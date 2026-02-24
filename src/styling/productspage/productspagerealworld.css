@@ -1,0 +1,220 @@
+/* frontend/src/styling/productspage/productspagerealworld.css */
+/* =========================================================
+   PRODUCTS PAGE — REAL WORLD (table-style lines)
+   Fixes:
+   - Desktop: bullets in top 2 cards centered
+   - Mobile: no right-side line on first top card
+            + line under second top card
+   ========================================================= */
+
+.kprw {
+    background: #ffffff;
+    color: var(--kc-text-primary);
+    padding: 80px 0;
+}
+
+@media (max-width: 600px) {
+    .kprw {
+        padding: 56px 0;
+    }
+}
+
+.kprw__inner {
+    max-width: 1040px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+/* =========================
+   HEAD
+   ========================= */
+.kprw__head {
+    text-align: center;
+    margin-bottom: 28px;
+
+    /* ensure centered width works properly */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.kprw__kicker {
+    margin: 0 0 12px;
+}
+
+/* ✅ max 600px */
+.kprw__title {
+    margin: 0 0 10px;
+    max-width: 600px;
+}
+
+/* accent stays the same */
+.kprw__accent {
+    color: var(--kc-accent-primary);
+}
+
+/* ✅ max 500px */
+.kprw__sub {
+    margin: 0;
+    max-width: 500px;
+    color: var(--kc-text-secondary);
+}
+
+/* line colour */
+:root {
+    --kprw-line: rgba(15, 23, 42, 0.18);
+}
+
+/* =========================
+   TOP (2 columns)
+   ========================= */
+.kprw__top {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0;
+    /* important so borders touch */
+    align-items: stretch;
+    margin-top: 10px;
+}
+
+/* each top card */
+.kprw__topCard {
+    padding: 34px 22px;
+    text-align: center;
+    background: transparent;
+
+    /* bottom line to separate from the 6-grid */
+    border-bottom: 1px solid var(--kprw-line);
+}
+
+/* vertical line between the 2 top cards (desktop/tablet) */
+.kprw__topCard:first-child {
+    border-right: 1px solid var(--kprw-line);
+}
+
+.kprw__miniPill {
+    margin: 0 auto 12px;
+}
+
+.kprw__topTitle {
+    margin: 0 0 12px;
+}
+
+/* ✅ bullets centered (not left aligned) */
+.kprw__bullets {
+    margin: 0;
+    padding: 0;
+    list-style-position: inside;
+    text-align: center;
+    /* key */
+    display: block;
+}
+
+.kprw__li {
+    margin: 0 0 10px;
+}
+
+/* remove default margins safety */
+.kprw__li:last-child {
+    margin-bottom: 0;
+}
+
+/* =========================
+   GRID (6 cells, 3 cols)
+   ========================= */
+.kprw__grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 0;
+    /* borders touch */
+    align-items: stretch;
+}
+
+/* cell */
+.kprw__cell {
+    padding: 44px 22px;
+    text-align: center;
+    background: transparent;
+}
+
+/* icon */
+.kprw__icon {
+    width: 46px;
+    height: 46px;
+    margin: 0 auto 14px;
+    display: grid;
+    place-items: center;
+}
+
+.kprw__iconImg {
+    width: 44px;
+    height: 44px;
+    display: block;
+    object-fit: contain;
+}
+
+/* copy */
+.kprw__cellTitle {
+    margin: 0 0 8px;
+}
+
+.kprw__cellDesc {
+    margin: 0;
+    color: var(--kc-text-secondary);
+    line-height: 1.55;
+    max-width: 34ch;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+/* DESKTOP lines for 3-col grid */
+.kprw__cell:not(:nth-child(3n)) {
+    border-right: 1px solid var(--kprw-line);
+}
+
+.kprw__cell:nth-child(-n + 3) {
+    border-bottom: 1px solid var(--kprw-line);
+}
+
+/* =========================
+   TABLET (stack top + grid becomes 1 col like your pages)
+   ========================= */
+@media (max-width: 980px) {
+    .kprw__top {
+        grid-template-columns: 1fr;
+    }
+
+    /* ✅ fix mobile/tablet border bugs:
+       - remove right border that causes the “extra line on the right”
+       - ensure BOTH top cards have a bottom border (missing line under win more jobs) */
+    .kprw__topCard {
+        border-right: 0 !important;
+        border-bottom: 1px solid var(--kprw-line) !important;
+        padding: 34px 18px;
+    }
+
+    .kprw__grid {
+        grid-template-columns: 1fr;
+    }
+
+    /* clear desktop borders first */
+    .kprw__cell {
+        border: 0 !important;
+        padding: 40px 18px;
+    }
+
+    /* single divider between items */
+    .kprw__cell:not(:last-child) {
+        border-bottom: 1px solid var(--kprw-line) !important;
+    }
+}
+
+/* =========================
+   MOBILE tweaks
+   ========================= */
+@media (max-width: 640px) {
+    .kprw__bullets {
+        /* keep centered bullets on mobile too */
+        text-align: center;
+    }
+}

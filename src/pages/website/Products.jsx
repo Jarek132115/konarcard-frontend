@@ -1,7 +1,5 @@
 // frontend/src/pages/website/Products.jsx
-import React, { useMemo, useState } from "react";
-import { Link } from "react-router-dom";
-
+import React, { useMemo } from "react";
 import Navbar from "../../components/Navbar";
 import Footer from "../../components/Footer";
 
@@ -16,6 +14,13 @@ import PlasticCardImg from "../../assets/images/PlasticCard.jpg";
 import MetalCardImg from "../../assets/images/MetalCard.jpg";
 import KonarTagImg from "../../assets/images/KonarTag.jpg";
 
+/* ✅ Sections */
+import ProductsPageHero from "./productspage/ProductsPageHero";
+import ProductsPageBundles from "./productspage/ProductsPageBundles";
+import ProductsPageRealWorld from "./productspage/ProductsPageRealWorld";
+import ProductsPageBestChoice from "./productspage/ProductsPageBestChoice";
+import ProductsPageFAQ from "./productspage/ProductsPageFAQ"; // ✅ NEW
+
 /* ✅ Real world icons */
 import OnSiteIcon from "../../assets/icons/OnSite.svg";
 import AfterQuoteIcon from "../../assets/icons/AfterQuote.svg";
@@ -28,28 +33,37 @@ export default function Products() {
     const products = useMemo(
         () => [
             {
-                tag: "Best seller",
-                name: "KonarCard — Plastic Edition",
-                desc: "Durable, lightweight NFC business card for everyday use.",
-                price: "£29.99",
+                tag: "Best Value",
+                name: "KonarCard - Plastic NFC Business Card",
+                desc: "Durable, lightweight NFC business card for everyday networking and on-site use.",
+                priceText: "£29.99",
                 to: "/products/plastic-card",
                 img: PlasticCardImg,
+                alt: "KonarCard Plastic Edition – plastic NFC business card with QR code",
+                sku: "konarcard-plastic",
+                cta: "View Plastic Card",
             },
             {
                 tag: "Premium",
-                name: "KonarCard — Metal Edition",
-                desc: "Premium metal NFC card designed to make a strong first impression.",
-                price: "£44.99",
+                name: "KonarCard - Metal NFC Business Card",
+                desc: "Premium metal NFC business card designed to make a strong first impression.",
+                priceText: "£44.99",
                 to: "/products/metal-card",
                 img: MetalCardImg,
+                alt: "KonarCard Metal Edition – metal NFC business card with QR code",
+                sku: "konarcard-metal",
+                cta: "View Metal Card",
             },
             {
                 tag: "Accessory",
-                name: "KonarTag",
-                desc: "Compact NFC key tag that shares your profile with a tap.",
-                price: "£9.99",
+                name: "KonarTag - NFC Key Tag",
+                desc: "Compact NFC key tag that shares your profile instantly with a tap or QR scan.",
+                priceText: "£9.99",
                 to: "/products/konartag",
                 img: KonarTagImg,
+                alt: "KonarTag – NFC key tag that opens your digital business card profile",
+                sku: "konartag",
+                cta: "View KonarTag",
             },
         ],
         []
@@ -58,30 +72,36 @@ export default function Products() {
     const bundles = useMemo(
         () => [
             {
+                sku: "bundle-plastic-starter",
                 tag: "Best value",
-                name: "Plastic Bundle",
-                desc: "A complete starter setup for sharing your profile everywhere.",
+                name: "Plastic NFC Starter Bundle",
+                desc: "Everything you need to start sharing your profile today.",
+                includes: ["1x Plastic NFC Business Card", "1x KonarTag NFC Key Tag", "12-Month Plus Plan Subscription"],
                 price: "£39.99",
                 was: "£49.97",
+                save: "Save £10",
                 to: "/products/plastic-bundle",
-                cardLabel: "KonarCard",
-                tagLabel: "KonarTag",
-                subLabel: "Subscription",
+                cta: "Get Starter Bundle",
                 imgCard: PlasticCardImg,
                 imgTag: KonarTagImg,
+                altCard: "Plastic NFC business card included in the starter bundle",
+                altTag: "KonarTag key tag included in the starter bundle",
             },
             {
+                sku: "bundle-metal-pro",
                 tag: "Premium bundle",
-                name: "Metal Bundle",
-                desc: "Premium setup designed to make a stronger first impression.",
+                name: "Metal NFC Pro Bundle",
+                desc: "Premium setup for trades who want to stand out instantly.",
+                includes: ["1x Metal NFC Business Card", "1x KonarTag NFC Key Tag", "12-Month Plus Plan Subscription"],
                 price: "£54.99",
                 was: "£69.97",
+                save: "Save £15",
                 to: "/products/metal-bundle",
-                cardLabel: "KonarCard",
-                tagLabel: "KonarTag",
-                subLabel: "Subscription",
+                cta: "Get Pro Bundle",
                 imgCard: MetalCardImg,
                 imgTag: KonarTagImg,
+                altCard: "Metal NFC business card included in the pro bundle",
+                altTag: "KonarTag key tag included in the pro bundle",
             },
         ],
         []
@@ -145,248 +165,25 @@ export default function Products() {
         []
     );
 
-    const productFaqs = useMemo(
-        () => [
-            {
-                q: "Will it work on iPhone and Android?",
-                a: "Yes. KonarCard works on iPhone and Android. Most modern phones support NFC. QR works on any phone with a camera.",
-            },
-            { q: "Do customers need an app to tap my card?", a: "No app needed. The tap opens your KonarCard profile instantly in their browser." },
-            { q: "Can I update my details after ordering?", a: "Yes. Update your profile anytime, changes go live instantly without reprinting anything." },
-            { q: "What if someone’s phone doesn’t support NFC?", a: "Every card includes a QR code backup, so anyone can scan and view your profile." },
-            { q: "Can I use one profile on multiple products?", a: "Yes. Your card and keytag can link to the same KonarCard profile." },
-        ],
-        []
-    );
-
-    const [openIndex, setOpenIndex] = useState(0);
-
     return (
         <>
             <Navbar />
 
             <main className="kc-products kc-page kp-page">
-                {/* HERO */}
-                <section className="kp-hero">
-                    <div className="kp-container kp-hero__inner">
-                        <div className="kp-heroCopyGrid">
-                            <p className="kc-pill kp-heroPill">Cards that link directly to your KonarCard profile</p>
-
-                            <h1 className="h2 kp-title">
-                                Shop the <span className="kp-accent">Konar</span> product range
-                            </h1>
-
-                            <p className="body-s kp-sub">
-                                Physical NFC business cards that open your profile instantly, so customers can save your details and contact you fast.
-                            </p>
-                        </div>
-                    </div>
-                </section>
-
-                {/* PRODUCTS */}
-                <section className="kp-section kp-section--cards">
-                    <div className="kp-container">
-                        <div className="kp-grid" role="list" aria-label="KonarCard products">
-                            {products.map((item) => (
-                                <article key={item.name} className="kp-card" role="listitem">
-                                    <div className="kp-media" aria-hidden="true">
-                                        <span className="kp-mediaPill" aria-label={item.tag}>
-                                            {item.tag}
-                                        </span>
-                                        <img src={item.img} alt="" className="kp-media__img" loading="lazy" />
-                                    </div>
-
-                                    <div className="kp-divider" aria-hidden="true" />
-
-                                    <div className="kp-card__body">
-                                        <div className="kp-topCopy">
-                                            <p className="h6 kp-card__name">{item.name}</p>
-                                            <p className="body-s kp-desc">{item.desc}</p>
-                                        </div>
-
-                                        <div className="kp-buy">
-                                            <div className="kp-priceRow">
-                                                <p className="kp-price">{item.price}</p>
-                                            </div>
-
-                                            <div className="kp-actions">
-                                                {/* ✅ WHITE CTA */}
-                                                <Link to={item.to} className="kx-btn kx-btn--white kp-btn kp-btn--white" aria-label={`View ${item.name}`}>
-                                                    View product
-                                                </Link>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </article>
-                            ))}
-                        </div>
-
-                        <p className="kp-note">One-time card purchase — profiles are free to start.</p>
-                    </div>
-                </section>
+                {/* HERO (heading + 3 product cards) */}
+                <ProductsPageHero products={products} />
 
                 {/* BUNDLES */}
-                <section className="kp-bundlesSection">
-                    <div className="kp-container">
-                        <header className="kp-sectionHead">
-                            <p className="kc-pill kp-kicker">Bundles</p>
-                            <h2 className="h3 kp-h2">
-                                Save More With KonarCard <span className="kp-accent">Bundles</span>
-                            </h2>
-                            <p className="body-s kp-sectionSub">Each bundle includes a card, a KonarTag, and 12 months subscription.</p>
-                        </header>
-
-                        <div className="kp-bundleList" role="list" aria-label="KonarCard bundles">
-                            {bundles.map((b) => (
-                                <article key={b.name} className="kp-bundleCard" role="listitem">
-                                    <div className="kp-bundleLeft">
-                                        <span className="kp-softPill" aria-label={b.tag}>
-                                            {b.tag}
-                                        </span>
-
-                                        <h3 className="h6 kp-bundleTitle">{b.name}</h3>
-                                        <p className="body-s kp-bundleDesc">{b.desc}</p>
-
-                                        <div className="kp-bundlePriceRow">
-                                            <span className="kp-bundlePrice">{b.price}</span>
-                                            <span className="kp-bundleWas">{b.was}</span>
-                                        </div>
-
-                                        {/* ✅ WHITE CTA */}
-                                        <Link to={b.to} className="kx-btn kx-btn--white kp-bundleBtn kp-btn--white">
-                                            View bundle
-                                        </Link>
-                                    </div>
-
-                                    <div className="kp-bundleRight" aria-label="Bundle includes">
-                                        <div className="kp-bundleRightTop">
-                                            <div className="kp-bundleRightTitle">Includes</div>
-                                            <div className="kp-bundleRightSub">One setup, share anywhere — tap, scan, or link.</div>
-                                        </div>
-
-                                        <div className="kp-bundleItems">
-                                            <div className="kp-bundleItem">
-                                                <div className="kp-bundleLabel">{b.cardLabel}</div>
-                                                <div className="kp-bundleThumb">
-                                                    <img src={b.imgCard} alt={`${b.name} card`} loading="lazy" />
-                                                </div>
-                                            </div>
-
-                                            <div className="kp-bundlePlus" aria-hidden="true">
-                                                +
-                                            </div>
-
-                                            <div className="kp-bundleItem">
-                                                <div className="kp-bundleLabel">{b.tagLabel}</div>
-                                                <div className="kp-bundleThumb">
-                                                    <img src={b.imgTag} alt={`${b.name} KonarTag`} loading="lazy" />
-                                                </div>
-                                            </div>
-
-                                            <div className="kp-bundlePlus" aria-hidden="true">
-                                                +
-                                            </div>
-
-                                            <div className="kp-bundleItem">
-                                                <div className="kp-bundleLabel">{b.subLabel}</div>
-                                                <div className="kp-bundleThumb kp-bundleSubBox" aria-label="Subscription included">
-                                                    <div className="kp-subTop">12 months</div>
-                                                    <div className="kp-subBottom">INCLUDED</div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </article>
-                            ))}
-                        </div>
-                    </div>
-                </section>
+                <ProductsPageBundles bundles={bundles} />
 
                 {/* REAL WORLD */}
-                <section className="kp-realWorld">
-                    <div className="kp-container">
-                        <header className="kp-sectionHead">
-                            <p className="kc-pill kp-kicker">Built for trades</p>
-                            <h2 className="h3 kp-h2">
-                                How you’ll use it in the <span className="kp-accent">real world</span>
-                            </h2>
-                            <p className="body-s kp-sectionSub">
-                                Your KonarCard profile puts your work, reviews and contact details in one place, so customers can trust you fast and get in touch quickly.
-                            </p>
-                        </header>
+                <ProductsPageRealWorld topCards={realWorldTop} gridCards={realWorldGrid} />
 
-                        <div className="kp-twoUp" role="list" aria-label="Real world highlights">
-                            {realWorldTop.map((box) => (
-                                <article key={box.title} className="kp-highlightCard" role="listitem">
-                                    <span className="kp-softPill kp-softPill--tight">{box.pill}</span>
-                                    <h3 className="h6 kp-highlightTitle">{box.title}</h3>
-                                    <ul className="kp-bullets">
-                                        {box.points.map((pt) => (
-                                            <li key={pt} className="body-s">
-                                                {pt}
-                                            </li>
-                                        ))}
-                                    </ul>
-                                </article>
-                            ))}
-                        </div>
+                {/* BEST CHOICE (Choose the right card) */}
+                <ProductsPageBestChoice />
 
-                        <div className="kp-realGrid" role="list" aria-label="Real world examples">
-                            {realWorldGrid.map((g) => (
-                                <article key={g.title} className="kp-realCard" role="listitem">
-                                    <div className="kp-realIconTop" aria-hidden="true">
-                                        <img src={g.icon} alt="" />
-                                    </div>
-                                    <h3 className="h6 kp-realTitle">{g.title}</h3>
-
-                                    {/* ✅ IMPORTANT: This class now matches the CSS clamp */}
-                                    <p className="body-s kp-rwCardDesc">{g.desc}</p>
-                                </article>
-                            ))}
-                        </div>
-                    </div>
-                </section>
-
-                {/* FAQ */}
-                <section className="kp-faq">
-                    <div className="kp-container kp-faq__inner">
-                        <header className="kp-faqHead">
-                            <p className="kc-pill kp-kicker">FAQs</p>
-                            <h2 className="h3 kp-h2">Product FAQs</h2>
-                            <p className="body-s kp-sectionSub">Quick answers before you order.</p>
-                        </header>
-
-                        <div className="kp-faqList" role="region" aria-label="Product FAQs">
-                            {productFaqs.map((item, idx) => {
-                                const isOpen = idx === openIndex;
-                                return (
-                                    <div className="kp-faqItem" key={`${item.q}-${idx}`}>
-                                        <button
-                                            type="button"
-                                            className="kp-qRow"
-                                            onClick={() => setOpenIndex(isOpen ? -1 : idx)}
-                                            aria-expanded={isOpen}
-                                        >
-                                            <span className="h6 kp-q">{item.q}</span>
-                                            <span className={`kp-chev ${isOpen ? "is-open" : ""}`} aria-hidden="true">
-                                                ▾
-                                            </span>
-                                        </button>
-
-                                        {isOpen && <div className="body-s kp-a">{item.a}</div>}
-                                    </div>
-                                );
-                            })}
-                        </div>
-
-                        <div className="kp-faqCta">
-                            <p className="body-s kp-faqCtaText">Still got questions? We’re happy to help.</p>
-                            <Link to="/contactus" className="kx-btn kx-btn--black">
-                                Contact support
-                            </Link>
-                        </div>
-                    </div>
-                </section>
+                {/* PRODUCT FAQ */}
+                <ProductsPageFAQ />
             </main>
 
             <Footer />

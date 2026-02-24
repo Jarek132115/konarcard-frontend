@@ -1,0 +1,160 @@
+/* frontend/src/styling/productspage/productspagefaq.css */
+/* =========================================================
+   PRODUCTS PAGE — FAQ SECTION (Product FAQs)
+   - Same divider-list style as Home FAQ
+   - No tabs (product-only questions)
+   Typography comes ONLY from fonts.css
+   ========================================================= */
+
+.kpfq {
+    background: var(--kc-bg-main);
+    color: var(--kc-text-primary);
+    padding: 80px 0;
+}
+
+@media (max-width: 600px) {
+    .kpfq {
+        padding: 56px 0;
+    }
+}
+
+.kpfq__inner {
+    max-width: 1040px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+/* =========================
+   HEAD
+   ========================= */
+.kpfq__head {
+    text-align: center;
+    margin-bottom: 18px;
+}
+
+.kpfq__kicker {
+    margin: 0 0 12px;
+}
+
+.kpfq__title {
+    margin: 0 0 8px;
+}
+
+.kpfq__sub {
+    margin: 0 auto;
+    max-width: 560px;
+    color: var(--kc-text-secondary);
+}
+
+/* =========================
+   DIVIDER LIST
+   ========================= */
+.kpfq__list {
+    margin-top: 18px;
+    max-width: 920px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.kpfq__item {
+    border-bottom: 1px solid rgba(11, 18, 32, 0.10);
+}
+
+.kpfq__item:first-child {
+    border-top: 1px solid rgba(11, 18, 32, 0.10);
+}
+
+.kpfq__qRow {
+    width: 100%;
+    text-align: left;
+
+    padding: 22px 0;
+    background: transparent;
+    border: none;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px;
+
+    cursor: pointer;
+}
+
+.kpfq__q {
+    margin: 0;
+    max-width: 70ch;
+    line-height: 1.25;
+    color: var(--kc-text-primary);
+}
+
+/* Chevron */
+.kpfq__chev {
+    width: 34px;
+    height: 34px;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 999px;
+    border: 1px solid rgba(11, 18, 32, 0.14);
+    background: rgba(255, 255, 255, 0.92);
+
+    color: rgba(11, 18, 32, 0.80);
+    font-size: 12px;
+
+    flex: 0 0 auto;
+    transition: transform 0.15s ease, background-color 0.15s ease, border-color 0.15s ease;
+}
+
+.kpfq__qRow:hover .kpfq__chev {
+    background: rgba(15, 23, 42, 0.03);
+    border-color: rgba(11, 18, 32, 0.22);
+}
+
+.kpfq__chev.is-open {
+    transform: rotate(180deg);
+}
+
+.kpfq__a {
+    padding: 0 0 22px;
+    max-width: 78ch;
+    line-height: 1.65;
+    color: var(--kc-text-secondary);
+}
+
+/* =========================
+   CTA
+   ========================= */
+.kpfq__cta {
+    margin-top: 18px;
+    display: grid;
+    gap: 12px;
+    justify-items: center;
+    text-align: center;
+}
+
+.kpfq__ctaText {
+    margin: 0;
+    color: rgba(15, 23, 42, 0.70);
+}
+
+.kpfq__ctaBtns {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+/* =========================
+   RESPONSIVE
+   ========================= */
+@media (max-width: 720px) {
+    .kpfq__qRow {
+        padding: 18px 0;
+    }
+
+    .kpfq__a {
+        padding-bottom: 18px;
+    }
+}
