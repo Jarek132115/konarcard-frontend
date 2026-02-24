@@ -1,94 +1,126 @@
 /* frontend/src/styling/products/konarcard.css */
 
 /* =========================================================
-   KONARCARD PRODUCT PAGE (Plastic/Metal)
-   Updated to match the "2nd image" layout:
-   - cleaner white hero
-   - more visible grid behind hero (like homepage)
-   - headings use fonts.css classes (hero title uses h2)
-   - section title max-width rhythm like your site
-   - pills do NOT repeat headings (better UX/SEO)
+   KonarCard page (Plastic/Metal)
+   - Keep hero + configurator
+   - Product details + What you get now reuse HOME value.css (khv)
+   - Only overrides needed are scoped + minimal
 ========================================================= */
 
 :root {
-    --kcp-orange: #ff7b00;
-    --kcp-text: #0b1220;
-    --kcp-muted: rgba(12, 24, 48, 0.68);
-    --kcp-border: rgba(12, 24, 48, 0.12);
-    --kcp-border-soft: rgba(12, 24, 48, 0.10);
-    --kcp-shadow: 0 10px 24px rgba(12, 24, 48, 0.06);
+    --kc-orange: #ff7b00;
+    --kc-orange-hover: #e66f00;
 
-    --kcp-section-pad: 72px;
-    --kcp-section-pad-mobile: 54px;
+    --kc-text: #0b1220;
+    --kc-muted: rgba(12, 24, 48, .72);
+
+    --kc-border: rgba(12, 24, 48, .10);
+    --kc-border-2: rgba(12, 24, 48, .08);
+
+    --kc-softShadow: 0 10px 24px rgba(12, 24, 48, .06);
+
+    --kc-section-pad: 62px;
+    --kc-section-pad-mobile: 48px;
 }
 
+/* =========================================================
+   Global sanity
+========================================================= */
 *,
 *::before,
 *::after {
     box-sizing: border-box;
 }
 
-.kc-konarcard {
-    width: 100%;
-    background: #fff;
-    color: var(--kcp-text);
+img,
+svg,
+video,
+canvas {
+    max-width: 100%;
+    display: block;
 }
 
 /* =========================================================
-   HERO
+   Page shell
 ========================================================= */
-.kcp-hero {
+.kc-konarcard {
+    width: 100%;
     background: #fff;
-    padding: 34px 0 var(--kcp-section-pad);
-    overflow: visible;
+    color: var(--kc-text);
 }
 
-@media (max-width: 600px) {
-    .kcp-hero {
-        padding: 26px 0 var(--kcp-section-pad-mobile);
-    }
+.kc-konarcard--premium {
+    background: #fff;
 }
 
-.kcp-hero__inner {
+.kc-konarcard__wrap {
     max-width: 1140px;
     margin: 0 auto;
     padding: 0 18px;
 }
 
-.kcp-hero__head {
-    text-align: center;
-    max-width: 980px;
-    margin: 0 auto;
-    position: relative;
-    padding: 18px 14px 6px;
+/* =========================================================
+   TOP HERO
+========================================================= */
+.kc-topHero {
+    width: 100%;
+    padding-bottom: var(--kc-section-pad);
 }
 
-/* ✅ more visible grid like homepage hero */
-.kcp-hero__head::before {
+@media (max-width: 560px) {
+    .kc-topHero {
+        padding-bottom: var(--kc-section-pad-mobile);
+    }
+}
+
+/* grid ONLY behind heading area */
+.kc-heroHeadWrap {
+    position: relative;
+    max-width: 980px;
+    margin: 0 auto;
+    padding: 0;
+}
+
+/* bigger grid coverage */
+.kc-heroHeadWrap--lg {
+    max-width: 1020px;
+}
+
+.kc-heroHeadWrap::before {
     content: "";
     position: absolute;
-    inset: -18px -10px 0;
+    inset: 0;
     border-radius: 22px;
     pointer-events: none;
     z-index: 0;
 
+    background-color: #fff;
     background-image:
-        linear-gradient(to right, rgba(12, 24, 48, 0.06) 1px, transparent 1px),
-        linear-gradient(to bottom, rgba(12, 24, 48, 0.06) 1px, transparent 1px);
-    background-size: 56px 56px;
+        linear-gradient(to right, rgba(12, 24, 48, 0.05) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(12, 24, 48, 0.05) 1px, transparent 1px);
+    background-size: 64px 64px;
     background-position: center;
-    opacity: 0.75;
+    opacity: .55;
 
-    mask-image: radial-gradient(closest-side, rgba(0, 0, 0, 1) 0%, rgba(0, 0, 0, 1) 72%, rgba(0, 0, 0, 0) 100%);
-    -webkit-mask-image: radial-gradient(closest-side, rgba(0, 0, 0, 1) 0%, rgba(0, 0, 0, 1) 72%, rgba(0, 0, 0, 0) 100%);
+    mask-image: radial-gradient(closest-side, rgba(0, 0, 0, 1) 0%, rgba(0, 0, 0, 1) 70%, rgba(0, 0, 0, 0) 100%);
+    -webkit-mask-image: radial-gradient(closest-side, rgba(0, 0, 0, 1) 0%, rgba(0, 0, 0, 1) 70%, rgba(0, 0, 0, 0) 100%);
 }
 
-.kcp-hero__head>* {
+.kc-heroHeadWrap>* {
     position: relative;
     z-index: 1;
 }
 
-.kcp-crumbPill {
+.kc-topHero__head {
+    text-align: center;
+    max-width: 920px;
+    margin: 0 auto;
+}
+
+/* =========================================================
+   Breadcrumb pill
+========================================================= */
+.kc-crumbPill {
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -98,117 +130,121 @@
     border-radius: 999px;
 
     background: #fff;
-    border: 1px solid var(--kcp-border);
-    box-shadow: var(--kcp-shadow);
+    border: 1px solid rgba(12, 24, 48, .12);
+    box-shadow: 0 10px 22px rgba(12, 24, 48, .06);
 
     font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
     font-size: 12px;
-    font-weight: 700;
-    color: rgba(12, 24, 48, 0.72);
-    margin: 0 auto 14px;
+    font-weight: 900;
+    color: rgba(12, 24, 48, .72);
+    margin: 0 auto 16px;
     white-space: nowrap;
 }
 
-.kcp-crumbPill__link {
+.kc-crumbPill__link {
     text-decoration: none;
-    color: rgba(12, 24, 48, 0.82);
+    color: rgba(12, 24, 48, .82);
 }
 
-.kcp-crumbPill__link:hover {
+.kc-crumbPill__link:hover {
     text-decoration: underline;
 }
 
-.kcp-crumbPill__sep {
-    opacity: 0.5;
+.kc-crumbPill__sep {
+    opacity: .5;
 }
 
-.kcp-crumbPill__here {
-    color: rgba(12, 24, 48, 0.68);
+.kc-crumbPill__here {
+    color: rgba(12, 24, 48, .68);
 }
 
-/* hero title uses fonts.css class h2 */
-.kcp-hero__title {
+/* =========================================================
+   Hero typography
+   (h2 class is applied in JSX; this only styles the element)
+========================================================= */
+.kc-premHero__title {
+    font-family: "Cal Sans", Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+    font-weight: 500 !important;
+    font-synthesis: none;
     margin: 0;
-    max-width: 700px;
-    margin-left: auto;
-    margin-right: auto;
+    letter-spacing: -0.04em;
+    line-height: 1.03;
+    color: rgba(12, 24, 48, .95);
 }
 
-.kcp-accent {
-    color: var(--kcp-orange);
-}
-
-.kcp-hero__sub {
+.kc-premHero__sub {
     margin: 10px auto 0;
-    max-width: 500px;
-    color: var(--kcp-muted);
+    max-width: 760px;
+    font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+    font-size: 14px;
+    line-height: 1.7;
+    color: rgba(12, 24, 48, .68);
 }
 
-.kcp-hero__badges {
-    margin-top: 14px;
+/* =========================================================
+   Badges
+========================================================= */
+.kc-topHero__badges {
+    margin-top: 12px;
     display: flex;
-    justify-content: center;
     gap: 10px;
     flex-wrap: wrap;
+    justify-content: center;
 }
 
-.kcp-badge {
+.kc-badge {
     display: inline-flex;
     align-items: center;
     justify-content: center;
     padding: 8px 12px;
     border-radius: 999px;
 
-    background: rgba(12, 24, 48, 0.06);
-    border: 1px solid var(--kcp-border);
-    color: rgba(12, 24, 48, 0.78);
-
     font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
     font-size: 12px;
-    font-weight: 700;
+    font-weight: 900;
+    letter-spacing: .01em;
+
+    background: rgba(12, 24, 48, .06);
+    border: 1px solid rgba(12, 24, 48, .12);
+    color: rgba(12, 24, 48, .78);
     white-space: nowrap;
 }
 
-.kcp-badge--orange {
-    background: var(--kcp-orange);
-    border-color: rgba(255, 123, 0, 0.30);
+.kc-badge--orange {
+    background: var(--kc-orange);
+    border-color: rgba(255, 123, 0, .30);
     color: #fff;
-    box-shadow: 0 14px 34px rgba(255, 123, 0, 0.18);
+    box-shadow: 0 16px 34px rgba(255, 123, 0, .18);
 }
 
-.kcp-msgBox {
+.kc-msgBox {
     margin: 14px auto 0;
     max-width: 860px;
     padding: 10px 12px;
     border-radius: 12px;
-    border: 1px solid var(--kcp-border);
-    background: rgba(12, 24, 48, 0.03);
-    color: rgba(12, 24, 48, 0.9);
+    border: 1px solid rgba(12, 24, 48, .12);
+    background: rgba(12, 24, 48, .03);
+    color: rgba(12, 24, 48, .9);
     font-size: 14px;
 }
 
-/* stage */
-.kcp-stage {
-    margin-top: 18px;
-}
-
-.kcp-stage__canvas {
-    max-width: 980px;
-    margin: 0 auto;
-    padding: 18px 0 8px;
-    overflow: visible;
+/* =========================================================
+   Stage spacing
+========================================================= */
+.kc-premStage {
+    margin-top: 14px;
 }
 
 /* =========================================================
-   CONFIG (keep controls + CTA but match new design)
+   Controls + Buy — responsive 3-col / 2x2 fallback
 ========================================================= */
-.kcp-config {
+.kc-controls {
     max-width: 980px;
-    margin: 0 auto;
-    padding-top: 6px;
+    margin: 10px auto 0;
+    padding-bottom: 8px;
 }
 
-.kcp-config__grid {
+.kc-configGrid {
     display: grid;
     gap: 18px;
     align-items: start;
@@ -221,17 +257,18 @@
 }
 
 @media (min-width: 1021px) {
-    .kcp-config__grid {
-        grid-template-columns: 1fr minmax(260px, 320px) 1fr;
+    .kc-configGrid {
+        grid-template-columns: 1fr minmax(240px, 320px) 1fr;
+        grid-template-rows: auto auto;
         grid-template-areas:
-            "logo buy size"
-            "colour buy profile";
+            "logo  buy  size"
+            "colour buy  profile";
         align-items: center;
     }
 }
 
-@media (max-width: 600px) {
-    .kcp-config__grid {
+@media (max-width: 560px) {
+    .kc-configGrid {
         grid-template-columns: 1fr;
         grid-template-areas:
             "logo"
@@ -243,51 +280,52 @@
     }
 }
 
-.kcp-config__grid> :nth-child(1) {
+.kc-cell--logo {
     grid-area: logo;
 }
 
-.kcp-config__grid> :nth-child(2) {
-    grid-area: colour;
-}
-
-.kcp-config__grid> :nth-child(3) {
-    grid-area: buy;
-}
-
-.kcp-config__grid> :nth-child(4) {
+.kc-cell--size {
     grid-area: size;
 }
 
-.kcp-config__grid> :nth-child(5) {
+.kc-cell--colour {
+    grid-area: colour;
+}
+
+.kc-cell--profile {
     grid-area: profile;
 }
 
-.kcp-control {
-    text-align: center;
-    padding: 10px 8px;
+.kc-cell--buy {
+    grid-area: buy;
 }
 
-.kcp-control__k {
+.kc-controlCell {
+    text-align: center;
+    padding: 12px 8px;
+}
+
+.kc-controlK {
     display: inline-flex;
     align-items: center;
     justify-content: center;
     padding: 6px 12px;
     border-radius: 999px;
 
-    background: rgba(12, 24, 48, 0.06);
-    border: 1px solid rgba(12, 24, 48, 0.10);
-    color: rgba(12, 24, 48, 0.82);
-
     font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-    font-weight: 700;
+    font-weight: 900;
     font-size: 12px;
+    letter-spacing: -0.01em;
+
+    background: rgba(12, 24, 48, .06);
+    border: 1px solid rgba(12, 24, 48, .10);
+    color: rgba(12, 24, 48, .82);
 
     margin: 0 auto 12px;
     white-space: nowrap;
 }
 
-.kcp-control__row {
+.kc-inlineRow {
     display: flex;
     gap: 14px;
     justify-content: center;
@@ -295,64 +333,80 @@
     flex-wrap: wrap;
 }
 
-.kcp-textAction {
+.kc-textAction {
     border: none;
     background: transparent;
     padding: 0;
     cursor: pointer;
 
     font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-    font-weight: 700;
+    font-weight: 900;
     font-size: 13px;
-    color: rgba(12, 24, 48, 0.92);
+    color: rgba(12, 24, 48, .92);
+    letter-spacing: -0.01em;
 }
 
-.kcp-textAction:hover {
+.kc-textAction:hover {
     text-decoration: underline;
 }
 
-.kcp-textAction--muted {
-    color: rgba(12, 24, 48, 0.62);
+.kc-textAction:disabled {
+    opacity: .55;
+    cursor: not-allowed;
+    text-decoration: none;
 }
 
-.kcp-textAction input {
+.kc-textAction--muted {
+    color: rgba(12, 24, 48, .62);
+}
+
+.kc-textAction input {
     display: none;
 }
 
-.kcp-toggle {
+.kc-toggleText {
     border: none;
     background: transparent;
     padding: 0;
     cursor: pointer;
 
     font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-    font-weight: 700;
+    font-weight: 900;
     font-size: 13px;
-    color: rgba(12, 24, 48, 0.62);
+    color: rgba(12, 24, 48, .62);
+    letter-spacing: -0.01em;
 }
 
-.kcp-toggle:hover {
-    color: rgba(12, 24, 48, 0.92);
+.kc-toggleText:hover {
+    color: rgba(12, 24, 48, .92);
 }
 
-.kcp-toggle.is-active {
-    color: rgba(12, 24, 48, 0.95);
+.kc-toggleText.is-active {
+    color: rgba(12, 24, 48, .95);
     text-decoration: underline;
     text-underline-offset: 4px;
 }
 
-/* profile */
-.kcp-profileBox {
-    width: min(260px, 100%);
+/* =========================================================
+   Profile box (ONLY one with background/border)
+========================================================= */
+.kc-profileBox {
+    width: min(520px, 100%);
     margin: 0 auto;
-    padding: 10px;
+    padding: 12px;
+
     background: #fff;
-    border: 1px solid var(--kcp-border);
-    border-radius: 16px;
-    box-shadow: 0 14px 34px rgba(12, 24, 48, 0.06);
+    border: 1px solid rgba(12, 24, 48, .12);
+    border-radius: 18px;
+    box-shadow: 0 14px 34px rgba(12, 24, 48, .06);
 }
 
-.kcp-profileLoggedOut {
+.kc-profileBox--sm {
+    width: min(200px, 100%);
+    padding: 10px;
+}
+
+.kc-profileLoggedOut {
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -360,271 +414,205 @@
 
     font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
     font-size: 13px;
-    font-weight: 700;
-    color: rgba(12, 24, 48, 0.70);
+    font-weight: 800;
+    color: rgba(12, 24, 48, .70);
 }
 
-.kcp-loginInline {
+.kc-loginInline {
     border: none;
     background: transparent;
     padding: 0;
     cursor: pointer;
 
     font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-    font-weight: 700;
+    font-weight: 900;
     font-size: 13px;
-    color: rgba(12, 24, 48, 0.92);
+    color: rgba(12, 24, 48, .92);
     text-decoration: underline;
     text-underline-offset: 4px;
 }
 
-.kcp-profileSelect {
+.kc-profileSelect {
     width: 100%;
     height: 42px;
     border-radius: 14px;
-    border: 1px solid var(--kcp-border);
+    border: 1px solid rgba(12, 24, 48, .12);
     background: #fff;
     padding: 0 12px;
-    outline: none;
 
+    color: rgba(12, 24, 48, .92);
+    outline: none;
     font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-    font-weight: 600;
+    font-weight: 700;
     font-size: 13px;
-    color: rgba(12, 24, 48, 0.92);
 }
 
-/* buy */
-.kcp-buy {
+/* =========================================================
+   Buy area
+========================================================= */
+.kc-buyArea {
+    margin: 0;
+    padding: 10px 0 0;
     text-align: center;
     display: grid;
     gap: 12px;
     justify-items: center;
     align-content: center;
+    width: 100%;
 }
 
-.kcp-buy__price {
+.kc-buyPrice {
     font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
     font-size: 34px;
-    font-weight: 800;
+    font-weight: 950;
     letter-spacing: -0.03em;
-    color: rgba(12, 24, 48, 0.95);
+    color: rgba(12, 24, 48, .95);
     line-height: 1.05;
 }
 
-.kcp-buy__row {
+.kc-buyControls {
     display: grid;
     gap: 12px;
     justify-items: center;
+    width: 100%;
 }
 
-.kcp-qty {
+.kc-qtySm {
     display: inline-flex;
     align-items: center;
     height: 44px;
     border-radius: 999px;
-    border: 1px solid var(--kcp-border);
+    border: 1px solid rgba(12, 24, 48, .12);
     background: #fff;
     overflow: hidden;
+    width: max-content;
+    max-width: 100%;
 }
 
-.kcp-qty__btn {
+.kc-qtySm__btn {
     width: 40px;
     height: 44px;
     border: none;
+    outline: none;
     background: transparent;
     cursor: pointer;
-    font-weight: 800;
+    font-weight: 900;
     font-size: 18px;
-    color: rgba(12, 24, 48, 0.86);
+    color: rgba(12, 24, 48, .86);
 }
 
-.kcp-qty__btn:hover {
-    background: rgba(12, 24, 48, 0.05);
+.kc-qtySm__btn:hover {
+    background: rgba(12, 24, 48, .05);
 }
 
-.kcp-qty__val {
+.kc-qtySm__val {
     width: 44px;
     text-align: center;
     font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-    font-weight: 800;
+    font-weight: 900;
     font-size: 13px;
-    color: rgba(12, 24, 48, 0.9);
+    color: rgba(12, 24, 48, .9);
 }
 
-.kcp-buy__btn {
+.kc-buyBtnFit {
     width: auto !important;
     min-width: unset !important;
 }
 
 /* =========================================================
-   SECTIONS
+   ✅ Reusing HOME value.css (khv)
+   Only minimal overrides, scoped to this page
 ========================================================= */
-.kcp-section {
+
+/* white version for “What you get” */
+.khv--white {
+    background: #ffffff !important;
+}
+
+/* keep product-page headings within your requested widths (scoped) */
+.kc-konarcard .khv__title {
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.kc-konarcard .khv__sub {
+    max-width: 520px;
+}
+
+/* product details cells: pill + value (no icon) */
+.kc-specCell {
+    display: grid;
+    gap: 10px;
+    align-content: start;
+}
+
+.kc-specPill {
+    margin: 0 auto;
+    width: fit-content;
+}
+
+.kc-specValue {
+    max-width: 34ch;
+    margin-left: auto !important;
+    margin-right: auto !important;
+}
+
+/* =========================================================
+   SECTION SYSTEM (still used for gallery)
+========================================================= */
+.kc-section {
     width: 100%;
-    padding: var(--kcp-section-pad) 0;
+    padding: var(--kc-section-pad) 0;
 }
 
-@media (max-width: 600px) {
-    .kcp-section {
-        padding: var(--kcp-section-pad-mobile) 0;
-    }
-}
-
-.kcp-section--soft {
+.kc-section--soft {
     background: #fafafa;
 }
 
-.kcp-section--white {
-    background: #fff;
-}
-
-.kcp-section__inner {
+.kc-section__inner {
     max-width: 1140px;
     margin: 0 auto;
     padding: 0 18px;
 }
 
-.kcp-section__head {
+.kc-section__head {
     text-align: center;
+    max-width: 780px;
     margin: 0 auto 22px;
+    padding: 0 2px;
 }
 
-.kcp-section__pill {
+.kc-section__pill {
     margin: 0 0 12px;
 }
 
-.kcp-section__title {
-    margin: 0 auto 10px;
-    max-width: 600px;
+.kc-section__title {
+    font-family: "Cal Sans", Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+    font-weight: 500 !important;
+    margin: 0 0 10px;
+    font-size: 40px;
+    letter-spacing: -0.03em;
+    color: rgba(12, 24, 48, .95);
 }
 
-.kcp-section__sub {
+.kc-accentWord {
+    color: var(--kc-orange);
+}
+
+.kc-section__sub {
     margin: 0 auto;
-    max-width: 500px;
-    color: var(--kcp-muted);
-}
-
-/* =========================================================
-   DETAILS GRID (3x2 + lines like screenshot)
-========================================================= */
-.kcp-detailsGrid {
-    position: relative;
-    max-width: 980px;
-    margin: 18px auto 0;
-    display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-}
-
-.kcp-detailsGrid::before {
-    content: "";
-    position: absolute;
-    inset: 0;
-    pointer-events: none;
-    z-index: 0;
-
-    background-image:
-        linear-gradient(to right,
-            transparent 0,
-            transparent calc(33.333% - 0.5px),
-            rgba(12, 24, 48, 0.14) calc(33.333% - 0.5px),
-            rgba(12, 24, 48, 0.14) calc(33.333% + 0.5px),
-            transparent calc(33.333% + 0.5px),
-            transparent calc(66.666% - 0.5px),
-            rgba(12, 24, 48, 0.14) calc(66.666% - 0.5px),
-            rgba(12, 24, 48, 0.14) calc(66.666% + 0.5px),
-            transparent calc(66.666% + 0.5px),
-            transparent 100%),
-        linear-gradient(to bottom,
-            transparent 0,
-            transparent calc(50% - 0.5px),
-            rgba(12, 24, 48, 0.14) calc(50% - 0.5px),
-            rgba(12, 24, 48, 0.14) calc(50% + 0.5px),
-            transparent calc(50% + 0.5px),
-            transparent 100%);
-}
-
-.kcp-detailsItem {
-    padding: 28px 18px;
-    text-align: center;
-    position: relative;
-    z-index: 1;
-}
-
-.kcp-detailsK {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    padding: 6px 12px;
-    border-radius: 999px;
-
-    background: rgba(12, 24, 48, 0.06);
-    border: 1px solid rgba(12, 24, 48, 0.10);
-    color: rgba(12, 24, 48, 0.82);
-
     font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-    font-weight: 700;
-    font-size: 12px;
-    margin: 0 auto 12px;
-    white-space: nowrap;
-}
-
-.kcp-detailsV {
-    color: rgba(12, 24, 48, 0.65);
-    line-height: 1.65;
+    font-size: 14px;
+    line-height: 1.7;
+    color: rgba(12, 24, 48, .62);
+    max-width: 720px;
 }
 
 /* =========================================================
-   WHAT YOU GET (cards)
+   MADE TO LOOK PREMIUM GRID
 ========================================================= */
-.kcp-whatGrid {
-    max-width: 1040px;
-    margin: 22px auto 0;
-    display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: 18px;
-    align-items: stretch;
-}
-
-.kcp-whatCard {
-    border: 1px solid var(--kcp-border-soft);
-    background: #fff;
-    border-radius: 16px;
-    box-shadow: 0 8px 18px rgba(16, 24, 40, 0.06);
-    padding: 22px;
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    transition: transform 0.12s ease, box-shadow 0.12s ease, border-color 0.12s ease;
-}
-
-.kcp-whatCard:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 12px 26px rgba(16, 24, 40, 0.08);
-    border-color: rgba(12, 24, 48, 0.14);
-}
-
-.kcp-whatIcon {
-    margin-bottom: 14px;
-}
-
-.kcp-whatSvg {
-    width: 34px;
-    height: 34px;
-}
-
-.kcp-whatTitle {
-    margin: 0 0 8px;
-}
-
-.kcp-whatDesc {
-    margin: 0;
-    color: rgba(12, 24, 48, 0.66);
-}
-
-/* =========================================================
-   GALLERY GRID (placeholders)
-========================================================= */
-.kcp-galleryGrid {
+.kc-premiumGrid {
     max-width: 980px;
     margin: 22px auto 0;
     display: grid;
@@ -632,57 +620,63 @@
     gap: 14px;
 }
 
-.kcp-galleryTile {
+.kc-premiumTile {
     aspect-ratio: 1 / 1;
     border-radius: 18px;
-    background: #0b1220;
-    box-shadow: 0 16px 40px rgba(12, 24, 48, 0.12);
-    border: 1px solid rgba(12, 24, 48, 0.10);
+    background: var(--kc-text);
+    box-shadow: 0 16px 40px rgba(12, 24, 48, .12);
+    border: 1px solid rgba(12, 24, 48, .10);
 }
 
 /* =========================================================
    RESPONSIVE
 ========================================================= */
-@media (max-width: 1020px) {
-    .kcp-detailsGrid {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-        gap: 18px;
-    }
-
-    .kcp-detailsGrid::before {
-        display: none;
-    }
-
-    .kcp-detailsItem {
-        padding: 18px 14px;
-    }
-
-    .kcp-whatGrid {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-    }
-
-    .kcp-galleryGrid {
-        grid-template-columns: repeat(3, minmax(0, 1fr));
-    }
-}
-
 @media (max-width: 720px) {
-    .kcp-galleryGrid {
+    .kc-premiumGrid {
         grid-template-columns: repeat(2, minmax(0, 1fr));
     }
 }
 
 @media (max-width: 560px) {
-    .kcp-detailsGrid {
-        grid-template-columns: 1fr;
-        gap: 14px;
+    .kc-topHero {
+        padding: 28px 0 18px;
+        padding-bottom: var(--kc-section-pad-mobile);
     }
 
-    .kcp-whatGrid {
-        grid-template-columns: 1fr;
+    .kc-premHero__title {
+        font-size: 34px;
     }
 
-    .kcp-galleryGrid {
+    .kc-premStage__canvasPad {
+        padding-bottom: 28px;
+    }
+
+    .kc-section {
+        padding: var(--kc-section-pad-mobile) 0;
+    }
+
+    .kc-section__title {
+        font-size: 30px;
+    }
+
+    .kc-premiumGrid {
         grid-template-columns: 1fr;
     }
+}
+
+/* =========================================================
+   3D PREVIEW — NEVER CLIP
+========================================================= */
+.kc-topHero,
+.kc-konarcard,
+.kc-konarcard__wrap,
+.kc-premStage,
+.kc-premStage__canvasPad {
+    overflow: visible;
+}
+
+.kc-topHero .kc-konarcard__wrap,
+.kc-topHero .kc-premStage,
+.kc-topHero .kc-premStage__canvasPad {
+    overflow: visible !important;
 }
