@@ -6,8 +6,14 @@ import Navbar from "../../../components/Navbar";
 import Footer from "../../../components/Footer";
 import MetalCard3D from "../../../components/MetalCard3D";
 
-/* ✅ SAME CSS system as PlasticCard */
+/* ✅ typography tokens */
+import "../../../styling/fonts.css";
+
+/* ✅ same page CSS system as Plastic */
 import "../../../styling/products/konarcard.css";
+
+/* ✅ reuse the exact homepage “Worth it” section system */
+import "../../../styling/home/value.css";
 
 /* Logos */
 import LogoIcon from "../../../assets/icons/Logo-Icon.svg";
@@ -19,7 +25,7 @@ import CardQrCode from "../../../assets/images/CardQrCode.png";
 import api from "../../../services/api";
 import { useMyProfiles } from "../../../hooks/useBusinessCard";
 
-/* ✅ same icons as Plastic section (re-use for consistency) */
+/* ✅ same icons (consistency) */
 import OneJobIcon from "../../../assets/icons/OneJob.svg";
 import NoReprintsIcon from "../../../assets/icons/NoReprints.svg";
 import UpToDateIcon from "../../../assets/icons/UpToDate.svg";
@@ -201,26 +207,28 @@ export default function MetalCard() {
         navigate("/login", { state: { from: location.pathname } });
     };
 
+    /* ✅ “What you get” benefits (same structure + tone as Plastic, but premium/metal angle) */
     const features = useMemo(
         () => [
-            { icon: OneJobIcon, t: "Premium metal that stands out", s: "A heavier feel designed to leave a strong first impression." },
-            { icon: NoReprintsIcon, t: "No reprints, ever", s: "Update your details anytime without reordering cards." },
-            { icon: UpToDateIcon, t: "Always up to date", s: "Your latest work, reviews, and services — instantly." },
-            { icon: WorksEverywhereIcon, t: "Works everywhere", s: "In person, online, on any phone. No apps needed." },
-            { icon: HammerIcon, t: "Built for serious trades", s: "Clean, practical, and made for how you actually work." },
-            { icon: ProfessionalFastIcon, t: "Looks premium fast", s: "Metal makes you look the part before you even speak." },
+            { icon: OneJobIcon, t: "Premium metal that stands out", s: "Heavier feel designed to leave a strong first impression." },
+            { icon: NoReprintsIcon, t: "No reprints, ever", s: "Update your details anytime — no reordering required." },
+            { icon: UpToDateIcon, t: "Always up to date", s: "Your latest work, reviews, and services stay live instantly." },
+            { icon: WorksEverywhereIcon, t: "Works everywhere", s: "In person, online, or on the phone — no apps needed." },
+            { icon: HammerIcon, t: "Built for serious trades", s: "Clean, practical, and made for the way you actually work." },
+            { icon: ProfessionalFastIcon, t: "Looks premium fast", s: "Metal helps you look the part before you even speak." },
         ],
         []
     );
 
+    /* ✅ “Product details” specs (match grid style used on homepage value.css) */
     const specs = useMemo(
         () => [
-            { k: "Card size", v: "85.6 × 54 mm (standard bank card)" },
-            { k: "Thickness", v: "0.8 mm (premium metal build)" },
-            { k: "Material", v: "Premium metal body, durable finish" },
-            { k: "NFC", v: "NTAG compatible (works with iPhone & Android)" },
-            { k: "QR backup", v: "Printed on the rear for instant scan access" },
-            { k: "Setup", v: "Link to your Konar profile — updates anytime" },
+            { k: "Card size", v: "85.6 × 54 mm — standard wallet size" },
+            { k: "Thickness", v: "0.8 mm — premium metal build" },
+            { k: "Material", v: "Premium metal body with a durable finish" },
+            { k: "NFC", v: "NFC enabled — works with iPhone & Android" },
+            { k: "QR backup", v: "Printed QR code on the back for instant access" },
+            { k: "Setup", v: "Linked to your Konar profile — update anytime, no reprints" },
         ],
         []
     );
@@ -315,6 +323,9 @@ export default function MetalCard() {
             <Navbar />
 
             <main className="kc-konarcard kc-konarcard--premium kc-page">
+                {/* =====================
+                    HERO (same as Plastic style)
+                ====================== */}
                 <section className="kc-topHero" aria-label="Metal KonarCard hero">
                     <div className="kc-konarcard__wrap">
                         <div className="kc-heroHeadWrap kc-heroHeadWrap--lg">
@@ -327,9 +338,11 @@ export default function MetalCard() {
                                     <span className="kc-crumbPill__here">KonarCard – Metal</span>
                                 </div>
 
-                                <h1 className="kc-premHero__title">Metal NFC Business Card (UK)</h1>
+                                {/* ✅ match Plastic: heading uses h2 class */}
+                                <h1 className="h2 kc-premHero__title">Metal NFC Business Card (UK)</h1>
+
                                 <p className="kc-premHero__sub">
-                                    Premium metal. Tap to share your Konar profile instantly — with QR backup on the back.
+                                    Premium metal that stands out — tap to share your profile in seconds, with a QR backup so it works on every phone.
                                 </p>
 
                                 <div className="kc-topHero__badges">
@@ -345,15 +358,10 @@ export default function MetalCard() {
 
                         <div className="kc-premStage">
                             <div className="kc-premStage__canvasPad">
-                                <MetalCard3D
-                                    logoSrc={displayedLogo}
-                                    qrSrc={CardQrCode}
-                                    logoSize={logoPercent}
-                                    finish={finish}
-                                />
+                                <MetalCard3D logoSrc={displayedLogo} qrSrc={CardQrCode} logoSize={logoPercent} finish={finish} />
                             </div>
 
-                            {/* ✅ SAME layout system as Plastic (wide: 3 cols with BUY in middle; else 2x2 + buy below) */}
+                            {/* ✅ keep configurator + buy (same grid) */}
                             <div className="kc-controls" aria-label="Configure your card">
                                 <div className="kc-configGrid">
                                     {/* Logo */}
@@ -442,11 +450,7 @@ export default function MetalCard() {
                                                     aria-label="Choose profile"
                                                 >
                                                     <option value="">
-                                                        {isProfilesLoading
-                                                            ? "Loading..."
-                                                            : myProfiles.length
-                                                                ? "Choose profile"
-                                                                : "No profiles"}
+                                                        {isProfilesLoading ? "Loading..." : myProfiles.length ? "Choose profile" : "No profiles"}
                                                     </option>
 
                                                     {myProfiles.map((p) => {
@@ -471,9 +475,10 @@ export default function MetalCard() {
                                         </div>
                                     </div>
 
-                                    {/* BUY AREA (middle on wide) */}
-                                    <div className="kc-buyArea kc-buyArea--pad kc-cell--buy" aria-label="Buy">
+                                    {/* BUY */}
+                                    <div className="kc-buyArea kc-cell--buy" aria-label="Buy">
                                         <div className="kc-buyMeta">
+                                            {/* update if your backend price differs */}
                                             <div className="kc-buyPrice">£44.99</div>
                                         </div>
 
@@ -500,12 +505,7 @@ export default function MetalCard() {
                                                 </button>
                                             </div>
 
-                                            <button
-                                                type="button"
-                                                onClick={handleBuy}
-                                                className="kx-btn kx-btn--black kc-buyBtnFit"
-                                                disabled={busy}
-                                            >
+                                            <button type="button" onClick={handleBuy} className="kx-btn kx-btn--black kc-buyBtnFit" disabled={busy}>
                                                 {busy ? "Starting checkout..." : "Buy KonarCard"}
                                             </button>
                                         </div>
@@ -516,56 +516,84 @@ export default function MetalCard() {
                     </div>
                 </section>
 
-                {/* ====== FULL-WIDTH SECTIONS ====== */}
-                <section className="kc-section kc-section--soft" aria-label="Product details">
-                    <div className="kc-section__inner">
-                        <div className="kc-section__head">
-                            <p className="kc-pill kc-section__pill">Product details</p>
-                            <h2 className="kc-section__title">Everything you need to know</h2>
-                            <p className="kc-section__sub">Materials, sizing, and tech — simple and clear.</p>
-                        </div>
+                {/* =====================
+                    PRODUCT DETAILS (khv style)
+                    bg: #fafafa (default)
+                ====================== */}
+                <section className="khv kc-plastic-khv" aria-label="Product details">
+                    <div className="khv__inner">
+                        <header className="khv__head">
+                            <p className="kc-pill khv__kicker">Product details</p>
 
-                        <div className="kc-detailsGrid">
-                            {specs.map((s, i) => (
-                                <div className="kc-detailsItem" key={i}>
-                                    <div className="kc-detailsK">{s.k}</div>
-                                    <div className="kc-detailsV">{s.v}</div>
-                                </div>
-                            ))}
-                        </div>
-                    </div>
-                </section>
+                            <h2 className="h3 khv__title">
+                                Everything <span className="khv__accent">you need</span> to know about <br />
+                                your metal NFC business card
+                            </h2>
 
-                <section className="kc-section kc-section--white" aria-label="What you get">
-                    <div className="kc-section__inner">
-                        <div className="kc-section__head">
-                            <p className="kc-pill kc-section__pill">What you get</p>
-                            <h2 className="kc-section__title">Everything you need to look premium</h2>
-                            <p className="kc-section__sub">
-                                A simple tool that makes you look premium instantly — and keeps everything up to date.
+                            <p className="kc-subheading khv__sub">
+                                Premium metal build. Durable finish. Works instantly with NFC and QR.
                             </p>
-                        </div>
+                        </header>
 
-                        <div className="kc-whatGrid" role="list" aria-label="What you get features">
-                            {features.map((f, i) => (
-                                <article className="kc-whatCard" key={i} role="listitem">
-                                    <div className="kc-whatIcon" aria-hidden="true">
-                                        <img className="kc-whatSvg" src={f.icon} alt="" loading="lazy" decoding="async" />
-                                    </div>
-                                    <h3 className="kc-whatTitle">{f.t}</h3>
-                                    <p className="kc-whatDesc">{f.s}</p>
+                        <div className="khv__grid" aria-label="Metal card specifications">
+                            {specs.map((s, i) => (
+                                <article className="khv__cell kc-specCell" key={i}>
+                                    <p className="kc-pill kc-specPill">{s.k}</p>
+                                    <p className="body khv__cellDesc kc-specValue">{s.v}</p>
                                 </article>
                             ))}
                         </div>
                     </div>
                 </section>
 
-                <section className="kc-section kc-section--soft" aria-label="Made to look premium">
+                {/* =====================
+                    WHAT YOU GET (khv style)
+                    bg: #ffffff
+                ====================== */}
+                <section className="khv khv--white kc-plastic-khv" aria-label="What you get">
+                    <div className="khv__inner">
+                        <header className="khv__head">
+                            <p className="kc-pill khv__kicker">What you get</p>
+
+                            <h2 className="h3 khv__title">
+                                Everything <span className="khv__accent">you need</span> to look <br />
+                                premium
+                            </h2>
+
+                            <p className="kc-subheading khv__sub">
+                                Make a strong first impression instantly — and update your details anytime without reprinting.
+                            </p>
+                        </header>
+
+                        <div className="khv__grid" aria-label="Metal card benefits">
+                            {features.map((it, i) => (
+                                <article className="khv__cell" key={i}>
+                                    <div className="khv__icon" aria-hidden="true">
+                                        <img className="khv__iconImg" src={it.icon} alt="" loading="lazy" decoding="async" />
+                                    </div>
+
+                                    <h3 className="kc-title khv__cellTitle">{it.t}</h3>
+                                    <p className="body khv__cellDesc">{it.s}</p>
+                                </article>
+                            ))}
+                        </div>
+                    </div>
+                </section>
+
+                {/* =====================
+                    GALLERY (same as Plastic)
+                    bg: #fafafa
+                ====================== */}
+                <section className="kc-section kc-section--soft" aria-label="Metal NFC Business Card gallery">
                     <div className="kc-section__inner">
                         <div className="kc-section__head">
-                            <p className="kc-pill kc-section__pill">Made to look premium</p>
-                            <h2 className="kc-section__title">Made to look premium</h2>
-                            <p className="kc-section__sub">Placeholder gallery (swap these for real photos later).</p>
+                            <p className="kc-pill kc-section__pill">Metal NFC Business Card Gallery</p>
+                            <h2 className="kc-section__title">
+                                Made to look <span className="kc-accentWord">premium</span>
+                            </h2>
+                            <p className="kc-section__sub">
+                                Built for trades who want a premium first impression and a profile that stays up to date.
+                            </p>
                         </div>
 
                         <div className="kc-premiumGrid" aria-label="Premium gallery placeholders">

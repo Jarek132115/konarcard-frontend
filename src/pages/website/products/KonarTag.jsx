@@ -6,11 +6,16 @@ import Navbar from "../../../components/Navbar";
 import Footer from "../../../components/Footer";
 import KonarTag3D from "../../../components/KonarTag3D";
 
-/* ✅ USE SAME CSS SYSTEM AS PLASTIC/METAL (includes kc-configGrid layout) */
+/* ✅ typography tokens */
+import "../../../styling/fonts.css";
+
+/* ✅ same CSS system as Plastic/Metal (hero + configurator + gallery) */
 import "../../../styling/products/konarcard.css";
 
+/* ✅ reuse the homepage “Worth it” grid system for Product details + What you get */
+import "../../../styling/home/value.css";
+
 /* Logos */
-import LogoIcon from "../../../assets/icons/Logo-Icon.svg";
 import LogoIconWhite from "../../../assets/icons/Logo-Icon-White.svg";
 
 /* QR image (static) */
@@ -319,22 +324,24 @@ export default function KonarTag() {
         navigate("/login", { state: { from: location.pathname } });
     };
 
+    /* ✅ Product details (rendered in khv grid style) */
     const specs = useMemo(
         () => [
-            { k: "Tag size", v: "Compact key-tag size (everyday carry)" },
+            { k: "Tag size", v: "Compact key-tag size — easy everyday carry" },
             { k: "Material", v: "Durable metal body with premium finish" },
             { k: "Finish", v: "Black or Gold" },
-            { k: "NFC", v: "Tap compatible (works with iPhone & Android)" },
+            { k: "NFC", v: "Tap compatible — works with iPhone & Android" },
             { k: "QR backup", v: "Printed on the rear for instant scan access" },
-            { k: "Setup", v: "Link to your Konar profile — updates anytime" },
+            { k: "Setup", v: "Linked to your Konar profile — update anytime" },
         ],
         []
     );
 
+    /* ✅ What you get (rendered in khv grid style) */
     const features = useMemo(
         () => [
             { icon: WorksEverywhereIcon, t: "Pocket-friendly", s: "A compact NFC tag — ideal for keys, vans, and everyday carry." },
-            { icon: UpToDateIcon, t: "Tap to share instantly", s: "A single tap opens your Konar profile in seconds." },
+            { icon: UpToDateIcon, t: "Tap to share instantly", s: "One tap opens your Konar profile in seconds." },
             { icon: NoReprintsIcon, t: "QR backup included", s: "If NFC is off, they can scan the QR and still save your details." },
             { icon: HammerIcon, t: "Built for daily use", s: "Durable finish designed for busy days and real work." },
             { icon: OneJobIcon, t: "One-time purchase", s: "Pay once — keep sharing. Your profile stays up to date anytime." },
@@ -346,9 +353,8 @@ export default function KonarTag() {
     const logoLabel = logoFile?.name || "Upload logo";
     const sizeLabel = (k) => (k === "small" ? "S" : k === "medium" ? "M" : "L");
 
-    // ✅ KonarTag: BOTH finishes default to white logo (matches your request)
-    const defaultLogo = LogoIconWhite;
-    const displayedLogo = logoUrl || defaultLogo;
+    // ✅ KonarTag: BOTH finishes default to white logo (as requested)
+    const displayedLogo = logoUrl || LogoIconWhite;
 
     const handleBuy = async () => {
         setErrorMsg("");
@@ -433,6 +439,9 @@ export default function KonarTag() {
             <Navbar />
 
             <main className="kc-konarcard kc-konarcard--premium kc-page">
+                {/* =====================
+                    HERO (same system as Plastic/Metal)
+                ====================== */}
                 <section className="kc-topHero" aria-label="KonarTag hero">
                     <div className="kc-konarcard__wrap">
                         <div className="kc-heroHeadWrap kc-heroHeadWrap--lg">
@@ -445,7 +454,9 @@ export default function KonarTag() {
                                     <span className="kc-crumbPill__here">KonarTag</span>
                                 </div>
 
-                                <h1 className="kc-premHero__title">KonarTag NFC Key Tag (UK)</h1>
+                                {/* ✅ match Plastic/Metal: main heading uses h2 class */}
+                                <h1 className="h2 kc-premHero__title">KonarTag NFC Key Tag (UK)</h1>
+
                                 <p className="kc-premHero__sub">
                                     Pocket-friendly. Tap to share your Konar profile instantly — with QR backup on the back.
                                 </p>
@@ -463,16 +474,18 @@ export default function KonarTag() {
 
                         <div className="kc-premStage">
                             <div className="kc-premStage__canvasPad">
-                                <KonarTag3D logoSrc={displayedLogo} qrSrc={CardQrCode} logoSize={logoPercent} finish={finish} />
+                                <KonarTag3D
+                                    logoSrc={displayedLogo}
+                                    qrSrc={CardQrCode}
+                                    logoSize={logoPercent}
+                                    finish={finish}
+                                />
                             </div>
 
-                            {/* ✅ EXACT SAME GRID SYSTEM AS PLASTIC:
-                                Wide: 3 columns (2 controls left, BUY middle, 2 controls right)
-                                Not wide: controls become 2x2 and BUY drops underneath (handled by CSS)
-                            */}
+                            {/* ✅ keep configurator + buy (same grid system) */}
                             <div className="kc-controls" aria-label="Configure your KonarTag">
                                 <div className="kc-configGrid">
-                                    {/* Logo (left) */}
+                                    {/* Logo */}
                                     <div className="kc-controlCell kc-cell--logo">
                                         <div className="kc-controlK">Logo</div>
 
@@ -494,7 +507,26 @@ export default function KonarTag() {
                                         </div>
                                     </div>
 
-                                    {/* Finish (left bottom) */}
+                                    {/* Logo size */}
+                                    <div className="kc-controlCell kc-cell--size">
+                                        <div className="kc-controlK">Logo size</div>
+
+                                        <div className="kc-inlineRow" role="group" aria-label="Choose logo size">
+                                            {["small", "medium", "large"].map((k) => (
+                                                <button
+                                                    key={k}
+                                                    type="button"
+                                                    className={`kc-toggleText ${logoPreset === k ? "is-active" : ""}`}
+                                                    onClick={() => setLogoPreset(k)}
+                                                    disabled={busy}
+                                                >
+                                                    {sizeLabel(k)}
+                                                </button>
+                                            ))}
+                                        </div>
+                                    </div>
+
+                                    {/* Finish */}
                                     <div className="kc-controlCell kc-cell--colour">
                                         <div className="kc-controlK">Finish</div>
 
@@ -518,26 +550,7 @@ export default function KonarTag() {
                                         </div>
                                     </div>
 
-                                    {/* Logo size (right top) */}
-                                    <div className="kc-controlCell kc-cell--size">
-                                        <div className="kc-controlK">Logo size</div>
-
-                                        <div className="kc-inlineRow" role="group" aria-label="Choose logo size">
-                                            {["small", "medium", "large"].map((k) => (
-                                                <button
-                                                    key={k}
-                                                    type="button"
-                                                    className={`kc-toggleText ${logoPreset === k ? "is-active" : ""}`}
-                                                    onClick={() => setLogoPreset(k)}
-                                                    disabled={busy}
-                                                >
-                                                    {sizeLabel(k)}
-                                                </button>
-                                            ))}
-                                        </div>
-                                    </div>
-
-                                    {/* Profile (right bottom) */}
+                                    {/* Profile */}
                                     <div className="kc-controlCell kc-cell--profile">
                                         <div className="kc-controlK">Link to profile</div>
 
@@ -583,7 +596,7 @@ export default function KonarTag() {
                                         </div>
                                     </div>
 
-                                    {/* ✅ BUY (middle column on wide) */}
+                                    {/* BUY */}
                                     <div className="kc-buyArea kc-cell--buy" aria-label="Buy">
                                         <div className="kc-buyMeta">
                                             <div className="kc-buyPrice">£9.99</div>
@@ -612,7 +625,12 @@ export default function KonarTag() {
                                                 </button>
                                             </div>
 
-                                            <button type="button" onClick={handleBuy} className="kx-btn kx-btn--black kc-buyBtnFit" disabled={busy}>
+                                            <button
+                                                type="button"
+                                                onClick={handleBuy}
+                                                className="kx-btn kx-btn--black kc-buyBtnFit"
+                                                disabled={busy}
+                                            >
                                                 {busy ? "Starting checkout..." : "Buy KonarTag"}
                                             </button>
                                         </div>
@@ -623,54 +641,84 @@ export default function KonarTag() {
                     </div>
                 </section>
 
-                {/* ====== FULL-WIDTH SECTIONS ====== */}
-                <section className="kc-section kc-section--soft" aria-label="Product details">
-                    <div className="kc-section__inner">
-                        <div className="kc-section__head">
-                            <p className="kc-pill kc-section__pill">Product details</p>
-                            <h2 className="kc-section__title">Everything you need to know</h2>
-                            <p className="kc-section__sub">Materials, sizing, and tech — simple and clear.</p>
-                        </div>
+                {/* =====================
+                    PRODUCT DETAILS (khv style)
+                    bg: #fafafa (default)
+                ====================== */}
+                <section className="khv kc-plastic-khv" aria-label="Product details">
+                    <div className="khv__inner">
+                        <header className="khv__head">
+                            <p className="kc-pill khv__kicker">Product details</p>
 
-                        <div className="kc-detailsGrid">
+                            <h2 className="h3 khv__title">
+                                Everything <span className="khv__accent">you need</span> to know about <br />
+                                your KonarTag
+                            </h2>
+
+                            <p className="kc-subheading khv__sub">
+                                Compact. Durable. Works instantly with NFC and QR.
+                            </p>
+                        </header>
+
+                        <div className="khv__grid" aria-label="KonarTag specifications">
                             {specs.map((s, i) => (
-                                <div className="kc-detailsItem" key={i}>
-                                    <div className="kc-detailsK">{s.k}</div>
-                                    <div className="kc-detailsV">{s.v}</div>
-                                </div>
-                            ))}
-                        </div>
-                    </div>
-                </section>
-
-                <section className="kc-section kc-section--white" aria-label="What you get">
-                    <div className="kc-section__inner">
-                        <div className="kc-section__head">
-                            <p className="kc-pill kc-section__pill">What you get</p>
-                            <h2 className="kc-section__title">Everything you need to share faster</h2>
-                            <p className="kc-section__sub">A simple tool for everyday carry — tap or scan and you’re done.</p>
-                        </div>
-
-                        <div className="kc-whatGrid" role="list" aria-label="What you get features">
-                            {features.map((f, i) => (
-                                <article className="kc-whatCard" key={i} role="listitem">
-                                    <div className="kc-whatIcon" aria-hidden="true">
-                                        <img className="kc-whatSvg" src={f.icon} alt="" loading="lazy" decoding="async" />
-                                    </div>
-                                    <h3 className="kc-whatTitle">{f.t}</h3>
-                                    <p className="kc-whatDesc">{f.s}</p>
+                                <article className="khv__cell kc-specCell" key={i}>
+                                    <p className="kc-pill kc-specPill">{s.k}</p>
+                                    <p className="body khv__cellDesc kc-specValue">{s.v}</p>
                                 </article>
                             ))}
                         </div>
                     </div>
                 </section>
 
-                <section className="kc-section kc-section--soft" aria-label="Made to look premium">
+                {/* =====================
+                    WHAT YOU GET (khv style)
+                    bg: #ffffff
+                ====================== */}
+                <section className="khv khv--white kc-plastic-khv" aria-label="What you get">
+                    <div className="khv__inner">
+                        <header className="khv__head">
+                            <p className="kc-pill khv__kicker">What you get</p>
+
+                            <h2 className="h3 khv__title">
+                                Everything <span className="khv__accent">you need</span> to share <br />
+                                faster
+                            </h2>
+
+                            <p className="kc-subheading khv__sub">
+                                Tap or scan and you’re done — a simple tool for everyday carry.
+                            </p>
+                        </header>
+
+                        <div className="khv__grid" aria-label="KonarTag benefits">
+                            {features.map((it, i) => (
+                                <article className="khv__cell" key={i}>
+                                    <div className="khv__icon" aria-hidden="true">
+                                        <img className="khv__iconImg" src={it.icon} alt="" loading="lazy" decoding="async" />
+                                    </div>
+
+                                    <h3 className="kc-title khv__cellTitle">{it.t}</h3>
+                                    <p className="body khv__cellDesc">{it.s}</p>
+                                </article>
+                            ))}
+                        </div>
+                    </div>
+                </section>
+
+                {/* =====================
+                    GALLERY (same system as Plastic/Metal)
+                    bg: #fafafa
+                ====================== */}
+                <section className="kc-section kc-section--soft" aria-label="KonarTag gallery">
                     <div className="kc-section__inner">
                         <div className="kc-section__head">
-                            <p className="kc-pill kc-section__pill">Made to look premium</p>
-                            <h2 className="kc-section__title">Made to look premium</h2>
-                            <p className="kc-section__sub">Placeholder gallery (swap these for real photos later).</p>
+                            <p className="kc-pill kc-section__pill">KonarTag Gallery</p>
+                            <h2 className="kc-section__title">
+                                Made to look <span className="kc-accentWord">premium</span>
+                            </h2>
+                            <p className="kc-section__sub">
+                                Built for trades who want a quick, professional way to share details anywhere.
+                            </p>
                         </div>
 
                         <div className="kc-premiumGrid" aria-label="Premium gallery placeholders">
