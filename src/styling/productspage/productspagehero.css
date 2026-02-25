@@ -177,3 +177,44 @@
         margin-right: auto;
     }
 }
+
+/* =========================================================
+   PRICING HERO HEADING ONLY
+   ✅ This file styles ONLY the heading area for pricing hero.
+   ✅ Does NOT style the kpr cards at all.
+========================================================= */
+
+.pr-hero .pr-billing {
+    margin-top: 18px;
+    display: grid;
+    gap: 10px;
+    justify-items: center;
+}
+
+.pr-hero .pr-billing__tabs {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.pr-hero .pr-note {
+    color: rgba(15, 23, 42, 0.62);
+}
+
+/* status line */
+.pr-hero .pr-status {
+    margin-top: 10px;
+}
+
+.pr-hero .pr-status__muted {
+    color: rgba(15, 23, 42, 0.62);
+    font-weight: 600;
+    font-size: 13px;
+}
+
+.pr-hero .pr-status__err {
+    color: #b42318;
+    font-weight: 700;
+    font-size: 13px;
+}
