@@ -143,6 +143,7 @@ export default function App() {
           <Route path="/products/plastic-bundle" element={<PlasticBundle />} />
           <Route path="/products/metal-bundle" element={<MetalBundle />} />
 
+
           <Route path="/examples" element={<Example />} />
           <Route path="/pricing" element={<Pricing />} />
           <Route path="/faq" element={<FAQ />} />
