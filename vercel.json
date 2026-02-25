@@ -10,6 +10,16 @@
       ],
       "destination": "https://www.konarcard.com/$1",
       "permanent": true
+    },
+    {
+      "source": "/products/plastic",
+      "destination": "/products/plastic-card",
+      "permanent": true
+    },
+    {
+      "source": "/products/metal",
+      "destination": "/products/metal-card",
+      "permanent": true
     }
   ],
   "rewrites": [
