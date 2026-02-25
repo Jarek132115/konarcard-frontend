@@ -2,6 +2,9 @@
 import React, { useMemo } from "react";
 import { Link } from "react-router-dom";
 
+/* ✅ NEW: Hero-only styling for the pricing page */
+import "../../../styling/pricingpage/pricingpagehero.css";
+
 /* Plan icons (same as HOME pricing section) */
 import FreePlanIcon from "../../../assets/icons/FreePlan.svg";
 import PlusPlanIcon from "../../../assets/icons/PlusPlan.svg";
@@ -52,7 +55,6 @@ export default function PricingPageHero({
 }) {
     /* =========================
        CTA logic (kept safe)
-       - Cards JSX + class names match HOME pricing section
     ========================= */
     const getCTA = (planName, planKeyForPaid) => {
         const logged = !!isLoggedIn;
@@ -61,7 +63,6 @@ export default function PricingPageHero({
         if (!logged) {
             if (planName === "free") return { type: "link", label: "Start Free", to: "/register" };
 
-            // If no Stripe handler, route to login
             if (typeof startSubscription !== "function") {
                 return { type: "link", label: `Upgrade to ${planName === "plus" ? "Plus" : "Teams"}`, to: "/login" };
             }
@@ -134,7 +135,7 @@ export default function PricingPageHero({
     };
 
     /* =========================
-       Cards (SAME structure as HOME pricing)
+       Cards (same structure as HOME pricing)
     ========================= */
     const cards = useMemo(() => {
         const plusKey = `plus-${billing}`;
@@ -154,7 +155,14 @@ export default function PricingPageHero({
                 price: "£0",
                 cadence: "No monthly fees",
                 meta: [],
-                highlights: ["Your KonarCard link", "Contact buttons", "QR sharing", "Works on any phone", "Unlimited updates", "Tap or scan share"],
+                highlights: [
+                    "Your KonarCard link",
+                    "Contact buttons",
+                    "QR sharing",
+                    "Works on any phone",
+                    "Unlimited updates",
+                    "Tap or scan share",
+                ],
                 cta: getCTA("free"),
             },
             {
@@ -169,7 +177,15 @@ export default function PricingPageHero({
                     billing === "monthly" ? "Cancel anytime. No contracts." : `Billed ${plusBilledLabel}. Cancel anytime.`,
                     plusSavings ? plusSavings : null,
                 ].filter(Boolean),
-                highlights: ["Full customisation", "More photos", "Services & pricing", "Reviews & ratings", "Unlimited edits", "Remove branding", "Deeper analytics"],
+                highlights: [
+                    "Full customisation",
+                    "More photos",
+                    "Services & pricing",
+                    "Reviews & ratings",
+                    "Unlimited edits",
+                    "Remove branding",
+                    "Deeper analytics",
+                ],
                 cta: getCTA("plus", plusKey),
             },
             {
@@ -184,7 +200,14 @@ export default function PricingPageHero({
                     billing === "monthly" ? "Billed monthly. Cancel anytime." : `Base billed ${plusBilledLabel}.`,
                     base > 0 ? `Example: 3 profiles = ${fmtGBP(teamsExample3Profiles)} / month` : null,
                 ].filter(Boolean),
-                highlights: ["Everything in Plus", "Add staff profiles", "Centralised controls", "Shared branding", "Team analytics", "Manage in one place"],
+                highlights: [
+                    "Everything in Plus",
+                    "Add staff profiles",
+                    "Centralised controls",
+                    "Shared branding",
+                    "Team analytics",
+                    "Manage in one place",
+                ],
                 cta: getCTA("teams", teamsKey),
             },
         ];
@@ -205,17 +228,17 @@ export default function PricingPageHero({
     ]);
 
     return (
-        <section className="kph-hero pr-hero" aria-label="Pricing hero and plans">
-            <div className="kph-container pr-container">
-                {/* ✅ HERO HEADING AREA (styled ONLY by productspagehero.css) */}
-                <header className="kph-head pr-head">
-                    <p className="kc-pill kph-topPill pr-topPill">Pricing</p>
+        <section className="pr-hero" aria-label="Pricing hero and plans">
+            <div className="pr-container pr-hero__inner">
+                {/* ✅ Heading block (grid background ONLY here) */}
+                <div className="pr-heroCopyGrid">
+                    <p className="kc-pill pr-heroPill">Pricing</p>
 
-                    <h1 className="h2 kph-title pr-title">
-                        Plans &amp; pricing <span className="kph-accent pr-accent">built</span> for real trades
+                    <h1 className="h2 pr-title">
+                        Plans &amp; pricing <span className="pr-accent">built</span> for real trades
                     </h1>
 
-                    <p className="kc-subheading kph-sub pr-sub">Start free. Upgrade when it’s worth it. Cancel anytime.</p>
+                    <p className="kc-subheading pr-sub">Start free. Upgrade when it’s worth it. Cancel anytime.</p>
 
                     {isLoggedIn && (
                         <div className="pr-status" aria-live="polite">
@@ -250,9 +273,9 @@ export default function PricingPageHero({
 
                         <div className="body-s pr-note">{billingNote}</div>
                     </div>
-                </header>
+                </div>
 
-                {/* ✅ EXACT HOME PRICING JSX: ONLY THE 3 CARDS */}
+                {/* ✅ Cards (HOME pricing system) */}
                 <div className="pr-plansInline">
                     <div className="kpr__grid" role="list" aria-label="KonarCard plans">
                         {cards.map((card) => {
@@ -260,7 +283,6 @@ export default function PricingPageHero({
 
                             return (
                                 <article key={card.key} className={`kpr-card ${isFeatured ? "is-featured" : ""}`} role="listitem">
-                                    {/* TOP */}
                                     <div className={`kpr-top ${isFeatured ? "is-featured" : ""}`}>
                                         <div className={`kpr-tag ${isFeatured ? "is-featured" : ""}`}>{card.tag}</div>
 
@@ -288,7 +310,6 @@ export default function PricingPageHero({
 
                                     <div className={`kpr-divider ${isFeatured ? "is-featured" : ""}`} aria-hidden="true" />
 
-                                    {/* BODY (fit height) */}
                                     <div className="kpr-body">
                                         <div className="kpr-content">
                                             <div className={`kpr-included ${isFeatured ? "is-featured" : ""}`}>What’s Included</div>
