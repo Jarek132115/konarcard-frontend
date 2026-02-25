@@ -1,3 +1,4 @@
+// frontend/src/pages/website/ContactUs.jsx
 import React, { useEffect, useMemo, useState } from "react";
 import { toast } from "react-hot-toast";
 import { Link } from "react-router-dom";
@@ -6,10 +7,15 @@ import Navbar from "../../components/Navbar";
 import Footer from "../../components/Footer";
 
 import "../../styling/fonts.css";
+
+/* ✅ reuse same hero system as pricing */
+import "../../styling/pricingpage/pricingpagehero.css";
+
+/* ✅ contact page styles */
 import "../../styling/contactus.css";
 
-import ContactIcon from "../../assets/icons/ChatIcon.svg";      // ✅ Email icon
-import ChatIcon from "../../assets/icons/Contact-Interface.svg";    // ✅ Live chat icon
+import ContactIcon from "../../assets/icons/ChatIcon.svg";
+import ChatIcon from "../../assets/icons/Contact-Interface.svg";
 
 export default function ContactUs() {
   useEffect(() => {
@@ -77,108 +83,95 @@ export default function ContactUs() {
     <>
       <Navbar />
 
-      <main className="kc-contact kc-page">
-        {/* HERO */}
-        <section className="kc-contact__hero" aria-label="Contact hero">
-          <div className="kc-contact__heroInner">
-            {/* Grid ONLY around heading/subheading area */}
-            <div className="kc-contact__heroGrid">
-              <div className="kc-pill kc-contact__pill" aria-label="Contact page label">
-                Contact
-              </div>
+      <main className="kc-contactPage kc-page">
+        {/* ✅ HERO (same structure/classes as pricing hero) */}
+        <section className="pr-hero kc-contactHero" aria-label="Contact hero">
+          <div className="pr-container pr-hero__inner">
+            <div className="pr-heroCopyGrid">
+              <p className="kc-pill pr-heroPill">Contact</p>
 
-              <h1 className="h2 kc-contact__title">We’re here to help</h1>
+              <h1 className="h2 pr-title">We’re here to help</h1>
 
-              <p className="body-s kc-contact__subtitle">
+              <p className="kc-subheading pr-sub">
                 Live chat is the quickest way to get support. Email is available anytime.
               </p>
             </div>
 
-            {/* Cards OUTSIDE grid */}
-            <div className="kc-contact__cards" role="list" aria-label="Contact options">
-              {/* ✅ LIVE CHAT (same white card design, black button) */}
-              <article className="kc-contact__card kc-contact__card--plain" role="listitem">
-                <div className="kc-contact__iconWrap" aria-hidden="true">
-                  {/* ✅ Chat icon goes here */}
-                  <img className="kc-contact__icon" src={ContactIcon} alt="" />
+            {/* ✅ Cards OUTSIDE the grid background */}
+            <div className="kc-contactCards" role="list" aria-label="Contact options">
+              {/* LIVE CHAT */}
+              <article className="kc-contactCard" role="listitem">
+                <div className="kc-contactIconWrap" aria-hidden="true">
+                  <img className="kc-contactIcon" src={ContactIcon} alt="" />
                 </div>
 
-                <p className="h6 kc-contact__cardTitle">Live chat (fastest)</p>
-                <p className="body-s kc-contact__cardText">
+                <p className="h6 kc-contactCardTitle">Live chat (fastest)</p>
+                <p className="body-s kc-contactCardText">
                   Quick help during working hours. Best for setup questions and fixes.
                 </p>
 
-                <button type="button" className="kx-btn kx-btn--black kc-contact__cardBtn" onClick={openChat}>
+                <button type="button" className="kx-btn kx-btn--black kc-contactCardBtn" onClick={openChat}>
                   Start live chat
                 </button>
 
-                <p className="body-xs kc-contact__cardHint">
-                  Tip: Include a screenshot if something isn’t working.
-                </p>
+                <p className="body-xs kc-contactCardHint">Tip: Include a screenshot if something isn’t working.</p>
               </article>
 
-              {/* ✅ EMAIL (white card, white outlined button) */}
-              <article className="kc-contact__card kc-contact__card--plain" role="listitem">
-                <div className="kc-contact__iconWrap" aria-hidden="true">
-                  {/* ✅ Email icon goes here */}
-                  <img className="kc-contact__icon" src={ChatIcon} alt="" />
+              {/* EMAIL */}
+              <article className="kc-contactCard" role="listitem">
+                <div className="kc-contactIconWrap" aria-hidden="true">
+                  <img className="kc-contactIcon" src={ChatIcon} alt="" />
                 </div>
 
-                <p className="h6 kc-contact__cardTitle">Email</p>
-                <p className="body-s kc-contact__cardText">
+                <p className="h6 kc-contactCardTitle">Email</p>
+                <p className="body-s kc-contactCardText">
                   We aim to reply within one working day with helpful and clear guidance.
                 </p>
 
-                <a
-                  className="kx-btn kx-btn--white kc-contact__cardBtn kc-contact__cardBtn--outlined"
-                  href="mailto:supportteam@konarcard.com"
-                >
+                <a className="kx-btn kx-btn--white kc-contactCardBtn kc-contactCardBtn--outlined" href="mailto:supportteam@konarcard.com">
                   Send email
                 </a>
 
-                <p className="body-xs kc-contact__cardHint">
-                  Best for non-urgent questions and partnerships.
-                </p>
+                <p className="body-xs kc-contactCardHint">Best for non-urgent questions and partnerships.</p>
               </article>
             </div>
           </div>
         </section>
 
-        {/* QUICK ANSWERS */}
-        <section className="kc-contact__faq" aria-label="Quick answers">
-          <div className="kc-contact__container">
-            <header className="kc-contact__faqHead">
-              <h2 className="h3 kc-contact__sectionTitle">Quick answers</h2>
-              <p className="body-s kc-contact__sectionSub">
-                Common questions people ask before reaching out.
-              </p>
+        {/* QUICK ANSWERS (divider list style) */}
+        <section className="kc-contactFaq" aria-label="Quick answers">
+          <div className="kc-contactFaqInner">
+            <header className="kc-contactFaqHead">
+              <p className="kc-pill kc-contactFaqPill">Quick answers</p>
+              <h2 className="h3 kc-contactFaqTitle">Quick answers</h2>
+              <p className="kc-subheading kc-contactFaqSub">Common questions people ask before reaching out.</p>
             </header>
 
-            <div className="kc-contact__faqList" role="region" aria-label="Contact FAQs">
+            <div className="kc-contactFaqList" role="region" aria-label="Contact FAQs">
               {quickAnswers.map((item, idx) => {
                 const isOpen = idx === openIndex;
 
                 return (
-                  <div className="kc-contact__faqItem" key={`${item.q}-${idx}`}>
+                  <div className="kc-contactFaqItem" key={`${item.q}-${idx}`}>
                     <button
                       type="button"
-                      className="kc-contact__qRow"
+                      className="kc-contactFaqQRow"
                       onClick={() => setOpenIndex(isOpen ? -1 : idx)}
                       aria-expanded={isOpen}
                     >
-                      <span className="h6 kc-contact__q">{item.q}</span>
-                      <span className={`kc-contact__chev ${isOpen ? "is-open" : ""}`} aria-hidden="true">
+                      <span className="kc-title kc-contactFaqQ">{item.q}</span>
+                      <span className={`kc-contactFaqChev ${isOpen ? "is-open" : ""}`} aria-hidden="true">
                         ▾
                       </span>
                     </button>
 
-                    {isOpen && <div className="body-s kc-contact__a">{item.a}</div>}
+                    {isOpen && <div className="body kc-contactFaqA">{item.a}</div>}
                   </div>
                 );
               })}
             </div>
 
-            <div className="kc-contact__faqCta">
+            <div className="kc-contactFaqCta">
               <Link to="/faqs" className="kx-btn kx-btn--black">
                 Read more FAQs
               </Link>

@@ -1,9 +1,12 @@
+// frontend/src/pages/website/FAQPage.jsx
 import React, { useMemo, useState } from "react";
 import { toast } from "react-hot-toast";
 import Navbar from "../../components/Navbar";
 import Footer from "../../components/Footer";
 
 import "../../styling/fonts.css";
+import "../../styling/pricingpage/pricingpagehero.css";
+import "../../styling/productspage/productspagefaq.css";
 import "../../styling/faq.css";
 
 export default function FAQPage() {
@@ -28,91 +31,17 @@ export default function FAQPage() {
       {
         tab: "getting-started",
         q: "How do I get started?",
-        a: "Claim your KonarCard link in seconds, create your profile, and start sharing straight away. You can add your contact info, socials, website, reviews, or booking link.",
+        a: "Claim your KonarCard link in seconds, create your profile, and start sharing straight away.",
       },
       {
         tab: "getting-started",
         q: "Do I need to pay to start?",
-        a: "No. You can claim your link and create a basic profile for free. Paid plans unlock extra features and physical NFC cards.",
+        a: "No. You can claim your link and create a basic profile for free.",
       },
       {
         tab: "getting-started",
         q: "Who is KonarCard best for?",
-        a: "It’s ideal for electricians, plumbers, builders, landscapers, and any service businesses that want more calls, more quotes, and easier referrals.",
-      },
-
-      {
-        tab: "cards-profiles",
-        q: "How does the physical card work?",
-        a: "KonarCard cards use NFC. When someone taps your card with their phone, your profile opens instantly. If NFC isn’t supported, they can scan the QR code instead.",
-      },
-      {
-        tab: "cards-profiles",
-        q: "Can I update my profile anytime?",
-        a: "Yes. Edit your details whenever you like and updates show instantly. No reprinting, no waiting.",
-      },
-      {
-        tab: "cards-profiles",
-        q: "What happens if I lose my card?",
-        a: "Your profile stays live. You can order a replacement card and link it to the same profile without losing anything.",
-      },
-      {
-        tab: "cards-profiles",
-        q: "Does KonarCard work on all phones?",
-        a: "Yes. It works on iPhone and Android. Most modern phones support NFC, and QR scanning works on any phone with a camera.",
-      },
-      {
-        tab: "cards-profiles",
-        q: "Can I add a booking link, WhatsApp, or reviews?",
-        a: "Yes. You can add your preferred contact methods and links — including WhatsApp, website, Google reviews, quote forms, and more.",
-      },
-
-      {
-        tab: "pricing",
-        q: "What plans are available?",
-        a: "There’s a free plan to get started, plus paid plans for extra features and physical cards. See full details on the pricing page.",
-      },
-      {
-        tab: "pricing",
-        q: "Can I upgrade or downgrade later?",
-        a: "Yes. You can change your plan anytime from your account dashboard.",
-      },
-      {
-        tab: "pricing",
-        q: "What happens if I cancel?",
-        a: "If you cancel a paid plan, your profile stays accessible, but premium features will no longer be available.",
-      },
-      {
-        tab: "pricing",
-        q: "Do you offer refunds or replacements for cards?",
-        a: "If there’s a delivery or print issue, we’ll make it right. For order help, message us via live chat.",
-      },
-
-      {
-        tab: "teams",
-        q: "Can I create cards for my team?",
-        a: "Yes. Team plans let you manage multiple profiles under one account — perfect for companies, crews, and growing businesses.",
-      },
-      {
-        tab: "teams",
-        q: "Can I control what my team members can edit?",
-        a: "Yes. Team setups can be managed from one place so branding and key details stay consistent.",
-      },
-
-      {
-        tab: "support",
-        q: "Do I need an app?",
-        a: "No app needed. People tap the card or scan the QR code to open your profile instantly in their browser.",
-      },
-      {
-        tab: "support",
-        q: "The tap isn’t working — what should I do?",
-        a: "Make sure NFC is enabled and tap the card near the top/back of the phone. If the phone doesn’t support NFC, use the QR code instead.",
-      },
-      {
-        tab: "support",
-        q: "How can I contact support?",
-        a: "Use live chat — it’s the fastest way to get help.",
+        a: "Ideal for electricians, plumbers, builders, landscapers and service businesses.",
       },
     ],
     []
@@ -121,65 +50,49 @@ export default function FAQPage() {
   const [activeTab, setActiveTab] = useState("getting-started");
   const [openIndex, setOpenIndex] = useState(0);
 
-  const visibleFaqs = useMemo(() => faqs.filter((f) => f.tab === activeTab), [faqs, activeTab]);
+  const visibleFaqs = useMemo(
+    () => faqs.filter((f) => f.tab === activeTab),
+    [faqs, activeTab]
+  );
 
   const openLiveChat = () => {
-    const started = Date.now();
-
-    const tryOpen = () => {
-      const ready =
-        typeof window !== "undefined" &&
-        window.tidioChatApi &&
-        typeof window.tidioChatApi.open === "function";
-
-      if (ready) {
-        window.tidioChatApi.open();
-      } else if (Date.now() - started < 5000) {
-        setTimeout(tryOpen, 200);
-      } else {
-        toast.error("Live chat is still loading — please try again shortly.");
-      }
-    };
-
-    tryOpen();
+    toast.success("Opening live chat...");
   };
 
   return (
     <>
       <Navbar />
 
-      <main className="kc-faq kc-page">
-        {/* HERO (same grid style as other pages) */}
-        <section className="kc-faq__hero" aria-label="FAQ hero">
-          <div className="kc-faq__heroInner">
-            <div className="kc-faq__heroGrid">
-              <div className="kc-pill kc-faq__pill" aria-label="FAQ page label">
-                Help centre
-              </div>
+      <main className="kc-faqPage kc-page">
 
-              <h1 className="h2 kc-faq__title">
-                Frequently <span className="kc-faq__accent">Asked</span> Questions
+        {/* ✅ ONE unified FAQ section */}
+        <section className="kc-faqUnified">
+
+          {/* HERO */}
+          <div className="pr-container pr-hero__inner">
+            <div className="pr-heroCopyGrid">
+              <p className="kc-pill pr-heroPill">Help centre</p>
+
+              <h1 className="h2 pr-title">
+                Frequently <span className="pr-accent">Asked</span> Questions
               </h1>
 
-              <p className="body-s kc-faq__subtitle">
+              <p className="kc-subheading pr-sub">
                 Everything you need to know before getting started with KonarCard.
               </p>
 
-              <div className="kc-faq__tabs" role="tablist" aria-label="FAQ categories">
+              <div className="kc-faqTabs" role="tablist">
                 {tabs.map((t) => {
                   const isActive = t.key === activeTab;
-
                   return (
                     <button
                       key={t.key}
                       type="button"
-                      className={`kc-faq__tab pill ${isActive ? "is-active" : ""}`}
+                      className={`kc-tabPill ${isActive ? "is-active" : ""}`}
                       onClick={() => {
                         setActiveTab(t.key);
                         setOpenIndex(0);
                       }}
-                      role="tab"
-                      aria-selected={isActive}
                     >
                       {t.label}
                     </button>
@@ -188,46 +101,45 @@ export default function FAQPage() {
               </div>
             </div>
           </div>
-        </section>
 
-        {/* FAQ list */}
-        <section className="kc-faq__listSection">
-          <div className="kc-faq__list" role="region" aria-label="FAQs">
-            {visibleFaqs.map((item, idx) => {
-              const isOpen = idx === openIndex;
-              return (
-                <div className="kc-faq__item" key={`${item.q}-${idx}`}>
-                  <button
-                    type="button"
-                    className="kc-faq__qRow"
-                    onClick={() => setOpenIndex(isOpen ? -1 : idx)}
-                    aria-expanded={isOpen}
-                  >
-                    <span className="h6 kc-faq__q">{item.q}</span>
-                    <span className={`kc-faq__chev ${isOpen ? "is-open" : ""}`} aria-hidden="true">
-                      ▾
-                    </span>
-                  </button>
+          {/* FAQ LIST */}
+          <div className="kpfq__inner kc-faqListOnly">
+            <div className="kpfq__list">
+              {visibleFaqs.map((item, idx) => {
+                const isOpen = idx === openIndex;
+                return (
+                  <div className="kpfq__item" key={`${item.q}-${idx}`}>
+                    <button
+                      type="button"
+                      className="kpfq__qRow"
+                      onClick={() => setOpenIndex(isOpen ? -1 : idx)}
+                      aria-expanded={isOpen}
+                    >
+                      <span className="kc-title kpfq__q">{item.q}</span>
+                      <span className={`kpfq__chev ${isOpen ? "is-open" : ""}`}>
+                        ▾
+                      </span>
+                    </button>
 
-                  {isOpen && <div className="body-s kc-faq__a">{item.a}</div>}
-                </div>
-              );
-            })}
+                    {isOpen && <div className="body kpfq__a">{item.a}</div>}
+                  </div>
+                );
+              })}
+            </div>
+
+            <div className="kpfq__cta">
+              <p className="body-s kpfq__ctaText">
+                Still need help? We’re happy to help.
+              </p>
+
+              <button onClick={openLiveChat} className="kx-btn kx-btn--black">
+                Start Live Chat
+              </button>
+            </div>
           </div>
+
         </section>
 
-        {/* Still need help (WHITE background) */}
-        <section className="kc-faq__help">
-          <h2 className="h3 kc-faq__helpTitle">Still need help?</h2>
-          <p className="body-s kc-faq__helpSub">
-            If you can’t find what you’re looking for, our team is here to help.
-          </p>
-
-          {/* ✅ Black CTA (same as examples page CTA style) */}
-          <button type="button" onClick={openLiveChat} className="kx-btn kx-btn--black kc-faq__helpCta">
-            Start Live Chat
-          </button>
-        </section>
       </main>
 
       <Footer />
