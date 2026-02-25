@@ -1,7 +1,9 @@
 // frontend/src/pages/website/pricingpage/PricingPageCompare.jsx
 import React, { useMemo } from "react";
+
 import "../../../styling/fonts.css";
 import "../../../styling/pricing.css";
+import "../../../styling/pricingpage/pricingpagecompare.css";
 
 /* ✅ compare icons */
 import PricingTick from "../../../assets/icons/PricingTick.svg";
@@ -45,17 +47,17 @@ export default function PricingPageCompare({ billing = "monthly" }) {
     return (
         <section className="pr-compare" aria-label="Compare plans">
             <div className="pr-container">
-                <div className="pr-sectionHead">
+                <header className="pr-sectionHead">
                     <div className="kc-pill pr-sectionPill">Compare</div>
                     <h2 className="h3 pr-h2">Compare plans</h2>
                     <p className="body-s pr-sectionSub">Clear differences — no fluff. Pick what matches how you work.</p>
-                </div>
+                </header>
 
                 <div className="pr-compareWrap" role="region" aria-label="Plan comparison">
-                    <div className="pr-compareScroll">
+                    <div className="pr-compareScroll" tabIndex={0} aria-label="Scrollable comparison table">
                         <div className="pr-compareTable" role="table" aria-label="Pricing comparison table">
                             <div className="pr-compareHeader" role="row">
-                                <div className="pr-th pr-th--feature" role="columnheader">
+                                <div className="pr-th pr-th--feature" role="columnheader" aria-label="Feature column">
                                     <div className="pr-thName">Feature</div>
                                 </div>
 
@@ -107,6 +109,8 @@ export default function PricingPageCompare({ billing = "monthly" }) {
                             ))}
                         </div>
                     </div>
+
+                    <p className="pr-compareHint body-s">Tip: on mobile, swipe sideways to compare.</p>
                 </div>
             </div>
         </section>
@@ -119,11 +123,11 @@ function CompareValue({ v, PricingTick, XTick }) {
     if (isBool) {
         return v ? (
             <span className="pr-cv pr-cv--icon pr-cv--yes" aria-label="Included">
-                <img src={PricingTick} alt="" />
+                <img src={PricingTick} alt="" loading="lazy" decoding="async" />
             </span>
         ) : (
             <span className="pr-cv pr-cv--icon pr-cv--no" aria-label="Not included">
-                <img src={XTick} alt="" />
+                <img src={XTick} alt="" loading="lazy" decoding="async" />
             </span>
         );
     }
@@ -132,7 +136,7 @@ function CompareValue({ v, PricingTick, XTick }) {
     if (!s || s === "—") {
         return (
             <span className="pr-cv pr-cv--icon pr-cv--no" aria-label="Not included">
-                <img src={XTick} alt="" />
+                <img src={XTick} alt="" loading="lazy" decoding="async" />
             </span>
         );
     }

@@ -601,15 +601,6 @@ export default function Pricing() {
                 {/* ✅ COMPARE (styled) */}
                 <PricingPageCompare billing={billing} />
 
-                <div className="pr-compareCtas">
-                    <Link to="/claimyourlink" className="kx-btn kx-btn--black">
-                        Claim Your Link
-                    </Link>
-                    <button type="button" className="kx-btn kx-btn--white" onClick={openBillingPortal}>
-                        Manage Billing
-                    </button>
-                </div>
-
                 {/* ✅ FAQ */}
                 <PricingPageFAQ />
             </main>

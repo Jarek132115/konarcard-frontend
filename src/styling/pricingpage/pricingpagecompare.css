@@ -1,0 +1,274 @@
+/* frontend/src/styling/pricingpagecompare.css
+   PRICING — COMPARE TABLE
+   Clean, minimal, responsive.
+   Uses typography from fonts.css
+*/
+
+/* Section spacing aligned with other page sections */
+.pr-compare {
+    padding: 56px 0 76px;
+    background: #ffffff;
+}
+
+@media (max-width: 600px) {
+    .pr-compare {
+        padding: 44px 0 64px;
+    }
+}
+
+/* Section head */
+.pr-sectionHead {
+    text-align: center;
+    max-width: 760px;
+    margin: 0 auto 18px;
+}
+
+.pr-sectionPill {
+    margin: 0 auto 10px;
+    display: inline-flex;
+}
+
+.pr-h2 {
+    margin: 0 0 8px;
+}
+
+.pr-sectionSub {
+    margin: 0 auto;
+    color: rgba(15, 23, 42, 0.62);
+    max-width: 560px;
+}
+
+/* Wrap */
+.pr-compareWrap {
+    margin-top: 22px;
+}
+
+/* Scroll container */
+.pr-compareScroll {
+    overflow-x: auto;
+    overflow-y: hidden;
+    -webkit-overflow-scrolling: touch;
+
+    border: 1px solid rgba(15, 23, 42, 0.10);
+    border-radius: 22px;
+    background: #ffffff;
+    box-shadow: 0 12px 28px rgba(16, 24, 40, 0.06);
+
+    /* so sticky elements behave and edges look clean */
+    position: relative;
+}
+
+/* Nice focus when tabbing into scroll region */
+.pr-compareScroll:focus {
+    outline: 3px solid rgba(249, 115, 22, 0.25);
+    outline-offset: 3px;
+}
+
+/* Table */
+.pr-compareTable {
+    min-width: 980px;
+    /* ensures 3 plan columns are readable; scroll on small screens */
+}
+
+/* Header row */
+.pr-compareHeader {
+    display: grid;
+    grid-template-columns: minmax(280px, 1.35fr) repeat(3, minmax(180px, 1fr));
+    align-items: stretch;
+    border-bottom: 1px solid rgba(15, 23, 42, 0.08);
+    background: #ffffff;
+}
+
+/* Shared cell styles */
+.pr-th,
+.pr-td {
+    padding: 16px 16px;
+}
+
+/* Keep feature column readable */
+.pr-th--feature,
+.pr-td--feature {
+    text-align: left;
+}
+
+/* Plan columns */
+.pr-th {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    justify-content: center;
+}
+
+.pr-thName {
+    font-weight: 800;
+    color: rgba(15, 23, 42, 0.92);
+}
+
+.pr-thSub {
+    font-size: 12px;
+    font-weight: 700;
+    color: rgba(15, 23, 42, 0.58);
+}
+
+/* Highlight Plus column subtly */
+.pr-th--plus {
+    background: rgba(249, 115, 22, 0.06);
+}
+
+.pr-th--plus .pr-thName {
+    color: rgba(15, 23, 42, 0.92);
+}
+
+.pr-th--plus .pr-thSub {
+    color: rgba(249, 115, 22, 0.90);
+}
+
+/* Section blocks */
+.pr-sec {
+    border-bottom: 1px solid rgba(15, 23, 42, 0.06);
+}
+
+.pr-sec:last-child {
+    border-bottom: none;
+}
+
+/* Section title row */
+.pr-secTitle {
+    padding: 10px 16px;
+    background: rgba(15, 23, 42, 0.03);
+    border-top: 1px solid rgba(15, 23, 42, 0.06);
+    border-bottom: 1px solid rgba(15, 23, 42, 0.06);
+}
+
+.pr-secTitleInner {
+    font-weight: 800;
+    font-size: 13px;
+    letter-spacing: 0.2px;
+    color: rgba(15, 23, 42, 0.70);
+}
+
+/* Rows */
+.pr-tr {
+    display: grid;
+    grid-template-columns: minmax(280px, 1.35fr) repeat(3, minmax(180px, 1fr));
+    align-items: stretch;
+    background: #ffffff;
+}
+
+.pr-tr:nth-child(even) {
+    background: rgba(15, 23, 42, 0.015);
+}
+
+/* Row separators */
+.pr-tr+.pr-tr {
+    border-top: 1px solid rgba(15, 23, 42, 0.06);
+}
+
+/* Cells */
+.pr-td {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.pr-td--center {
+    align-items: center;
+    text-align: center;
+}
+
+/* Ensure Plus column stays highlighted throughout table */
+.pr-td--plus {
+    background: rgba(249, 115, 22, 0.04);
+}
+
+/* Feature cell copy */
+.pr-featLabel {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.pr-featText {
+    font-weight: 750;
+    color: rgba(15, 23, 42, 0.92);
+}
+
+.pr-featHint {
+    margin-top: 4px;
+    font-size: 12px;
+    font-weight: 650;
+    color: rgba(15, 23, 42, 0.60);
+}
+
+/* Compare values */
+.pr-cv {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.pr-cv--text {
+    font-weight: 800;
+    color: rgba(15, 23, 42, 0.86);
+}
+
+.pr-cv--icon img {
+    width: 18px;
+    height: 18px;
+    display: block;
+}
+
+.pr-cv--yes {
+    filter: none;
+}
+
+.pr-cv--no {
+    opacity: 0.85;
+}
+
+/* Sticky first column (nice UX on scroll) */
+.pr-th--feature,
+.pr-td--feature {
+    position: sticky;
+    left: 0;
+    z-index: 2;
+    background: inherit;
+}
+
+/* Sticky header effect (optional feel without real sticky top) */
+.pr-compareHeader .pr-th {
+    position: sticky;
+    top: 0;
+    z-index: 3;
+}
+
+/* But keep feature header above everything */
+.pr-compareHeader .pr-th--feature {
+    z-index: 4;
+}
+
+/* Hint under table */
+.pr-compareHint {
+    margin: 10px 4px 0;
+    text-align: center;
+    color: rgba(15, 23, 42, 0.60);
+}
+
+/* Mobile tightening */
+@media (max-width: 640px) {
+    .pr-compareTable {
+        min-width: 920px;
+    }
+
+    .pr-th,
+    .pr-td {
+        padding: 14px 14px;
+    }
+}
+
+/* Reduced motion friendliness */
+@media (prefers-reduced-motion: reduce) {
+    .pr-compareScroll {
+        scroll-behavior: auto;
+    }
+}
