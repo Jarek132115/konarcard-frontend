@@ -1,3 +1,4 @@
+// frontend/src/pages/website/Reviews.jsx
 import React, { useMemo } from "react";
 import Navbar from "../../components/Navbar";
 import Footer from "../../components/Footer";
@@ -30,11 +31,7 @@ function Stars({ value = 5 }) {
       <div className="kc-rev__starsBase" aria-hidden="true">
         {"★★★★★"}
       </div>
-      <div
-        className="kc-rev__starsFill"
-        style={{ width: `${pct * 100}%` }}
-        aria-hidden="true"
-      >
+      <div className="kc-rev__starsFill" style={{ width: `${pct * 100}%` }} aria-hidden="true">
         {"★★★★★"}
       </div>
     </div>
@@ -63,8 +60,7 @@ export default function Reviews() {
         date: "2 days ago",
         plan: "Plus plan",
         products: ["KonarCard"],
-        text:
-          "Since using KonarCard I’m actually getting replies.\nClients say it looks slick and I’m getting referrals.",
+        text: "Since using KonarCard I’m actually getting replies.\nClients say it looks slick and I’m getting referrals.",
       },
       {
         id: "r2",
@@ -76,8 +72,7 @@ export default function Reviews() {
         date: "1 week ago",
         plan: "Free plan",
         products: ["KonarCard"],
-        text:
-          "Saved me a fortune on printing.\nTap the card and customers have everything in seconds.",
+        text: "Saved me a fortune on printing.\nTap the card and customers have everything in seconds.",
       },
       {
         id: "r3",
@@ -89,8 +84,7 @@ export default function Reviews() {
         date: "3 weeks ago",
         plan: "Teams plan",
         products: ["KonarCard"],
-        text:
-          "Gives me a proper online presence without a pricey website.\nPhotos and reviews do the selling.",
+        text: "Gives me a proper online presence without a pricey website.\nPhotos and reviews do the selling.",
       },
       {
         id: "r4",
@@ -102,8 +96,7 @@ export default function Reviews() {
         date: "1 month ago",
         plan: "Plus plan",
         products: [],
-        text:
-          "I update prices and services on my phone. No reprinting, no fuss.\nMore enquiries coming in.",
+        text: "I update prices and services on my phone. No reprinting, no fuss.\nMore enquiries coming in.",
       },
       {
         id: "r5",
@@ -115,8 +108,7 @@ export default function Reviews() {
         date: "5 days ago",
         plan: "Plus plan",
         products: ["KonarCard"],
-        text:
-          "Looks professional on mobile.\nClients can call, WhatsApp or request a quote right away.",
+        text: "Looks professional on mobile.\nClients can call, WhatsApp or request a quote right away.",
       },
       {
         id: "r6",
@@ -128,8 +120,7 @@ export default function Reviews() {
         date: "2 months ago",
         plan: "Plus plan",
         products: ["KonarCard"],
-        text:
-          "Before this I relied on word of mouth.\nNow people find me online and book.\nWorth every penny.",
+        text: "Before this I relied on word of mouth.\nNow people find me online and book.\nWorth every penny.",
       },
       {
         id: "r7",
@@ -141,8 +132,7 @@ export default function Reviews() {
         date: "2 weeks ago",
         plan: "Free plan",
         products: [],
-        text:
-          "Cheaper than keeping a website going.\nThe gallery shows my best work and wins trust.",
+        text: "Cheaper than keeping a website going.\nThe gallery shows my best work and wins trust.",
       },
       {
         id: "r8",
@@ -154,8 +144,7 @@ export default function Reviews() {
         date: "6 days ago",
         plan: "Plus plan",
         products: ["KonarCard"],
-        text:
-          "Tap, scan or share the link — it just works.\nBooking more local jobs than ever.",
+        text: "Tap, scan or share the link — it just works.\nBooking more local jobs than ever.",
       },
       {
         id: "r9",
@@ -167,8 +156,7 @@ export default function Reviews() {
         date: "3 months ago",
         plan: "Free plan",
         products: [],
-        text:
-          "Not techy at all and still set it up in minutes.\nTidy, modern and saves me on marketing.",
+        text: "Not techy at all and still set it up in minutes.\nTidy, modern and saves me on marketing.",
       },
       {
         id: "r10",
@@ -180,8 +168,7 @@ export default function Reviews() {
         date: "4 weeks ago",
         plan: "Plus plan",
         products: [],
-        text:
-          "Clients love the map and service list.\nStopped reprinting cards — this pays for itself.",
+        text: "Clients love the map and service list.\nStopped reprinting cards — this pays for itself.",
       },
       {
         id: "r11",
@@ -193,8 +180,7 @@ export default function Reviews() {
         date: "8 days ago",
         plan: "Plus plan",
         products: [],
-        text:
-          "All my links in one place — quote form, photos, socials.\nHelped me close jobs faster.",
+        text: "All my links in one place — quote form, photos, socials.\nHelped me close jobs faster.",
       },
       {
         id: "r12",
@@ -206,8 +192,7 @@ export default function Reviews() {
         date: "2 months ago",
         plan: "Plus plan",
         products: ["KonarCard"],
-        text:
-          "Looks professional when I’m on site.\nOne tap and the client has my details + portfolio.\n(Edited after 2 weeks)",
+        text: "Looks professional when I’m on site.\nOne tap and the client has my details + portfolio.\n(Edited after 2 weeks)",
       },
     ],
     []
@@ -234,19 +219,18 @@ export default function Reviews() {
         {/* HERO */}
         <section className="kc-rev__hero" aria-label="Reviews hero">
           <div className="kc-rev__container">
-            {/* grid backdrop wrapper (slightly larger than cards + oval fade) */}
             <div className="kc-rev__heroGridWrap">
               <div className="kc-rev__heroGrid">
                 <div className="kc-rev__heroCopy">
-                  <p className="label kc-rev__kicker">Customer reviews</p>
+                  {/* ✅ consistent: kc-pill + h2 + kc-subheading */}
+                  <p className="kc-pill kc-rev__kicker">Customer reviews</p>
 
                   <h1 className="h2 kc-rev__title">
                     Tradespeople use KonarCard to look more professional — fast.
                   </h1>
 
-                  <p className="body kc-rev__subtitle">
-                    Clear profiles, easy sharing, and a better first impression. Here’s what
-                    customers are saying after switching.
+                  <p className="kc-subheading kc-rev__subtitle">
+                    Clear profiles, easy sharing, and a better first impression. Here’s what customers are saying after switching.
                   </p>
 
                   <div className="kc-rev__trustRow" aria-label="Average rating">
@@ -257,9 +241,7 @@ export default function Reviews() {
 
                     <Stars value={summary.avg} />
 
-                    <span className="body-xs kc-rev__trustNote">
-                      Based on {summary.total} reviews
-                    </span>
+                    <span className="body-xs kc-rev__trustNote">Based on {summary.total} reviews</span>
                   </div>
 
                   <div className="kc-rev__chips" aria-label="Highlights">
@@ -336,11 +318,8 @@ export default function Reviews() {
                       </div>
                     </header>
 
-                    {/* plan + product pills (grey style) */}
                     <div className="kc-rev__tags" aria-label="Tags">
-                      {r.plan ? (
-                        <span className="pill kc-rev__pill kc-rev__pill--plan">{r.plan}</span>
-                      ) : null}
+                      {r.plan ? <span className="pill kc-rev__pill kc-rev__pill--plan">{r.plan}</span> : null}
 
                       {r.products?.map((p) => (
                         <span key={p} className="pill kc-rev__pill kc-rev__pill--product">
@@ -355,7 +334,6 @@ export default function Reviews() {
               })}
             </div>
 
-            {/* CTA (like FAQ page style) */}
             <div className="kc-rev__cta">
               <p className="body-s kc-rev__ctaText">Share your personal experience with KonarCard.</p>
               <button type="button" className="kx-btn kx-btn--black kc-rev__ctaBtn">

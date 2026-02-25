@@ -1,8 +1,9 @@
-/* =========================================================
-   REVIEWS — hero grid backdrop + grey pills + CTA
-   - Cal Sans always 500
-   - Hero grid wraps BOTH top cards and fades oval (not a rectangle)
-   ========================================================= */
+/* frontend/src/styling/reviews.css
+   REVIEWS — consistent system styling
+   - Hero uses kc-pill + h2 + kc-subheading
+   - Grid backdrop fades oval and NEVER overlays cards
+   - Review cards match other grids (3 -> 2 -> 1)
+*/
 
 .kc-rev {
     background: var(--kc-bg-main);
@@ -15,7 +16,7 @@
     padding: 0 20px;
 }
 
-/* Ensure any Cal Sans usage stays at 500 */
+/* Cal Sans 500 enforcement (matches your system) */
 .kc-rev__title,
 .kc-rev__trustNum,
 .kc-rev__summaryTitle,
@@ -29,7 +30,7 @@
    HERO
    ========================= */
 .kc-rev__hero {
-    padding: 26px 0 18px;
+    padding: 0 0 26px;
     position: relative;
     overflow: clip;
 }
@@ -44,22 +45,20 @@
 .kc-rev__heroGridWrap {
     position: relative;
     width: 100%;
-    padding: 10px 0;
-    /* breathing room so grid never overlaps cards */
+    padding: 18px 0 10px;
+    /* ✅ breathing room; avoids overlap */
     z-index: 1;
 }
 
-/* Grid backdrop (bigger + visible on sides + oval fade) */
+/* Grid backdrop */
 .kc-rev__heroGridWrap::before {
     content: "";
     position: absolute;
     inset: -66px -110px -66px;
-    /* bigger than the cards + visible on sides */
     pointer-events: none;
     z-index: 0;
 
-    background-image:
-        linear-gradient(to right, rgba(12, 24, 48, 0.06) 1px, transparent 1px),
+    background-image: linear-gradient(to right, rgba(12, 24, 48, 0.06) 1px, transparent 1px),
         linear-gradient(to bottom, rgba(12, 24, 48, 0.06) 1px, transparent 1px);
     background-size: 64px 64px;
 
@@ -77,7 +76,7 @@
             rgba(0, 0, 0, 0) 88%);
 }
 
-/* Soft white dissolve so it never looks like a hard rectangle */
+/* Soft white dissolve so it never looks like a rectangle */
 .kc-rev__heroGridWrap::after {
     content: "";
     position: absolute;
@@ -85,8 +84,7 @@
     pointer-events: none;
     z-index: 0;
 
-    background:
-        radial-gradient(ellipse at center, rgba(255, 255, 255, 0) 42%, #fff 92%),
+    background: radial-gradient(ellipse at center, rgba(255, 255, 255, 0) 42%, #fff 92%),
         linear-gradient(to bottom,
             #fff 0%,
             rgba(255, 255, 255, 0) 18%,
@@ -101,14 +99,12 @@
     display: grid;
     grid-template-columns: 1.25fr 0.75fr;
     gap: 18px;
-
-    /* ✅ make both cards same height */
     align-items: stretch;
 }
 
 /* Left hero card */
 .kc-rev__heroCopy {
-    border: 1px solid var(--kc-border);
+    border: 1px solid rgba(15, 23, 42, 0.10);
     border-radius: 18px;
     background: #ffffff;
     padding: 18px;
@@ -119,7 +115,7 @@
 
 /* Right summary card */
 .kc-rev__summary {
-    border: 1px solid var(--kc-border);
+    border: 1px solid rgba(15, 23, 42, 0.10);
     border-radius: 18px;
     background: #ffffff;
     padding: 18px;
@@ -129,17 +125,20 @@
     height: 100%;
 }
 
+/* kicker/title/sub */
 .kc-rev__kicker {
-    margin: 0 0 10px;
+    margin: 0 0 12px;
 }
 
 .kc-rev__title {
     margin: 0 0 10px;
+    letter-spacing: -0.02em;
 }
 
 .kc-rev__subtitle {
     margin: 0 0 14px;
     max-width: 60ch;
+    color: var(--kc-text-secondary);
 }
 
 /* Trust row */
@@ -148,7 +147,7 @@
     flex-wrap: wrap;
     align-items: center;
     gap: 10px;
-    padding-top: 10px;
+    padding-top: 12px;
     border-top: 1px solid rgba(15, 23, 42, 0.08);
 }
 
@@ -169,6 +168,7 @@
     color: var(--kc-text-secondary);
 }
 
+/* Chips */
 .kc-rev__chips {
     display: flex;
     flex-wrap: wrap;
@@ -176,7 +176,6 @@
     margin-top: 12px;
 }
 
-/* Keep these chips as the existing soft/orange highlight */
 .kc-rev__chips .pill {
     border: 1px solid rgba(249, 115, 22, 0.28);
     background: rgba(249, 115, 22, 0.08);
@@ -198,6 +197,7 @@
 
 .kc-rev__summaryDesc {
     margin: 0;
+    color: var(--kc-text-secondary);
 }
 
 .kc-rev__stats {
@@ -216,7 +216,6 @@
     margin: 0 0 4px;
     font-size: 14px;
     line-height: 20px;
-    color: var(--kc-text-primary);
 }
 
 .kc-rev__statLabel {
@@ -227,15 +226,19 @@
 .kc-rev__summaryBtn {
     margin-top: 14px;
     width: 100%;
+
     display: inline-flex;
     align-items: center;
     justify-content: center;
+
     padding: 12px 16px;
     border-radius: 999px;
+
     background: var(--kc-accent-primary);
     color: #ffffff;
     text-decoration: none;
-    box-shadow: var(--kc-shadow-accent);
+
+    box-shadow: 0 12px 26px rgba(249, 115, 22, 0.18);
     transition: filter 0.15s ease, transform 0.08s ease;
 }
 
@@ -251,11 +254,6 @@
     margin: 10px 0 0;
     text-align: center;
     color: var(--kc-text-secondary);
-}
-
-/* Push CTA area up if needed */
-.kc-rev__summary {
-    justify-content: flex-start;
 }
 
 /* =========================
@@ -287,26 +285,29 @@
    LIST / GRID
    ========================= */
 .kc-rev__list {
-    padding: 12px 0 120px;
+    padding: 10px 0 120px;
 }
 
 .kc-rev__grid {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(3, minmax(0, 1fr));
     gap: 14px;
 }
 
 /* =========================
-   CARD
+   REVIEW CARD
    ========================= */
 .kc-rev__card {
-    border: 1px solid var(--kc-border);
+    border: 1px solid rgba(15, 23, 42, 0.10);
     background: #ffffff;
     border-radius: 18px;
     padding: 16px;
+
     display: flex;
     flex-direction: column;
     gap: 12px;
+
+    box-shadow: 0 10px 26px rgba(15, 23, 42, 0.06);
     transition: transform 0.12s ease;
 }
 
@@ -337,10 +338,6 @@
     border: 1px solid rgba(15, 23, 42, 0.10);
 }
 
-.kc-rev__personMeta {
-    min-width: 0;
-}
-
 .kc-rev__nameLine {
     margin: 0;
     display: flex;
@@ -351,7 +348,6 @@
 }
 
 .kc-rev__name {
-    color: var(--kc-text-primary);
     flex: 0 0 auto;
 }
 
@@ -359,7 +355,6 @@
     color: var(--kc-text-secondary);
     font-weight: 400;
 
-    /* ✅ do NOT wrap */
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -377,7 +372,6 @@
     color: rgba(15, 23, 42, 0.35);
 }
 
-/* Rating */
 .kc-rev__rating {
     display: inline-flex;
     align-items: center;
@@ -391,43 +385,37 @@
     color: var(--kc-text-secondary);
 }
 
-/* tags */
+/* tags (grey pills) */
 .kc-rev__tags {
     display: flex;
     flex-wrap: wrap;
     gap: 6px;
 }
 
-/* ✅ Grey pills for reviews (NOT orange) */
 .kc-rev__pill {
     border-radius: 999px;
     font-family: "Inter", sans-serif;
     font-weight: 600;
 }
 
-/* plan = normal grey */
 .kc-rev__pill--plan {
     background: rgba(15, 23, 42, 0.04);
     border: 1px solid rgba(15, 23, 42, 0.14);
     color: rgba(15, 23, 42, 0.72);
 }
 
-/* product = slightly darker */
 .kc-rev__pill--product {
     background: rgba(15, 23, 42, 0.07);
     border: 1px solid rgba(15, 23, 42, 0.18);
     color: rgba(15, 23, 42, 0.82);
 }
 
-/* review text */
 .kc-rev__text {
     margin: 0;
     line-height: 1.75;
 }
 
-/* =========================
-   CTA (bottom)
-   ========================= */
+/* CTA */
 .kc-rev__cta {
     margin-top: 18px;
     display: grid;
@@ -454,10 +442,9 @@
     }
 
     .kc-rev__grid {
-        grid-template-columns: repeat(2, 1fr);
+        grid-template-columns: repeat(2, minmax(0, 1fr));
     }
 
-    /* tighten grid inset on smaller screens */
     .kc-rev__heroGridWrap::before,
     .kc-rev__heroGridWrap::after {
         inset: -54px -34px -58px;
@@ -479,27 +466,12 @@
         justify-content: flex-start;
     }
 
-    .kc-rev__person {
-        grid-template-columns: 42px 1fr;
-    }
-
-    .kc-rev__avatar {
-        width: 42px;
-        height: 42px;
-    }
-
-    .kc-rev__text {
-        font-size: 14px;
-        line-height: 1.8;
+    .kc-rev__trade {
+        max-width: 140px;
     }
 
     .kc-rev__ctaBtn {
         width: 100%;
         max-width: 360px;
-    }
-
-    /* allow a bit more truncation room on mobile */
-    .kc-rev__trade {
-        max-width: 140px;
     }
 }
