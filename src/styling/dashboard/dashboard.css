@@ -2,6 +2,7 @@
 
 .dash-shell {
     background: var(--kc-bg-main);
+    /* ✅ page = pure white */
     min-height: 100vh;
     box-sizing: border-box;
     padding: 0;
@@ -63,12 +64,20 @@
     grid-row: 1;
 }
 
-/* Cards */
+/* =========================================================
+   CARDS (UPDATED)
+   - page background white
+   - cards use kc-bg-soft (#fafafa)
+   - shadows reduced (border-like)
+   ========================================================= */
+
 .dash-card {
-    background: #ffffff;
+    background: var(--kc-bg-soft);
+    /* ✅ cards = #fafafa */
     border: 1px solid rgba(15, 23, 42, 0.10);
     border-radius: 20px;
-    box-shadow: 0 14px 34px rgba(15, 23, 42, 0.08);
+    /* ✅ super light shadow (acts like soft edge) */
+    box-shadow: 0 1px 2px rgba(15, 23, 42, 0.05);
     padding: 16px;
     box-sizing: border-box;
 }
@@ -162,7 +171,9 @@
     padding: 10px 12px;
     border-radius: 14px;
     background: #ffffff;
+    /* ✅ inner tiles remain white for contrast */
     border: 1px solid rgba(15, 23, 42, 0.10);
+    box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
 }
 
 .dash-check-dot {
@@ -204,6 +215,7 @@
 
 .dash-quick-tile {
     background: #ffffff;
+    /* ✅ inner tiles white */
     border: 1px solid rgba(15, 23, 42, 0.10);
     border-radius: 16px;
     padding: 14px;
@@ -211,6 +223,7 @@
     transition: transform 0.12s ease, box-shadow 0.15s ease, background-color 0.15s ease;
     display: block;
     text-align: left;
+    box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
 }
 
 .dash-quick-btn {
@@ -220,7 +233,7 @@
 .dash-quick-tile:hover {
     transform: translateY(-1px);
     background: rgba(15, 23, 42, 0.02);
-    box-shadow: 0 10px 26px rgba(15, 23, 42, 0.10);
+    box-shadow: 0 6px 16px rgba(15, 23, 42, 0.08);
 }
 
 .dash-quick-tile:disabled {
@@ -255,9 +268,11 @@
 
 .dash-preview-card {
     background: #ffffff;
+    /* ✅ white inner preview */
     border: 1px solid rgba(15, 23, 42, 0.10);
     border-radius: 18px;
     padding: 14px;
+    box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
 }
 
 .dash-preview-hero {
@@ -325,9 +340,11 @@
 
 .dash-metric {
     background: #ffffff;
+    /* ✅ inner tiles white */
     border: 1px solid rgba(15, 23, 42, 0.10);
     border-radius: 16px;
     padding: 14px;
+    box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
 }
 
 .dash-metric-num {
@@ -354,11 +371,11 @@
     line-height: 1.5;
 }
 
-/* Upgrade */
+/* Upgrade (keep orange, but soften shadow slightly) */
 .dash-upgrade {
     background: var(--kc-accent-primary);
     border: none;
-    box-shadow: 0 14px 34px rgba(249, 115, 22, 0.22);
+    box-shadow: 0 8px 22px rgba(249, 115, 22, 0.18);
 }
 
 .dash-upgrade-inner {

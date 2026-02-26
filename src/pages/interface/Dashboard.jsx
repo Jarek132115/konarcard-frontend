@@ -68,7 +68,9 @@ export default function Dashboard() {
 
     const selectedProfile = useMemo(() => {
         if (!profilesForShare.length) return null;
-        return profilesForShare.find((p) => p.slug === selectedSlug) || profilesForShare[0];
+        return (
+            profilesForShare.find((p) => p.slug === selectedSlug) || profilesForShare[0]
+        );
     }, [profilesForShare, selectedSlug]);
 
     // ✅ (same placeholder logic as your current file)
@@ -198,7 +200,9 @@ export default function Dashboard() {
                         <div className="dash-card-head">
                             <div>
                                 <h2 className="dash-card-title">Profile completion</h2>
-                                <p className="dash-muted">Complete your profile to look more professional and get more leads.</p>
+                                <p className="dash-muted">
+                                    Complete your profile to look more professional and get more leads.
+                                </p>
                             </div>
 
                             <div className="dash-progress-wrap" aria-label="Profile completion">
