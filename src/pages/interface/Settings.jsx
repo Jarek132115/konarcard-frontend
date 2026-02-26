@@ -101,10 +101,7 @@ export default function Settings() {
 
     const provider = useMemo(() => {
         const p = safeLower(
-            summary?.account?.authProvider ||
-            authUser?.authProvider ||
-            authUser?.provider ||
-            authUser?.loginProvider
+            summary?.account?.authProvider || authUser?.authProvider || authUser?.provider || authUser?.loginProvider
         );
         return p === "google" ? "google" : "local";
     }, [summary, authUser]);
@@ -142,33 +139,21 @@ export default function Settings() {
         await refetchAuth?.();
     };
 
-    // Skeleton helper
-    const SkelText = ({ w = "60%" }) => (
-        <span className="settings-skelText" style={{ width: w }} aria-hidden="true" />
-    );
-
     const headerRight = (
-        <div className="settings-headActions">
-            <div className="settings-headPills">
-                <span className={`kc-pill ${isBusy ? "settings-skel-pill" : ""}`}>
-                    Plan: <strong>{String(plan || "free").toUpperCase()}</strong>
-                </span>
-                <span className={`kc-pill ${isBusy ? "settings-skel-pill" : ""}`}>
-                    Status: <strong>{String(subscriptionStatus || "free").toUpperCase()}</strong>
-                </span>
-            </div>
+        <div className="settings-headRight">
+            <span className="kc-pill">
+                Plan: <strong>{String(plan || "free").toUpperCase()}</strong>
+            </span>
 
-            <div className="settings-headButtons">
-                {hasError ? (
-                    <button type="button" className="kx-btn kx-btn--black" onClick={retryAll}>
-                        Retry
-                    </button>
-                ) : (
-                    <button type="button" className="kx-btn kx-btn--black" onClick={openBillingPortal} disabled={isBusy}>
-                        Manage billing
-                    </button>
-                )}
-            </div>
+            {hasError ? (
+                <button type="button" className="kx-btn kx-btn--black" onClick={retryAll}>
+                    Retry
+                </button>
+            ) : (
+                <button type="button" className="kx-btn kx-btn--black" onClick={openBillingPortal} disabled={isBusy}>
+                    Manage Billing
+                </button>
+            )}
         </div>
     );
 
@@ -189,245 +174,245 @@ export default function Settings() {
                 ) : null}
 
                 <div className="settings-grid">
-                    {/* LEFT */}
-                    <div className="settings-col">
-                        {/* Account */}
-                        <section className="settings-card">
-                            <div className="settings-card-head">
-                                <div>
-                                    <h2 className="settings-card-title">Account</h2>
-                                    <p className="settings-muted">Your login method determines what details can be edited.</p>
-                                </div>
-
-                                <span className="kc-pill">
-                                    Login: <strong>{isBusy ? "…" : isGoogle ? "GOOGLE" : "EMAIL"}</strong>
-                                </span>
+                    {/* Row 1 */}
+                    <section className="settings-card settings-account">
+                        <div className="settings-cardHead">
+                            <div>
+                                <h2 className="settings-cardTitle">Account</h2>
+                                <p className="settings-cardSub">Your login method determines what details can be edited.</p>
                             </div>
 
-                            <div className="settings-accountTop">
-                                <div className="settings-avatar">
-                                    {accountAvatar && !isBusy ? (
-                                        <img src={accountAvatar} alt="Avatar" />
-                                    ) : (
-                                        <div className={`settings-avatarFallback ${isBusy ? "settings-skelBlock" : ""}`}>
-                                            {!isBusy ? (accountName || "U").trim().charAt(0).toUpperCase() : ""}
-                                        </div>
-                                    )}
-                                </div>
+                            <span className="kc-pill">
+                                Login: <strong>{isBusy ? "…" : isGoogle ? "GOOGLE" : "EMAIL"}</strong>
+                            </span>
+                        </div>
 
-                                <div className="settings-accountSummary">
-                                    <div className="settings-accountName">{isBusy ? <SkelText w="52%" /> : accountName}</div>
-                                    <div className="settings-accountEmail">{isBusy ? <SkelText w="72%" /> : accountEmail}</div>
-
-                                    <div className="settings-accountChips">
-                                        <span className={`settings-chip ${isBusy ? "settings-skel-chip" : ""}`}>
-                                            {isBusy ? "" : isGoogle ? "Google account" : "Email account"}
-                                        </span>
-                                        <span className={`settings-chip settings-chip--ghost ${isBusy ? "settings-skel-chip" : ""}`}>
-                                            {isBusy ? "" : isGoogle ? "Managed by Google" : "Editable in app"}
-                                        </span>
+                        <div className="settings-accountTop">
+                            <div className="settings-avatar">
+                                {accountAvatar && !isBusy ? (
+                                    <img src={accountAvatar} alt="Avatar" />
+                                ) : (
+                                    <div className={`settings-avatarFallback ${isBusy ? "settings-skelBlock" : ""}`}>
+                                        {!isBusy ? (accountName || "U").trim().charAt(0).toUpperCase() : ""}
                                     </div>
-                                </div>
+                                )}
                             </div>
 
-                            <div className="settings-fields2">
-                                <div className="settings-field">
-                                    <label className="settings-label">Name</label>
-                                    <div className={`settings-inputFake ${isBusy ? "settings-skelLine" : ""}`}>{isBusy ? "" : accountName}</div>
-                                    {isGoogle && !isBusy ? (
-                                        <div className="settings-hint">
-                                            This account is managed by Google. Changes must be made through Google.
-                                        </div>
-                                    ) : null}
-                                </div>
+                            <div className="settings-accountSummary">
+                                <div className="settings-accountName">{isBusy ? <span className="settings-skelText w52" /> : accountName}</div>
+                                <div className="settings-accountEmail">{isBusy ? <span className="settings-skelText w72" /> : accountEmail}</div>
 
-                                <div className="settings-field">
-                                    <label className="settings-label">Email</label>
-                                    <div className={`settings-inputFake ${isBusy ? "settings-skelLine" : ""}`}>{isBusy ? "" : accountEmail}</div>
-                                    {isGoogle && !isBusy ? (
-                                        <div className="settings-hint">
-                                            This account is managed by Google. Changes must be made through Google.
-                                        </div>
-                                    ) : null}
+                                <div className="settings-accountChips">
+                                    <span className={`settings-chip ${isBusy ? "settings-skel-chip" : ""}`}>
+                                        {isBusy ? "" : isGoogle ? "Google account" : "Email account"}
+                                    </span>
+                                    <span className={`settings-chip settings-chip--ghost ${isBusy ? "settings-skel-chip" : ""}`}>
+                                        {isBusy ? "" : isGoogle ? "Managed by Google" : "Editable in app"}
+                                    </span>
                                 </div>
                             </div>
-                        </section>
+                        </div>
 
-                        {/* Billing */}
-                        <section className="settings-card">
-                            <div className="settings-card-head">
-                                <div>
-                                    <h2 className="settings-card-title">Billing</h2>
-                                    <p className="settings-muted">Plan status and renewal information.</p>
-                                </div>
-
-                                <span className={`kc-pill ${isBusy ? "settings-skel-pill" : ""}`}>
-                                    Plan: <strong>{String(plan || "free").toUpperCase()}</strong>
-                                </span>
+                        <div className="settings-fields2">
+                            <div className="settings-field">
+                                <div className="settings-k">Name</div>
+                                <div className={`settings-vBox ${isBusy ? "settings-skelLine" : ""}`}>{isBusy ? "" : accountName}</div>
+                                {isGoogle && !isBusy ? (
+                                    <div className="settings-hint">This account is managed by Google. Changes must be made through Google.</div>
+                                ) : null}
                             </div>
 
-                            <div className="settings-stats3">
-                                <div className="settings-stat">
-                                    <div className="settings-statK">Status</div>
-                                    <div className={`settings-statV ${safeLower(subscriptionStatus) === "active" && !isBusy ? "is-active" : ""}`}>
-                                        {isBusy ? <SkelText w="70%" /> : pick(subscriptionStatus)}
-                                    </div>
-                                </div>
-
-                                <div className="settings-stat">
-                                    <div className="settings-statK">Interval</div>
-                                    <div className="settings-statV">{isBusy ? <SkelText w="60%" /> : pick(planInterval)}</div>
-                                </div>
-
-                                <div className="settings-stat">
-                                    <div className="settings-statK">Renews</div>
-                                    <div className="settings-statV">
-                                        {isBusy ? <SkelText w="64%" /> : currentPeriodEnd ? fmtDate(currentPeriodEnd) : "—"}
-                                    </div>
-                                </div>
+                            <div className="settings-field">
+                                <div className="settings-k">Email</div>
+                                <div className={`settings-vBox ${isBusy ? "settings-skelLine" : ""}`}>{isBusy ? "" : accountEmail}</div>
+                                {isGoogle && !isBusy ? (
+                                    <div className="settings-hint">This account is managed by Google. Changes must be made through Google.</div>
+                                ) : null}
                             </div>
+                        </div>
 
+                        {/* Optional buttons (only show if NOT google) */}
+                        {!isGoogle ? (
                             <div className="settings-actions">
-                                <button type="button" className="kx-btn kx-btn--black" onClick={openBillingPortal} disabled={isBusy || hasError}>
-                                    Manage billing
+                                <button type="button" className="kx-btn kx-btn--black" disabled={isBusy}>
+                                    Reset Password
                                 </button>
-                                <button type="button" className="kx-btn kx-btn--white" onClick={() => (window.location.href = "/pricing")} disabled={isBusy}>
-                                    View plans
+                                <button type="button" className="kx-btn kx-btn--white" disabled={isBusy}>
+                                    Delete My Account
                                 </button>
                             </div>
+                        ) : null}
+                    </section>
 
-                            <div className="settings-hint">
-                                Use <strong>Manage billing</strong> to update payment method, view invoices, or cancel.
+                    <section className="settings-card settings-invoices">
+                        <div className="settings-cardHead">
+                            <div>
+                                <h2 className="settings-cardTitle">Invoices</h2>
+                                <p className="settings-cardSub">Subscription invoices and receipts.</p>
                             </div>
-                        </section>
-                    </div>
+                        </div>
 
-                    {/* RIGHT */}
-                    <div className="settings-col">
-                        {/* Invoices */}
-                        <section className="settings-card">
-                            <div className="settings-card-head">
-                                <div>
-                                    <h2 className="settings-card-title">Invoices</h2>
-                                    <p className="settings-muted">Subscription invoices and receipts.</p>
+                        <div className="settings-table">
+                            <div className="settings-row settings-rowHead settings-row4">
+                                <div>Date</div>
+                                <div>Amount</div>
+                                <div>Status</div>
+                                <div>PDF</div>
+                            </div>
+
+                            {isBusy ? (
+                                <>
+                                    {[0, 1, 2].map((k) => (
+                                        <div className="settings-row settings-row4" key={`inv-skel-${k}`}>
+                                            <div><span className="settings-skelText w70" /></div>
+                                            <div><span className="settings-skelText w60" /></div>
+                                            <div><span className="settings-skelBadge" /></div>
+                                            <div><span className="settings-skelText w55" /></div>
+                                        </div>
+                                    ))}
+                                </>
+                            ) : invoices.length ? (
+                                invoices.map((inv, idx) => {
+                                    const id = inv?.id || idx;
+                                    const date = inv?.created;
+                                    const amountMinor = inv?.total ?? inv?.amount_paid ?? inv?.amount_due;
+                                    const currency = inv?.currency;
+                                    const status = inv?.status || "—";
+                                    const pdf = inv?.invoice_pdf || inv?.hosted_invoice_url;
+
+                                    return (
+                                        <div className="settings-row settings-row4" key={id}>
+                                            <div>{fmtDate(date)}</div>
+                                            <div>{fmtMoneyFromMinor(amountMinor, currency)}</div>
+                                            <div>
+                                                <span className={`settings-badge ${safeLower(status)}`}>{String(status)}</span>
+                                            </div>
+                                            <div>
+                                                {pdf ? (
+                                                    <a className="settings-link" href={pdf} target="_blank" rel="noreferrer">
+                                                        Download
+                                                    </a>
+                                                ) : (
+                                                    "—"
+                                                )}
+                                            </div>
+                                        </div>
+                                    );
+                                })
+                            ) : (
+                                <div className="settings-emptyRow">
+                                    <div className="settings-emptyTitle">No invoices yet.</div>
+                                    <div className="settings-emptySub">Invoices appear here once Stripe generates them.</div>
+                                </div>
+                            )}
+                        </div>
+                    </section>
+
+                    {/* Row 2 */}
+                    <section className="settings-card settings-billing">
+                        <div className="settings-cardHead">
+                            <div>
+                                <h2 className="settings-cardTitle">Billing</h2>
+                                <p className="settings-cardSub">Plan status and renewal information.</p>
+                            </div>
+
+                            <span className="kc-pill">
+                                Plan: <strong>{String(plan || "free").toUpperCase()}</strong>
+                            </span>
+                        </div>
+
+                        <div className="settings-stats3">
+                            <div className="settings-stat">
+                                <div className="settings-statK">Status</div>
+                                <div className={`settings-statV ${safeLower(subscriptionStatus) === "active" && !isBusy ? "is-active" : ""}`}>
+                                    {isBusy ? <span className="settings-skelText w70" /> : pick(subscriptionStatus)}
                                 </div>
                             </div>
 
-                            <div className="settings-table">
-                                <div className="settings-row settings-rowHead settings-row4">
-                                    <div>Date</div>
-                                    <div>Amount</div>
-                                    <div>Status</div>
-                                    <div>PDF</div>
-                                </div>
-
-                                {isBusy ? (
-                                    <>
-                                        {[0, 1, 2].map((k) => (
-                                            <div className="settings-row settings-row4" key={`inv-skel-${k}`}>
-                                                <div><span className="settings-skelText" style={{ width: "70%" }} /></div>
-                                                <div><span className="settings-skelText" style={{ width: "60%" }} /></div>
-                                                <div><span className="settings-skelBadge" /></div>
-                                                <div><span className="settings-skelText" style={{ width: "55%" }} /></div>
-                                            </div>
-                                        ))}
-                                    </>
-                                ) : invoices.length ? (
-                                    invoices.map((inv, idx) => {
-                                        const id = inv?.id || idx;
-                                        const date = inv?.created;
-                                        const amountMinor = inv?.total ?? inv?.amount_paid ?? inv?.amount_due;
-                                        const currency = inv?.currency;
-                                        const status = inv?.status || "—";
-                                        const pdf = inv?.invoice_pdf || inv?.hosted_invoice_url;
-
-                                        return (
-                                            <div className="settings-row settings-row4" key={id}>
-                                                <div>{fmtDate(date)}</div>
-                                                <div>{fmtMoneyFromMinor(amountMinor, currency)}</div>
-                                                <div>
-                                                    <span className={`settings-badge ${safeLower(status)}`}>{String(status)}</span>
-                                                </div>
-                                                <div>
-                                                    {pdf ? (
-                                                        <a className="settings-link" href={pdf} target="_blank" rel="noreferrer">
-                                                            Download
-                                                        </a>
-                                                    ) : (
-                                                        "—"
-                                                    )}
-                                                </div>
-                                            </div>
-                                        );
-                                    })
-                                ) : (
-                                    <div className="settings-emptyRow">
-                                        <div className="settings-emptyTitle">No invoices yet.</div>
-                                        <div className="settings-emptySub">Invoices appear here once Stripe generates them.</div>
-                                    </div>
-                                )}
-                            </div>
-                        </section>
-
-                        {/* Payments */}
-                        <section className="settings-card">
-                            <div className="settings-card-head">
-                                <div>
-                                    <h2 className="settings-card-title">Payments</h2>
-                                    <p className="settings-muted">Your recent payment activity.</p>
-                                </div>
+                            <div className="settings-stat">
+                                <div className="settings-statK">Interval</div>
+                                <div className="settings-statV">{isBusy ? <span className="settings-skelText w60" /> : pick(planInterval)}</div>
                             </div>
 
-                            <div className="settings-table">
-                                <div className="settings-row settings-rowHead settings-row4p">
-                                    <div>Date</div>
-                                    <div>Amount</div>
-                                    <div>Status</div>
-                                    <div>Description</div>
+                            <div className="settings-stat">
+                                <div className="settings-statK">Renews</div>
+                                <div className="settings-statV">
+                                    {isBusy ? <span className="settings-skelText w64" /> : currentPeriodEnd ? fmtDate(currentPeriodEnd) : "—"}
                                 </div>
-
-                                {isBusy ? (
-                                    <>
-                                        {[0, 1, 2].map((k) => (
-                                            <div className="settings-row settings-row4p" key={`pay-skel-${k}`}>
-                                                <div><span className="settings-skelText" style={{ width: "70%" }} /></div>
-                                                <div><span className="settings-skelText" style={{ width: "60%" }} /></div>
-                                                <div><span className="settings-skelBadge" /></div>
-                                                <div><span className="settings-skelText" style={{ width: "92%" }} /></div>
-                                            </div>
-                                        ))}
-                                    </>
-                                ) : payments.length ? (
-                                    payments.map((p, idx) => {
-                                        const id = p?.id || idx;
-                                        const date = p?.created;
-                                        const amountMinor = p?.amount;
-                                        const currency = p?.currency;
-                                        const status = p?.status || "—";
-                                        const desc = p?.description || p?.receipt_email || "—";
-
-                                        return (
-                                            <div className="settings-row settings-row4p" key={id}>
-                                                <div>{fmtDate(date)}</div>
-                                                <div>{fmtMoneyFromMinor(amountMinor, currency)}</div>
-                                                <div>
-                                                    <span className={`settings-badge ${safeLower(status)}`}>{String(status)}</span>
-                                                </div>
-                                                <div className="settings-mono settings-ellipsis" title={String(desc)}>
-                                                    {String(desc)}
-                                                </div>
-                                            </div>
-                                        );
-                                    })
-                                ) : (
-                                    <div className="settings-emptyRow">
-                                        <div className="settings-emptyTitle">No payments yet.</div>
-                                        <div className="settings-emptySub">Payments appear here after successful charges.</div>
-                                    </div>
-                                )}
                             </div>
-                        </section>
-                    </div>
+                        </div>
+
+                        <div className="settings-actions">
+                            <button type="button" className="kx-btn kx-btn--black" onClick={openBillingPortal} disabled={isBusy || hasError}>
+                                Manage Billing
+                            </button>
+                            <button type="button" className="kx-btn kx-btn--white" onClick={() => (window.location.href = "/pricing")} disabled={isBusy}>
+                                View Plans
+                            </button>
+                        </div>
+
+                        <div className="settings-hint">
+                            Use <strong>Manage Billing</strong> to update payment method, view invoices, or cancel.
+                        </div>
+                    </section>
+
+                    <section className="settings-card settings-payments">
+                        <div className="settings-cardHead">
+                            <div>
+                                <h2 className="settings-cardTitle">Payments</h2>
+                                <p className="settings-cardSub">Your recent payment activity.</p>
+                            </div>
+                        </div>
+
+                        <div className="settings-table">
+                            <div className="settings-row settings-rowHead settings-row4p">
+                                <div>Date</div>
+                                <div>Amount</div>
+                                <div>Status</div>
+                                <div>Description</div>
+                            </div>
+
+                            {isBusy ? (
+                                <>
+                                    {[0, 1, 2].map((k) => (
+                                        <div className="settings-row settings-row4p" key={`pay-skel-${k}`}>
+                                            <div><span className="settings-skelText w70" /></div>
+                                            <div><span className="settings-skelText w60" /></div>
+                                            <div><span className="settings-skelBadge" /></div>
+                                            <div><span className="settings-skelText w92" /></div>
+                                        </div>
+                                    ))}
+                                </>
+                            ) : payments.length ? (
+                                payments.map((p, idx) => {
+                                    const id = p?.id || idx;
+                                    const date = p?.created;
+                                    const amountMinor = p?.amount;
+                                    const currency = p?.currency;
+                                    const status = p?.status || "—";
+                                    const desc = p?.description || p?.receipt_email || "—";
+
+                                    return (
+                                        <div className="settings-row settings-row4p" key={id}>
+                                            <div>{fmtDate(date)}</div>
+                                            <div>{fmtMoneyFromMinor(amountMinor, currency)}</div>
+                                            <div>
+                                                <span className={`settings-badge ${safeLower(status)}`}>{String(status)}</span>
+                                            </div>
+                                            <div className="settings-mono settings-ellipsis" title={String(desc)}>
+                                                {String(desc)}
+                                            </div>
+                                        </div>
+                                    );
+                                })
+                            ) : (
+                                <div className="settings-emptyRow">
+                                    <div className="settings-emptyTitle">No payments yet.</div>
+                                    <div className="settings-emptySub">Payments appear here after successful charges.</div>
+                                </div>
+                            )}
+                        </div>
+                    </section>
                 </div>
             </div>
         </DashboardLayout>
