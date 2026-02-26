@@ -3,25 +3,29 @@ import React from "react";
 import "../../styling/dashboard/pageheader.css";
 
 /**
- * PageHeader (Unified)
+ * PageHeader (Clean v2)
+ * - White page background (handled by page / layout)
+ * - Header card uses kc-bg-soft (#fafafa)
+ * - Very light shadow (almost border-only)
+ *
  * Props:
  * - title: string
  * - subtitle?: string
- * - rightSlot?: ReactNode (plan pill + actions)
+ * - rightSlot?: ReactNode
  */
 export default function PageHeader({ title, subtitle, rightSlot }) {
   return (
-    <div className="ph-wrap">
-      <div className="ph-card">
-        <div className="ph-row">
-          <div className="ph-left">
-            <h1 className="ph-title">{title}</h1>
-            {subtitle ? <p className="ph-sub">{subtitle}</p> : null}
+    <header className="ph2-wrap">
+      <div className="ph2-card">
+        <div className="ph2-row">
+          <div className="ph2-left">
+            <h1 className="ph2-title">{title}</h1>
+            {subtitle ? <p className="ph2-sub">{subtitle}</p> : null}
           </div>
 
-          {rightSlot ? <div className="ph-right">{rightSlot}</div> : null}
+          {rightSlot ? <div className="ph2-right">{rightSlot}</div> : null}
         </div>
       </div>
-    </div>
+    </header>
   );
 }

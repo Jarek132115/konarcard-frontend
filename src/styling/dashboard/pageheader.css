@@ -1,115 +1,88 @@
 /* src/styling/dashboard/pageheader.css */
 
 :root {
-    --ph-ink: var(--kc-text-primary, #0f172a);
-    --ph-muted: var(--kc-text-secondary, #475569);
-    --ph-surface: #ffffff;
-    --ph-border: rgba(15, 23, 42, 0.10);
-    --ph-shadow: 0 14px 34px rgba(15, 23, 42, 0.08);
+    --ph2-ink: var(--kc-text-primary, #0f172a);
+    --ph2-muted: var(--kc-text-secondary, #475569);
+
+    /* ✅ As requested */
+    --ph2-surface: var(--kc-bg-soft, #fafafa);
+
+    /* Very light border + shadow */
+    --ph2-border: rgba(15, 23, 42, 0.08);
+    --ph2-shadow: 0 1px 0 rgba(15, 23, 42, 0.04),
+        0 10px 22px rgba(15, 23, 42, 0.04);
 }
 
-.ph-wrap {
+.ph2-wrap {
     width: 100%;
-    margin: 0 0 14px;
+    margin: 0 0 16px;
 }
 
-.ph-card {
-    background: var(--ph-surface);
-    border: 1px solid var(--ph-border);
-    border-radius: 20px;
-    box-shadow: var(--ph-shadow);
-    padding: 16px;
+.ph2-card {
+    background: var(--ph2-surface);
+    border: 1px solid var(--ph2-border);
+    border-radius: 22px;
+    box-shadow: var(--ph2-shadow);
+    padding: 18px;
 }
 
-.ph-row {
+.ph2-row {
     display: flex;
     align-items: flex-start;
     justify-content: space-between;
-    gap: 14px;
+    gap: 16px;
 }
 
-.ph-left {
+.ph2-left {
     min-width: 0;
 }
 
-.ph-title {
+.ph2-title {
     margin: 0;
     font-family: "Cal Sans", sans-serif;
     font-weight: 500;
     letter-spacing: -0.02em;
-    color: var(--ph-ink);
+    color: var(--ph2-ink);
     font-size: 22px;
     line-height: 1.15;
 }
 
-.ph-sub {
+.ph2-sub {
     margin: 8px 0 0;
     font-family: "Inter", sans-serif;
     font-weight: 600;
-    color: var(--ph-muted);
+    color: var(--ph2-muted);
     font-size: 14px;
     line-height: 1.55;
     max-width: 920px;
 }
 
-.ph-right {
+.ph2-right {
     display: flex;
     align-items: flex-end;
     justify-content: flex-end;
+    min-width: 0;
 }
 
-/* Right-slot helpers (used by Dashboard.jsx) */
-.ph-rightStack {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-end;
-    gap: 10px;
-}
-
-.ph-actionsInline {
-    display: inline-flex;
-    gap: 10px;
-    flex-wrap: wrap;
-    justify-content: flex-end;
-}
-
+/* Responsive */
 @media (max-width: 1000px) {
-    .ph-row {
+    .ph2-row {
         flex-direction: column;
     }
 
-    .ph-right {
-        width: 100%;
-        justify-content: flex-start;
-    }
-
-    .ph-rightStack {
-        width: 100%;
-        align-items: flex-start;
-    }
-
-    .ph-actionsInline {
+    .ph2-right {
         width: 100%;
         justify-content: flex-start;
     }
 }
 
 @media (max-width: 520px) {
-    .ph-card {
+    .ph2-card {
         padding: 14px;
+        border-radius: 20px;
     }
 
-    .ph-title {
+    .ph2-title {
         font-size: 20px;
-    }
-
-    .ph-actionsInline {
-        flex-direction: column;
-        align-items: stretch;
-    }
-
-    .ph-actionsInline .kx-btn {
-        width: 100%;
-        justify-content: center;
     }
 }
