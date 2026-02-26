@@ -127,21 +127,16 @@ export default function App() {
           {/* Public website pages */}
           <Route path="/products" element={<Products />} />
 
-          {/* ✅ CANONICAL ROUTES (match sitemap.xml) */}
+          {/* ✅ CANONICAL ROUTES (these are the real pages) */}
           <Route path="/products/plastic-card" element={<PlasticCard />} />
           <Route path="/products/metal-card" element={<MetalCard />} />
-
-          {/* ✅ OPTIONAL client-side fallback (nice for in-app nav / old links) */}
-          <Route path="/products/plastic" element={<Navigate to="/products/plastic-card" replace />} />
-          <Route path="/products/metal" element={<Navigate to="/products/metal-card" replace />} />
-
-          {/* ✅ OLD ROUTES REDIRECT */}
-          <Route path="/products/plastic-card" element={<Navigate to="/products/plastic" replace />} />
-          <Route path="/products/metal-card" element={<Navigate to="/products/metal" replace />} />
-
           <Route path="/products/konartag" element={<KonarTag />} />
           <Route path="/products/plastic-bundle" element={<PlasticBundle />} />
           <Route path="/products/metal-bundle" element={<MetalBundle />} />
+
+          {/* ✅ OLD ROUTES REDIRECT TO CANONICAL (one-way only) */}
+          <Route path="/products/plastic" element={<Navigate to="/products/plastic-card" replace />} />
+          <Route path="/products/metal" element={<Navigate to="/products/metal-card" replace />} />
 
 
           <Route path="/examples" element={<Example />} />
