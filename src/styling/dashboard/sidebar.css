@@ -8,8 +8,8 @@
     /* ✅ Sidebar surface */
     --sb2-surface: var(--kc-bg-soft, #fafafa);
 
-    /* ✅ Super subtle “border-like” shadow */
-    --sb2-shadow: 0 2px 10px rgba(15, 23, 42, 0.10);
+    /* ✅ Subtle border-like shadow (requested) */
+    --sb2-shadow: 0 0 2px rgba(0, 0, 0, 0.25);
 
     --sb2-border: rgba(15, 23, 42, 0.10);
 
@@ -54,7 +54,9 @@
 
 /* Top brand */
 .sb2-top {
-    padding: 16px;
+    /* ✅ 24px gap around the top area */
+    padding: 24px 16px 24px;
+
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -89,10 +91,7 @@
     min-width: 0;
 }
 
-.sb2-brandText .kc-title {
-    margin: 0;
-}
-
+.sb2-brandText .kc-title,
 .sb2-brandText .kc-body {
     margin: 0;
 }
@@ -118,32 +117,17 @@
     transform: translateY(1px);
 }
 
-/* Dividers + spacing (24px above/below like you asked) */
+/* Divider */
 .sb2-divider {
     height: 1px;
-    background: rgba(15, 23, 42, 0.08);
+    background: rgba(15, 23, 42, 0.10);
     margin: 0 16px;
 }
 
-.sb2-divider--top {
-    margin-top: 0;
-}
-
+/* Menu wrapper */
 .sb2-menuWrap {
+    /* ✅ 24px below the line before content starts */
     padding: 24px 16px 0;
-}
-
-.sb2-bottom {
-    margin-top: auto;
-    padding: 0 16px 16px;
-    display: grid;
-    gap: 14px;
-}
-
-.sb2-divider--bottom {
-    margin: 24px 0 0;
-    width: calc(100% - 32px);
-    justify-self: center;
 }
 
 /* Menu label */
@@ -154,35 +138,31 @@
     letter-spacing: 0.14em;
     text-transform: uppercase;
     color: rgba(71, 85, 105, 0.85);
-    margin-bottom: 18px;
+
+    margin-bottom: 24px;
+    /* ✅ consistent 24 */
 }
 
 /* Nav list */
 .sb2-nav {
     display: grid;
-    gap: 18px;
-    /* ✅ nice spaced out gap */
+    gap: 24px;
+    /* ✅ requested link gap */
 }
 
-/* ✅ LINKS: no pill, no bg, no border */
+/* Links: no bg/border */
 .sb2-link {
     display: flex;
     align-items: center;
     gap: 12px;
 
     padding: 0;
-    /* ✅ no padding */
     border: none;
-    /* ✅ no border */
     background: transparent;
-    /* ✅ no background */
-    border-radius: 0;
-    /* ✅ no shape */
 
     text-decoration: none;
     color: var(--sb2-muted);
 
-    /* ✅ text style */
     font-family: "Cal Sans", sans-serif;
     font-size: 20px;
     font-weight: 400;
@@ -202,13 +182,11 @@
     outline: none;
     box-shadow: 0 0 0 3px var(--kc-focus-ring);
     border-radius: 12px;
-    /* focus ring needs a shape */
     padding: 6px 8px;
-    /* only for focus ring comfort */
     margin: -6px -8px;
 }
 
-/* Icons: 30x30 requested */
+/* Icons */
 .sb2-ico {
     width: 30px;
     height: 30px;
@@ -224,29 +202,37 @@
     opacity: 0.95;
 }
 
-/* Active: ONLY colour change (text + icon) */
+/* Active: only colour changes */
 .sb2-link.active {
     color: var(--sb2-active);
 }
 
-.sb2-link.active .sb2-ico img {
-    filter: none;
+/* Bottom */
+.sb2-bottom {
+    margin-top: auto;
+
+    /* ✅ consistent spacing */
+    padding: 24px 16px 16px;
+
+    display: grid;
+    gap: 24px;
+    /* keeps Settings/Logout spacing clean */
 }
 
-/* Bottom section link spacing */
-.sb2-linkBottom {
-    margin-top: 18px;
+/* ✅ bottom divider: 24px gap below it */
+.sb2-divider--bottom {
+    margin: 0;
 }
 
-/* Logout button: match link style (no pill) but red */
+/* Logout (red) */
 .sb2-logout {
     width: fit-content;
     padding: 0;
     border: none;
     background: transparent;
     cursor: pointer;
-    color: rgba(220, 38, 38, 0.95);
 
+    color: rgba(220, 38, 38, 0.95);
     font-family: "Cal Sans", sans-serif;
     font-size: 20px;
     font-weight: 400;
@@ -308,23 +294,51 @@
         transform: translateX(0);
     }
 
+    /* ✅ Center everything in the drawer */
     .sb2-top {
-        padding: 14px;
+        padding: 24px 18px 24px;
+        justify-content: center;
+        position: relative;
     }
 
-    .sb2-divider {
-        margin: 0 14px;
+    .sb2-close {
+        position: absolute;
+        right: 14px;
+        top: 18px;
     }
 
     .sb2-menuWrap {
-        padding: 24px 14px 0;
+        padding: 24px 18px 0;
+        display: grid;
+        justify-items: center;
+    }
+
+    .sb2-menuLabel {
+        text-align: center;
+        width: 100%;
+    }
+
+    .sb2-nav {
+        width: 100%;
+        justify-items: center;
+    }
+
+    .sb2-link {
+        /* ✅ centered nav items */
+        justify-content: center;
+        width: 100%;
     }
 
     .sb2-bottom {
-        padding: 0 14px 14px;
+        padding: 24px 18px 18px;
+        justify-items: center;
     }
 
-    .sb2-divider--bottom {
-        width: calc(100% - 28px);
+    .sb2-logout {
+        justify-self: center;
+    }
+
+    .sb2-divider {
+        margin: 0 18px;
     }
 }
