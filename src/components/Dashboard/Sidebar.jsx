@@ -66,13 +66,13 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen }) {
                 {/* Top brand */}
                 <div className="sb2-top">
                     <Link to="/dashboard" className="sb2-brand" onClick={closeSidebar}>
-                        <span className="sb2-logo" aria-hidden="true">
+                        <span className="sb2-logoPlain" aria-hidden="true">
                             <img src={LogoIcon} alt="" />
                         </span>
 
                         <span className="sb2-brandText">
-                            <span className="kc-sidebarBrand">KonarCard</span>
-                            <span className="kc-sidebarTagline">Your digital business card</span>
+                            <span className="kc-title">KonarCard</span>
+                            <span className="kc-body">Your digital business card</span>
                         </span>
                     </Link>
 
@@ -88,7 +88,6 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen }) {
                     ) : null}
                 </div>
 
-                {/* divider + spacing exactly like design */}
                 <div className="sb2-divider sb2-divider--top" />
 
                 {/* Menu */}

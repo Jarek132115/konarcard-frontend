@@ -299,3 +299,34 @@
         transform: translateX(0);
     }
 }
+
+/* src/styling/dashboard/sidebar.css */
+
+/* ...keep everything you already have... */
+
+/* ✅ NEW: logo with NO background / border, and 40x40 */
+.sb2-logoPlain {
+    width: 40px;
+    height: 40px;
+    display: grid;
+    place-items: center;
+    flex: 0 0 auto;
+}
+
+.sb2-logoPlain img {
+    width: 40px;
+    height: 40px;
+    display: block;
+}
+
+/* Optional: tighten brand text spacing slightly */
+.sb2-brandText {
+    display: grid;
+    gap: 2px;
+    min-width: 0;
+}
+
+/* Make sure the body class in brand line doesn't add unwanted margins */
+.sb2-brandText .kc-body {
+    margin: 0;
+}
