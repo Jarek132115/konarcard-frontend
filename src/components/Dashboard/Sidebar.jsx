@@ -1,4 +1,3 @@
-// src/components/Dashboard/Sidebar.jsx
 import React, { useContext, useEffect, useMemo, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { AuthContext } from "../AuthContext.jsx";
@@ -63,14 +62,14 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen }) {
                 className={`sb2 ${isMobile ? "mobile" : ""} ${sidebarOpen ? "open" : ""}`}
                 aria-label="Sidebar"
             >
-                {/* Top brand */}
+                {/* Top */}
                 <div className="sb2-top">
                     <Link to="/dashboard" className="sb2-brand" onClick={closeSidebar}>
                         <span className="sb2-logoPlain" aria-hidden="true">
                             <img src={LogoIcon} alt="" />
                         </span>
 
-                        {/* Desktop only: brand text */}
+                        {/* Desktop only brand text */}
                         <span className="sb2-brandText">
                             <span className="kc-title">KonarCard</span>
                             <span className="kc-body">Your digital business card</span>
@@ -89,9 +88,9 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen }) {
                     ) : null}
                 </div>
 
-                <div className="sb2-divider sb2-divider--top" />
+                <div className="sb2-divider" />
 
-                {/* Menu */}
+                {/* Menu (centered on mobile) */}
                 <div className="sb2-menuWrap">
                     <div className="sb2-menuLabel">MENU</div>
 
@@ -104,11 +103,7 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen }) {
                                 className={`sb2-link ${isActive(item.to) ? "active" : ""}`}
                             >
                                 <span className="sb2-ico" aria-hidden="true">
-                                    {/* icon uses mask so it can change colour */}
-                                    <span
-                                        className="sb2-icon"
-                                        style={{ WebkitMaskImage: `url(${item.icon})`, maskImage: `url(${item.icon})` }}
-                                    />
+                                    <img src={item.icon} alt="" />
                                 </span>
                                 <span className="sb2-text">{item.label}</span>
                             </Link>
@@ -118,18 +113,15 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen }) {
 
                 {/* Bottom */}
                 <div className="sb2-bottom">
-                    <div className="sb2-divider sb2-divider--bottom" />
+                    <div className="sb2-divider" />
 
                     <Link
                         to="/settings"
                         onClick={closeSidebar}
-                        className={`sb2-link sb2-linkBottom ${isActive("/settings") ? "active" : ""}`}
+                        className={`sb2-link ${isActive("/settings") ? "active" : ""}`}
                     >
                         <span className="sb2-ico" aria-hidden="true">
-                            <span
-                                className="sb2-icon"
-                                style={{ WebkitMaskImage: `url(${SettingsIcon})`, maskImage: `url(${SettingsIcon})` }}
-                            />
+                            <img src={SettingsIcon} alt="" />
                         </span>
                         <span className="sb2-text">Settings</span>
                     </Link>
@@ -137,10 +129,7 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen }) {
                     <button className="sb2-logout" onClick={handleLogout} type="button">
                         <span className="sb2-logoutInner">
                             <span className="sb2-ico" aria-hidden="true">
-                                <span
-                                    className="sb2-icon sb2-icon--danger"
-                                    style={{ WebkitMaskImage: `url(${LogoutIcon})`, maskImage: `url(${LogoutIcon})` }}
-                                />
+                                <img src={LogoutIcon} alt="" />
                             </span>
                             <span className="sb2-logoutText">Logout</span>
                         </span>
