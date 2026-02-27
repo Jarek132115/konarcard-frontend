@@ -55,30 +55,30 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen }) {
     return (
         <>
             <div
-                className={`sb-overlay ${isMobile && sidebarOpen ? "active" : ""}`}
+                className={`sb2-overlay ${isMobile && sidebarOpen ? "active" : ""}`}
                 onClick={closeSidebar}
             />
 
             <aside
-                className={`sb ${isMobile ? "mobile" : ""} ${sidebarOpen ? "open" : ""}`}
+                className={`sb2 ${isMobile ? "mobile" : ""} ${sidebarOpen ? "open" : ""}`}
                 aria-label="Sidebar"
             >
-                {/* Brand */}
-                <div className="sb-brandRow">
-                    <Link to="/dashboard" className="sb-brand" onClick={closeSidebar}>
-                        <span className="sb-logoWrap" aria-hidden="true">
+                {/* Top brand */}
+                <div className="sb2-top">
+                    <Link to="/dashboard" className="sb2-brand" onClick={closeSidebar}>
+                        <span className="sb2-logo" aria-hidden="true">
                             <img src={LogoIcon} alt="" />
                         </span>
 
-                        <span className="sb-brandText">
-                            <span className="sb-brandName">KonarCard</span>
-                            <span className="sb-brandTag">Your digital business card</span>
+                        <span className="sb2-brandText">
+                            <span className="kc-sidebarBrand">KonarCard</span>
+                            <span className="kc-sidebarTagline">Your digital business card</span>
                         </span>
                     </Link>
 
                     {isMobile ? (
                         <button
-                            className="sb-close"
+                            className="sb2-close"
                             aria-label="Close menu"
                             onClick={closeSidebar}
                             type="button"
@@ -88,50 +88,55 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen }) {
                     ) : null}
                 </div>
 
-                <div className="sb-divider" />
+                {/* divider + spacing exactly like design */}
+                <div className="sb2-divider sb2-divider--top" />
 
-                {/* Nav */}
-                <nav className="sb-nav" aria-label="Main navigation">
-                    {NAV_ITEMS.map((item) => (
-                        <Link
-                            key={item.to}
-                            to={item.to}
-                            onClick={closeSidebar}
-                            className={`sb-link ${isActive(item.to) ? "active" : ""}`}
-                        >
-                            <span className="sb-ico" aria-hidden="true">
-                                <img src={item.icon} alt="" />
-                            </span>
-                            <span className="sb-text">{item.label}</span>
-                        </Link>
-                    ))}
-                </nav>
+                {/* Menu */}
+                <div className="sb2-menuWrap">
+                    <div className="sb2-menuLabel">MENU</div>
+
+                    <nav className="sb2-nav" aria-label="Main navigation">
+                        {NAV_ITEMS.map((item) => (
+                            <Link
+                                key={item.to}
+                                to={item.to}
+                                onClick={closeSidebar}
+                                className={`sb2-link ${isActive(item.to) ? "active" : ""}`}
+                            >
+                                <span className="sb2-ico" aria-hidden="true">
+                                    <img src={item.icon} alt="" />
+                                </span>
+                                <span className="sb2-text">{item.label}</span>
+                            </Link>
+                        ))}
+                    </nav>
+                </div>
 
                 {/* Bottom */}
-                <div className="sb-bottom">
-                    <div className="sb-divider" />
+                <div className="sb2-bottom">
+                    <div className="sb2-divider sb2-divider--bottom" />
 
                     <Link
                         to="/settings"
                         onClick={closeSidebar}
-                        className={`sb-link sb-linkBottom ${isActive("/settings") ? "active" : ""}`}
+                        className={`sb2-link sb2-linkBottom ${isActive("/settings") ? "active" : ""}`}
                     >
-                        <span className="sb-ico" aria-hidden="true">
+                        <span className="sb2-ico" aria-hidden="true">
                             <img src={SettingsIcon} alt="" />
                         </span>
-                        <span className="sb-text">Settings</span>
+                        <span className="sb2-text">Settings</span>
                     </Link>
 
-                    <button className="sb-logout" onClick={handleLogout} type="button">
-                        <span className="sb-logoutInner">
-                            <span className="sb-ico" aria-hidden="true">
+                    <button className="sb2-logout" onClick={handleLogout} type="button">
+                        <span className="sb2-logoutInner">
+                            <span className="sb2-ico" aria-hidden="true">
                                 <img src={LogoutIcon} alt="" />
                             </span>
-                            <span>Logout</span>
+                            <span className="sb2-logoutText">Logout</span>
                         </span>
                     </button>
 
-                    <div className="sb-footnote">© {new Date().getFullYear()} KonarCard</div>
+                    <div className="sb2-footnote">© {new Date().getFullYear()} KonarCard</div>
                 </div>
             </aside>
         </>
