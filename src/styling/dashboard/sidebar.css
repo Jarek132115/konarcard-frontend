@@ -1,22 +1,25 @@
 /* src/styling/dashboard/sidebar.css */
 
+/* Tokens */
 :root {
     --sb2-width: 300px;
     --sb2-radius: 22px;
 
-    --sb2-border: rgba(15, 23, 42, 0.08);
-    --sb2-shadow: 0 10px 22px rgba(15, 23, 42, 0.06);
+    /* ✅ Sidebar surface */
+    --sb2-surface: var(--kc-bg-soft, #fafafa);
+
+    /* ✅ Super subtle “border-like” shadow */
+    --sb2-shadow: 0 2px 10px rgba(15, 23, 42, 0.10);
+
+    --sb2-border: rgba(15, 23, 42, 0.10);
 
     --sb2-ink: var(--kc-text-primary, #0f172a);
     --sb2-muted: var(--kc-text-secondary, #475569);
 
     --sb2-active: var(--kc-accent-primary, #f97316);
-
-    --sb2-pad: 18px;
-    --sb2-gap-24: 24px;
 }
 
-/* Mobile overlay */
+/* Overlay (mobile) */
 .sb2-overlay {
     position: fixed;
     inset: 0;
@@ -32,14 +35,14 @@
     visibility: visible;
 }
 
-/* Sidebar shell */
+/* Sidebar */
 .sb2 {
     position: sticky;
     top: 16px;
     height: calc(100vh - 32px);
     width: var(--sb2-width);
 
-    background: #ffffff;
+    background: var(--sb2-surface);
     border: 1px solid var(--sb2-border);
     border-radius: var(--sb2-radius);
     box-shadow: var(--sb2-shadow);
@@ -49,9 +52,9 @@
     overflow: hidden;
 }
 
-/* ===== Top brand ===== */
+/* Top brand */
 .sb2-top {
-    padding: var(--sb2-pad);
+    padding: 16px;
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -62,24 +65,21 @@
     display: flex;
     align-items: center;
     gap: 12px;
-    text-decoration: none;
     min-width: 0;
+    text-decoration: none;
 }
 
-.sb2-logo {
-    width: 36px;
-    height: 36px;
-    border-radius: 14px;
+.sb2-logoPlain {
+    width: 40px;
+    height: 40px;
     display: grid;
     place-items: center;
-    background: rgba(249, 115, 22, 0.10);
-    border: 1px solid rgba(249, 115, 22, 0.14);
     flex: 0 0 auto;
 }
 
-.sb2-logo img {
-    width: 18px;
-    height: 18px;
+.sb2-logoPlain img {
+    width: 40px;
+    height: 40px;
     display: block;
 }
 
@@ -89,10 +89,18 @@
     min-width: 0;
 }
 
+.sb2-brandText .kc-title {
+    margin: 0;
+}
+
+.sb2-brandText .kc-body {
+    margin: 0;
+}
+
 /* Close (mobile) */
 .sb2-close {
-    width: 40px;
-    height: 40px;
+    width: 42px;
+    height: 42px;
     border-radius: 14px;
     border: 1px solid rgba(15, 23, 42, 0.10);
     background: rgba(15, 23, 42, 0.03);
@@ -110,71 +118,100 @@
     transform: translateY(1px);
 }
 
-/* Divider */
+/* Dividers + spacing (24px above/below like you asked) */
 .sb2-divider {
     height: 1px;
-    background: rgba(15, 23, 42, 0.10);
-    margin: 0 var(--sb2-pad);
+    background: rgba(15, 23, 42, 0.08);
+    margin: 0 16px;
 }
 
 .sb2-divider--top {
     margin-top: 0;
-    margin-bottom: var(--sb2-gap-24);
-    /* 24px under line */
 }
 
-/* ===== Menu area ===== */
 .sb2-menuWrap {
-    padding: 0 var(--sb2-pad);
+    padding: 24px 16px 0;
 }
 
-/* MENU label */
+.sb2-bottom {
+    margin-top: auto;
+    padding: 0 16px 16px;
+    display: grid;
+    gap: 14px;
+}
+
+.sb2-divider--bottom {
+    margin: 24px 0 0;
+    width: calc(100% - 32px);
+    justify-self: center;
+}
+
+/* Menu label */
 .sb2-menuLabel {
     font-family: "Inter", sans-serif;
+    font-size: 11px;
     font-weight: 700;
-    font-size: 12px;
-    letter-spacing: 0.12em;
+    letter-spacing: 0.14em;
     text-transform: uppercase;
-    color: var(--sb2-muted);
-    margin-bottom: 14px;
+    color: rgba(71, 85, 105, 0.85);
+    margin-bottom: 18px;
 }
 
 /* Nav list */
 .sb2-nav {
     display: grid;
-    gap: 10px;
-    padding-bottom: var(--sb2-gap-24);
+    gap: 18px;
+    /* ✅ nice spaced out gap */
 }
 
-/* Link row */
+/* ✅ LINKS: no pill, no bg, no border */
 .sb2-link {
     display: flex;
     align-items: center;
-    gap: 14px;
-    padding: 10px 12px;
-    border-radius: 16px;
-    text-decoration: none;
-    border: 1px solid transparent;
+    gap: 12px;
 
+    padding: 0;
+    /* ✅ no padding */
+    border: none;
+    /* ✅ no border */
+    background: transparent;
+    /* ✅ no background */
+    border-radius: 0;
+    /* ✅ no shape */
+
+    text-decoration: none;
     color: var(--sb2-muted);
-    transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+
+    /* ✅ text style */
+    font-family: "Cal Sans", sans-serif;
+    font-size: 20px;
+    font-weight: 400;
+
+    transition: color 0.15s ease, transform 0.08s ease;
+}
+
+.sb2-link:hover {
+    color: rgba(15, 23, 42, 0.86);
+}
+
+.sb2-link:active {
+    transform: translateY(1px);
 }
 
 .sb2-link:focus-visible {
     outline: none;
     box-shadow: 0 0 0 3px var(--kc-focus-ring);
+    border-radius: 12px;
+    /* focus ring needs a shape */
+    padding: 6px 8px;
+    /* only for focus ring comfort */
+    margin: -6px -8px;
 }
 
-.sb2-link:hover {
-    background: rgba(15, 23, 42, 0.03);
-    color: var(--sb2-ink);
-}
-
-/* Icon 30x30 */
+/* Icons: 30x30 requested */
 .sb2-ico {
     width: 30px;
     height: 30px;
-    border-radius: 12px;
     display: grid;
     place-items: center;
     flex: 0 0 auto;
@@ -184,104 +221,76 @@
     width: 30px;
     height: 30px;
     display: block;
-    opacity: 0.92;
-    /* make non-active icons feel "secondary" */
-    filter: grayscale(1) saturate(0.2) opacity(0.9);
+    opacity: 0.95;
 }
 
-/* Text 20px Cal Sans regular */
-.sb2-text {
-    font-family: "Cal Sans", sans-serif;
-    font-size: 20px;
-    font-weight: 400;
-    letter-spacing: -0.01em;
-    color: currentColor;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
-
-/* Active state = orange text + orange icon */
+/* Active: ONLY colour change (text + icon) */
 .sb2-link.active {
-    background: rgba(249, 115, 22, 0.10);
-    border-color: rgba(249, 115, 22, 0.18);
     color: var(--sb2-active);
 }
 
 .sb2-link.active .sb2-ico img {
-    /* approximate orange tint for SVG icons used as <img> */
-    filter: invert(54%) sepia(63%) saturate(1540%) hue-rotate(347deg) brightness(101%) contrast(96%);
+    filter: none;
 }
 
-/* ===== Bottom area ===== */
-.sb2-bottom {
-    margin-top: auto;
-    padding: 0 var(--sb2-pad) var(--sb2-pad);
-    display: grid;
-    gap: 12px;
-}
-
-.sb2-divider--bottom {
-    margin-top: var(--sb2-gap-24);
-    margin-bottom: var(--sb2-gap-24);
-}
-
+/* Bottom section link spacing */
 .sb2-linkBottom {
-    padding: 10px 12px;
+    margin-top: 18px;
 }
 
-/* Logout button (same row style as links) */
+/* Logout button: match link style (no pill) but red */
 .sb2-logout {
-    width: 100%;
-    border-radius: 16px;
-    padding: 10px 12px;
-
-    border: 1px solid transparent;
+    width: fit-content;
+    padding: 0;
+    border: none;
     background: transparent;
     cursor: pointer;
-
     color: rgba(220, 38, 38, 0.95);
-    transition: background 0.15s ease, border-color 0.15s ease;
+
+    font-family: "Cal Sans", sans-serif;
+    font-size: 20px;
+    font-weight: 400;
+
+    transition: color 0.15s ease, transform 0.08s ease;
 }
 
 .sb2-logout:hover {
-    background: rgba(220, 38, 38, 0.05);
-    border-color: rgba(220, 38, 38, 0.14);
+    color: rgba(220, 38, 38, 0.85);
+}
+
+.sb2-logout:active {
+    transform: translateY(1px);
 }
 
 .sb2-logout:focus-visible {
     outline: none;
     box-shadow: 0 0 0 3px var(--kc-focus-ring);
+    border-radius: 12px;
+    padding: 6px 8px;
+    margin: -6px -8px;
 }
 
 .sb2-logoutInner {
     display: flex;
     align-items: center;
-    gap: 14px;
+    gap: 12px;
 }
 
 .sb2-logoutText {
-    font-family: "Cal Sans", sans-serif;
-    font-size: 20px;
-    font-weight: 400;
-    letter-spacing: -0.01em;
+    line-height: 1;
 }
 
-/* Ensure logout icon stays red-ish */
-.sb2-logout .sb2-ico img {
-    filter: invert(20%) sepia(92%) saturate(3332%) hue-rotate(347deg) brightness(95%) contrast(102%);
-}
-
+/* Footnote */
 .sb2-footnote {
     font-family: "Inter", sans-serif;
     font-size: 12px;
-    font-weight: 600;
-    color: rgba(71, 85, 105, 0.80);
+    font-weight: 700;
+    color: rgba(71, 85, 105, 0.70);
     text-align: center;
-    padding-top: 4px;
+    margin-top: 6px;
 }
 
-/* ===== Mobile drawer ===== */
+/* Mobile drawer */
 @media (max-width: 1000px) {
     .sb2 {
         position: fixed;
@@ -298,35 +307,24 @@
     .sb2.open {
         transform: translateX(0);
     }
-}
 
-/* src/styling/dashboard/sidebar.css */
+    .sb2-top {
+        padding: 14px;
+    }
 
-/* ...keep everything you already have... */
+    .sb2-divider {
+        margin: 0 14px;
+    }
 
-/* ✅ NEW: logo with NO background / border, and 40x40 */
-.sb2-logoPlain {
-    width: 40px;
-    height: 40px;
-    display: grid;
-    place-items: center;
-    flex: 0 0 auto;
-}
+    .sb2-menuWrap {
+        padding: 24px 14px 0;
+    }
 
-.sb2-logoPlain img {
-    width: 40px;
-    height: 40px;
-    display: block;
-}
+    .sb2-bottom {
+        padding: 0 14px 14px;
+    }
 
-/* Optional: tighten brand text spacing slightly */
-.sb2-brandText {
-    display: grid;
-    gap: 2px;
-    min-width: 0;
-}
-
-/* Make sure the body class in brand line doesn't add unwanted margins */
-.sb2-brandText .kc-body {
-    margin: 0;
+    .sb2-divider--bottom {
+        width: calc(100% - 28px);
+    }
 }
