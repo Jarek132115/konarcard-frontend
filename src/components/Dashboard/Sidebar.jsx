@@ -70,6 +70,7 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen }) {
                             <img src={LogoIcon} alt="" />
                         </span>
 
+                        {/* Desktop only: brand text */}
                         <span className="sb2-brandText">
                             <span className="kc-title">KonarCard</span>
                             <span className="kc-body">Your digital business card</span>
@@ -103,7 +104,11 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen }) {
                                 className={`sb2-link ${isActive(item.to) ? "active" : ""}`}
                             >
                                 <span className="sb2-ico" aria-hidden="true">
-                                    <img src={item.icon} alt="" />
+                                    {/* icon uses mask so it can change colour */}
+                                    <span
+                                        className="sb2-icon"
+                                        style={{ WebkitMaskImage: `url(${item.icon})`, maskImage: `url(${item.icon})` }}
+                                    />
                                 </span>
                                 <span className="sb2-text">{item.label}</span>
                             </Link>
@@ -121,7 +126,10 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen }) {
                         className={`sb2-link sb2-linkBottom ${isActive("/settings") ? "active" : ""}`}
                     >
                         <span className="sb2-ico" aria-hidden="true">
-                            <img src={SettingsIcon} alt="" />
+                            <span
+                                className="sb2-icon"
+                                style={{ WebkitMaskImage: `url(${SettingsIcon})`, maskImage: `url(${SettingsIcon})` }}
+                            />
                         </span>
                         <span className="sb2-text">Settings</span>
                     </Link>
@@ -129,7 +137,10 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen }) {
                     <button className="sb2-logout" onClick={handleLogout} type="button">
                         <span className="sb2-logoutInner">
                             <span className="sb2-ico" aria-hidden="true">
-                                <img src={LogoutIcon} alt="" />
+                                <span
+                                    className="sb2-icon sb2-icon--danger"
+                                    style={{ WebkitMaskImage: `url(${LogoutIcon})`, maskImage: `url(${LogoutIcon})` }}
+                                />
                             </span>
                             <span className="sb2-logoutText">Logout</span>
                         </span>
