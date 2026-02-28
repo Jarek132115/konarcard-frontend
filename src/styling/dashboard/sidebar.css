@@ -301,7 +301,7 @@
 
     /* ✅ Bottom section also centered as a group */
     .sb2-bottom {
-        padding: 0 16px 48px;
+        padding: 0 16px 64px;
         align-items: center;
         justify-content: center;
     }
