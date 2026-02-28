@@ -42,13 +42,11 @@
 }
 
 /* Grid of videos */
-/* Grid of videos — ✅ 1 per row, full width */
 .hc3-grid {
   display: grid;
-  grid-template-columns: 1fr;
-  /* ✅ always one column */
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 24px;
-  /* ✅ consistent spacing */
+  /* ✅ consistent */
   align-items: stretch;
 }
 
