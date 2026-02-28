@@ -30,6 +30,7 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen }) {
     }, []);
 
     const closeSidebar = () => setSidebarOpen(false);
+    const openSidebar = () => setSidebarOpen(true);
 
     const isActive = (path) =>
         location.pathname === path || location.pathname.startsWith(path + "/");
@@ -53,6 +54,26 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen }) {
 
     return (
         <>
+            {/* ✅ MOBILE TOP BAR (when sidebar is closed) — LOGO ONLY */}
+            {isMobile && !sidebarOpen ? (
+                <div className="sb2-topbar" role="banner" aria-label="Mobile top bar">
+                    <Link to="/dashboard" className="sb2-topbarBrand" aria-label="KonarCard home">
+                        <span className="sb2-logoPlain" aria-hidden="true">
+                            <img src={LogoIcon} alt="" />
+                        </span>
+                    </Link>
+
+                    <button
+                        type="button"
+                        className="sb2-topbarMenu"
+                        aria-label="Open menu"
+                        onClick={openSidebar}
+                    >
+                        ☰
+                    </button>
+                </div>
+            ) : null}
+
             <div
                 className={`sb2-overlay ${isMobile && sidebarOpen ? "active" : ""}`}
                 onClick={closeSidebar}
@@ -62,14 +83,14 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen }) {
                 className={`sb2 ${isMobile ? "mobile" : ""} ${sidebarOpen ? "open" : ""}`}
                 aria-label="Sidebar"
             >
-                {/* Top */}
+                {/* Top (open sidebar) */}
                 <div className="sb2-top">
                     <Link to="/dashboard" className="sb2-brand" onClick={closeSidebar}>
                         <span className="sb2-logoPlain" aria-hidden="true">
                             <img src={LogoIcon} alt="" />
                         </span>
 
-                        {/* Desktop only brand text */}
+                        {/* Desktop only brand text (CSS hides on mobile open) */}
                         <span className="sb2-brandText">
                             <span className="kc-title">KonarCard</span>
                             <span className="kc-body">Your digital business card</span>
@@ -90,7 +111,7 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen }) {
 
                 <div className="sb2-divider" />
 
-                {/* Menu (centered on mobile) */}
+                {/* Menu */}
                 <div className="sb2-menuWrap">
                     <div className="sb2-menuLabel">MENU</div>
 

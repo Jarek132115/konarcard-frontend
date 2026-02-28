@@ -10,9 +10,67 @@
     --sb2-muted: var(--kc-text-secondary, #475569);
     --sb2-active: var(--kc-accent-primary, #f97316);
 
-    /* icon filters (for black SVGs in <img>) */
+    /* icon filters (for black SVGs inside <img>) */
     --sb2-icon-muted-filter: invert(33%) sepia(10%) saturate(980%) hue-rotate(182deg) brightness(95%) contrast(90%);
     --sb2-icon-active-filter: invert(59%) sepia(79%) saturate(1900%) hue-rotate(346deg) brightness(100%) contrast(98%);
+
+    /* logout icon red filter */
+    --sb2-icon-logout-filter: invert(32%) sepia(93%) saturate(1450%) hue-rotate(345deg) brightness(95%) contrast(95%);
+}
+
+/* ---------------------------
+   MOBILE TOP BAR (closed)
+   --------------------------- */
+.sb2-topbar {
+    width: 100%;
+    background: #fff;
+    border: 1px solid rgba(15, 23, 42, 0.10);
+    border-radius: 20px;
+    box-shadow: 0 2px 10px rgba(15, 23, 42, 0.08);
+
+    padding: 12px 14px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+
+    /* keep above content */
+    position: relative;
+    z-index: 50;
+}
+
+.sb2-topbarBrand {
+    display: inline-flex;
+    align-items: center;
+    text-decoration: none;
+}
+
+.sb2-topbarMenu {
+    width: 44px;
+    height: 44px;
+    border-radius: 14px;
+    border: 1px solid rgba(15, 23, 42, 0.10);
+    background: rgba(15, 23, 42, 0.03);
+    cursor: pointer;
+
+    font-size: 18px;
+    font-weight: 900;
+    line-height: 1;
+
+    transition: background 0.18s ease, transform 0.08s ease;
+}
+
+.sb2-topbarMenu:hover {
+    background: rgba(15, 23, 42, 0.06);
+}
+
+.sb2-topbarMenu:active {
+    transform: translateY(1px);
+}
+
+.sb2-topbarMenu:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 3px var(--kc-focus-ring);
 }
 
 /* Overlay (mobile) */
@@ -48,7 +106,7 @@
     overflow: hidden;
 }
 
-/* Top brand */
+/* Top brand (open sidebar) */
 .sb2-top {
     padding: 24px 16px;
     display: flex;
@@ -65,7 +123,7 @@
     text-decoration: none;
 }
 
-/* ✅ HARD RESET: logo must be plain everywhere (no bg/border/radius/shadow) */
+/* ✅ LOGO MUST ALWAYS BE PLAIN (no bg/border/pill anywhere) */
 .sb2-logoPlain {
     width: 40px;
     height: 40px;
@@ -89,6 +147,7 @@
     border: 0 !important;
     box-shadow: none !important;
     border-radius: 0 !important;
+    padding: 0 !important;
 }
 
 .sb2-brandText {
@@ -183,7 +242,7 @@
     margin: -6px -8px;
 }
 
-/* Icons: NO background, NO border, just the icon */
+/* Icons */
 .sb2-ico {
     width: 30px;
     height: 30px;
@@ -216,6 +275,7 @@
     gap: 24px;
 }
 
+/* Logout */
 .sb2-logout {
     width: fit-content;
     padding: 0;
@@ -245,6 +305,12 @@
     gap: 12px;
 }
 
+/* ✅ Logout icon always red */
+.sb2-logout .sb2-ico img {
+    filter: var(--sb2-icon-logout-filter) !important;
+    opacity: 0.95;
+}
+
 .sb2-footnote {
     font-family: "Inter", sans-serif;
     font-size: 12px;
@@ -254,7 +320,7 @@
     margin-top: 6px;
 }
 
-/* ✅ Mobile: full width + centered menu group + top only logo + close */
+/* ✅ Mobile: full width drawer + centered menu group + top only logo + close */
 @media (max-width: 1000px) {
     .sb2 {
         position: fixed;
@@ -266,6 +332,9 @@
         transform: translateX(-100%);
         transition: transform 0.35s ease;
         z-index: 1002;
+
+        /* Mobile sidebar surface */
+        background: #fff;
     }
 
     .sb2.open {
@@ -276,7 +345,7 @@
         padding: 16px;
     }
 
-    /* ✅ remove KonarCard + subtext on mobile */
+    /* ✅ remove KonarCard + subtext on mobile open sidebar */
     .sb2-brandText {
         display: none;
     }
@@ -285,7 +354,7 @@
         margin: 0 16px;
     }
 
-    /* ✅ Center the MENU label + nav group cleanly */
+    /* Center the MENU label + nav group */
     .sb2-menuWrap {
         padding: 24px 16px 0;
         display: flex;
@@ -303,15 +372,10 @@
         justify-items: center;
     }
 
-    /* ✅ Bottom section also centered as a group */
+    /* Bottom section centered */
     .sb2-bottom {
         padding: 0 16px 64px;
         align-items: center;
         justify-content: center;
     }
-}
-
-/* ✅ Make logout icon always red (same as text) */
-.sb2-logout .sb2-ico img {
-    filter: invert(32%) sepia(93%) saturate(1450%) hue-rotate(345deg) brightness(95%) contrast(95%);
 }
