@@ -1,5 +1,7 @@
 :root {
-    --sb2-width: 300px;
+    /* ✅ match previous feel (optional, but this is likely what you mean by oversized) */
+    --sb2-width: 272px;
+
     --sb2-radius: 22px;
 
     --sb2-surface: var(--kc-bg-soft, #fafafa);
@@ -10,11 +12,9 @@
     --sb2-muted: var(--kc-text-secondary, #475569);
     --sb2-active: var(--kc-accent-primary, #f97316);
 
-    /* icon filters (for black SVGs inside <img>) */
     --sb2-icon-muted-filter: invert(33%) sepia(10%) saturate(980%) hue-rotate(182deg) brightness(95%) contrast(90%);
     --sb2-icon-active-filter: invert(59%) sepia(79%) saturate(1900%) hue-rotate(346deg) brightness(100%) contrast(98%);
 
-    /* logout icon red filter */
     --sb2-icon-logout-filter: invert(32%) sepia(93%) saturate(1450%) hue-rotate(345deg) brightness(95%) contrast(95%);
 }
 
@@ -37,8 +37,11 @@
 /* Sidebar */
 .sb2 {
     position: sticky;
-    top: 16px;
-    height: calc(100vh - 32px);
+
+    /* ✅ MATCH the new page gutter (24px) */
+    top: 24px;
+    height: calc(100vh - 48px);
+
     width: var(--sb2-width);
 
     background: var(--sb2-surface);
@@ -51,7 +54,7 @@
     overflow: hidden;
 }
 
-/* ✅ Top brand (open sidebar) — 24px all around */
+/* Top brand — 24px all around */
 .sb2-top {
     padding: 24px;
     display: flex;
@@ -68,7 +71,7 @@
     text-decoration: none;
 }
 
-/* ✅ LOGO MUST ALWAYS BE PLAIN (no bg/border/pill anywhere) */
+/* Logo plain */
 .sb2-logoPlain {
     width: 40px;
     height: 40px;
@@ -122,14 +125,14 @@
     transform: translateY(1px);
 }
 
-/* ✅ Divider aligns to 24px gutters */
+/* Divider aligns to 24px gutters */
 .sb2-divider {
     height: 1px;
     background: rgba(15, 23, 42, 0.08);
     margin: 0 24px;
 }
 
-/* ✅ Menu block — 24px gutters */
+/* Menu block */
 .sb2-menuWrap {
     padding: 24px 24px 0;
 }
@@ -144,13 +147,12 @@
     margin-bottom: 24px;
 }
 
-/* Nav list (gap = 24px) */
+/* Nav list */
 .sb2-nav {
     display: grid;
     gap: 24px;
 }
 
-/* Links */
 .sb2-link {
     display: flex;
     align-items: center;
@@ -187,7 +189,6 @@
     margin: -6px -8px;
 }
 
-/* Icons */
 .sb2-ico {
     width: 30px;
     height: 30px;
@@ -203,7 +204,6 @@
     filter: var(--sb2-icon-muted-filter);
 }
 
-/* Active: text + icon both orange */
 .sb2-link.active {
     color: var(--sb2-active);
 }
@@ -212,7 +212,7 @@
     filter: var(--sb2-icon-active-filter);
 }
 
-/* ✅ Bottom — 24px gutters + clean spacing */
+/* Bottom */
 .sb2-bottom {
     margin-top: auto;
     padding: 0 24px 24px;
@@ -220,7 +220,6 @@
     gap: 24px;
 }
 
-/* Logout */
 .sb2-logout {
     width: fit-content;
     padding: 0;
@@ -250,7 +249,6 @@
     gap: 12px;
 }
 
-/* ✅ Logout icon always red */
 .sb2-logout .sb2-ico img {
     filter: var(--sb2-icon-logout-filter) !important;
     opacity: 0.95;
@@ -265,7 +263,7 @@
     margin-top: 6px;
 }
 
-/* ✅ Mobile: full width drawer + centered menu group + logo-only (no KonarCard text) */
+/* Mobile drawer */
 @media (max-width: 1000px) {
     .sb2 {
         position: fixed;
@@ -277,8 +275,6 @@
         transform: translateX(-100%);
         transition: transform 0.35s ease;
         z-index: 1002;
-
-        /* keep your current mobile surface */
         background: #fafafa;
     }
 
@@ -290,7 +286,6 @@
         padding: 24px;
     }
 
-    /* ✅ KonarCard + subtext must not show on mobile */
     .sb2-brandText {
         display: none;
     }
