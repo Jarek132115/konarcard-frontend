@@ -1,299 +1,88 @@
 /* frontend/src/styling/dashboard/helpcentreinterface.css
-   Help Centre — minimal, premium, consistent with kx-btn system
-   Cal Sans only used by PageHeader title (global rule).
+   Help Centre v3
+   - No topics/rail
+   - 10 video cards
+   - 24px spacing system
 */
 
 :root {
-  --hc-ink: var(--kc-text-primary, #0f172a);
-  --hc-muted: var(--kc-text-secondary, #475569);
-  --hc-border: rgba(15, 23, 42, 0.10);
-  --hc-soft: rgba(15, 23, 42, 0.02);
-  --hc-shadow: 0 14px 34px rgba(15, 23, 42, 0.08);
-  --hc-shadow-sm: 0 10px 26px rgba(15, 23, 42, 0.06);
+  --hc3-border: rgba(15, 23, 42, 0.10);
+  --hc3-shadow: 0 10px 22px rgba(15, 23, 42, 0.04);
+  --hc3-card: #ffffff;
 }
 
-.hc-shell {
+.hc3-shell {
   width: 100%;
-  padding: 0;
-  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  /* ✅ header -> content gap */
 }
 
-/* =========================
-   PageHeader rightSlot
-   ========================= */
-.hc-headRight {
-  display: flex;
-  align-items: flex-end;
+/* PageHeader already handles padding/shape. This ensures we don't add extra spacing */
+.hc3-shell .ph2-wrap {
+  margin-bottom: 0;
+}
+
+/* Header right slot */
+.hc3-headRight {
+  display: inline-flex;
+  align-items: center;
   justify-content: flex-end;
   gap: 10px;
   flex-wrap: wrap;
 }
 
-.hc-headPills {
-  display: inline-flex;
-  align-items: center;
-  gap: 10px;
-  flex-wrap: wrap;
-}
-
-.hc-pillLink {
+.hc3-pillLink {
   text-decoration: none;
 }
 
-.hc-pillLink:hover {
+.hc3-pillLink:hover {
   text-decoration: underline;
 }
 
-/* header actions */
-.hc-header-actions {
-  display: inline-flex;
-  align-items: center;
-  gap: 10px;
-  flex-wrap: wrap;
-  justify-content: flex-end;
-}
-
-/* =========================
-   Layout grid
-   ========================= */
-.hc-grid {
+/* Grid of videos */
+.hc3-grid {
   display: grid;
-  grid-template-columns: minmax(0, 1.05fr) minmax(0, 1.55fr);
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 24px;
+  /* ✅ consistent */
+  align-items: stretch;
+}
+
+/* Card */
+.hc3-card {
+  background: var(--hc3-card);
+  border: 1px solid var(--hc3-border);
+  border-radius: 22px;
+  box-shadow: var(--hc3-shadow);
+  padding: 24px;
+
+  display: flex;
+  flex-direction: column;
   gap: 16px;
-  align-items: start;
-  margin-top: 16px;
+
+  min-width: 0;
 }
 
-/* =========================
-   Rail
-   ========================= */
-.hc-rail {
-  position: sticky;
-  top: 12px;
-}
-
-.hc-rail-card {
-  background: #fff;
-  border: 1px solid var(--hc-border);
-  border-radius: 20px;
-  box-shadow: var(--hc-shadow-sm);
-  padding: 16px;
-}
-
-.hc-rail-head {
+.hc3-top {
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
-  gap: 12px;
+  gap: 16px;
 }
 
-.hc-eyebrow {
-  font-family: "Inter", sans-serif;
-  font-weight: 600;
-  font-size: 12px;
-  letter-spacing: 0.10em;
-  text-transform: uppercase;
-  color: rgba(15, 23, 42, 0.55);
-}
-
-.hc-rail-title {
-  margin-top: 6px;
-  font-family: "Inter", sans-serif;
-  font-weight: 700;
-  font-size: 16px;
-  color: var(--hc-ink);
-  letter-spacing: -0.01em;
-}
-
-.hc-muted {
-  margin-top: 8px;
-  font-family: "Inter", sans-serif;
-  font-weight: 500;
-  font-size: 14px;
-  line-height: 1.55;
-  color: var(--hc-muted);
-}
-
-.hc-chip {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  padding: 7px 10px;
-  border-radius: 999px;
-  border: 1px solid rgba(15, 23, 42, 0.12);
-  background: rgba(15, 23, 42, 0.03);
-  font-family: "Inter", sans-serif;
-  font-weight: 600;
-  font-size: 12px;
-  color: rgba(15, 23, 42, 0.82);
-  white-space: nowrap;
-}
-
-.hc-rail-list {
-  margin-top: 14px;
-  display: grid;
-  gap: 10px;
-}
-
-.hc-rail-item {
-  width: 100%;
-  background: #fff;
-  border: 1px solid rgba(15, 23, 42, 0.10);
-  border-radius: 18px;
-  padding: 12px;
+.hc3-titleWrap {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   gap: 12px;
-  cursor: pointer;
-  text-align: left;
-  transition: transform 0.12s ease, box-shadow 0.15s ease, background 0.15s ease, border-color 0.15s ease;
-}
-
-.hc-rail-item:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 10px 26px rgba(15, 23, 42, 0.08);
-  background: rgba(15, 23, 42, 0.01);
-}
-
-.hc-rail-item:active {
-  transform: translateY(0px);
-  box-shadow: none;
-}
-
-.hc-rail-item:focus-visible {
-  outline: none;
-  box-shadow: 0 0 0 3px var(--kc-focus-ring, rgba(249, 115, 22, 0.2));
-}
-
-.hc-rail-ico {
-  width: 42px;
-  height: 42px;
-  border-radius: 16px;
-  background: rgba(249, 115, 22, 0.12);
-  border: 1px solid rgba(249, 115, 22, 0.18);
-  display: grid;
-  place-items: center;
-  font-size: 18px;
-  flex: 0 0 auto;
-}
-
-.hc-rail-meta {
   min-width: 0;
   flex: 1;
 }
 
-.hc-rail-item-title {
-  font-family: "Inter", sans-serif;
-  font-weight: 700;
-  color: var(--hc-ink);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.hc-rail-item-sub {
-  overflow: hidden;
-  display: -webkit-box;
-
-  /* ✅ standard + webkit for compatibility/lint */
-  line-clamp: 2;
-  -webkit-line-clamp: 2;
-
-  -webkit-box-orient: vertical;
-}
-
-.hc-rail-tag {
-  flex: 0 0 auto;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  padding: 7px 10px;
-  border-radius: 999px;
-  border: 1px solid rgba(15, 23, 42, 0.12);
-  background: rgba(15, 23, 42, 0.03);
-  font-family: "Inter", sans-serif;
-  font-weight: 600;
-  font-size: 12px;
-  color: rgba(15, 23, 42, 0.75);
-  white-space: nowrap;
-}
-
-.hc-rail-divider {
-  margin: 14px 0;
-  height: 1px;
-  background: rgba(15, 23, 42, 0.08);
-}
-
-.hc-callout {
-  border: 1px solid rgba(15, 23, 42, 0.10);
-  background: rgba(15, 23, 42, 0.02);
-  border-radius: 16px;
-  padding: 12px;
-  font-family: "Inter", sans-serif;
-  font-weight: 500;
-  color: var(--hc-ink);
-  line-height: 1.5;
-}
-
-.hc-linklike {
-  background: none;
-  border: none;
-  padding: 0;
-  margin: 0;
-  color: var(--kc-accent-primary, #f97316);
-  cursor: pointer;
-  text-decoration: underline;
-  font: inherit;
-  font-weight: 650;
-}
-
-.hc-rail-actions {
-  margin-top: 12px;
-  display: flex;
-  gap: 10px;
-  flex-wrap: wrap;
-}
-
-/* =========================
-   Main
-   ========================= */
-.hc-main {
-  min-width: 0;
-}
-
-.hc-list {
-  display: grid;
-  gap: 12px;
-}
-
-/* =========================
-   Content cards
-   ========================= */
-.hc-card {
-  background: #fff;
-  border: 1px solid var(--hc-border);
-  border-radius: 20px;
-  box-shadow: var(--hc-shadow-sm);
-  padding: 16px;
-}
-
-.hc-card-top {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 12px;
-}
-
-.hc-card-titlewrap {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  min-width: 0;
-}
-
-.hc-card-emoji {
-  width: 42px;
-  height: 42px;
+.hc3-ico {
+  width: 44px;
+  height: 44px;
   border-radius: 16px;
   background: rgba(249, 115, 22, 0.10);
   border: 1px solid rgba(249, 115, 22, 0.16);
@@ -303,130 +92,92 @@
   flex: 0 0 auto;
 }
 
-.hc-card-title {
-  margin: 0;
-  font-family: "Inter", sans-serif;
-  font-weight: 700;
-  font-size: 16px;
-  color: var(--hc-ink);
-  letter-spacing: -0.01em;
+.hc3-txt {
+  min-width: 0;
+  display: grid;
+  gap: 4px;
 }
 
-.hc-status {
+.hc3-title {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.hc3-desc {
+  margin: 0;
+  display: -webkit-box;
+  line-clamp: 2;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* Meta chips */
+.hc3-meta {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
   flex: 0 0 auto;
+}
+
+.hc3-chip {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   padding: 7px 10px;
   border-radius: 999px;
-  border: 1px solid rgba(107, 33, 168, 0.22);
-  background: rgba(107, 33, 168, 0.08);
+  border: 1px solid rgba(15, 23, 42, 0.12);
+  background: rgba(15, 23, 42, 0.03);
   font-family: "Inter", sans-serif;
-  font-weight: 600;
+  font-weight: 700;
   font-size: 12px;
-  color: #6b21a8;
+  color: rgba(15, 23, 42, 0.80);
   white-space: nowrap;
 }
 
-.hc-card-body {
-  margin-top: 12px;
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 10px;
+.hc3-chip--ghost {
+  background: #ffffff;
 }
 
-.hc-kv {
-  border: 1px solid rgba(15, 23, 42, 0.10);
-  background: #fff;
-  border-radius: 18px;
-  padding: 14px;
-}
-
-.hc-k {
-  font-family: "Inter", sans-serif;
-  font-size: 12px;
-  font-weight: 600;
-  letter-spacing: 0.10em;
-  color: rgba(15, 23, 42, 0.55);
-  text-transform: uppercase;
-}
-
-.hc-v {
-  margin-top: 8px;
-  font-family: "Inter", sans-serif;
-  font-size: 13px;
-  font-weight: 500;
-  color: rgba(71, 85, 105, 0.95);
-  line-height: 1.45;
-}
-
-.hc-inline-link {
-  color: var(--kc-accent-primary, #f97316);
-  font-weight: 650;
-}
-
-.hc-card-actions {
-  margin-top: 12px;
+/* Actions */
+.hc3-actions {
   display: flex;
   gap: 10px;
   flex-wrap: wrap;
+  align-items: center;
 }
 
-/* =========================
-   Responsive
-   ========================= */
+/* Responsive */
 @media (max-width: 1100px) {
-  .hc-grid {
+  .hc3-grid {
     grid-template-columns: 1fr;
   }
 
-  .hc-rail {
-    position: static;
-  }
-
-  /* PageHeader right slot on tablet */
-  .hc-headRight {
+  .hc3-headRight {
     width: 100%;
     justify-content: flex-start;
-    align-items: flex-start;
-  }
-
-  .hc-header-actions {
-    justify-content: flex-start;
-  }
-
-  .hc-card-body {
-    grid-template-columns: 1fr;
   }
 }
 
 @media (max-width: 520px) {
-  .hc-card-top {
-    flex-direction: column;
-    align-items: flex-start;
-  }
-
-  /* PageHeader right slot on mobile */
-  .hc-headRight {
+  .hc3-headRight {
     flex-direction: column;
     align-items: stretch;
   }
 
-  .hc-headPills,
-  .hc-header-actions,
-  .hc-rail-actions,
-  .hc-card-actions {
-    width: 100%;
-  }
-
-  .hc-header-actions .kx-btn,
-  .hc-rail-actions .kx-btn,
-  .hc-card-actions .kx-btn {
+  .hc3-headRight .kx-btn,
+  .hc3-headRight .kc-pill {
     width: 100%;
     justify-content: center;
   }
 
-  .hc-rail-item {
-    align-items: flex-start;
+  .hc3-actions .kx-btn {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .hc3-title {
+    white-space: normal;
   }
 }

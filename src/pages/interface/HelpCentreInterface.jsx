@@ -1,5 +1,5 @@
 // src/pages/interface/HelpCentreInterface.jsx
-import React, { useMemo, useContext } from "react";
+import React, { useContext, useMemo } from "react";
 import { Link } from "react-router-dom";
 import DashboardLayout from "../../components/Dashboard/DashboardLayout";
 import PageHeader from "../../components/Dashboard/PageHeader";
@@ -17,18 +17,9 @@ export default function HelpCentreInterface() {
   // keep your consistency hook
   useFetchBusinessCard(userId);
 
-  const currentProfileUrl = userUsername ? `https://www.konarcard.com/u/${userUsername}` : "";
-
-  const sections = useMemo(
-    () => [
-      { id: "getting-started", title: "Getting Started", icon: "🚀", desc: "Set up your first profile and share it." },
-      { id: "profile", title: "Create & Edit Your Profile", icon: "🧩", desc: "Update your details, services and links." },
-      { id: "konar-card", title: "Using Your KonarCard", icon: "📲", desc: "How taps work, sharing, and best practices." },
-      { id: "branding", title: "Branding & Themes", icon: "🎨", desc: "Themes, colors, layout and customization." },
-      { id: "troubleshooting", title: "Troubleshooting", icon: "🛠️", desc: "Common issues and quick fixes." },
-    ],
-    []
-  );
+  const currentProfileUrl = userUsername
+    ? `https://www.konarcard.com/u/${userUsername}`
+    : "";
 
   const openChat = () => {
     try {
@@ -38,147 +29,155 @@ export default function HelpCentreInterface() {
     }
   };
 
-  const scrollTo = (id) => {
-    const el = document.getElementById(`hc-${id}`);
-    el?.scrollIntoView?.({ behavior: "smooth", block: "start" });
-  };
+  const videos = useMemo(
+    () => [
+      {
+        id: "v1",
+        icon: "🚀",
+        title: "Getting started (2 minutes)",
+        desc: "Create your first profile, add the essentials, and share your link.",
+        length: "2:08",
+        level: "Beginner",
+      },
+      {
+        id: "v2",
+        icon: "🧩",
+        title: "Edit your profile like a pro",
+        desc: "Update services, add links, and keep your details always current.",
+        length: "3:12",
+        level: "Beginner",
+      },
+      {
+        id: "v3",
+        icon: "📸",
+        title: "Add photos that build trust",
+        desc: "Upload the right images to show proof, quality, and your best work.",
+        length: "2:41",
+        level: "Beginner",
+      },
+      {
+        id: "v4",
+        icon: "⭐",
+        title: "Collect reviews (the simple method)",
+        desc: "Ask at the right moment and display reviews to win more quotes.",
+        length: "4:05",
+        level: "Intermediate",
+      },
+      {
+        id: "v5",
+        icon: "🔗",
+        title: "Share your profile link (fast)",
+        desc: "Copy + send to customers, add to WhatsApp, and post to socials.",
+        length: "2:22",
+        level: "Beginner",
+      },
+      {
+        id: "v6",
+        icon: "📲",
+        title: "Using your KonarCard (tap-to-share)",
+        desc: "How tap works, what customers see, and best practices on-site.",
+        length: "3:48",
+        level: "Beginner",
+      },
+      {
+        id: "v7",
+        icon: "🎨",
+        title: "Branding & themes",
+        desc: "Pick a clean theme, match colours, and keep everything consistent.",
+        length: "3:25",
+        level: "Intermediate",
+      },
+      {
+        id: "v8",
+        icon: "📈",
+        title: "Analytics: understand what’s working",
+        desc: "See profile views, taps, and link clicks — then improve your results.",
+        length: "4:16",
+        level: "Intermediate",
+      },
+      {
+        id: "v9",
+        icon: "👥",
+        title: "Contact Book: follow up properly",
+        desc: "Track people who saved you and message them at the right time.",
+        length: "3:03",
+        level: "Intermediate",
+      },
+      {
+        id: "v10",
+        icon: "🛠️",
+        title: "Troubleshooting (quick fixes)",
+        desc: "If tap/share isn’t working, fix it in under 60 seconds.",
+        length: "1:18",
+        level: "Beginner",
+      },
+    ],
+    []
+  );
+
+  const headerRight = (
+    <div className="hc3-headRight">
+      {currentProfileUrl ? (
+        <a className="kc-pill hc3-pillLink" href={currentProfileUrl} target="_blank" rel="noreferrer">
+          Visit your profile
+        </a>
+      ) : (
+        <span className="kc-pill">Profile: —</span>
+      )}
+
+      <button type="button" className="kx-btn kx-btn--white" onClick={openChat}>
+        Live chat
+      </button>
+
+      <Link to="/contact" className="kx-btn kx-btn--orange">
+        Contact support
+      </Link>
+    </div>
+  );
 
   return (
-    <DashboardLayout title="Help Centre" subtitle="Tutorials, guides, and support for your KonarCard." hideDesktopHeader>
-      <div className="hc-shell">
+    <DashboardLayout title={null} subtitle={null} hideDesktopHeader>
+      <div className="hc3-shell">
         <PageHeader
           title="Help Centre"
-          subtitle="Find quick answers, tutorials, and best practices."
-          rightSlot={
-            <div className="hc-headRight">
-              <div className="hc-headPills">
-                {currentProfileUrl ? (
-                  <a className="kc-pill hc-pillLink" href={currentProfileUrl} target="_blank" rel="noreferrer">
-                    Visit your profile
-                  </a>
-                ) : (
-                  <span className="kc-pill">Profile: —</span>
-                )}
+          subtitle="Watch quick tutorials and follow step-by-step guides."
+          rightSlot={headerRight}
+        />
+
+        <section className="hc3-grid" aria-label="Help videos">
+          {videos.map((v) => (
+            <article key={v.id} className="hc3-card">
+              <div className="hc3-top">
+                <div className="hc3-titleWrap">
+                  <div className="hc3-ico" aria-hidden="true">
+                    {v.icon}
+                  </div>
+
+                  <div className="hc3-txt">
+                    <div className="kc-title hc3-title">{v.title}</div>
+                    <div className="kc-body hc3-desc">{v.desc}</div>
+                  </div>
+                </div>
+
+                <div className="hc3-meta">
+                  <span className="hc3-chip">{v.level}</span>
+                  <span className="hc3-chip hc3-chip--ghost">{v.length}</span>
+                </div>
               </div>
 
-              <div className="hc-header-actions">
+              <div className="hc3-actions">
+                {/* ✅ does nothing for now */}
+                <button type="button" className="kx-btn kx-btn--black" onClick={() => { }}>
+                  Watch video
+                </button>
+
                 <button type="button" className="kx-btn kx-btn--white" onClick={openChat}>
                   Live chat
                 </button>
-                <Link to="/contact" className="kx-btn kx-btn--orange">
-                  Contact support
-                </Link>
               </div>
-            </div>
-          }
-        />
-
-        <div className="hc-grid">
-          {/* LEFT: rail */}
-          <aside className="hc-rail">
-            <div className="hc-rail-card">
-              <div className="hc-rail-head">
-                <div>
-                  <div className="hc-eyebrow">Browse</div>
-                  <div className="hc-rail-title">Help topics</div>
-                  <div className="hc-muted">Quick links to sections (more coming soon).</div>
-                </div>
-                <span className="hc-chip">BETA</span>
-              </div>
-
-              <div className="hc-rail-list">
-                {sections.map((s) => (
-                  <button key={s.id} type="button" className="hc-rail-item" onClick={() => scrollTo(s.id)}>
-                    <span className="hc-rail-ico" aria-hidden="true">
-                      {s.icon}
-                    </span>
-                    <div className="hc-rail-meta">
-                      <div className="hc-rail-item-title">{s.title}</div>
-                      <div className="hc-rail-item-sub">{s.desc}</div>
-                    </div>
-                    <span className="hc-rail-tag">Soon</span>
-                  </button>
-                ))}
-              </div>
-
-              <div className="hc-rail-divider" />
-
-              <div className="hc-rail-cta">
-                <div className="hc-callout">
-                  Need help now? Use{" "}
-                  <button type="button" className="hc-linklike" onClick={openChat}>
-                    live chat
-                  </button>{" "}
-                  or contact support.
-                </div>
-
-                <div className="hc-rail-actions">
-                  <button type="button" className="kx-btn kx-btn--white" onClick={openChat}>
-                    Live chat
-                  </button>
-                  <Link to="/contact" className="kx-btn kx-btn--black">
-                    Contact support
-                  </Link>
-                </div>
-              </div>
-            </div>
-          </aside>
-
-          {/* RIGHT: content */}
-          <section className="hc-main">
-            <div className="hc-list">
-              {sections.map((s) => (
-                <article key={s.id} id={`hc-${s.id}`} className="hc-card">
-                  <div className="hc-card-top">
-                    <div className="hc-card-titlewrap">
-                      <div className="hc-card-emoji" aria-hidden="true">
-                        {s.icon}
-                      </div>
-                      <div>
-                        <h3 className="hc-card-title">{s.title}</h3>
-                        <p className="hc-muted">{s.desc}</p>
-                      </div>
-                    </div>
-
-                    <span className="hc-status">Under maintenance</span>
-                  </div>
-
-                  <div className="hc-card-body">
-                    <div className="hc-kv">
-                      <div className="hc-k">What’s happening</div>
-                      <div className="hc-v">This section is being improved. We’re polishing the tutorials for a smoother experience.</div>
-                    </div>
-
-                    <div className="hc-kv">
-                      <div className="hc-k">What you’ll get</div>
-                      <div className="hc-v">Short videos, step-by-step guides, best practices, and quick fixes you can follow on-site.</div>
-                    </div>
-
-                    <div className="hc-kv">
-                      <div className="hc-k">Need help now?</div>
-                      <div className="hc-v">
-                        Use{" "}
-                        <button type="button" className="hc-linklike" onClick={openChat}>
-                          live chat
-                        </button>{" "}
-                        or go to <Link to="/contact" className="hc-inline-link">contact support</Link>.
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="hc-card-actions">
-                    <button type="button" onClick={openChat} className="kx-btn kx-btn--white">
-                      Live chat
-                    </button>
-                    <Link to="/contact" className="kx-btn kx-btn--orange">
-                      Contact support
-                    </Link>
-                  </div>
-                </article>
-              ))}
-            </div>
-          </section>
-        </div>
+            </article>
+          ))}
+        </section>
       </div>
     </DashboardLayout>
   );
