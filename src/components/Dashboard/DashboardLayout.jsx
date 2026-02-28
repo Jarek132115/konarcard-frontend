@@ -1,5 +1,6 @@
 // src/components/Dashboard/DashboardLayout.jsx
 import React, { useEffect, useMemo, useState } from "react";
+import { Link } from "react-router-dom";
 import Sidebar from "./Sidebar";
 
 import LogoIcon from "../../assets/icons/Logo-Icon.svg";
@@ -56,18 +57,13 @@ export default function DashboardLayout({
         if (hideMobileTopbar) return null;
 
         return (
-            <header className="dash-topbar" role="banner">
-                {/* ✅ Logo LEFT */}
-                <div className="dash-topbar-left" aria-label="KonarCard">
-                    <span className="dash-topbar-logo">
-                        <img src={LogoIcon} alt="KonarCard" />
+            <header className="dash-topbar" role="banner" aria-label="Mobile header">
+                {/* ✅ Logo ONLY (no text) */}
+                <Link to="/dashboard" className="dash-topbar-left" aria-label="KonarCard home">
+                    <span className="sb2-logoPlain" aria-hidden="true">
+                        <img src={LogoIcon} alt="" />
                     </span>
-
-                    <div className="dash-topbar-text">
-                        <div className="dash-topbar-title">{title || "KonarCard"}</div>
-                        {subtitle ? <div className="dash-topbar-sub">{subtitle}</div> : null}
-                    </div>
-                </div>
+                </Link>
 
                 {/* ✅ Menu RIGHT */}
                 <div className="dash-topbar-right">
@@ -84,7 +80,7 @@ export default function DashboardLayout({
                 </div>
             </header>
         );
-    }, [hideMobileTopbar, rightSlot, subtitle, title]);
+    }, [hideMobileTopbar, rightSlot]);
 
     return (
         <div className="dash-layout">
