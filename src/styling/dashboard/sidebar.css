@@ -306,3 +306,8 @@
         justify-content: center;
     }
 }
+
+/* Make logout icon always red (same as text) */
+.sb2-logout .sb2-ico img {
+    filter: invert(32%) sepia(93%) saturate(1450%) hue-rotate(345deg) brightness(95%) contrast(95%);
+}
