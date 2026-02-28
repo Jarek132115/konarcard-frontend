@@ -30,7 +30,6 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen }) {
     }, []);
 
     const closeSidebar = () => setSidebarOpen(false);
-    const openSidebar = () => setSidebarOpen(true);
 
     const isActive = (path) =>
         location.pathname === path || location.pathname.startsWith(path + "/");
@@ -54,26 +53,6 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen }) {
 
     return (
         <>
-            {/* ✅ MOBILE TOP BAR (when sidebar is closed) — LOGO ONLY */}
-            {isMobile && !sidebarOpen ? (
-                <div className="sb2-topbar" role="banner" aria-label="Mobile top bar">
-                    <Link to="/dashboard" className="sb2-topbarBrand" aria-label="KonarCard home">
-                        <span className="sb2-logoPlain" aria-hidden="true">
-                            <img src={LogoIcon} alt="" />
-                        </span>
-                    </Link>
-
-                    <button
-                        type="button"
-                        className="sb2-topbarMenu"
-                        aria-label="Open menu"
-                        onClick={openSidebar}
-                    >
-                        ☰
-                    </button>
-                </div>
-            ) : null}
-
             <div
                 className={`sb2-overlay ${isMobile && sidebarOpen ? "active" : ""}`}
                 onClick={closeSidebar}
