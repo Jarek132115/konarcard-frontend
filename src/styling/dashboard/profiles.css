@@ -1,22 +1,54 @@
+/* src/styling/dashboard/profiles.css
+=========================================================
+Profiles — Dashboard system aligned
+Rules:
+- Section titles use Cal Sans ONLY, weight 500
+- Body text uses Inter
+- Cards match other dashboard pages (white, soft border, low shadow)
+- PageHeader rightSlot supports stacked badges + actions
+========================================================= */
+
 :root {
     --p-ink: var(--kc-text-primary, #0f172a);
     --p-muted: var(--kc-text-secondary, #475569);
     --p-soft: var(--kc-bg-soft, #fafafa);
-    --p-border: var(--kc-border, #e5e7eb);
 
-    --p-shadow: 0 14px 34px rgba(15, 23, 42, 0.08);
-    --p-shadow-sm: 0 10px 26px rgba(15, 23, 42, 0.06);
+    --p-border: rgba(15, 23, 42, 0.10);
+    --p-border-2: rgba(15, 23, 42, 0.08);
+
+    --p-radius: 22px;
+    --p-radius-sm: 18px;
+
+    /* Match other pages */
+    --p-shadow: 0 1px 2px rgba(15, 23, 42, 0.05);
+    --p-shadow-sm: 0 1px 2px rgba(15, 23, 42, 0.04);
 }
 
-/* Page shell — NO extra padding.
-   DashboardLayout already provides global 16px padding. */
+/* Shell — DashboardLayout controls padding */
 .profiles-shell {
     width: 100%;
     margin: 0;
     padding: 0;
 }
 
-/* RightSlot (inside PageHeader) */
+/* =========================================================
+   PageHeader rightSlot helpers (YOU USE THESE IN JSX)
+========================================================= */
+.ph-rightStack {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 10px;
+}
+
+.ph-actionsInline {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+}
+
 .profiles-header-rightslot {
     display: inline-flex;
     align-items: center;
@@ -25,7 +57,33 @@
     justify-content: flex-end;
 }
 
-/* Grid layout */
+@media (max-width: 1000px) {
+    .ph-rightStack {
+        align-items: flex-start;
+        width: 100%;
+    }
+
+    .profiles-header-rightslot,
+    .ph-actionsInline {
+        justify-content: flex-start;
+        width: 100%;
+    }
+}
+
+@media (max-width: 520px) {
+    .ph-actionsInline {
+        width: 100%;
+    }
+
+    .ph-actionsInline .kx-btn {
+        width: 100%;
+        justify-content: center;
+    }
+}
+
+/* =========================================================
+   Grid layout
+========================================================= */
 .profiles-grid {
     display: grid;
     grid-template-columns: minmax(0, 1.35fr) minmax(0, 0.95fr);
@@ -34,13 +92,16 @@
     margin-top: 16px;
 }
 
-/* Cards */
+/* =========================================================
+   Cards
+========================================================= */
 .profiles-card {
     background: #ffffff;
-    border: 1px solid rgba(15, 23, 42, 0.10);
-    border-radius: 20px;
-    box-shadow: var(--p-shadow-sm);
+    border: 1px solid var(--p-border);
+    border-radius: var(--p-radius);
+    box-shadow: var(--p-shadow);
     padding: 16px;
+    min-width: 0;
 }
 
 .profiles-card-head {
@@ -50,26 +111,26 @@
     gap: 12px;
 }
 
-/* Card titles should NOT be Cal Sans */
+/* ✅ Section titles MUST be Cal Sans 500 */
 .profiles-card-title {
     margin: 0;
-    font-family: "Inter", sans-serif;
-    font-weight: 650;
-    font-size: 16px;
-    color: var(--p-ink);
+    font-family: "Cal Sans", sans-serif;
+    font-weight: 500;
+    font-size: 18px;
     letter-spacing: -0.01em;
+    color: var(--p-ink);
 }
 
 .profiles-muted {
     margin: 8px 0 0;
     font-family: "Inter", sans-serif;
-    font-weight: 500;
+    font-weight: 600;
     font-size: 14px;
     line-height: 1.55;
     color: var(--p-muted);
 }
 
-/* Sticky right column */
+/* Sticky right card */
 .profiles-right {
     position: relative;
 }
@@ -79,7 +140,7 @@
     top: 12px;
 }
 
-/* Action rows */
+/* Button rows */
 .profiles-actions-row {
     display: flex;
     gap: 10px;
@@ -88,154 +149,29 @@
 }
 
 /* =========================================================
-   ✅ Inline Claim Panel (NEW)
-   - Looks like part of the list
-   - Renders under the first profile
+   List
 ========================================================= */
-.profiles-claim-inline {
-    border: 1px solid rgba(15, 23, 42, 0.10);
-    background: rgba(15, 23, 42, 0.02);
-    border-radius: 18px;
-    padding: 14px;
-    margin-top: 10px;
-}
-
-.profiles-claim-inline-head {
-    display: flex;
-    align-items: flex-start;
-    justify-content: space-between;
-    gap: 12px;
-}
-
-.profiles-claim-inline-title {
-    font-family: "Inter", sans-serif;
-    font-weight: 700;
-    font-size: 14px;
-    color: var(--p-ink);
-}
-
-.profiles-claim-inline-sub {
-    margin-top: 4px;
-    font-family: "Inter", sans-serif;
-    font-weight: 500;
-    font-size: 13px;
-    color: rgba(71, 85, 105, 0.95);
-}
-
-/* Claim grid (reuse your original) */
-.profiles-claim-grid {
-    display: grid;
-    gap: 12px;
-    margin-top: 12px;
-}
-
-.profiles-claim-row {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr) auto;
-    gap: 10px;
-    align-items: center;
-}
-
-/* Input */
-.profiles-input-wrap {
-    display: flex;
-    align-items: center;
-    border: 1px solid rgba(15, 23, 42, 0.14);
-    background: #fff;
-    border-radius: 14px;
-    overflow: hidden;
-    min-width: 0;
-}
-
-.profiles-input-prefix {
-    flex: 0 0 auto;
-    padding: 12px 12px;
-    font-family: "Inter", sans-serif;
-    font-weight: 600;
-    font-size: 13px;
-    color: rgba(15, 23, 42, 0.60);
-    background: rgba(15, 23, 42, 0.03);
-    border-right: 1px solid rgba(15, 23, 42, 0.10);
-    white-space: nowrap;
-}
-
-.profiles-input {
-    width: 100%;
-    border: none;
-    outline: none;
-    padding: 12px 12px;
-    font-family: "Inter", sans-serif;
-    font-weight: 500;
-    font-size: 14px;
-    color: var(--p-ink);
-}
-
-.profiles-input::placeholder {
-    color: rgba(71, 85, 105, 0.75);
-}
-
-/* Alerts */
-.profiles-alert {
-    padding: 12px 12px;
-    border-radius: 14px;
-    border: 1px solid rgba(15, 23, 42, 0.10);
-    background: #fff;
-    font-family: "Inter", sans-serif;
-    font-weight: 600;
-    color: var(--p-ink);
-}
-
-.profiles-alert.success {
-    border-color: rgba(22, 163, 74, 0.25);
-    background: rgba(22, 163, 74, 0.08);
-}
-
-.profiles-alert.danger {
-    border-color: rgba(220, 38, 38, 0.25);
-    background: rgba(220, 38, 38, 0.08);
-}
-
-.profiles-alert.neutral {
-    background: rgba(15, 23, 42, 0.03);
-}
-
-.profiles-claim-actions {
-    display: flex;
-    gap: 10px;
-    flex-wrap: wrap;
-}
-
-.profiles-hint {
-    font-family: "Inter", sans-serif;
-    font-weight: 500;
-    font-size: 13px;
-    color: rgba(71, 85, 105, 0.95);
-}
-
-.profiles-hint strong {
-    color: var(--kc-accent-primary, #f97316);
-}
-
-/* List */
 .profiles-list {
     margin-top: 12px;
     display: grid;
     gap: 10px;
 }
 
-/* List item */
 .profiles-item {
     width: 100%;
     background: #fff;
     border: 1px solid rgba(15, 23, 42, 0.10);
-    border-radius: 18px;
+    border-radius: var(--p-radius-sm);
     padding: 14px;
+
     display: flex;
     align-items: center;
     justify-content: space-between;
     gap: 12px;
+
     cursor: pointer;
     text-align: left;
+
     transition: background 0.2s ease, transform 0.08s ease, box-shadow 0.2s ease, border-color 0.2s ease;
 }
 
@@ -249,14 +185,15 @@
 
 .profiles-item:focus-visible {
     outline: none;
-    box-shadow: 0 0 0 3px var(--kc-focus-ring, rgba(249, 115, 22, 0.2));
+    box-shadow: 0 0 0 3px var(--kc-focus-ring, rgba(249, 115, 22, 0.20));
 }
 
 .profiles-item.active {
     border-color: rgba(249, 115, 22, 0.35);
-    box-shadow: 0 12px 26px rgba(249, 115, 22, 0.12);
+    box-shadow: 0 12px 26px rgba(249, 115, 22, 0.10);
 }
 
+/* Left area */
 .profiles-item-left {
     display: flex;
     gap: 12px;
@@ -275,9 +212,11 @@
     background: rgba(249, 115, 22, 0.14);
     display: grid;
     place-items: center;
+
     font-family: "Inter", sans-serif;
-    font-weight: 700;
+    font-weight: 800;
     color: var(--p-ink);
+
     flex: 0 0 auto;
     border: 1px solid rgba(249, 115, 22, 0.18);
 }
@@ -291,17 +230,19 @@
 
 .profiles-item-name {
     font-family: "Inter", sans-serif;
-    font-weight: 700;
+    font-weight: 800;
     color: var(--p-ink);
+
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+
     max-width: 420px;
 }
 
 .profiles-trade {
     font-family: "Inter", sans-serif;
-    font-weight: 600;
+    font-weight: 700;
     color: rgba(71, 85, 105, 0.95);
     font-size: 13px;
     white-space: nowrap;
@@ -313,20 +254,22 @@
     gap: 8px;
     align-items: center;
     flex-wrap: wrap;
+
     font-family: "Inter", sans-serif;
-    font-weight: 500;
+    font-weight: 600;
     font-size: 13px;
 }
 
 .profiles-link {
     color: var(--kc-accent-primary, #f97316);
-    font-weight: 650;
+    font-weight: 800;
 }
 
 .profiles-dot {
     color: rgba(15, 23, 42, 0.25);
 }
 
+/* Right area */
 .profiles-item-right {
     display: flex;
     align-items: center;
@@ -334,10 +277,10 @@
     flex: 0 0 auto;
 }
 
-/* Status */
+/* Status pill */
 .profiles-status {
     font-family: "Inter", sans-serif;
-    font-weight: 650;
+    font-weight: 800;
     font-size: 12px;
     padding: 8px 10px;
     border-radius: 999px;
@@ -357,7 +300,7 @@
     background: rgba(249, 115, 22, 0.08);
 }
 
-/* Inline actions use kx-btn but smaller */
+/* Inline actions (smaller kx-btn) */
 .profiles-inline-actions {
     display: flex;
     gap: 8px;
@@ -392,15 +335,16 @@
     align-items: center;
     justify-content: space-between;
     gap: 14px;
+
     background: rgba(15, 23, 42, 0.02);
     border: 1px solid rgba(15, 23, 42, 0.10);
-    border-radius: 18px;
+    border-radius: var(--p-radius-sm);
     padding: 14px;
 }
 
 .profiles-upsell-text {
     font-family: "Inter", sans-serif;
-    font-weight: 600;
+    font-weight: 700;
     color: var(--p-ink);
     line-height: 1.35;
 }
@@ -409,7 +353,133 @@
     color: var(--kc-accent-primary, #f97316);
 }
 
-/* Preview phone */
+/* =========================================================
+   Inline Claim Panel
+========================================================= */
+.profiles-claim-inline {
+    border: 1px solid rgba(15, 23, 42, 0.10);
+    background: rgba(15, 23, 42, 0.02);
+    border-radius: var(--p-radius-sm);
+    padding: 14px;
+    margin-top: 10px;
+}
+
+.profiles-claim-inline-head {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 12px;
+}
+
+.profiles-claim-inline-title {
+    font-family: "Inter", sans-serif;
+    font-weight: 800;
+    font-size: 14px;
+    color: var(--p-ink);
+}
+
+.profiles-claim-inline-sub {
+    margin-top: 4px;
+    font-family: "Inter", sans-serif;
+    font-weight: 600;
+    font-size: 13px;
+    color: rgba(71, 85, 105, 0.95);
+}
+
+.profiles-claim-grid {
+    display: grid;
+    gap: 12px;
+    margin-top: 12px;
+}
+
+.profiles-claim-row {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 10px;
+    align-items: center;
+}
+
+.profiles-input-wrap {
+    display: flex;
+    align-items: center;
+    border: 1px solid rgba(15, 23, 42, 0.14);
+    background: #fff;
+    border-radius: 14px;
+    overflow: hidden;
+    min-width: 0;
+}
+
+.profiles-input-prefix {
+    flex: 0 0 auto;
+    padding: 12px 12px;
+    font-family: "Inter", sans-serif;
+    font-weight: 700;
+    font-size: 13px;
+    color: rgba(15, 23, 42, 0.60);
+    background: rgba(15, 23, 42, 0.03);
+    border-right: 1px solid rgba(15, 23, 42, 0.10);
+    white-space: nowrap;
+}
+
+.profiles-input {
+    width: 100%;
+    border: none;
+    outline: none;
+    padding: 12px 12px;
+    font-family: "Inter", sans-serif;
+    font-weight: 600;
+    font-size: 14px;
+    color: var(--p-ink);
+}
+
+.profiles-input::placeholder {
+    color: rgba(71, 85, 105, 0.75);
+}
+
+.profiles-alert {
+    padding: 12px 12px;
+    border-radius: 14px;
+    border: 1px solid rgba(15, 23, 42, 0.10);
+    background: #fff;
+    font-family: "Inter", sans-serif;
+    font-weight: 700;
+    color: var(--p-ink);
+}
+
+.profiles-alert.success {
+    border-color: rgba(22, 163, 74, 0.25);
+    background: rgba(22, 163, 74, 0.08);
+}
+
+.profiles-alert.danger {
+    border-color: rgba(220, 38, 38, 0.25);
+    background: rgba(220, 38, 38, 0.08);
+}
+
+.profiles-alert.neutral {
+    background: rgba(15, 23, 42, 0.03);
+}
+
+.profiles-claim-actions {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.profiles-hint {
+    font-family: "Inter", sans-serif;
+    font-weight: 600;
+    font-size: 13px;
+    color: rgba(71, 85, 105, 0.95);
+}
+
+.profiles-hint strong {
+    color: var(--kc-accent-primary, #f97316);
+}
+
+/* =========================================================
+   Preview phone
+========================================================= */
 .profiles-preview {
     margin-top: 14px;
 }
@@ -433,7 +503,7 @@
 
 .profiles-preview-name {
     font-family: "Inter", sans-serif;
-    font-weight: 700;
+    font-weight: 800;
     color: var(--p-ink);
     font-size: 16px;
     text-align: center;
@@ -444,7 +514,7 @@
     color: rgba(71, 85, 105, 0.95);
     text-align: center;
     font-family: "Inter", sans-serif;
-    font-weight: 600;
+    font-weight: 700;
     font-size: 13px;
 }
 
@@ -483,7 +553,7 @@
 /* Actions card */
 .profiles-actions-card {
     margin-top: 14px;
-    border-radius: 18px;
+    border-radius: var(--p-radius-sm);
     background: rgba(15, 23, 42, 0.02);
     border: 1px solid rgba(15, 23, 42, 0.10);
     padding: 14px;
@@ -492,7 +562,7 @@
 .profiles-actions-title {
     margin: 0;
     font-family: "Inter", sans-serif;
-    font-weight: 650;
+    font-weight: 800;
     color: var(--p-ink);
     font-size: 14px;
 }
@@ -504,7 +574,9 @@
     margin-top: 12px;
 }
 
-/* Empty / Skeleton */
+/* =========================================================
+   Empty / Skeleton
+========================================================= */
 .profiles-empty {
     padding: 22px;
 }
@@ -518,7 +590,7 @@
 
 .profiles-skel-card {
     height: 420px;
-    border-radius: 20px;
+    border-radius: var(--p-radius);
     border: 1px solid rgba(15, 23, 42, 0.08);
     background: linear-gradient(90deg, rgba(15, 23, 42, 0.05), rgba(15, 23, 42, 0.03), rgba(15, 23, 42, 0.05));
     background-size: 200% 100%;
@@ -535,7 +607,9 @@
     }
 }
 
-/* Responsive */
+/* =========================================================
+   Responsive
+========================================================= */
 @media (max-width: 1100px) {
     .profiles-grid {
         grid-template-columns: 1fr;
@@ -543,10 +617,6 @@
 
     .profiles-preview-card {
         position: static;
-    }
-
-    .profiles-header-rightslot {
-        justify-content: flex-start;
     }
 
     .profiles-skeleton {
@@ -588,26 +658,4 @@
     .profiles-actions-grid {
         grid-template-columns: 1fr;
     }
-}
-
-/* ✅ The row that contains: [preview column] [editor column] */
-.profiles-edit-row {
-    display: flex;
-    align-items: stretch;
-    min-height: calc(100vh - 140px);
-    /* adjust if you have a top header */
-}
-
-/* ✅ The left column that contains the preview card */
-.profiles-edit-left {
-    display: flex;
-    flex-direction: column;
-    min-height: 0;
-    flex: 1;
-}
-
-/* ✅ The actual preview card wrapper inside left column */
-.profiles-edit-left .myprofile-preview-wrapper {
-    flex: 1;
-    min-height: 0;
 }
