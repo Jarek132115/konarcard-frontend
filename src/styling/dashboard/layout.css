@@ -84,7 +84,8 @@
     align-items: center;
     gap: 10px;
     min-width: 0;
-    flex: 1;
+    flex: 0 0 auto;
+    /* ✅ was flex:1 (used for title/sub). Now logo-only */
 }
 
 /* src/styling/dashboard/layout.css */

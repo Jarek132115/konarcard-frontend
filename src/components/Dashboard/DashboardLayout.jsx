@@ -49,12 +49,7 @@ export default function DashboardLayout({
                     <span className="dash-topbar-logo" aria-hidden="true">
                         <img src={LogoIcon} alt="" />
                     </span>
-
-                    {/* ✅ Always brand-only on mobile (no page title switching) */}
-                    <div className="dash-topbar-text">
-                        <div className="dash-topbar-title">KonarCard</div>
-                        <div className="dash-topbar-sub">Your digital business card</div>
-                    </div>
+                    {/* ✅ NO TEXT on mobile */}
                 </div>
 
                 <div className="dash-topbar-right">
