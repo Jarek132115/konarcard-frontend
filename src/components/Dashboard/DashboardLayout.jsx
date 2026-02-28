@@ -1,20 +1,10 @@
 // src/components/Dashboard/DashboardLayout.jsx
 import React, { useEffect, useMemo, useState } from "react";
-import { Link } from "react-router-dom";
 import Sidebar from "./Sidebar";
 
 import LogoIcon from "../../assets/icons/Logo-Icon.svg";
 import "../../styling/dashboard/layout.css";
 
-/**
- * Props:
- * - title?: string
- * - subtitle?: string
- * - rightSlot?: ReactNode
- * - children: ReactNode
- * - hideDesktopHeader?: boolean   ✅ hides the desktop header (use PageHeader inside pages)
- * - hideMobileTopbar?: boolean    ✅ optional (default false)
- */
 export default function DashboardLayout({
     title,
     subtitle,
@@ -32,8 +22,6 @@ export default function DashboardLayout({
         const onResize = () => {
             const mobileNow = window.innerWidth <= 1000;
             setIsMobile(mobileNow);
-
-            // If we switch to desktop, ensure the mobile drawer isn't stuck open
             if (!mobileNow) setSidebarOpen(false);
         };
 
@@ -41,7 +29,6 @@ export default function DashboardLayout({
         return () => window.removeEventListener("resize", onResize);
     }, []);
 
-    // Prevent background scroll when sidebar is open on mobile
     useEffect(() => {
         if (!isMobile) return;
 
@@ -57,15 +44,18 @@ export default function DashboardLayout({
         if (hideMobileTopbar) return null;
 
         return (
-            <header className="dash-topbar" role="banner" aria-label="Mobile header">
-                {/* ✅ Logo ONLY (no text) */}
-                <Link to="/dashboard" className="dash-topbar-left" aria-label="KonarCard home">
-                    <span className="sb2-logoPlain" aria-hidden="true">
-                        <img src={LogoIcon} alt="" />
+            <header className="dash-topbar" role="banner">
+                <div className="dash-topbar-left" aria-label="KonarCard">
+                    <span className="dash-topbar-logo">
+                        <img src={LogoIcon} alt="KonarCard" />
                     </span>
-                </Link>
 
-                {/* ✅ Menu RIGHT */}
+                    <div className="dash-topbar-text">
+                        <div className="dash-topbar-title">{title || "KonarCard"}</div>
+                        {subtitle ? <div className="dash-topbar-sub">{subtitle}</div> : null}
+                    </div>
+                </div>
+
                 <div className="dash-topbar-right">
                     {rightSlot ? <div className="dash-topbar-slot">{rightSlot}</div> : null}
 
@@ -80,17 +70,15 @@ export default function DashboardLayout({
                 </div>
             </header>
         );
-    }, [hideMobileTopbar, rightSlot]);
+    }, [hideMobileTopbar, rightSlot, subtitle, title]);
 
     return (
         <div className="dash-layout">
             <Sidebar sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
 
             <div className="dash-main">
-                {/* Mobile topbar */}
                 {mobileTopbar}
 
-                {/* Desktop header */}
                 {!hideDesktopHeader && (title || subtitle || rightSlot) ? (
                     <div className="dash-desktop-header">
                         <div className="dash-desktop-left">

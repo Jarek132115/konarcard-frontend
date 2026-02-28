@@ -1,9 +1,10 @@
 /* src/styling/dashboard/layout.css */
 
-/* ✅ Uses ONLY global tokens from fonts.css */
 :root {
     --sidebar-w: 272px;
-    --dash-gutter: 16px;
+
+    /* ✅ ONE spacing system */
+    --dash-gutter: 24px;
 
     --dash-border: rgba(15, 23, 42, 0.10);
     --dash-shadow: 0 14px 34px rgba(15, 23, 42, 0.08);
@@ -62,7 +63,7 @@
     flex-wrap: wrap;
 }
 
-/* ✅ Mobile topbar (logo left, menu right) */
+/* ✅ Mobile topbar */
 .dash-topbar {
     display: none;
     align-items: center;
@@ -72,19 +73,67 @@
     background: #ffffff;
     border: 1px solid var(--dash-border);
     border-radius: 18px;
+
+    /* ✅ match 24 spacing system */
     padding: 14px;
-    margin: 0 0 14px;
+    margin: 0 0 24px;
 }
 
 .dash-topbar-left {
-    display: inline-flex;
+    display: flex;
     align-items: center;
+    gap: 10px;
     min-width: 0;
     flex: 1;
-    text-decoration: none;
 }
 
-/* Right group: optional slot + burger */
+.dash-topbar-logo {
+    width: 38px;
+    height: 38px;
+    border-radius: 14px;
+    display: grid;
+    place-items: center;
+
+    /* NOTE: if you want logo plain here too, tell me and I’ll match sidebar */
+    background: rgb(249 115 22 / 0.12);
+    border: 1px solid rgb(249 115 22 / 0.16);
+    flex: 0 0 auto;
+}
+
+.dash-topbar-logo img {
+    width: 20px;
+    height: 20px;
+    display: block;
+}
+
+.dash-topbar-text {
+    min-width: 0;
+}
+
+.dash-topbar-title {
+    font-family: "Cal Sans", sans-serif;
+    font-weight: 500;
+    letter-spacing: -0.01em;
+    color: var(--kc-text-primary);
+    font-size: 16px;
+
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.dash-topbar-sub {
+    margin-top: 2px;
+    font-family: "Inter", sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--kc-text-secondary);
+
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
 .dash-topbar-right {
     display: inline-flex;
     align-items: center;
@@ -128,7 +177,6 @@
     box-shadow: 0 0 0 3px var(--kc-focus-ring);
 }
 
-/* Content area */
 .dash-content {
     width: 100%;
     max-width: none;
@@ -141,6 +189,7 @@
         padding: 0;
     }
 
+    /* ✅ 24px page padding on mobile too */
     .dash-main {
         padding: var(--dash-gutter);
     }

@@ -2,8 +2,6 @@
 
 :root {
     --ph2-surface: var(--kc-bg-soft, #fafafa);
-
-    /* Very light border + shadow */
     --ph2-border: rgba(15, 23, 42, 0.08);
     --ph2-shadow: 0 1px 0 rgba(15, 23, 42, 0.04),
         0 10px 22px rgba(15, 23, 42, 0.04);
@@ -11,7 +9,8 @@
 
 .ph2-wrap {
     width: 100%;
-    margin: 0 0 16px;
+    margin: 0 0 24px;
+    /* ✅ was 16 */
 }
 
 .ph2-card {
@@ -19,30 +18,25 @@
     border: 1px solid var(--ph2-border);
     border-radius: 22px;
     box-shadow: var(--ph2-shadow);
-
-    /* ✅ 24px all around */
     padding: 24px;
+    /* ✅ */
 }
 
 .ph2-row {
     display: flex;
-
-    /* ✅ center rightSlot vertically */
     align-items: center;
-
+    /* ✅ */
     justify-content: space-between;
     gap: 16px;
 }
 
 .ph2-left {
     min-width: 0;
-
-    /* ✅ title/sub gap = 4px */
     display: grid;
     gap: 4px;
+    /* ✅ */
 }
 
-/* Title + subtitle now use global classes, keep these minimal */
 .ph2-title {
     margin: 0;
 }
@@ -52,22 +46,18 @@
     max-width: 920px;
 }
 
-/* Right side */
 .ph2-right {
     display: flex;
     align-items: center;
-    /* ✅ center items */
     justify-content: flex-end;
     gap: 10px;
     min-width: 0;
 }
 
-/* Responsive */
 @media (max-width: 1000px) {
     .ph2-row {
         flex-direction: column;
         align-items: flex-start;
-        /* left align stack */
     }
 
     .ph2-right {
@@ -79,7 +69,6 @@
 @media (max-width: 520px) {
     .ph2-card {
         padding: 24px;
-        /* keep 24px as requested */
         border-radius: 20px;
     }
 }
