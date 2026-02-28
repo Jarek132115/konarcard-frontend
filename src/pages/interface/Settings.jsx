@@ -174,7 +174,7 @@ export default function Settings() {
                 ) : null}
 
                 <div className="stg-grid">
-                    {/* 1) Account */}
+                    {/* 1) Account — simplified */}
                     <section className="stg-card">
                         <div className="stg-cardHead">
                             <div className="stg-cardHeadLeft">
@@ -188,7 +188,7 @@ export default function Settings() {
                         </div>
 
                         <div className="stg-cardBody">
-                            <div className="stg-accountTop">
+                            <div className="stg-accountRow">
                                 <div className="stg-avatar">
                                     {accountAvatar && !isBusy ? (
                                         <img src={accountAvatar} alt="Avatar" />
@@ -199,22 +199,9 @@ export default function Settings() {
                                     )}
                                 </div>
 
-                                <div className="stg-accountSummary">
-                                    <div className="stg-accountName">
-                                        {isBusy ? <span className="stg-skelText w52" /> : accountName}
-                                    </div>
-                                    <div className="stg-accountEmail">
-                                        {isBusy ? <span className="stg-skelText w72" /> : accountEmail}
-                                    </div>
-
-                                    <div className="stg-chips">
-                                        <span className={`stg-chip ${isBusy ? "stg-skel-chip" : ""}`}>
-                                            {isBusy ? "" : isGoogle ? "Google account" : "Email account"}
-                                        </span>
-                                        <span className={`stg-chip stg-chip--ghost ${isBusy ? "stg-skel-chip" : ""}`}>
-                                            {isBusy ? "" : isGoogle ? "Managed by Google" : "Editable in app"}
-                                        </span>
-                                    </div>
+                                <div className="stg-accountMeta">
+                                    <div className="stg-accountName">{isBusy ? <span className="stg-skelText w52" /> : accountName}</div>
+                                    <div className="stg-accountEmail">{isBusy ? <span className="stg-skelText w72" /> : accountEmail}</div>
                                 </div>
                             </div>
 
@@ -222,19 +209,19 @@ export default function Settings() {
                                 <div className="stg-field">
                                     <div className="stg-k">Name</div>
                                     <div className={`stg-vBox ${isBusy ? "stg-skelLine" : ""}`}>{isBusy ? "" : accountName}</div>
-                                    {isGoogle && !isBusy ? (
-                                        <div className="stg-hint">This account is managed by Google. Changes must be made through Google.</div>
-                                    ) : null}
                                 </div>
 
                                 <div className="stg-field">
                                     <div className="stg-k">Email</div>
                                     <div className={`stg-vBox ${isBusy ? "stg-skelLine" : ""}`}>{isBusy ? "" : accountEmail}</div>
-                                    {isGoogle && !isBusy ? (
-                                        <div className="stg-hint">This account is managed by Google. Changes must be made through Google.</div>
-                                    ) : null}
                                 </div>
                             </div>
+
+                            {isGoogle && !isBusy ? (
+                                <div className="stg-hint">
+                                    This account is managed by Google. Changes must be made through Google.
+                                </div>
+                            ) : null}
 
                             {!isGoogle ? (
                                 <div className="stg-actions">
@@ -297,9 +284,7 @@ export default function Settings() {
                                                         <a className="stg-link" href={pdf} target="_blank" rel="noreferrer">
                                                             Download
                                                         </a>
-                                                    ) : (
-                                                        "—"
-                                                    )}
+                                                    ) : "—"}
                                                 </div>
                                             </div>
                                         );

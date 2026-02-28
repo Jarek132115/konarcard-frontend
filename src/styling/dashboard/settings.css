@@ -6,15 +6,21 @@
     --stg-card: var(--kc-bg-soft, #fafafa);
 }
 
-/* Page shell fills available height like sidebar (100vh - 32px) */
+/* ✅ Fix double spacing:
+   PageHeader has its own margin-bottom, so override it inside settings */
+.stg-shell .ph2-wrap {
+    margin-bottom: 0;
+}
+
+/* Shell: use ONE spacing system = 24px between blocks */
 .stg-shell {
     width: 100%;
     min-height: calc(100vh - 32px);
+
     display: flex;
     flex-direction: column;
-    gap: 16px;
-    padding: 0;
-    margin: 0;
+    gap: 24px;
+    /* ✅ this is the single spacing source */
 }
 
 /* Header right slot */
@@ -38,7 +44,7 @@
     }
 }
 
-/* ✅ Desktop: 2x2 grid that fills remaining height */
+/* Desktop 2x2 grid fills remaining height */
 .stg-grid {
     flex: 1;
     min-height: 0;
@@ -56,9 +62,7 @@
     border-radius: 22px;
     box-shadow: var(--stg-shadow);
 
-    /* ✅ 24px padding all around */
     padding: 24px;
-
     min-width: 0;
     min-height: 0;
 
@@ -79,19 +83,34 @@
     min-width: 0;
     display: grid;
     gap: 4px;
-    /* clean small gap */
 }
 
-/* Card body fills height */
+/* ✅ Card body: use FLEX (prevents tall stretched buttons) */
 .stg-cardBody {
     flex: 1;
     min-height: 0;
-    display: grid;
+    display: flex;
+    flex-direction: column;
     gap: 12px;
 }
 
-/* Scroll areas (tables) */
+/* ✅ Buttons hug height (no stretching) */
+.stg-actions {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    align-items: center;
+    /* ✅ */
+}
+
+.stg-actions .kx-btn {
+    align-self: flex-start;
+    /* ✅ */
+}
+
+/* Tables scroll in-card on desktop */
 .stg-scrollArea {
+    flex: 1;
     min-height: 0;
 }
 
@@ -99,21 +118,20 @@
     border-radius: 18px;
     border: 1px solid rgba(15, 23, 42, 0.10);
     overflow: auto;
-    /* ✅ scroll inside card on desktop */
     background: #fff;
     min-height: 0;
 }
 
-/* Account summary block */
-.stg-accountTop {
+/* ---------- Account (simpler) ---------- */
+.stg-accountRow {
     display: flex;
-    gap: 12px;
     align-items: center;
+    gap: 12px;
+
     border: 1px solid rgba(15, 23, 42, 0.10);
     background: #fff;
     border-radius: 18px;
     padding: 16px;
-    /* slightly roomier */
 }
 
 .stg-avatar {
@@ -145,7 +163,7 @@
     font-size: 18px;
 }
 
-.stg-accountSummary {
+.stg-accountMeta {
     min-width: 0;
 }
 
@@ -168,30 +186,6 @@
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-}
-
-.stg-chips {
-    margin-top: 10px;
-    display: flex;
-    gap: 8px;
-    flex-wrap: wrap;
-}
-
-.stg-chip {
-    display: inline-flex;
-    align-items: center;
-    padding: 7px 10px;
-    border-radius: 999px;
-    border: 1px solid rgba(15, 23, 42, 0.12);
-    background: rgba(15, 23, 42, 0.03);
-    font-family: "Inter", sans-serif;
-    font-weight: 700;
-    font-size: 12px;
-    color: rgba(15, 23, 42, 0.82);
-}
-
-.stg-chip--ghost {
-    background: #fff;
 }
 
 /* Fields */
@@ -224,6 +218,7 @@
     border-radius: 14px;
     border: 1px solid rgba(15, 23, 42, 0.14);
     background: #fff;
+
     font-family: "Inter", sans-serif;
     font-weight: 650;
     font-size: 14px;
@@ -274,13 +269,6 @@
 
 .stg-statV.is-active {
     color: rgb(22, 163, 74);
-}
-
-/* Actions */
-.stg-actions {
-    display: flex;
-    gap: 10px;
-    flex-wrap: wrap;
 }
 
 /* Table rows */
@@ -389,6 +377,7 @@
     background: rgba(15, 23, 42, 0.02);
 }
 
+/* Banner */
 .stg-banner {
     border-radius: 18px;
     border: 1px solid var(--stg-border);
@@ -439,7 +428,6 @@
     border-color: rgba(15, 23, 42, 0.10);
 }
 
-/* width helpers */
 .w52 {
     width: 52%;
 }
@@ -478,7 +466,7 @@
     }
 }
 
-/* ✅ Responsive: when not 2-per-row, stop forcing height (hug content) */
+/* Responsive: when stacked, stop forcing equal-height */
 @media (max-width: 1100px) {
     .stg-shell {
         min-height: 0;
@@ -487,10 +475,8 @@
     .stg-grid {
         flex: none;
         min-height: 0;
-
         grid-template-columns: 1fr;
         grid-template-rows: none;
-        /* ✅ no equal-height rows */
     }
 
     .stg-card {
@@ -507,7 +493,6 @@
 
     .stg-table {
         overflow: hidden;
-        /* tables expand naturally on stacked layout */
     }
 }
 
