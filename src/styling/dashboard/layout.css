@@ -88,10 +88,6 @@
     /* ✅ was flex:1 (used for title/sub). Now logo-only */
 }
 
-/* src/styling/dashboard/layout.css */
-
-/* ...keep everything else the same... */
-
 .dash-topbar-logo {
     width: 38px;
     height: 38px;
