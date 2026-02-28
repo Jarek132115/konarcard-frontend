@@ -100,7 +100,7 @@ export default function ContactBook() {
     }, [contacts, search]);
 
     const sourceLabel = (s) => {
-        if (s === "exchange_contact") return "Exchange contact";
+        if (s === "exchange_contact") return "Exchange Contact";
         return "Unknown";
     };
 
@@ -152,12 +152,16 @@ export default function ContactBook() {
     };
 
     const rightSlot = (
-        <button type="button" className="kx-btn kx-btn--black" onClick={exportCSV}>
-            Export CSV
-        </button>
+        <div className="cb-headRight">
+            <span className="kc-pill">
+                Contacts: <strong>{contacts.length}</strong>
+            </span>
+            <button type="button" className="kx-btn kx-btn--black" onClick={exportCSV}>
+                Export
+            </button>
+        </div>
     );
 
-    // Keep layout stable: always render grid + cards, swap content inside
     const showEmpty = !isLoading && !isError && contacts.length === 0;
 
     return (
@@ -213,51 +217,63 @@ export default function ContactBook() {
                                 </div>
                             </div>
                         ) : (
-                            <div className="cb-list" aria-busy={isLoading ? "true" : "false"}>
-                                {isLoading ? (
-                                    <>
-                                        <div className="cb-skelItem" />
-                                        <div className="cb-skelItem" />
-                                        <div className="cb-skelItem" />
-                                        <div className="cb-skelItem" />
-                                        <div className="cb-skelItem" />
-                                    </>
-                                ) : (
-                                    <>
-                                        {filtered.map((c) => (
-                                            <button
-                                                key={c.id}
-                                                type="button"
-                                                className={`cb-item ${selected?.id === c.id ? "active" : ""}`}
-                                                onClick={() => setSelectedId(c.id)}
-                                            >
-                                                <div className="cb-item-left">
-                                                    <div className="cb-avatar" aria-hidden="true">
-                                                        {(c.name || "U").slice(0, 1).toUpperCase()}
-                                                    </div>
+                            <div className="cb-listWrap" aria-busy={isLoading ? "true" : "false"}>
+                                <div className="cb-list">
+                                    {isLoading ? (
+                                        <>
+                                            <div className="cb-skelItem" />
+                                            <div className="cb-skelItem" />
+                                            <div className="cb-skelItem" />
+                                            <div className="cb-skelItem" />
+                                            <div className="cb-skelItem" />
+                                        </>
+                                    ) : (
+                                        <>
+                                            {filtered.map((c) => (
+                                                <button
+                                                    key={c.id}
+                                                    type="button"
+                                                    className={`cb-item ${selected?.id === c.id ? "active" : ""}`}
+                                                    onClick={() => setSelectedId(c.id)}
+                                                >
+                                                    <div className="cb-item-left">
+                                                        <div className="cb-avatar" aria-hidden="true">
+                                                            {(c.name || "U").slice(0, 1).toUpperCase()}
+                                                        </div>
 
-                                                    <div className="cb-item-meta">
-                                                        <div className="cb-item-title">{c.name || "Unknown"}</div>
-                                                        <div className="cb-item-sub">
-                                                            <span className="cb-source">{sourceLabel(c.source)}</span>
-                                                            <span className="cb-dot">•</span>
-                                                            <span className="cb-mutedInline">Received {c.lastSeen || "—"}</span>
+                                                        <div className="cb-item-meta">
+                                                            <div className="cb-item-title">{c.name || "Unknown"}</div>
+
+                                                            <div className="cb-item-line">
+                                                                <span className="cb-lineStrong">
+                                                                    {nonEmpty(c.phone) ? c.phone : "—"}
+                                                                </span>
+                                                                <span className="cb-dot">•</span>
+                                                                <span className="cb-lineMuted">
+                                                                    {nonEmpty(c.email) ? c.email : "—"}
+                                                                </span>
+                                                            </div>
+
+                                                            <div className="cb-item-sub">
+                                                                <span className="cb-mutedInline">
+                                                                    Received <strong>{c.lastSeen || "—"}</strong>
+                                                                </span>
+                                                            </div>
                                                         </div>
                                                     </div>
-                                                </div>
 
-                                                <div className="cb-item-right">
-                                                    <span className="cb-count">{c.interactions}×</span>
-                                                    <span className="cb-view">View</span>
-                                                </div>
-                                            </button>
-                                        ))}
+                                                    <div className="cb-item-right">
+                                                        <span className="cb-chev" aria-hidden="true">›</span>
+                                                    </div>
+                                                </button>
+                                            ))}
 
-                                        {filtered.length === 0 && (
-                                            <div className="cb-empty-inline">No contacts match “{search}”.</div>
-                                        )}
-                                    </>
-                                )}
+                                            {filtered.length === 0 && (
+                                                <div className="cb-empty-inline">No contacts match “{search}”.</div>
+                                            )}
+                                        </>
+                                    )}
+                                </div>
                             </div>
                         )}
                     </section>
@@ -287,13 +303,15 @@ export default function ContactBook() {
                         </div>
 
                         {isLoading ? (
-                            <div className="cb-detailSkel">
-                                <div className="cb-skelHead" />
-                                <div className="cb-skelRow" />
-                                <div className="cb-skelRow" />
-                                <div className="cb-skelRow" />
-                                <div className="cb-skelRow" />
-                                <div className="cb-skelNote" />
+                            <div className="cb-detailBody">
+                                <div className="cb-detailSkel">
+                                    <div className="cb-skelHead" />
+                                    <div className="cb-skelRow" />
+                                    <div className="cb-skelRow" />
+                                    <div className="cb-skelRow" />
+                                    <div className="cb-skelRow" />
+                                    <div className="cb-skelNote" />
+                                </div>
                             </div>
                         ) : isError ? (
                             <div className="cb-inlineState cb-error">
@@ -311,48 +329,50 @@ export default function ContactBook() {
                                 <div className="cb-inlineText">Pick someone from the list to view their details.</div>
                             </div>
                         ) : (
-                            <div className="cb-detail">
-                                <div className="cb-detail-top">
-                                    <div className="cb-detail-avatar" aria-hidden="true">
-                                        {(selected.name || "U").slice(0, 1).toUpperCase()}
-                                    </div>
+                            <div className="cb-detailBody">
+                                <div className="cb-detail">
+                                    <div className="cb-detail-top">
+                                        <div className="cb-detail-avatar" aria-hidden="true">
+                                            {(selected.name || "U").slice(0, 1).toUpperCase()}
+                                        </div>
 
-                                    <div className="cb-detail-meta">
-                                        <div className="cb-detail-name">{selected.name || "Unknown"}</div>
-                                        <div className="cb-detail-sub">
-                                            Source: <strong>{sourceLabel(selected.source)}</strong>
+                                        <div className="cb-detail-meta">
+                                            <div className="cb-detail-name">{selected.name || "Unknown"}</div>
+                                            <div className="cb-detail-sub">
+                                                Received: <strong>{selected.firstSeen || "—"}</strong>
+                                            </div>
                                         </div>
                                     </div>
+
+                                    <div className="cb-detail-grid">
+                                        <div className="cb-detail-row">
+                                            <div className="cb-detail-label">Email</div>
+                                            <div className="cb-detail-value">{nonEmpty(selected.email) ? selected.email : "—"}</div>
+                                        </div>
+
+                                        <div className="cb-detail-row">
+                                            <div className="cb-detail-label">Phone</div>
+                                            <div className="cb-detail-value">{nonEmpty(selected.phone) ? selected.phone : "—"}</div>
+                                        </div>
+
+                                        <div className="cb-detail-row">
+                                            <div className="cb-detail-label">Source</div>
+                                            <div className="cb-detail-value">{sourceLabel(selected.source)}</div>
+                                        </div>
+
+                                        <div className="cb-detail-row">
+                                            <div className="cb-detail-label">Profile</div>
+                                            <div className="cb-detail-value">{selected.raw?.profile_slug || "—"}</div>
+                                        </div>
+                                    </div>
+
+                                    <div className="cb-note">
+                                        <div className="cb-note-title">Message</div>
+                                        <div className="cb-note-body">{nonEmpty(selected.note) ? selected.note : "No message."}</div>
+                                    </div>
+
+                                    <div className="cb-hint">Tip: Add “Exchange Contact” on your profile to collect leads faster.</div>
                                 </div>
-
-                                <div className="cb-detail-grid">
-                                    <div className="cb-detail-row">
-                                        <div className="cb-detail-label">Email</div>
-                                        <div className="cb-detail-value">{nonEmpty(selected.email) ? selected.email : "—"}</div>
-                                    </div>
-
-                                    <div className="cb-detail-row">
-                                        <div className="cb-detail-label">Phone</div>
-                                        <div className="cb-detail-value">{nonEmpty(selected.phone) ? selected.phone : "—"}</div>
-                                    </div>
-
-                                    <div className="cb-detail-row">
-                                        <div className="cb-detail-label">Received</div>
-                                        <div className="cb-detail-value">{selected.firstSeen || "—"}</div>
-                                    </div>
-
-                                    <div className="cb-detail-row">
-                                        <div className="cb-detail-label">Profile</div>
-                                        <div className="cb-detail-value">{selected.raw?.profile_slug || "—"}</div>
-                                    </div>
-                                </div>
-
-                                <div className="cb-note">
-                                    <div className="cb-note-title">Message</div>
-                                    <div className="cb-note-body">{nonEmpty(selected.note) ? selected.note : "No message."}</div>
-                                </div>
-
-                                <div className="cb-hint">Tip: Add “Exchange Contact” on your profile to collect leads faster.</div>
                             </div>
                         )}
                     </section>

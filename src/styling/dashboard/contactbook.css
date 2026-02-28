@@ -1,16 +1,42 @@
 /* frontend/src/styling/dashboard/contactbook.css
 =========================================================
-Contact Book — KonarCard Dashboard system
-- Uses PageHeader
-- Uses kx-btn from fonts.css (black/white/orange)
-- Cal Sans ONLY for main headings, always weight 500
-- Layout never collapses during loading (skeletons inside cards)
+Contact Book — Dashboard v3
+- 24px spacing system
+- Main cards = soft surface (#fafafa)
+- Inner surfaces = white for contrast
+- Equal-height columns on desktop (scroll inside)
 ========================================================= */
+
+:root {
+    --cb-border: rgba(15, 23, 42, 0.10);
+    --cb-border-soft: rgba(15, 23, 42, 0.08);
+    --cb-shadow: 0 1px 0 rgba(15, 23, 42, 0.04), 0 10px 22px rgba(15, 23, 42, 0.04);
+
+    --cb-card: var(--kc-bg-soft, #fafafa);
+    --cb-ink: var(--kc-text-primary, #0f172a);
+    --cb-muted: var(--kc-text-secondary, #475569);
+}
+
+/* prevent double spacing under PageHeader */
+.cb-shell .ph2-wrap {
+    margin-bottom: 0;
+}
 
 .cb-shell {
     width: 100%;
-    padding: 0;
-    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    /* ✅ header -> content gap */
+}
+
+/* Header right slot */
+.cb-headRight {
+    display: inline-flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 10px;
+    flex-wrap: wrap;
 }
 
 /* =========================================================
@@ -19,9 +45,12 @@ Contact Book — KonarCard Dashboard system
 .cb-grid {
     display: grid;
     grid-template-columns: repeat(12, minmax(0, 1fr));
-    gap: 16px;
-    margin-top: 16px;
-    align-items: start;
+    gap: 24px;
+    /* ✅ */
+    margin-top: 0;
+    /* ✅ */
+    align-items: stretch;
+    /* ✅ equal height columns */
 }
 
 .cb-span-7 {
@@ -36,12 +65,18 @@ Contact Book — KonarCard Dashboard system
    Cards
 ========================================================= */
 .cb-card {
-    background: #fff;
-    border: 1px solid rgba(15, 23, 42, 0.10);
+    background: var(--cb-card);
+    border: 1px solid var(--cb-border-soft);
     border-radius: 22px;
-    box-shadow: 0 10px 26px rgba(15, 23, 42, 0.06);
-    padding: 16px;
+    box-shadow: var(--cb-shadow);
+    padding: 24px;
+    /* ✅ */
     min-width: 0;
+    min-height: 0;
+
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
 }
 
 .cb-card-head {
@@ -55,20 +90,24 @@ Contact Book — KonarCard Dashboard system
     margin: 0;
     font-family: "Cal Sans", sans-serif;
     font-weight: 500;
-    color: var(--kc-text-primary);
+    color: var(--cb-ink);
     font-size: 18px;
     letter-spacing: -0.01em;
 }
 
 .cb-muted {
     margin: 8px 0 0;
-    color: var(--kc-text-secondary);
+    color: var(--cb-muted);
+    font-family: "Inter", sans-serif;
+    font-weight: 600;
     font-size: 14px;
     line-height: 1.55;
 }
 
 .cb-mutedInline {
     color: rgba(71, 85, 105, 0.95);
+    font-family: "Inter", sans-serif;
+    font-weight: 600;
 }
 
 /* =========================================================
@@ -85,7 +124,7 @@ Contact Book — KonarCard Dashboard system
     border: 1px solid rgba(15, 23, 42, 0.14);
     background: #fff;
     font-family: "Inter", sans-serif;
-    font-weight: 600;
+    font-weight: 650;
     font-size: 14px;
     outline: none;
     transition: box-shadow 0.15s ease, border-color 0.15s ease;
@@ -97,25 +136,34 @@ Contact Book — KonarCard Dashboard system
 }
 
 /* =========================================================
-   List
+   List (scroll inside card)
 ========================================================= */
+.cb-listWrap {
+    flex: 1;
+    min-height: 0;
+    overflow: auto;
+    padding-right: 2px;
+}
+
 .cb-list {
-    margin-top: 14px;
     display: grid;
-    gap: 10px;
+    gap: 12px;
 }
 
 .cb-item {
     width: 100%;
     text-align: left;
+
     background: #fff;
     border: 1px solid rgba(15, 23, 42, 0.10);
     border-radius: 18px;
-    padding: 14px;
+    padding: 16px;
+
     display: flex;
     align-items: center;
     justify-content: space-between;
     gap: 12px;
+
     cursor: pointer;
     transition: background 0.15s ease, transform 0.10s ease, border-color 0.15s ease, box-shadow 0.15s ease;
 }
@@ -146,16 +194,16 @@ Contact Book — KonarCard Dashboard system
 }
 
 .cb-avatar {
-    width: 44px;
-    height: 44px;
+    width: 46px;
+    height: 46px;
     border-radius: 16px;
     background: rgba(249, 115, 22, 0.14);
     border: 1px solid rgba(249, 115, 22, 0.18);
     display: grid;
     place-items: center;
     font-family: "Inter", sans-serif;
-    font-weight: 700;
-    color: var(--kc-text-primary);
+    font-weight: 800;
+    color: var(--cb-ink);
     flex: 0 0 auto;
 }
 
@@ -165,70 +213,73 @@ Contact Book — KonarCard Dashboard system
 
 .cb-item-title {
     font-family: "Inter", sans-serif;
-    font-weight: 700;
-    color: var(--kc-text-primary);
+    font-weight: 800;
+    color: var(--cb-ink);
+    font-size: 16px;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
 }
 
-.cb-item-sub {
+.cb-item-line {
     margin-top: 4px;
     display: flex;
     gap: 8px;
     align-items: center;
     flex-wrap: wrap;
+
+    font-family: "Inter", sans-serif;
     font-size: 13px;
-    font-weight: 600;
+    font-weight: 650;
     color: rgba(71, 85, 105, 0.95);
 }
 
-.cb-source {
-    font-weight: 700;
-    color: rgba(249, 115, 22, 1);
+.cb-lineStrong {
+    font-weight: 800;
+    color: var(--cb-ink);
+}
+
+.cb-lineMuted {
+    font-weight: 650;
+    color: rgba(71, 85, 105, 0.95);
+}
+
+.cb-item-sub {
+    margin-top: 10px;
+    font-family: "Inter", sans-serif;
+    font-size: 13px;
+    font-weight: 650;
+    color: rgba(71, 85, 105, 0.95);
 }
 
 .cb-dot {
-    color: rgba(15, 23, 42, 0.25);
+    color: rgba(15, 23, 42, 0.22);
 }
 
 .cb-item-right {
-    display: flex;
-    align-items: center;
-    gap: 10px;
     flex: 0 0 auto;
+    display: grid;
+    place-items: center;
 }
 
-.cb-count {
-    font-family: "Inter", sans-serif;
-    font-weight: 700;
-    color: var(--kc-text-primary);
-    background: var(--kc-bg-soft);
-    border: 1px solid rgba(15, 23, 42, 0.14);
-    padding: 7px 10px;
-    border-radius: 999px;
-}
-
-.cb-view {
-    font-family: "Inter", sans-serif;
-    font-weight: 600;
-    color: rgba(71, 85, 105, 0.95);
+.cb-chev {
+    font-size: 22px;
+    font-weight: 900;
+    color: rgba(15, 23, 42, 0.35);
 }
 
 /* Inline empty */
 .cb-empty-inline {
-    margin-top: 10px;
     background: rgba(15, 23, 42, 0.02);
     border: 1px dashed rgba(15, 23, 42, 0.18);
     border-radius: 18px;
     padding: 14px;
-    font-weight: 600;
+    font-family: "Inter", sans-serif;
+    font-weight: 650;
     color: rgba(71, 85, 105, 0.95);
 }
 
-/* =========================================================
-   Empty state action row (was referenced but missing)
-========================================================= */
+/* Empty state action row */
 .cb-actions-row {
     margin-top: 12px;
     display: flex;
@@ -236,14 +287,8 @@ Contact Book — KonarCard Dashboard system
     flex-wrap: wrap;
 }
 
-.cb-actions-row .kx-btn {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-}
-
 /* =========================================================
-   Detail (sticky on desktop)
+   Detail (sticky on desktop + scroll inside)
 ========================================================= */
 .cb-detailCard {
     position: sticky;
@@ -257,27 +302,38 @@ Contact Book — KonarCard Dashboard system
     justify-content: flex-end;
 }
 
+.cb-detailBody {
+    flex: 1;
+    min-height: 0;
+    overflow: auto;
+    padding-right: 2px;
+}
+
 .cb-detail {
-    margin-top: 14px;
+    margin-top: 0;
 }
 
 .cb-detail-top {
     display: flex;
     gap: 12px;
     align-items: center;
+    background: #fff;
+    border: 1px solid rgba(15, 23, 42, 0.10);
+    border-radius: 18px;
+    padding: 16px;
 }
 
 .cb-detail-avatar {
-    width: 52px;
-    height: 52px;
+    width: 54px;
+    height: 54px;
     border-radius: 18px;
     background: rgba(249, 115, 22, 0.14);
     border: 1px solid rgba(249, 115, 22, 0.18);
     display: grid;
     place-items: center;
     font-family: "Inter", sans-serif;
-    font-weight: 700;
-    color: var(--kc-text-primary);
+    font-weight: 800;
+    color: var(--cb-ink);
     flex: 0 0 auto;
 }
 
@@ -287,18 +343,19 @@ Contact Book — KonarCard Dashboard system
 
 .cb-detail-name {
     font-family: "Inter", sans-serif;
-    font-weight: 700;
+    font-weight: 900;
     font-size: 16px;
-    color: var(--kc-text-primary);
+    color: var(--cb-ink);
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
 }
 
 .cb-detail-sub {
-    margin-top: 4px;
+    margin-top: 6px;
     color: rgba(71, 85, 105, 0.95);
-    font-weight: 600;
+    font-family: "Inter", sans-serif;
+    font-weight: 650;
     font-size: 13px;
 }
 
@@ -319,13 +376,15 @@ Contact Book — KonarCard Dashboard system
 }
 
 .cb-detail-label {
-    font-weight: 600;
+    font-family: "Inter", sans-serif;
+    font-weight: 650;
     color: rgba(71, 85, 105, 0.95);
 }
 
 .cb-detail-value {
-    font-weight: 700;
-    color: var(--kc-text-primary);
+    font-family: "Inter", sans-serif;
+    font-weight: 800;
+    color: var(--cb-ink);
     text-align: right;
     max-width: 62%;
     overflow: hidden;
@@ -343,14 +402,15 @@ Contact Book — KonarCard Dashboard system
 
 .cb-note-title {
     font-family: "Inter", sans-serif;
-    font-weight: 700;
-    color: var(--kc-text-primary);
+    font-weight: 800;
+    color: var(--cb-ink);
 }
 
 .cb-note-body {
     margin-top: 8px;
     color: rgba(71, 85, 105, 0.95);
-    font-weight: 600;
+    font-family: "Inter", sans-serif;
+    font-weight: 650;
     font-size: 13px;
     line-height: 1.5;
     white-space: pre-wrap;
@@ -359,12 +419,13 @@ Contact Book — KonarCard Dashboard system
 .cb-hint {
     margin-top: 12px;
     color: rgba(71, 85, 105, 0.95);
-    font-weight: 600;
+    font-family: "Inter", sans-serif;
+    font-weight: 650;
     font-size: 13px;
 }
 
 /* =========================================================
-   Inline states (error / empty) that don't break layout
+   Inline states
 ========================================================= */
 .cb-inlineState {
     margin-top: 14px;
@@ -383,22 +444,23 @@ Contact Book — KonarCard Dashboard system
 
 .cb-inlineTitle {
     font-family: "Inter", sans-serif;
-    font-weight: 700;
-    color: var(--kc-text-primary);
+    font-weight: 800;
+    color: var(--cb-ink);
 }
 
 .cb-inlineText {
     font-family: "Inter", sans-serif;
-    font-weight: 600;
+    font-weight: 650;
     color: rgba(71, 85, 105, 0.95);
 }
 
 /* =========================================================
-   Skeletons (stable card height feel)
+   Skeletons
 ========================================================= */
-.cb-skelItem {
-    height: 76px;
-    border-radius: 18px;
+.cb-skelItem,
+.cb-skelHead,
+.cb-skelRow,
+.cb-skelNote {
     border: 1px solid rgba(15, 23, 42, 0.08);
     background: linear-gradient(90deg,
             rgba(15, 23, 42, 0.05),
@@ -408,46 +470,29 @@ Contact Book — KonarCard Dashboard system
     animation: cbShimmer 1.1s ease-in-out infinite;
 }
 
+.cb-skelItem {
+    height: 92px;
+    border-radius: 18px;
+}
+
 .cb-detailSkel {
-    margin-top: 14px;
     display: grid;
     gap: 10px;
 }
 
 .cb-skelHead {
-    height: 70px;
+    height: 78px;
     border-radius: 18px;
-    border: 1px solid rgba(15, 23, 42, 0.08);
-    background: linear-gradient(90deg,
-            rgba(15, 23, 42, 0.05),
-            rgba(15, 23, 42, 0.03),
-            rgba(15, 23, 42, 0.05));
-    background-size: 200% 100%;
-    animation: cbShimmer 1.1s ease-in-out infinite;
 }
 
 .cb-skelRow {
-    height: 52px;
+    height: 54px;
     border-radius: 18px;
-    border: 1px solid rgba(15, 23, 42, 0.08);
-    background: linear-gradient(90deg,
-            rgba(15, 23, 42, 0.05),
-            rgba(15, 23, 42, 0.03),
-            rgba(15, 23, 42, 0.05));
-    background-size: 200% 100%;
-    animation: cbShimmer 1.1s ease-in-out infinite;
 }
 
 .cb-skelNote {
-    height: 110px;
+    height: 120px;
     border-radius: 18px;
-    border: 1px solid rgba(15, 23, 42, 0.08);
-    background: linear-gradient(90deg,
-            rgba(15, 23, 42, 0.05),
-            rgba(15, 23, 42, 0.03),
-            rgba(15, 23, 42, 0.05));
-    background-size: 200% 100%;
-    animation: cbShimmer 1.1s ease-in-out infinite;
 }
 
 @keyframes cbShimmer {
@@ -483,6 +528,11 @@ Contact Book — KonarCard Dashboard system
     .cb-detailTopActions {
         justify-content: flex-start;
     }
+
+    .cb-listWrap,
+    .cb-detailBody {
+        overflow: visible;
+    }
 }
 
 @media (max-width: 520px) {
@@ -500,5 +550,10 @@ Contact Book — KonarCard Dashboard system
     .cb-actions-row .kx-btn {
         width: 100%;
         justify-content: center;
+    }
+
+    .cb-headRight {
+        width: 100%;
+        justify-content: flex-start;
     }
 }
