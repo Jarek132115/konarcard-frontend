@@ -51,9 +51,9 @@
     overflow: hidden;
 }
 
-/* Top brand (open sidebar) */
+/* ✅ Top brand (open sidebar) — 24px all around */
 .sb2-top {
-    padding: 24px 16px;
+    padding: 24px;
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -122,16 +122,16 @@
     transform: translateY(1px);
 }
 
-/* Divider */
+/* ✅ Divider aligns to 24px gutters */
 .sb2-divider {
     height: 1px;
     background: rgba(15, 23, 42, 0.08);
-    margin: 0 16px;
+    margin: 0 24px;
 }
 
-/* Menu block */
+/* ✅ Menu block — 24px gutters */
 .sb2-menuWrap {
-    padding: 24px 16px 0;
+    padding: 24px 24px 0;
 }
 
 .sb2-menuLabel {
@@ -212,10 +212,10 @@
     filter: var(--sb2-icon-active-filter);
 }
 
-/* Bottom */
+/* ✅ Bottom — 24px gutters + clean spacing */
 .sb2-bottom {
     margin-top: auto;
-    padding: 0 16px 16px;
+    padding: 0 24px 24px;
     display: grid;
     gap: 24px;
 }
@@ -265,7 +265,7 @@
     margin-top: 6px;
 }
 
-/* ✅ Mobile: full width drawer + centered menu group + top only logo + close */
+/* ✅ Mobile: full width drawer + centered menu group + logo-only (no KonarCard text) */
 @media (max-width: 1000px) {
     .sb2 {
         position: fixed;
@@ -278,7 +278,7 @@
         transition: transform 0.35s ease;
         z-index: 1002;
 
-        /* Mobile sidebar surface */
+        /* keep your current mobile surface */
         background: #fff;
     }
 
@@ -287,21 +287,20 @@
     }
 
     .sb2-top {
-        padding: 16px;
+        padding: 24px;
     }
 
-    /* ✅ remove KonarCard + subtext on mobile open sidebar */
+    /* ✅ KonarCard + subtext must not show on mobile */
     .sb2-brandText {
         display: none;
     }
 
     .sb2-divider {
-        margin: 0 16px;
+        margin: 0 24px;
     }
 
-    /* Center the MENU label + nav group */
     .sb2-menuWrap {
-        padding: 24px 16px 0;
+        padding: 24px 24px 0;
         display: flex;
         flex-direction: column;
         align-items: center;
@@ -317,9 +316,8 @@
         justify-items: center;
     }
 
-    /* Bottom section centered */
     .sb2-bottom {
-        padding: 0 16px 64px;
+        padding: 0 24px 64px;
         align-items: center;
         justify-content: center;
     }
