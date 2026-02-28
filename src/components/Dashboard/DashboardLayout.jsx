@@ -46,13 +46,14 @@ export default function DashboardLayout({
         return (
             <header className="dash-topbar" role="banner">
                 <div className="dash-topbar-left" aria-label="KonarCard">
-                    <span className="dash-topbar-logo">
-                        <img src={LogoIcon} alt="KonarCard" />
+                    <span className="dash-topbar-logo" aria-hidden="true">
+                        <img src={LogoIcon} alt="" />
                     </span>
 
+                    {/* ✅ Always brand-only on mobile (no page title switching) */}
                     <div className="dash-topbar-text">
-                        <div className="dash-topbar-title">{title || "KonarCard"}</div>
-                        {subtitle ? <div className="dash-topbar-sub">{subtitle}</div> : null}
+                        <div className="dash-topbar-title">KonarCard</div>
+                        <div className="dash-topbar-sub">Your digital business card</div>
                     </div>
                 </div>
 
@@ -70,7 +71,7 @@ export default function DashboardLayout({
                 </div>
             </header>
         );
-    }, [hideMobileTopbar, rightSlot, subtitle, title]);
+    }, [hideMobileTopbar, rightSlot]);
 
     return (
         <div className="dash-layout">
