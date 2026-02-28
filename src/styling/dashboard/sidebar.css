@@ -65,18 +65,30 @@
     text-decoration: none;
 }
 
+/* ✅ HARD RESET: logo must be plain everywhere (no bg/border/radius/shadow) */
 .sb2-logoPlain {
     width: 40px;
     height: 40px;
     display: grid;
     place-items: center;
     flex: 0 0 auto;
+
+    background: transparent !important;
+    border: 0 !important;
+    box-shadow: none !important;
+    border-radius: 0 !important;
+    padding: 0 !important;
 }
 
 .sb2-logoPlain img {
     width: 40px;
     height: 40px;
     display: block;
+
+    background: transparent !important;
+    border: 0 !important;
+    box-shadow: none !important;
+    border-radius: 0 !important;
 }
 
 .sb2-brandText {
@@ -233,12 +245,6 @@
     gap: 12px;
 }
 
-.sb2-logout .sb2-ico img {
-    /* keep the logout icon red-ish (optional). If you want it muted until hover, tell me. */
-    filter: none;
-    opacity: 0.95;
-}
-
 .sb2-footnote {
     font-family: "Inter", sans-serif;
     font-size: 12px;
@@ -256,7 +262,6 @@
         left: 0;
         height: 100vh;
         width: 100vw;
-        /* ✅ full width */
         border-radius: 0;
         transform: translateX(-100%);
         transition: transform 0.35s ease;
@@ -296,7 +301,6 @@
     .sb2-nav {
         width: min(420px, 100%);
         justify-items: center;
-        /* keep icon left within each row */
     }
 
     /* ✅ Bottom section also centered as a group */
@@ -307,7 +311,7 @@
     }
 }
 
-/* Make logout icon always red (same as text) */
+/* ✅ Make logout icon always red (same as text) */
 .sb2-logout .sb2-ico img {
     filter: invert(32%) sepia(93%) saturate(1450%) hue-rotate(345deg) brightness(95%) contrast(95%);
 }
