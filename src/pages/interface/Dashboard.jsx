@@ -1,4 +1,3 @@
-// src/pages/interface/Dashboard.jsx
 import React, { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import "../../styling/dashboard/dashboard.css";
@@ -25,17 +24,84 @@ const buildPublicUrl = (profileSlug) => {
     return `${window.location.origin}/u/${encodeURIComponent(s)}`;
 };
 
+function ShareIcon() {
+    return (
+        <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true">
+            <path
+                d="M16 5a3 3 0 1 0 2.83 4H19a1 1 0 0 0-1-1h-.17A3 3 0 0 0 16 5zM6 14a3 3 0 1 0 2.83 4H9a1 1 0 0 0-1-1h-.17A3 3 0 0 0 6 14zM16 14a3 3 0 1 0 2.83 4H19a1 1 0 0 0-1-1h-.17A3 3 0 0 0 16 14z"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinejoin="round"
+            />
+            <path
+                d="M8.6 15.3l6.8-3.6M8.6 8.7l6.8 3.6"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinejoin="round"
+            />
+        </svg>
+    );
+}
+
+function PencilIcon() {
+    return (
+        <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true">
+            <path
+                d="M14.1 4.9l5 5L8 21H3v-5L14.1 4.9z"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinejoin="round"
+            />
+            <path d="M13 6l5 5" fill="none" stroke="currentColor" strokeWidth="2" strokeLinejoin="round" />
+        </svg>
+    );
+}
+
+function CardIcon() {
+    return (
+        <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true">
+            <path
+                d="M4 7h16v10H4V7z"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinejoin="round"
+            />
+            <path d="M4 10h16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinejoin="round" />
+        </svg>
+    );
+}
+
+function ContactIcon() {
+    return (
+        <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true">
+            <path
+                d="M7 7a4 4 0 1 1 8 0 4 4 0 0 1-8 0z"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+            />
+            <path
+                d="M4 21a8 8 0 0 1 16 0"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+            />
+        </svg>
+    );
+}
+
 export default function Dashboard() {
     const { data: authUser } = useAuthUser();
     const { data: cards } = useMyProfiles();
 
     const plan = safeLower(authUser?.plan || "free");
-    const isFreePlan = plan === "free";
-    const displayPlan = `Plan: ${plan.toUpperCase()}`;
-
+    const displayPlan = `Plan: ${plan.charAt(0).toUpperCase()}${plan.slice(1)}`;
     const displayName = authUser?.name?.split(" ")?.[0] || "there";
 
-    // ✅ Profiles list (for ShareProfile modal)
     const profilesForShare = useMemo(() => {
         const xs = Array.isArray(cards) ? cards : [];
         return xs
@@ -53,11 +119,9 @@ export default function Dashboard() {
             .filter(Boolean);
     }, [cards]);
 
-    // ✅ Share modal state
     const [shareOpen, setShareOpen] = useState(false);
     const [selectedSlug, setSelectedSlug] = useState(null);
 
-    // default selected profile
     useEffect(() => {
         if (!profilesForShare.length) {
             setSelectedSlug(null);
@@ -68,19 +132,20 @@ export default function Dashboard() {
 
     const selectedProfile = useMemo(() => {
         if (!profilesForShare.length) return null;
-        return (
-            profilesForShare.find((p) => p.slug === selectedSlug) || profilesForShare[0]
-        );
+        return profilesForShare.find((p) => p.slug === selectedSlug) || profilesForShare[0];
     }, [profilesForShare, selectedSlug]);
 
-    // ✅ (same placeholder logic as your current file)
+    // placeholder completion
     const profileCompletion = useMemo(() => {
         const items = [
-            { key: "profilePhoto", label: "Add a profile photo", done: false },
+            { key: "profilePhoto", label: "Add a profile picture", done: false },
             { key: "bio", label: "Write a short bio", done: false },
             { key: "services", label: "Add your services", done: false },
-            { key: "reviews", label: "Add a review", done: false },
-            { key: "contact", label: "Confirm contact details", done: true },
+            { key: "gallery", label: "Add gallery photos", done: false },
+            { key: "reviews", label: "Add reviews", done: false },
+            { key: "contact", label: "Confirm contact details", done: false },
+            { key: "socials", label: "Add social links", done: false },
+            { key: "cta", label: "Add a call-to-action button", done: false },
         ];
 
         const doneCount = items.filter((i) => i.done).length;
@@ -89,32 +154,34 @@ export default function Dashboard() {
         return { percent, items };
     }, []);
 
-    const hasProfile = true;
+    const headerRight = (
+        <div className="db-headRight">
+            <span className="db-pill">{displayPlan}</span>
+
+            <button
+                type="button"
+                className="kx-btn kx-btn--black"
+                onClick={() => setShareOpen(true)}
+                disabled={!selectedProfile}
+                title={!selectedProfile ? "Create a profile first" : "Share your profile"}
+            >
+                <span className="db-btnIco" aria-hidden="true">
+                    <ShareIcon />
+                </span>
+                Share Your Profile
+            </button>
+        </div>
+    );
 
     return (
         <DashboardLayout hideDesktopHeader>
-            <div className="dash-shell">
+            <div className="db-shell">
                 <PageHeader
                     title="Dashboard"
-                    subtitle={`Welcome back, ${displayName}. Finish your profile and start using KonarCard.`}
-                    rightSlot={
-                        <div className="dash-headActions">
-                            <span className="kc-pill">{displayPlan}</span>
-
-                            <button
-                                type="button"
-                                className="kx-btn kx-btn--black"
-                                onClick={() => setShareOpen(true)}
-                                disabled={!selectedProfile}
-                                title={!selectedProfile ? "Create a profile first" : "Share your profile"}
-                            >
-                                Share your profile
-                            </button>
-                        </div>
-                    }
+                    subtitle={`Welcome Back ${displayName}. Finish your Profile and start using konarcard.`}
+                    rightSlot={headerRight}
                 />
 
-                {/* ✅ Share modal */}
                 <ShareProfile
                     isOpen={shareOpen}
                     onClose={() => setShareOpen(false)}
@@ -125,247 +192,108 @@ export default function Dashboard() {
                     profileUrl={selectedProfile?.url || ""}
                 />
 
-                {!hasProfile && (
-                    <section className="dash-card dash-empty">
-                        <div className="dash-empty-left">
-                            <h2 className="dash-card-title">Create your first profile</h2>
-                            <p className="dash-muted">
-                                Your profile is what customers scan, save, and share. Create it once — update anytime.
-                            </p>
-
-                            <div className="dash-actions-row">
-                                <Link to="/profiles" className="kx-btn kx-btn--black">
-                                    Create your profile
-                                </Link>
-                                <Link to="/helpcentreinterface" className="kx-btn kx-btn--white">
-                                    Learn how it works
-                                </Link>
-                            </div>
-                        </div>
-
-                        <div className="dash-empty-preview" aria-hidden="true">
-                            <div className="dash-phone">
-                                <div className="dash-phone-top" />
-                                <div className="dash-phone-line" />
-                                <div className="dash-phone-line short" />
-                                <div className="dash-phone-box" />
-                                <div className="dash-phone-row">
-                                    <div className="dash-chip" />
-                                    <div className="dash-chip" />
-                                </div>
-                            </div>
-                        </div>
-                    </section>
-                )}
-
-                <div className="dash-grid">
-                    {/* ✅ Force these two sections to be FIRST ROW */}
-                    <section className="dash-card dash-span-6 dash-top-quick">
-                        <div className="dash-card-head">
+                <div className="db-grid">
+                    {/* Quick Actions */}
+                    <section className="db-card db-span-12">
+                        <div className="db-cardHead">
                             <div>
-                                <h2 className="dash-card-title">Quick actions</h2>
-                                <p className="dash-muted">Fast ways to start getting value from KonarCard.</p>
+                                <h2 className="db-cardTitle">Quick Actions</h2>
+                                <p className="db-muted">Fast Ways to start getting value from KonarCard.</p>
                             </div>
                         </div>
 
-                        <div className="dash-quick">
-                            <Link to="/profiles" className="dash-quick-tile">
-                                <div className="dash-quick-title">Create / edit profile</div>
-                                <div className="dash-quick-sub">Update your details anytime</div>
+                        <div className="db-quickRow">
+                            <Link to="/profiles" className="db-quickBtn">
+                                <span className="db-quickIco" aria-hidden="true"><PencilIcon /></span>
+                                Create / Edit Profile
                             </Link>
 
                             <button
                                 type="button"
-                                className="dash-quick-tile dash-quick-btn"
+                                className="db-quickBtn"
                                 onClick={() => setShareOpen(true)}
                                 disabled={!selectedProfile}
                             >
-                                <div className="dash-quick-title">Share your profile link</div>
-                                <div className="dash-quick-sub">Copy + send to customers</div>
+                                <span className="db-quickIco" aria-hidden="true"><ShareIcon /></span>
+                                Share Your Profile Link
                             </button>
 
-                            <Link to="/cards" className="dash-quick-tile">
-                                <div className="dash-quick-title">Order a KonarCard</div>
-                                <div className="dash-quick-sub">Tap-to-share in seconds</div>
+                            <Link to="/cards" className="db-quickBtn">
+                                <span className="db-quickIco" aria-hidden="true"><CardIcon /></span>
+                                Order A KonarCard
                             </Link>
 
-                            <Link to="/contact-book" className="dash-quick-tile">
-                                <div className="dash-quick-title">View contact book</div>
-                                <div className="dash-quick-sub">People who saved you</div>
-                            </Link>
-                        </div>
-                    </section>
-
-                    <section className="dash-card dash-span-6 dash-top-steps">
-                        <div className="dash-card-head">
-                            <div>
-                                <h2 className="dash-card-title">Profile completion</h2>
-                                <p className="dash-muted">
-                                    Complete your profile to look more professional and get more leads.
-                                </p>
-                            </div>
-
-                            <div className="dash-progress-wrap" aria-label="Profile completion">
-                                <div className="dash-progress-text">
-                                    <span className="dash-progress-percent">{profileCompletion.percent}%</span>
-                                    <span className="dash-muted dash-muted-inline">complete</span>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div
-                            className="dash-progress-bar"
-                            role="progressbar"
-                            aria-valuenow={profileCompletion.percent}
-                            aria-valuemin={0}
-                            aria-valuemax={100}
-                        >
-                            <div className="dash-progress-fill" style={{ width: `${profileCompletion.percent}%` }} />
-                        </div>
-
-                        <ul className="dash-checklist">
-                            {profileCompletion.items.map((item) => (
-                                <li key={item.key} className={`dash-check ${item.done ? "done" : ""}`}>
-                                    <span className="dash-check-dot" aria-hidden="true" />
-                                    <span className="dash-check-label">{item.label}</span>
-                                    {!item.done && <span className="dash-check-cta">Recommended</span>}
-                                </li>
-                            ))}
-                        </ul>
-
-                        <div className="dash-actions-row">
-                            <Link to="/profiles" className="kx-btn kx-btn--black">
-                                Complete your profile
-                            </Link>
-                            <Link to="/cards" className="kx-btn kx-btn--white">
-                                Order a card
+                            <Link to="/contact-book" className="db-quickBtn">
+                                <span className="db-quickIco" aria-hidden="true"><ContactIcon /></span>
+                                View Contact Book
                             </Link>
                         </div>
                     </section>
 
-                    {/* Your digital profile */}
-                    <section className="dash-card dash-span-7">
-                        <div className="dash-card-head">
+                    {/* Profile Completion (left) */}
+                    <section className="db-card db-span-7">
+                        <div className="db-cardHead">
                             <div>
-                                <h2 className="dash-card-title">Your digital profile</h2>
-                                <p className="dash-muted">This is what customers see when they scan your card.</p>
-                            </div>
-                            <Link to="/profiles" className="kx-btn kx-btn--white">
-                                Edit profile
-                            </Link>
-                        </div>
-
-                        <div className="dash-preview">
-                            <div className="dash-preview-left">
-                                <div className="dash-preview-card">
-                                    <div className="dash-preview-hero" />
-                                    <div className="dash-preview-line" />
-                                    <div className="dash-preview-line short" />
-                                    <div className="dash-preview-row">
-                                        <div className="dash-preview-pill" />
-                                        <div className="dash-preview-pill" />
-                                        <div className="dash-preview-pill" />
-                                    </div>
-                                    <div className="dash-preview-box" />
-                                </div>
-                            </div>
-
-                            <div className="dash-preview-right">
-                                <div className="dash-mini-title">Preview tips</div>
-                                <ul className="dash-mini-list">
-                                    <li>Add a photo for trust</li>
-                                    <li>List your main services</li>
-                                    <li>Add 1–2 reviews</li>
-                                    <li>Share your link after each job</li>
-                                </ul>
-
-                                <div className="dash-actions-row">
-                                    <Link to="/profiles" className="kx-btn kx-btn--black">
-                                        Improve profile
-                                    </Link>
-                                    <Link to="/cards" className="kx-btn kx-btn--white">
-                                        Order a card
-                                    </Link>
-                                </div>
-                            </div>
-                        </div>
-                    </section>
-
-                    {/* Usage snapshot */}
-                    <section className="dash-card dash-span-5">
-                        <div className="dash-card-head">
-                            <div>
-                                <h2 className="dash-card-title">Usage snapshot</h2>
-                                <p className="dash-muted">Last 7 days</p>
-                            </div>
-                            <Link to="/analytics" className="kx-btn kx-btn--white">
-                                View analytics
-                            </Link>
-                        </div>
-
-                        <div className="dash-metrics">
-                            <div className="dash-metric">
-                                <div className="dash-metric-num">0</div>
-                                <div className="dash-metric-label">Profile views</div>
-                            </div>
-                            <div className="dash-metric">
-                                <div className="dash-metric-num">0</div>
-                                <div className="dash-metric-label">Card taps</div>
-                            </div>
-                            <div className="dash-metric">
-                                <div className="dash-metric-num">0</div>
-                                <div className="dash-metric-label">Link clicks</div>
+                                <h2 className="db-cardTitle">Profile Completion</h2>
+                                <p className="db-muted">Complete your profile to look more professional and get more jobs.</p>
                             </div>
                         </div>
 
-                        <div className="dash-note">Analytics will populate as soon as you start sharing your profile.</div>
-                    </section>
+                        <div className="db-complete">
+                            <div className="db-completeLabel">To Complete:</div>
 
-                    {/* Upgrade */}
-                    {isFreePlan && (
-                        <section className="dash-card dash-upgrade dash-span-12">
-                            <div className="dash-upgrade-inner">
-                                <div className="dash-upgrade-left">
-                                    <h2 className="dash-upgrade-title">Unlock more with Plus</h2>
-                                    <p className="dash-upgrade-sub">
-                                        More templates, full customization, and advanced features to win more work.
-                                    </p>
+                            <ul className="db-list">
+                                {profileCompletion.items.map((item) => (
+                                    <li key={item.key} className="db-listRow">
+                                        <span className="db-listText">{item.label}</span>
+                                        <span className={`db-box ${item.done ? "done" : ""}`} aria-hidden="true" />
+                                    </li>
+                                ))}
+                            </ul>
 
-                                    <ul className="dash-upgrade-list">
-                                        <li>All templates (5 designs)</li>
-                                        <li>Full profile customization</li>
-                                        <li>Better trust + conversion</li>
-                                    </ul>
-                                </div>
-
-                                <div className="dash-upgrade-right">
-                                    <Link to="/subscription" className="kx-btn kx-btn--white">
-                                        Upgrade plan
-                                    </Link>
-                                    <Link to="/pricing" className="kx-btn kx-btn--black">
-                                        Compare plans
-                                    </Link>
-                                </div>
-                            </div>
-                        </section>
-                    )}
-
-                    {/* Help & support */}
-                    <section className="dash-card dash-span-12">
-                        <div className="dash-help">
-                            <div>
-                                <h2 className="dash-card-title">Help & support</h2>
-                                <p className="dash-muted">Need help setting up? We’ll get you sorted quickly.</p>
-                            </div>
-
-                            <div className="dash-actions-row">
-                                <Link to="/helpcentreinterface" className="kx-btn kx-btn--white">
-                                    View help centre
-                                </Link>
-                                <Link to="/contact-support" className="kx-btn kx-btn--black">
-                                    Contact support
+                            <div className="db-bottomCta">
+                                <Link to="/profiles" className="kx-btn kx-btn--black">
+                                    Complete Your Profile
                                 </Link>
                             </div>
+                        </div>
+                    </section>
+
+                    {/* Usage Snapshot (right) */}
+                    <section className="db-card db-span-5">
+                        <div className="db-cardHead">
+                            <div>
+                                <h2 className="db-cardTitle">Usage Snapshot</h2>
+                                <p className="db-muted">Fast Ways to start getting value from KonarCard.</p>
+                            </div>
+                        </div>
+
+                        <div className="db-metrics2x2">
+                            <div className="db-metricBox">
+                                <div className="db-metricNum">22</div>
+                                <div className="db-metricLabel">Profile Views</div>
+                            </div>
+
+                            <div className="db-metricBox">
+                                <div className="db-metricNum">12</div>
+                                <div className="db-metricLabel">Card Taps</div>
+                            </div>
+
+                            <div className="db-metricBox">
+                                <div className="db-metricNum">10</div>
+                                <div className="db-metricLabel">QR Scans</div>
+                            </div>
+
+                            <div className="db-metricBox">
+                                <div className="db-metricNum">7</div>
+                                <div className="db-metricLabel">Numbers Exchanged</div>
+                            </div>
+                        </div>
+
+                        <div className="db-bottomCta">
+                            <Link to="/analytics" className="kx-btn kx-btn--black">
+                                View Analytics
+                            </Link>
                         </div>
                     </section>
                 </div>
