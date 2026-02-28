@@ -10,6 +10,9 @@ import { useAuthUser } from "../../hooks/useAuthUser";
 import { useMyProfiles, useCreateProfile, useDeleteProfile } from "../../hooks/useBusinessCard";
 import api from "../../services/api";
 
+// ✅ NEW: real preview component (same as MyProfile page)
+import Preview from "../../components/Dashboard/Preview";
+
 const TEAMS_CHECKOUT_ENDPOINT = "/api/checkout/teams";
 
 const centerTrim = (v) => (v ?? "").toString().trim();
@@ -24,6 +27,30 @@ const normalizeSlug = (raw) =>
 export default function Profiles() {
     const navigate = useNavigate();
     const location = useLocation();
+
+    // ✅ Responsive (for Preview props)
+    const mqDesktopToMobile = "(max-width: 1000px)";
+    const mqSmallMobile = "(max-width: 520px)";
+    const [isMobile, setIsMobile] = useState(() => window.matchMedia(mqDesktopToMobile).matches);
+    const [isSmallMobile, setIsSmallMobile] = useState(() => window.matchMedia(mqSmallMobile).matches);
+
+    useEffect(() => {
+        const mm1 = window.matchMedia(mqDesktopToMobile);
+        const mm2 = window.matchMedia(mqSmallMobile);
+
+        const onChange = () => {
+            setIsMobile(mm1.matches);
+            setIsSmallMobile(mm2.matches);
+        };
+
+        mm1.addEventListener("change", onChange);
+        mm2.addEventListener("change", onChange);
+
+        return () => {
+            mm1.removeEventListener("change", onChange);
+            mm2.removeEventListener("change", onChange);
+        };
+    }, []);
 
     // ✅ User + plan
     const { data: authUser, refetch: refetchAuthUser } = useAuthUser();
@@ -49,13 +76,9 @@ export default function Profiles() {
 
             const trade = centerTrim(c.job_title) || "Trade";
 
-            const isComplete = Boolean(
-                centerTrim(c.full_name) || centerTrim(c.main_heading) || centerTrim(c.business_card_name)
-            );
+            const isComplete = Boolean(centerTrim(c.full_name) || centerTrim(c.main_heading) || centerTrim(c.business_card_name));
 
-            const updatedAtText = c.updatedAt
-                ? `Updated ${new Date(c.updatedAt).toLocaleDateString()}`
-                : "Updated recently";
+            const updatedAtText = c.updatedAt ? `Updated ${new Date(c.updatedAt).toLocaleDateString()}` : "Updated recently";
 
             return {
                 id: c._id,
@@ -97,6 +120,105 @@ export default function Profiles() {
         return `${window.location.origin}/u/${encodeURIComponent(s)}`;
     };
 
+    // =========================================================
+    // ✅ REAL PREVIEW DATA (fetch selected profile full record)
+    // =========================================================
+    const [previewLoading, setPreviewLoading] = useState(false);
+    const [previewError, setPreviewError] = useState("");
+    const [previewCard, setPreviewCard] = useState(null);
+
+    useEffect(() => {
+        const slug = selectedProfile?.slug;
+        if (!slug) {
+            setPreviewCard(null);
+            setPreviewError("");
+            return;
+        }
+
+        let cancelled = false;
+
+        (async () => {
+            try {
+                setPreviewLoading(true);
+                setPreviewError("");
+
+                const res = await api.get(`/api/business-card/profiles/${encodeURIComponent(slug)}`);
+                const data = res?.data?.data ?? null;
+
+                if (cancelled) return;
+                setPreviewCard(data);
+            } catch (e) {
+                if (cancelled) return;
+                setPreviewCard(null);
+                setPreviewError(e?.response?.data?.error || e?.message || "Could not load preview.");
+            } finally {
+                if (cancelled) return;
+                setPreviewLoading(false);
+            }
+        })();
+
+        return () => {
+            cancelled = true;
+        };
+    }, [selectedProfile?.slug]);
+
+    const previewState = useMemo(() => {
+        const bc = previewCard || {};
+
+        return {
+            templateId: bc.template_id || "template-1",
+
+            businessName: bc.business_card_name || "",
+            mainHeading: bc.main_heading || "",
+            subHeading: bc.sub_heading || "",
+            job_title: bc.job_title || "",
+            full_name: bc.full_name || "",
+            bio: bc.bio || "",
+
+            avatar: bc.avatar || null,
+            coverPhoto: bc.cover_photo || null,
+
+            // local-only (not used here, but Preview expects these keys in many setups)
+            avatarPreview: "",
+            coverPhotoPreview: "",
+            avatarFile: null,
+            coverPhotoFile: null,
+
+            workImages: Array.isArray(bc.works) ? bc.works.map((url) => ({ file: null, preview: url })) : [],
+
+            services: Array.isArray(bc.services) ? bc.services : [],
+            reviews: Array.isArray(bc.reviews) ? bc.reviews : [],
+
+            contact_email: bc.contact_email || "",
+            phone_number: bc.phone_number || "",
+
+            facebook_url: bc.facebook_url || "",
+            instagram_url: bc.instagram_url || "",
+            linkedin_url: bc.linkedin_url || "",
+            x_url: bc.x_url || "",
+            tiktok_url: bc.tiktok_url || "",
+        };
+    }, [previewCard]);
+
+    const previewToggles = useMemo(() => {
+        const bc = previewCard || {};
+        return {
+            showMainSection: bc.show_main_section !== false,
+            showAboutMeSection: bc.show_about_me_section !== false,
+            showWorkSection: bc.show_work_section !== false,
+            showServicesSection: bc.show_services_section !== false,
+            showReviewsSection: bc.show_reviews_section !== false,
+            showContactSection: bc.show_contact_section !== false,
+        };
+    }, [previewCard]);
+
+    const hasExchangeContact =
+        (previewState.contact_email && previewState.contact_email.trim()) ||
+        (previewState.phone_number && previewState.phone_number.trim());
+
+    // =========================================================
+    // Actions
+    // =========================================================
     const handleCopyLink = async () => {
         if (!selectedProfile) return;
         const link = buildPublicUrl(selectedProfile.slug);
@@ -142,7 +264,7 @@ export default function Profiles() {
         try {
             await deleteProfile.mutateAsync(slug);
             await refetchProfiles();
-            // if we deleted the selected one, reselect the first available
+
             setSelectedSlug((prev) => {
                 if (prev !== slug) return prev;
                 const remaining = sortedProfiles.filter((p) => p.slug !== slug);
@@ -155,7 +277,7 @@ export default function Profiles() {
     };
 
     // =========================================================
-    // Profile actions (right panel placeholders)
+    // Bottom 4 buttons (keep)
     // =========================================================
     const handleDownloadQr = async () => {
         if (!selectedProfile?.slug) return;
@@ -208,9 +330,7 @@ export default function Profiles() {
             setClaimOpen(true);
             resetClaim();
             setClaimStatus("error");
-            setClaimMessage(
-                `You’re at your Teams limit (${sortedProfiles.length}/${maxProfiles}). Increase your Teams quantity to add more profiles.`
-            );
+            setClaimMessage(`You’re at your Teams limit (${sortedProfiles.length}/${maxProfiles}). Increase your Teams quantity to add more profiles.`);
             setTimeout(() => {
                 claimRef.current?.scrollIntoView({ behavior: "smooth", block: "center" });
             }, 80);
@@ -221,12 +341,8 @@ export default function Profiles() {
 
     const validateClaimSlug = (raw) => {
         const s = normalizeSlug(raw);
-        if (!s || s.length < 3) {
-            return { ok: false, slug: s, msg: "Slug must be at least 3 characters (a-z, 0-9, hyphen)." };
-        }
-        if (s === "main") {
-            return { ok: false, slug: s, msg: "Please choose a real slug (not “main”)." };
-        }
+        if (!s || s.length < 3) return { ok: false, slug: s, msg: "Slug must be at least 3 characters (a-z, 0-9, hyphen)." };
+        if (s === "main") return { ok: false, slug: s, msg: "Please choose a real slug (not “main”)." };
         return { ok: true, slug: s, msg: "" };
     };
 
@@ -372,7 +488,6 @@ export default function Profiles() {
 
                 try {
                     await refetchProfiles?.();
-                    // select returned slug regardless (if it exists it will show, if not it won’t break)
                     setSelectedSlug(returnedSlug);
                     break;
                 } catch { }
@@ -465,7 +580,6 @@ export default function Profiles() {
                     }
                 />
 
-
                 {sortedProfiles.length === 0 ? (
                     <section className="profiles-card profiles-empty">
                         <h2 className="profiles-card-title">Create your first profile</h2>
@@ -527,10 +641,10 @@ export default function Profiles() {
                                     {claimMessage ? (
                                         <div
                                             className={`profiles-alert ${claimStatus === "available"
-                                                ? "success"
-                                                : claimStatus === "error" || claimStatus === "invalid"
-                                                    ? "danger"
-                                                    : "neutral"
+                                                    ? "success"
+                                                    : claimStatus === "error" || claimStatus === "invalid"
+                                                        ? "danger"
+                                                        : "neutral"
                                                 }`}
                                         >
                                             {claimMessage}
@@ -568,7 +682,8 @@ export default function Profiles() {
 
                                     {isTeams && (
                                         <div className="profiles-hint">
-                                            Teams cap is controlled by your subscription: <strong>{maxProfiles}</strong>. If you hit the limit, increase quantity.
+                                            Teams cap is controlled by your subscription: <strong>{maxProfiles}</strong>. If you hit the limit, increase
+                                            quantity.
                                         </div>
                                     )}
                                 </div>
@@ -695,9 +810,7 @@ export default function Profiles() {
                                                                 type="button"
                                                                 className="kx-btn kx-btn--black"
                                                                 onClick={checkSlugAvailability}
-                                                                disabled={
-                                                                    claimStatus === "checking" || claimStatus === "subscribing" || claimStatus === "creating"
-                                                                }
+                                                                disabled={claimStatus === "checking" || claimStatus === "subscribing" || claimStatus === "creating"}
                                                             >
                                                                 {claimStatus === "checking" ? "Checking..." : "Check availability"}
                                                             </button>
@@ -706,10 +819,10 @@ export default function Profiles() {
                                                         {claimMessage ? (
                                                             <div
                                                                 className={`profiles-alert ${claimStatus === "available"
-                                                                    ? "success"
-                                                                    : claimStatus === "error" || claimStatus === "invalid"
-                                                                        ? "danger"
-                                                                        : "neutral"
+                                                                        ? "success"
+                                                                        : claimStatus === "error" || claimStatus === "invalid"
+                                                                            ? "danger"
+                                                                            : "neutral"
                                                                     }`}
                                                             >
                                                                 {claimMessage}
@@ -734,9 +847,7 @@ export default function Profiles() {
                                                                         onClick={startTeamsCheckout}
                                                                         disabled={claimStatus === "subscribing"}
                                                                     >
-                                                                        {claimStatus === "subscribing"
-                                                                            ? "Opening checkout..."
-                                                                            : "Subscribe / Update Teams to add it"}
+                                                                        {claimStatus === "subscribing" ? "Opening checkout..." : "Subscribe / Update Teams to add it"}
                                                                     </button>
                                                                 )}
                                                             </div>
@@ -750,8 +861,8 @@ export default function Profiles() {
 
                                                         {isTeams && (
                                                             <div className="profiles-hint">
-                                                                Teams cap is controlled by your subscription: <strong>{maxProfiles}</strong>. If you hit the
-                                                                limit, increase quantity.
+                                                                Teams cap is controlled by your subscription: <strong>{maxProfiles}</strong>. If you hit the limit,
+                                                                increase quantity.
                                                             </div>
                                                         )}
                                                     </div>
@@ -783,65 +894,54 @@ export default function Profiles() {
                             </div>
                         </section>
 
-                        {/* RIGHT */}
+                        {/* RIGHT (REAL PREVIEW + 4 BOTTOM BUTTONS) */}
                         <aside className="profiles-right">
                             <section className="profiles-card profiles-preview-card">
                                 <div className="profiles-card-head">
                                     <div>
                                         <h2 className="profiles-card-title">Profile preview</h2>
-                                        <p className="profiles-muted">A quick look at what customers see on mobile.</p>
+                                        <p className="profiles-muted">This is what customers see when they open your link.</p>
                                     </div>
                                 </div>
 
-                                <div className="profiles-preview">
-                                    <div className="profiles-phone">
-                                        <div className="profiles-phone-top" />
-                                        <div className="profiles-preview-name">{selectedProfile?.name || "Profile"}</div>
-                                        <div className="profiles-preview-trade">{selectedProfile?.trade || "Trade"}</div>
-                                        <div className="profiles-phone-line" />
-                                        <div className="profiles-phone-line short" />
-                                        <div className="profiles-phone-block" />
-                                        <div className="profiles-phone-row">
-                                            <div className="profiles-chip" />
-                                            <div className="profiles-chip" />
-                                        </div>
-                                    </div>
-
-                                    <div className="profiles-actions-row">
-                                        <button type="button" className="kx-btn kx-btn--black" onClick={() => handleEdit(selectedProfile?.slug)}>
-                                            Edit profile
-                                        </button>
-
-                                        <button type="button" className="kx-btn kx-btn--white" onClick={() => handleVisit(selectedProfile?.slug)}>
-                                            Visit
-                                        </button>
-                                    </div>
+                                <div className="profiles-previewWrap">
+                                    {previewLoading ? (
+                                        <div className="profiles-previewLoading">Loading preview…</div>
+                                    ) : previewError ? (
+                                        <div className="profiles-previewError">{previewError}</div>
+                                    ) : (
+                                        <Preview
+                                            state={previewState}
+                                            isMobile={isMobile}
+                                            hasSavedData={!!previewCard}
+                                            showMainSection={previewToggles.showMainSection}
+                                            showAboutMeSection={previewToggles.showAboutMeSection}
+                                            showWorkSection={previewToggles.showWorkSection}
+                                            showServicesSection={previewToggles.showServicesSection}
+                                            showReviewsSection={previewToggles.showReviewsSection}
+                                            showContactSection={previewToggles.showContactSection}
+                                            hasExchangeContact={hasExchangeContact}
+                                            visitUrl={selectedProfile?.slug ? buildPublicUrl(selectedProfile.slug) : ""}
+                                        />
+                                    )}
                                 </div>
 
-                                <div className="profiles-actions-card">
-                                    <h3 className="profiles-actions-title">Profile actions</h3>
+                                <div className="profiles-previewActions">
+                                    <button type="button" className="kx-btn kx-btn--black" onClick={handleShare} disabled={!selectedProfile}>
+                                        Share page
+                                    </button>
 
-                                    <div className="profiles-actions-grid">
-                                        <button type="button" className="kx-btn kx-btn--white" onClick={handleShare}>
-                                            Share link
-                                        </button>
+                                    <button type="button" className="kx-btn kx-btn--white" onClick={handleDownloadQr} disabled={!selectedProfile}>
+                                        Download QR
+                                    </button>
 
-                                        <button type="button" className="kx-btn kx-btn--white" onClick={handleCopyLink}>
-                                            Copy link
-                                        </button>
+                                    <button type="button" className="kx-btn kx-btn--white" onClick={handleAddAppleWallet} disabled={!selectedProfile}>
+                                        Apple Wallet
+                                    </button>
 
-                                        <button type="button" className="kx-btn kx-btn--white" onClick={handleDownloadQr}>
-                                            Download QR
-                                        </button>
-
-                                        <button type="button" className="kx-btn kx-btn--white" onClick={handleAddGoogleWallet}>
-                                            Google Wallet
-                                        </button>
-
-                                        <button type="button" className="kx-btn kx-btn--white" onClick={handleAddAppleWallet}>
-                                            Apple Wallet
-                                        </button>
-                                    </div>
+                                    <button type="button" className="kx-btn kx-btn--white" onClick={handleAddGoogleWallet} disabled={!selectedProfile}>
+                                        Google Wallet
+                                    </button>
                                 </div>
                             </section>
                         </aside>
