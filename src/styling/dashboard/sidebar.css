@@ -1,7 +1,6 @@
 :root {
-    /* ✅ match previous feel (optional, but this is likely what you mean by oversized) */
-    --sb2-width: 272px;
-
+    /* ✅ Wider so "Your digital business card" stays 1 line */
+    --sb2-width: 320px;
     --sb2-radius: 22px;
 
     --sb2-surface: var(--kc-bg-soft, #fafafa);
@@ -14,7 +13,6 @@
 
     --sb2-icon-muted-filter: invert(33%) sepia(10%) saturate(980%) hue-rotate(182deg) brightness(95%) contrast(90%);
     --sb2-icon-active-filter: invert(59%) sepia(79%) saturate(1900%) hue-rotate(346deg) brightness(100%) contrast(98%);
-
     --sb2-icon-logout-filter: invert(32%) sepia(93%) saturate(1450%) hue-rotate(345deg) brightness(95%) contrast(95%);
 }
 
@@ -38,7 +36,7 @@
 .sb2 {
     position: sticky;
 
-    /* ✅ MATCH the new page gutter (24px) */
+    /* ✅ match page gutter */
     top: 24px;
     height: calc(100vh - 48px);
 
@@ -54,7 +52,7 @@
     overflow: hidden;
 }
 
-/* Top brand — 24px all around */
+/* Top brand */
 .sb2-top {
     padding: 24px;
     display: flex;
@@ -71,7 +69,7 @@
     text-decoration: none;
 }
 
-/* Logo plain */
+/* ✅ LOGO MUST ALWAYS BE PLAIN (beats any global styles) */
 .sb2-logoPlain {
     width: 40px;
     height: 40px;
@@ -84,6 +82,7 @@
     box-shadow: none !important;
     border-radius: 0 !important;
     padding: 0 !important;
+    outline: none !important;
 }
 
 .sb2-logoPlain img {
@@ -96,12 +95,21 @@
     box-shadow: none !important;
     border-radius: 0 !important;
     padding: 0 !important;
+    outline: none !important;
 }
 
+/* Brand text */
 .sb2-brandText {
     display: grid;
     gap: 2px;
     min-width: 0;
+}
+
+/* ✅ Force subtitle to stay one line on desktop */
+.sb2-brandText .kc-body {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 /* Close (mobile) */
@@ -125,7 +133,7 @@
     transform: translateY(1px);
 }
 
-/* Divider aligns to 24px gutters */
+/* Divider */
 .sb2-divider {
     height: 1px;
     background: rgba(15, 23, 42, 0.08);
@@ -147,12 +155,12 @@
     margin-bottom: 24px;
 }
 
-/* Nav list */
 .sb2-nav {
     display: grid;
     gap: 24px;
 }
 
+/* Links */
 .sb2-link {
     display: flex;
     align-items: center;
@@ -189,6 +197,7 @@
     margin: -6px -8px;
 }
 
+/* Icons */
 .sb2-ico {
     width: 30px;
     height: 30px;
@@ -220,6 +229,7 @@
     gap: 24px;
 }
 
+/* Logout */
 .sb2-logout {
     width: fit-content;
     padding: 0;
@@ -263,7 +273,9 @@
     margin-top: 6px;
 }
 
-/* Mobile drawer */
+/* =========================
+   Mobile drawer fixes
+   ========================= */
 @media (max-width: 1000px) {
     .sb2 {
         position: fixed;
@@ -282,12 +294,26 @@
         transform: translateX(0);
     }
 
-    .sb2-top {
-        padding: 24px;
+    /* ✅ Keep logo plain on mobile too (in case global styles override) */
+    .sb2-logoPlain,
+    .sb2-logoPlain img {
+        background: transparent !important;
+        border: 0 !important;
+        box-shadow: none !important;
+        border-radius: 0 !important;
+        padding: 0 !important;
     }
 
+    /* ✅ HARD hide brand text on mobile (beats global styles) */
     .sb2-brandText {
-        display: none;
+        display: none !important;
+        visibility: hidden !important;
+        height: 0 !important;
+        overflow: hidden !important;
+    }
+
+    .sb2-top {
+        padding: 24px;
     }
 
     .sb2-divider {
@@ -315,5 +341,12 @@
         padding: 0 24px 64px;
         align-items: center;
         justify-content: center;
+    }
+}
+
+/* Optional: slightly narrower on mid screens so it doesn’t feel huge */
+@media (max-width: 1300px) {
+    :root {
+        --sb2-width: 304px;
     }
 }
