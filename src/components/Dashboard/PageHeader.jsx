@@ -4,9 +4,11 @@ import "../../styling/dashboard/pageheader.css";
 
 /**
  * PageHeader (Clean v2)
- * - White page background (handled by page / layout)
- * - Header card uses kc-bg-soft (#fafafa)
- * - Very light shadow (almost border-only)
+ * - Card padding = 24px all around
+ * - Title uses .kc-title
+ * - Subtitle uses .kc-body
+ * - Gap between title/sub = 4px
+ * - RightSlot vertically centered
  *
  * Props:
  * - title: string
@@ -19,8 +21,8 @@ export default function PageHeader({ title, subtitle, rightSlot }) {
       <div className="ph2-card">
         <div className="ph2-row">
           <div className="ph2-left">
-            <h1 className="ph2-title">{title}</h1>
-            {subtitle ? <p className="ph2-sub">{subtitle}</p> : null}
+            <div className="ph2-title kc-title">{title}</div>
+            {subtitle ? <div className="ph2-sub kc-body">{subtitle}</div> : null}
           </div>
 
           {rightSlot ? <div className="ph2-right">{rightSlot}</div> : null}

@@ -1,10 +1,6 @@
 /* src/styling/dashboard/pageheader.css */
 
 :root {
-    --ph2-ink: var(--kc-text-primary, #0f172a);
-    --ph2-muted: var(--kc-text-secondary, #475569);
-
-    /* ✅ As requested */
     --ph2-surface: var(--kc-bg-soft, #fafafa);
 
     /* Very light border + shadow */
@@ -23,44 +19,46 @@
     border: 1px solid var(--ph2-border);
     border-radius: 22px;
     box-shadow: var(--ph2-shadow);
-    padding: 18px;
+
+    /* ✅ 24px all around */
+    padding: 24px;
 }
 
 .ph2-row {
     display: flex;
-    align-items: flex-start;
+
+    /* ✅ center rightSlot vertically */
+    align-items: center;
+
     justify-content: space-between;
     gap: 16px;
 }
 
 .ph2-left {
     min-width: 0;
+
+    /* ✅ title/sub gap = 4px */
+    display: grid;
+    gap: 4px;
 }
 
+/* Title + subtitle now use global classes, keep these minimal */
 .ph2-title {
     margin: 0;
-    font-family: "Cal Sans", sans-serif;
-    font-weight: 500;
-    letter-spacing: -0.02em;
-    color: var(--ph2-ink);
-    font-size: 22px;
-    line-height: 1.15;
 }
 
 .ph2-sub {
-    margin: 8px 0 0;
-    font-family: "Inter", sans-serif;
-    font-weight: 600;
-    color: var(--ph2-muted);
-    font-size: 14px;
-    line-height: 1.55;
+    margin: 0;
     max-width: 920px;
 }
 
+/* Right side */
 .ph2-right {
     display: flex;
-    align-items: flex-end;
+    align-items: center;
+    /* ✅ center items */
     justify-content: flex-end;
+    gap: 10px;
     min-width: 0;
 }
 
@@ -68,6 +66,8 @@
 @media (max-width: 1000px) {
     .ph2-row {
         flex-direction: column;
+        align-items: flex-start;
+        /* left align stack */
     }
 
     .ph2-right {
@@ -78,11 +78,8 @@
 
 @media (max-width: 520px) {
     .ph2-card {
-        padding: 14px;
+        padding: 24px;
+        /* keep 24px as requested */
         border-radius: 20px;
-    }
-
-    .ph2-title {
-        font-size: 20px;
     }
 }
