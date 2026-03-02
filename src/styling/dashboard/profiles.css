@@ -43,7 +43,6 @@ Profiles — Split panels (50/50) + full-height fill
     display: grid;
     gap: 16px;
     align-items: stretch;
-    margin-top: 16px;
 }
 
 .profiles-grid--fill {
