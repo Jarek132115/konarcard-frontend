@@ -1,3 +1,4 @@
+// src/components/Dashboard/Sidebar.jsx
 import React, { useContext, useEffect, useMemo, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { AuthContext } from "../AuthContext.jsx";
@@ -84,7 +85,7 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen }) {
                     ) : null}
                 </div>
 
-                {/* Divider (inset, respects 24px padding) */}
+                {/* Divider (inset) */}
                 <div className="sb3-divider" />
 
                 {/* 36px gap before first link */}
@@ -112,41 +113,44 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen }) {
                 <div className="sb3-divider" />
                 <div className="sb3-gap36" />
 
-                {/* Upgrade */}
-                <Link
-                    to="/upgrade"
-                    onClick={closeSidebar}
-                    className={`sb3-link ${isActive("/upgrade") ? "active" : ""} sb3-linkInset`}
-                >
-                    <span className="sb3-icoWrap" aria-hidden="true">
-                        <img className="sb3-ico" src={UpgradeIcon} alt="" />
-                    </span>
-                    <span className="sb3-text">Upgrade Plan</span>
-                </Link>
+                {/* ✅ Upgrade (inside nav so it aligns perfectly) */}
+                <nav className="sb3-nav" aria-label="Upgrade">
+                    <Link
+                        to="/upgrade"
+                        onClick={closeSidebar}
+                        className={`sb3-link ${isActive("/upgrade") ? "active" : ""}`}
+                    >
+                        <span className="sb3-icoWrap" aria-hidden="true">
+                            <img className="sb3-ico" src={UpgradeIcon} alt="" />
+                        </span>
+                        <span className="sb3-text">Upgrade Plan</span>
+                    </Link>
+                </nav>
 
                 {/* ✅ 36px gap under Upgrade Plan */}
                 <div className="sb3-gap36" />
                 <div className="sb3-divider" />
                 <div className="sb3-gap36" />
 
-                {/* Help */}
-                <Link
-                    to="/helpcentreinterface"
-                    onClick={closeSidebar}
-                    className={`sb3-link ${isActive("/helpcentreinterface") ? "active" : ""} sb3-linkInset`}
-                >
-                    <span className="sb3-icoWrap" aria-hidden="true">
-                        <img className="sb3-ico" src={HelpIcon} alt="" />
-                    </span>
-                    <span className="sb3-text">Help &amp; Support</span>
-                </Link>
+                {/* ✅ Help (inside nav so it aligns perfectly) */}
+                <nav className="sb3-nav" aria-label="Help">
+                    <Link
+                        to="/helpcentreinterface"
+                        onClick={closeSidebar}
+                        className={`sb3-link ${isActive("/helpcentreinterface") ? "active" : ""}`}
+                    >
+                        <span className="sb3-icoWrap" aria-hidden="true">
+                            <img className="sb3-ico" src={HelpIcon} alt="" />
+                        </span>
+                        <span className="sb3-text">Help &amp; Support</span>
+                    </Link>
+                </nav>
 
                 {/* Bottom */}
                 <div className="sb3-bottom">
                     <div className="sb3-divider" />
                     <div className="sb3-gap36" />
 
-                    {/* Settings + Logout should behave like normal links */}
                     <div className="sb3-nav sb3-nav--bottom">
                         <Link
                             to="/settings"
@@ -159,11 +163,7 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen }) {
                             <span className="sb3-text">Settings</span>
                         </Link>
 
-                        <button
-                            type="button"
-                            className="sb3-link sb3-link--logout"
-                            onClick={handleLogout}
-                        >
+                        <button type="button" className="sb3-link sb3-link--logout" onClick={handleLogout}>
                             <span className="sb3-icoWrap sb3-icoWrap--logout" aria-hidden="true">
                                 <img className="sb3-ico" src={LogoutIcon} alt="" />
                             </span>
