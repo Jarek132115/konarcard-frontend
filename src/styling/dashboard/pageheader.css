@@ -1,74 +1,211 @@
-/* src/styling/dashboard/pageheader.css */
+/* PageHeader v3 (NO background) */
 
-:root {
-    --ph2-surface: var(--kc-bg-soft, #fafafa);
-    --ph2-border: rgba(15, 23, 42, 0.08);
-    --ph2-shadow: 0 1px 0 rgba(15, 23, 42, 0.04),
-        0 10px 22px rgba(15, 23, 42, 0.04);
-}
-
-.ph2-wrap {
+.ph3 {
     width: 100%;
     margin: 0 0 24px;
-    /* ✅ was 16 */
-}
-
-.ph2-card {
-    background: var(--ph2-surface);
-    border: 1px solid var(--ph2-border);
-    border-radius: 22px;
-    box-shadow: var(--ph2-shadow);
-    padding: 24px;
-    /* ✅ */
-}
-
-.ph2-row {
     display: flex;
     align-items: center;
-    /* ✅ */
     justify-content: space-between;
     gap: 16px;
 }
 
-.ph2-left {
+.ph3-left {
     min-width: 0;
     display: grid;
-    gap: 4px;
-    /* ✅ */
+    gap: 6px;
 }
 
-.ph2-title {
+.ph3-title {
     margin: 0;
 }
 
-.ph2-sub {
+.ph3-sub {
     margin: 0;
-    max-width: 920px;
+    max-width: 980px;
+    color: rgba(71, 85, 105, 0.90);
 }
 
-.ph2-right {
+.ph3-right {
     display: flex;
     align-items: center;
     justify-content: flex-end;
     gap: 10px;
-    min-width: 0;
+    flex: 0 0 auto;
 }
 
+/* Plan pill */
+.ph3-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+
+    height: 36px;
+    padding: 0 12px;
+    border-radius: 999px;
+
+    border: 1px solid rgba(15, 23, 42, 0.08);
+    background: #ffffff;
+
+    font-family: "Inter", sans-serif;
+    font-size: 12px;
+    font-weight: 700;
+    color: rgba(15, 23, 42, 0.80);
+}
+
+.ph3-pill strong {
+    font-weight: 900;
+    color: rgba(15, 23, 42, 0.95);
+}
+
+/* Icon buttons */
+.ph3-iconBtn {
+    position: relative;
+    width: 36px;
+    height: 36px;
+    border-radius: 999px;
+
+    border: 1px solid rgba(15, 23, 42, 0.08);
+    background: #ffffff;
+
+    display: grid;
+    place-items: center;
+
+    color: rgba(15, 23, 42, 0.78);
+    cursor: pointer;
+
+    transition: background 0.15s ease, transform 0.08s ease, color 0.15s ease;
+}
+
+.ph3-iconBtn svg {
+    width: 18px;
+    height: 18px;
+    display: block;
+}
+
+.ph3-iconBtn:hover {
+    background: rgba(15, 23, 42, 0.03);
+    color: rgba(15, 23, 42, 0.92);
+}
+
+.ph3-iconBtn:active {
+    transform: translateY(1px);
+}
+
+.ph3-iconBtn.active {
+    background: rgba(249, 115, 22, 0.10);
+    border-color: rgba(249, 115, 22, 0.25);
+    color: rgba(249, 115, 22, 0.95);
+}
+
+.ph3-dot {
+    position: absolute;
+    top: 7px;
+    right: 7px;
+    width: 8px;
+    height: 8px;
+    border-radius: 999px;
+    background: var(--kc-accent-primary, #f97316);
+    box-shadow: 0 0 0 2px #ffffff;
+}
+
+/* Dropdown */
+.ph3-dd {
+    position: relative;
+}
+
+.ph3-menu {
+    position: absolute;
+    top: calc(100% + 10px);
+    right: 0;
+    width: 320px;
+    background: #ffffff;
+    border: 1px solid rgba(15, 23, 42, 0.10);
+    border-radius: 16px;
+    box-shadow: 0 16px 40px rgba(15, 23, 42, 0.12);
+    overflow: hidden;
+    z-index: 50;
+}
+
+.ph3-menuHead {
+    padding: 12px 14px;
+    border-bottom: 1px solid rgba(15, 23, 42, 0.08);
+    font-family: "Inter", sans-serif;
+    font-size: 12px;
+    font-weight: 900;
+    color: rgba(15, 23, 42, 0.90);
+}
+
+.ph3-menuList {
+    display: grid;
+}
+
+.ph3-item {
+    padding: 12px 14px;
+    border-bottom: 1px solid rgba(15, 23, 42, 0.06);
+}
+
+.ph3-item:last-child {
+    border-bottom: none;
+}
+
+.ph3-itemTitle {
+    font-family: "Inter", sans-serif;
+    font-size: 13px;
+    font-weight: 800;
+    color: rgba(15, 23, 42, 0.90);
+}
+
+.ph3-itemTime {
+    margin-top: 4px;
+    font-family: "Inter", sans-serif;
+    font-size: 12px;
+    font-weight: 700;
+    color: rgba(71, 85, 105, 0.70);
+}
+
+.ph3-empty {
+    padding: 14px;
+    font-family: "Inter", sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    color: rgba(71, 85, 105, 0.75);
+}
+
+/* Avatar */
+.ph3-avatarBtn {
+    border: none;
+    background: transparent;
+    padding: 0;
+    cursor: pointer;
+}
+
+.ph3-avatar {
+    width: 36px;
+    height: 36px;
+    border-radius: 999px;
+    border: 1px solid rgba(15, 23, 42, 0.08);
+    background: #ffffff;
+    display: grid;
+    place-items: center;
+}
+
+.ph3-avatarInner {
+    font-family: "Inter", sans-serif;
+    font-size: 12px;
+    font-weight: 900;
+    color: rgba(15, 23, 42, 0.90);
+}
+
+/* Responsive */
 @media (max-width: 1000px) {
-    .ph2-row {
+    .ph3 {
         flex-direction: column;
         align-items: flex-start;
     }
 
-    .ph2-right {
+    .ph3-right {
         width: 100%;
         justify-content: flex-start;
-    }
-}
-
-@media (max-width: 520px) {
-    .ph2-card {
-        padding: 24px;
-        border-radius: 20px;
+        flex-wrap: wrap;
     }
 }
