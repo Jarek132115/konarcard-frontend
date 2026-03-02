@@ -1,23 +1,30 @@
+/* src/styling/dashboard/sidebar.css */
+
 :root {
-    /* ✅ sidebar width now follows layout.css */
-    --sb2-width: var(--sidebar-w, 272px);
-    --sb2-radius: 22px;
+    --sb3-w: var(--sidebar-w, 272px);
+    --sb3-radius: 22px;
 
-    --sb2-surface: #ffffff;
-    --sb2-border: rgba(15, 23, 42, 0.08);
-    --sb2-shadow: 0 1px 0 rgba(15, 23, 42, 0.04), 0 10px 22px rgba(15, 23, 42, 0.04);
+    --sb3-bg: #ffffff;
+    --sb3-border: rgba(15, 23, 42, 0.08);
+    --sb3-shadow: 0 1px 0 rgba(15, 23, 42, 0.04), 0 10px 22px rgba(15, 23, 42, 0.04);
 
-    --sb2-ink: #0f172a;
-    --sb2-muted: rgba(71, 85, 105, 0.92);
-    --sb2-active: var(--kc-accent-primary, #f97316);
+    --sb3-ink: var(--kc-text-primary, #0f172a);
+    --sb3-muted: var(--kc-text-secondary, #475569);
 
-    --sb2-icon-muted-filter: invert(33%) sepia(10%) saturate(980%) hue-rotate(182deg) brightness(95%) contrast(90%);
-    --sb2-icon-active-filter: invert(59%) sepia(79%) saturate(1900%) hue-rotate(346deg) brightness(100%) contrast(98%);
-    --sb2-icon-logout-filter: invert(32%) sepia(93%) saturate(1450%) hue-rotate(345deg) brightness(95%) contrast(95%);
+    --sb3-soft: #fafafa;
+    --sb3-active-bg: #f5f5f5;
+
+    /* active “border shadow”: 0x 1y 1 blur @ 25% black */
+    --sb3-active-shadow: 0 1px 1px rgba(0, 0, 0, 0.25);
+
+    --sb3-divider: rgba(15, 23, 42, 0.10);
+
+    --sb3-danger: rgba(220, 38, 38, 0.95);
+    --sb3-danger-soft: rgba(220, 38, 38, 0.08);
 }
 
 /* Overlay (mobile) */
-.sb2-overlay {
+.sb3-overlay {
     position: fixed;
     inset: 0;
     background: rgba(15, 23, 42, 0.55);
@@ -27,33 +34,31 @@
     z-index: 1001;
 }
 
-.sb2-overlay.active {
+.sb3-overlay.active {
     opacity: 1;
     visibility: visible;
 }
 
 /* Sidebar */
-.sb2 {
-    /* ✅ IMPORTANT: no outer margin – DashboardLayout owns the 24px gutter */
+.sb3 {
     margin: 0;
-
     position: sticky;
     top: var(--dash-gutter, 24px);
     height: calc(100vh - (var(--dash-gutter, 24px) * 2));
 
-    width: var(--sb2-width);
-    background: var(--sb2-surface);
-    border: 1px solid var(--sb2-border);
-    border-radius: var(--sb2-radius);
-    box-shadow: var(--sb2-shadow);
+    width: var(--sb3-w);
+    background: var(--sb3-bg);
+    border: 1px solid var(--sb3-border);
+    border-radius: var(--sb3-radius);
+    box-shadow: var(--sb3-shadow);
 
     display: flex;
     flex-direction: column;
     overflow: hidden;
 }
 
-/* Top brand */
-.sb2-top {
+/* Top brand row */
+.sb3-top {
     padding: 24px;
     display: flex;
     align-items: center;
@@ -61,15 +66,16 @@
     gap: 12px;
 }
 
-.sb2-brand {
-    display: flex;
+.sb3-brand {
+    display: inline-flex;
     align-items: center;
+    /* ✅ vertically centered */
     gap: 12px;
     min-width: 0;
     text-decoration: none;
 }
 
-.sb2-logoPlain {
+.sb3-logo {
     width: 40px;
     height: 40px;
     display: grid;
@@ -81,10 +87,9 @@
     box-shadow: none !important;
     border-radius: 0 !important;
     padding: 0 !important;
-    outline: none !important;
 }
 
-.sb2-logoPlain img {
+.sb3-logo img {
     width: 40px;
     height: 40px;
     display: block;
@@ -94,35 +99,20 @@
     box-shadow: none !important;
     border-radius: 0 !important;
     padding: 0 !important;
-    outline: none !important;
 }
 
-.sb2-brandText {
-    display: grid;
-    gap: 2px;
-    min-width: 0;
-}
-
-.sb2-brandTitle {
-    font-family: "Cal Sans", sans-serif;
-    font-size: 20px;
-    font-weight: 400;
-    color: var(--sb2-ink);
-    line-height: 1.1;
-}
-
-.sb2-brandSub {
+/* KonarCard text: Inter 20px semibold */
+.sb3-brandName {
     font-family: "Inter", sans-serif;
-    font-size: 12px;
+    font-size: 20px;
     font-weight: 600;
-    color: rgba(71, 85, 105, 0.78);
+    color: var(--sb3-ink);
+    line-height: 1;
     white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
 }
 
 /* Close (mobile) */
-.sb2-close {
+.sb3-close {
     width: 42px;
     height: 42px;
     border-radius: 14px;
@@ -134,154 +124,174 @@
     transition: background 0.18s ease, transform 0.08s ease;
 }
 
-.sb2-close:hover {
+.sb3-close:hover {
     background: rgba(15, 23, 42, 0.06);
 }
 
-.sb2-close:active {
+.sb3-close:active {
     transform: translateY(1px);
 }
 
-/* Divider */
-.sb2-divider {
+/* 24px padding under logo area */
+.sb3-topGap {
+    height: 24px;
+}
+
+/* Divider full width */
+.sb3-divider {
     height: 1px;
-    background: rgba(15, 23, 42, 0.08);
-    margin: 0 24px;
+    background: var(--sb3-divider);
+    width: 100%;
 }
 
-/* Menu */
-.sb2-menuWrap {
-    padding: 24px 24px 0;
+/* 36px section gap */
+.sb3-sectionGap {
+    height: 36px;
 }
 
-.sb2-menuLabel {
-    font-family: "Inter", sans-serif;
-    font-size: 11px;
-    font-weight: 800;
-    letter-spacing: 0.14em;
-    text-transform: uppercase;
-    color: rgba(71, 85, 105, 0.72);
-    margin-bottom: 18px;
-}
-
-.sb2-nav {
+/* Nav */
+.sb3-nav {
     display: grid;
-    gap: 18px;
+    gap: 16px;
+    /* ✅ 16px gap between links */
+    padding: 0 24px;
 }
 
-/* Links */
-.sb2-link {
+/* Shared link base */
+.sb3-link {
     display: flex;
     align-items: center;
-    gap: 12px;
-
-    padding: 10px 10px;
-    border-radius: 14px;
+    gap: 8px;
+    /* ✅ 8px between icon and text */
 
     text-decoration: none;
-    color: var(--sb2-muted);
 
-    font-family: "Cal Sans", sans-serif;
-    font-size: 18px;
-    font-weight: 400;
+    /* ✅ 6px padding around link */
+    padding: 6px;
 
-    transition: background 0.15s ease, color 0.15s ease, transform 0.08s ease;
+    border-radius: 8px;
+    /* ✅ active radius requirement */
+    background: transparent;
+
+    font-family: "Inter", sans-serif;
+    font-size: 16px;
+    font-weight: 600;
+    /* ✅ semibold */
+    color: var(--sb3-muted);
+
+    border: 1px solid transparent;
+    transition: background 0.15s ease, box-shadow 0.15s ease, color 0.15s ease,
+        transform 0.08s ease;
 }
 
-.sb2-link:hover {
+.sb3-link:hover {
     background: rgba(15, 23, 42, 0.03);
-    color: rgba(15, 23, 42, 0.90);
 }
 
-.sb2-link:active {
+.sb3-link:active {
     transform: translateY(1px);
 }
 
-.sb2-link:focus-visible {
+.sb3-link:focus-visible {
     outline: none;
     box-shadow: 0 0 0 3px var(--kc-focus-ring);
 }
 
-.sb2-ico {
+/* Icon wrapper: 2px padding, bg #fafafa, radius 4px */
+.sb3-icoWrap {
     width: 28px;
+    /* 24px icon + 2px padding each side */
     height: 28px;
+    padding: 2px;
+
+    background: var(--sb3-soft);
+    border-radius: 4px;
+
     display: grid;
     place-items: center;
     flex: 0 0 auto;
 }
 
-.sb2-ico img {
-    width: 28px;
-    height: 28px;
+/* Icon itself */
+.sb3-ico {
+    width: 24px;
+    height: 24px;
     display: block;
-    filter: var(--sb2-icon-muted-filter);
+
+    /* Make SVG appear “secondary text colour” */
+    filter: invert(33%) sepia(10%) saturate(980%) hue-rotate(182deg) brightness(95%) contrast(90%);
 }
 
-.sb2-link.active {
-    background: rgba(249, 115, 22, 0.10);
-    color: var(--sb2-active);
+/* Active link */
+.sb3-link.active {
+    background: var(--sb3-active-bg);
+    box-shadow: var(--sb3-active-shadow);
+    color: var(--sb3-ink);
 }
 
-.sb2-link.active .sb2-ico img {
-    filter: var(--sb2-icon-active-filter);
+/* Active icon wrapper background becomes white */
+.sb3-link.active .sb3-icoWrap {
+    background: #ffffff;
+}
+
+/* Active icon becomes primary */
+.sb3-link.active .sb3-ico {
+    filter: none;
+}
+
+/* Upgrade & Help single links (padding aligns with nav) */
+.sb3>a.sb3-link,
+.sb3>button.sb3-link {
+    margin: 0 24px;
 }
 
 /* Bottom */
-.sb2-bottom {
+.sb3-bottom {
     margin-top: auto;
-    padding: 0 24px 24px;
+    padding: 0 0 24px;
     display: grid;
-    gap: 16px;
+    gap: 0;
 }
 
-/* Logout */
-.sb2-logout {
-    width: fit-content;
-    padding: 10px 10px;
-    border: none;
-    background: transparent;
-    cursor: pointer;
-    border-radius: 14px;
-
-    font-family: "Cal Sans", sans-serif;
-    font-size: 18px;
-    font-weight: 400;
-    color: rgba(220, 38, 38, 0.95);
-
-    transition: background 0.15s ease, color 0.15s ease, transform 0.08s ease;
+.sb3-bottom .sb3-link {
+    margin: 0 24px;
 }
 
-.sb2-logout:hover {
-    background: rgba(220, 38, 38, 0.06);
-}
-
-.sb2-logout:active {
-    transform: translateY(1px);
-}
-
-.sb2-logoutInner {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-}
-
-.sb2-logout .sb2-ico img {
-    filter: var(--sb2-icon-logout-filter) !important;
-    opacity: 0.95;
-}
-
-.sb2-footnote {
+.sb3-footnote {
+    margin-top: 18px;
     font-family: "Inter", sans-serif;
     font-size: 12px;
     font-weight: 700;
     color: rgba(71, 85, 105, 0.60);
     text-align: center;
-    margin-top: 4px;
+}
+
+/* Logout always red */
+.sb3-link--logout {
+    background: transparent;
+    border: 1px solid transparent;
+    color: var(--sb3-danger);
+}
+
+.sb3-text--logout {
+    color: var(--sb3-danger);
+}
+
+.sb3-icoWrap--logout {
+    background: rgba(220, 38, 38, 0.06);
+}
+
+.sb3-link--logout .sb3-ico {
+    filter: invert(32%) sepia(93%) saturate(1450%) hue-rotate(345deg) brightness(95%) contrast(95%);
+}
+
+.sb3-link--logout:hover {
+    background: var(--sb3-danger-soft);
 }
 
 /* Mobile drawer */
 @media (max-width: 1000px) {
-    .sb2 {
+    .sb3 {
         position: fixed;
         top: 0;
         left: 0;
@@ -294,37 +304,7 @@
         background: #ffffff;
     }
 
-    .sb2.open {
+    .sb3.open {
         transform: translateX(0);
-    }
-
-    .sb2-brandText {
-        display: none !important;
-        visibility: hidden !important;
-        height: 0 !important;
-        overflow: hidden !important;
-    }
-
-    .sb2-menuWrap {
-        padding: 24px 24px 0;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-    }
-
-    .sb2-menuLabel {
-        width: 100%;
-        text-align: center;
-    }
-
-    .sb2-nav {
-        width: min(420px, 100%);
-        justify-items: stretch;
-    }
-
-    .sb2-bottom {
-        padding: 0 24px 64px;
-        align-items: center;
-        justify-content: center;
     }
 }
