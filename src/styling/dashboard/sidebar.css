@@ -132,11 +132,6 @@
     transform: translateY(1px);
 }
 
-/* 24px padding under logo area */
-.sb3-topGap {
-    height: 24px;
-}
-
 /* Divider full width */
 .sb3-divider {
     height: 1px;
