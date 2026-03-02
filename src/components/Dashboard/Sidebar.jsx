@@ -62,7 +62,6 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen }) {
                 className={`sb2 ${isMobile ? "mobile" : ""} ${sidebarOpen ? "open" : ""}`}
                 aria-label="Sidebar"
             >
-                {/* Brand */}
                 <div className="sb2-top">
                     <Link to="/dashboard" className="sb2-brand" onClick={closeSidebar}>
                         <span className="sb2-logoPlain" aria-hidden="true">
@@ -89,7 +88,6 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen }) {
 
                 <div className="sb2-divider" />
 
-                {/* Menu */}
                 <div className="sb2-menuWrap">
                     <div className="sb2-menuLabel">MENU</div>
 
@@ -110,7 +108,6 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen }) {
                     </nav>
                 </div>
 
-                {/* Bottom */}
                 <div className="sb2-bottom">
                     <div className="sb2-divider" />
 

@@ -1,6 +1,7 @@
 /* src/styling/dashboard/layout.css */
 
 :root {
+    /* ✅ match your “perfect before” sidebar size */
     --sidebar-w: 272px;
 
     /* ✅ ONE spacing system */
@@ -13,7 +14,9 @@
 /* Layout wrapper */
 .dash-layout {
     min-height: 100vh;
-    background: var(--kc-bg-main);
+
+    /* ✅ REQUIRED */
+    background: #fafafa;
 
     display: flex;
     gap: var(--dash-gutter);
@@ -28,7 +31,7 @@
     padding: 0;
 }
 
-/* Desktop header */
+/* Desktop header (only used if you don’t hide it) */
 .dash-desktop-header {
     display: flex;
     align-items: flex-start;
@@ -70,11 +73,10 @@
     justify-content: space-between;
     gap: 12px;
 
-    background: #fafafa;
+    background: #ffffff;
     border: 1px solid var(--dash-border);
     border-radius: 18px;
 
-    /* ✅ match 24 spacing system */
     padding: 14px;
     margin: 0 0 24px;
 }
@@ -85,7 +87,6 @@
     gap: 10px;
     min-width: 0;
     flex: 0 0 auto;
-    /* ✅ was flex:1 (used for title/sub). Now logo-only */
 }
 
 .dash-topbar-logo {
@@ -95,7 +96,6 @@
     place-items: center;
     flex: 0 0 auto;
 
-    /* ✅ plain logo (no orange bg/border) */
     background: transparent !important;
     border: 0 !important;
     box-shadow: none !important;
@@ -108,40 +108,11 @@
     height: 38px;
     display: block;
 
-    /* ✅ plain logo (no orange bg/border) */
     background: transparent !important;
     border: 0 !important;
     box-shadow: none !important;
     border-radius: 0 !important;
     padding: 0 !important;
-}
-
-.dash-topbar-text {
-    min-width: 0;
-}
-
-.dash-topbar-title {
-    font-family: "Cal Sans", sans-serif;
-    font-weight: 500;
-    letter-spacing: -0.01em;
-    color: var(--kc-text-primary);
-    font-size: 16px;
-
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
-
-.dash-topbar-sub {
-    margin-top: 2px;
-    font-family: "Inter", sans-serif;
-    font-size: 13px;
-    font-weight: 600;
-    color: var(--kc-text-secondary);
-
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
 }
 
 .dash-topbar-right {
@@ -197,9 +168,9 @@
     .dash-layout {
         display: block;
         padding: 0;
+        background: #fafafa;
     }
 
-    /* ✅ 24px page padding on mobile too */
     .dash-main {
         padding: var(--dash-gutter);
     }

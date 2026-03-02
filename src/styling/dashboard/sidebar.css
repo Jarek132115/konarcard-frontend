@@ -1,11 +1,9 @@
 :root {
-    --sb2-width: 320px;
+    /* ✅ sidebar width now follows layout.css */
+    --sb2-width: var(--sidebar-w, 272px);
     --sb2-radius: 22px;
 
-    /* NEW DESIGN */
-    --sb2-page-bg: #fafafa;
     --sb2-surface: #ffffff;
-
     --sb2-border: rgba(15, 23, 42, 0.08);
     --sb2-shadow: 0 1px 0 rgba(15, 23, 42, 0.04), 0 10px 22px rgba(15, 23, 42, 0.04);
 
@@ -36,14 +34,14 @@
 
 /* Sidebar */
 .sb2 {
-    /* ✅ NEW: ensure 24px outer padding feel even if layout hasn’t been updated */
-    margin: 24px;
+    /* ✅ IMPORTANT: no outer margin – DashboardLayout owns the 24px gutter */
+    margin: 0;
 
     position: sticky;
-    top: 24px;
-    height: calc(100vh - 48px);
-    width: var(--sb2-width);
+    top: var(--dash-gutter, 24px);
+    height: calc(100vh - (var(--dash-gutter, 24px) * 2));
 
+    width: var(--sb2-width);
     background: var(--sb2-surface);
     border: 1px solid var(--sb2-border);
     border-radius: var(--sb2-radius);
@@ -99,7 +97,6 @@
     outline: none !important;
 }
 
-/* Brand text */
 .sb2-brandText {
     display: grid;
     gap: 2px;
@@ -152,7 +149,7 @@
     margin: 0 24px;
 }
 
-/* Menu block */
+/* Menu */
 .sb2-menuWrap {
     padding: 24px 24px 0;
 }
@@ -285,7 +282,6 @@
 /* Mobile drawer */
 @media (max-width: 1000px) {
     .sb2 {
-        margin: 0;
         position: fixed;
         top: 0;
         left: 0;
@@ -330,11 +326,5 @@
         padding: 0 24px 64px;
         align-items: center;
         justify-content: center;
-    }
-}
-
-@media (max-width: 1300px) {
-    :root {
-        --sb2-width: 304px;
     }
 }
