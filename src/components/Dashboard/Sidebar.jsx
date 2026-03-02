@@ -4,15 +4,17 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import { AuthContext } from "../AuthContext.jsx";
 
 import LogoIcon from "../../assets/icons/Logo-Icon.svg";
-import DashboardIcon from "../../assets/icons/Home-Interface.svg";
-import ProfileIcon from "../../assets/icons/Card-Interface.svg";
-import CardsIcon from "../../assets/icons/MyOrder-Icon.svg";
-import AnalyticsIcon from "../../assets/icons/Card-Interface.svg";
-import ContactsIcon from "../../assets/icons/Contact-Interface.svg";
-import UpgradeIcon from "../../assets/icons/Upgrade-Interface.svg";
-import SettingsIcon from "../../assets/icons/Settings-Interface.svg";
-import HelpIcon from "../../assets/icons/Help-Interface.svg";
-import LogoutIcon from "../../assets/icons/Logout-Interface.svg";
+
+// ✅ Correct sidebar icon set (matches your folder)
+import DashboardIcon from "../../assets/icons/SidebarLinkDashboard.svg";
+import ProfilesIcon from "../../assets/icons/SidebarLinkProfiles.svg";
+import CardsIcon from "../../assets/icons/SidebarLinkCards.svg";
+import AnalyticsIcon from "../../assets/icons/SidebarLinkAnalytics.svg";
+import ContactBookIcon from "../../assets/icons/SidebarLinkContactBook.svg";
+import UpgradeIcon from "../../assets/icons/SidebarLinkUpgrade.svg";
+import HelpIcon from "../../assets/icons/SidebarLinkHelp.svg";
+import SettingsIcon from "../../assets/icons/SidebarLinkSettings.svg";
+import LogoutIcon from "../../assets/icons/SidebarLinkLogout.svg";
 
 import "../../styling/dashboard/sidebar.css";
 
@@ -44,10 +46,10 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen }) {
     const MAIN_ITEMS = useMemo(
         () => [
             { to: "/dashboard", label: "Dashboard", icon: DashboardIcon },
-            { to: "/profiles", label: "Profiles", icon: ProfileIcon },
+            { to: "/profiles", label: "Profiles", icon: ProfilesIcon },
             { to: "/cards", label: "Cards", icon: CardsIcon },
             { to: "/analytics", label: "Analytics", icon: AnalyticsIcon },
-            { to: "/contact-book", label: "Contact Book", icon: ContactsIcon },
+            { to: "/contact-book", label: "Contact Book", icon: ContactBookIcon },
         ],
         []
     );
@@ -84,11 +86,8 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen }) {
                     ) : null}
                 </div>
 
-                {/* 24px gap under brand, then divider */}
                 <div className="sb3-topGap" />
                 <div className="sb3-divider" />
-
-                {/* 36px gap before first link */}
                 <div className="sb3-sectionGap" />
 
                 {/* Main links */}
@@ -154,7 +153,11 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen }) {
                         <span className="sb3-text">Settings</span>
                     </Link>
 
-                    <button type="button" className="sb3-link sb3-link--logout" onClick={handleLogout}>
+                    <button
+                        type="button"
+                        className="sb3-link sb3-link--logout"
+                        onClick={handleLogout}
+                    >
                         <span className="sb3-icoWrap sb3-icoWrap--logout" aria-hidden="true">
                             <img className="sb3-ico" src={LogoutIcon} alt="" />
                         </span>
