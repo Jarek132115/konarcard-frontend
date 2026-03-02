@@ -1,14 +1,16 @@
 :root {
-    /* ✅ Wider so "Your digital business card" stays 1 line */
     --sb2-width: 320px;
     --sb2-radius: 22px;
 
-    --sb2-surface: var(--kc-bg-soft, #fafafa);
-    --sb2-border: rgba(15, 23, 42, 0.10);
-    --sb2-shadow: 0 2px 10px rgba(15, 23, 42, 0.10);
+    /* NEW DESIGN */
+    --sb2-page-bg: #fafafa;
+    --sb2-surface: #ffffff;
 
-    --sb2-ink: var(--kc-text-primary, #0f172a);
-    --sb2-muted: var(--kc-text-secondary, #475569);
+    --sb2-border: rgba(15, 23, 42, 0.08);
+    --sb2-shadow: 0 1px 0 rgba(15, 23, 42, 0.04), 0 10px 22px rgba(15, 23, 42, 0.04);
+
+    --sb2-ink: #0f172a;
+    --sb2-muted: rgba(71, 85, 105, 0.92);
     --sb2-active: var(--kc-accent-primary, #f97316);
 
     --sb2-icon-muted-filter: invert(33%) sepia(10%) saturate(980%) hue-rotate(182deg) brightness(95%) contrast(90%);
@@ -34,12 +36,12 @@
 
 /* Sidebar */
 .sb2 {
-    position: sticky;
+    /* ✅ NEW: ensure 24px outer padding feel even if layout hasn’t been updated */
+    margin: 24px;
 
-    /* ✅ match page gutter */
+    position: sticky;
     top: 24px;
     height: calc(100vh - 48px);
-
     width: var(--sb2-width);
 
     background: var(--sb2-surface);
@@ -69,7 +71,6 @@
     text-decoration: none;
 }
 
-/* ✅ LOGO MUST ALWAYS BE PLAIN (beats any global styles) */
 .sb2-logoPlain {
     width: 40px;
     height: 40px;
@@ -105,8 +106,19 @@
     min-width: 0;
 }
 
-/* ✅ Force subtitle to stay one line on desktop */
-.sb2-brandText .kc-body {
+.sb2-brandTitle {
+    font-family: "Cal Sans", sans-serif;
+    font-size: 20px;
+    font-weight: 400;
+    color: var(--sb2-ink);
+    line-height: 1.1;
+}
+
+.sb2-brandSub {
+    font-family: "Inter", sans-serif;
+    font-size: 12px;
+    font-weight: 600;
+    color: rgba(71, 85, 105, 0.78);
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -148,16 +160,16 @@
 .sb2-menuLabel {
     font-family: "Inter", sans-serif;
     font-size: 11px;
-    font-weight: 700;
+    font-weight: 800;
     letter-spacing: 0.14em;
     text-transform: uppercase;
-    color: rgba(71, 85, 105, 0.85);
-    margin-bottom: 24px;
+    color: rgba(71, 85, 105, 0.72);
+    margin-bottom: 18px;
 }
 
 .sb2-nav {
     display: grid;
-    gap: 24px;
+    gap: 18px;
 }
 
 /* Links */
@@ -166,23 +178,22 @@
     align-items: center;
     gap: 12px;
 
-    padding: 0;
-    border: none;
-    background: transparent;
-    border-radius: 0;
+    padding: 10px 10px;
+    border-radius: 14px;
 
     text-decoration: none;
     color: var(--sb2-muted);
 
     font-family: "Cal Sans", sans-serif;
-    font-size: 20px;
+    font-size: 18px;
     font-weight: 400;
 
-    transition: color 0.15s ease, transform 0.08s ease;
+    transition: background 0.15s ease, color 0.15s ease, transform 0.08s ease;
 }
 
 .sb2-link:hover {
-    color: rgba(15, 23, 42, 0.86);
+    background: rgba(15, 23, 42, 0.03);
+    color: rgba(15, 23, 42, 0.90);
 }
 
 .sb2-link:active {
@@ -192,28 +203,25 @@
 .sb2-link:focus-visible {
     outline: none;
     box-shadow: 0 0 0 3px var(--kc-focus-ring);
-    border-radius: 12px;
-    padding: 6px 8px;
-    margin: -6px -8px;
 }
 
-/* Icons */
 .sb2-ico {
-    width: 30px;
-    height: 30px;
+    width: 28px;
+    height: 28px;
     display: grid;
     place-items: center;
     flex: 0 0 auto;
 }
 
 .sb2-ico img {
-    width: 30px;
-    height: 30px;
+    width: 28px;
+    height: 28px;
     display: block;
     filter: var(--sb2-icon-muted-filter);
 }
 
 .sb2-link.active {
+    background: rgba(249, 115, 22, 0.10);
     color: var(--sb2-active);
 }
 
@@ -226,27 +234,28 @@
     margin-top: auto;
     padding: 0 24px 24px;
     display: grid;
-    gap: 24px;
+    gap: 16px;
 }
 
 /* Logout */
 .sb2-logout {
     width: fit-content;
-    padding: 0;
+    padding: 10px 10px;
     border: none;
     background: transparent;
     cursor: pointer;
+    border-radius: 14px;
 
     font-family: "Cal Sans", sans-serif;
-    font-size: 20px;
+    font-size: 18px;
     font-weight: 400;
     color: rgba(220, 38, 38, 0.95);
 
-    transition: color 0.15s ease, transform 0.08s ease;
+    transition: background 0.15s ease, color 0.15s ease, transform 0.08s ease;
 }
 
 .sb2-logout:hover {
-    color: rgba(220, 38, 38, 0.85);
+    background: rgba(220, 38, 38, 0.06);
 }
 
 .sb2-logout:active {
@@ -268,16 +277,15 @@
     font-family: "Inter", sans-serif;
     font-size: 12px;
     font-weight: 700;
-    color: rgba(71, 85, 105, 0.70);
+    color: rgba(71, 85, 105, 0.60);
     text-align: center;
-    margin-top: 6px;
+    margin-top: 4px;
 }
 
-/* =========================
-   Mobile drawer fixes
-   ========================= */
+/* Mobile drawer */
 @media (max-width: 1000px) {
     .sb2 {
+        margin: 0;
         position: fixed;
         top: 0;
         left: 0;
@@ -287,37 +295,18 @@
         transform: translateX(-100%);
         transition: transform 0.35s ease;
         z-index: 1002;
-        background: #fafafa;
+        background: #ffffff;
     }
 
     .sb2.open {
         transform: translateX(0);
     }
 
-    /* ✅ Keep logo plain on mobile too (in case global styles override) */
-    .sb2-logoPlain,
-    .sb2-logoPlain img {
-        background: transparent !important;
-        border: 0 !important;
-        box-shadow: none !important;
-        border-radius: 0 !important;
-        padding: 0 !important;
-    }
-
-    /* ✅ HARD hide brand text on mobile (beats global styles) */
     .sb2-brandText {
         display: none !important;
         visibility: hidden !important;
         height: 0 !important;
         overflow: hidden !important;
-    }
-
-    .sb2-top {
-        padding: 24px;
-    }
-
-    .sb2-divider {
-        margin: 0 24px;
     }
 
     .sb2-menuWrap {
@@ -334,7 +323,7 @@
 
     .sb2-nav {
         width: min(420px, 100%);
-        justify-items: center;
+        justify-items: stretch;
     }
 
     .sb2-bottom {
@@ -344,7 +333,6 @@
     }
 }
 
-/* Optional: slightly narrower on mid screens so it doesn’t feel huge */
 @media (max-width: 1300px) {
     :root {
         --sb2-width: 304px;

@@ -62,17 +62,16 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen }) {
                 className={`sb2 ${isMobile ? "mobile" : ""} ${sidebarOpen ? "open" : ""}`}
                 aria-label="Sidebar"
             >
-                {/* Top (open sidebar) */}
+                {/* Brand */}
                 <div className="sb2-top">
                     <Link to="/dashboard" className="sb2-brand" onClick={closeSidebar}>
                         <span className="sb2-logoPlain" aria-hidden="true">
                             <img src={LogoIcon} alt="" />
                         </span>
 
-                        {/* Desktop only brand text (CSS hides on mobile open) */}
                         <span className="sb2-brandText">
-                            <span className="kc-title">KonarCard</span>
-                            <span className="kc-body">Your digital business card</span>
+                            <span className="sb2-brandTitle">KonarCard</span>
+                            <span className="sb2-brandSub">Your digital business card</span>
                         </span>
                     </Link>
 
