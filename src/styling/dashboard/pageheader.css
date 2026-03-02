@@ -17,7 +17,8 @@
     width: 100%;
     margin: 0 0 24px;
     display: flex;
-    align-items: flex-start;
+    align-items: center;
+    /* ✅ center right side vertically */
     justify-content: space-between;
     gap: 16px;
 }
