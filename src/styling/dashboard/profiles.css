@@ -1,11 +1,9 @@
 /* src/styling/dashboard/profiles.css
 =========================================================
-Profiles — Dashboard system aligned
-Rules:
-- Section titles use Cal Sans ONLY, weight 500
-- Body text uses Inter
-- Cards match other dashboard pages (white, soft border, low shadow)
-- PageHeader rightSlot supports stacked badges + actions
+Profiles — Split panels (50/50) + full-height fill
+- Page header stays at top
+- Panels fill remaining height (never exceed sidebar/viewport)
+- Only inner bodies scroll
 ========================================================= */
 
 :root {
@@ -19,81 +17,45 @@ Rules:
     --p-radius: 22px;
     --p-radius-sm: 18px;
 
-    /* Match other pages */
     --p-shadow: 0 1px 2px rgba(15, 23, 42, 0.05);
     --p-shadow-sm: 0 1px 2px rgba(15, 23, 42, 0.04);
 }
 
-/* Shell — DashboardLayout controls padding */
+/* Shell */
 .profiles-shell {
     width: 100%;
     margin: 0;
     padding: 0;
 }
 
-/* =========================================================
-   PageHeader rightSlot helpers (YOU USE THESE IN JSX)
-========================================================= */
-.ph-rightStack {
+/* ✅ Fill the visible dashboard height (same height budget as sidebar) */
+.profiles-shell--fill {
+    height: calc(100vh - (var(--dash-gutter, 24px) * 2));
     display: flex;
     flex-direction: column;
-    align-items: flex-end;
-    gap: 10px;
-}
-
-.ph-actionsInline {
-    display: inline-flex;
-    align-items: center;
-    gap: 10px;
-    flex-wrap: wrap;
-    justify-content: flex-end;
-}
-
-.profiles-header-rightslot {
-    display: inline-flex;
-    align-items: center;
-    gap: 10px;
-    flex-wrap: wrap;
-    justify-content: flex-end;
-}
-
-@media (max-width: 1000px) {
-    .ph-rightStack {
-        align-items: flex-start;
-        width: 100%;
-    }
-
-    .profiles-header-rightslot,
-    .ph-actionsInline {
-        justify-content: flex-start;
-        width: 100%;
-    }
-}
-
-@media (max-width: 520px) {
-    .ph-actionsInline {
-        width: 100%;
-    }
-
-    .ph-actionsInline .kx-btn {
-        width: 100%;
-        justify-content: center;
-    }
+    min-height: 0;
 }
 
 /* =========================================================
-   Grid layout
+   Grid layout (50 / 50) + fill remaining space
 ========================================================= */
 .profiles-grid {
     display: grid;
-    grid-template-columns: minmax(0, 1.35fr) minmax(0, 0.95fr);
     gap: 16px;
-    align-items: start;
+    align-items: stretch;
     margin-top: 16px;
 }
 
+.profiles-grid--fill {
+    grid-template-columns: 1fr 1fr;
+    /* ✅ half / half */
+    flex: 1;
+    min-height: 0;
+    /* ✅ allows children to be scroll containers */
+}
+
 /* =========================================================
-   Cards
+   Cards / Panels
 ========================================================= */
 .profiles-card {
     background: #ffffff;
@@ -104,14 +66,29 @@ Rules:
     min-width: 0;
 }
 
-.profiles-card-head {
+/* ✅ panel is a vertical layout: header (fixed) + body (scroll) + footer */
+.profiles-panel {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+}
+
+.profiles-panelHead {
     display: flex;
     align-items: flex-start;
     justify-content: space-between;
     gap: 12px;
 }
 
-/* ✅ Section titles MUST be Cal Sans 500 */
+.profiles-panelHeadActions {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+/* Titles */
 .profiles-card-title {
     margin: 0;
     font-family: "Cal Sans", sans-serif;
@@ -130,29 +107,21 @@ Rules:
     color: var(--p-muted);
 }
 
-/* Sticky right card */
-.profiles-right {
-    position: relative;
-}
-
-.profiles-preview-card {
-    position: sticky;
-    top: 12px;
-}
-
-/* Button rows */
-.profiles-actions-row {
-    display: flex;
-    gap: 10px;
-    flex-wrap: wrap;
-    margin-top: 14px;
-}
-
 /* =========================================================
-   List
+   LEFT body scroll container
 ========================================================= */
-.profiles-list {
+.profiles-panelBody {
     margin-top: 12px;
+    flex: 1;
+    min-height: 0;
+    overflow: auto;
+    /* ✅ scroll here */
+    padding-right: 4px;
+    /* small breathing room for scrollbar */
+}
+
+/* List */
+.profiles-list {
     display: grid;
     gap: 10px;
 }
@@ -300,7 +269,7 @@ Rules:
     background: rgba(249, 115, 22, 0.08);
 }
 
-/* Inline actions (smaller kx-btn) */
+/* Inline actions */
 .profiles-inline-actions {
     display: flex;
     gap: 8px;
@@ -478,100 +447,42 @@ Rules:
 }
 
 /* =========================================================
-   Preview phone
+   RIGHT Preview (full width, scroll inside)
 ========================================================= */
-.profiles-preview {
-    margin-top: 14px;
+.profiles-previewBody {
+    margin-top: 12px;
+    flex: 1;
+    min-height: 0;
+    overflow: auto;
+    /* ✅ preview scroll */
+    padding: 12px;
+    /* ✅ requested 12px padding */
+    border-radius: 16px;
+    /* soft edges */
+    background: #ffffff;
+    /* keeps it clean */
 }
 
-.profiles-phone {
+/* loading/error blocks */
+.profiles-previewLoading,
+.profiles-previewError {
     width: 100%;
-    border-radius: 28px;
-    background: #fff;
+    padding: 16px;
+    border-radius: 14px;
+    background: rgba(15, 23, 42, 0.03);
     border: 1px solid rgba(15, 23, 42, 0.10);
-    padding: 14px;
-    box-shadow: var(--p-shadow-sm);
-}
-
-.profiles-phone-top {
-    height: 14px;
-    width: 64%;
-    border-radius: 999px;
-    background: rgba(15, 23, 42, 0.10);
-    margin: 0 auto 14px;
-}
-
-.profiles-preview-name {
-    font-family: "Inter", sans-serif;
-    font-weight: 800;
-    color: var(--p-ink);
-    font-size: 16px;
-    text-align: center;
-}
-
-.profiles-preview-trade {
-    margin-top: 4px;
-    color: rgba(71, 85, 105, 0.95);
-    text-align: center;
     font-family: "Inter", sans-serif;
     font-weight: 700;
     font-size: 13px;
+    color: rgba(71, 85, 105, 0.95);
 }
 
-.profiles-phone-line {
-    height: 12px;
-    border-radius: 999px;
-    background: rgba(15, 23, 42, 0.10);
-    margin-top: 10px;
-}
-
-.profiles-phone-line.short {
-    width: 70%;
-}
-
-.profiles-phone-block {
-    height: 92px;
-    border-radius: 18px;
-    background: rgba(249, 115, 22, 0.10);
+/* 4 bottom buttons (2x2) */
+.profiles-previewActions {
     margin-top: 12px;
-    border: 1px solid rgba(249, 115, 22, 0.14);
-}
-
-.profiles-phone-row {
-    display: flex;
-    gap: 10px;
-    margin-top: 12px;
-}
-
-.profiles-chip {
-    height: 28px;
-    flex: 1;
-    border-radius: 999px;
-    background: rgba(15, 23, 42, 0.10);
-}
-
-/* Actions card */
-.profiles-actions-card {
-    margin-top: 14px;
-    border-radius: var(--p-radius-sm);
-    background: rgba(15, 23, 42, 0.02);
-    border: 1px solid rgba(15, 23, 42, 0.10);
-    padding: 14px;
-}
-
-.profiles-actions-title {
-    margin: 0;
-    font-family: "Inter", sans-serif;
-    font-weight: 800;
-    color: var(--p-ink);
-    font-size: 14px;
-}
-
-.profiles-actions-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 10px;
-    margin-top: 12px;
+    gap: 12px;
 }
 
 /* =========================================================
@@ -583,9 +494,9 @@ Rules:
 
 .profiles-skeleton {
     display: grid;
-    grid-template-columns: 1.35fr 0.95fr;
+    grid-template-columns: 1fr 1fr;
     gap: 16px;
-    align-items: start;
+    align-items: stretch;
 }
 
 .profiles-skel-card {
@@ -611,12 +522,23 @@ Rules:
    Responsive
 ========================================================= */
 @media (max-width: 1100px) {
-    .profiles-grid {
-        grid-template-columns: 1fr;
+    .profiles-shell--fill {
+        height: auto;
+        display: block;
     }
 
-    .profiles-preview-card {
-        position: static;
+    .profiles-grid--fill {
+        grid-template-columns: 1fr;
+        height: auto;
+    }
+
+    .profiles-panel {
+        height: auto;
+    }
+
+    .profiles-panelBody,
+    .profiles-previewBody {
+        max-height: 560px;
     }
 
     .profiles-skeleton {
@@ -655,64 +577,6 @@ Rules:
 }
 
 @media (max-width: 520px) {
-    .profiles-actions-grid {
-        grid-template-columns: 1fr;
-    }
-}
-
-/* =========================================================
-   RIGHT PREVIEW (REAL Preview component)
-   - clean spacing system: 8 / 12 / 16 / 24
-   - preview centered like screenshot
-========================================================= */
-
-.profiles-previewWrap {
-    margin-top: 16px;
-    /* 16px between header and preview */
-    border: 1px solid rgba(15, 23, 42, 0.10);
-    border-radius: 20px;
-    background: #ffffff;
-    box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
-    padding: 16px;
-    /* nice inner breathing room */
-    min-height: 520px;
-    /* keeps card tall like screenshot */
-    display: flex;
-    justify-content: center;
-    align-items: flex-start;
-    overflow: hidden;
-    /* avoids weird overflow from preview */
-}
-
-.profiles-previewLoading,
-.profiles-previewError {
-    width: 100%;
-    padding: 16px;
-    border-radius: 14px;
-    background: rgba(15, 23, 42, 0.03);
-    border: 1px solid rgba(15, 23, 42, 0.10);
-    font-family: "Inter", sans-serif;
-    font-weight: 700;
-    font-size: 13px;
-    color: rgba(71, 85, 105, 0.95);
-}
-
-/* 4 bottom buttons (2x2) */
-.profiles-previewActions {
-    margin-top: 16px;
-    /* 16px between preview and buttons */
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 12px;
-    /* clean */
-}
-
-@media (max-width: 520px) {
-    .profiles-previewWrap {
-        min-height: 420px;
-        padding: 14px;
-    }
-
     .profiles-previewActions {
         grid-template-columns: 1fr;
         gap: 10px;

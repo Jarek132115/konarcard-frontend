@@ -10,7 +10,7 @@ import { useAuthUser } from "../../hooks/useAuthUser";
 import { useMyProfiles, useCreateProfile, useDeleteProfile } from "../../hooks/useBusinessCard";
 import api from "../../services/api";
 
-// ✅ NEW: real preview component (same as MyProfile page)
+// ✅ real preview component (same as MyProfile page)
 import Preview from "../../components/Dashboard/Preview";
 
 const TEAMS_CHECKOUT_ENDPOINT = "/api/checkout/teams";
@@ -178,7 +178,7 @@ export default function Profiles() {
             avatar: bc.avatar || null,
             coverPhoto: bc.cover_photo || null,
 
-            // local-only (not used here, but Preview expects these keys in many setups)
+            // local-only (Preview expects these keys in many setups)
             avatarPreview: "",
             coverPhotoPreview: "",
             avatarFile: null,
@@ -276,9 +276,7 @@ export default function Profiles() {
         }
     };
 
-    // =========================================================
     // Bottom 4 buttons (keep)
-    // =========================================================
     const handleDownloadQr = async () => {
         if (!selectedProfile?.slug) return;
         alert("QR download endpoint not wired yet. Tell me your backend QR endpoint and I’ll connect it.");
@@ -302,7 +300,6 @@ export default function Profiles() {
     const [claimMessage, setClaimMessage] = useState("");
 
     const claimRef = useRef(null);
-
     const desiredNewCount = Math.max(2, sortedProfiles.length + 1);
 
     const resetClaim = () => {
@@ -516,7 +513,7 @@ export default function Profiles() {
     if (isLoading) {
         return (
             <DashboardLayout hideDesktopHeader>
-                <div className="profiles-shell">
+                <div className="profiles-shell profiles-shell--fill">
                     <div className="profiles-skeleton">
                         <div className="profiles-skel-card" />
                         <div className="profiles-skel-card" />
@@ -529,7 +526,7 @@ export default function Profiles() {
     if (isError) {
         return (
             <DashboardLayout hideDesktopHeader>
-                <div className="profiles-shell">
+                <div className="profiles-shell profiles-shell--fill">
                     <section className="profiles-card profiles-empty">
                         <h2 className="profiles-card-title">We couldn’t load your profiles</h2>
                         <p className="profiles-muted">Please try again. If this keeps happening, contact support.</p>
@@ -545,39 +542,13 @@ export default function Profiles() {
         );
     }
 
-    // =========================================================
-    // Main render
-    // =========================================================
     return (
         <DashboardLayout hideDesktopHeader>
-            <div className="profiles-shell">
+            <div className="profiles-shell profiles-shell--fill">
                 <PageHeader
                     title="Profiles"
                     subtitle="Profiles are your public digital business cards. Each profile has its own link you can share after every job."
-                    rightSlot={
-                        <div className="ph-rightStack">
-                            <div className="profiles-header-rightslot">
-                                <span className="kc-pill">
-                                    Plan: <strong>{plan.toUpperCase()}</strong>
-                                </span>
-                                <span className="kc-pill">
-                                    Profiles: <strong>{sortedProfiles.length}</strong> / <strong>{maxProfiles}</strong>
-                                </span>
-                            </div>
-
-                            <div className="ph-actionsInline">
-                                {sortedProfiles.length ? (
-                                    <button type="button" className="kx-btn kx-btn--white" onClick={handleShare}>
-                                        Share
-                                    </button>
-                                ) : null}
-
-                                <button type="button" className="kx-btn kx-btn--orange" onClick={handleCreateButtonClick}>
-                                    + Add profile
-                                </button>
-                            </div>
-                        </div>
-                    }
+                    rightSlot={null}
                 />
 
                 {sortedProfiles.length === 0 ? (
@@ -640,11 +611,7 @@ export default function Profiles() {
 
                                     {claimMessage ? (
                                         <div
-                                            className={`profiles-alert ${claimStatus === "available"
-                                                    ? "success"
-                                                    : claimStatus === "error" || claimStatus === "invalid"
-                                                        ? "danger"
-                                                        : "neutral"
+                                            className={`profiles-alert ${claimStatus === "available" ? "success" : claimStatus === "error" || claimStatus === "invalid" ? "danger" : "neutral"
                                                 }`}
                                         >
                                             {claimMessage}
@@ -654,12 +621,7 @@ export default function Profiles() {
                                     {claimStatus === "available" && (
                                         <div className="profiles-claim-actions">
                                             {isTeams ? (
-                                                <button
-                                                    type="button"
-                                                    className="kx-btn kx-btn--orange"
-                                                    onClick={createTeamsProfileNow}
-                                                    disabled={claimStatus === "creating"}
-                                                >
+                                                <button type="button" className="kx-btn kx-btn--orange" onClick={createTeamsProfileNow} disabled={claimStatus === "creating"}>
                                                     {claimStatus === "creating" ? "Creating..." : "Create profile"}
                                                 </button>
                                             ) : (
@@ -682,8 +644,7 @@ export default function Profiles() {
 
                                     {isTeams && (
                                         <div className="profiles-hint">
-                                            Teams cap is controlled by your subscription: <strong>{maxProfiles}</strong>. If you hit the limit, increase
-                                            quantity.
+                                            Teams cap is controlled by your subscription: <strong>{maxProfiles}</strong>. If you hit the limit, increase quantity.
                                         </div>
                                     )}
                                 </div>
@@ -691,260 +652,269 @@ export default function Profiles() {
                         )}
                     </section>
                 ) : (
-                    <div className="profiles-grid">
+                    <div className="profiles-grid profiles-grid--fill">
                         {/* LEFT */}
-                        <section className="profiles-card profiles-list-card">
-                            <div className="profiles-card-head">
+                        <section className="profiles-card profiles-panel">
+                            <div className="profiles-panelHead">
                                 <div>
                                     <h2 className="profiles-card-title">Profiles</h2>
                                     <p className="profiles-muted">Select a profile to preview, edit, share or manage it.</p>
                                 </div>
-                            </div>
 
-                            <div className="profiles-list">
-                                {sortedProfiles.map((p, idx) => {
-                                    const isActive = selectedProfile?.slug === p.slug;
-
-                                    return (
-                                        <React.Fragment key={p.slug}>
-                                            <button
-                                                type="button"
-                                                className={`profiles-item ${isActive ? "active" : ""}`}
-                                                onClick={() => setSelectedSlug(p.slug)}
-                                            >
-                                                <div className="profiles-item-left">
-                                                    <div className="profiles-avatar" aria-hidden="true">
-                                                        {p.name?.slice(0, 1) || "P"}
-                                                    </div>
-
-                                                    <div className="profiles-item-meta">
-                                                        <div className="profiles-item-title">
-                                                            <span className="profiles-item-name">{p.name}</span>
-                                                            <span className="profiles-trade">• {p.trade}</span>
-                                                        </div>
-
-                                                        <div className="profiles-item-sub">
-                                                            <span className="profiles-link">{p.slug}</span>
-                                                            <span className="profiles-dot">•</span>
-                                                            <span className="profiles-muted">{p.updatedAt}</span>
-                                                        </div>
-                                                    </div>
-                                                </div>
-
-                                                <div className="profiles-item-right">
-                                                    <span className={`profiles-status ${p.status}`}>
-                                                        {p.status === "complete" ? "Complete" : "Incomplete"}
-                                                    </span>
-
-                                                    <div className="profiles-inline-actions">
-                                                        <button
-                                                            type="button"
-                                                            className="kx-btn kx-btn--white profiles-mini"
-                                                            onClick={(e) => {
-                                                                e.stopPropagation();
-                                                                handleEdit(p.slug);
-                                                            }}
-                                                        >
-                                                            Edit
-                                                        </button>
-
-                                                        <button
-                                                            type="button"
-                                                            className="kx-btn kx-btn--white profiles-mini"
-                                                            onClick={(e) => {
-                                                                e.stopPropagation();
-                                                                handleVisit(p.slug);
-                                                            }}
-                                                        >
-                                                            Visit
-                                                        </button>
-
-                                                        <button
-                                                            type="button"
-                                                            className="kx-btn kx-btn--white profiles-mini profiles-mini-danger"
-                                                            onClick={(e) => {
-                                                                e.stopPropagation();
-                                                                handleDelete(p.slug);
-                                                            }}
-                                                        >
-                                                            Delete
-                                                        </button>
-                                                    </div>
-                                                </div>
-                                            </button>
-
-                                            {/* Inline claim under first profile */}
-                                            {idx === 0 && claimOpen && (
-                                                <div ref={claimRef} className="profiles-claim-inline">
-                                                    <div className="profiles-claim-inline-head">
-                                                        <div>
-                                                            <div className="profiles-claim-inline-title">Claim your link</div>
-                                                            <div className="profiles-claim-inline-sub">
-                                                                Example: <strong>{window.location.origin}/u/your-link</strong>
-                                                            </div>
-                                                        </div>
-
-                                                        <button type="button" className="kx-btn kx-btn--white" onClick={closeClaimPanel}>
-                                                            Close
-                                                        </button>
-                                                    </div>
-
-                                                    <div className="profiles-claim-grid">
-                                                        <div className="profiles-claim-row">
-                                                            <div className="profiles-input-wrap" aria-label="Claim link input">
-                                                                <span className="profiles-input-prefix">{window.location.origin}/u/</span>
-                                                                <input
-                                                                    className="profiles-input"
-                                                                    value={claimSlugInput}
-                                                                    onChange={(e) => {
-                                                                        setClaimSlugInput(e.target.value);
-                                                                        setClaimStatus("idle");
-                                                                        setClaimMessage("");
-                                                                    }}
-                                                                    placeholder="plumbing-north-london"
-                                                                    aria-label="Profile slug"
-                                                                />
-                                                            </div>
-
-                                                            <button
-                                                                type="button"
-                                                                className="kx-btn kx-btn--black"
-                                                                onClick={checkSlugAvailability}
-                                                                disabled={claimStatus === "checking" || claimStatus === "subscribing" || claimStatus === "creating"}
-                                                            >
-                                                                {claimStatus === "checking" ? "Checking..." : "Check availability"}
-                                                            </button>
-                                                        </div>
-
-                                                        {claimMessage ? (
-                                                            <div
-                                                                className={`profiles-alert ${claimStatus === "available"
-                                                                        ? "success"
-                                                                        : claimStatus === "error" || claimStatus === "invalid"
-                                                                            ? "danger"
-                                                                            : "neutral"
-                                                                    }`}
-                                                            >
-                                                                {claimMessage}
-                                                            </div>
-                                                        ) : null}
-
-                                                        {claimStatus === "available" && (
-                                                            <div className="profiles-claim-actions">
-                                                                {canCreateMoreProfilesWithoutCheckout ? (
-                                                                    <button
-                                                                        type="button"
-                                                                        className="kx-btn kx-btn--orange"
-                                                                        onClick={createTeamsProfileNow}
-                                                                        disabled={claimStatus === "creating"}
-                                                                    >
-                                                                        {claimStatus === "creating" ? "Creating..." : "Create profile"}
-                                                                    </button>
-                                                                ) : (
-                                                                    <button
-                                                                        type="button"
-                                                                        className="kx-btn kx-btn--orange"
-                                                                        onClick={startTeamsCheckout}
-                                                                        disabled={claimStatus === "subscribing"}
-                                                                    >
-                                                                        {claimStatus === "subscribing" ? "Opening checkout..." : "Subscribe / Update Teams to add it"}
-                                                                    </button>
-                                                                )}
-                                                            </div>
-                                                        )}
-
-                                                        {!isTeams && (
-                                                            <div className="profiles-hint">
-                                                                Your current plan allows <strong>1 profile</strong>. Teams unlocks multiple profiles.
-                                                            </div>
-                                                        )}
-
-                                                        {isTeams && (
-                                                            <div className="profiles-hint">
-                                                                Teams cap is controlled by your subscription: <strong>{maxProfiles}</strong>. If you hit the limit,
-                                                                increase quantity.
-                                                            </div>
-                                                        )}
-                                                    </div>
-                                                </div>
-                                            )}
-                                        </React.Fragment>
-                                    );
-                                })}
-                            </div>
-
-                            <div className="profiles-under-list">
-                                <div className="profiles-upsell-row">
-                                    <div className="profiles-upsell-text">
-                                        {isTeams ? (
-                                            <>
-                                                Teams plan: <strong>{sortedProfiles.length}</strong> / <strong>{maxProfiles}</strong> profiles.
-                                            </>
-                                        ) : (
-                                            <>
-                                                Want more profiles? <strong>Teams</strong> lets you add more links.
-                                            </>
-                                        )}
-                                    </div>
-
+                                <div className="profiles-panelHeadActions">
+                                    <button type="button" className="kx-btn kx-btn--white" onClick={handleShare}>
+                                        Share
+                                    </button>
                                     <button type="button" className="kx-btn kx-btn--orange" onClick={handleCreateButtonClick}>
                                         + Add profile
                                     </button>
                                 </div>
                             </div>
-                        </section>
 
-                        {/* RIGHT (REAL PREVIEW + 4 BOTTOM BUTTONS) */}
-                        <aside className="profiles-right">
-                            <section className="profiles-card profiles-preview-card">
-                                <div className="profiles-card-head">
-                                    <div>
-                                        <h2 className="profiles-card-title">Profile preview</h2>
-                                        <p className="profiles-muted">This is what customers see when they open your link.</p>
+                            {/* ✅ ONLY THIS AREA SCROLLS */}
+                            <div className="profiles-panelBody">
+                                <div className="profiles-list">
+                                    {sortedProfiles.map((p, idx) => {
+                                        const isActive = selectedProfile?.slug === p.slug;
+
+                                        return (
+                                            <React.Fragment key={p.slug}>
+                                                <button
+                                                    type="button"
+                                                    className={`profiles-item ${isActive ? "active" : ""}`}
+                                                    onClick={() => setSelectedSlug(p.slug)}
+                                                >
+                                                    <div className="profiles-item-left">
+                                                        <div className="profiles-avatar" aria-hidden="true">
+                                                            {p.name?.slice(0, 1) || "P"}
+                                                        </div>
+
+                                                        <div className="profiles-item-meta">
+                                                            <div className="profiles-item-title">
+                                                                <span className="profiles-item-name">{p.name}</span>
+                                                                <span className="profiles-trade">• {p.trade}</span>
+                                                            </div>
+
+                                                            <div className="profiles-item-sub">
+                                                                <span className="profiles-link">{p.slug}</span>
+                                                                <span className="profiles-dot">•</span>
+                                                                <span className="profiles-muted">{p.updatedAt}</span>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                    <div className="profiles-item-right">
+                                                        <span className={`profiles-status ${p.status}`}>{p.status === "complete" ? "Complete" : "Incomplete"}</span>
+
+                                                        <div className="profiles-inline-actions">
+                                                            <button
+                                                                type="button"
+                                                                className="kx-btn kx-btn--white profiles-mini"
+                                                                onClick={(e) => {
+                                                                    e.stopPropagation();
+                                                                    handleEdit(p.slug);
+                                                                }}
+                                                            >
+                                                                Edit
+                                                            </button>
+
+                                                            <button
+                                                                type="button"
+                                                                className="kx-btn kx-btn--white profiles-mini"
+                                                                onClick={(e) => {
+                                                                    e.stopPropagation();
+                                                                    handleVisit(p.slug);
+                                                                }}
+                                                            >
+                                                                Visit
+                                                            </button>
+
+                                                            <button
+                                                                type="button"
+                                                                className="kx-btn kx-btn--white profiles-mini profiles-mini-danger"
+                                                                onClick={(e) => {
+                                                                    e.stopPropagation();
+                                                                    handleDelete(p.slug);
+                                                                }}
+                                                            >
+                                                                Delete
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                </button>
+
+                                                {/* Inline claim under first profile */}
+                                                {idx === 0 && claimOpen && (
+                                                    <div ref={claimRef} className="profiles-claim-inline">
+                                                        <div className="profiles-claim-inline-head">
+                                                            <div>
+                                                                <div className="profiles-claim-inline-title">Claim your link</div>
+                                                                <div className="profiles-claim-inline-sub">
+                                                                    Example: <strong>{window.location.origin}/u/your-link</strong>
+                                                                </div>
+                                                            </div>
+
+                                                            <button type="button" className="kx-btn kx-btn--white" onClick={closeClaimPanel}>
+                                                                Close
+                                                            </button>
+                                                        </div>
+
+                                                        <div className="profiles-claim-grid">
+                                                            <div className="profiles-claim-row">
+                                                                <div className="profiles-input-wrap" aria-label="Claim link input">
+                                                                    <span className="profiles-input-prefix">{window.location.origin}/u/</span>
+                                                                    <input
+                                                                        className="profiles-input"
+                                                                        value={claimSlugInput}
+                                                                        onChange={(e) => {
+                                                                            setClaimSlugInput(e.target.value);
+                                                                            setClaimStatus("idle");
+                                                                            setClaimMessage("");
+                                                                        }}
+                                                                        placeholder="plumbing-north-london"
+                                                                        aria-label="Profile slug"
+                                                                    />
+                                                                </div>
+
+                                                                <button
+                                                                    type="button"
+                                                                    className="kx-btn kx-btn--black"
+                                                                    onClick={checkSlugAvailability}
+                                                                    disabled={claimStatus === "checking" || claimStatus === "subscribing" || claimStatus === "creating"}
+                                                                >
+                                                                    {claimStatus === "checking" ? "Checking..." : "Check availability"}
+                                                                </button>
+                                                            </div>
+
+                                                            {claimMessage ? (
+                                                                <div
+                                                                    className={`profiles-alert ${claimStatus === "available"
+                                                                            ? "success"
+                                                                            : claimStatus === "error" || claimStatus === "invalid"
+                                                                                ? "danger"
+                                                                                : "neutral"
+                                                                        }`}
+                                                                >
+                                                                    {claimMessage}
+                                                                </div>
+                                                            ) : null}
+
+                                                            {claimStatus === "available" && (
+                                                                <div className="profiles-claim-actions">
+                                                                    {canCreateMoreProfilesWithoutCheckout ? (
+                                                                        <button
+                                                                            type="button"
+                                                                            className="kx-btn kx-btn--orange"
+                                                                            onClick={createTeamsProfileNow}
+                                                                            disabled={claimStatus === "creating"}
+                                                                        >
+                                                                            {claimStatus === "creating" ? "Creating..." : "Create profile"}
+                                                                        </button>
+                                                                    ) : (
+                                                                        <button
+                                                                            type="button"
+                                                                            className="kx-btn kx-btn--orange"
+                                                                            onClick={startTeamsCheckout}
+                                                                            disabled={claimStatus === "subscribing"}
+                                                                        >
+                                                                            {claimStatus === "subscribing" ? "Opening checkout..." : "Subscribe / Update Teams to add it"}
+                                                                        </button>
+                                                                    )}
+                                                                </div>
+                                                            )}
+
+                                                            {!isTeams && (
+                                                                <div className="profiles-hint">
+                                                                    Your current plan allows <strong>1 profile</strong>. Teams unlocks multiple profiles.
+                                                                </div>
+                                                            )}
+
+                                                            {isTeams && (
+                                                                <div className="profiles-hint">
+                                                                    Teams cap is controlled by your subscription: <strong>{maxProfiles}</strong>. If you hit the limit, increase
+                                                                    quantity.
+                                                                </div>
+                                                            )}
+                                                        </div>
+                                                    </div>
+                                                )}
+                                            </React.Fragment>
+                                        );
+                                    })}
+                                </div>
+
+                                <div className="profiles-under-list">
+                                    <div className="profiles-upsell-row">
+                                        <div className="profiles-upsell-text">
+                                            {isTeams ? (
+                                                <>
+                                                    Teams plan: <strong>{sortedProfiles.length}</strong> / <strong>{maxProfiles}</strong> profiles.
+                                                </>
+                                            ) : (
+                                                <>
+                                                    Want more profiles? <strong>Teams</strong> lets you add more links.
+                                                </>
+                                            )}
+                                        </div>
+
+                                        <button type="button" className="kx-btn kx-btn--orange" onClick={handleCreateButtonClick}>
+                                            + Add profile
+                                        </button>
                                     </div>
                                 </div>
+                            </div>
+                        </section>
 
-                                <div className="profiles-previewWrap">
-                                    {previewLoading ? (
-                                        <div className="profiles-previewLoading">Loading preview…</div>
-                                    ) : previewError ? (
-                                        <div className="profiles-previewError">{previewError}</div>
-                                    ) : (
-                                        <Preview
-                                            state={previewState}
-                                            isMobile={isMobile}
-                                            hasSavedData={!!previewCard}
-                                            showMainSection={previewToggles.showMainSection}
-                                            showAboutMeSection={previewToggles.showAboutMeSection}
-                                            showWorkSection={previewToggles.showWorkSection}
-                                            showServicesSection={previewToggles.showServicesSection}
-                                            showReviewsSection={previewToggles.showReviewsSection}
-                                            showContactSection={previewToggles.showContactSection}
-                                            hasExchangeContact={hasExchangeContact}
-                                            visitUrl={selectedProfile?.slug ? buildPublicUrl(selectedProfile.slug) : ""}
-                                        />
-                                    )}
+                        {/* RIGHT */}
+                        <section className="profiles-card profiles-panel">
+                            <div className="profiles-panelHead">
+                                <div>
+                                    <h2 className="profiles-card-title">Profile preview</h2>
+                                    <p className="profiles-muted">This is what customers see when they open your link.</p>
                                 </div>
+                            </div>
 
-                                <div className="profiles-previewActions">
-                                    <button type="button" className="kx-btn kx-btn--black" onClick={handleShare} disabled={!selectedProfile}>
-                                        Share page
-                                    </button>
+                            {/* ✅ fills height, scrolls inside, NO tight wrapper */}
+                            <div className="profiles-previewBody">
+                                {previewLoading ? (
+                                    <div className="profiles-previewLoading">Loading preview…</div>
+                                ) : previewError ? (
+                                    <div className="profiles-previewError">{previewError}</div>
+                                ) : (
+                                    <Preview
+                                        state={previewState}
+                                        isMobile={isMobile}
+                                        hasSavedData={!!previewCard}
+                                        showMainSection={previewToggles.showMainSection}
+                                        showAboutMeSection={previewToggles.showAboutMeSection}
+                                        showWorkSection={previewToggles.showWorkSection}
+                                        showServicesSection={previewToggles.showServicesSection}
+                                        showReviewsSection={previewToggles.showReviewsSection}
+                                        showContactSection={previewToggles.showContactSection}
+                                        hasExchangeContact={hasExchangeContact}
+                                        visitUrl={selectedProfile?.slug ? buildPublicUrl(selectedProfile.slug) : ""}
+                                    />
+                                )}
+                            </div>
 
-                                    <button type="button" className="kx-btn kx-btn--white" onClick={handleDownloadQr} disabled={!selectedProfile}>
-                                        Download QR
-                                    </button>
+                            <div className="profiles-previewActions">
+                                <button type="button" className="kx-btn kx-btn--black" onClick={handleShare} disabled={!selectedProfile}>
+                                    Share page
+                                </button>
 
-                                    <button type="button" className="kx-btn kx-btn--white" onClick={handleAddAppleWallet} disabled={!selectedProfile}>
-                                        Apple Wallet
-                                    </button>
+                                <button type="button" className="kx-btn kx-btn--white" onClick={handleDownloadQr} disabled={!selectedProfile}>
+                                    Download QR
+                                </button>
 
-                                    <button type="button" className="kx-btn kx-btn--white" onClick={handleAddGoogleWallet} disabled={!selectedProfile}>
-                                        Google Wallet
-                                    </button>
-                                </div>
-                            </section>
-                        </aside>
+                                <button type="button" className="kx-btn kx-btn--white" onClick={handleAddAppleWallet} disabled={!selectedProfile}>
+                                    Apple Wallet
+                                </button>
+
+                                <button type="button" className="kx-btn kx-btn--white" onClick={handleAddGoogleWallet} disabled={!selectedProfile}>
+                                    Google Wallet
+                                </button>
+                            </div>
+                        </section>
                     </div>
                 )}
             </div>
