@@ -1,11 +1,9 @@
-// src/components/Dashboard/Sidebar.jsx
 import React, { useContext, useEffect, useMemo, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { AuthContext } from "../AuthContext.jsx";
 
 import LogoIcon from "../../assets/icons/Logo-Icon.svg";
 
-// ✅ Correct sidebar icon set (matches your folder)
 import DashboardIcon from "../../assets/icons/SidebarLinkDashboard.svg";
 import ProfilesIcon from "../../assets/icons/SidebarLinkProfiles.svg";
 import CardsIcon from "../../assets/icons/SidebarLinkCards.svg";
@@ -86,9 +84,11 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen }) {
                     ) : null}
                 </div>
 
-                <div className="sb3-topGap" />
+                {/* Divider (inset, respects 24px padding) */}
                 <div className="sb3-divider" />
-                <div className="sb3-sectionGap" />
+
+                {/* 36px gap before first link */}
+                <div className="sb3-gap36" />
 
                 {/* Main links */}
                 <nav className="sb3-nav" aria-label="Main navigation">
@@ -107,14 +107,16 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen }) {
                     ))}
                 </nav>
 
-                {/* Divider + Upgrade */}
-                <div className="sb3-divider sb3-divider--full" />
-                <div className="sb3-sectionGap" />
+                {/* ✅ Gap under Contact Book to divider */}
+                <div className="sb3-gap36" />
+                <div className="sb3-divider" />
+                <div className="sb3-gap36" />
 
+                {/* Upgrade */}
                 <Link
                     to="/upgrade"
                     onClick={closeSidebar}
-                    className={`sb3-link ${isActive("/upgrade") ? "active" : ""}`}
+                    className={`sb3-link ${isActive("/upgrade") ? "active" : ""} sb3-linkInset`}
                 >
                     <span className="sb3-icoWrap" aria-hidden="true">
                         <img className="sb3-ico" src={UpgradeIcon} alt="" />
@@ -122,14 +124,16 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen }) {
                     <span className="sb3-text">Upgrade Plan</span>
                 </Link>
 
-                {/* Divider + Help */}
-                <div className="sb3-divider sb3-divider--full" />
-                <div className="sb3-sectionGap" />
+                {/* ✅ 36px gap under Upgrade Plan */}
+                <div className="sb3-gap36" />
+                <div className="sb3-divider" />
+                <div className="sb3-gap36" />
 
+                {/* Help */}
                 <Link
                     to="/helpcentreinterface"
                     onClick={closeSidebar}
-                    className={`sb3-link ${isActive("/helpcentreinterface") ? "active" : ""}`}
+                    className={`sb3-link ${isActive("/helpcentreinterface") ? "active" : ""} sb3-linkInset`}
                 >
                     <span className="sb3-icoWrap" aria-hidden="true">
                         <img className="sb3-ico" src={HelpIcon} alt="" />
@@ -139,30 +143,33 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen }) {
 
                 {/* Bottom */}
                 <div className="sb3-bottom">
-                    <div className="sb3-divider sb3-divider--full" />
-                    <div className="sb3-sectionGap" />
+                    <div className="sb3-divider" />
+                    <div className="sb3-gap36" />
 
-                    <Link
-                        to="/settings"
-                        onClick={closeSidebar}
-                        className={`sb3-link ${isActive("/settings") ? "active" : ""}`}
-                    >
-                        <span className="sb3-icoWrap" aria-hidden="true">
-                            <img className="sb3-ico" src={SettingsIcon} alt="" />
-                        </span>
-                        <span className="sb3-text">Settings</span>
-                    </Link>
+                    {/* Settings + Logout should behave like normal links */}
+                    <div className="sb3-nav sb3-nav--bottom">
+                        <Link
+                            to="/settings"
+                            onClick={closeSidebar}
+                            className={`sb3-link ${isActive("/settings") ? "active" : ""}`}
+                        >
+                            <span className="sb3-icoWrap" aria-hidden="true">
+                                <img className="sb3-ico" src={SettingsIcon} alt="" />
+                            </span>
+                            <span className="sb3-text">Settings</span>
+                        </Link>
 
-                    <button
-                        type="button"
-                        className="sb3-link sb3-link--logout"
-                        onClick={handleLogout}
-                    >
-                        <span className="sb3-icoWrap sb3-icoWrap--logout" aria-hidden="true">
-                            <img className="sb3-ico" src={LogoutIcon} alt="" />
-                        </span>
-                        <span className="sb3-text sb3-text--logout">Logout</span>
-                    </button>
+                        <button
+                            type="button"
+                            className="sb3-link sb3-link--logout"
+                            onClick={handleLogout}
+                        >
+                            <span className="sb3-icoWrap sb3-icoWrap--logout" aria-hidden="true">
+                                <img className="sb3-ico" src={LogoutIcon} alt="" />
+                            </span>
+                            <span className="sb3-text sb3-text--logout">Logout</span>
+                        </button>
+                    </div>
 
                     <div className="sb3-footnote">© {new Date().getFullYear()} KonarCard</div>
                 </div>

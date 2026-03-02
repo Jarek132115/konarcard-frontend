@@ -1,5 +1,3 @@
-/* src/styling/dashboard/sidebar.css */
-
 :root {
     --sb3-w: var(--sidebar-w, 272px);
     --sb3-radius: 22px;
@@ -14,8 +12,8 @@
     --sb3-soft: #fafafa;
     --sb3-active-bg: #f5f5f5;
 
-    /* active “border shadow”: 0x 1y 1 blur @ 25% black */
-    --sb3-active-shadow: 0 1px 1px rgba(0, 0, 0, 0.25);
+    /* ✅ active “even border look” */
+    --sb3-active-shadow: 0 0 1px rgba(0, 0, 0, 0.25);
 
     --sb3-divider: rgba(15, 23, 42, 0.10);
 
@@ -41,12 +39,11 @@
 
 /* Sidebar */
 .sb3 {
-    margin: 0;
     position: sticky;
     top: var(--dash-gutter, 24px);
     height: calc(100vh - (var(--dash-gutter, 24px) * 2));
-
     width: var(--sb3-w);
+
     background: var(--sb3-bg);
     border: 1px solid var(--sb3-border);
     border-radius: var(--sb3-radius);
@@ -69,7 +66,6 @@
 .sb3-brand {
     display: inline-flex;
     align-items: center;
-    /* ✅ vertically centered */
     gap: 12px;
     min-width: 0;
     text-decoration: none;
@@ -101,7 +97,7 @@
     padding: 0 !important;
 }
 
-/* KonarCard text: Inter 20px semibold */
+/* KonarCard: Inter 20px semibold */
 .sb3-brandName {
     font-family: "Inter", sans-serif;
     font-size: 20px;
@@ -132,32 +128,30 @@
     transform: translateY(1px);
 }
 
-/* Divider full width */
+/* ✅ Divider is inset (respects 24px padding) */
 .sb3-divider {
     height: 1px;
     background: var(--sb3-divider);
-    width: 100%;
+    margin: 0 24px;
 }
 
-/* 36px section gap */
-.sb3-sectionGap {
+/* ✅ reusable 36px gap blocks */
+.sb3-gap36 {
     height: 36px;
 }
 
-/* Nav */
+/* Nav: links have 16px spacing and same left/right padding */
 .sb3-nav {
     display: grid;
     gap: 16px;
-    /* ✅ 16px gap between links */
     padding: 0 24px;
 }
 
-/* Shared link base */
+/* Link base */
 .sb3-link {
     display: flex;
     align-items: center;
     gap: 8px;
-    /* ✅ 8px between icon and text */
 
     text-decoration: none;
 
@@ -165,16 +159,19 @@
     padding: 6px;
 
     border-radius: 8px;
-    /* ✅ active radius requirement */
     background: transparent;
 
     font-family: "Inter", sans-serif;
     font-size: 16px;
     font-weight: 600;
-    /* ✅ semibold */
     color: var(--sb3-muted);
 
-    border: 1px solid transparent;
+    border: none;
+    /* ✅ remove border usage */
+    box-shadow: none;
+
+    cursor: pointer;
+
     transition: background 0.15s ease, box-shadow 0.15s ease, color 0.15s ease,
         transform 0.08s ease;
 }
@@ -195,7 +192,6 @@
 /* Icon wrapper: 2px padding, bg #fafafa, radius 4px */
 .sb3-icoWrap {
     width: 28px;
-    /* 24px icon + 2px padding each side */
     height: 28px;
     padding: 2px;
 
@@ -207,24 +203,23 @@
     flex: 0 0 auto;
 }
 
-/* Icon itself */
 .sb3-ico {
     width: 24px;
     height: 24px;
     display: block;
 
-    /* Make SVG appear “secondary text colour” */
+    /* default (non-active) icon tint */
     filter: invert(33%) sepia(10%) saturate(980%) hue-rotate(182deg) brightness(95%) contrast(90%);
 }
 
-/* Active link */
+/* ✅ Active: no border, use even shadow */
 .sb3-link.active {
     background: var(--sb3-active-bg);
     box-shadow: var(--sb3-active-shadow);
     color: var(--sb3-ink);
 }
 
-/* Active icon wrapper background becomes white */
+/* Active icon wrap becomes white */
 .sb3-link.active .sb3-icoWrap {
     background: #ffffff;
 }
@@ -234,24 +229,18 @@
     filter: none;
 }
 
-/* Upgrade & Help single links (padding aligns with nav) */
-.sb3>a.sb3-link,
-.sb3>button.sb3-link {
-    margin: 0 24px;
-}
-
-/* Bottom */
+/* Bottom area */
 .sb3-bottom {
     margin-top: auto;
-    padding: 0 0 24px;
-    display: grid;
-    gap: 0;
+    padding: 0 0 18px;
 }
 
-.sb3-bottom .sb3-link {
-    margin: 0 24px;
+/* Bottom nav uses same spacing as main */
+.sb3-nav--bottom {
+    padding: 0 24px;
 }
 
+/* Footnote */
 .sb3-footnote {
     margin-top: 18px;
     font-family: "Inter", sans-serif;
@@ -264,7 +253,6 @@
 /* Logout always red */
 .sb3-link--logout {
     background: transparent;
-    border: 1px solid transparent;
     color: var(--sb3-danger);
 }
 
