@@ -2,21 +2,25 @@ import React, { useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "../../styling/dashboard/pageheader.css";
 
+import NotificationsIcon from "../../assets/icons/PageHeaderNotifications.svg";
+
 /**
  * PageHeader (No background)
- * - Title + subtitle on left
- * - Right cluster: Plan pill, notifications dropdown, avatar (settings)
+ * - Left: title (.h3) + subtitle (.kc-subheading) with 4px gap
+ * - Right: Plan pill (shadow border), notifications (40x40), avatar initials (40x40)
  *
  * Props:
  * - title: string
  * - subtitle?: string
  * - planName?: string (defaults "Free")
+ * - userName?: string (used to generate initial, e.g. "Sam" => "S")
  * - notifications?: Array<{ id: string, title: string, time?: string }>
  */
 export default function PageHeader({
   title,
   subtitle,
   planName = "Free",
+  userName = "",
   notifications = [],
 }) {
   const navigate = useNavigate();
@@ -35,54 +39,52 @@ export default function PageHeader({
 
   const items = useMemo(() => notifications.slice(0, 6), [notifications]);
 
+  const initial = useMemo(() => {
+    const t = (userName || "").trim();
+    if (!t) return "U";
+    return t[0].toUpperCase();
+  }, [userName]);
+
   return (
-    <header className="ph3">
-      <div className="ph3-left">
-        <div className="ph3-title kc-title">{title}</div>
-        {subtitle ? <div className="ph3-sub kc-body">{subtitle}</div> : null}
+    <header className="ph4">
+      <div className="ph4-left">
+        <div className="ph4-title h3">{title}</div>
+        {subtitle ? <div className="ph4-sub kc-subheading">{subtitle}</div> : null}
       </div>
 
-      <div className="ph3-right" ref={wrapRef}>
-        <span className="ph3-pill" aria-label={`Plan: ${planName}`}>
+      <div className="ph4-right" ref={wrapRef}>
+        <span className="ph4-pill" aria-label={`Plan: ${planName}`}>
           Plan: <strong>{planName}</strong>
         </span>
 
-        <div className="ph3-dd">
+        <div className="ph4-dd">
           <button
             type="button"
-            className={`ph3-iconBtn ${open ? "active" : ""}`}
+            className={`ph4-iconBtn ${open ? "active" : ""}`}
             aria-label="Notifications"
             aria-haspopup="menu"
             aria-expanded={open ? "true" : "false"}
             onClick={() => setOpen((v) => !v)}
           >
-            {/* simple bell svg (no extra asset required) */}
-            <svg viewBox="0 0 24 24" aria-hidden="true">
-              <path
-                d="M12 22a2.2 2.2 0 0 0 2.2-2.2h-4.4A2.2 2.2 0 0 0 12 22Zm7-6.2V11a7 7 0 1 0-14 0v4.8L3.6 17.2c-.6.6-.2 1.6.7 1.6h15.4c.9 0 1.3-1 .7-1.6L19 15.8Z"
-                fill="currentColor"
-              />
-            </svg>
-            {notifications.length ? <span className="ph3-dot" /> : null}
+            <img className="ph4-iconImg" src={NotificationsIcon} alt="" aria-hidden="true" />
+            {notifications.length ? <span className="ph4-dot" /> : null}
           </button>
 
           {open ? (
-            <div className="ph3-menu" role="menu">
-              <div className="ph3-menuHead">Notifications</div>
+            <div className="ph4-menu" role="menu">
+              <div className="ph4-menuHead">Notifications</div>
 
               {items.length ? (
-                <div className="ph3-menuList">
+                <div className="ph4-menuList">
                   {items.map((n) => (
-                    <div className="ph3-item" key={n.id} role="menuitem">
-                      <div className="ph3-itemTitle">{n.title}</div>
-                      {n.time ? <div className="ph3-itemTime">{n.time}</div> : null}
+                    <div className="ph4-item" key={n.id} role="menuitem">
+                      <div className="ph4-itemTitle">{n.title}</div>
+                      {n.time ? <div className="ph4-itemTime">{n.time}</div> : null}
                     </div>
                   ))}
                 </div>
               ) : (
-                <div className="ph3-empty">
-                  No notifications yet.
-                </div>
+                <div className="ph4-empty">No notifications yet.</div>
               )}
             </div>
           ) : null}
@@ -90,13 +92,12 @@ export default function PageHeader({
 
         <button
           type="button"
-          className="ph3-avatarBtn"
+          className="ph4-avatarBtn"
           aria-label="Account settings"
           onClick={() => navigate("/settings")}
         >
-          {/* If you later have a real avatar image, replace with <img/> */}
-          <span className="ph3-avatar" aria-hidden="true">
-            <span className="ph3-avatarInner">U</span>
+          <span className="ph4-avatar" aria-hidden="true">
+            <span className="ph4-avatarInner">{initial}</span>
           </span>
         </button>
       </div>
