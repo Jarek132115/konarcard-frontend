@@ -324,6 +324,10 @@
     min-height: 0;
 }
 
+.profiles-previewTop {
+    margin-top: 0;
+}
+
 .profiles-previewPills {
     margin-bottom: 16px;
 }
