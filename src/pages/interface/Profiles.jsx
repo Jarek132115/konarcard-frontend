@@ -725,37 +725,40 @@ export default function Profiles() {
                                                 </div>
 
                                                 <div className="profiles-profileRight">
-                                                    <div className="profiles-cardBtns">
-                                                        <button
-                                                            type="button"
-                                                            className="kx-btn kx-btn--white profiles-cardBtn"
-                                                            onClick={(e) => {
-                                                                e.stopPropagation();
-                                                                handleEdit(p.slug);
-                                                            }}
-                                                        >
-                                                            Edit
-                                                        </button>
-                                                        <button
-                                                            type="button"
-                                                            className="kx-btn kx-btn--black profiles-cardBtn"
-                                                            onClick={(e) => {
-                                                                e.stopPropagation();
-                                                                shareSlug(p.slug);
-                                                            }}
-                                                        >
-                                                            Share
-                                                        </button>
-                                                    </div>
+                                                    <div className="profiles-profileRightInner">
+                                                        <div className="profiles-cardBtns">
+                                                            <button
+                                                                type="button"
+                                                                className="kx-btn kx-btn--white profiles-cardBtn"
+                                                                onClick={(e) => {
+                                                                    e.stopPropagation();
+                                                                    handleEdit(p.slug);
+                                                                }}
+                                                            >
+                                                                Edit
+                                                            </button>
 
-                                                    <div className="profiles-metrics">
-                                                        <div className="profiles-metric">
-                                                            <div className="profiles-metricVal">{p.views}</div>
-                                                            <div className="profiles-metricLab">Views</div>
+                                                            <button
+                                                                type="button"
+                                                                className="kx-btn kx-btn--black profiles-cardBtn"
+                                                                onClick={(e) => {
+                                                                    e.stopPropagation();
+                                                                    shareSlug(p.slug);
+                                                                }}
+                                                            >
+                                                                Share
+                                                            </button>
                                                         </div>
-                                                        <div className="profiles-metric">
-                                                            <div className="profiles-metricVal">{p.linkTaps}</div>
-                                                            <div className="profiles-metricLab">Link Taps</div>
+
+                                                        <div className="profiles-metrics">
+                                                            <div className="profiles-metric">
+                                                                <div className="profiles-metricVal">{p.views}</div>
+                                                                <div className="profiles-metricLab">Views</div>
+                                                            </div>
+                                                            <div className="profiles-metric">
+                                                                <div className="profiles-metricVal">{p.linkTaps}</div>
+                                                                <div className="profiles-metricLab">Link Taps</div>
+                                                            </div>
                                                         </div>
                                                     </div>
                                                 </div>

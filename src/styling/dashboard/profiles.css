@@ -1,6 +1,13 @@
 /* src/styling/dashboard/profiles.css
 =========================================================
 Profiles — left "Your Profiles" redesign (match ref)
+Final tweaks:
+- "Your Profiles" uses TITLE class styling
+- Subtitle uses BODY class styling
+- Pills: 12px font, padding 6px/10px
+- Updated text: 12px
+- Right-side (buttons + metrics) vertically centered + centered as a group
+- Metrics centered under CTAs (not pushed to edges)
 ========================================================= */
 
 :root {
@@ -84,22 +91,29 @@ Profiles — left "Your Profiles" redesign (match ref)
     gap: 12px;
 }
 
+.profiles-listHeader-left {
+    min-width: 0;
+}
+
+/* ✅ Title class styling */
 .profiles-listTitle {
     margin: 0;
     font-family: "Cal Sans", sans-serif;
-    font-weight: 500;
-    font-size: 24px;
-    letter-spacing: -0.02em;
-    color: var(--p-ink);
+    font-weight: 400;
+    font-size: var(--kc-title-size);
+    line-height: var(--kc-title-line);
+    color: var(--kc-text-primary);
+    letter-spacing: -0.01em;
 }
 
+/* ✅ Body class styling + 4px gap */
 .profiles-listSub {
     margin: 4px 0 0;
     font-family: "Inter", sans-serif;
-    font-weight: 600;
-    font-size: 16px;
-    line-height: 1.4;
-    color: rgba(71, 85, 105, 0.90);
+    font-weight: 400;
+    font-size: var(--kc-body-size);
+    line-height: var(--kc-body-line);
+    color: var(--kc-text-secondary);
 }
 
 .profiles-countPill {
@@ -118,6 +132,7 @@ Profiles — left "Your Profiles" redesign (match ref)
     color: rgba(15, 23, 42, 0.86);
 
     box-shadow: 0 0 1px rgba(0, 0, 0, 0.25);
+    flex: 0 0 auto;
 }
 
 .profiles-listDivider {
@@ -139,7 +154,6 @@ Profiles — left "Your Profiles" redesign (match ref)
     gap: 16px;
 
     padding-right: 6px;
-    /* tiny comfort for scrollbar */
 }
 
 /* Profile card (new design) */
@@ -178,18 +192,19 @@ Profiles — left "Your Profiles" redesign (match ref)
     /* pills → slug gap */
 }
 
+/* ✅ Pills: 12px font, padding 6/10 */
 .profiles-pill {
     display: inline-flex;
     align-items: center;
     justify-content: center;
 
-    height: 34px;
-    padding: 0 14px;
+    padding: 6px 10px;
     border-radius: 999px;
 
     font-family: "Inter", sans-serif;
     font-weight: 600;
-    font-size: 14px;
+    font-size: 12px;
+    line-height: 1;
 
     border: 1px solid transparent;
 }
@@ -224,7 +239,8 @@ Profiles — left "Your Profiles" redesign (match ref)
     display: grid;
     grid-template-columns: minmax(0, 1fr) auto;
     gap: 14px;
-    align-items: start;
+    align-items: center;
+    /* ✅ center whole right cluster vertically */
 }
 
 /* slug + updated */
@@ -236,27 +252,36 @@ Profiles — left "Your Profiles" redesign (match ref)
     color: var(--p-ink);
 }
 
+/* ✅ updated text 12px */
 .profiles-updated {
     margin-top: 4px;
-    /* 4px gap */
     font-family: "Inter", sans-serif;
     font-style: italic;
     font-weight: 500;
-    font-size: 10px;
+    font-size: 12px;
     color: rgba(71, 85, 105, 0.85);
 }
 
-/* right side buttons + metrics */
+/* right side: CENTER the CTAs + metrics as a group */
 .profiles-profileRight {
     display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.profiles-profileRightInner {
+    display: flex;
     flex-direction: column;
-    align-items: flex-end;
+    align-items: center;
+    /* ✅ center */
+    justify-content: center;
     gap: 10px;
 }
 
 .profiles-cardBtns {
     display: flex;
     align-items: center;
+    justify-content: center;
     gap: 12px;
 }
 
@@ -265,12 +290,18 @@ Profiles — left "Your Profiles" redesign (match ref)
     justify-content: center;
 }
 
-/* metrics under buttons */
+/* metrics under buttons (centered) */
 .profiles-metrics {
     display: flex;
-    align-items: flex-start;
-    justify-content: flex-end;
+    align-items: center;
+    justify-content: center;
     gap: 18px;
+    width: 100%;
+}
+
+.profiles-metric {
+    display: grid;
+    justify-items: center;
 }
 
 .profiles-metricVal {
@@ -278,7 +309,7 @@ Profiles — left "Your Profiles" redesign (match ref)
     font-weight: 700;
     font-size: 14px;
     color: rgba(15, 23, 42, 0.90);
-    text-align: right;
+    text-align: center;
 }
 
 .profiles-metricLab {
@@ -287,7 +318,7 @@ Profiles — left "Your Profiles" redesign (match ref)
     font-weight: 600;
     font-size: 12px;
     color: rgba(71, 85, 105, 0.80);
-    text-align: right;
+    text-align: center;
 }
 
 /* Add profile dashed card */
@@ -378,7 +409,7 @@ Profiles — left "Your Profiles" redesign (match ref)
     gap: 12px;
 }
 
-/* Claim panel (kept from your file) */
+/* Claim panel (kept) */
 .profiles-claim-inline {
     border: 1px solid rgba(15, 23, 42, 0.10);
     background: rgba(15, 23, 42, 0.02);
@@ -517,14 +548,32 @@ Profiles — left "Your Profiles" redesign (match ref)
 @media (max-width: 640px) {
     .profiles-profileMain {
         grid-template-columns: 1fr;
+        align-items: start;
     }
 
     .profiles-profileRight {
+        justify-content: flex-start;
+    }
+
+    .profiles-profileRightInner {
         align-items: flex-start;
+    }
+
+    .profiles-cardBtns {
+        justify-content: flex-start;
     }
 
     .profiles-metrics {
         justify-content: flex-start;
+    }
+
+    .profiles-metric {
+        justify-items: start;
+    }
+
+    .profiles-metricVal,
+    .profiles-metricLab {
+        text-align: left;
     }
 
     .profiles-claim-row {
