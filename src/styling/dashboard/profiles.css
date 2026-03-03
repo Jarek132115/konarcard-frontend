@@ -2,21 +2,22 @@
 =========================================================
 Profiles — left "Your Profiles" redesign (match ref)
 Final tweaks:
-- "Your Profiles" uses TITLE class styling
-- Subtitle uses BODY class styling
-- Pills: 12px font, padding 6px/10px
-- Updated text: 12px
-- Right-side (buttons + metrics) vertically centered + centered as a group
-- Metrics centered under CTAs (not pushed to edges)
+- Pills live inside left column (with slug/updated)
+- Pills → slug gap: 8px
+- Remove heavy shadows (keep subtle border/shadow)
+- Active card: background #f5f5f5 + “border” emphasis 4px
+- Right cluster (CTAs + metrics) vertically centered and centered as group
 ========================================================= */
 
 :root {
     --p-ink: var(--kc-text-primary, #0f172a);
     --p-muted: var(--kc-text-secondary, #475569);
     --p-border: rgba(15, 23, 42, 0.10);
-    --p-radius: 22px;
-    --p-shadow: 0 1px 2px rgba(15, 23, 42, 0.05);
     --p-softLine: rgba(15, 23, 42, 0.08);
+    --p-radius: 22px;
+
+    /* subtle “border-like” shadow */
+    --p-softShadow: 0 0 1px rgba(0, 0, 0, 0.25);
 }
 
 /* Shell: allow internal scroll areas */
@@ -49,7 +50,7 @@ Final tweaks:
     background: #ffffff;
     border: 1px solid var(--p-border);
     border-radius: var(--p-radius);
-    box-shadow: var(--p-shadow);
+    box-shadow: var(--p-softShadow);
     padding: 16px;
     min-width: 0;
 
@@ -95,7 +96,7 @@ Final tweaks:
     min-width: 0;
 }
 
-/* ✅ Title class styling */
+/* Title class styling */
 .profiles-listTitle {
     margin: 0;
     font-family: "Cal Sans", sans-serif;
@@ -106,7 +107,7 @@ Final tweaks:
     letter-spacing: -0.01em;
 }
 
-/* ✅ Body class styling + 4px gap */
+/* Body class styling + 4px gap */
 .profiles-listSub {
     margin: 4px 0 0;
     font-family: "Inter", sans-serif;
@@ -131,7 +132,7 @@ Final tweaks:
     font-size: 14px;
     color: rgba(15, 23, 42, 0.86);
 
-    box-shadow: 0 0 1px rgba(0, 0, 0, 0.25);
+    box-shadow: var(--p-softShadow);
     flex: 0 0 auto;
 }
 
@@ -156,7 +157,7 @@ Final tweaks:
     padding-right: 6px;
 }
 
-/* Profile card (new design) */
+/* Profile card */
 .profiles-profileCard {
     border-radius: 24px;
     border: 1px solid rgba(15, 23, 42, 0.10);
@@ -165,34 +166,51 @@ Final tweaks:
     padding: 18px;
     cursor: pointer;
 
-    box-shadow: 0 0 0 rgba(0, 0, 0, 0);
-    transition: transform 0.08s ease, box-shadow 0.18s ease, border-color 0.18s ease;
+    /* subtle only */
+    box-shadow: var(--p-softShadow);
+    transition: transform 0.08s ease, background 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease;
 }
 
 .profiles-profileCard:hover {
-    box-shadow: 0 10px 24px rgba(15, 23, 42, 0.06);
+    background: rgba(15, 23, 42, 0.01);
 }
 
 .profiles-profileCard:active {
     transform: translateY(1px);
 }
 
+/* ✅ Active: #f5f5f5 + “border” emphasis 4px */
 .profiles-profileCard.is-active {
-    border-color: rgba(15, 23, 42, 0.14);
-    box-shadow: 0 14px 30px rgba(15, 23, 42, 0.08);
+    background: #f5f5f5;
+    border-color: rgba(15, 23, 42, 0.12);
+    box-shadow: inset 0 0 0 4px rgba(15, 23, 42, 0.10);
 }
 
-/* top pills */
+/* main layout: left content + right actions */
+.profiles-profileMain {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 14px;
+    align-items: center;
+}
+
+/* LEFT column now includes pills + slug + updated */
+.profiles-profileLeft {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+}
+
+/* pills row inside left */
 .profiles-pillRow {
     display: flex;
     align-items: center;
     gap: 10px;
-    /* pills gap */
-    margin-bottom: 8px;
-    /* pills → slug gap */
+    margin: 0 0 8px;
+    /* ✅ pills → slug gap */
 }
 
-/* ✅ Pills: 12px font, padding 6/10 */
+/* Pills: 12px font, padding 6/10 */
 .profiles-pill {
     display: inline-flex;
     align-items: center;
@@ -207,6 +225,7 @@ Final tweaks:
     line-height: 1;
 
     border: 1px solid transparent;
+    white-space: nowrap;
 }
 
 .profiles-pill.live {
@@ -234,15 +253,6 @@ Final tweaks:
     color: rgba(153, 27, 27, 0.95);
 }
 
-/* main layout: left content + right actions */
-.profiles-profileMain {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr) auto;
-    gap: 14px;
-    align-items: center;
-    /* ✅ center whole right cluster vertically */
-}
-
 /* slug + updated */
 .profiles-slug {
     font-family: "Inter", sans-serif;
@@ -250,9 +260,12 @@ Final tweaks:
     font-size: 20px;
     letter-spacing: -0.01em;
     color: var(--p-ink);
+
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
-/* ✅ updated text 12px */
 .profiles-updated {
     margin-top: 4px;
     font-family: "Inter", sans-serif;
@@ -273,7 +286,6 @@ Final tweaks:
     display: flex;
     flex-direction: column;
     align-items: center;
-    /* ✅ center */
     justify-content: center;
     gap: 10px;
 }
@@ -336,6 +348,7 @@ Final tweaks:
     justify-content: center;
     gap: 10px;
 
+    box-shadow: var(--p-softShadow);
     transition: transform 0.08s ease, background 0.18s ease, border-color 0.18s ease;
 }
 
@@ -380,7 +393,7 @@ Final tweaks:
     border: 1px solid rgba(15, 23, 42, 0.10);
     border-radius: 20px;
     background: #ffffff;
-    box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
+    box-shadow: var(--p-softShadow);
     padding: 16px;
     min-height: 520px;
     display: flex;

@@ -709,17 +709,18 @@ export default function Profiles() {
                                                 if (e.key === "Enter" || e.key === " ") setSelectedSlug(p.slug);
                                             }}
                                         >
-                                            <div className="profiles-profileTop">
-                                                <div className="profiles-pillRow">
-                                                    <span className={`profiles-pill ${p.isLive ? "live" : "draft"}`}>{p.isLive ? "Live" : "Draft"}</span>
-                                                    <span className={`profiles-pill completion ${p.tone}`}>
-                                                        {p.pct >= 95 ? "Profile Complete" : `${p.pct}% Complete`}
-                                                    </span>
-                                                </div>
-                                            </div>
-
                                             <div className="profiles-profileMain">
                                                 <div className="profiles-profileLeft">
+                                                    <div className="profiles-pillRow">
+                                                        <span className={`profiles-pill ${p.isLive ? "live" : "draft"}`}>
+                                                            {p.isLive ? "Live" : "Draft"}
+                                                        </span>
+
+                                                        <span className={`profiles-pill completion ${p.tone}`}>
+                                                            {p.pct >= 95 ? "Profile Complete" : `${p.pct}% Complete`}
+                                                        </span>
+                                                    </div>
+
                                                     <div className="profiles-slug">{p.slug}</div>
                                                     <div className="profiles-updated">{p.updatedAt}</div>
                                                 </div>
@@ -755,6 +756,7 @@ export default function Profiles() {
                                                                 <div className="profiles-metricVal">{p.views}</div>
                                                                 <div className="profiles-metricLab">Views</div>
                                                             </div>
+
                                                             <div className="profiles-metric">
                                                                 <div className="profiles-metricVal">{p.linkTaps}</div>
                                                                 <div className="profiles-metricLab">Link Taps</div>
