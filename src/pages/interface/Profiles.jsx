@@ -13,6 +13,9 @@ import api from "../../services/api";
 // ✅ real preview component (same as MyProfile page)
 import Preview from "../../components/Dashboard/Preview";
 
+// ✅ new icon
+import CopyLinkIcon from "../../assets/icons/CopyLink.svg";
+
 const TEAMS_CHECKOUT_ENDPOINT = "/api/checkout/teams";
 
 const centerTrim = (v) => (v ?? "").toString().trim();
@@ -114,11 +117,8 @@ export default function Profiles() {
             const isLive = pct > 0; // "anything saved" → live
 
             // Optional metrics (safe fallbacks)
-            const views =
-                Number(c?.views ?? c?.profile_views ?? c?.total_views ?? c?.profileViews ?? 0) || 0;
-
-            const linkTaps =
-                Number(c?.link_taps ?? c?.card_taps ?? c?.linkTaps ?? c?.cardTaps ?? 0) || 0;
+            const views = Number(c?.views ?? c?.profile_views ?? c?.total_views ?? c?.profileViews ?? 0) || 0;
+            const linkTaps = Number(c?.link_taps ?? c?.card_taps ?? c?.linkTaps ?? c?.cardTaps ?? 0) || 0;
 
             return {
                 id: c._id,
@@ -162,6 +162,10 @@ export default function Profiles() {
         if (!s) return `${window.location.origin}/u/`;
         return `${window.location.origin}/u/${encodeURIComponent(s)}`;
     };
+
+    const selectedPublicUrl = useMemo(() => {
+        return selectedProfile?.slug ? buildPublicUrl(selectedProfile.slug) : "";
+    }, [selectedProfile?.slug]);
 
     // =========================================================
     // ✅ REAL PREVIEW DATA (fetch selected profile full record)
@@ -284,12 +288,18 @@ export default function Profiles() {
         }
     };
 
-    const handleEdit = (slug) => {
-        navigate(`/profiles/edit?slug=${encodeURIComponent(slug || "")}`);
+    const copySelectedLink = async () => {
+        if (!selectedPublicUrl) return;
+        try {
+            await navigator.clipboard.writeText(selectedPublicUrl);
+            alert("Link copied ✅");
+        } catch {
+            alert("Copy failed — please copy manually: " + selectedPublicUrl);
+        }
     };
 
-    const handleVisit = (slug) => {
-        window.open(buildPublicUrl(slug || ""), "_blank", "noreferrer");
+    const handleEdit = (slug) => {
+        navigate(`/profiles/edit?slug=${encodeURIComponent(slug || "")}`);
     };
 
     const handleDelete = async (slug) => {
@@ -337,7 +347,6 @@ export default function Profiles() {
     const [claimMessage, setClaimMessage] = useState("");
 
     const claimRef = useRef(null);
-
     const desiredNewCount = Math.max(2, sortedProfiles.length + 1);
 
     const resetClaim = () => {
@@ -586,12 +595,17 @@ export default function Profiles() {
     return (
         <DashboardLayout hideDesktopHeader>
             <div className="profiles-shell">
-                <PageHeader title="Profiles" subtitle="Profiles are your public digital business cards. Each profile has its own link you can share after every job." />
+                <PageHeader
+                    title="Profiles"
+                    subtitle="Profiles are your public digital business cards. Each profile has its own link you can share after every job."
+                />
 
                 {sortedProfiles.length === 0 ? (
                     <section className="profiles-card profiles-empty">
                         <h2 className="profiles-card-title">Create your first profile</h2>
-                        <p className="profiles-muted">Your profile is what customers see when they scan your KonarCard. Create it once — update it any time.</p>
+                        <p className="profiles-muted">
+                            Your profile is what customers see when they scan your KonarCard. Create it once — update it any time.
+                        </p>
 
                         <div className="profiles-actions-row">
                             <button type="button" className="kx-btn kx-btn--orange" onClick={openClaimPanel}>
@@ -645,7 +659,14 @@ export default function Profiles() {
                                     </div>
 
                                     {claimMessage ? (
-                                        <div className={`profiles-alert ${claimStatus === "available" ? "success" : claimStatus === "error" || claimStatus === "invalid" ? "danger" : "neutral"}`}>
+                                        <div
+                                            className={`profiles-alert ${claimStatus === "available"
+                                                    ? "success"
+                                                    : claimStatus === "error" || claimStatus === "invalid"
+                                                        ? "danger"
+                                                        : "neutral"
+                                                }`}
+                                        >
                                             {claimMessage}
                                         </div>
                                     ) : null}
@@ -653,11 +674,20 @@ export default function Profiles() {
                                     {claimStatus === "available" && (
                                         <div className="profiles-claim-actions">
                                             {isTeams ? (
-                                                <button type="button" className="kx-btn kx-btn--orange" onClick={createTeamsProfileNow} disabled={claimStatus === "creating"}>
+                                                <button
+                                                    type="button"
+                                                    className="kx-btn kx-btn--orange"
+                                                    onClick={createTeamsProfileNow}
+                                                    disabled={claimStatus === "creating"}
+                                                >
                                                     {claimStatus === "creating" ? "Creating..." : "Create profile"}
                                                 </button>
                                             ) : (
-                                                <button type="button" className="kx-btn kx-btn--orange" onClick={() => handleEdit(claimSlugNormalized || normalizeSlug(claimSlugInput))}>
+                                                <button
+                                                    type="button"
+                                                    className="kx-btn kx-btn--orange"
+                                                    onClick={() => handleEdit(claimSlugNormalized || normalizeSlug(claimSlugInput))}
+                                                >
                                                     Continue to editor
                                                 </button>
                                             )}
@@ -689,7 +719,9 @@ export default function Profiles() {
                                     <p className="profiles-listSub">Choose one to edit or share.</p>
                                 </div>
 
-                                <span className="profiles-countPill">{sortedProfiles.length} Profile{sortedProfiles.length === 1 ? "" : "s"}</span>
+                                <span className="profiles-countPill">
+                                    {sortedProfiles.length} Profile{sortedProfiles.length === 1 ? "" : "s"}
+                                </span>
                             </div>
 
                             <div className="profiles-listDivider" />
@@ -775,7 +807,7 @@ export default function Profiles() {
                                     <span className="profiles-addText">Add Profile</span>
                                 </button>
 
-                                {/* Inline claim panel sits UNDER the add card (this is where it expands) */}
+                                {/* Inline claim panel sits UNDER the add card */}
                                 {claimOpen && (
                                     <div ref={claimRef} className="profiles-claim-inline">
                                         <div className="profiles-claim-inline-head">
@@ -819,7 +851,14 @@ export default function Profiles() {
                                             </div>
 
                                             {claimMessage ? (
-                                                <div className={`profiles-alert ${claimStatus === "available" ? "success" : claimStatus === "error" || claimStatus === "invalid" ? "danger" : "neutral"}`}>
+                                                <div
+                                                    className={`profiles-alert ${claimStatus === "available"
+                                                            ? "success"
+                                                            : claimStatus === "error" || claimStatus === "invalid"
+                                                                ? "danger"
+                                                                : "neutral"
+                                                        }`}
+                                                >
                                                     {claimMessage}
                                                 </div>
                                             ) : null}
@@ -827,11 +866,21 @@ export default function Profiles() {
                                             {claimStatus === "available" && (
                                                 <div className="profiles-claim-actions">
                                                     {canCreateMoreProfilesWithoutCheckout ? (
-                                                        <button type="button" className="kx-btn kx-btn--orange" onClick={createTeamsProfileNow} disabled={claimStatus === "creating"}>
+                                                        <button
+                                                            type="button"
+                                                            className="kx-btn kx-btn--orange"
+                                                            onClick={createTeamsProfileNow}
+                                                            disabled={claimStatus === "creating"}
+                                                        >
                                                             {claimStatus === "creating" ? "Creating..." : "Create profile"}
                                                         </button>
                                                     ) : (
-                                                        <button type="button" className="kx-btn kx-btn--orange" onClick={startTeamsCheckout} disabled={claimStatus === "subscribing"}>
+                                                        <button
+                                                            type="button"
+                                                            className="kx-btn kx-btn--orange"
+                                                            onClick={startTeamsCheckout}
+                                                            disabled={claimStatus === "subscribing"}
+                                                        >
                                                             {claimStatus === "subscribing" ? "Opening checkout..." : "Subscribe / Update Teams to add it"}
                                                         </button>
                                                     )}
@@ -855,7 +904,7 @@ export default function Profiles() {
                             </div>
                         </section>
 
-                        {/* RIGHT (Preview stays as-is for now) */}
+                        {/* RIGHT (NEW PREVIEW LAYOUT) */}
                         <aside className="profiles-right">
                             <section className="profiles-card profiles-preview-card">
                                 <div className="profiles-card-head">
@@ -865,30 +914,98 @@ export default function Profiles() {
                                     </div>
                                 </div>
 
-                                <div className="profiles-previewWrap">
-                                    {previewLoading ? (
-                                        <div className="profiles-previewLoading">Loading preview…</div>
-                                    ) : previewError ? (
-                                        <div className="profiles-previewError">{previewError}</div>
-                                    ) : (
-                                        <Preview
-                                            state={previewState}
-                                            isMobile={isMobile}
-                                            hasSavedData={!!previewCard}
-                                            showMainSection={previewToggles.showMainSection}
-                                            showAboutMeSection={previewToggles.showAboutMeSection}
-                                            showWorkSection={previewToggles.showWorkSection}
-                                            showServicesSection={previewToggles.showServicesSection}
-                                            showReviewsSection={previewToggles.showReviewsSection}
-                                            showContactSection={previewToggles.showContactSection}
-                                            hasExchangeContact={hasExchangeContact}
-                                            visitUrl={selectedProfile?.slug ? buildPublicUrl(selectedProfile.slug) : ""}
-                                        />
-                                    )}
+                                {/* ✅ top: pills */}
+                                {selectedProfile ? (
+                                    <div className="profiles-previewMeta">
+                                        <div className="profiles-pillRow profiles-previewPills">
+                                            <span className={`profiles-pill ${selectedProfile.isLive ? "live" : "draft"}`}>
+                                                {selectedProfile.isLive ? "Live" : "Draft"}
+                                            </span>
+                                            <span className={`profiles-pill completion ${selectedProfile.tone}`}>
+                                                {selectedProfile.pct >= 95 ? "Profile Complete" : `${selectedProfile.pct}% Complete`}
+                                            </span>
+                                        </div>
+
+                                        {/* 16px gap handled by CSS */}
+
+                                        <div className="profiles-previewLinkBlock">
+                                            <div className="profiles-previewLinkLeft">
+                                                <div className="profiles-previewLinkLabel">Profile link</div>
+
+                                                <div className="profiles-previewLinkRow">
+                                                    <div className="profiles-previewLinkUrl" title={selectedPublicUrl}>
+                                                        {selectedPublicUrl}
+                                                    </div>
+
+                                                    <button
+                                                        type="button"
+                                                        className="profiles-copyBtn"
+                                                        onClick={copySelectedLink}
+                                                        aria-label="Copy profile link"
+                                                    >
+                                                        <img src={CopyLinkIcon} alt="" className="profiles-copyIcon" />
+                                                        <span className="profiles-copyText">Copy link</span>
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div className="profiles-previewHint">
+                                            This is your profile link — share it after every job, quote, or enquiry.
+                                        </div>
+
+                                        <div className="profiles-previewStats">
+                                            <div className="profiles-previewStat">
+                                                <div className="profiles-previewStatVal">{selectedProfile.views}</div>
+                                                <div className="profiles-previewStatLab">Views</div>
+                                            </div>
+
+                                            <div className="profiles-previewStat">
+                                                <div className="profiles-previewStatVal">{selectedProfile.linkTaps}</div>
+                                                <div className="profiles-previewStatLab">Link taps</div>
+                                            </div>
+
+                                            <div className="profiles-previewStat">
+                                                <div className="profiles-previewStatVal">{selectedProfile.pct}%</div>
+                                                <div className="profiles-previewStatLab">Completion</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                ) : null}
+
+                                {/* ✅ scroll INSIDE this area */}
+                                <div className="profiles-previewViewport">
+                                    <div className="profiles-previewViewportInner">
+                                        {previewLoading ? (
+                                            <div className="profiles-previewLoading">Loading preview…</div>
+                                        ) : previewError ? (
+                                            <div className="profiles-previewError">{previewError}</div>
+                                        ) : (
+                                            <Preview
+                                                state={previewState}
+                                                isMobile={isMobile}
+                                                hasSavedData={!!previewCard}
+                                                showMainSection={previewToggles.showMainSection}
+                                                showAboutMeSection={previewToggles.showAboutMeSection}
+                                                showWorkSection={previewToggles.showWorkSection}
+                                                showServicesSection={previewToggles.showServicesSection}
+                                                showReviewsSection={previewToggles.showReviewsSection}
+                                                showContactSection={previewToggles.showContactSection}
+                                                hasExchangeContact={hasExchangeContact}
+                                                visitUrl={selectedProfile?.slug ? buildPublicUrl(selectedProfile.slug) : ""}
+                                            />
+                                        )}
+                                    </div>
                                 </div>
 
+                                {/* bottom 4 buttons */}
                                 <div className="profiles-previewActions">
-                                    <button type="button" className="kx-btn kx-btn--black" onClick={() => shareSlug(selectedProfile?.slug)} disabled={!selectedProfile}>
+                                    <button
+                                        type="button"
+                                        className="kx-btn kx-btn--black"
+                                        onClick={() => shareSlug(selectedProfile?.slug)}
+                                        disabled={!selectedProfile}
+                                    >
                                         Share page
                                     </button>
 
