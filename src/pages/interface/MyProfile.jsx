@@ -37,11 +37,6 @@ const revokeAllLocalPreviews = (st) => {
   (st?.workImages || []).forEach((w) => safeRevoke(w?.preview));
 };
 
-/**
- * ✅ NEW: Minimal FormData
- * Only data content + template + show/hide toggles.
- * NO theme/font/alignment/button colors/section order/display modes.
- */
 const buildBusinessCardFormData = ({
   profile_slug,
   template_id,
@@ -102,7 +97,7 @@ const buildBusinessCardFormData = ({
   fd.append("services", JSON.stringify(Array.isArray(services) ? services : []));
   fd.append("reviews", JSON.stringify(Array.isArray(reviews) ? reviews : []));
 
-  // Existing works URLs (repeat key)
+  // Existing works URLs
   const existing = Array.isArray(works_existing_urls) ? works_existing_urls.filter(Boolean) : [];
   existing.forEach((url) => fd.append("existing_works", url));
 
@@ -146,6 +141,34 @@ function getSlugFromSearch(search) {
     return "main";
   }
 }
+
+// ✅ small completion helper (for pills)
+const calcCompletionPctFromState = (st) => {
+  const checks = [
+    !!norm(st?.businessName),
+    !!norm(st?.mainHeading),
+    !!norm(st?.subHeading),
+    !!norm(st?.job_title),
+    !!norm(st?.full_name),
+    !!norm(st?.bio),
+    !!norm(st?.avatar) || !!norm(st?.avatarPreview),
+    !!norm(st?.coverPhoto) || !!norm(st?.coverPhotoPreview),
+    Array.isArray(st?.workImages) && st.workImages.length > 0,
+    Array.isArray(st?.services) && st.services.length > 0,
+    Array.isArray(st?.reviews) && st.reviews.length > 0,
+    !!norm(st?.contact_email),
+    !!norm(st?.phone_number),
+  ];
+  const total = checks.length;
+  const done = checks.filter(Boolean).length;
+  return total ? Math.round((done / total) * 100) : 0;
+};
+
+const pctTone = (pct) => {
+  if (pct >= 80) return "good";
+  if (pct >= 40) return "mid";
+  return "bad";
+};
 
 export default function MyProfile() {
   const { state, updateState, resetState } = useBusinessCardStore();
@@ -224,7 +247,6 @@ export default function MyProfile() {
   const [isMobile, setIsMobile] = useState(() => window.matchMedia(mqDesktopToMobile).matches);
   const [isSmallMobile, setIsSmallMobile] = useState(() => window.matchMedia(mqSmallMobile).matches);
 
-  // ✅ ONLY user controls are show/hide toggles now
   const [showMainSection, setShowMainSection] = useState(true);
   const [showAboutMeSection, setShowAboutMeSection] = useState(true);
   const [showWorkSection, setShowWorkSection] = useState(true);
@@ -306,7 +328,7 @@ export default function MyProfile() {
     else if (!authLoading && isUserVerified) setShowVerificationPrompt(false);
   }, [authLoading, authUser, isUserVerified, userEmail]);
 
-  // ✅ Hydrate editor from backend (minimal — no style controls)
+  // Hydrate editor from backend
   useEffect(() => {
     if (isCardLoading) return;
 
@@ -314,10 +336,8 @@ export default function MyProfile() {
 
     if (businessCard) {
       updateState({
-        // template
         templateId: businessCard.template_id || "template-1",
 
-        // content
         businessName: businessCard.business_card_name || "",
         mainHeading: businessCard.main_heading || "",
         subHeading: businessCard.sub_heading || "",
@@ -325,24 +345,19 @@ export default function MyProfile() {
         full_name: businessCard.full_name || "",
         bio: businessCard.bio || "",
 
-        // persisted URLs only
         avatar: businessCard.avatar || null,
         coverPhoto: businessCard.cover_photo || null,
 
-        // local-only
         avatarPreview: "",
         coverPhotoPreview: "",
         avatarFile: null,
         coverPhotoFile: null,
 
-        // works: store as preview urls (no file)
         workImages: (businessCard.works || []).map((url) => ({ file: null, preview: url })),
 
-        // arrays
         services: businessCard.services || [],
         reviews: businessCard.reviews || [],
 
-        // contact + socials
         contact_email: businessCard.contact_email || "",
         phone_number: businessCard.phone_number || "",
 
@@ -364,7 +379,6 @@ export default function MyProfile() {
       setIsAvatarRemoved(false);
     } else {
       resetState();
-
       setShowMainSection(true);
       setShowAboutMeSection(true);
       setShowWorkSection(true);
@@ -410,7 +424,7 @@ export default function MyProfile() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [businessCard, isCardLoading, resetState, updateState]);
 
-  // -------- Upload handlers (keep) --------
+  // Upload handlers (unchanged)
   const onCoverUpload = (file) => {
     if (!file || !file.type?.startsWith("image/")) return;
 
@@ -486,7 +500,7 @@ export default function MyProfile() {
     updateState({ workImages: (state.workImages || []).filter((_, i) => i !== idx) });
   };
 
-  // -------- Verification --------
+  // Verification
   const sendVerificationCode = async () => {
     if (!userEmail) return toast.error("Email not found. Please log in again.");
     try {
@@ -570,7 +584,6 @@ export default function MyProfile() {
     toast.success("Editor reset.");
   };
 
-  // ✅ Changes detector (minimal — ignores styling fields)
   const hasProfileChanges = () => {
     const hasNewFiles =
       state.coverPhotoFile instanceof File ||
@@ -710,7 +723,6 @@ export default function MyProfile() {
       queryClient.invalidateQueries({ queryKey: ["businessCard", "profiles"] });
       queryClient.invalidateQueries({ queryKey: ["businessCard", "profile", activeSlug] });
 
-      // cleanup local previews & clear local file fields
       revokeAllLocalPreviews(state);
       updateState({
         coverPhotoPreview: "",
@@ -743,30 +755,29 @@ export default function MyProfile() {
     return `${window.location.origin}/u/${userUsername}/${encodeURIComponent(activeSlug)}`;
   }, [userUsername, activeSlug]);
 
-  const rightSlot = (
-    <div className="myprofile-header-badges">
-      <span className="profiles-pill">
-        Plan: <strong>{isTeams ? "TEAMS" : isPlus ? "PLUS" : "FREE"}</strong>
-      </span>
-      <span className="profiles-pill">
-        Editing: <strong>{activeSlug}</strong>
-      </span>
-    </div>
-  );
+  // ✅ preview pills (simple + premium)
+  const completionPct = useMemo(() => calcCompletionPctFromState(state), [state]);
+  const completionTone = useMemo(() => pctTone(completionPct), [completionPct]);
 
-  const desktopScrollStyle = !isMobile ? { overflow: "auto" } : undefined;
+  const isLive = useMemo(() => {
+    // prefer backend flags if present, fallback to completion
+    if (businessCard?.is_live === true) return true;
+    if (businessCard?.published === true) return true;
+    if (String(businessCard?.status || "").toLowerCase() === "live") return true;
+    return completionPct >= 60;
+  }, [businessCard, completionPct]);
 
   return (
     <DashboardLayout title={null} subtitle={null} hideDesktopHeader>
       <div className="myprofile-shell">
         <PageHeader
-          title="Edit your profile"
+          title={`${activeSlug} Profile`}
           subtitle="Update your card — changes go live when you publish."
           onShareCard={handleShareCard}
           visitUrl={visitUrl}
           isMobile={isMobile}
           isSmallMobile={isSmallMobile}
-          rightSlot={rightSlot}
+          rightSlot={null}
         />
 
         {!authLoading && !authUser && (
@@ -848,53 +859,76 @@ export default function MyProfile() {
             )}
 
             <div className="myprofile-grid">
-              {/* PREVIEW */}
-              <section className="profiles-card myprofile-col" style={desktopScrollStyle}>
-                <Preview
-                  state={state}
-                  isMobile={isMobile}
-                  hasSavedData={!!businessCard}
-                  showMainSection={showMainSection}
-                  showAboutMeSection={showAboutMeSection}
-                  showWorkSection={showWorkSection}
-                  showServicesSection={showServicesSection}
-                  showReviewsSection={showReviewsSection}
-                  showContactSection={showContactSection}
-                  hasExchangeContact={hasExchangeContact}
-                  visitUrl={visitUrl}
-                />
+              {/* ✅ EDITOR LEFT (swapped) */}
+              <section className="profiles-card myprofile-cardShell myprofile-editorCard">
+                <div className="myprofile-cardBody">
+                  <Editor
+                    state={state}
+                    updateState={updateState}
+                    isSubscribed={!isFree}
+                    hasTrialEnded={false}
+                    onStartSubscription={handleStartSubscription}
+                    onResetPage={handleResetPage}
+                    onSubmit={handleSubmit}
+                    showMainSection={showMainSection}
+                    setShowMainSection={setShowMainSection}
+                    showAboutMeSection={showAboutMeSection}
+                    setShowAboutMeSection={setShowAboutMeSection}
+                    showWorkSection={showWorkSection}
+                    setShowWorkSection={setShowWorkSection}
+                    showServicesSection={showServicesSection}
+                    setShowServicesSection={setShowServicesSection}
+                    showReviewsSection={showReviewsSection}
+                    setShowReviewsSection={setShowReviewsSection}
+                    showContactSection={showContactSection}
+                    setShowContactSection={setShowContactSection}
+                    onCoverUpload={onCoverUpload}
+                    onRemoveCover={handleRemoveCoverPhoto}
+                    onAvatarUpload={onAvatarUpload}
+                    onRemoveAvatar={handleRemoveAvatar}
+                    onAddWorkImages={onAddWorkImages}
+                    onRemoveWorkImage={handleRemoveWorkImage}
+                  />
+                </div>
               </section>
 
-              {/* EDITOR */}
-              <section className="profiles-card myprofile-col" style={desktopScrollStyle}>
-                <Editor
-                  state={state}
-                  updateState={updateState}
-                  isSubscribed={!isFree}
-                  hasTrialEnded={false}
-                  onStartSubscription={handleStartSubscription}
-                  onResetPage={handleResetPage}
-                  onSubmit={handleSubmit}
-                  showMainSection={showMainSection}
-                  setShowMainSection={setShowMainSection}
-                  showAboutMeSection={showAboutMeSection}
-                  setShowAboutMeSection={setShowAboutMeSection}
-                  showWorkSection={showWorkSection}
-                  setShowWorkSection={setShowWorkSection}
-                  showServicesSection={showServicesSection}
-                  setShowServicesSection={setShowServicesSection}
-                  showReviewsSection={showReviewsSection}
-                  setShowReviewsSection={setShowReviewsSection}
-                  showContactSection={showContactSection}
-                  setShowContactSection={setShowContactSection}
-                  onCoverUpload={onCoverUpload}
-                  onRemoveCover={handleRemoveCoverPhoto}
-                  onAvatarUpload={onAvatarUpload}
-                  onRemoveAvatar={handleRemoveAvatar}
-                  onAddWorkImages={onAddWorkImages}
-                  onRemoveWorkImage={handleRemoveWorkImage}
-                />
-              </section>
+              {/* ✅ PREVIEW RIGHT (new header + fill) */}
+              <aside className="profiles-card myprofile-cardShell myprofile-previewCard">
+                <div className="myprofile-previewTop">
+                  <div className="myprofile-previewTopLeft">
+                    <h2 className="myprofile-previewTitle">Profile Preview</h2>
+                    <p className="myprofile-previewSub">Choose one to edit or share.</p>
+                  </div>
+
+                  <div className="myprofile-previewTopRight">
+                    <div className="profiles-pillRow myprofile-previewPills">
+                      <span className={`profiles-pill ${isLive ? "live" : "draft"}`}>
+                        {isLive ? "Live" : "Draft"}
+                      </span>
+                      <span className={`profiles-pill completion ${completionTone}`}>
+                        {completionPct >= 95 ? "Profile Complete" : `${completionPct}% Complete`}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="myprofile-previewFrame">
+                  <Preview
+                    state={state}
+                    isMobile={isMobile}
+                    hasSavedData={!!businessCard}
+                    showMainSection={showMainSection}
+                    showAboutMeSection={showAboutMeSection}
+                    showWorkSection={showWorkSection}
+                    showServicesSection={showServicesSection}
+                    showReviewsSection={showReviewsSection}
+                    showContactSection={showContactSection}
+                    hasExchangeContact={hasExchangeContact}
+                    visitUrl={visitUrl}
+                    columnScrollStyle={{ height: "100%", maxHeight: "100%" }}
+                  />
+                </div>
+              </aside>
             </div>
           </>
         )}
