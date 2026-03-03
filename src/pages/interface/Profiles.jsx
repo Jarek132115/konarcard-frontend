@@ -57,6 +57,12 @@ const pctTone = (pct) => {
     return "bad";
 };
 
+const toMs = (d) => {
+    if (!d) return 0;
+    const t = new Date(d).getTime();
+    return Number.isFinite(t) ? t : 0;
+};
+
 export default function Profiles() {
     const navigate = useNavigate();
     const location = useLocation();
@@ -108,7 +114,13 @@ export default function Profiles() {
                 (c.profile_slug === "main" ? "Main Profile" : "Profile");
 
             const slug = c.profile_slug || "";
-            const updatedAtText = c.updatedAt ? `Updated ${new Date(c.updatedAt).toLocaleDateString()}` : "Updated recently";
+
+            // ✅ store ms for sorting
+            const updatedMs = toMs(c.updatedAt || c.updated_at || c.lastUpdated || c.last_updated);
+
+            const updatedAtText = updatedMs
+                ? `Updated ${new Date(updatedMs).toLocaleDateString()}`
+                : "Updated recently";
 
             const pct = calcCompletionPct(c);
             const tone = pctTone(pct);
@@ -123,6 +135,7 @@ export default function Profiles() {
                 slug,
                 name: displayName,
                 updatedAt: updatedAtText,
+                updatedMs,
                 pct,
                 tone,
                 isLive,
@@ -132,9 +145,14 @@ export default function Profiles() {
         });
     }, [cards]);
 
+    // ✅ Sort newest updated first (fallback: slug)
     const sortedProfiles = useMemo(() => {
         const xs = [...profiles].filter((p) => !!p.slug);
-        xs.sort((a, b) => a.slug.localeCompare(b.slug));
+        xs.sort((a, b) => {
+            const d = (b.updatedMs || 0) - (a.updatedMs || 0);
+            if (d !== 0) return d;
+            return a.slug.localeCompare(b.slug);
+        });
         return xs;
     }, [profiles]);
 
@@ -152,8 +170,6 @@ export default function Profiles() {
         if (!sortedProfiles.length) return null;
         return sortedProfiles.find((p) => p.slug === selectedSlug) || sortedProfiles[0];
     }, [sortedProfiles, selectedSlug]);
-
-    const canCreateMoreProfilesWithoutCheckout = isTeams && sortedProfiles.length < maxProfiles;
 
     const buildPublicUrl = (profileSlug) => {
         const s = normalizeSlug(profileSlug);
@@ -320,28 +336,24 @@ export default function Profiles() {
     };
 
     // =========================================================
-    // Bottom 4 buttons (keep)
+    // Bottom buttons (new labels + delete)
     // =========================================================
     const handleDownloadQr = async () => {
         if (!selectedProfile?.slug) return;
         alert("QR download endpoint not wired yet. Tell me your backend QR endpoint and I’ll connect it.");
     };
 
-    const handleAddGoogleWallet = async () => {
-        alert("Google Wallet not wired yet. If you have an endpoint/URL for pass creation, send it and I’ll connect it.");
+    const handleWalletCombined = async () => {
+        alert("Wallet not wired yet. If you have an endpoint/URL for pass creation, send it and I’ll connect it.");
     };
 
-    const handleAddAppleWallet = async () => {
-        alert("Apple Wallet not wired yet. If you have an endpoint/URL for pass creation, send it and I’ll connect it.");
-    };
-
-    /* =========================================================
-          INLINE "CLAIM YOUR LINK" FLOW (unchanged)
-    ========================================================= */
+    // =========================================================
+    // INLINE "ADD PROFILE" (REPLACES THE DASHED CARD)
+    // =========================================================
     const [claimOpen, setClaimOpen] = useState(false);
     const [claimSlugInput, setClaimSlugInput] = useState("");
     const [claimSlugNormalized, setClaimSlugNormalized] = useState("");
-    const [claimStatus, setClaimStatus] = useState("idle");
+    const [claimStatus, setClaimStatus] = useState("idle"); // idle|invalid|checking|available|taken|creating|created|error|subscribing
     const [claimMessage, setClaimMessage] = useState("");
 
     const claimRef = useRef(null);
@@ -357,28 +369,12 @@ export default function Profiles() {
     const openClaimPanel = () => {
         setClaimOpen(true);
         resetClaim();
-        setTimeout(() => {
-            claimRef.current?.scrollIntoView({ behavior: "smooth", block: "center" });
-        }, 80);
+        setTimeout(() => claimRef.current?.scrollIntoView({ behavior: "smooth", block: "center" }), 50);
     };
 
     const closeClaimPanel = () => {
         setClaimOpen(false);
         resetClaim();
-    };
-
-    const handleCreateButtonClick = () => {
-        if (isTeams && sortedProfiles.length >= maxProfiles) {
-            setClaimOpen(true);
-            resetClaim();
-            setClaimStatus("error");
-            setClaimMessage(`You’re at your Teams limit (${sortedProfiles.length}/${maxProfiles}). Increase your Teams quantity to add more profiles.`);
-            setTimeout(() => {
-                claimRef.current?.scrollIntoView({ behavior: "smooth", block: "center" });
-            }, 80);
-            return;
-        }
-        openClaimPanel();
     };
 
     const validateClaimSlug = (raw) => {
@@ -419,40 +415,59 @@ export default function Profiles() {
         }
     };
 
-    const createTeamsProfileNow = async () => {
-        if (!isTeams) return;
-        if (claimStatus !== "available") return;
+    const createProfileNow = async () => {
+        // Teams: create directly
+        // Free: send to editor (cannot exceed 1 profile)
+        const v = validateClaimSlug(claimSlugInput);
+        setClaimSlugNormalized(v.slug);
 
-        if (sortedProfiles.length >= maxProfiles) {
-            setClaimStatus("error");
-            setClaimMessage(`You’re at your Teams limit (${sortedProfiles.length}/${maxProfiles}). Increase quantity to add more.`);
+        if (!v.ok) {
+            setClaimStatus("invalid");
+            setClaimMessage(v.msg);
             return;
         }
 
-        const slug = claimSlugNormalized || normalizeSlug(claimSlugInput);
-        if (!slug) return;
+        // Free plan cap guard
+        if (!isTeams && sortedProfiles.length >= maxProfiles) {
+            setClaimStatus("error");
+            setClaimMessage("Your current plan allows 1 profile. Upgrade to create more.");
+            return;
+        }
+
+        // Teams cap guard
+        if (isTeams && sortedProfiles.length >= maxProfiles) {
+            setClaimStatus("error");
+            setClaimMessage(`You’re at your Teams limit (${sortedProfiles.length}/${maxProfiles}). Increase your Teams quantity to add more profiles.`);
+            return;
+        }
+
+        if (!isTeams) {
+            // still keep UX consistent: if available → go editor
+            handleEdit(v.slug);
+            return;
+        }
+
+        if (claimStatus !== "available") return;
 
         setClaimStatus("creating");
         setClaimMessage("");
 
         try {
             const createdResp = await createProfile.mutateAsync({
-                profile_slug: slug,
+                profile_slug: v.slug,
                 template_id: "template-1",
                 business_card_name: "",
             });
 
             await refetchProfiles();
 
+            const createdSlug = createdResp?.profile_slug || createdResp?.data?.profile_slug || v.slug;
+
             setClaimStatus("created");
-            setClaimMessage("Profile created ✅ Opening editor...");
+            setClaimMessage("Profile created ✅");
 
-            const createdSlug = createdResp?.profile_slug || createdResp?.data?.profile_slug || slug;
-
-            setTimeout(() => {
-                closeClaimPanel();
-                handleEdit(createdSlug);
-            }, 350);
+            setSelectedSlug(createdSlug);
+            setTimeout(() => closeClaimPanel(), 450);
         } catch (e) {
             const msg = e?.response?.data?.error || e?.message || "Could not create profile.";
             setClaimStatus("error");
@@ -503,6 +518,7 @@ export default function Profiles() {
         }
     };
 
+    // Handle return from Teams checkout (kept)
     useEffect(() => {
         const params = new URLSearchParams(location.search);
 
@@ -551,6 +567,9 @@ export default function Profiles() {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [location.search, refetchProfiles, refetchAuthUser]);
 
+    // =========================================================
+    // Loading / Error states
+    // =========================================================
     if (isLoading) {
         return (
             <DashboardLayout hideDesktopHeader>
@@ -583,6 +602,9 @@ export default function Profiles() {
         );
     }
 
+    // =========================================================
+    // Main render
+    // =========================================================
     return (
         <DashboardLayout hideDesktopHeader>
             <div className="profiles-shell">
@@ -592,7 +614,19 @@ export default function Profiles() {
                 />
 
                 {sortedProfiles.length === 0 ? (
-                    <section className="profiles-card profiles-empty">{/* unchanged empty state */}</section>
+                    <section className="profiles-card profiles-empty">
+                        <h2 className="profiles-card-title">Create your first profile</h2>
+                        <p className="profiles-muted">Your profile is what customers see when they scan your KonarCard. Create it once — update it any time.</p>
+
+                        <div className="profiles-actions-row">
+                            <button type="button" className="kx-btn kx-btn--orange" onClick={openClaimPanel}>
+                                + Add profile
+                            </button>
+                            <button type="button" className="kx-btn kx-btn--white" onClick={() => handleEdit("")}>
+                                Skip slug (open editor)
+                            </button>
+                        </div>
+                    </section>
                 ) : (
                     <div className="profiles-grid">
                         {/* LEFT */}
@@ -685,17 +719,106 @@ export default function Profiles() {
                                     );
                                 })}
 
-                                <button type="button" className="profiles-addCard" onClick={handleCreateButtonClick}>
-                                    <span className="profiles-addPlus">＋</span>
-                                    <span className="profiles-addText">Add Profile</span>
-                                </button>
+                                {/* ✅ Add Profile card now transforms into inline claim UI */}
+                                {!claimOpen ? (
+                                    <button type="button" className="profiles-addCard" onClick={openClaimPanel}>
+                                        <span className="profiles-addPlus">＋</span>
+                                        <span className="profiles-addText">Add Profile</span>
+                                    </button>
+                                ) : (
+                                    <div ref={claimRef} className="profiles-addInline">
+                                        <div className="profiles-addInlineHead">
+                                            <div className="profiles-addInlineTitle">Claim your link</div>
+                                            <button type="button" className="profiles-addInlineClose" onClick={closeClaimPanel} aria-label="Close">
+                                                ✕
+                                            </button>
+                                        </div>
+
+                                        <div className="profiles-addInlineRow">
+                                            <div className="profiles-input-wrap" aria-label="Claim link input">
+                                                <span className="profiles-input-prefix">{window.location.origin}/u/</span>
+                                                <input
+                                                    className="profiles-input"
+                                                    value={claimSlugInput}
+                                                    onChange={(e) => {
+                                                        setClaimSlugInput(e.target.value);
+                                                        setClaimStatus("idle");
+                                                        setClaimMessage("");
+                                                    }}
+                                                    onKeyDown={(e) => {
+                                                        if (e.key === "Enter") checkSlugAvailability();
+                                                    }}
+                                                    placeholder="plumbing-north-london"
+                                                    aria-label="Profile slug"
+                                                />
+                                            </div>
+
+                                            <button
+                                                type="button"
+                                                className="kx-btn kx-btn--black"
+                                                onClick={checkSlugAvailability}
+                                                disabled={claimStatus === "checking" || claimStatus === "subscribing" || claimStatus === "creating"}
+                                            >
+                                                {claimStatus === "checking" ? "Checking..." : "Check availability"}
+                                            </button>
+                                        </div>
+
+                                        {claimMessage ? (
+                                            <div
+                                                className={`profiles-alert ${claimStatus === "available"
+                                                        ? "success"
+                                                        : claimStatus === "error" || claimStatus === "invalid"
+                                                            ? "danger"
+                                                            : "neutral"
+                                                    }`}
+                                            >
+                                                {claimMessage}
+                                            </div>
+                                        ) : null}
+
+                                        {claimStatus === "available" && (
+                                            <div className="profiles-addInlineActions">
+                                                {isTeams ? (
+                                                    sortedProfiles.length < maxProfiles ? (
+                                                        <button
+                                                            type="button"
+                                                            className="kx-btn kx-btn--orange"
+                                                            onClick={createProfileNow}
+                                                            disabled={claimStatus === "creating"}
+                                                        >
+                                                            {claimStatus === "creating" ? "Creating..." : "Create profile"}
+                                                        </button>
+                                                    ) : (
+                                                        <button
+                                                            type="button"
+                                                            className="kx-btn kx-btn--orange"
+                                                            onClick={startTeamsCheckout}
+                                                            disabled={claimStatus === "subscribing"}
+                                                        >
+                                                            {claimStatus === "subscribing" ? "Opening checkout..." : "Subscribe / Update Teams to add it"}
+                                                        </button>
+                                                    )
+                                                ) : (
+                                                    <button type="button" className="kx-btn kx-btn--orange" onClick={createProfileNow}>
+                                                        Continue to editor
+                                                    </button>
+                                                )}
+                                            </div>
+                                        )}
+
+                                        {!isTeams && sortedProfiles.length >= maxProfiles ? (
+                                            <div className="profiles-hint">
+                                                Your current plan allows <strong>1 profile</strong>. Upgrade to create more.
+                                            </div>
+                                        ) : null}
+                                    </div>
+                                )}
                             </div>
                         </section>
 
-                        {/* RIGHT (FIXED PREVIEW) */}
+                        {/* RIGHT */}
                         <aside className="profiles-right">
                             <section className="profiles-card profiles-preview-card">
-                                {/* ✅ Pills at the very top */}
                                 {selectedProfile ? (
                                     <div className="profiles-previewTop">
                                         <div className="profiles-pillRow profiles-previewPills">
@@ -728,7 +851,6 @@ export default function Profiles() {
                                             This is your profile link — share it after every job, quote, or enquiry.
                                         </div>
 
-                                        {/* ✅ 3 stats, SAME styling as list metrics, aligned right */}
                                         <div className="profiles-previewMetricsRow">
                                             <div className="profiles-metrics profiles-metrics--preview">
                                                 <div className="profiles-metric">
@@ -750,7 +872,6 @@ export default function Profiles() {
                                     </div>
                                 ) : null}
 
-                                {/* ✅ Preview fills remaining space (NO outer framed box) */}
                                 <div className="profiles-previewFrame">
                                     {previewLoading ? (
                                         <div className="profiles-previewLoading">Loading preview…</div>
@@ -769,29 +890,47 @@ export default function Profiles() {
                                             showContactSection={previewToggles.showContactSection}
                                             hasExchangeContact={hasExchangeContact}
                                             visitUrl={selectedProfile?.slug ? buildPublicUrl(selectedProfile.slug) : ""}
-
-                                            /* ✅ important: make Preview obey parent height */
                                             columnScrollStyle={{ height: "100%", maxHeight: "100%" }}
                                         />
                                     )}
                                 </div>
 
-                                {/* Bottom 4 buttons (unchanged) */}
+                                {/* ✅ New 4 buttons order + labels */}
                                 <div className="profiles-previewActions">
-                                    <button type="button" className="kx-btn kx-btn--black" onClick={() => shareSlug(selectedProfile?.slug)} disabled={!selectedProfile}>
-                                        Share page
+                                    <button
+                                        type="button"
+                                        className="kx-btn kx-btn--black"
+                                        onClick={() => shareSlug(selectedProfile?.slug)}
+                                        disabled={!selectedProfile}
+                                    >
+                                        Share profile
                                     </button>
 
-                                    <button type="button" className="kx-btn kx-btn--white" onClick={handleDownloadQr} disabled={!selectedProfile}>
-                                        Download QR
+                                    <button
+                                        type="button"
+                                        className="kx-btn kx-btn--white"
+                                        onClick={handleDownloadQr}
+                                        disabled={!selectedProfile}
+                                    >
+                                        Download QR code
                                     </button>
 
-                                    <button type="button" className="kx-btn kx-btn--white" onClick={handleAddAppleWallet} disabled={!selectedProfile}>
-                                        Apple Wallet
+                                    <button
+                                        type="button"
+                                        className="kx-btn kx-btn--white"
+                                        onClick={handleWalletCombined}
+                                        disabled={!selectedProfile}
+                                    >
+                                        Google / Apple Wallet
                                     </button>
 
-                                    <button type="button" className="kx-btn kx-btn--white" onClick={handleAddGoogleWallet} disabled={!selectedProfile}>
-                                        Google Wallet
+                                    <button
+                                        type="button"
+                                        className="kx-btn kx-btn--white profiles-deleteBtn"
+                                        onClick={() => handleDelete(selectedProfile?.slug)}
+                                        disabled={!selectedProfile}
+                                    >
+                                        Delete
                                     </button>
                                 </div>
                             </section>

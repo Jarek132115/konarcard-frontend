@@ -35,7 +35,7 @@
     border: 1px solid var(--p-border);
     border-radius: var(--p-radius);
     box-shadow: var(--p-softShadow);
-    padding: 16px;
+    padding: 24px;
     min-width: 0;
 
     display: flex;
@@ -98,11 +98,8 @@
 .profiles-listScroll {
     margin-top: 16px;
     flex: 1;
-    /* ✅ critical */
     min-height: 0;
-    /* ✅ critical */
     overflow: auto;
-    /* ✅ internal scroll */
     display: flex;
     flex-direction: column;
     gap: 16px;
@@ -319,15 +316,148 @@
     color: rgba(15, 23, 42, 0.88);
 }
 
+/* ✅ Add profile inline (replaces dashed card) */
+.profiles-addInline {
+    width: 100%;
+    border-radius: 24px;
+    border: 1px solid rgba(15, 23, 42, 0.10);
+    background: rgba(15, 23, 42, 0.02);
+    padding: 16px;
+    box-shadow: var(--p-softShadow);
+
+    display: grid;
+    gap: 12px;
+}
+
+.profiles-addInlineHead {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+}
+
+.profiles-addInlineTitle {
+    font-family: "Inter", sans-serif;
+    font-weight: 800;
+    font-size: 14px;
+    color: var(--p-ink);
+}
+
+.profiles-addInlineClose {
+    width: 32px;
+    height: 32px;
+    border: 0;
+    background: transparent;
+    cursor: pointer;
+    border-radius: 10px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: rgba(15, 23, 42, 0.70);
+}
+
+.profiles-addInlineClose:hover {
+    background: rgba(15, 23, 42, 0.06);
+}
+
+.profiles-addInlineRow {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 10px;
+    align-items: center;
+}
+
+.profiles-addInlineActions {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+/* input styles (reused) */
+.profiles-input-wrap {
+    display: flex;
+    align-items: center;
+    border: 1px solid rgba(15, 23, 42, 0.14);
+    background: #fff;
+    border-radius: 14px;
+    overflow: hidden;
+    min-width: 0;
+}
+
+.profiles-input-prefix {
+    flex: 0 0 auto;
+    padding: 12px 12px;
+    font-family: "Inter", sans-serif;
+    font-weight: 700;
+    font-size: 13px;
+    color: rgba(15, 23, 42, 0.60);
+    background: rgba(15, 23, 42, 0.03);
+    border-right: 1px solid rgba(15, 23, 42, 0.10);
+    white-space: nowrap;
+}
+
+.profiles-input {
+    width: 100%;
+    border: none;
+    outline: none;
+    padding: 12px 12px;
+    font-family: "Inter", sans-serif;
+    font-weight: 600;
+    font-size: 14px;
+    color: var(--p-ink);
+}
+
+.profiles-input::placeholder {
+    color: rgba(71, 85, 105, 0.75);
+}
+
+.profiles-alert {
+    padding: 12px 12px;
+    border-radius: 14px;
+    border: 1px solid rgba(15, 23, 42, 0.10);
+    background: #fff;
+    font-family: "Inter", sans-serif;
+    font-weight: 700;
+    color: var(--p-ink);
+}
+
+.profiles-alert.success {
+    border-color: rgba(22, 163, 74, 0.25);
+    background: rgba(22, 163, 74, 0.08);
+}
+
+.profiles-alert.danger {
+    border-color: rgba(220, 38, 38, 0.25);
+    background: rgba(220, 38, 38, 0.08);
+}
+
+.profiles-alert.neutral {
+    background: rgba(15, 23, 42, 0.03);
+}
+
+.profiles-hint {
+    font-family: "Inter", sans-serif;
+    font-weight: 600;
+    font-size: 13px;
+    color: rgba(71, 85, 105, 0.95);
+}
+
+.profiles-hint strong {
+    color: var(--kc-accent-primary, #f97316);
+}
+
 /* =========================
-   PREVIEW PANEL (FIXED)
+   PREVIEW PANEL
    ========================= */
 
 .profiles-right {
+    display: flex;
+    flex-direction: column;
     min-height: 0;
 }
 
 .profiles-preview-card {
+    flex: 1;
     min-height: 0;
 }
 
@@ -349,7 +479,6 @@
 
 .profiles-previewLinkRow {
     margin-top: 4px;
-    /* ✅ 4px gap under label */
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -370,7 +499,7 @@
     white-space: nowrap;
 }
 
-/* ✅ icon-only copy button: no border/bg/text */
+/* icon-only copy button */
 .profiles-copyIconBtn {
     flex: 0 0 auto;
     width: 24px;
@@ -394,7 +523,6 @@
     display: block;
 }
 
-/* ✅ body text 4px under URL row */
 .profiles-previewHint {
     margin-top: 4px;
     font-family: "Inter", sans-serif;
@@ -404,7 +532,6 @@
     color: var(--kc-text-secondary);
 }
 
-/* ✅ stats aligned right, same style as list metrics */
 .profiles-previewMetricsRow {
     margin-top: 16px;
     display: flex;
@@ -412,34 +539,44 @@
 
 .profiles-metrics--preview {
     width: auto;
-    /* don't stretch */
     justify-content: flex-end;
 }
 
-/* ✅ Preview fills ONLY remaining space + scroll inside */
-.profiles-previewViewport {
+/* preview fill remaining space */
+.profiles-previewFrame {
     margin-top: 24px;
     flex: 1;
     min-height: 0;
-
-    /* keep a subtle frame like other cards */
-    border: 1px solid rgba(15, 23, 42, 0.10);
-    border-radius: 20px;
-    background: #ffffff;
-    box-shadow: var(--p-softShadow);
-
     overflow: hidden;
-    /* scroll inside */
 }
 
-.profiles-previewViewportInner {
-    height: 100%;
-    overflow: auto;
-    /* ✅ internal scroll */
-    padding: 16px;
+/* Override Preview’s forced 100vh height ONLY inside Profiles */
+.profiles-previewFrame .preview-scope.myprofile-preview-wrapper {
+    height: 100% !important;
+    max-height: 100% !important;
+    min-height: 0 !important;
+    flex: 1 !important;
+}
 
-    /* ✅ full width (no centering island) */
-    display: block;
+/* Ensure the real scroll is inside the Preview column */
+.profiles-previewFrame .preview-scope .myprofile-preview {
+    height: 100% !important;
+    max-height: 100% !important;
+    min-height: 0 !important;
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+}
+
+/* Iframe mode must also stretch + obey parent */
+.profiles-previewFrame .preview-iframe-shell,
+.profiles-previewFrame .preview-iframe {
+    height: 100% !important;
+    min-height: 0 !important;
+}
+
+/* Remove inner padding so preview is full-width to the card padding */
+.profiles-previewFrame .preview-iframe-padding {
+    padding: 0 !important;
 }
 
 /* loading/error */
@@ -456,11 +593,22 @@
     color: rgba(71, 85, 105, 0.95);
 }
 
+/* Buttons under preview */
 .profiles-previewActions {
     margin-top: 16px;
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 12px;
+}
+
+/* ✅ delete styling (matches your screenshot vibe) */
+.profiles-deleteBtn {
+    border-color: rgba(239, 68, 68, 0.55) !important;
+    color: rgba(239, 68, 68, 0.95) !important;
+}
+
+.profiles-deleteBtn:hover {
+    background: rgba(239, 68, 68, 0.06) !important;
 }
 
 /* Responsive */
@@ -471,10 +619,6 @@
 
     .profiles-grid {
         grid-template-columns: 1fr;
-    }
-
-    .profiles-previewViewport {
-        min-height: 520px;
     }
 }
 
@@ -516,6 +660,10 @@
     .profiles-previewLinkRow {
         align-items: flex-start;
     }
+
+    .profiles-addInlineRow {
+        grid-template-columns: 1fr;
+    }
 }
 
 @media (max-width: 520px) {
@@ -528,64 +676,4 @@
         width: 100%;
         justify-content: center;
     }
-}
-
-/* =========================
-   PROFILES: PREVIEW HEIGHT + SCROLL FIX
-   - Remove outer framed box
-   - Force Preview wrapper to obey remaining space
-   ========================= */
-
-.profiles-previewFrame {
-    margin-top: 24px;
-    flex: 1;
-    min-height: 0;
-    overflow: hidden;
-}
-
-/* ✅ Override Preview’s forced 100vh height ONLY inside Profiles */
-.profiles-previewFrame .preview-scope.myprofile-preview-wrapper {
-    height: 100% !important;
-    max-height: 100% !important;
-    min-height: 0 !important;
-    flex: 1 !important;
-}
-
-/* ✅ Ensure the real scroll is inside the Preview column */
-.profiles-previewFrame .preview-scope .myprofile-preview {
-    height: 100% !important;
-    max-height: 100% !important;
-    min-height: 0 !important;
-
-    overflow-y: auto !important;
-    overflow-x: hidden !important;
-}
-
-/* ✅ Iframe mode must also stretch + obey parent */
-.profiles-previewFrame .preview-iframe-shell,
-.profiles-previewFrame .preview-iframe {
-    height: 100% !important;
-    min-height: 0 !important;
-}
-
-/* ✅ Remove inner padding so preview is full-width to the card padding */
-.profiles-previewFrame .preview-iframe-padding {
-    padding: 0 !important;
-}
-
-/* RIGHT column must stretch like LEFT */
-.profiles-right {
-    display: flex;
-    /* ✅ critical */
-    flex-direction: column;
-    min-height: 0;
-    /* ✅ critical */
-}
-
-/* preview card must fill the grid cell height */
-.profiles-preview-card {
-    flex: 1;
-    /* ✅ critical */
-    min-height: 0;
-    /* ✅ critical */
 }
