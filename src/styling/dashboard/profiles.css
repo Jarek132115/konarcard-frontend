@@ -38,11 +38,9 @@ Final tweaks:
     display: grid;
     grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
     gap: 16px;
-
     align-items: stretch;
     flex: 1;
     min-height: 0;
-    margin-top: 16px;
 }
 
 /* Cards */
