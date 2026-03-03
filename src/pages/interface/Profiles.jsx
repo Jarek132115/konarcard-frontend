@@ -750,29 +750,30 @@ export default function Profiles() {
                                     </div>
                                 ) : null}
 
-                                {/* ✅ Preview fills remaining space and scrolls internally */}
-                                <div className="profiles-previewViewport">
-                                    <div className="profiles-previewViewportInner">
-                                        {previewLoading ? (
-                                            <div className="profiles-previewLoading">Loading preview…</div>
-                                        ) : previewError ? (
-                                            <div className="profiles-previewError">{previewError}</div>
-                                        ) : (
-                                            <Preview
-                                                state={previewState}
-                                                isMobile={isMobile}
-                                                hasSavedData={!!previewCard}
-                                                showMainSection={previewToggles.showMainSection}
-                                                showAboutMeSection={previewToggles.showAboutMeSection}
-                                                showWorkSection={previewToggles.showWorkSection}
-                                                showServicesSection={previewToggles.showServicesSection}
-                                                showReviewsSection={previewToggles.showReviewsSection}
-                                                showContactSection={previewToggles.showContactSection}
-                                                hasExchangeContact={hasExchangeContact}
-                                                visitUrl={selectedProfile?.slug ? buildPublicUrl(selectedProfile.slug) : ""}
-                                            />
-                                        )}
-                                    </div>
+                                {/* ✅ Preview fills remaining space (NO outer framed box) */}
+                                <div className="profiles-previewFrame">
+                                    {previewLoading ? (
+                                        <div className="profiles-previewLoading">Loading preview…</div>
+                                    ) : previewError ? (
+                                        <div className="profiles-previewError">{previewError}</div>
+                                    ) : (
+                                        <Preview
+                                            state={previewState}
+                                            isMobile={isMobile}
+                                            hasSavedData={!!previewCard}
+                                            showMainSection={previewToggles.showMainSection}
+                                            showAboutMeSection={previewToggles.showAboutMeSection}
+                                            showWorkSection={previewToggles.showWorkSection}
+                                            showServicesSection={previewToggles.showServicesSection}
+                                            showReviewsSection={previewToggles.showReviewsSection}
+                                            showContactSection={previewToggles.showContactSection}
+                                            hasExchangeContact={hasExchangeContact}
+                                            visitUrl={selectedProfile?.slug ? buildPublicUrl(selectedProfile.slug) : ""}
+
+                                            /* ✅ important: make Preview obey parent height */
+                                            columnScrollStyle={{ height: "100%", maxHeight: "100%" }}
+                                        />
+                                    )}
                                 </div>
 
                                 {/* Bottom 4 buttons (unchanged) */}

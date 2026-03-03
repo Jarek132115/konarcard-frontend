@@ -522,3 +522,47 @@
         justify-content: center;
     }
 }
+
+/* =========================
+   PROFILES: PREVIEW HEIGHT + SCROLL FIX
+   - Remove outer framed box
+   - Force Preview wrapper to obey remaining space
+   ========================= */
+
+.profiles-previewFrame {
+    margin-top: 24px;
+    flex: 1;
+    min-height: 0;
+    overflow: hidden;
+    /* ✅ scroll stays inside preview */
+}
+
+/* ✅ Override Preview’s forced 100vh height ONLY inside Profiles */
+.profiles-previewFrame .preview-scope.myprofile-preview-wrapper {
+    height: 100% !important;
+    max-height: 100% !important;
+    min-height: 0 !important;
+    flex: 1 !important;
+}
+
+/* ✅ Ensure the real scroll is inside the Preview column */
+.profiles-previewFrame .preview-scope .myprofile-preview {
+    height: 100% !important;
+    max-height: 100% !important;
+    min-height: 0 !important;
+
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+}
+
+/* ✅ Iframe mode must also stretch + obey parent */
+.profiles-previewFrame .preview-iframe-shell,
+.profiles-previewFrame .preview-iframe {
+    height: 100% !important;
+    min-height: 0 !important;
+}
+
+/* ✅ Remove inner padding so preview is full-width to the card padding */
+.profiles-previewFrame .preview-iframe-padding {
+    padding: 0 !important;
+}
