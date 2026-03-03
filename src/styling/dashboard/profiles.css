@@ -1,9 +1,4 @@
-/* src/styling/dashboard/profiles.css
-=========================================================
-Profiles — Your Profiles + Preview redesign
-- Preview column scrolls INSIDE (clean)
-- Preview meta header: pills, link row, copy btn, hint, 3 stats
-========================================================= */
+/* src/styling/dashboard/profiles.css */
 
 :root {
     --p-ink: var(--kc-text-primary, #0f172a);
@@ -11,12 +6,9 @@ Profiles — Your Profiles + Preview redesign
     --p-border: rgba(15, 23, 42, 0.10);
     --p-softLine: rgba(15, 23, 42, 0.08);
     --p-radius: 22px;
-
-    /* subtle “border-like” shadow */
     --p-softShadow: 0 0 1px rgba(0, 0, 0, 0.25);
 }
 
-/* Shell */
 .profiles-shell {
     width: 100%;
     margin: 0;
@@ -38,7 +30,6 @@ Profiles — Your Profiles + Preview redesign
     min-height: 0;
 }
 
-/* Cards */
 .profiles-card {
     background: #ffffff;
     border: 1px solid var(--p-border);
@@ -52,41 +43,12 @@ Profiles — Your Profiles + Preview redesign
     min-height: 0;
 }
 
-.profiles-card-head {
-    display: flex;
-    align-items: flex-start;
-    justify-content: space-between;
-    gap: 12px;
-}
-
-.profiles-card-title {
-    margin: 0;
-    font-family: "Cal Sans", sans-serif;
-    font-weight: 500;
-    font-size: 18px;
-    letter-spacing: -0.01em;
-    color: var(--p-ink);
-}
-
-.profiles-muted {
-    margin: 8px 0 0;
-    font-family: "Inter", sans-serif;
-    font-weight: 600;
-    font-size: 14px;
-    line-height: 1.55;
-    color: var(--p-muted);
-}
-
 /* LEFT header row */
 .profiles-listHeader {
     display: flex;
     align-items: center;
     justify-content: space-between;
     gap: 12px;
-}
-
-.profiles-listHeader-left {
-    min-width: 0;
 }
 
 .profiles-listTitle {
@@ -133,7 +95,6 @@ Profiles — Your Profiles + Preview redesign
     margin-top: 16px;
 }
 
-/* ✅ list area: NOT forced to scroll now */
 .profiles-listScroll {
     margin-top: 16px;
     display: flex;
@@ -162,14 +123,12 @@ Profiles — Your Profiles + Preview redesign
     transform: translateY(1px);
 }
 
-/* Active: #f5f5f5 + 4px emphasis */
 .profiles-profileCard.is-active {
     background: #f5f5f5;
     border-color: rgba(15, 23, 42, 0.12);
     box-shadow: inset 0 0 0 4px rgba(15, 23, 42, 0.10);
 }
 
-/* main layout */
 .profiles-profileMain {
     display: grid;
     grid-template-columns: minmax(0, 1fr) auto;
@@ -183,16 +142,13 @@ Profiles — Your Profiles + Preview redesign
     min-width: 0;
 }
 
-/* Pills row inside left */
 .profiles-pillRow {
     display: flex;
     align-items: center;
     gap: 10px;
     margin: 0 0 8px;
-    /* ✅ pills → slug gap = 8px */
 }
 
-/* Pills */
 .profiles-pill {
     display: inline-flex;
     align-items: center;
@@ -235,7 +191,6 @@ Profiles — Your Profiles + Preview redesign
     color: rgba(153, 27, 27, 0.95);
 }
 
-/* slug + updated */
 .profiles-slug {
     font-family: "Inter", sans-serif;
     font-weight: 600;
@@ -257,7 +212,6 @@ Profiles — Your Profiles + Preview redesign
     color: rgba(71, 85, 105, 0.85);
 }
 
-/* right side: center CTAs + metrics */
 .profiles-profileRight {
     display: flex;
     align-items: center;
@@ -284,7 +238,7 @@ Profiles — Your Profiles + Preview redesign
     justify-content: center;
 }
 
-/* metrics */
+/* ✅ metrics styling (used by list AND preview stats) */
 .profiles-metrics {
     display: flex;
     align-items: center;
@@ -358,25 +312,24 @@ Profiles — Your Profiles + Preview redesign
     color: rgba(15, 23, 42, 0.88);
 }
 
-/* RIGHT preview */
+/* =========================
+   PREVIEW PANEL (FIXED)
+   ========================= */
+
 .profiles-right {
-    position: relative;
     min-height: 0;
 }
 
 .profiles-preview-card {
-    /* match left height, and allow internal scrolling region */
     min-height: 0;
 }
 
-/* ✅ Preview meta header */
-.profiles-previewMeta {
+.profiles-previewTop {
     margin-top: 16px;
 }
 
 .profiles-previewPills {
     margin-bottom: 16px;
-    /* ✅ 16px gap under pills */
 }
 
 .profiles-previewLinkLabel {
@@ -410,51 +363,33 @@ Profiles — Your Profiles + Preview redesign
     white-space: nowrap;
 }
 
-/* copy link button */
-.profiles-copyBtn {
+/* ✅ icon-only copy button: no border/bg/text */
+.profiles-copyIconBtn {
     flex: 0 0 auto;
+    width: 24px;
+    height: 24px;
+    padding: 0;
+    border: none;
+    background: transparent;
+    cursor: pointer;
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    gap: 8px;
-
-    height: 44px;
-    padding: 0 14px;
-    border-radius: 999px;
-
-    background: #ffffff;
-    border: 1px solid rgba(15, 23, 42, 0.12);
-    box-shadow: var(--p-softShadow);
-
-    cursor: pointer;
-    transition: transform 0.08s ease, background 0.18s ease, border-color 0.18s ease;
 }
 
-.profiles-copyBtn:hover {
-    background: rgba(15, 23, 42, 0.02);
-    border-color: rgba(15, 23, 42, 0.18);
-}
-
-.profiles-copyBtn:active {
+.profiles-copyIconBtn:active {
     transform: translateY(1px);
 }
 
-.profiles-copyIcon {
-    width: 18px;
-    height: 18px;
+.profiles-copyIcon24 {
+    width: 24px;
+    height: 24px;
     display: block;
 }
 
-.profiles-copyText {
-    font-family: "Inter", sans-serif;
-    font-weight: 600;
-    font-size: 14px;
-    color: rgba(15, 23, 42, 0.88);
-}
-
-/* body class helper text */
+/* ✅ body text 4px under URL row */
 .profiles-previewHint {
-    margin-top: 12px;
+    margin-top: 4px;
     font-family: "Inter", sans-serif;
     font-weight: 400;
     font-size: var(--kc-body-size);
@@ -462,65 +397,44 @@ Profiles — Your Profiles + Preview redesign
     color: var(--kc-text-secondary);
 }
 
-/* stats */
-.profiles-previewStats {
+/* ✅ stats aligned right, same style as list metrics */
+.profiles-previewMetricsRow {
     margin-top: 16px;
-    display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: 12px;
+    display: flex;
+    justify-content: flex-end;
+    /* ✅ align to right */
 }
 
-.profiles-previewStat {
-    border: 1px solid rgba(15, 23, 42, 0.10);
-    border-radius: 16px;
-    background: #ffffff;
-    box-shadow: var(--p-softShadow);
-    padding: 12px;
-
-    display: grid;
-    justify-items: center;
-    text-align: center;
+.profiles-metrics--preview {
+    width: auto;
+    /* don't stretch */
+    justify-content: flex-end;
 }
 
-.profiles-previewStatVal {
-    font-family: "Inter", sans-serif;
-    font-weight: 800;
-    font-size: 16px;
-    color: rgba(15, 23, 42, 0.90);
-}
-
-.profiles-previewStatLab {
-    margin-top: 2px;
-    font-family: "Inter", sans-serif;
-    font-weight: 600;
-    font-size: 12px;
-    color: rgba(71, 85, 105, 0.82);
-}
-
-/* ✅ preview area takes leftover space + scrolls inside */
+/* ✅ Preview fills ONLY remaining space + scroll inside */
 .profiles-previewViewport {
     margin-top: 24px;
-    /* ✅ 24px gap under stats */
     flex: 1;
     min-height: 0;
 
+    /* keep a subtle frame like other cards */
     border: 1px solid rgba(15, 23, 42, 0.10);
     border-radius: 20px;
     background: #ffffff;
     box-shadow: var(--p-softShadow);
+
     overflow: hidden;
-    /* ✅ keep scroll inside inner */
+    /* scroll inside */
 }
 
 .profiles-previewViewportInner {
     height: 100%;
     overflow: auto;
-    /* ✅ scroll is inside */
+    /* ✅ internal scroll */
     padding: 16px;
 
-    display: flex;
-    justify-content: center;
-    align-items: flex-start;
+    /* ✅ full width (no centering island) */
+    display: block;
 }
 
 /* loading/error */
@@ -537,133 +451,11 @@ Profiles — Your Profiles + Preview redesign
     color: rgba(71, 85, 105, 0.95);
 }
 
-/* bottom buttons */
 .profiles-previewActions {
     margin-top: 16px;
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 12px;
-}
-
-/* Claim panel (unchanged) */
-.profiles-claim-inline {
-    border: 1px solid rgba(15, 23, 42, 0.10);
-    background: rgba(15, 23, 42, 0.02);
-    border-radius: 18px;
-    padding: 14px;
-}
-
-.profiles-claim-inline-head {
-    display: flex;
-    align-items: flex-start;
-    justify-content: space-between;
-    gap: 12px;
-}
-
-.profiles-claim-inline-title {
-    font-family: "Inter", sans-serif;
-    font-weight: 800;
-    font-size: 14px;
-    color: var(--p-ink);
-}
-
-.profiles-claim-inline-sub {
-    margin-top: 4px;
-    font-family: "Inter", sans-serif;
-    font-weight: 600;
-    font-size: 13px;
-    color: rgba(71, 85, 105, 0.95);
-}
-
-.profiles-claim-grid {
-    display: grid;
-    gap: 12px;
-    margin-top: 12px;
-}
-
-.profiles-claim-row {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr) auto;
-    gap: 10px;
-    align-items: center;
-}
-
-.profiles-input-wrap {
-    display: flex;
-    align-items: center;
-    border: 1px solid rgba(15, 23, 42, 0.14);
-    background: #fff;
-    border-radius: 14px;
-    overflow: hidden;
-    min-width: 0;
-}
-
-.profiles-input-prefix {
-    flex: 0 0 auto;
-    padding: 12px 12px;
-    font-family: "Inter", sans-serif;
-    font-weight: 700;
-    font-size: 13px;
-    color: rgba(15, 23, 42, 0.60);
-    background: rgba(15, 23, 42, 0.03);
-    border-right: 1px solid rgba(15, 23, 42, 0.10);
-    white-space: nowrap;
-}
-
-.profiles-input {
-    width: 100%;
-    border: none;
-    outline: none;
-    padding: 12px 12px;
-    font-family: "Inter", sans-serif;
-    font-weight: 600;
-    font-size: 14px;
-    color: var(--p-ink);
-}
-
-.profiles-input::placeholder {
-    color: rgba(71, 85, 105, 0.75);
-}
-
-.profiles-alert {
-    padding: 12px 12px;
-    border-radius: 14px;
-    border: 1px solid rgba(15, 23, 42, 0.10);
-    background: #fff;
-    font-family: "Inter", sans-serif;
-    font-weight: 700;
-    color: var(--p-ink);
-}
-
-.profiles-alert.success {
-    border-color: rgba(22, 163, 74, 0.25);
-    background: rgba(22, 163, 74, 0.08);
-}
-
-.profiles-alert.danger {
-    border-color: rgba(220, 38, 38, 0.25);
-    background: rgba(220, 38, 38, 0.08);
-}
-
-.profiles-alert.neutral {
-    background: rgba(15, 23, 42, 0.03);
-}
-
-.profiles-claim-actions {
-    display: flex;
-    gap: 10px;
-    flex-wrap: wrap;
-}
-
-.profiles-hint {
-    font-family: "Inter", sans-serif;
-    font-weight: 600;
-    font-size: 13px;
-    color: rgba(71, 85, 105, 0.95);
-}
-
-.profiles-hint strong {
-    color: var(--kc-accent-primary, #f97316);
 }
 
 /* Responsive */
@@ -712,22 +504,12 @@ Profiles — Your Profiles + Preview redesign
         text-align: left;
     }
 
-    .profiles-claim-row {
-        grid-template-columns: 1fr;
-    }
-
-    .profiles-previewStats {
-        grid-template-columns: 1fr;
+    .profiles-previewMetricsRow {
+        justify-content: flex-start;
     }
 
     .profiles-previewLinkRow {
-        flex-direction: column;
         align-items: flex-start;
-    }
-
-    .profiles-copyBtn {
-        width: 100%;
-        justify-content: center;
     }
 }
 
