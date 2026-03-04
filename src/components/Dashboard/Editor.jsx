@@ -1,5 +1,4 @@
-// frontend/src/components/Dashboard/Editor.jsx
-import React, { useEffect, useMemo, useRef } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import { previewPlaceholders } from "../../store/businessCardStore";
 
 /* Social icons */
@@ -8,6 +7,9 @@ import InstagramIcon from "../../assets/icons/icons8-instagram.svg";
 import LinkedInIcon from "../../assets/icons/icons8-linkedin.svg";
 import XIcon from "../../assets/icons/icons8-x.svg";
 import TikTokIcon from "../../assets/icons/icons8-tiktok.svg";
+
+/* ✅ Upgrade badge icon (premium) */
+import UpgradePlanIcon from "../../assets/icons/UpgradePlan.svg";
 
 /* ✅ Use ANY 5 images from the Home hero carousel (UP1–UP8) */
 import UP1 from "../../assets/images/UP1.jpg";
@@ -24,7 +26,7 @@ export default function Editor({
     state,
     updateState,
 
-    isSubscribed,
+    isSubscribed, // ✅ plus/teams = true, free = false
 
     onStartSubscription,
     onResetPage,
@@ -55,22 +57,35 @@ export default function Editor({
     const avatarInputRef = useRef(null);
     const workImageInputRef = useRef(null);
 
-    // local object URL cleanup
-    const objectUrlsRef = useRef(new Set());
-    const rememberObjectUrl = (url) => {
-        if (typeof url === "string" && url.startsWith("blob:")) objectUrlsRef.current.add(url);
+    const [upgradeOpen, setUpgradeOpen] = useState(false);
+    const [upgradeContext, setUpgradeContext] = useState("feature");
+
+    const FREE_MAX = 6;
+    const PRO_MAX = 12;
+
+    const maxWorks = isSubscribed ? PRO_MAX : FREE_MAX;
+    const maxServices = isSubscribed ? PRO_MAX : FREE_MAX;
+    const maxReviews = isSubscribed ? PRO_MAX : FREE_MAX;
+
+    const worksCount = Array.isArray(state.workImages) ? state.workImages.length : 0;
+    const servicesCount = Array.isArray(state.services) ? state.services.length : 0;
+    const reviewsCount = Array.isArray(state.reviews) ? state.reviews.length : 0;
+
+    const openUpgrade = (ctx = "feature") => {
+        setUpgradeContext(ctx);
+        setUpgradeOpen(true);
     };
 
+    const closeUpgrade = () => setUpgradeOpen(false);
+
+    // close on ESC
     useEffect(() => {
-        return () => {
-            for (const url of objectUrlsRef.current) {
-                try {
-                    URL.revokeObjectURL(url);
-                } catch { }
-            }
-            objectUrlsRef.current.clear();
+        const onKey = (e) => {
+            if (e.key === "Escape") closeUpgrade();
         };
-    }, []);
+        if (upgradeOpen) window.addEventListener("keydown", onKey);
+        return () => window.removeEventListener("keydown", onKey);
+    }, [upgradeOpen]);
 
     // Templates
     const TEMPLATE_IDS = useMemo(
@@ -94,7 +109,7 @@ export default function Editor({
 
     const handleTemplateSelect = (id) => {
         if (isTemplateLocked(id)) {
-            onStartSubscription?.();
+            openUpgrade("templates");
             return;
         }
         updateState({ templateId: id });
@@ -107,8 +122,10 @@ export default function Editor({
         updateState({ services: next });
     };
 
-    const handleAddService = () =>
+    const handleAddService = () => {
+        if (!isSubscribed && servicesCount >= FREE_MAX) return openUpgrade("services");
         updateState({ services: [...(state.services || []), { name: "", price: "" }] });
+    };
 
     const handleRemoveService = (i) =>
         updateState({ services: (state.services || []).filter((_, idx) => idx !== i) });
@@ -128,8 +145,10 @@ export default function Editor({
         updateState({ reviews: next });
     };
 
-    const handleAddReview = () =>
+    const handleAddReview = () => {
+        if (!isSubscribed && reviewsCount >= FREE_MAX) return openUpgrade("reviews");
         updateState({ reviews: [...(state.reviews || []), { name: "", text: "", rating: 5 }] });
+    };
 
     const handleRemoveReview = (i) =>
         updateState({ reviews: (state.reviews || []).filter((_, idx) => idx !== i) });
@@ -142,9 +161,48 @@ export default function Editor({
 
     const avatarSrc = state.avatarPreview || (isBlobUrl(state.avatar) ? "" : state.avatar) || "";
 
-    const sectionToggle = (isShown, setter) => {
-        const next = !isShown;
-        setter?.(next);
+    const sectionToggle = (isShown, setter) => setter?.(!isShown);
+
+    // Work add click handler (locks on free at 6)
+    const handleWorkAddClick = () => {
+        if (!isSubscribed && worksCount >= FREE_MAX) return openUpgrade("work");
+        workImageInputRef.current?.click();
+    };
+
+    const handleWorkFilesSelected = (e) => {
+        const files = Array.from(e.target.files || []).filter((f) => f && f.type.startsWith("image/"));
+        if (!files.length) return;
+
+        // free cap: only allow up to remaining slots
+        if (!isSubscribed) {
+            const remaining = Math.max(0, FREE_MAX - worksCount);
+            if (remaining <= 0) {
+                e.target.value = "";
+                return openUpgrade("work");
+            }
+            const trimmed = files.slice(0, remaining);
+            onAddWorkImages?.(trimmed);
+            e.target.value = "";
+            return;
+        }
+
+        // subscribed cap: up to 12 total (UI cap)
+        const remaining = Math.max(0, PRO_MAX - worksCount);
+        const trimmed = files.slice(0, remaining);
+        if (!trimmed.length) {
+            e.target.value = "";
+            return;
+        }
+        onAddWorkImages?.(trimmed);
+        e.target.value = "";
+    };
+
+    const capLine = (type) => {
+        if (isSubscribed) return `Plus: up to ${PRO_MAX}.`;
+        if (type === "work") return `Free plan: up to ${FREE_MAX} images. Upgrade for ${PRO_MAX}.`;
+        if (type === "services") return `Free plan: up to ${FREE_MAX} services. Upgrade for ${PRO_MAX}.`;
+        if (type === "reviews") return `Free plan: up to ${FREE_MAX} reviews. Upgrade for ${PRO_MAX}.`;
+        return `Free plan limits apply.`;
     };
 
     return (
@@ -169,6 +227,51 @@ export default function Editor({
             {/* 24px gap below divider */}
             <div className="kce-spacer24" />
 
+            {/* ✅ Upgrade modal */}
+            {upgradeOpen ? (
+                <div className="kce-modalOverlay" role="dialog" aria-modal="true" aria-label="Upgrade to Plus">
+                    <div className="kce-modal" onClick={(e) => e.stopPropagation()}>
+                        <button type="button" className="kce-modalClose" onClick={closeUpgrade} aria-label="Close">
+                            ✕
+                        </button>
+
+                        <div className="kce-modalTitle">Upgrade to Plus</div>
+                        <div className="kce-modalText">
+                            Unlock all features:
+                            <ul className="kce-modalList">
+                                <li>All templates</li>
+                                <li>Detailed analytics</li>
+                                <li>Upload 2× more images</li>
+                                <li>More reviews and services</li>
+                            </ul>
+                        </div>
+
+                        <div className="kce-modalActions">
+                            <button
+                                type="button"
+                                className="kce-btn kce-btnPrimary"
+                                onClick={() => {
+                                    closeUpgrade();
+                                    onStartSubscription?.();
+                                }}
+                            >
+                                Upgrade to Plus
+                            </button>
+
+                            <button type="button" className="kce-btn kce-btnGhost" onClick={closeUpgrade}>
+                                Not now
+                            </button>
+                        </div>
+
+                        <div className="kce-modalFoot">
+                            {upgradeContext === "templates" ? "This template is a Plus feature." : "This action is a Plus feature."}
+                        </div>
+                    </div>
+
+                    <button type="button" className="kce-modalBackdrop" onClick={closeUpgrade} aria-label="Close modal" />
+                </div>
+            ) : null}
+
             {/* Scroll body */}
             <div className="kce-scroll">
                 {/* TEMPLATES */}
@@ -192,8 +295,7 @@ export default function Editor({
                                     <button
                                         key={t}
                                         type="button"
-                                        className={`kce-phoneCard ${active ? "is-active" : ""} ${locked ? "is-locked" : ""
-                                            }`}
+                                        className={`kce-phoneCard ${active ? "is-active" : ""} ${locked ? "is-locked" : ""}`}
                                         onClick={() => handleTemplateSelect(t)}
                                         title={locked ? "Upgrade to unlock this template" : "Select template"}
                                         aria-label={locked ? `${t} locked` : t}
@@ -208,7 +310,13 @@ export default function Editor({
                                             loading="lazy"
                                             decoding="async"
                                         />
-                                        {locked ? <span className="kce-lockBadge">Locked</span> : null}
+
+                                        {/* ✅ premium badge icon on templates 2–5 for free plan */}
+                                        {locked ? (
+                                            <span className="kce-premiumBadge" aria-hidden="true">
+                                                <img src={UpgradePlanIcon} alt="" />
+                                            </span>
+                                        ) : null}
                                     </button>
                                 );
                             })}
@@ -240,56 +348,53 @@ export default function Editor({
 
                     {showMainSection ? (
                         <div className="kce-sectionBody">
-                            <div className="kce-label body">Cover Photo</div>
+                            <div className="kce-field">
+                                <div className="kce-label">Cover Photo</div>
 
-                            <input
-                                ref={coverInputRef}
-                                type="file"
-                                accept="image/*"
-                                onChange={(e) => {
-                                    const file = e.target.files?.[0];
-                                    if (!file) return;
+                                <input
+                                    ref={coverInputRef}
+                                    type="file"
+                                    accept="image/*"
+                                    onChange={(e) => {
+                                        const file = e.target.files?.[0];
+                                        if (!file) return;
+                                        onCoverUpload?.(file);
+                                        e.target.value = "";
+                                    }}
+                                    style={{ display: "none" }}
+                                />
 
-                                    const url = URL.createObjectURL(file);
-                                    rememberObjectUrl(url);
+                                <div className="kce-mediaRow">
+                                    <button
+                                        type="button"
+                                        className="kce-upload kce-uploadHalf"
+                                        onClick={() => coverInputRef.current?.click()}
+                                    >
+                                        {coverSrc ? (
+                                            <img src={coverSrc} alt="Cover" className="kce-uploadImg" />
+                                        ) : (
+                                            <div className="kce-uploadInner">
+                                                <div className="kce-plus">+</div>
+                                                <div className="kce-uploadText">Upload Cover Image</div>
+                                            </div>
+                                        )}
 
-                                    updateState({ coverPhotoPreview: url, coverPhotoFile: file });
-                                    onCoverUpload?.(file);
-                                }}
-                                style={{ display: "none" }}
-                            />
-
-                            <div className="kce-mediaRow">
-                                <button
-                                    type="button"
-                                    className="kce-upload kce-uploadHalf"
-                                    onClick={() => coverInputRef.current?.click()}
-                                >
-                                    {coverSrc ? (
-                                        <img src={coverSrc} alt="Cover" className="kce-uploadImg" />
-                                    ) : (
-                                        <div className="kce-uploadInner">
-                                            <div className="kce-plus">+</div>
-                                            <div className="kce-uploadText">Upload Cover Image</div>
-                                        </div>
-                                    )}
-
-                                    {coverSrc ? (
-                                        <span
-                                            className="kce-x"
-                                            role="button"
-                                            aria-label="Remove cover"
-                                            onClick={(e) => {
-                                                e.preventDefault();
-                                                e.stopPropagation();
-                                                updateState({ coverPhotoPreview: "", coverPhotoFile: null });
-                                                onRemoveCover?.();
-                                            }}
-                                        >
-                                            ✕
-                                        </span>
-                                    ) : null}
-                                </button>
+                                        {coverSrc ? (
+                                            <span
+                                                className="kce-x"
+                                                role="button"
+                                                aria-label="Remove cover"
+                                                onClick={(ev) => {
+                                                    ev.preventDefault();
+                                                    ev.stopPropagation();
+                                                    onRemoveCover?.();
+                                                }}
+                                            >
+                                                ✕
+                                            </span>
+                                        ) : null}
+                                    </button>
+                                </div>
                             </div>
 
                             <div className="kce-grid2">
@@ -335,56 +440,53 @@ export default function Editor({
 
                     {showAboutMeSection ? (
                         <div className="kce-sectionBody">
-                            <div className="kce-label body">Profile Photo / Logo</div>
+                            <div className="kce-field">
+                                <div className="kce-label">Profile Photo / Logo</div>
 
-                            <input
-                                ref={avatarInputRef}
-                                type="file"
-                                accept="image/*"
-                                onChange={(e) => {
-                                    const file = e.target.files?.[0];
-                                    if (!file) return;
+                                <input
+                                    ref={avatarInputRef}
+                                    type="file"
+                                    accept="image/*"
+                                    onChange={(e) => {
+                                        const file = e.target.files?.[0];
+                                        if (!file) return;
+                                        onAvatarUpload?.(file);
+                                        e.target.value = "";
+                                    }}
+                                    style={{ display: "none" }}
+                                />
 
-                                    const url = URL.createObjectURL(file);
-                                    rememberObjectUrl(url);
+                                <div className="kce-mediaRow">
+                                    <button
+                                        type="button"
+                                        className="kce-upload kce-uploadHalf"
+                                        onClick={() => avatarInputRef.current?.click()}
+                                    >
+                                        {avatarSrc ? (
+                                            <img src={avatarSrc} alt="Avatar" className="kce-uploadImg" />
+                                        ) : (
+                                            <div className="kce-uploadInner">
+                                                <div className="kce-plus">+</div>
+                                                <div className="kce-uploadText">Upload Profile Photo / Logo</div>
+                                            </div>
+                                        )}
 
-                                    updateState({ avatarPreview: url, avatarFile: file });
-                                    onAvatarUpload?.(file);
-                                }}
-                                style={{ display: "none" }}
-                            />
-
-                            <div className="kce-mediaRow">
-                                <button
-                                    type="button"
-                                    className="kce-upload kce-uploadHalf"
-                                    onClick={() => avatarInputRef.current?.click()}
-                                >
-                                    {avatarSrc ? (
-                                        <img src={avatarSrc} alt="Avatar" className="kce-uploadImg" />
-                                    ) : (
-                                        <div className="kce-uploadInner">
-                                            <div className="kce-plus">+</div>
-                                            <div className="kce-uploadText">Upload Profile Photo / Logo</div>
-                                        </div>
-                                    )}
-
-                                    {avatarSrc ? (
-                                        <span
-                                            className="kce-x"
-                                            role="button"
-                                            aria-label="Remove avatar"
-                                            onClick={(e) => {
-                                                e.preventDefault();
-                                                e.stopPropagation();
-                                                updateState({ avatarPreview: "", avatarFile: null });
-                                                onRemoveAvatar?.();
-                                            }}
-                                        >
-                                            ✕
-                                        </span>
-                                    ) : null}
-                                </button>
+                                        {avatarSrc ? (
+                                            <span
+                                                className="kce-x"
+                                                role="button"
+                                                aria-label="Remove avatar"
+                                                onClick={(ev) => {
+                                                    ev.preventDefault();
+                                                    ev.stopPropagation();
+                                                    onRemoveAvatar?.();
+                                                }}
+                                            >
+                                                ✕
+                                            </span>
+                                        ) : null}
+                                    </button>
+                                </div>
                             </div>
 
                             <div className="kce-grid2">
@@ -441,10 +543,10 @@ export default function Editor({
 
                     {showWorkSection ? (
                         <div className="kce-sectionBody">
-                            <div className="body kce-miniSub">Upload up to 12 images</div>
+                            <div className="kce-capNote">{capLine("work")}</div>
 
                             <div className="kce-workGrid">
-                                {(state.workImages || []).slice(0, 12).map((item, i) => (
+                                {(state.workImages || []).slice(0, maxWorks).map((item, i) => (
                                     <div key={i} className="kce-workItem">
                                         <img src={item?.preview || item} alt={`work-${i}`} />
                                         <button
@@ -458,18 +560,19 @@ export default function Editor({
                                     </div>
                                 ))}
 
-                                {(state.workImages || []).length < 12 ? (
-                                    <button
-                                        type="button"
-                                        className="kce-upload kce-workAdd"
-                                        onClick={() => workImageInputRef.current?.click()}
-                                    >
-                                        <div className="kce-uploadInner">
-                                            <div className="kce-plus">+</div>
-                                            <div className="kce-uploadText">Upload Work Images</div>
-                                        </div>
-                                    </button>
-                                ) : null}
+                                {/* ✅ add card always shown, but locked if free+cap */}
+                                <button type="button" className="kce-upload kce-workAdd" onClick={handleWorkAddClick}>
+                                    <div className="kce-uploadInner">
+                                        <div className="kce-plus">+</div>
+                                        <div className="kce-uploadText">Upload Work Images</div>
+                                    </div>
+
+                                    {!isSubscribed && worksCount >= FREE_MAX ? (
+                                        <span className="kce-premiumBadge" aria-hidden="true">
+                                            <img src={UpgradePlanIcon} alt="" />
+                                        </span>
+                                    ) : null}
+                                </button>
                             </div>
 
                             <input
@@ -478,23 +581,7 @@ export default function Editor({
                                 multiple
                                 accept="image/*"
                                 style={{ display: "none" }}
-                                onChange={(e) => {
-                                    const files = Array.from(e.target.files || []).filter(
-                                        (f) => f && f.type.startsWith("image/")
-                                    );
-                                    if (!files.length) return;
-
-                                    const items = files.map((file) => {
-                                        const url = URL.createObjectURL(file);
-                                        rememberObjectUrl(url);
-                                        return { preview: url, file };
-                                    });
-
-                                    const existing = Array.isArray(state.workImages) ? state.workImages : [];
-                                    updateState({ workImages: [...existing, ...items].slice(0, 12) });
-
-                                    onAddWorkImages?.(files);
-                                }}
+                                onChange={handleWorkFilesSelected}
                             />
                         </div>
                     ) : null}
@@ -518,8 +605,10 @@ export default function Editor({
 
                     {showServicesSection ? (
                         <div className="kce-sectionBody">
+                            <div className="kce-capNote">{capLine("services")}</div>
+
                             <div className="kce-repeat">
-                                {(state.services || []).map((s, i) => (
+                                {(state.services || []).slice(0, maxServices).map((s, i) => (
                                     <div key={i} className="kce-repeatCard">
                                         <div className="kce-grid2">
                                             <div className="kce-field">
@@ -543,11 +632,7 @@ export default function Editor({
                                             </div>
                                         </div>
 
-                                        <button
-                                            type="button"
-                                            className="kce-dangerPill"
-                                            onClick={() => handleRemoveService(i)}
-                                        >
+                                        <button type="button" className="kce-dangerPill" onClick={() => handleRemoveService(i)}>
                                             Remove Service
                                         </button>
                                     </div>
@@ -557,6 +642,12 @@ export default function Editor({
                             <button type="button" className="kce-addCard" onClick={handleAddService}>
                                 <span className="kce-addCardPlus">+</span>
                                 <span className="kce-addCardText">Add Service</span>
+
+                                {!isSubscribed && servicesCount >= FREE_MAX ? (
+                                    <span className="kce-premiumBadge" aria-hidden="true">
+                                        <img src={UpgradePlanIcon} alt="" />
+                                    </span>
+                                ) : null}
                             </button>
                         </div>
                     ) : null}
@@ -580,8 +671,10 @@ export default function Editor({
 
                     {showReviewsSection ? (
                         <div className="kce-sectionBody">
+                            <div className="kce-capNote">{capLine("reviews")}</div>
+
                             <div className="kce-repeat">
-                                {(state.reviews || []).map((r, i) => (
+                                {(state.reviews || []).slice(0, maxReviews).map((r, i) => (
                                     <div key={i} className="kce-repeatCard">
                                         <div className="kce-grid2">
                                             <div className="kce-field">
@@ -619,11 +712,7 @@ export default function Editor({
                                             />
                                         </div>
 
-                                        <button
-                                            type="button"
-                                            className="kce-dangerPill"
-                                            onClick={() => handleRemoveReview(i)}
-                                        >
+                                        <button type="button" className="kce-dangerPill" onClick={() => handleRemoveReview(i)}>
                                             Remove Review
                                         </button>
                                     </div>
@@ -633,6 +722,12 @@ export default function Editor({
                             <button type="button" className="kce-addCard" onClick={handleAddReview}>
                                 <span className="kce-addCardPlus">+</span>
                                 <span className="kce-addCardText">Add Review</span>
+
+                                {!isSubscribed && reviewsCount >= FREE_MAX ? (
+                                    <span className="kce-premiumBadge" aria-hidden="true">
+                                        <img src={UpgradePlanIcon} alt="" />
+                                    </span>
+                                ) : null}
                             </button>
                         </div>
                     ) : null}

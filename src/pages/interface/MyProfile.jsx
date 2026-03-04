@@ -463,7 +463,10 @@ export default function MyProfile() {
     }));
 
     const existing = Array.isArray(state.workImages) ? state.workImages : [];
-    const merged = [...existing, ...items].slice(0, 10);
+
+    const maxWorks = isFree ? 6 : 12;
+
+    const merged = [...existing, ...items].slice(0, maxWorks);
 
     updateState({ workImages: merged });
   };

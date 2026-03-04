@@ -1,9 +1,7 @@
-/* frontend/src/styling/dashboard/editor.css */
 /* =========================================================
    KonarCard Editor — isolated class system (kce-*)
-   ✅ No clashes with other dashboard CSS
-   ✅ Sections are FAFafa surfaces (no extra white blocks)
-   ✅ Inter only (Cal Sans only via .kc-title from fonts.css)
+   ✅ Plan locks + upgrade modal
+   ✅ 16px gap under pills (as requested)
 ========================================================= */
 
 .kce-root {
@@ -125,7 +123,7 @@
     gap: 12px;
 }
 
-/* ✅ pill fits content */
+/* pill fits content */
 .kce-pill {
     display: inline-flex;
     align-items: center;
@@ -144,9 +142,9 @@
     letter-spacing: 0.02em;
 }
 
-/* ✅ 12px gap under pill row */
+/* ✅ 16px gap under pill row */
 .kce-sectionBody {
-    margin-top: 12px;
+    margin-top: 16px;
     display: grid;
     gap: 16px;
 }
@@ -185,14 +183,14 @@
     box-shadow: 0 0 0 3px var(--kc-focus-ring, rgba(249, 115, 22, 0.2));
 }
 
-/* divider blocks between sections: 24px gap above/below + line */
+/* divider blocks between sections */
 .kce-dividerBlock {
     height: 1px;
     background: rgba(15, 23, 42, 0.08);
     margin: 24px 0;
 }
 
-/* ---------- Headings in template section ---------- */
+/* ---------- Template section text ---------- */
 .kce-helpTitle {
     font-family: "Inter", sans-serif;
     font-size: 14px;
@@ -231,7 +229,6 @@
     overflow: hidden;
 
     aspect-ratio: 9 / 16;
-    /* ✅ phone */
     position: relative;
     cursor: pointer;
 
@@ -251,7 +248,7 @@
 }
 
 .kce-phoneCard.is-locked {
-    opacity: 0.7;
+    opacity: 0.75;
 }
 
 .kce-phoneImg {
@@ -259,25 +256,29 @@
     height: 100%;
     object-fit: cover;
     object-position: top;
-    /* ✅ “top part” feel */
     display: block;
 }
 
-.kce-lockBadge {
+/* ✅ premium badge (UpgradePlan.svg) */
+.kce-premiumBadge {
     position: absolute;
-    left: 10px;
     top: 10px;
+    right: 10px;
 
-    padding: 6px 10px;
-    border-radius: 999px;
+    width: 24px;
+    height: 24px;
+    border-radius: 10px;
+    border: 1px solid rgba(15, 23, 42, 0.12);
+    background: rgba(255, 255, 255, 0.92);
 
-    background: rgba(11, 18, 32, 0.88);
-    color: #fff;
+    display: grid;
+    place-items: center;
+}
 
-    font-family: "Inter", sans-serif;
-    font-size: 11px;
-    font-weight: 700;
-    line-height: 1;
+.kce-premiumBadge img {
+    width: 14px;
+    height: 14px;
+    display: block;
 }
 
 /* note */
@@ -294,7 +295,6 @@
 }
 
 /* ---------- Labels + inputs ---------- */
-/* ✅ Label: Inter semi-bold 14px */
 .kce-label {
     font-family: "Inter", sans-serif;
     font-size: 14px;
@@ -304,13 +304,12 @@
     margin: 0;
 }
 
-/* ✅ 8px gap between label and input */
+/* 8px gap between label and input */
 .kce-field {
     display: grid;
     gap: 8px;
 }
 
-/* ✅ Input text + placeholders: Inter regular 12px, primary colour */
 .kce-input {
     width: 100%;
     border: 1px solid rgba(15, 23, 42, 0.1);
@@ -355,18 +354,19 @@
     }
 }
 
-/* small spacing helpers */
 .kce-mt12 {
     margin-top: 12px;
 }
 
-.kce-miniSub {
-    margin-top: -4px;
+/* cap helper line */
+.kce-capNote {
     font-family: "Inter", sans-serif;
+    font-size: 12px;
+    font-weight: 500;
+    color: rgba(71, 85, 105, 0.9);
 }
 
 /* ---------- Upload cards ---------- */
-/* ✅ Cover/work/avatar all share same aspect ratio 4 / 2.75 */
 .kce-upload {
     width: 100%;
     border-radius: 16px;
@@ -377,7 +377,6 @@
     cursor: pointer;
 
     aspect-ratio: 4 / 2.75;
-
     display: grid;
     place-items: center;
 }
@@ -418,9 +417,7 @@
 .kce-uploadText {
     font-family: "Inter", sans-serif;
     font-size: 12px;
-    /* ✅ */
     font-weight: 400;
-    /* ✅ */
     color: var(--kc-text-primary, #0f172a);
     text-align: center;
 }
@@ -449,7 +446,6 @@
 }
 
 /* ---------- Work grid ---------- */
-/* ✅ work images same aspect ratio as cover */
 .kce-workGrid {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -498,7 +494,6 @@
     gap: 12px;
 }
 
-/* these stay white for readability but they are INSIDE the fafafa section */
 .kce-repeatCard {
     background: #fff;
     border: 1px solid rgba(15, 23, 42, 0.1);
@@ -510,9 +505,7 @@
 
 .kce-dangerPill {
     width: fit-content;
-    /* ✅ not full width */
     align-self: flex-start;
-    /* ✅ bottom-left in card */
     justify-self: flex-start;
 
     border-radius: 12px;
@@ -530,7 +523,7 @@
     cursor: pointer;
 }
 
-/* Add service/review: same “upload card” styling but not tall */
+/* Add service/review card */
 .kce-addCard {
     width: 100%;
     border-radius: 16px;
@@ -539,13 +532,13 @@
     cursor: pointer;
 
     padding: 24px;
-    /* ✅ */
     display: flex;
     align-items: center;
     justify-content: center;
     gap: 10px;
 
     font-family: "Inter", sans-serif;
+    position: relative;
 }
 
 .kce-addCardPlus {
@@ -553,14 +546,12 @@
     font-weight: 700;
     color: rgba(15, 23, 42, 0.75);
     line-height: 1;
-    font-family: "Inter", sans-serif;
 }
 
 .kce-addCardText {
     font-size: 12px;
     font-weight: 400;
     color: var(--kc-text-primary, #0f172a);
-    font-family: "Inter", sans-serif;
 }
 
 .kce-addCard:hover {
@@ -591,4 +582,84 @@
 
 .kce-bottomPad {
     height: 18px;
+}
+
+/* =========================================================
+   Upgrade modal
+========================================================= */
+
+.kce-modalOverlay {
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    display: grid;
+    place-items: center;
+}
+
+.kce-modalBackdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(15, 23, 42, 0.45);
+    border: 0;
+    padding: 0;
+    margin: 0;
+    cursor: pointer;
+}
+
+.kce-modal {
+    position: relative;
+    z-index: 10000;
+    width: min(520px, calc(100vw - 32px));
+    border-radius: 18px;
+    border: 1px solid rgba(15, 23, 42, 0.14);
+    background: #fff;
+    box-shadow: 0 30px 80px rgba(15, 23, 42, 0.28);
+    padding: 20px;
+    font-family: "Inter", sans-serif;
+}
+
+.kce-modalClose {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    width: 34px;
+    height: 34px;
+    border-radius: 12px;
+    border: 1px solid rgba(15, 23, 42, 0.12);
+    background: rgba(255, 255, 255, 0.92);
+    cursor: pointer;
+    font-weight: 800;
+}
+
+.kce-modalTitle {
+    font-size: 18px;
+    font-weight: 800;
+    color: rgba(15, 23, 42, 0.95);
+    margin: 2px 0 8px;
+}
+
+.kce-modalText {
+    font-size: 13px;
+    font-weight: 500;
+    color: rgba(71, 85, 105, 0.95);
+    line-height: 1.45;
+}
+
+.kce-modalList {
+    margin: 10px 0 0 18px;
+    padding: 0;
+}
+
+.kce-modalActions {
+    display: flex;
+    gap: 10px;
+    margin-top: 14px;
+    flex-wrap: wrap;
+}
+
+.kce-modalFoot {
+    margin-top: 10px;
+    font-size: 12px;
+    font-weight: 600;
+    color: rgba(71, 85, 105, 0.85);
 }
