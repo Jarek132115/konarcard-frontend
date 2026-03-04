@@ -222,3 +222,11 @@
         overflow: visible;
     }
 }
+
+/* CHANGE THIS ONLY for editor card body so Editor can control scroll */
+.myprofile-editorCard .myprofile-cardBody {
+    overflow: hidden;
+    /* ✅ prevents whole card scrolling */
+    padding-right: 0;
+    /* Editor scroll handles its own gutter */
+}

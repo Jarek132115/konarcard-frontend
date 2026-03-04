@@ -1,4 +1,4 @@
-import React, { useRef, useEffect } from "react";
+import React, { useRef, useEffect, useMemo, useState } from "react";
 import { previewPlaceholders } from "../../store/businessCardStore";
 
 /* Social icons */
@@ -12,19 +12,21 @@ import "../../styling/dashboard/editor.css";
 
 const isBlobUrl = (v) => typeof v === "string" && v.startsWith("blob:");
 
-function SectionHeader({ title, subtitle, open, onToggle }) {
+function AccordionHeader({ title, subtitle, pillText, open, onToggle }) {
     return (
-        <div className="kc-sec-head">
-            <button type="button" className="kc-sec-toggle" onClick={onToggle} aria-expanded={open}>
-                <div className="kc-sec-titlewrap">
-                    <div className="kc-sec-title">{title}</div>
-                    {subtitle ? <div className="kc-sec-sub">{subtitle}</div> : null}
+        <button type="button" className="kc-acc-btn" onClick={onToggle} aria-expanded={open}>
+            <div className="kc-acc-left">
+                {pillText ? <span className="kc-sec-pill">{pillText}</span> : null}
+                <div className="kc-acc-txt">
+                    <div className="kc-acc-title">{title}</div>
+                    {subtitle ? <div className="kc-acc-sub">{subtitle}</div> : null}
                 </div>
-                <span className={`kc-sec-chevron ${open ? "open" : ""}`} aria-hidden="true">
-                    ▾
-                </span>
-            </button>
-        </div>
+            </div>
+
+            <span className={`kc-acc-chev ${open ? "open" : ""}`} aria-hidden="true">
+                ▾
+            </span>
+        </button>
     );
 }
 
@@ -39,6 +41,7 @@ export default function Editor({
     onResetPage,
     onSubmit,
 
+    // preview toggles (keep)
     showMainSection,
     setShowMainSection,
     showAboutMeSection,
@@ -59,8 +62,6 @@ export default function Editor({
     onRemoveAvatar,
     onAddWorkImages,
     onRemoveWorkImage,
-
-    columnScrollStyle,
 }) {
     const coverInputRef = useRef(null);
     const avatarInputRef = useRef(null);
@@ -83,12 +84,20 @@ export default function Editor({
         };
     }, []);
 
+    // ✅ Accordion open state (collapsed by default)
+    const [openTemplate, setOpenTemplate] = useState(true); // keep open by default
+    const [openMain, setOpenMain] = useState(false);
+    const [openAbout, setOpenAbout] = useState(false);
+    const [openWork, setOpenWork] = useState(false);
+    const [openServices, setOpenServices] = useState(false);
+    const [openReviews, setOpenReviews] = useState(false);
+    const [openContact, setOpenContact] = useState(false);
+
     // ---------------------------------------------------------
     // Templates
     // ---------------------------------------------------------
     const TEMPLATE_IDS = ["template-1", "template-2", "template-3", "template-4", "template-5"];
     const currentTemplate = (state.templateId || "template-1").toString();
-
     const isTemplateLocked = (templateId) => !isSubscribed && templateId !== "template-1";
 
     const handleTemplateSelect = (id) => {
@@ -107,9 +116,7 @@ export default function Editor({
         next[i] = { ...(next[i] || {}), [field]: value };
         updateState({ services: next });
     };
-
     const handleAddService = () => updateState({ services: [...(state.services || []), { name: "", price: "" }] });
-
     const handleRemoveService = (i) => updateState({ services: (state.services || []).filter((_, idx) => idx !== i) });
 
     // ---------------------------------------------------------
@@ -125,88 +132,100 @@ export default function Editor({
         }
         updateState({ reviews: next });
     };
-
     const handleAddReview = () => updateState({ reviews: [...(state.reviews || []), { name: "", text: "", rating: 5 }] });
-
     const handleRemoveReview = (i) => updateState({ reviews: (state.reviews || []).filter((_, idx) => idx !== i) });
 
-    // Prefer explicit preview fields, then persisted URLs, but NEVER force blob into persisted field.
-    const coverSrc =
-        state.coverPhotoPreview ||
-        (isBlobUrl(state.coverPhoto) ? "" : state.coverPhoto) ||
-        previewPlaceholders.coverPhoto;
+    // Prefer explicit preview fields, then persisted URLs
+    const coverSrc = useMemo(() => {
+        return (
+            state.coverPhotoPreview ||
+            (isBlobUrl(state.coverPhoto) ? "" : state.coverPhoto) ||
+            previewPlaceholders.coverPhoto
+        );
+    }, [state.coverPhotoPreview, state.coverPhoto]);
 
-    const avatarSrc = state.avatarPreview || (isBlobUrl(state.avatar) ? "" : state.avatar) || "";
+    const avatarSrc = useMemo(() => {
+        return state.avatarPreview || (isBlobUrl(state.avatar) ? "" : state.avatar) || "";
+    }, [state.avatarPreview, state.avatar]);
 
     return (
-        <div className="kc-editor-scope" id="myprofile-editor" style={columnScrollStyle}>
-            <form onSubmit={onSubmit} className="kc-editor-card">
-                {/* Header */}
-                <div className="kc-editor-head">
-                    <div className="kc-editor-head-left">
-                        <div className="kc-editor-h1">Edit your profile</div>
-                        <div className="kc-editor-h2">Update your card — changes go live when you publish.</div>
+        <div className="kc-editor-scope">
+            {/* ✅ Fixed Header (non-scrolling) */}
+            <div className="kc-editor-top">
+                <div className="kc-editor-topRow">
+                    <div className="kc-editor-topLeft">
+                        <h2 className="kc-editor-h1">Edit Your Profile</h2>
+                        <p className="kc-editor-h2">Choose one to edit or share.</p>
                     </div>
 
-                    <div className="kc-editor-head-actions">
-                        <button type="button" className="kc-btn kc-btn-ghost" onClick={onResetPage}>
+                    <div className="kc-editor-topActions">
+                        <button type="button" className="kx-btn kx-btn--white" onClick={onResetPage}>
                             Reset
                         </button>
-                        <button type="submit" className="kc-btn kc-btn-primary">
-                            Publish
+                        <button type="submit" form="kc-editor-form" className="kx-btn kx-btn--black">
+                            Save Profile
                         </button>
                     </div>
                 </div>
+            </div>
 
-                {/* Template picker */}
-                <div className="kc-block">
-                    <div className="kc-block-title">Choose a template</div>
-
-                    <div className="kc-template-row" role="tablist" aria-label="Template selector">
-                        {TEMPLATE_IDS.map((t) => {
-                            const locked = isTemplateLocked(t);
-                            const active = currentTemplate === t;
-                            return (
-                                <button
-                                    key={t}
-                                    type="button"
-                                    className={`kc-template-chip ${active ? "active" : ""} ${locked ? "locked" : ""}`}
-                                    onClick={() => handleTemplateSelect(t)}
-                                    title={locked ? "Upgrade to unlock this template" : "Select template"}
-                                    aria-label={locked ? `${t} locked` : t}
-                                    role="tab"
-                                    aria-selected={active}
-                                >
-                                    <span className="kc-template-chip-label">{t.replace("-", " ").toUpperCase()}</span>
-                                    {locked ? <span className="kc-lock" aria-hidden="true">🔒</span> : null}
-                                </button>
-                            );
-                        })}
-                    </div>
-
-                    <div className="kc-help">Templates control the design (fonts, colors, layout). You only add your content.</div>
-
-                    {!isSubscribed ? (
-                        <div className="kc-help">
-                            Free users can use <strong>TEMPLATE 1</strong>. Upgrade to unlock Templates 2–5.
-                        </div>
-                    ) : null}
-                </div>
-
-                {/* MAIN */}
-                <div className="kc-divider" />
-                <div className="kc-section">
-                    <SectionHeader
-                        title="Main section"
-                        subtitle="Cover image + headings"
-                        open={showMainSection}
-                        onToggle={() => setShowMainSection(!showMainSection)}
+            {/* ✅ Scroll area only */}
+            <div className="kc-editor-scroll">
+                <form id="kc-editor-form" onSubmit={onSubmit}>
+                    {/* TEMPLATE */}
+                    <AccordionHeader
+                        pillText="Templates"
+                        title="Choose a template"
+                        subtitle="Templates control the design (fonts, colors, layout). You only add your content."
+                        open={openTemplate}
+                        onToggle={() => setOpenTemplate((v) => !v)}
                     />
 
-                    {showMainSection ? (
-                        <div className="kc-section-body">
-                            <div className="kc-block">
-                                <div className="kc-block-title">Cover photo</div>
+                    {openTemplate ? (
+                        <div className="kc-acc-body">
+                            <div className="kc-template-row" role="tablist" aria-label="Template selector">
+                                {TEMPLATE_IDS.map((t) => {
+                                    const locked = isTemplateLocked(t);
+                                    const active = currentTemplate === t;
+                                    return (
+                                        <button
+                                            key={t}
+                                            type="button"
+                                            className={`kc-template-chip ${active ? "active" : ""} ${locked ? "locked" : ""}`}
+                                            onClick={() => handleTemplateSelect(t)}
+                                            title={locked ? "Upgrade to unlock this template" : "Select template"}
+                                            aria-label={locked ? `${t} locked` : t}
+                                            role="tab"
+                                            aria-selected={active}
+                                        >
+                                            <span className="kc-template-chip-label">{t.replace("-", " ").toUpperCase()}</span>
+                                            {locked ? <span aria-hidden="true">🔒</span> : null}
+                                        </button>
+                                    );
+                                })}
+                            </div>
+
+                            {!isSubscribed ? (
+                                <div className="kc-help">
+                                    Free users can use <strong>TEMPLATE 1</strong>. Upgrade to unlock Templates 2–5.
+                                </div>
+                            ) : null}
+                        </div>
+                    ) : null}
+
+                    {/* MAIN */}
+                    <AccordionHeader
+                        pillText="Main Section"
+                        title="Main section"
+                        subtitle="Cover image + headings"
+                        open={openMain}
+                        onToggle={() => setOpenMain((v) => !v)}
+                    />
+
+                    {openMain ? (
+                        <div className="kc-acc-body">
+                            <div className="kc-field">
+                                <label className="kc-label">Cover photo</label>
 
                                 <input
                                     ref={coverInputRef}
@@ -226,11 +245,8 @@ export default function Editor({
                                 />
 
                                 <button type="button" className="kc-upload" onClick={() => coverInputRef.current?.click()}>
-                                    {coverSrc ? (
-                                        <img src={coverSrc} alt="Cover" className="kc-upload-img" />
-                                    ) : (
-                                        <span className="kc-upload-text">+ Upload cover image</span>
-                                    )}
+                                    {coverSrc ? <img src={coverSrc} alt="Cover" className="kc-upload-img" /> : null}
+                                    {!coverSrc ? <span className="kc-upload-text">+ Upload cover image</span> : null}
 
                                     {coverSrc ? (
                                         <span
@@ -248,10 +264,6 @@ export default function Editor({
                                         </span>
                                     ) : null}
                                 </button>
-
-                                {isBlobUrl(state.coverPhotoPreview) && !state.coverPhoto ? (
-                                    <div className="kc-help">This image is previewing locally — publish to save it.</div>
-                                ) : null}
                             </div>
 
                             <div className="kc-grid-2">
@@ -275,24 +287,31 @@ export default function Editor({
                                     />
                                 </div>
                             </div>
+
+                            {/* (Optional) show/hide in preview */}
+                            <button
+                                type="button"
+                                className="kx-btn kx-btn--white"
+                                onClick={() => setShowMainSection?.(!showMainSection)}
+                            >
+                                {showMainSection ? "Hide section on profile" : "Show section on profile"}
+                            </button>
                         </div>
                     ) : null}
-                </div>
 
-                {/* ABOUT */}
-                <div className="kc-divider" />
-                <div className="kc-section">
-                    <SectionHeader
+                    {/* ABOUT */}
+                    <AccordionHeader
+                        pillText="About Me Section"
                         title="About me"
                         subtitle="Avatar + name + job + bio"
-                        open={showAboutMeSection}
-                        onToggle={() => setShowAboutMeSection(!showAboutMeSection)}
+                        open={openAbout}
+                        onToggle={() => setOpenAbout((v) => !v)}
                     />
 
-                    {showAboutMeSection ? (
-                        <div className="kc-section-body">
-                            <div className="kc-block">
-                                <div className="kc-block-title">Profile photo</div>
+                    {openAbout ? (
+                        <div className="kc-acc-body">
+                            <div className="kc-field">
+                                <label className="kc-label">Profile photo / logo</label>
 
                                 <input
                                     ref={avatarInputRef}
@@ -311,16 +330,9 @@ export default function Editor({
                                     style={{ display: "none" }}
                                 />
 
-                                <button
-                                    type="button"
-                                    className="kc-upload kc-upload-square"
-                                    onClick={() => avatarInputRef.current?.click()}
-                                >
-                                    {avatarSrc ? (
-                                        <img src={avatarSrc} alt="Avatar" className="kc-upload-img" />
-                                    ) : (
-                                        <span className="kc-upload-text">+ Add profile picture / logo</span>
-                                    )}
+                                <button type="button" className="kc-upload" onClick={() => avatarInputRef.current?.click()}>
+                                    {avatarSrc ? <img src={avatarSrc} alt="Avatar" className="kc-upload-img" /> : null}
+                                    {!avatarSrc ? <span className="kc-upload-text">+ Upload profile photo / logo</span> : null}
 
                                     {avatarSrc ? (
                                         <span
@@ -338,10 +350,6 @@ export default function Editor({
                                         </span>
                                     ) : null}
                                 </button>
-
-                                {isBlobUrl(state.avatarPreview) && !state.avatar ? (
-                                    <div className="kc-help">This image is previewing locally — publish to save it.</div>
-                                ) : null}
                             </div>
 
                             <div className="kc-grid-2">
@@ -376,22 +384,28 @@ export default function Editor({
                                     placeholder={previewPlaceholders.bio}
                                 />
                             </div>
+
+                            <button
+                                type="button"
+                                className="kx-btn kx-btn--white"
+                                onClick={() => setShowAboutMeSection?.(!showAboutMeSection)}
+                            >
+                                {showAboutMeSection ? "Hide section on profile" : "Show section on profile"}
+                            </button>
                         </div>
                     ) : null}
-                </div>
 
-                {/* WORK */}
-                <div className="kc-divider" />
-                <div className="kc-section">
-                    <SectionHeader
+                    {/* WORK */}
+                    <AccordionHeader
+                        pillText="Work Section"
                         title="My work"
                         subtitle="Upload up to 10 images"
-                        open={showWorkSection}
-                        onToggle={() => setShowWorkSection(!showWorkSection)}
+                        open={openWork}
+                        onToggle={() => setOpenWork((v) => !v)}
                     />
 
-                    {showWorkSection ? (
-                        <div className="kc-section-body">
+                    {openWork ? (
+                        <div className="kc-acc-body">
                             <div className="kc-work-grid">
                                 {(state.workImages || []).map((item, i) => (
                                     <div key={i} className="kc-work-item">
@@ -408,11 +422,7 @@ export default function Editor({
                                 ))}
 
                                 {(state.workImages || []).length < 10 ? (
-                                    <button
-                                        type="button"
-                                        className="kc-work-add"
-                                        onClick={() => workImageInputRef.current?.click()}
-                                    >
+                                    <button type="button" className="kc-work-add" onClick={() => workImageInputRef.current?.click()}>
                                         + Add image(s)
                                     </button>
                                 ) : null}
@@ -440,22 +450,28 @@ export default function Editor({
                                     onAddWorkImages?.(files);
                                 }}
                             />
+
+                            <button
+                                type="button"
+                                className="kx-btn kx-btn--white"
+                                onClick={() => setShowWorkSection?.(!showWorkSection)}
+                            >
+                                {showWorkSection ? "Hide section on profile" : "Show section on profile"}
+                            </button>
                         </div>
                     ) : null}
-                </div>
 
-                {/* SERVICES */}
-                <div className="kc-divider" />
-                <div className="kc-section">
-                    <SectionHeader
+                    {/* SERVICES */}
+                    <AccordionHeader
+                        pillText="Services Section"
                         title="My services"
                         subtitle="Add services & pricing"
-                        open={showServicesSection}
-                        onToggle={() => setShowServicesSection(!showServicesSection)}
+                        open={openServices}
+                        onToggle={() => setOpenServices((v) => !v)}
                     />
 
-                    {showServicesSection ? (
-                        <div className="kc-section-body">
+                    {openServices ? (
+                        <div className="kc-acc-body">
                             <div className="kc-repeat">
                                 {(state.services || []).map((s, i) => (
                                     <div key={i} className="kc-repeat-card">
@@ -482,7 +498,7 @@ export default function Editor({
                                         </div>
 
                                         <div className="kc-row-right">
-                                            <button type="button" className="kc-btn kc-btn-danger" onClick={() => handleRemoveService(i)}>
+                                            <button type="button" className="kx-btn kx-btn--white" onClick={() => handleRemoveService(i)}>
                                                 Remove
                                             </button>
                                         </div>
@@ -490,25 +506,31 @@ export default function Editor({
                                 ))}
                             </div>
 
-                            <button type="button" className="kc-btn kc-btn-ghost kc-btn-wide" onClick={handleAddService}>
+                            <button type="button" className="kx-btn kx-btn--white" onClick={handleAddService}>
                                 + Add service
+                            </button>
+
+                            <button
+                                type="button"
+                                className="kx-btn kx-btn--white"
+                                onClick={() => setShowServicesSection?.(!showServicesSection)}
+                            >
+                                {showServicesSection ? "Hide section on profile" : "Show section on profile"}
                             </button>
                         </div>
                     ) : null}
-                </div>
 
-                {/* REVIEWS */}
-                <div className="kc-divider" />
-                <div className="kc-section">
-                    <SectionHeader
+                    {/* REVIEWS */}
+                    <AccordionHeader
+                        pillText="Reviews Section"
                         title="Reviews"
                         subtitle="Show social proof"
-                        open={showReviewsSection}
-                        onToggle={() => setShowReviewsSection(!showReviewsSection)}
+                        open={openReviews}
+                        onToggle={() => setOpenReviews((v) => !v)}
                     />
 
-                    {showReviewsSection ? (
-                        <div className="kc-section-body">
+                    {openReviews ? (
+                        <div className="kc-acc-body">
                             <div className="kc-repeat">
                                 {(state.reviews || []).map((r, i) => (
                                     <div key={i} className="kc-repeat-card">
@@ -549,7 +571,7 @@ export default function Editor({
                                         </div>
 
                                         <div className="kc-row-right">
-                                            <button type="button" className="kc-btn kc-btn-danger" onClick={() => handleRemoveReview(i)}>
+                                            <button type="button" className="kx-btn kx-btn--white" onClick={() => handleRemoveReview(i)}>
                                                 Remove
                                             </button>
                                         </div>
@@ -557,25 +579,31 @@ export default function Editor({
                                 ))}
                             </div>
 
-                            <button type="button" className="kc-btn kc-btn-ghost kc-btn-wide" onClick={handleAddReview}>
+                            <button type="button" className="kx-btn kx-btn--white" onClick={handleAddReview}>
                                 + Add review
+                            </button>
+
+                            <button
+                                type="button"
+                                className="kx-btn kx-btn--white"
+                                onClick={() => setShowReviewsSection?.(!showReviewsSection)}
+                            >
+                                {showReviewsSection ? "Hide section on profile" : "Show section on profile"}
                             </button>
                         </div>
                     ) : null}
-                </div>
 
-                {/* CONTACT */}
-                <div className="kc-divider" />
-                <div className="kc-section">
-                    <SectionHeader
+                    {/* CONTACT */}
+                    <AccordionHeader
+                        pillText="Contact Section"
                         title="Contact"
                         subtitle="Email, phone & socials"
-                        open={showContactSection}
-                        onToggle={() => setShowContactSection(!showContactSection)}
+                        open={openContact}
+                        onToggle={() => setOpenContact((v) => !v)}
                     />
 
-                    {showContactSection ? (
-                        <div className="kc-section-body">
+                    {openContact ? (
+                        <div className="kc-acc-body">
                             <div className="kc-grid-2">
                                 <div className="kc-field">
                                     <label className="kc-label">Email</label>
@@ -602,50 +630,83 @@ export default function Editor({
                                 </div>
                             </div>
 
-                            <div className="kc-block kc-block--flat">
-                                <div className="kc-block-title">Social links</div>
+                            <div className="kc-field">
+                                <label className="kc-label">Social links</label>
 
                                 <div className="kc-social">
                                     <div className="kc-social-row">
                                         <img src={FacebookIcon} alt="" />
-                                        <input className="kc-input" placeholder="Facebook URL" value={state.facebook_url || ""} onChange={(e) => updateState({ facebook_url: e.target.value })} />
+                                        <input
+                                            className="kc-input"
+                                            placeholder="Facebook URL"
+                                            value={state.facebook_url || ""}
+                                            onChange={(e) => updateState({ facebook_url: e.target.value })}
+                                        />
                                     </div>
 
                                     <div className="kc-social-row">
                                         <img src={InstagramIcon} alt="" />
-                                        <input className="kc-input" placeholder="Instagram URL" value={state.instagram_url || ""} onChange={(e) => updateState({ instagram_url: e.target.value })} />
+                                        <input
+                                            className="kc-input"
+                                            placeholder="Instagram URL"
+                                            value={state.instagram_url || ""}
+                                            onChange={(e) => updateState({ instagram_url: e.target.value })}
+                                        />
                                     </div>
 
                                     <div className="kc-social-row">
                                         <img src={LinkedInIcon} alt="" />
-                                        <input className="kc-input" placeholder="LinkedIn URL" value={state.linkedin_url || ""} onChange={(e) => updateState({ linkedin_url: e.target.value })} />
+                                        <input
+                                            className="kc-input"
+                                            placeholder="LinkedIn URL"
+                                            value={state.linkedin_url || ""}
+                                            onChange={(e) => updateState({ linkedin_url: e.target.value })}
+                                        />
                                     </div>
 
                                     <div className="kc-social-row">
                                         <img src={XIcon} alt="" />
-                                        <input className="kc-input" placeholder="X (Twitter) URL" value={state.x_url || ""} onChange={(e) => updateState({ x_url: e.target.value })} />
+                                        <input
+                                            className="kc-input"
+                                            placeholder="X (Twitter) URL"
+                                            value={state.x_url || ""}
+                                            onChange={(e) => updateState({ x_url: e.target.value })}
+                                        />
                                     </div>
 
                                     <div className="kc-social-row">
                                         <img src={TikTokIcon} alt="" />
-                                        <input className="kc-input" placeholder="TikTok URL" value={state.tiktok_url || ""} onChange={(e) => updateState({ tiktok_url: e.target.value })} />
+                                        <input
+                                            className="kc-input"
+                                            placeholder="TikTok URL"
+                                            value={state.tiktok_url || ""}
+                                            onChange={(e) => updateState({ tiktok_url: e.target.value })}
+                                        />
                                     </div>
                                 </div>
                             </div>
+
+                            <button
+                                type="button"
+                                className="kx-btn kx-btn--white"
+                                onClick={() => setShowContactSection?.(!showContactSection)}
+                            >
+                                {showContactSection ? "Hide section on profile" : "Show section on profile"}
+                            </button>
                         </div>
                     ) : null}
-                </div>
 
-                {/* Bottom actions */}
-                <div className="kc-bottom-actions">
-                    <button type="button" className="kc-btn kc-btn-ghost" onClick={onResetPage}>
-                        Reset page
-                    </button>
-                    <button type="submit" className="kc-btn kc-btn-primary">
-                        Publish now
-                    </button>
-                </div>
-            </form>
+                    {/* Bottom actions (optional) */}
+                    <div className="kc-bottom-actions">
+                        <button type="button" className="kx-btn kx-btn--white" onClick={onResetPage}>
+                            Reset
+                        </button>
+                        <button type="submit" className="kx-btn kx-btn--black">
+                            Save Profile
+                        </button>
+                    </div>
+                </form>
+            </div>
         </div>
     );
 }
