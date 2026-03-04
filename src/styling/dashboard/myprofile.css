@@ -14,7 +14,10 @@
     --mp-softShadow: 0 0 1px rgba(0, 0, 0, 0.25);
 }
 
-/* Page shell */
+/* =========================================
+   Page shell
+   ✅ MUST be a fixed-height area so children can scroll
+========================================= */
 .myprofile-shell {
     width: 100%;
     margin: 0;
@@ -24,9 +27,15 @@
     flex-direction: column;
     min-height: 0;
 
-    height: calc(100vh - (var(--dash-gutter, 24px) * 2));
+    /* ✅ Lock to viewport like before (matches sidebar height area) */
+    height: calc(100dvh - (var(--dash-gutter, 24px) * 2));
+    overflow: hidden;
+    /* ✅ prevents page from growing */
 }
 
+/* =========================================
+   Main 2-col grid
+========================================= */
 .myprofile-grid {
     display: grid;
     grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
@@ -35,9 +44,13 @@
 
     flex: 1;
     min-height: 0;
+    overflow: hidden;
+    /* ✅ grid must not expand */
 }
 
-/* Preview column keeps card styling */
+/* =========================================
+   Preview column keeps card styling
+========================================= */
 .myprofile-cardShell {
     background: #ffffff;
     border: 1px solid var(--mp-border);
@@ -48,24 +61,26 @@
     display: flex;
     flex-direction: column;
     min-height: 0;
+    overflow: hidden;
+    /* ✅ important */
 }
 
-/* Preview MUST be 24px padding */
 .myprofile-previewCard {
     padding: 24px;
     flex: 1;
+    min-height: 0;
 }
 
 /* =========================================
    ✅ EDITOR COLUMN (no outer border)
-   Editor gets its OWN surface box inside
 ========================================= */
-
 .myprofile-editorCol {
     min-width: 0;
     min-height: 0;
     display: flex;
     flex-direction: column;
+    overflow: hidden;
+    /* ✅ stop growth */
 }
 
 .myprofile-editorSurface {
@@ -74,7 +89,6 @@
     border-radius: var(--mp-radius);
     box-shadow: var(--mp-softShadow);
 
-    /* ✅ EXACT 24px padding around the editor */
     padding: 24px;
 
     flex: 1;
@@ -82,6 +96,8 @@
 
     display: flex;
     flex-direction: column;
+    overflow: hidden;
+    /* ✅ stop growth */
 }
 
 /* This wrapper constrains height so Editor can scroll internally */
@@ -89,15 +105,21 @@
     flex: 1;
     min-height: 0;
     overflow: hidden;
-    /* ✅ prevents the whole surface scrolling */
+    /* ✅ prevents whole surface scrolling */
     display: flex;
     flex-direction: column;
 }
 
-/* =========================================
-   Preview header (unchanged)
-========================================= */
+/* ✅ Make sure editor root can take height + scroll inside */
+.myprofile-editorBody .kce-root {
+    flex: 1;
+    min-height: 0;
+    height: 100%;
+}
 
+/* =========================================
+   Preview header
+========================================= */
 .myprofile-previewTop {
     display: flex;
     align-items: center;
@@ -141,7 +163,9 @@
     justify-content: flex-end;
 }
 
-/* Preview fill + internal scroll */
+/* =========================================
+   Preview fill + internal scroll
+========================================= */
 .myprofile-previewFrame {
     margin-top: 16px;
     flex: 1;
@@ -149,6 +173,7 @@
     overflow: hidden;
 }
 
+/* Keep your existing preview overrides */
 .myprofile-previewFrame .preview-scope.myprofile-preview-wrapper {
     height: 100% !important;
     max-height: 100% !important;
@@ -209,10 +234,12 @@
 @media (max-width: 1000px) {
     .myprofile-shell {
         height: auto;
+        overflow: visible;
     }
 
     .myprofile-grid {
         grid-template-columns: 1fr;
+        overflow: visible;
     }
 
     .myprofile-editorSurface,
@@ -222,6 +249,10 @@
 
     .myprofile-editorBody {
         overflow: visible;
+    }
+
+    .myprofile-editorBody .kce-root {
+        height: auto;
     }
 
     .myprofile-previewFrame {
