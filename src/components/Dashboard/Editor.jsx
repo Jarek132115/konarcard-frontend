@@ -2,6 +2,13 @@
 import React, { useEffect, useMemo, useRef } from "react";
 import { previewPlaceholders } from "../../store/businessCardStore";
 
+/* ✅ TEMP: use any 5 carousel images from Hero */
+import UP1 from "../../assets/images/UP1.jpg";
+import UP2 from "../../assets/images/UP2.jpg";
+import UP3 from "../../assets/images/UP3.jpg";
+import UP4 from "../../assets/images/UP4.jpg";
+import UP5 from "../../assets/images/UP5.jpg";
+
 /* Social icons */
 import FacebookIcon from "../../assets/icons/icons8-facebook.svg";
 import InstagramIcon from "../../assets/icons/icons8-instagram.svg";
@@ -30,6 +37,7 @@ export default function Editor({
     showReviewsSection,
     showContactSection,
 
+    // keep these props (even if you don’t collapse right now)
     setShowMainSection,
     setShowAboutMeSection,
     setShowWorkSection,
@@ -68,6 +76,18 @@ export default function Editor({
     // Templates
     const TEMPLATE_IDS = useMemo(
         () => ["template-1", "template-2", "template-3", "template-4", "template-5"],
+        []
+    );
+
+    // ✅ TEMP thumbs mapped to 5 templates
+    const templateThumbs = useMemo(
+        () => ({
+            "template-1": UP1,
+            "template-2": UP2,
+            "template-3": UP3,
+            "template-4": UP4,
+            "template-5": UP5,
+        }),
         []
     );
 
@@ -126,7 +146,7 @@ export default function Editor({
 
     return (
         <div className="kce-root">
-            {/* Header (title area is already correct) */}
+            {/* Header */}
             <div className="kce-top">
                 <div className="kce-topLeft">
                     <div className="kc-title kce-title">Edit Your Profile</div>
@@ -143,10 +163,8 @@ export default function Editor({
                 </div>
             </div>
 
-            {/* 24px gap below divider */}
             <div className="kce-spacer24" />
 
-            {/* Scroll body */}
             <div className="kce-scroll">
                 {/* TEMPLATES */}
                 <div className="kce-panel">
@@ -157,23 +175,29 @@ export default function Editor({
                         Templates control the design (fonts, colors, layout). You only add your content.
                     </div>
 
-                    <div className="kce-templateRow" role="tablist" aria-label="Template selector">
+                    {/* ✅ NEW: phone aspect ratio image tiles (no text) */}
+                    <div className="kce-templatePhones" role="tablist" aria-label="Template selector">
                         {TEMPLATE_IDS.map((t) => {
                             const locked = isTemplateLocked(t);
                             const active = currentTemplate === t;
+                            const src = templateThumbs[t];
+
                             return (
                                 <button
                                     key={t}
                                     type="button"
-                                    className={`kce-templateChip ${active ? "is-active" : ""} ${locked ? "is-locked" : ""
-                                        }`}
+                                    className={`kce-phoneTile ${active ? "is-active" : ""} ${locked ? "is-locked" : ""}`}
                                     onClick={() => handleTemplateSelect(t)}
                                     title={locked ? "Upgrade to unlock this template" : "Select template"}
                                     aria-label={locked ? `${t} locked` : t}
                                     role="tab"
                                     aria-selected={active}
                                 >
-                                    {t.replace("-", " ").toUpperCase()}
+                                    <span className="kce-phoneViewport">
+                                        <img src={src} alt="" draggable={false} />
+                                    </span>
+
+                                    {locked ? <span className="kce-phoneLock" aria-hidden="true">🔒</span> : null}
                                 </button>
                             );
                         })}
@@ -181,7 +205,7 @@ export default function Editor({
 
                     {!isSubscribed ? (
                         <div className="kce-note">
-                            Free users can use <strong>TEMPLATE 1</strong>. Upgrade to unlock Templates 2–5.
+                            Free users can use <strong>Template 1</strong>. Upgrade to unlock Templates 2–5.
                         </div>
                     ) : null}
                 </div>
@@ -365,7 +389,6 @@ export default function Editor({
                 {showWorkSection !== false && (
                     <div className="kce-panel">
                         <div className="kce-chip">My Work Section</div>
-
                         <div className="body kce-miniSub">Upload up to 12 images</div>
 
                         <div className="kce-workGrid">
@@ -384,11 +407,7 @@ export default function Editor({
                             ))}
 
                             {(state.workImages || []).length < 12 ? (
-                                <button
-                                    type="button"
-                                    className="kce-workAdd"
-                                    onClick={() => workImageInputRef.current?.click()}
-                                >
+                                <button type="button" className="kce-workAdd" onClick={() => workImageInputRef.current?.click()}>
                                     <div className="kce-plus">+</div>
                                     <div className="kce-uploadText">Upload Image(s)</div>
                                 </button>
@@ -615,7 +634,6 @@ export default function Editor({
                     </div>
                 )}
 
-                {/* bottom padding so last panel isn't jammed */}
                 <div style={{ height: 8 }} />
             </div>
         </div>
