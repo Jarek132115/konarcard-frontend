@@ -1,501 +1,335 @@
 /* frontend/src/styling/dashboard/editor.css */
-
 /* =========================================================
-   KonarCard Editor (scoped)
-   - Parent (MyProfile card) provides outer 24px padding.
-   - This component must be FULL HEIGHT + internally scroll.
+   KonarCard Editor — NEW isolated class system (kce-*)
+   ✅ No clashes with other dashboard CSS
+   ✅ Matches the reference screenshot layout
 ========================================================= */
 
-.kc-editor-scope {
+.kce-root {
     width: 100%;
     min-width: 0;
-    box-sizing: border-box;
-
-    padding: 0;
-    /* ✅ important: no extra padding here */
-    font-family: "Inter", sans-serif;
-    color: var(--kc-text-primary);
-
+    height: 100%;
+    min-height: 0;
     display: flex;
     flex-direction: column;
-    min-height: 0;
-    height: 100%;
+    font-family: "Inter", sans-serif;
+    color: var(--kc-text-primary, #0f172a);
 }
 
-/* ---------------------------------------------------------
-   Sticky top header (does NOT scroll away)
---------------------------------------------------------- */
-.kc-editor-top {
+/* ---------- Header ---------- */
+.kce-top {
     position: sticky;
     top: 0;
     z-index: 5;
-    background: #ffffff;
+    background: #fff;
 
     display: flex;
-    align-items: center;
+    align-items: flex-start;
     justify-content: space-between;
     gap: 12px;
 
-    padding-bottom: 12px;
+    padding: 0 0 16px;
     border-bottom: 1px solid rgba(15, 23, 42, 0.08);
 }
 
-.kc-editor-topLeft {
-    display: flex;
-    flex-direction: column;
+.kce-topLeft {
+    display: grid;
     gap: 4px;
     min-width: 0;
 }
 
-.kc-editor-title,
-.kc-editor-sub {
+.kce-title,
+.kce-sub {
     margin: 0;
 }
 
-/* Actions */
-.kc-editor-topActions {
+.kce-topRight {
     display: flex;
     align-items: center;
-    justify-content: flex-end;
     gap: 12px;
     flex: 0 0 auto;
 }
 
-@media (max-width: 420px) {
-    .kc-editor-top {
-        align-items: flex-start;
-    }
-
-    .kc-editor-topActions {
-        flex-direction: column;
-        align-items: stretch;
-        width: 140px;
-    }
+/* 24px gap under header divider */
+.kce-spacer24 {
+    height: 24px;
 }
 
-/* ---------------------------------------------------------
-   Only body scrolls
-   ✅ 24px gap after header divider
---------------------------------------------------------- */
-.kc-editor-scroll {
-    margin-top: 24px;
-    /* ✅ requested */
-    overflow: auto;
-    min-height: 0;
+/* ---------- Scroll body ---------- */
+.kce-scroll {
     flex: 1;
-    /* ✅ makes it scroll */
+    min-height: 0;
+    overflow: auto;
     -webkit-overflow-scrolling: touch;
     scrollbar-gutter: stable;
+    padding-right: 2px;
 }
 
-/* ---------------------------------------------------------
-   Form layout (tight but clean)
---------------------------------------------------------- */
-.kc-editor-card {
-    background: transparent;
-    border: 0;
-    padding: 0;
-    margin: 0;
+/* ---------- Buttons ---------- */
+.kce-btn {
+    appearance: none;
+    border: 1px solid rgba(15, 23, 42, 0.14);
+    border-radius: 12px;
+    padding: 12px 18px;
+    font-family: "Inter", sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    line-height: 1;
+    cursor: pointer;
+    transition: transform 0.12s ease, box-shadow 0.15s ease, background-color 0.15s ease;
+    background: #fff;
+    color: var(--kc-text-primary, #0f172a);
+}
+
+.kce-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 10px 26px rgba(15, 23, 42, 0.10);
+}
+
+.kce-btn:active {
+    transform: translateY(0);
+    box-shadow: none;
+}
+
+.kce-btn:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 3px var(--kc-focus-ring, rgba(249, 115, 22, 0.2));
+}
+
+.kce-btnPrimary {
+    background: #0b1220;
+    color: #fff;
+    border-color: transparent;
+}
+
+.kce-btnGhost {
+    background: #fff;
+    color: #0b1220;
+}
+
+.kce-btnWide {
     width: 100%;
-    max-width: none;
-    box-sizing: border-box;
-
-    display: grid;
-    gap: 0;
-    /* ✅ dividers handle spacing */
 }
 
-/* ---------------------------------------------------------
-   Section blocks + dividers
-   ✅ divider breaks sections with 24px top/bottom
---------------------------------------------------------- */
-.kc-section {
+/* ---------- Section layout ---------- */
+.kce-section {
     display: grid;
-    gap: 10px;
+    gap: 12px;
 }
 
-.kc-editor-divider {
+/* Dark centered bar like screenshot */
+.kce-sectionBar {
+    width: 100%;
+    border: 0;
+    border-radius: 999px;
+    padding: 10px 14px;
+    background: #0b1220;
+    color: #fff;
+
+    font-family: "Inter", sans-serif;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: default;
+}
+
+/* divider blocks between sections: 24px gap above/below + line */
+.kce-dividerBlock {
     height: 1px;
     background: rgba(15, 23, 42, 0.08);
     margin: 24px 0;
-    /* ✅ requested */
 }
 
-/* body spacing inside opened accordion */
-.kc-section-body {
-    margin-top: 0;
-    padding: 10px 0 0;
-    /* ✅ remove side padding */
-    display: grid;
-    gap: 10px;
-    /* ✅ tighter */
-}
-
-/* ---------------------------------------------------------
-   Buttons (used inside editor)
---------------------------------------------------------- */
-.kc-btn {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: 10px;
-    border-radius: 14px;
-    padding: 12px 14px;
-    border: 1px solid transparent;
-    cursor: pointer;
-    font-family: "Inter", sans-serif;
-    font-weight: 600;
-    font-size: 14px;
-    line-height: 1;
-    transition: transform 0.08s ease, background 0.18s ease, border-color 0.18s ease,
-        box-shadow 0.18s ease, opacity 0.18s ease;
-}
-
-.kc-btn:active {
-    transform: translateY(1px);
-}
-
-.kc-btn:focus-visible {
-    outline: none;
-    box-shadow: 0 0 0 3px var(--kc-focus-ring, rgba(249, 115, 22, 0.25));
-}
-
-.kc-btn-primary {
-    background: #0b1220;
-    color: #ffffff;
-    border-color: rgba(15, 23, 42, 0.12);
-    box-shadow: 0 0 1px rgba(0, 0, 0, 0.25);
-}
-
-.kc-btn-primary:hover {
-    box-shadow: 0 10px 26px rgba(15, 23, 42, 0.10);
-}
-
-.kc-btn-ghost {
-    background: #ffffff;
-    color: #0b1220;
-    border-color: rgba(15, 23, 42, 0.14);
-    box-shadow: 0 0 1px rgba(0, 0, 0, 0.25);
-}
-
-.kc-btn-ghost:hover {
-    background: rgba(15, 23, 42, 0.02);
-    box-shadow: 0 10px 26px rgba(15, 23, 42, 0.10);
-}
-
-.kc-btn-danger {
-    background: rgba(220, 38, 38, 0.08);
-    color: rgb(220, 38, 38);
-    border-color: rgba(220, 38, 38, 0.22);
-}
-
-.kc-btn-danger:hover {
-    background: rgba(220, 38, 38, 0.12);
-    box-shadow: 0 10px 26px rgba(15, 23, 42, 0.10);
-}
-
-.kc-btn-wide {
-    width: 100%;
-}
-
-/* ---------------------------------------------------------
-   Accordion header row
---------------------------------------------------------- */
-.kc-sec-toggle {
-    width: 100%;
-    border-radius: 18px;
-    padding: 14px 16px;
-
-    border: 1px solid rgba(15, 23, 42, 0.10);
-    background: #ffffff;
-
-    display: grid;
-    grid-template-columns: auto minmax(0, 1fr) auto;
-    align-items: center;
-    gap: 12px;
-
-    cursor: pointer;
-    text-align: left;
-
-    box-shadow: 0 0 1px rgba(0, 0, 0, 0.25);
-    transition: transform 0.08s ease, background 0.18s ease, border-color 0.18s ease,
-        box-shadow 0.18s ease;
-}
-
-.kc-sec-toggle:hover {
-    background: rgba(15, 23, 42, 0.01);
-    box-shadow: 0 10px 26px rgba(15, 23, 42, 0.08);
-}
-
-.kc-sec-toggle:active {
-    transform: translateY(1px);
-}
-
-.kc-sec-toggle:focus-visible {
-    outline: none;
-    box-shadow: 0 0 0 3px var(--kc-focus-ring, rgba(249, 115, 22, 0.25));
-}
-
-.kc-sec-pill {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-
-    padding: 6px 10px;
-    border-radius: 999px;
-
-    background: rgba(15, 23, 42, 0.10);
-    color: rgba(15, 23, 42, 0.86);
-
-    font-family: "Inter", sans-serif;
-    font-weight: 700;
-    font-size: 12px;
-    line-height: 1;
-    white-space: nowrap;
-}
-
-.kc-sec-titlewrap {
-    min-width: 0;
-    display: flex;
-    flex-direction: column;
-}
-
-.kc-sec-title {
-    font-family: "Cal Sans", sans-serif;
-    font-size: 16px;
-    font-weight: 400;
-    line-height: 1.15;
-    color: var(--kc-text-primary, #0f172a);
-    letter-spacing: -0.01em;
-}
-
-.kc-sec-sub {
-    margin-top: 4px;
-    font-family: "Inter", sans-serif;
-    font-size: 13px;
-    font-weight: 400;
-    line-height: 1.35;
-    color: var(--kc-text-secondary, #475569);
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
-
-.kc-sec-chevron {
-    font-size: 16px;
-    opacity: 0.65;
-    transform: rotate(-90deg);
-    transition: transform 0.18s ease;
-}
-
-.kc-sec-chevron.open {
-    transform: rotate(0deg);
-}
-
-/* ---------------------------------------------------------
-   Blocks (inner panels)
---------------------------------------------------------- */
-.kc-block {
-    background: #ffffff;
-    border: 1px solid rgba(15, 23, 42, 0.10);
-    border-radius: 18px;
-    padding: 14px;
-    box-shadow: 0 0 1px rgba(0, 0, 0, 0.25);
-}
-
-.kc-block-title {
-    font-family: "Inter", sans-serif;
-    font-size: 13px;
-    font-weight: 700;
-    color: rgba(15, 23, 42, 0.86);
-    margin: 0 0 10px;
-}
-
-.kc-help {
-    margin-top: 10px;
-    font-family: "Inter", sans-serif;
-    font-size: 12px;
-    font-weight: 600;
-    line-height: 1.35;
-    color: rgba(71, 85, 105, 0.90);
-}
-
-.kc-help strong {
-    color: var(--kc-text-primary, #0f172a);
-}
-
-/* ---------------------------------------------------------
-   Layout helpers
---------------------------------------------------------- */
-.kc-grid-2 {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 12px;
-}
-
-@media (max-width: 560px) {
-    .kc-grid-2 {
-        grid-template-columns: 1fr;
-    }
-}
-
-/* ---------------------------------------------------------
-   Inputs
---------------------------------------------------------- */
-.kc-field {
-    display: grid;
-    gap: 8px;
-}
-
-.kc-label {
-    font-family: "Inter", sans-serif;
-    font-size: 13px;
-    font-weight: 600;
-    letter-spacing: 0.2px;
-    color: var(--kc-text-secondary, #475569);
-}
-
-.kc-input {
-    width: 100%;
-    box-sizing: border-box;
-
-    border: 1px solid rgba(15, 23, 42, 0.14);
-    background: #ffffff;
-    border-radius: 14px;
-    padding: 12px 12px;
-
+/* ---------- Template header text ---------- */
+.kce-helpTitle {
     font-family: "Inter", sans-serif;
     font-size: 14px;
-    font-weight: 500;
-    color: var(--kc-text-primary, #0f172a);
-
-    outline: none;
-    transition: box-shadow 0.15s ease, border-color 0.15s ease, background-color 0.15s ease;
+    font-weight: 700;
+    color: rgba(15, 23, 42, 0.92);
+    margin-top: 2px;
 }
 
-.kc-input::placeholder {
-    color: rgba(71, 85, 105, 0.75);
-    font-weight: 500;
+.kce-helpSub {
+    margin-top: -6px;
 }
 
-.kc-input:focus {
-    border-color: rgba(249, 115, 22, 0.55);
-    box-shadow: 0 0 0 3px var(--kc-focus-ring, rgba(249, 115, 22, 0.25));
-}
-
-.kc-textarea {
-    resize: vertical;
-    min-height: 110px;
-}
-
-/* ---------------------------------------------------------
-   Template selector
---------------------------------------------------------- */
-.kc-template-row {
+/* Template chips row */
+.kce-templateRow {
     display: grid;
     grid-template-columns: repeat(5, minmax(0, 1fr));
     gap: 10px;
 }
 
 @media (max-width: 720px) {
-    .kc-template-row {
+    .kce-templateRow {
         grid-template-columns: repeat(3, minmax(0, 1fr));
     }
 }
 
 @media (max-width: 420px) {
-    .kc-template-row {
+    .kce-templateRow {
         grid-template-columns: repeat(2, minmax(0, 1fr));
     }
 }
 
-.kc-template-chip {
+.kce-templateChip {
     width: 100%;
-    border-radius: 14px;
+    border-radius: 12px;
     padding: 12px 10px;
-
     border: 1px solid rgba(15, 23, 42, 0.14);
-    background: #ffffff;
-
+    background: #fff;
     cursor: pointer;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: 6px;
 
-    transition: transform 0.08s ease, box-shadow 0.18s ease, background-color 0.18s ease,
-        border-color 0.18s ease;
-    box-shadow: 0 0 1px rgba(0, 0, 0, 0.25);
-}
-
-.kc-template-chip:hover {
-    background: rgba(15, 23, 42, 0.01);
-    box-shadow: 0 10px 26px rgba(15, 23, 42, 0.08);
-}
-
-.kc-template-chip:active {
-    transform: translateY(1px);
-}
-
-.kc-template-chip.active {
-    border-color: rgba(249, 115, 22, 0.45);
-    background: rgba(249, 115, 22, 0.08);
-}
-
-.kc-template-chip.locked {
-    opacity: 0.6;
-    border-style: dashed;
-}
-
-.kc-template-chip-label {
     font-family: "Inter", sans-serif;
     font-size: 12px;
     font-weight: 700;
     letter-spacing: 0.08em;
-    color: rgba(15, 23, 42, 0.90);
+    color: rgba(15, 23, 42, 0.9);
+
+    transition: transform 0.12s ease, box-shadow 0.15s ease, background-color 0.15s ease;
 }
 
-.kc-lock {
-    font-size: 14px;
-    line-height: 1;
-}
-
-/* ---------------------------------------------------------
-   Upload cards
---------------------------------------------------------- */
-.kc-upload {
-    width: 100%;
-    border-radius: 18px;
-    border: 2px dashed rgba(15, 23, 42, 0.18);
-    background: rgba(15, 23, 42, 0.02);
-
-    min-height: 190px;
-    overflow: hidden;
-    position: relative;
-    cursor: pointer;
-
-    transition: background-color 0.18s ease, border-color 0.18s ease, transform 0.08s ease,
-        box-shadow 0.18s ease;
-    display: grid;
-    place-items: center;
-    box-shadow: 0 0 1px rgba(0, 0, 0, 0.25);
-}
-
-.kc-upload-square {
-    min-height: 190px;
-}
-
-.kc-upload:hover {
-    background: rgba(15, 23, 42, 0.03);
-    border-color: rgba(15, 23, 42, 0.26);
+.kce-templateChip:hover {
+    transform: translateY(-1px);
     box-shadow: 0 10px 26px rgba(15, 23, 42, 0.08);
 }
 
-.kc-upload:active {
-    transform: translateY(1px);
+.kce-templateChip.is-active {
+    border-color: rgba(249, 115, 22, 0.55);
+    background: rgba(249, 115, 22, 0.08);
 }
 
-.kc-upload-img {
+.kce-templateChip.is-locked {
+    opacity: 0.6;
+    border-style: dashed;
+}
+
+.kce-note {
+    margin-top: 8px;
+    font-size: 12px;
+    font-weight: 600;
+    color: rgba(71, 85, 105, 0.9);
+}
+
+.kce-note strong {
+    color: var(--kc-text-primary, #0f172a);
+}
+
+/* ---------- Blocks ---------- */
+.kce-block {
+    background: #fff;
+    border: 1px solid rgba(15, 23, 42, 0.10);
+    border-radius: 14px;
+    padding: 14px;
+}
+
+/* labels like screenshot */
+.kce-label {
+    font-family: "Inter", sans-serif;
+    font-size: 12px;
+    font-weight: 600;
+    color: rgba(71, 85, 105, 0.95);
+    margin-bottom: 8px;
+}
+
+.kce-mt16 {
+    margin-top: 16px;
+}
+
+/* ---------- Inputs ---------- */
+.kce-field {
+    display: grid;
+    gap: 8px;
+}
+
+.kce-input {
+    width: 100%;
+    border: 1px solid rgba(15, 23, 42, 0.10);
+    background: #fff;
+    border-radius: 10px;
+    padding: 10px 12px;
+
+    font-family: "Inter", sans-serif;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--kc-text-primary, #0f172a);
+
+    outline: none;
+    transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.kce-input::placeholder {
+    color: rgba(71, 85, 105, 0.75);
+    font-weight: 500;
+}
+
+.kce-input:focus {
+    border-color: rgba(249, 115, 22, 0.55);
+    box-shadow: 0 0 0 3px var(--kc-focus-ring, rgba(249, 115, 22, 0.2));
+}
+
+.kce-textarea {
+    resize: vertical;
+    min-height: 110px;
+}
+
+/* two-column fields like screenshot */
+.kce-grid2 {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+    margin-top: 14px;
+}
+
+@media (max-width: 560px) {
+    .kce-grid2 {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* ---------- Uploads ---------- */
+.kce-upload {
+    width: 100%;
+    border-radius: 12px;
+    border: 1px dashed rgba(15, 23, 42, 0.18);
+    background: #fff;
+    min-height: 120px;
+    position: relative;
+    overflow: hidden;
+    cursor: pointer;
+    display: grid;
+    place-items: center;
+}
+
+.kce-uploadSquare {
+    min-height: 120px;
+}
+
+.kce-uploadInner {
+    display: grid;
+    place-items: center;
+    gap: 6px;
+}
+
+.kce-plus {
+    font-size: 18px;
+    font-weight: 700;
+    color: rgba(15, 23, 42, 0.75);
+    line-height: 1;
+}
+
+.kce-uploadText {
+    font-size: 12px;
+    font-weight: 700;
+    color: rgba(15, 23, 42, 0.78);
+    text-align: center;
+}
+
+.kce-uploadImg {
     width: 100%;
     height: 100%;
     object-fit: cover;
@@ -503,145 +337,142 @@
     inset: 0;
 }
 
-.kc-upload-text {
-    font-family: "Inter", sans-serif;
-    font-weight: 700;
-    color: rgba(15, 23, 42, 0.86);
-    z-index: 1;
-}
-
-.kc-upload-x {
+.kce-x {
     position: absolute;
     top: 10px;
     right: 10px;
-    width: 38px;
-    height: 38px;
-    border-radius: 12px;
-
+    width: 32px;
+    height: 32px;
+    border-radius: 10px;
     border: 1px solid rgba(15, 23, 42, 0.12);
     background: rgba(255, 255, 255, 0.92);
-
     display: grid;
     place-items: center;
-    font-family: "Inter", sans-serif;
     font-weight: 800;
-    z-index: 2;
-    cursor: pointer;
 }
 
-.kc-upload-x:hover {
-    background: #ffffff;
+/* ---------- Work grid ---------- */
+.kce-miniSub {
+    margin-top: -6px;
 }
 
-/* ---------------------------------------------------------
-   Work grid
---------------------------------------------------------- */
-.kc-work-grid {
+.kce-workGrid {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 12px;
+    gap: 10px;
 }
 
-@media (max-width: 560px) {
-    .kc-work-grid {
-        grid-template-columns: 1fr;
-    }
-}
-
-.kc-work-item,
-.kc-work-add {
-    border-radius: 18px;
-    border: 1px solid rgba(15, 23, 42, 0.12);
-    background: #ffffff;
+.kce-workItem,
+.kce-workAdd {
+    border-radius: 12px;
     overflow: hidden;
     aspect-ratio: 4 / 3;
     position: relative;
-    box-shadow: 0 0 1px rgba(0, 0, 0, 0.25);
 }
 
-.kc-work-item img {
+.kce-workItem {
+    background: rgba(15, 23, 42, 0.78);
+}
+
+.kce-workItem img {
     width: 100%;
     height: 100%;
     object-fit: cover;
 }
 
-.kc-work-x {
+.kce-workX {
     position: absolute;
     top: 10px;
     right: 10px;
-    width: 36px;
-    height: 36px;
-    border-radius: 12px;
-
+    width: 30px;
+    height: 30px;
+    border-radius: 10px;
     border: 1px solid rgba(15, 23, 42, 0.12);
     background: rgba(255, 255, 255, 0.92);
-
     cursor: pointer;
-    font-family: "Inter", sans-serif;
     font-weight: 800;
 }
 
-.kc-work-x:hover {
-    background: #ffffff;
-}
-
-.kc-work-add {
+.kce-workAdd {
+    border: 1px dashed rgba(15, 23, 42, 0.18);
+    background: #fff;
     display: grid;
     place-items: center;
     cursor: pointer;
-    border-style: dashed;
-
-    font-family: "Inter", sans-serif;
-    font-size: 14px;
-    font-weight: 700;
-    color: rgba(15, 23, 42, 0.86);
-    background: rgba(15, 23, 42, 0.02);
 }
 
-/* ---------------------------------------------------------
-   Repeat blocks (services/reviews)
---------------------------------------------------------- */
-.kc-repeat {
+/* ---------- Repeat cards (services/reviews) ---------- */
+.kce-repeat {
     display: grid;
     gap: 12px;
 }
 
-.kc-repeat-card {
+.kce-repeatCard {
+    background: #fff;
     border: 1px solid rgba(15, 23, 42, 0.10);
-    background: rgba(15, 23, 42, 0.02);
-    border-radius: 18px;
+    border-radius: 12px;
     padding: 12px;
-    box-shadow: 0 0 1px rgba(0, 0, 0, 0.25);
+    display: grid;
+    gap: 12px;
 }
 
-.kc-row-right {
-    display: flex;
-    justify-content: flex-end;
+.kce-dangerOutline {
+    width: 100%;
+    border-radius: 10px;
+    padding: 10px 12px;
+    border: 1px solid rgba(239, 68, 68, 0.45);
+    background: rgba(239, 68, 68, 0.06);
+    color: rgba(239, 68, 68, 0.95);
+    font-weight: 700;
+    cursor: pointer;
+}
+
+/* dashed add button */
+.kce-dashedAdd {
+    width: 100%;
+    border-radius: 12px;
+    padding: 12px 14px;
+    border: 1px dashed rgba(15, 23, 42, 0.18);
+    background: #fff;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+/* ---------- Social rows ---------- */
+.kce-social {
+    display: grid;
+    gap: 10px;
     margin-top: 10px;
 }
 
-/* Social rows */
-.kc-social {
+.kce-socialRow {
     display: grid;
-    gap: 10px;
-}
-
-.kc-social-row {
-    display: grid;
-    grid-template-columns: 34px minmax(0, 1fr);
+    grid-template-columns: 28px minmax(0, 1fr);
     gap: 10px;
     align-items: center;
 }
 
-.kc-social-row img {
-    width: 22px;
-    height: 22px;
+.kce-socialRow img {
+    width: 20px;
+    height: 20px;
     object-fit: contain;
     opacity: 0.9;
 }
 
-@media (max-width: 560px) {
-    .kc-btn-wide {
-        width: 100%;
-    }
+/* ---------- Footer bar ---------- */
+.kce-footer {
+    position: sticky;
+    bottom: 0;
+    z-index: 6;
+    background: #fff;
+    border-top: 1px solid rgba(15, 23, 42, 0.08);
+    padding-top: 12px;
+
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+}
+
+.kce-footerPad {
+    height: 14px;
 }
