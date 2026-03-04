@@ -95,8 +95,10 @@ export default function Profiles() {
     const { data: authUser, refetch: refetchAuthUser } = useAuthUser();
     const plan = safeLower(authUser?.plan || "free");
     const isTeams = plan === "teams";
+    const isPlus = plan === "plus";
+    const isFree = !isTeams && !isPlus;
 
-    // ✅ Teams cap
+    // ✅ cap logic (important)
     const teamsCap = Math.max(1, Number(authUser?.teamsProfilesQty || 1));
     const maxProfiles = isTeams ? teamsCap : 1;
 
@@ -104,6 +106,13 @@ export default function Profiles() {
     const { data: cards, isLoading, isError, refetch: refetchProfiles } = useMyProfiles();
     const createProfile = useCreateProfile();
     const deleteProfile = useDeleteProfile();
+
+    // If plan changes (e.g., cancel/subscription updates), refetch list
+    useEffect(() => {
+        if (!authUser) return;
+        refetchProfiles?.();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [plan, teamsCap]);
 
     const profiles = useMemo(() => {
         const xs = Array.isArray(cards) ? cards : [];
@@ -156,20 +165,48 @@ export default function Profiles() {
         return xs;
     }, [profiles]);
 
+    // ✅ mark over-cap profiles as locked (so UI doesn’t lie)
+    const cappedProfiles = useMemo(() => {
+        return sortedProfiles.map((p, idx) => ({
+            ...p,
+            isOverCap: idx >= maxProfiles,
+        }));
+    }, [sortedProfiles, maxProfiles]);
+
     const [selectedSlug, setSelectedSlug] = useState(null);
 
+    // ✅ ensure selected profile is never over-cap
     useEffect(() => {
         if (!sortedProfiles.length) {
             setSelectedSlug(null);
             return;
         }
-        setSelectedSlug((prev) => prev || sortedProfiles[0].slug);
-    }, [sortedProfiles]);
+
+        setSelectedSlug((prev) => {
+            const firstAllowed = sortedProfiles[0]?.slug || null;
+            if (!prev) return firstAllowed;
+
+            const idx = sortedProfiles.findIndex((p) => p.slug === prev);
+            if (idx === -1) return firstAllowed;
+
+            // if user downgraded and current selection is now over cap, snap back
+            if (idx >= maxProfiles) return firstAllowed;
+
+            return prev;
+        });
+    }, [sortedProfiles, maxProfiles]);
 
     const selectedProfile = useMemo(() => {
         if (!sortedProfiles.length) return null;
-        return sortedProfiles.find((p) => p.slug === selectedSlug) || sortedProfiles[0];
-    }, [sortedProfiles, selectedSlug]);
+
+        const found = sortedProfiles.find((p) => p.slug === selectedSlug) || sortedProfiles[0];
+        const idx = sortedProfiles.findIndex((p) => p.slug === found.slug);
+
+        // never return over-cap as selected
+        if (idx >= maxProfiles) return sortedProfiles[0] || null;
+
+        return found;
+    }, [sortedProfiles, selectedSlug, maxProfiles]);
 
     const buildPublicUrl = (profileSlug) => {
         const s = normalizeSlug(profileSlug);
@@ -335,9 +372,6 @@ export default function Profiles() {
         }
     };
 
-    // =========================================================
-    // Bottom buttons (new labels + delete)
-    // =========================================================
     const handleDownloadQr = async () => {
         if (!selectedProfile?.slug) return;
         alert("QR download endpoint not wired yet. Tell me your backend QR endpoint and I’ll connect it.");
@@ -346,6 +380,8 @@ export default function Profiles() {
     const handleWalletCombined = async () => {
         alert("Wallet not wired yet. If you have an endpoint/URL for pass creation, send it and I’ll connect it.");
     };
+
+    const goUpgrade = () => navigate("/pricing");
 
     // =========================================================
     // INLINE "ADD PROFILE" (REPLACES THE DASHED CARD)
@@ -416,8 +452,6 @@ export default function Profiles() {
     };
 
     const createProfileNow = async () => {
-        // Teams: create directly
-        // Free: send to editor (cannot exceed 1 profile)
         const v = validateClaimSlug(claimSlugInput);
         setClaimSlugNormalized(v.slug);
 
@@ -427,7 +461,7 @@ export default function Profiles() {
             return;
         }
 
-        // Free plan cap guard
+        // Free/Plus cap guard (you currently only allow extra profiles on Teams)
         if (!isTeams && sortedProfiles.length >= maxProfiles) {
             setClaimStatus("error");
             setClaimMessage("Your current plan allows 1 profile. Upgrade to create more.");
@@ -442,7 +476,7 @@ export default function Profiles() {
         }
 
         if (!isTeams) {
-            // still keep UX consistent: if available → go editor
+            // If you later allow Plus to have >1 profile, change maxProfiles for plus above.
             handleEdit(v.slug);
             return;
         }
@@ -602,6 +636,8 @@ export default function Profiles() {
         );
     }
 
+    const hasOverCapProfiles = cappedProfiles.some((p) => p.isOverCap);
+
     // =========================================================
     // Main render
     // =========================================================
@@ -613,10 +649,29 @@ export default function Profiles() {
                     subtitle="Profiles are your public digital business cards. Each profile has its own link you can share after every job."
                 />
 
+                {hasOverCapProfiles ? (
+                    <section className="profiles-card" style={{ marginBottom: 16 }}>
+                        <h2 className="profiles-card-title" style={{ marginBottom: 6 }}>
+                            Some profiles are locked
+                        </h2>
+                        <p className="profiles-muted" style={{ marginBottom: 12 }}>
+                            Your plan allows <strong>{maxProfiles}</strong> profile{maxProfiles === 1 ? "" : "s"}.
+                            Upgrade to unlock the extra profile{cappedProfiles.length - maxProfiles === 1 ? "" : "s"}.
+                        </p>
+                        <div className="profiles-actions-row">
+                            <button type="button" className="kx-btn kx-btn--orange" onClick={goUpgrade}>
+                                Upgrade plan
+                            </button>
+                        </div>
+                    </section>
+                ) : null}
+
                 {sortedProfiles.length === 0 ? (
                     <section className="profiles-card profiles-empty">
                         <h2 className="profiles-card-title">Create your first profile</h2>
-                        <p className="profiles-muted">Your profile is what customers see when they scan your KonarCard. Create it once — update it any time.</p>
+                        <p className="profiles-muted">
+                            Your profile is what customers see when they scan your KonarCard. Create it once — update it any time.
+                        </p>
 
                         <div className="profiles-actions-row">
                             <button type="button" className="kx-btn kx-btn--orange" onClick={openClaimPanel}>
@@ -645,19 +700,28 @@ export default function Profiles() {
                             <div className="profiles-listDivider" />
 
                             <div className="profiles-listScroll">
-                                {sortedProfiles.map((p) => {
+                                {cappedProfiles.map((p) => {
                                     const active = selectedProfile?.slug === p.slug;
+                                    const locked = p.isOverCap;
 
                                     return (
                                         <article
                                             key={p.slug}
-                                            className={`profiles-profileCard ${active ? "is-active" : ""}`}
-                                            onClick={() => setSelectedSlug(p.slug)}
+                                            className={`profiles-profileCard ${active ? "is-active" : ""} ${locked ? "is-locked" : ""}`}
+                                            onClick={() => {
+                                                if (locked) return goUpgrade();
+                                                setSelectedSlug(p.slug);
+                                            }}
                                             role="button"
                                             tabIndex={0}
                                             onKeyDown={(e) => {
-                                                if (e.key === "Enter" || e.key === " ") setSelectedSlug(p.slug);
+                                                if (e.key === "Enter" || e.key === " ") {
+                                                    if (locked) return goUpgrade();
+                                                    setSelectedSlug(p.slug);
+                                                }
                                             }}
+                                            aria-disabled={locked ? "true" : "false"}
+                                            style={locked ? { opacity: 0.62, cursor: "pointer" } : undefined}
                                         >
                                             <div className="profiles-profileMain">
                                                 <div className="profiles-profileLeft">
@@ -669,10 +733,21 @@ export default function Profiles() {
                                                         <span className={`profiles-pill completion ${p.tone}`}>
                                                             {p.pct >= 95 ? "Profile Complete" : `${p.pct}% Complete`}
                                                         </span>
+
+                                                        {locked ? (
+                                                            <span className="profiles-pill" style={{ background: "#0b1220", color: "#fff" }}>
+                                                                Locked
+                                                            </span>
+                                                        ) : null}
                                                     </div>
 
                                                     <div className="profiles-slug">{p.slug}</div>
                                                     <div className="profiles-updated">{p.updatedAt}</div>
+                                                    {locked ? (
+                                                        <div className="profiles-updated" style={{ marginTop: 6 }}>
+                                                            Upgrade to use this profile.
+                                                        </div>
+                                                    ) : null}
                                                 </div>
 
                                                 <div className="profiles-profileRight">
@@ -681,8 +756,10 @@ export default function Profiles() {
                                                             <button
                                                                 type="button"
                                                                 className="kx-btn kx-btn--white profiles-cardBtn"
+                                                                disabled={locked}
                                                                 onClick={(e) => {
                                                                     e.stopPropagation();
+                                                                    if (locked) return goUpgrade();
                                                                     handleEdit(p.slug);
                                                                 }}
                                                             >
@@ -692,8 +769,10 @@ export default function Profiles() {
                                                             <button
                                                                 type="button"
                                                                 className="kx-btn kx-btn--black profiles-cardBtn"
+                                                                disabled={locked}
                                                                 onClick={(e) => {
                                                                     e.stopPropagation();
+                                                                    if (locked) return goUpgrade();
                                                                     shareSlug(p.slug);
                                                                 }}
                                                             >
@@ -799,8 +878,16 @@ export default function Profiles() {
                                                         </button>
                                                     )
                                                 ) : (
-                                                    <button type="button" className="kx-btn kx-btn--orange" onClick={createProfileNow}>
-                                                        Continue to editor
+                                                    <button
+                                                        type="button"
+                                                        className="kx-btn kx-btn--orange"
+                                                        onClick={() => {
+                                                            // Free/Plus currently capped at 1 here
+                                                            if (sortedProfiles.length >= maxProfiles) return goUpgrade();
+                                                            createProfileNow();
+                                                        }}
+                                                    >
+                                                        {sortedProfiles.length >= maxProfiles ? "Upgrade to add profiles" : "Continue to editor"}
                                                     </button>
                                                 )}
                                             </div>
