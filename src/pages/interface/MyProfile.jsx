@@ -859,36 +859,38 @@ export default function MyProfile() {
             )}
 
             <div className="myprofile-grid">
-              {/* ✅ EDITOR LEFT (swapped) */}
-              <section className="profiles-card myprofile-cardShell myprofile-editorCard">
-                <div className="myprofile-cardBody">
-                  <Editor
-                    state={state}
-                    updateState={updateState}
-                    isSubscribed={!isFree}
-                    hasTrialEnded={false}
-                    onStartSubscription={handleStartSubscription}
-                    onResetPage={handleResetPage}
-                    onSubmit={handleSubmit}
-                    showMainSection={showMainSection}
-                    setShowMainSection={setShowMainSection}
-                    showAboutMeSection={showAboutMeSection}
-                    setShowAboutMeSection={setShowAboutMeSection}
-                    showWorkSection={showWorkSection}
-                    setShowWorkSection={setShowWorkSection}
-                    showServicesSection={showServicesSection}
-                    setShowServicesSection={setShowServicesSection}
-                    showReviewsSection={showReviewsSection}
-                    setShowReviewsSection={setShowReviewsSection}
-                    showContactSection={showContactSection}
-                    setShowContactSection={setShowContactSection}
-                    onCoverUpload={onCoverUpload}
-                    onRemoveCover={handleRemoveCoverPhoto}
-                    onAvatarUpload={onAvatarUpload}
-                    onRemoveAvatar={handleRemoveAvatar}
-                    onAddWorkImages={onAddWorkImages}
-                    onRemoveWorkImage={handleRemoveWorkImage}
-                  />
+              {/* ✅ EDITOR LEFT (NO outer card border) */}
+              <section className="myprofile-editorCol">
+                <div className="myprofile-editorSurface">
+                  <div className="myprofile-editorBody">
+                    <Editor
+                      state={state}
+                      updateState={updateState}
+                      isSubscribed={!isFree}
+                      hasTrialEnded={false}
+                      onStartSubscription={handleStartSubscription}
+                      onResetPage={handleResetPage}
+                      onSubmit={handleSubmit}
+                      showMainSection={showMainSection}
+                      setShowMainSection={setShowMainSection}
+                      showAboutMeSection={showAboutMeSection}
+                      setShowAboutMeSection={setShowAboutMeSection}
+                      showWorkSection={showWorkSection}
+                      setShowWorkSection={setShowWorkSection}
+                      showServicesSection={showServicesSection}
+                      setShowServicesSection={setShowServicesSection}
+                      showReviewsSection={showReviewsSection}
+                      setShowReviewsSection={setShowReviewsSection}
+                      showContactSection={showContactSection}
+                      setShowContactSection={setShowContactSection}
+                      onCoverUpload={onCoverUpload}
+                      onRemoveCover={handleRemoveCoverPhoto}
+                      onAvatarUpload={onAvatarUpload}
+                      onRemoveAvatar={handleRemoveAvatar}
+                      onAddWorkImages={onAddWorkImages}
+                      onRemoveWorkImage={handleRemoveWorkImage}
+                    />
+                  </div>
                 </div>
               </section>
 

@@ -645,3 +645,84 @@
         width: 100%;
     }
 }
+
+/* frontend/src/styling/dashboard/editor.css */
+
+/* ✅ IMPORTANT: remove padding here — parent surface provides 24px */
+.kc-editor-scope {
+    width: 100%;
+    min-width: 0;
+    box-sizing: border-box;
+
+    padding: 0;
+    /* ✅ was 24px -> caused “too big” */
+    font-family: "Inter", sans-serif;
+    color: var(--kc-text-primary);
+
+    /* ✅ make scroll layout work */
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+    height: 100%;
+}
+
+/* Sticky header stays */
+.kc-editor-top {
+    position: sticky;
+    top: 0;
+    z-index: 5;
+    background: #ffffff;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+
+    padding-bottom: 12px;
+    /* slightly tighter */
+    border-bottom: 1px solid rgba(15, 23, 42, 0.08);
+}
+
+/* ✅ The editor scroll area must fill remaining height */
+.kc-editor-scroll {
+    margin-top: 12px;
+    /* tighter */
+    overflow: auto;
+    min-height: 0;
+    flex: 1;
+    /* ✅ THIS makes it scroll */
+    -webkit-overflow-scrolling: touch;
+    scrollbar-gutter: stable;
+}
+
+/* ✅ reduce big gaps between sections */
+.kc-editor-card {
+    background: transparent;
+    border: 0;
+    padding: 0;
+    margin: 0;
+    width: 100%;
+    max-width: none;
+    box-sizing: border-box;
+
+    display: grid;
+    gap: 10px;
+    /* ✅ was larger-feeling */
+}
+
+.kc-section {
+    display: grid;
+    gap: 8px;
+    /* ✅ tighter */
+}
+
+.kc-section-body {
+    margin-top: 0;
+    padding: 10px 0 0;
+    /* ✅ remove extra side padding that looked like “spacing” */
+    display: grid;
+    gap: 10px;
+    /* ✅ tighter */
+}
+
+/* keep your existing rest of styles below unchanged */

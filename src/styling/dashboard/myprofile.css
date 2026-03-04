@@ -1,6 +1,5 @@
 /* frontend/src/styling/dashboard/myprofile.css */
 
-/* Keep your existing token fallbacks */
 :root {
     --mp-bg: var(--kc-bg, #ffffff);
     --mp-surface: var(--kc-surface, #ffffff);
@@ -15,7 +14,7 @@
     --mp-softShadow: 0 0 1px rgba(0, 0, 0, 0.25);
 }
 
-/* Shell like Profiles page: let columns fill and scroll correctly */
+/* Page shell */
 .myprofile-shell {
     width: 100%;
     margin: 0;
@@ -28,7 +27,6 @@
     height: calc(100vh - (var(--dash-gutter, 24px) * 2));
 }
 
-/* Grid: editor left, preview right */
 .myprofile-grid {
     display: grid;
     grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
@@ -39,7 +37,7 @@
     min-height: 0;
 }
 
-/* Make both cards flex columns so preview can fill remaining height */
+/* Preview column keeps card styling */
 .myprofile-cardShell {
     background: #ffffff;
     border: 1px solid var(--mp-border);
@@ -52,31 +50,57 @@
     min-height: 0;
 }
 
-/* Editor card: leave as-is for now, but ensure it can scroll internally */
-.myprofile-editorCard {
-    padding: 16px;
-}
-
-.myprofile-cardBody {
-    flex: 1;
-    min-height: 0;
-    overflow: auto;
-    padding-right: 6px;
-}
-
-/* Preview card MUST be 24px padding */
+/* Preview MUST be 24px padding */
 .myprofile-previewCard {
     padding: 24px;
+    flex: 1;
 }
 
-/* =========================
-   Preview header (new)
-   ========================= */
+/* =========================================
+   ✅ EDITOR COLUMN (no outer border)
+   Editor gets its OWN surface box inside
+========================================= */
+
+.myprofile-editorCol {
+    min-width: 0;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+}
+
+.myprofile-editorSurface {
+    background: #ffffff;
+    border: 1px solid var(--mp-border);
+    border-radius: var(--mp-radius);
+    box-shadow: var(--mp-softShadow);
+
+    /* ✅ EXACT 24px padding around the editor */
+    padding: 24px;
+
+    flex: 1;
+    min-height: 0;
+
+    display: flex;
+    flex-direction: column;
+}
+
+/* This wrapper constrains height so Editor can scroll internally */
+.myprofile-editorBody {
+    flex: 1;
+    min-height: 0;
+    overflow: hidden;
+    /* ✅ prevents the whole surface scrolling */
+    display: flex;
+    flex-direction: column;
+}
+
+/* =========================================
+   Preview header (unchanged)
+========================================= */
 
 .myprofile-previewTop {
     display: flex;
     align-items: center;
-    /* ✅ pills centered vertically */
     justify-content: space-between;
     gap: 12px;
     min-width: 0;
@@ -86,7 +110,6 @@
     display: flex;
     flex-direction: column;
     gap: 4px;
-    /* ✅ exactly 4px gap */
     min-width: 0;
 }
 
@@ -118,19 +141,14 @@
     justify-content: flex-end;
 }
 
-/* =========================
-   Preview fill + internal scroll
-   ========================= */
-
+/* Preview fill + internal scroll */
 .myprofile-previewFrame {
     margin-top: 16px;
     flex: 1;
     min-height: 0;
     overflow: hidden;
-    /* ✅ scroll must be inside Preview */
 }
 
-/* Override Preview’s internal forced heights ONLY inside this page */
 .myprofile-previewFrame .preview-scope.myprofile-preview-wrapper {
     height: 100% !important;
     max-height: 100% !important;
@@ -138,7 +156,6 @@
     flex: 1 !important;
 }
 
-/* Ensure real scroll is inside Preview */
 .myprofile-previewFrame .preview-scope .myprofile-preview {
     height: 100% !important;
     max-height: 100% !important;
@@ -147,7 +164,6 @@
     overflow-x: hidden !important;
 }
 
-/* Iframe mode must also stretch */
 .myprofile-previewFrame .preview-iframe-shell,
 .myprofile-previewFrame .preview-iframe {
     height: 100% !important;
@@ -158,16 +174,7 @@
     padding: 0 !important;
 }
 
-/* optional: keep scrollbar stable */
-.myprofile-cardBody,
-.myprofile-previewFrame {
-    scrollbar-gutter: stable;
-}
-
-/* =========================
-   Existing utility styles kept
-   ========================= */
-
+/* Utility cards (verify/warn) */
 .myprofile-card {
     background: var(--mp-surface);
     border: 1px solid var(--mp-softLine);
@@ -208,34 +215,16 @@
         grid-template-columns: 1fr;
     }
 
-    .myprofile-editorCard,
+    .myprofile-editorSurface,
     .myprofile-previewCard {
         padding: 16px;
     }
 
-    .myprofile-cardBody {
+    .myprofile-editorBody {
         overflow: visible;
-        padding-right: 0;
     }
 
     .myprofile-previewFrame {
         overflow: visible;
     }
-}
-
-/* CHANGE THIS ONLY for editor card body so Editor can control scroll */
-.myprofile-editorCard .myprofile-cardBody {
-    overflow: hidden;
-    /* ✅ prevents whole card scrolling */
-    padding-right: 0;
-    /* Editor scroll handles its own gutter */
-}
-
-.myprofile-col {
-    padding: 24px;
-    /* ✅ match Profiles cards */
-    overflow: hidden;
-    /* ✅ stop the card scrolling */
-    max-height: calc(100vh - 190px);
-    min-height: 0;
 }
