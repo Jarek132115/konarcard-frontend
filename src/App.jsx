@@ -67,6 +67,9 @@ import Analytics from "./pages/interface/Analytics.jsx";
 import ContactBook from "./pages/interface/ContactBook.jsx";
 import Settings from "./pages/interface/Settings.jsx";
 
+// ✅ NEW: Dashboard pricing page
+import UpgradePlan from "./pages/interface/UpgradePlan.jsx";
+
 // Admin
 import AdminOrders from "./pages/admin/AdminDashboard.jsx";
 
@@ -84,6 +87,7 @@ function TidioWrapper() {
     location.pathname.startsWith("/contact-book") ||
     location.pathname.startsWith("/settings") ||
     location.pathname.startsWith("/billing") ||
+    location.pathname.startsWith("/upgrade-plan") || // ✅ add
     location.pathname.startsWith("/myorders") ||
     location.pathname.startsWith("/nfccards") ||
     location.pathname.startsWith("/notifications") ||
@@ -138,7 +142,6 @@ export default function App() {
           <Route path="/products/plastic" element={<Navigate to="/products/plastic-card" replace />} />
           <Route path="/products/metal" element={<Navigate to="/products/metal-card" replace />} />
 
-
           <Route path="/examples" element={<Example />} />
           <Route path="/pricing" element={<Pricing />} />
           <Route path="/faq" element={<FAQ />} />
@@ -172,6 +175,7 @@ export default function App() {
               </ProtectedRoute>
             }
           />
+
           <Route
             path="/profiles"
             element={
@@ -188,6 +192,7 @@ export default function App() {
               </ProtectedRoute>
             }
           />
+
           <Route
             path="/cards"
             element={
@@ -196,6 +201,7 @@ export default function App() {
               </ProtectedRoute>
             }
           />
+
           <Route
             path="/analytics"
             element={
@@ -204,6 +210,7 @@ export default function App() {
               </ProtectedRoute>
             }
           />
+
           <Route
             path="/contact-book"
             element={
@@ -212,6 +219,17 @@ export default function App() {
               </ProtectedRoute>
             }
           />
+
+          {/* ✅ NEW: dashboard pricing / upgrade page */}
+          <Route
+            path="/upgrade-plan"
+            element={
+              <ProtectedRoute>
+                <UpgradePlan />
+              </ProtectedRoute>
+            }
+          />
+
           <Route
             path="/settings"
             element={
