@@ -1,60 +1,59 @@
 /* =========================================================
-   KonarCard Editor (scoped) — Premium Dashboard Style
-   ✅ Fixed header (non-scrolling)
-   ✅ Scroll only the content area
-   ✅ Accordion sections collapsed by default
-   ✅ 24px padding
+   KonarCard Editor (scoped)
+   - Sticky header (title/subtitle/actions)
+   - Scroll only in body
+   - Accordion rows match your screenshot
+   - NO extra padding (parent card provides 24px)
 ========================================================= */
 
 .kc-editor-scope {
     width: 100%;
     min-width: 0;
-    height: 100%;
     min-height: 0;
+    height: 100%;
 
     display: flex;
     flex-direction: column;
 
     font-family: "Inter", sans-serif;
     color: var(--kc-text-primary);
-    box-sizing: border-box;
 }
 
-/* Fixed top header (does NOT scroll) */
-.kc-editor-top {
-    flex: 0 0 auto;
-    padding: 24px;
-    border-bottom: 1px solid rgba(15, 23, 42, 0.08);
+/* Sticky header area */
+.kc-editor-sticky {
+    position: sticky;
+    top: 0;
+    z-index: 5;
     background: #ffffff;
 }
 
-.kc-editor-topRow {
+/* Header layout */
+.kc-editor-head {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 12px;
+    gap: 16px;
 }
 
-.kc-editor-topLeft {
+.kc-editor-headLeft {
     min-width: 0;
-    display: flex;
-    flex-direction: column;
+    display: grid;
     gap: 4px;
-    /* ✅ exactly 4px */
+    /* ✅ 4px gap like you asked */
 }
 
-/* Uses same styling language as Profiles page titles */
-.kc-editor-h1 {
+/* Use same typographic feel as the rest of dashboard */
+.kc-editor-title {
     margin: 0;
     font-family: "Cal Sans", sans-serif;
     font-weight: 400;
     font-size: var(--kc-title-size);
     line-height: var(--kc-title-line);
-    letter-spacing: -0.01em;
     color: var(--kc-text-primary);
+    letter-spacing: -0.01em;
 }
 
-.kc-editor-h2 {
+.kc-editor-subtitle {
     margin: 0;
     font-family: "Inter", sans-serif;
     font-weight: 400;
@@ -63,144 +62,175 @@
     color: var(--kc-text-secondary);
 }
 
-.kc-editor-topActions {
+.kc-editor-actions {
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 12px;
     flex: 0 0 auto;
 }
 
-/* Scroll area (ONLY this scrolls) */
-.kc-editor-scroll {
+/* divider under header (like Profiles list) */
+.kc-editor-divider {
+    height: 1px;
+    background: rgba(15, 23, 42, 0.08);
+    margin-top: 16px;
+}
+
+/* Scroll area */
+.kc-editor-body {
     flex: 1;
     min-height: 0;
     overflow: auto;
-    padding: 24px;
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
-    scrollbar-gutter: stable;
+    padding-top: 16px;
+    -webkit-overflow-scrolling: touch;
 }
 
-/* ---------------------------------------------------------
-   Section pill (the black pill style)
-   - primary text colour background
-   - 10px side padding, 6px vertical
---------------------------------------------------------- */
-.kc-sec-pill {
+/* form spacing */
+.kc-editor-form {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+/* =========================================================
+   Accordion row (your screenshot)
+========================================================= */
+
+.kc-acc-row {
+    width: 100%;
+    border-radius: 18px;
+    border: 1px solid rgba(15, 23, 42, 0.10);
+    background: #ffffff;
+    padding: 14px;
+
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 12px;
+
+    cursor: pointer;
+    text-align: left;
+
+    box-shadow: 0 0 1px rgba(0, 0, 0, 0.25);
+    transition: transform 0.08s ease, background 0.18s ease, border-color 0.18s ease;
+}
+
+.kc-acc-row:hover {
+    background: rgba(15, 23, 42, 0.01);
+}
+
+.kc-acc-row:active {
+    transform: translateY(1px);
+}
+
+.kc-acc-row.is-open {
+    background: rgba(15, 23, 42, 0.02);
+    border-color: rgba(15, 23, 42, 0.12);
+    box-shadow: inset 0 0 0 4px rgba(15, 23, 42, 0.08);
+}
+
+/* pill: primary text color background */
+.kc-acc-pill {
     display: inline-flex;
     align-items: center;
     justify-content: center;
 
     padding: 6px 10px;
-    /* ✅ requested */
+    /* ✅ 6 vertical, 10 horizontal */
     border-radius: 999px;
 
-    background: var(--kc-text-primary);
+    background: var(--kc-text-primary, #0f172a);
     color: #ffffff;
 
     font-family: "Inter", sans-serif;
     font-weight: 700;
     font-size: 12px;
     line-height: 1;
+
     white-space: nowrap;
 }
 
-/* ---------------------------------------------------------
-   Accordion header button (clean + premium)
---------------------------------------------------------- */
-.kc-acc-btn {
-    width: 100%;
-    border-radius: 16px;
-    border: 1px solid rgba(15, 23, 42, 0.10);
-    background: #ffffff;
-    box-shadow: 0 0 1px rgba(0, 0, 0, 0.25);
-
-    padding: 14px;
-    cursor: pointer;
-
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 12px;
-
-    text-align: left;
-    transition: transform 0.08s ease, background 0.18s ease, border-color 0.18s ease;
-}
-
-.kc-acc-btn:hover {
-    background: rgba(15, 23, 42, 0.01);
-}
-
-.kc-acc-btn:active {
-    transform: translateY(1px);
-}
-
-.kc-acc-left {
-    display: flex;
-    align-items: center;
-    gap: 12px;
+.kc-acc-text {
     min-width: 0;
-}
-
-.kc-acc-txt {
-    min-width: 0;
+    display: grid;
+    gap: 2px;
 }
 
 .kc-acc-title {
-    margin: 0;
-    font-family: "Cal Sans", sans-serif;
-    font-weight: 400;
-    font-size: 15px;
-    color: var(--kc-text-primary);
-    letter-spacing: -0.01em;
-    line-height: 1.2;
+    font-family: "Inter", sans-serif;
+    font-weight: 700;
+    font-size: 14px;
+    color: rgba(15, 23, 42, 0.92);
 }
 
 .kc-acc-sub {
-    margin-top: 4px;
     font-family: "Inter", sans-serif;
-    font-weight: 400;
-    font-size: 13px;
-    line-height: 1.35;
-    color: var(--kc-text-secondary);
+    font-weight: 500;
+    font-size: 12px;
+    color: rgba(71, 85, 105, 0.85);
 }
 
-/* Chevron */
-.kc-acc-chev {
-    flex: 0 0 auto;
-    width: 34px;
-    height: 34px;
-    border-radius: 12px;
-    display: grid;
-    place-items: center;
-    color: rgba(15, 23, 42, 0.65);
-    transition: transform 0.18s ease, background 0.18s ease;
+.kc-acc-chevron {
+    font-size: 16px;
+    opacity: 0.7;
+    transform: rotate(-90deg);
+    transition: transform 0.18s ease;
 }
 
-.kc-acc-btn:hover .kc-acc-chev {
-    background: rgba(15, 23, 42, 0.05);
+.kc-acc-chevron.open {
+    transform: rotate(0deg);
 }
 
-.kc-acc-chev.open {
-    transform: rotate(180deg);
-}
-
-/* Accordion body */
-.kc-acc-body {
-    margin-top: 12px;
-    padding: 16px;
-    border-radius: 16px;
-    border: 1px solid rgba(15, 23, 42, 0.08);
-    background: rgba(15, 23, 42, 0.02);
-
+/* panel under each accordion row */
+.kc-acc-panel {
+    margin-top: 2px;
+    padding: 12px 2px 8px;
     display: grid;
     gap: 12px;
 }
 
-/* ---------------------------------------------------------
-   Fields / inputs
---------------------------------------------------------- */
+/* =========================================================
+   Existing editor building blocks (kept, slightly tightened)
+========================================================= */
+
+.kc-block {
+    background: #ffffff;
+    border: 1px solid rgba(15, 23, 42, 0.10);
+    border-radius: 16px;
+    padding: 14px;
+    box-shadow: 0 0 1px rgba(0, 0, 0, 0.25);
+}
+
+.kc-block-title {
+    font-family: "Inter", sans-serif;
+    font-size: 13px;
+    font-weight: 800;
+    line-height: 1.2;
+    color: rgba(15, 23, 42, 0.92);
+    margin-bottom: 10px;
+}
+
+.kc-help {
+    margin-top: 10px;
+    font-family: "Inter", sans-serif;
+    font-size: 12px;
+    font-weight: 600;
+    line-height: 1.35;
+    color: rgba(15, 23, 42, 0.70);
+}
+
+.kc-grid-2 {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+}
+
+@media (max-width: 560px) {
+    .kc-grid-2 {
+        grid-template-columns: 1fr;
+    }
+}
+
 .kc-field {
     display: grid;
     gap: 8px;
@@ -210,25 +240,30 @@
     font-family: "Inter", sans-serif;
     font-size: 13px;
     font-weight: 600;
+    letter-spacing: 0.2px;
     color: rgba(71, 85, 105, 0.95);
 }
 
 .kc-input {
     width: 100%;
+    box-sizing: border-box;
+
     border: 1px solid rgba(15, 23, 42, 0.14);
     background: #ffffff;
-    border-radius: 14px;
-    padding: 12px 12px;
+    border-radius: 12px;
+    padding: 11px 12px;
 
     font-family: "Inter", sans-serif;
     font-size: 14px;
     font-weight: 600;
-    color: var(--kc-text-primary);
+    color: rgba(15, 23, 42, 0.92);
+
     outline: none;
+    transition: box-shadow 0.15s ease, border-color 0.15s ease, background-color 0.15s ease;
 }
 
 .kc-input::placeholder {
-    color: rgba(71, 85, 105, 0.70);
+    color: rgba(15, 23, 42, 0.40);
     font-weight: 600;
 }
 
@@ -242,24 +277,7 @@
     min-height: 110px;
 }
 
-/* ---------------------------------------------------------
-   Layout helpers
---------------------------------------------------------- */
-.kc-grid-2 {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 12px;
-}
-
-@media (max-width: 560px) {
-    .kc-grid-2 {
-        grid-template-columns: 1fr;
-    }
-}
-
-/* ---------------------------------------------------------
-   Template selector
---------------------------------------------------------- */
+/* Template chips */
 .kc-template-row {
     display: grid;
     grid-template-columns: repeat(5, minmax(0, 1fr));
@@ -282,24 +300,22 @@
     width: 100%;
     border-radius: 14px;
     padding: 12px 10px;
+
     border: 1px solid rgba(15, 23, 42, 0.14);
     background: #ffffff;
-    cursor: pointer;
 
+    cursor: pointer;
     display: inline-flex;
     align-items: center;
     justify-content: center;
     gap: 6px;
 
-    transition: transform 0.08s ease, background 0.18s ease, border-color 0.18s ease;
+    transition: transform 0.12s ease, box-shadow 0.15s ease, background-color 0.15s ease, border-color 0.15s ease;
 }
 
 .kc-template-chip:hover {
-    background: rgba(15, 23, 42, 0.02);
-}
-
-.kc-template-chip:active {
-    transform: translateY(1px);
+    transform: translateY(-1px);
+    box-shadow: 0 10px 26px rgba(15, 23, 42, 0.10);
 }
 
 .kc-template-chip.active {
@@ -308,7 +324,7 @@
 }
 
 .kc-template-chip.locked {
-    opacity: 0.65;
+    opacity: 0.6;
     border-style: dashed;
 }
 
@@ -317,21 +333,83 @@
     font-size: 12px;
     font-weight: 800;
     letter-spacing: 0.08em;
-    color: var(--kc-text-primary);
+    color: rgba(15, 23, 42, 0.92);
 }
 
-/* Helper text */
-.kc-help {
-    margin-top: 10px;
+.kc-lock {
+    font-size: 14px;
+    line-height: 1;
+}
+
+/* Upload cards */
+.kc-upload {
+    width: 100%;
+    border-radius: 16px;
+    border: 2px dashed rgba(15, 23, 42, 0.18);
+    background: rgba(15, 23, 42, 0.03);
+    min-height: 190px;
+    overflow: hidden;
+    position: relative;
+    cursor: pointer;
+
+    display: grid;
+    place-items: center;
+
+    transition: background-color 0.15s ease, border-color 0.15s ease, transform 0.12s ease;
+}
+
+.kc-upload:hover {
+    transform: translateY(-1px);
+    background: rgba(15, 23, 42, 0.04);
+    border-color: rgba(15, 23, 42, 0.26);
+}
+
+.kc-upload:active {
+    transform: translateY(0px);
+}
+
+.kc-upload-square {
+    min-height: 190px;
+}
+
+.kc-upload-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    position: absolute;
+    inset: 0;
+}
+
+.kc-upload-text {
     font-family: "Inter", sans-serif;
-    font-size: 12px;
-    font-weight: 600;
-    color: rgba(71, 85, 105, 0.90);
+    font-weight: 800;
+    color: rgba(15, 23, 42, 0.88);
+    z-index: 1;
 }
 
-/* ---------------------------------------------------------
-   Work grid
---------------------------------------------------------- */
+.kc-upload-x {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    width: 38px;
+    height: 38px;
+    border-radius: 12px;
+
+    border: 1px solid rgba(15, 23, 42, 0.12);
+    background: rgba(255, 255, 255, 0.92);
+
+    display: grid;
+    place-items: center;
+    font-family: "Inter", sans-serif;
+    font-weight: 900;
+    z-index: 2;
+}
+
+.kc-upload-x:hover {
+    background: #ffffff;
+}
+
+/* Work grid */
 .kc-work-grid {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -367,8 +445,10 @@
     width: 36px;
     height: 36px;
     border-radius: 12px;
+
     border: 1px solid rgba(15, 23, 42, 0.12);
     background: rgba(255, 255, 255, 0.92);
+
     cursor: pointer;
     font-family: "Inter", sans-serif;
     font-weight: 900;
@@ -379,73 +459,15 @@
     place-items: center;
     cursor: pointer;
     border-style: dashed;
+
     font-family: "Inter", sans-serif;
     font-size: 14px;
     font-weight: 800;
-    color: var(--kc-accent-primary);
-    background: rgba(249, 115, 22, 0.08);
+    color: rgba(15, 23, 42, 0.88);
+    background: rgba(15, 23, 42, 0.03);
 }
 
-/* ---------------------------------------------------------
-   Upload cards
---------------------------------------------------------- */
-.kc-upload {
-    width: 100%;
-    border-radius: 16px;
-    border: 2px dashed rgba(15, 23, 42, 0.18);
-    background: #ffffff;
-    min-height: 190px;
-    overflow: hidden;
-    position: relative;
-    cursor: pointer;
-    display: grid;
-    place-items: center;
-    transition: transform 0.08s ease, background 0.18s ease, border-color 0.18s ease;
-}
-
-.kc-upload:hover {
-    background: rgba(15, 23, 42, 0.02);
-    border-color: rgba(15, 23, 42, 0.26);
-}
-
-.kc-upload:active {
-    transform: translateY(1px);
-}
-
-.kc-upload-img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    position: absolute;
-    inset: 0;
-}
-
-.kc-upload-text {
-    font-family: "Inter", sans-serif;
-    font-weight: 800;
-    color: rgba(15, 23, 42, 0.85);
-    z-index: 1;
-}
-
-.kc-upload-x {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    width: 38px;
-    height: 38px;
-    border-radius: 12px;
-    border: 1px solid rgba(15, 23, 42, 0.12);
-    background: rgba(255, 255, 255, 0.92);
-    display: grid;
-    place-items: center;
-    font-family: "Inter", sans-serif;
-    font-weight: 900;
-    z-index: 2;
-}
-
-/* ---------------------------------------------------------
-   Repeat blocks (services/reviews)
---------------------------------------------------------- */
+/* Repeat blocks */
 .kc-repeat {
     display: grid;
     gap: 12px;
@@ -453,7 +475,7 @@
 
 .kc-repeat-card {
     border: 1px solid rgba(15, 23, 42, 0.10);
-    background: #ffffff;
+    background: rgba(15, 23, 42, 0.02);
     border-radius: 16px;
     padding: 12px;
 }
@@ -464,7 +486,6 @@
     margin-top: 10px;
 }
 
-/* Social rows */
 .kc-social {
     display: grid;
     gap: 10px;
@@ -485,16 +506,38 @@
 }
 
 /* Bottom actions */
-.kc-bottom-actions {
+.kc-editor-bottomActions {
+    margin-top: 4px;
     display: flex;
     justify-content: flex-end;
-    gap: 10px;
-    flex-wrap: wrap;
-    margin-top: 8px;
+    gap: 12px;
+}
+
+.kc-wideBtn {
+    width: 100%;
+    justify-content: center;
+}
+
+.kc-dangerBtn {
+    border-color: rgba(239, 68, 68, 0.55) !important;
+    color: rgba(239, 68, 68, 0.95) !important;
+}
+
+.kc-dangerBtn:hover {
+    background: rgba(239, 68, 68, 0.06) !important;
 }
 
 @media (max-width: 560px) {
-    .kc-bottom-actions .kx-btn {
+    .kc-editor-actions {
+        gap: 10px;
+    }
+
+    .kc-editor-bottomActions {
+        flex-direction: column;
+    }
+
+    .kc-editor-bottomActions .kx-btn {
         width: 100%;
+        justify-content: center;
     }
 }
