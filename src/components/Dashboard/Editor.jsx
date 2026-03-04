@@ -9,7 +9,7 @@ import XIcon from "../../assets/icons/icons8-x.svg";
 import TikTokIcon from "../../assets/icons/icons8-tiktok.svg";
 
 /* ✅ Upgrade badge icon (premium) */
-import UpgradePlanIcon from "../../assets/icons/UpgradePlan.svg";
+import UpgradePlanIcon from "../../assets/icons/UpgradePlanIcon.svg";
 
 /* ✅ Use ANY 5 images from the Home hero carousel (UP1–UP8) */
 import UP1 from "../../assets/images/UP1.jpg";
