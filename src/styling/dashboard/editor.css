@@ -1,9 +1,6 @@
 /* frontend/src/styling/dashboard/editor.css */
 /* =========================================================
    KonarCard Editor — isolated class system (kce-*)
-   ✅ Template selector = 5 phone-aspect image tiles (no text)
-   ✅ Each section is a #fafafa rounded panel with inner padding
-   ✅ Divider between panels with 24px gap top/bottom
 ========================================================= */
 
 .kce-root {
@@ -84,7 +81,7 @@
 
 .kce-btn:hover {
     transform: translateY(-1px);
-    box-shadow: 0 10px 26px rgba(15, 23, 42, 0.10);
+    box-shadow: 0 10px 26px rgba(15, 23, 42, 0.1);
 }
 
 .kce-btn:active {
@@ -108,133 +105,46 @@
     color: #0b1220;
 }
 
-/* ---------- Panels ---------- */
-.kce-panel {
+.kce-btnWide {
+    width: 100%;
+}
+
+/* ---------- Section surface (FAFAFA wrapper) ---------- */
+.kce-section {
     background: #fafafa;
     border: 1px solid rgba(15, 23, 42, 0.08);
-    border-radius: 16px;
+    border-radius: 18px;
     padding: 16px;
-
     display: grid;
     gap: 12px;
 }
 
-/* FIT-CONTENT chip inside panel */
-.kce-chip {
-    width: fit-content;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-
-    padding: 8px 12px;
+/* ✅ black pill is FIT-CONTENT (not full width) */
+.kce-pillBar {
+    border: 0;
     border-radius: 999px;
-
+    padding: 8px 12px;
     background: #0b1220;
     color: #fff;
 
+    width: fit-content;
+    max-width: 100%;
+
     font-family: "Inter", sans-serif;
     font-size: 12px;
-    font-weight: 800;
+    font-weight: 700;
     letter-spacing: 0.02em;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
 }
 
-/* Divider between panels: 24px gap above/below + line */
+/* divider blocks between sections: 24px gap above/below + line */
 .kce-dividerBlock {
     height: 1px;
     background: rgba(15, 23, 42, 0.08);
     margin: 24px 0;
-}
-
-/* ---------- Template selector (phone tiles) ---------- */
-.kce-templatePhones {
-    display: grid;
-    grid-template-columns: repeat(5, minmax(0, 1fr));
-    gap: 12px;
-    align-items: start;
-}
-
-@media (max-width: 980px) {
-    .kce-templatePhones {
-        grid-template-columns: repeat(3, minmax(0, 1fr));
-    }
-}
-
-@media (max-width: 560px) {
-    .kce-templatePhones {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-    }
-}
-
-/* Phone-like tile */
-.kce-phoneTile {
-    position: relative;
-    border: 1px solid rgba(15, 23, 42, 0.14);
-    background: #ffffff;
-    border-radius: 16px;
-    padding: 8px;
-    cursor: pointer;
-    width: 100%;
-
-    transition: transform 0.12s ease, box-shadow 0.15s ease, border-color 0.15s ease;
-}
-
-.kce-phoneTile:hover {
-    transform: translateY(-1px);
-    box-shadow: 0 10px 26px rgba(15, 23, 42, 0.10);
-}
-
-.kce-phoneTile:active {
-    transform: translateY(0);
-    box-shadow: none;
-}
-
-.kce-phoneTile:focus-visible {
-    outline: none;
-    box-shadow: 0 0 0 3px var(--kc-focus-ring, rgba(249, 115, 22, 0.2));
-}
-
-/* Active state */
-.kce-phoneTile.is-active {
-    border-color: rgba(249, 115, 22, 0.55);
-    box-shadow: 0 0 0 3px rgba(249, 115, 22, 0.12);
-}
-
-/* Locked */
-.kce-phoneTile.is-locked {
-    opacity: 0.7;
-    border-style: dashed;
-}
-
-/* The phone viewport keeps aspect ratio */
-.kce-phoneViewport {
-    display: block;
-    width: 100%;
-    border-radius: 12px;
-    overflow: hidden;
-    aspect-ratio: 9 / 16;
-    background: rgba(15, 23, 42, 0.06);
-}
-
-.kce-phoneViewport img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    display: block;
-}
-
-/* Lock badge */
-.kce-phoneLock {
-    position: absolute;
-    right: 10px;
-    top: 10px;
-    width: 30px;
-    height: 30px;
-    border-radius: 10px;
-    border: 1px solid rgba(15, 23, 42, 0.12);
-    background: rgba(255, 255, 255, 0.92);
-    display: grid;
-    place-items: center;
-    font-size: 14px;
 }
 
 /* ---------- Template header text ---------- */
@@ -250,9 +160,59 @@
     margin-top: -6px;
 }
 
-/* Note */
+/* Template chips row */
+.kce-templateRow {
+    display: grid;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: 10px;
+}
+
+@media (max-width: 720px) {
+    .kce-templateRow {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 420px) {
+    .kce-templateRow {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+.kce-templateChip {
+    width: 100%;
+    border-radius: 12px;
+    padding: 12px 10px;
+    border: 1px solid rgba(15, 23, 42, 0.14);
+    background: #fff;
+    cursor: pointer;
+
+    font-family: "Inter", sans-serif;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    color: rgba(15, 23, 42, 0.9);
+
+    transition: transform 0.12s ease, box-shadow 0.15s ease, background-color 0.15s ease;
+}
+
+.kce-templateChip:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 10px 26px rgba(15, 23, 42, 0.08);
+}
+
+.kce-templateChip.is-active {
+    border-color: rgba(249, 115, 22, 0.55);
+    background: rgba(249, 115, 22, 0.08);
+}
+
+.kce-templateChip.is-locked {
+    opacity: 0.6;
+    border-style: dashed;
+}
+
 .kce-note {
-    margin-top: 6px;
+    margin-top: 8px;
     font-size: 12px;
     font-weight: 600;
     color: rgba(71, 85, 105, 0.9);
@@ -262,20 +222,20 @@
     color: var(--kc-text-primary, #0f172a);
 }
 
-/* ---------- Blocks (white inner surfaces inside panels) ---------- */
+/* ---------- Blocks (inner white panels where still needed) ---------- */
 .kce-block {
     background: #fff;
-    border: 1px solid rgba(15, 23, 42, 0.10);
+    border: 1px solid rgba(15, 23, 42, 0.1);
     border-radius: 14px;
     padding: 14px;
 }
 
-/* labels */
+/* ✅ Main-section labels use body class in JSX, but we force the requested 12px/regular/primary here */
 .kce-label {
     font-family: "Inter", sans-serif;
     font-size: 12px;
-    font-weight: 600;
-    color: rgba(71, 85, 105, 0.95);
+    font-weight: 400;
+    color: var(--kc-text-primary, #0f172a);
     margin-bottom: 8px;
 }
 
@@ -283,7 +243,7 @@
     margin-top: 16px;
 }
 
-/* ---------- Inputs ---------- */
+/* ---------- Inputs (12px regular, primary text) ---------- */
 .kce-field {
     display: grid;
     gap: 8px;
@@ -291,14 +251,14 @@
 
 .kce-input {
     width: 100%;
-    border: 1px solid rgba(15, 23, 42, 0.10);
+    border: 1px solid rgba(15, 23, 42, 0.1);
     background: #fff;
-    border-radius: 10px;
+    border-radius: 12px;
     padding: 10px 12px;
 
     font-family: "Inter", sans-serif;
-    font-size: 13px;
-    font-weight: 500;
+    font-size: 12px;
+    font-weight: 400;
     color: var(--kc-text-primary, #0f172a);
 
     outline: none;
@@ -306,8 +266,8 @@
 }
 
 .kce-input::placeholder {
-    color: rgba(71, 85, 105, 0.75);
-    font-weight: 500;
+    color: rgba(71, 85, 105, 0.7);
+    font-weight: 400;
 }
 
 .kce-input:focus {
@@ -328,24 +288,56 @@
     margin-top: 14px;
 }
 
+.kce-grid2Tight {
+    margin-top: 12px;
+}
+
 @media (max-width: 560px) {
     .kce-grid2 {
         grid-template-columns: 1fr;
     }
 }
 
-/* ---------- Uploads ---------- */
+/* ---------- Main cover layout (2-up row, but only 1 upload shown) ---------- */
+.kce-mediaGrid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: 12px;
+}
+
+.kce-mediaSpacer {
+    visibility: hidden;
+    border-radius: 12px;
+    border: 1px dashed rgba(15, 23, 42, 0.14);
+    background: #fff;
+    aspect-ratio: 4 / 2.75;
+}
+
+@media (max-width: 560px) {
+    .kce-mediaGrid {
+        grid-template-columns: 1fr;
+    }
+
+    .kce-mediaSpacer {
+        display: none;
+    }
+}
+
+/* ---------- Uploads (cover aspect ratio 4 x 2.75) ---------- */
 .kce-upload {
     width: 100%;
     border-radius: 12px;
     border: 1px dashed rgba(15, 23, 42, 0.18);
     background: #fff;
-    min-height: 120px;
     position: relative;
     overflow: hidden;
     cursor: pointer;
     display: grid;
     place-items: center;
+}
+
+.kce-uploadCover {
+    aspect-ratio: 4 / 2.75;
 }
 
 .kce-uploadSquare {
@@ -356,6 +348,7 @@
     display: grid;
     place-items: center;
     gap: 6px;
+    padding: 10px;
 }
 
 .kce-plus {
@@ -365,10 +358,12 @@
     line-height: 1;
 }
 
+/* ✅ upload text: Inter regular 12px, primary */
 .kce-uploadText {
+    font-family: "Inter", sans-serif;
     font-size: 12px;
-    font-weight: 700;
-    color: rgba(15, 23, 42, 0.78);
+    font-weight: 400;
+    color: var(--kc-text-primary, #0f172a);
     text-align: center;
 }
 
@@ -452,7 +447,7 @@
 
 .kce-repeatCard {
     background: #fff;
-    border: 1px solid rgba(15, 23, 42, 0.10);
+    border: 1px solid rgba(15, 23, 42, 0.1);
     border-radius: 12px;
     padding: 12px;
     display: grid;
@@ -500,4 +495,22 @@
     height: 20px;
     object-fit: contain;
     opacity: 0.9;
+}
+
+/* ---------- Footer bar ---------- */
+.kce-footer {
+    position: sticky;
+    bottom: 0;
+    z-index: 6;
+    background: #fff;
+    border-top: 1px solid rgba(15, 23, 42, 0.08);
+    padding-top: 12px;
+
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+}
+
+.kce-footerPad {
+    height: 14px;
 }
