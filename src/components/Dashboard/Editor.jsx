@@ -9,28 +9,16 @@ import LinkedInIcon from "../../assets/icons/icons8-linkedin.svg";
 import XIcon from "../../assets/icons/icons8-x.svg";
 import TikTokIcon from "../../assets/icons/icons8-tiktok.svg";
 
+/* ✅ Use ANY 5 images from the Home hero carousel (UP1–UP8) */
+import UP1 from "../../assets/images/UP1.jpg";
+import UP2 from "../../assets/images/UP2.jpg";
+import UP3 from "../../assets/images/UP3.jpg";
+import UP4 from "../../assets/images/UP4.jpg";
+import UP5 from "../../assets/images/UP5.jpg";
+
 import "../../styling/dashboard/editor.css";
 
 const isBlobUrl = (v) => typeof v === "string" && v.startsWith("blob:");
-
-function SectionHead({ title, enabled, onToggle }) {
-    return (
-        <div className="kce-secHead">
-            <button type="button" className="kce-pillBar" aria-label={title}>
-                {title}
-            </button>
-
-            <button
-                type="button"
-                className={`kce-toggle ${enabled ? "is-on" : "is-off"}`}
-                onClick={onToggle}
-                aria-pressed={enabled}
-            >
-                {enabled ? "Hide section" : "Show section"}
-            </button>
-        </div>
-    );
-}
 
 export default function Editor({
     state,
@@ -90,6 +78,17 @@ export default function Editor({
         []
     );
 
+    const templateThumbs = useMemo(
+        () => ({
+            "template-1": UP1,
+            "template-2": UP2,
+            "template-3": UP3,
+            "template-4": UP4,
+            "template-5": UP5,
+        }),
+        []
+    );
+
     const currentTemplate = (state.templateId || "template-1").toString();
     const isTemplateLocked = (templateId) => !isSubscribed && templateId !== "template-1";
 
@@ -143,15 +142,9 @@ export default function Editor({
 
     const avatarSrc = state.avatarPreview || (isBlobUrl(state.avatar) ? "" : state.avatar) || "";
 
-    const enabledMain = showMainSection !== false;
-    const enabledAbout = showAboutMeSection !== false;
-    const enabledWork = showWorkSection !== false;
-    const enabledServices = showServicesSection !== false;
-    const enabledReviews = showReviewsSection !== false;
-    const enabledContact = showContactSection !== false;
-
-    const setEnabled = (setter, next) => {
-        if (typeof setter === "function") setter(next);
+    const sectionToggle = (isShown, setter) => {
+        const next = !isShown;
+        setter?.(next);
     };
 
     return (
@@ -173,122 +166,133 @@ export default function Editor({
                 </div>
             </div>
 
+            {/* 24px gap below divider */}
             <div className="kce-spacer24" />
 
+            {/* Scroll body */}
             <div className="kce-scroll">
                 {/* TEMPLATES */}
                 <div className="kce-section">
-                    <div className="kce-secHead">
-                        <button type="button" className="kce-pillBar" aria-label="Templates">
-                            Templates
-                        </button>
+                    <div className="kce-sectionTop">
+                        <span className="kce-pill">Templates</span>
                     </div>
 
-                    <div className="kce-helpTitle">Choose a template</div>
-                    <div className="body kce-helpSub">
-                        Templates control the design (fonts, colors, layout). You only add your content.
-                    </div>
-
-                    <div className="kce-templateRow" role="tablist" aria-label="Template selector">
-                        {TEMPLATE_IDS.map((t) => {
-                            const locked = isTemplateLocked(t);
-                            const active = currentTemplate === t;
-                            return (
-                                <button
-                                    key={t}
-                                    type="button"
-                                    className={`kce-templateChip ${active ? "is-active" : ""} ${locked ? "is-locked" : ""
-                                        }`}
-                                    onClick={() => handleTemplateSelect(t)}
-                                    title={locked ? "Upgrade to unlock this template" : "Select template"}
-                                    aria-label={locked ? `${t} locked` : t}
-                                    role="tab"
-                                    aria-selected={active}
-                                >
-                                    {t.replace("-", " ").toUpperCase()}
-                                </button>
-                            );
-                        })}
-                    </div>
-
-                    {!isSubscribed ? (
-                        <div className="kce-note">
-                            Free users can use <strong>TEMPLATE 1</strong>. Upgrade to unlock Templates 2–5.
+                    <div className="kce-sectionBody">
+                        <div className="kce-helpTitle">Choose a template</div>
+                        <div className="body kce-helpSub">
+                            Templates control the design (fonts, colors, layout). You only add your content.
                         </div>
-                    ) : null}
+
+                        <div className="kce-templatePhones" role="tablist" aria-label="Template selector">
+                            {TEMPLATE_IDS.map((t) => {
+                                const locked = isTemplateLocked(t);
+                                const active = currentTemplate === t;
+
+                                return (
+                                    <button
+                                        key={t}
+                                        type="button"
+                                        className={`kce-phoneCard ${active ? "is-active" : ""} ${locked ? "is-locked" : ""
+                                            }`}
+                                        onClick={() => handleTemplateSelect(t)}
+                                        title={locked ? "Upgrade to unlock this template" : "Select template"}
+                                        aria-label={locked ? `${t} locked` : t}
+                                        role="tab"
+                                        aria-selected={active}
+                                    >
+                                        <img
+                                            src={templateThumbs[t]}
+                                            alt=""
+                                            className="kce-phoneImg"
+                                            draggable={false}
+                                            loading="lazy"
+                                            decoding="async"
+                                        />
+                                        {locked ? <span className="kce-lockBadge">Locked</span> : null}
+                                    </button>
+                                );
+                            })}
+                        </div>
+
+                        {!isSubscribed ? (
+                            <div className="kce-note">
+                                Free users can use <strong>Template 1</strong>. Upgrade to unlock Templates 2–5.
+                            </div>
+                        ) : null}
+                    </div>
                 </div>
 
                 <div className="kce-dividerBlock" />
 
                 {/* MAIN */}
                 <div className="kce-section">
-                    <SectionHead
-                        title="Main Section"
-                        enabled={enabledMain}
-                        onToggle={() => setEnabled(setShowMainSection, !enabledMain)}
-                    />
+                    <div className="kce-sectionTop">
+                        <span className="kce-pill">Main Section</span>
 
-                    {enabledMain ? (
-                        <>
-                            <div className="kce-field">
-                                <div className="kce-label">Cover Photo</div>
+                        <button
+                            type="button"
+                            className="kce-hideBtn"
+                            onClick={() => sectionToggle(!!showMainSection, setShowMainSection)}
+                        >
+                            {showMainSection ? "Hide section" : "Show section"}
+                        </button>
+                    </div>
 
-                                <div className="kce-mediaGrid">
-                                    <div>
-                                        <input
-                                            ref={coverInputRef}
-                                            type="file"
-                                            accept="image/*"
-                                            onChange={(e) => {
-                                                const file = e.target.files?.[0];
-                                                if (!file) return;
+                    {showMainSection ? (
+                        <div className="kce-sectionBody">
+                            <div className="kce-label body">Cover Photo</div>
 
-                                                const url = URL.createObjectURL(file);
-                                                rememberObjectUrl(url);
+                            <input
+                                ref={coverInputRef}
+                                type="file"
+                                accept="image/*"
+                                onChange={(e) => {
+                                    const file = e.target.files?.[0];
+                                    if (!file) return;
 
-                                                updateState({ coverPhotoPreview: url, coverPhotoFile: file });
-                                                onCoverUpload?.(file);
+                                    const url = URL.createObjectURL(file);
+                                    rememberObjectUrl(url);
+
+                                    updateState({ coverPhotoPreview: url, coverPhotoFile: file });
+                                    onCoverUpload?.(file);
+                                }}
+                                style={{ display: "none" }}
+                            />
+
+                            <div className="kce-mediaRow">
+                                <button
+                                    type="button"
+                                    className="kce-upload kce-uploadHalf"
+                                    onClick={() => coverInputRef.current?.click()}
+                                >
+                                    {coverSrc ? (
+                                        <img src={coverSrc} alt="Cover" className="kce-uploadImg" />
+                                    ) : (
+                                        <div className="kce-uploadInner">
+                                            <div className="kce-plus">+</div>
+                                            <div className="kce-uploadText">Upload Cover Image</div>
+                                        </div>
+                                    )}
+
+                                    {coverSrc ? (
+                                        <span
+                                            className="kce-x"
+                                            role="button"
+                                            aria-label="Remove cover"
+                                            onClick={(e) => {
+                                                e.preventDefault();
+                                                e.stopPropagation();
+                                                updateState({ coverPhotoPreview: "", coverPhotoFile: null });
+                                                onRemoveCover?.();
                                             }}
-                                            style={{ display: "none" }}
-                                        />
-
-                                        <button
-                                            type="button"
-                                            className="kce-upload kce-uploadCover"
-                                            onClick={() => coverInputRef.current?.click()}
                                         >
-                                            {coverSrc ? (
-                                                <img src={coverSrc} alt="Cover" className="kce-uploadImg" />
-                                            ) : (
-                                                <div className="kce-uploadInner">
-                                                    <div className="kce-plus">+</div>
-                                                    <div className="kce-uploadText">Upload Cover Image</div>
-                                                </div>
-                                            )}
-
-                                            {coverSrc ? (
-                                                <span
-                                                    className="kce-x"
-                                                    role="button"
-                                                    aria-label="Remove cover"
-                                                    onClick={(ev) => {
-                                                        ev.preventDefault();
-                                                        ev.stopPropagation();
-                                                        updateState({ coverPhotoPreview: "", coverPhotoFile: null });
-                                                        onRemoveCover?.();
-                                                    }}
-                                                >
-                                                    ✕
-                                                </span>
-                                            ) : null}
-                                        </button>
-                                    </div>
-
-                                    <div className="kce-mediaSpacer" aria-hidden="true" />
-                                </div>
+                                            ✕
+                                        </span>
+                                    ) : null}
+                                </button>
                             </div>
 
-                            <div className="kce-grid2 kce-grid2Tight">
+                            <div className="kce-grid2">
                                 <div className="kce-field">
                                     <div className="kce-label">Main heading</div>
                                     <input
@@ -309,47 +313,51 @@ export default function Editor({
                                     />
                                 </div>
                             </div>
-                        </>
-                    ) : (
-                        <div className="kce-muted">This section is hidden from your profile.</div>
-                    )}
+                        </div>
+                    ) : null}
                 </div>
 
                 <div className="kce-dividerBlock" />
 
                 {/* ABOUT */}
                 <div className="kce-section">
-                    <SectionHead
-                        title="About Me Section"
-                        enabled={enabledAbout}
-                        onToggle={() => setEnabled(setShowAboutMeSection, !enabledAbout)}
-                    />
+                    <div className="kce-sectionTop">
+                        <span className="kce-pill">About Me Section</span>
 
-                    {enabledAbout ? (
-                        <>
-                            <div className="kce-field">
-                                <div className="kce-label">Profile Photo / Logo</div>
+                        <button
+                            type="button"
+                            className="kce-hideBtn"
+                            onClick={() => sectionToggle(!!showAboutMeSection, setShowAboutMeSection)}
+                        >
+                            {showAboutMeSection ? "Hide section" : "Show section"}
+                        </button>
+                    </div>
 
-                                <input
-                                    ref={avatarInputRef}
-                                    type="file"
-                                    accept="image/*"
-                                    onChange={(e) => {
-                                        const file = e.target.files?.[0];
-                                        if (!file) return;
+                    {showAboutMeSection ? (
+                        <div className="kce-sectionBody">
+                            <div className="kce-label body">Profile Photo / Logo</div>
 
-                                        const url = URL.createObjectURL(file);
-                                        rememberObjectUrl(url);
+                            <input
+                                ref={avatarInputRef}
+                                type="file"
+                                accept="image/*"
+                                onChange={(e) => {
+                                    const file = e.target.files?.[0];
+                                    if (!file) return;
 
-                                        updateState({ avatarPreview: url, avatarFile: file });
-                                        onAvatarUpload?.(file);
-                                    }}
-                                    style={{ display: "none" }}
-                                />
+                                    const url = URL.createObjectURL(file);
+                                    rememberObjectUrl(url);
 
+                                    updateState({ avatarPreview: url, avatarFile: file });
+                                    onAvatarUpload?.(file);
+                                }}
+                                style={{ display: "none" }}
+                            />
+
+                            <div className="kce-mediaRow">
                                 <button
                                     type="button"
-                                    className="kce-upload kce-uploadSquare"
+                                    className="kce-upload kce-uploadHalf"
                                     onClick={() => avatarInputRef.current?.click()}
                                 >
                                     {avatarSrc ? (
@@ -379,7 +387,7 @@ export default function Editor({
                                 </button>
                             </div>
 
-                            <div className="kce-grid2 kce-grid2Tight">
+                            <div className="kce-grid2">
                                 <div className="kce-field">
                                     <div className="kce-label">Full name</div>
                                     <input
@@ -411,25 +419,29 @@ export default function Editor({
                                     placeholder={previewPlaceholders.bio}
                                 />
                             </div>
-                        </>
-                    ) : (
-                        <div className="kce-muted">This section is hidden from your profile.</div>
-                    )}
+                        </div>
+                    ) : null}
                 </div>
 
                 <div className="kce-dividerBlock" />
 
                 {/* WORK */}
                 <div className="kce-section">
-                    <SectionHead
-                        title="My Work Section"
-                        enabled={enabledWork}
-                        onToggle={() => setEnabled(setShowWorkSection, !enabledWork)}
-                    />
+                    <div className="kce-sectionTop">
+                        <span className="kce-pill">My Work Section</span>
 
-                    {enabledWork ? (
-                        <>
-                            <div className="kce-label">Upload up to 12 images</div>
+                        <button
+                            type="button"
+                            className="kce-hideBtn"
+                            onClick={() => sectionToggle(!!showWorkSection, setShowWorkSection)}
+                        >
+                            {showWorkSection ? "Hide section" : "Show section"}
+                        </button>
+                    </div>
+
+                    {showWorkSection ? (
+                        <div className="kce-sectionBody">
+                            <div className="body kce-miniSub">Upload up to 12 images</div>
 
                             <div className="kce-workGrid">
                                 {(state.workImages || []).slice(0, 12).map((item, i) => (
@@ -449,11 +461,13 @@ export default function Editor({
                                 {(state.workImages || []).length < 12 ? (
                                     <button
                                         type="button"
-                                        className="kce-workAdd"
+                                        className="kce-upload kce-workAdd"
                                         onClick={() => workImageInputRef.current?.click()}
                                     >
-                                        <div className="kce-plus">+</div>
-                                        <div className="kce-uploadText">Upload Image(s)</div>
+                                        <div className="kce-uploadInner">
+                                            <div className="kce-plus">+</div>
+                                            <div className="kce-uploadText">Upload Work Images</div>
+                                        </div>
                                     </button>
                                 ) : null}
                             </div>
@@ -482,33 +496,37 @@ export default function Editor({
                                     onAddWorkImages?.(files);
                                 }}
                             />
-                        </>
-                    ) : (
-                        <div className="kce-muted">This section is hidden from your profile.</div>
-                    )}
+                        </div>
+                    ) : null}
                 </div>
 
                 <div className="kce-dividerBlock" />
 
                 {/* SERVICES */}
                 <div className="kce-section">
-                    <SectionHead
-                        title="My Services Section"
-                        enabled={enabledServices}
-                        onToggle={() => setEnabled(setShowServicesSection, !enabledServices)}
-                    />
+                    <div className="kce-sectionTop">
+                        <span className="kce-pill">My Services Section</span>
 
-                    {enabledServices ? (
-                        <>
+                        <button
+                            type="button"
+                            className="kce-hideBtn"
+                            onClick={() => sectionToggle(!!showServicesSection, setShowServicesSection)}
+                        >
+                            {showServicesSection ? "Hide section" : "Show section"}
+                        </button>
+                    </div>
+
+                    {showServicesSection ? (
+                        <div className="kce-sectionBody">
                             <div className="kce-repeat">
                                 {(state.services || []).map((s, i) => (
                                     <div key={i} className="kce-repeatCard">
-                                        <div className="kce-grid2 kce-grid2Tight">
+                                        <div className="kce-grid2">
                                             <div className="kce-field">
                                                 <div className="kce-label">Service Name</div>
                                                 <input
                                                     className="kce-input"
-                                                    placeholder="Enter your name"
+                                                    placeholder="Enter service"
                                                     value={s.name || ""}
                                                     onChange={(e) => handleServiceChange(i, "name", e.target.value)}
                                                 />
@@ -518,7 +536,7 @@ export default function Editor({
                                                 <div className="kce-label">Price / detail</div>
                                                 <input
                                                     className="kce-input"
-                                                    placeholder="Enter your email"
+                                                    placeholder="£ / from £ / call for quote"
                                                     value={s.price || ""}
                                                     onChange={(e) => handleServiceChange(i, "price", e.target.value)}
                                                 />
@@ -527,7 +545,7 @@ export default function Editor({
 
                                         <button
                                             type="button"
-                                            className="kce-dangerOutline"
+                                            className="kce-dangerPill"
                                             onClick={() => handleRemoveService(i)}
                                         >
                                             Remove Service
@@ -536,36 +554,41 @@ export default function Editor({
                                 ))}
                             </div>
 
-                            <button type="button" className="kce-dashedAdd" onClick={handleAddService}>
-                                + Add Another Service
+                            <button type="button" className="kce-addCard" onClick={handleAddService}>
+                                <span className="kce-addCardPlus">+</span>
+                                <span className="kce-addCardText">Add Service</span>
                             </button>
-                        </>
-                    ) : (
-                        <div className="kce-muted">This section is hidden from your profile.</div>
-                    )}
+                        </div>
+                    ) : null}
                 </div>
 
                 <div className="kce-dividerBlock" />
 
                 {/* REVIEWS */}
                 <div className="kce-section">
-                    <SectionHead
-                        title="Reviews Section"
-                        enabled={enabledReviews}
-                        onToggle={() => setEnabled(setShowReviewsSection, !enabledReviews)}
-                    />
+                    <div className="kce-sectionTop">
+                        <span className="kce-pill">Reviews Section</span>
 
-                    {enabledReviews ? (
-                        <>
+                        <button
+                            type="button"
+                            className="kce-hideBtn"
+                            onClick={() => sectionToggle(!!showReviewsSection, setShowReviewsSection)}
+                        >
+                            {showReviewsSection ? "Hide section" : "Show section"}
+                        </button>
+                    </div>
+
+                    {showReviewsSection ? (
+                        <div className="kce-sectionBody">
                             <div className="kce-repeat">
                                 {(state.reviews || []).map((r, i) => (
                                     <div key={i} className="kce-repeatCard">
-                                        <div className="kce-grid2 kce-grid2Tight">
+                                        <div className="kce-grid2">
                                             <div className="kce-field">
                                                 <div className="kce-label">Name</div>
                                                 <input
                                                     className="kce-input"
-                                                    placeholder="Enter your name"
+                                                    placeholder="Enter name"
                                                     value={r.name || ""}
                                                     onChange={(e) => handleReviewChange(i, "name", e.target.value)}
                                                 />
@@ -598,7 +621,7 @@ export default function Editor({
 
                                         <button
                                             type="button"
-                                            className="kce-dangerOutline"
+                                            className="kce-dangerPill"
                                             onClick={() => handleRemoveReview(i)}
                                         >
                                             Remove Review
@@ -607,28 +630,33 @@ export default function Editor({
                                 ))}
                             </div>
 
-                            <button type="button" className="kce-dashedAdd" onClick={handleAddReview}>
-                                + Add Another Review
+                            <button type="button" className="kce-addCard" onClick={handleAddReview}>
+                                <span className="kce-addCardPlus">+</span>
+                                <span className="kce-addCardText">Add Review</span>
                             </button>
-                        </>
-                    ) : (
-                        <div className="kce-muted">This section is hidden from your profile.</div>
-                    )}
+                        </div>
+                    ) : null}
                 </div>
 
                 <div className="kce-dividerBlock" />
 
                 {/* CONTACT */}
                 <div className="kce-section">
-                    <SectionHead
-                        title="Contact Section"
-                        enabled={enabledContact}
-                        onToggle={() => setEnabled(setShowContactSection, !enabledContact)}
-                    />
+                    <div className="kce-sectionTop">
+                        <span className="kce-pill">Contact Section</span>
 
-                    {enabledContact ? (
-                        <>
-                            <div className="kce-grid2 kce-grid2Tight">
+                        <button
+                            type="button"
+                            className="kce-hideBtn"
+                            onClick={() => sectionToggle(!!showContactSection, setShowContactSection)}
+                        >
+                            {showContactSection ? "Hide section" : "Show section"}
+                        </button>
+                    </div>
+
+                    {showContactSection ? (
+                        <div className="kce-sectionBody">
+                            <div className="kce-grid2">
                                 <div className="kce-field">
                                     <div className="kce-label">Email</div>
                                     <input
@@ -654,78 +682,64 @@ export default function Editor({
                                 </div>
                             </div>
 
-                            <div className="kce-field">
-                                <div className="kce-label">Social Links</div>
+                            <div className="kce-label kce-mt12">Social Links</div>
 
-                                <div className="kce-social">
-                                    <div className="kce-socialRow">
-                                        <img src={FacebookIcon} alt="" />
-                                        <input
-                                            className="kce-input"
-                                            placeholder="Enter your name"
-                                            value={state.facebook_url || ""}
-                                            onChange={(e) => updateState({ facebook_url: e.target.value })}
-                                        />
-                                    </div>
+                            <div className="kce-social">
+                                <div className="kce-socialRow">
+                                    <img src={FacebookIcon} alt="" />
+                                    <input
+                                        className="kce-input"
+                                        placeholder="Facebook URL"
+                                        value={state.facebook_url || ""}
+                                        onChange={(e) => updateState({ facebook_url: e.target.value })}
+                                    />
+                                </div>
 
-                                    <div className="kce-socialRow">
-                                        <img src={InstagramIcon} alt="" />
-                                        <input
-                                            className="kce-input"
-                                            placeholder="Enter your name"
-                                            value={state.instagram_url || ""}
-                                            onChange={(e) => updateState({ instagram_url: e.target.value })}
-                                        />
-                                    </div>
+                                <div className="kce-socialRow">
+                                    <img src={InstagramIcon} alt="" />
+                                    <input
+                                        className="kce-input"
+                                        placeholder="Instagram URL"
+                                        value={state.instagram_url || ""}
+                                        onChange={(e) => updateState({ instagram_url: e.target.value })}
+                                    />
+                                </div>
 
-                                    <div className="kce-socialRow">
-                                        <img src={LinkedInIcon} alt="" />
-                                        <input
-                                            className="kce-input"
-                                            placeholder="Enter your name"
-                                            value={state.linkedin_url || ""}
-                                            onChange={(e) => updateState({ linkedin_url: e.target.value })}
-                                        />
-                                    </div>
+                                <div className="kce-socialRow">
+                                    <img src={LinkedInIcon} alt="" />
+                                    <input
+                                        className="kce-input"
+                                        placeholder="LinkedIn URL"
+                                        value={state.linkedin_url || ""}
+                                        onChange={(e) => updateState({ linkedin_url: e.target.value })}
+                                    />
+                                </div>
 
-                                    <div className="kce-socialRow">
-                                        <img src={XIcon} alt="" />
-                                        <input
-                                            className="kce-input"
-                                            placeholder="Enter your name"
-                                            value={state.x_url || ""}
-                                            onChange={(e) => updateState({ x_url: e.target.value })}
-                                        />
-                                    </div>
+                                <div className="kce-socialRow">
+                                    <img src={XIcon} alt="" />
+                                    <input
+                                        className="kce-input"
+                                        placeholder="X URL"
+                                        value={state.x_url || ""}
+                                        onChange={(e) => updateState({ x_url: e.target.value })}
+                                    />
+                                </div>
 
-                                    <div className="kce-socialRow">
-                                        <img src={TikTokIcon} alt="" />
-                                        <input
-                                            className="kce-input"
-                                            placeholder="Enter your name"
-                                            value={state.tiktok_url || ""}
-                                            onChange={(e) => updateState({ tiktok_url: e.target.value })}
-                                        />
-                                    </div>
+                                <div className="kce-socialRow">
+                                    <img src={TikTokIcon} alt="" />
+                                    <input
+                                        className="kce-input"
+                                        placeholder="TikTok URL"
+                                        value={state.tiktok_url || ""}
+                                        onChange={(e) => updateState({ tiktok_url: e.target.value })}
+                                    />
                                 </div>
                             </div>
-                        </>
-                    ) : (
-                        <div className="kce-muted">This section is hidden from your profile.</div>
-                    )}
+                        </div>
+                    ) : null}
                 </div>
 
-                <div className="kce-footerPad" />
-            </div>
-
-            {/* Bottom action bar */}
-            <div className="kce-footer">
-                <button type="button" className="kce-btn kce-btnGhost kce-btnWide" onClick={onResetPage}>
-                    Reset Page
-                </button>
-                <button type="button" className="kce-btn kce-btnPrimary kce-btnWide" onClick={onSubmit}>
-                    Save / Publish Profile
-                </button>
+                <div className="kce-bottomPad" />
             </div>
         </div>
     );

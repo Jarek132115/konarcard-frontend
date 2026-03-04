@@ -1,4 +1,10 @@
 /* frontend/src/styling/dashboard/editor.css */
+/* =========================================================
+   KonarCard Editor — isolated class system (kce-*)
+   ✅ No clashes with other dashboard CSS
+   ✅ Sections are FAFafa surfaces (no extra white blocks)
+   ✅ Inter only (Cal Sans only via .kc-title from fonts.css)
+========================================================= */
 
 .kce-root {
     width: 100%;
@@ -45,6 +51,7 @@
     flex: 0 0 auto;
 }
 
+/* 24px gap under header divider */
 .kce-spacer24 {
     height: 24px;
 }
@@ -65,10 +72,12 @@
     border: 1px solid rgba(15, 23, 42, 0.14);
     border-radius: 12px;
     padding: 12px 18px;
+
     font-family: "Inter", sans-serif;
     font-size: 14px;
     font-weight: 600;
     line-height: 1;
+
     cursor: pointer;
     transition: transform 0.12s ease, box-shadow 0.15s ease, background-color 0.15s ease;
     background: #fff;
@@ -101,189 +110,213 @@
     color: #0b1220;
 }
 
-.kce-btnWide {
-    width: 100%;
-}
-
-/* ---------- Section surface (FAFAFA wrapper) ---------- */
+/* ---------- Section surface ---------- */
 .kce-section {
     background: #fafafa;
-    border: 1px solid rgba(15, 23, 42, 0.08);
+    border: 1px solid rgba(15, 23, 42, 0.1);
     border-radius: 18px;
-    padding: 16px;
-    display: grid;
-    gap: 12px;
+    padding: 24px;
 }
 
-/* ✅ pill + toggle row */
-.kce-secHead {
+.kce-sectionTop {
     display: flex;
     align-items: center;
     justify-content: space-between;
     gap: 12px;
 }
 
-/* ✅ black pill fit-content */
-.kce-pillBar {
-    border: 0;
-    border-radius: 999px;
-    padding: 8px 12px;
-    background: #0b1220;
-    color: #fff;
-
-    width: fit-content;
-    max-width: 100%;
-
-    font-family: "Inter", sans-serif;
-    font-size: 12px;
-    font-weight: 700;
-    letter-spacing: 0.02em;
-
+/* ✅ pill fits content */
+.kce-pill {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-}
+    width: fit-content;
 
-/* ✅ 16px gap from pill row to first label */
-.kce-section>.kce-secHead+* {
-    margin-top: 16px;
-}
+    padding: 8px 12px;
+    border-radius: 999px;
+    background: #0b1220;
+    color: #fff;
 
-/* Hide/show button (top-right) */
-.kce-toggle {
-    appearance: none;
-    border: 1px solid rgba(15, 23, 42, 0.14);
-    background: #fff;
-    color: var(--kc-text-primary, #0f172a);
-    border-radius: 12px;
-    padding: 10px 12px;
     font-family: "Inter", sans-serif;
     font-size: 12px;
     font-weight: 700;
+    line-height: 1;
+    letter-spacing: 0.02em;
+}
+
+/* ✅ 12px gap under pill row */
+.kce-sectionBody {
+    margin-top: 12px;
+    display: grid;
+    gap: 16px;
+}
+
+/* hide/show button */
+.kce-hideBtn {
+    appearance: none;
+    background: #fff;
+    border: 1px solid rgba(15, 23, 42, 0.14);
+    color: rgba(15, 23, 42, 0.9);
+    border-radius: 12px;
+    padding: 10px 14px;
+
+    font-family: "Inter", sans-serif;
+    font-size: 12px;
+    font-weight: 600;
+    line-height: 1;
+
     cursor: pointer;
     transition: transform 0.12s ease, box-shadow 0.15s ease, background-color 0.15s ease;
-    white-space: nowrap;
 }
 
-.kce-toggle:hover {
+.kce-hideBtn:hover {
     transform: translateY(-1px);
     box-shadow: 0 10px 26px rgba(15, 23, 42, 0.08);
+    background: rgba(15, 23, 42, 0.02);
 }
 
-.kce-toggle.is-off {
-    opacity: 0.8;
+.kce-hideBtn:active {
+    transform: translateY(0);
+    box-shadow: none;
 }
 
+.kce-hideBtn:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 3px var(--kc-focus-ring, rgba(249, 115, 22, 0.2));
+}
+
+/* divider blocks between sections: 24px gap above/below + line */
 .kce-dividerBlock {
     height: 1px;
     background: rgba(15, 23, 42, 0.08);
     margin: 24px 0;
 }
 
-/* ---------- Template header text ---------- */
+/* ---------- Headings in template section ---------- */
 .kce-helpTitle {
     font-family: "Inter", sans-serif;
     font-size: 14px;
     font-weight: 700;
     color: rgba(15, 23, 42, 0.92);
-    margin-top: 2px;
 }
 
 .kce-helpSub {
     margin-top: -6px;
 }
 
-/* Template chips row */
-.kce-templateRow {
+/* ---------- Template phone thumbnails ---------- */
+.kce-templatePhones {
     display: grid;
     grid-template-columns: repeat(5, minmax(0, 1fr));
-    gap: 10px;
+    gap: 12px;
 }
 
-@media (max-width: 720px) {
-    .kce-templateRow {
+@media (max-width: 900px) {
+    .kce-templatePhones {
         grid-template-columns: repeat(3, minmax(0, 1fr));
     }
 }
 
-@media (max-width: 420px) {
-    .kce-templateRow {
+@media (max-width: 560px) {
+    .kce-templatePhones {
         grid-template-columns: repeat(2, minmax(0, 1fr));
     }
 }
 
-.kce-templateChip {
+.kce-phoneCard {
     width: 100%;
-    border-radius: 12px;
-    padding: 12px 10px;
+    border-radius: 16px;
     border: 1px solid rgba(15, 23, 42, 0.14);
     background: #fff;
+    overflow: hidden;
+
+    aspect-ratio: 9 / 16;
+    /* ✅ phone */
+    position: relative;
     cursor: pointer;
 
-    font-family: "Inter", sans-serif;
-    font-size: 12px;
-    font-weight: 700;
-    letter-spacing: 0.08em;
-    color: rgba(15, 23, 42, 0.9);
-
-    transition: transform 0.12s ease, box-shadow 0.15s ease, background-color 0.15s ease;
+    transition: transform 0.12s ease, box-shadow 0.15s ease, border-color 0.15s ease;
+    box-shadow: 0 0 1px rgba(0, 0, 0, 0.18);
 }
 
-.kce-templateChip:hover {
+.kce-phoneCard:hover {
     transform: translateY(-1px);
     box-shadow: 0 10px 26px rgba(15, 23, 42, 0.08);
 }
 
-.kce-templateChip.is-active {
+.kce-phoneCard.is-active {
     border-color: rgba(249, 115, 22, 0.55);
-    background: rgba(249, 115, 22, 0.08);
+    box-shadow: 0 0 0 3px rgba(249, 115, 22, 0.16);
+    transform: none;
 }
 
-.kce-templateChip.is-locked {
-    opacity: 0.6;
-    border-style: dashed;
+.kce-phoneCard.is-locked {
+    opacity: 0.7;
 }
 
+.kce-phoneImg {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: top;
+    /* ✅ “top part” feel */
+    display: block;
+}
+
+.kce-lockBadge {
+    position: absolute;
+    left: 10px;
+    top: 10px;
+
+    padding: 6px 10px;
+    border-radius: 999px;
+
+    background: rgba(11, 18, 32, 0.88);
+    color: #fff;
+
+    font-family: "Inter", sans-serif;
+    font-size: 11px;
+    font-weight: 700;
+    line-height: 1;
+}
+
+/* note */
 .kce-note {
-    margin-top: 8px;
+    margin-top: 6px;
     font-size: 12px;
     font-weight: 600;
     color: rgba(71, 85, 105, 0.9);
+    font-family: "Inter", sans-serif;
 }
 
 .kce-note strong {
     color: var(--kc-text-primary, #0f172a);
 }
 
-/* ---------- Labels (Inter semi-bold 14px) ---------- */
+/* ---------- Labels + inputs ---------- */
+/* ✅ Label: Inter semi-bold 14px */
 .kce-label {
     font-family: "Inter", sans-serif;
     font-size: 14px;
     font-weight: 600;
-    color: var(--kc-text-primary, #0f172a);
+    color: rgba(15, 23, 42, 0.92);
+    line-height: 1.2;
     margin: 0;
 }
 
-/* ✅ gap label -> input = 8px (field controls spacing) */
+/* ✅ 8px gap between label and input */
 .kce-field {
     display: grid;
     gap: 8px;
 }
 
-.kce-muted {
-    font-family: "Inter", sans-serif;
-    font-size: 12px;
-    font-weight: 600;
-    color: rgba(71, 85, 105, 0.85);
-}
-
-/* ---------- Inputs (keep your 12px regular requirement) ---------- */
+/* ✅ Input text + placeholders: Inter regular 12px, primary colour */
 .kce-input {
     width: 100%;
     border: 1px solid rgba(15, 23, 42, 0.1);
     background: #fff;
     border-radius: 12px;
-    padding: 10px 12px;
+    padding: 12px 12px;
 
     font-family: "Inter", sans-serif;
     font-size: 12px;
@@ -295,7 +328,7 @@
 }
 
 .kce-input::placeholder {
-    color: rgba(71, 85, 105, 0.7);
+    color: rgba(15, 23, 42, 0.6);
     font-weight: 400;
 }
 
@@ -316,67 +349,62 @@
     gap: 12px;
 }
 
-.kce-grid2Tight {
-    margin-top: 0;
-}
-
 @media (max-width: 560px) {
     .kce-grid2 {
         grid-template-columns: 1fr;
     }
 }
 
-/* ---------- Main cover layout ---------- */
-.kce-mediaGrid {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-    gap: 12px;
+/* small spacing helpers */
+.kce-mt12 {
+    margin-top: 12px;
 }
 
-.kce-mediaSpacer {
-    visibility: hidden;
-    border-radius: 12px;
-    border: 1px dashed rgba(15, 23, 42, 0.14);
-    background: #fff;
-    aspect-ratio: 4 / 2.75;
+.kce-miniSub {
+    margin-top: -4px;
+    font-family: "Inter", sans-serif;
 }
 
-@media (max-width: 560px) {
-    .kce-mediaGrid {
-        grid-template-columns: 1fr;
-    }
-
-    .kce-mediaSpacer {
-        display: none;
-    }
-}
-
-/* ---------- Uploads ---------- */
+/* ---------- Upload cards ---------- */
+/* ✅ Cover/work/avatar all share same aspect ratio 4 / 2.75 */
 .kce-upload {
     width: 100%;
-    border-radius: 12px;
-    border: 1px dashed rgba(15, 23, 42, 0.18);
-    background: #fff;
+    border-radius: 16px;
+    border: 1px dashed rgba(15, 23, 42, 0.22);
+    background: rgba(255, 255, 255, 0.6);
     position: relative;
     overflow: hidden;
     cursor: pointer;
+
+    aspect-ratio: 4 / 2.75;
+
     display: grid;
     place-items: center;
 }
 
-.kce-uploadCover {
-    aspect-ratio: 4 / 2.75;
+.kce-uploadHalf {
+    max-width: 50%;
+    min-width: 280px;
 }
 
-.kce-uploadSquare {
-    min-height: 120px;
+@media (max-width: 720px) {
+    .kce-uploadHalf {
+        max-width: 100%;
+        min-width: 0;
+    }
+}
+
+.kce-mediaRow {
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
 }
 
 .kce-uploadInner {
     display: grid;
     place-items: center;
-    gap: 6px;
-    padding: 10px;
+    gap: 8px;
+    padding: 18px;
 }
 
 .kce-plus {
@@ -384,12 +412,15 @@
     font-weight: 700;
     color: rgba(15, 23, 42, 0.75);
     line-height: 1;
+    font-family: "Inter", sans-serif;
 }
 
 .kce-uploadText {
     font-family: "Inter", sans-serif;
     font-size: 12px;
+    /* ✅ */
     font-weight: 400;
+    /* ✅ */
     color: var(--kc-text-primary, #0f172a);
     text-align: center;
 }
@@ -414,31 +445,37 @@
     display: grid;
     place-items: center;
     font-weight: 800;
+    font-family: "Inter", sans-serif;
 }
 
-/* Work grid */
+/* ---------- Work grid ---------- */
+/* ✅ work images same aspect ratio as cover */
 .kce-workGrid {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 10px;
+    gap: 12px;
 }
 
-.kce-workItem,
-.kce-workAdd {
-    border-radius: 12px;
-    overflow: hidden;
-    aspect-ratio: 4 / 3;
-    position: relative;
+@media (max-width: 560px) {
+    .kce-workGrid {
+        grid-template-columns: 1fr;
+    }
 }
 
 .kce-workItem {
-    background: rgba(15, 23, 42, 0.78);
+    border-radius: 16px;
+    overflow: hidden;
+    position: relative;
+    aspect-ratio: 4 / 2.75;
+    background: rgba(15, 23, 42, 0.08);
+    border: 1px solid rgba(15, 23, 42, 0.1);
 }
 
 .kce-workItem img {
     width: 100%;
     height: 100%;
     object-fit: cover;
+    display: block;
 }
 
 .kce-workX {
@@ -452,53 +489,87 @@
     background: rgba(255, 255, 255, 0.92);
     cursor: pointer;
     font-weight: 800;
+    font-family: "Inter", sans-serif;
 }
 
-.kce-workAdd {
-    border: 1px dashed rgba(15, 23, 42, 0.18);
-    background: #fff;
-    display: grid;
-    place-items: center;
-    cursor: pointer;
-}
-
-/* Repeat cards */
+/* ---------- Repeat cards (services/reviews) ---------- */
 .kce-repeat {
     display: grid;
     gap: 12px;
 }
 
+/* these stay white for readability but they are INSIDE the fafafa section */
 .kce-repeatCard {
     background: #fff;
     border: 1px solid rgba(15, 23, 42, 0.1);
-    border-radius: 12px;
-    padding: 12px;
+    border-radius: 16px;
+    padding: 16px;
     display: grid;
-    gap: 12px;
+    gap: 14px;
 }
 
-.kce-dangerOutline {
-    width: 100%;
-    border-radius: 10px;
-    padding: 10px 12px;
+.kce-dangerPill {
+    width: fit-content;
+    /* ✅ not full width */
+    align-self: flex-start;
+    /* ✅ bottom-left in card */
+    justify-self: flex-start;
+
+    border-radius: 12px;
+    padding: 10px 14px;
+
     border: 1px solid rgba(239, 68, 68, 0.45);
     background: rgba(239, 68, 68, 0.06);
     color: rgba(239, 68, 68, 0.95);
+
+    font-family: "Inter", sans-serif;
+    font-size: 12px;
     font-weight: 700;
+    line-height: 1;
+
     cursor: pointer;
 }
 
-.kce-dashedAdd {
+/* Add service/review: same “upload card” styling but not tall */
+.kce-addCard {
     width: 100%;
-    border-radius: 12px;
-    padding: 12px 14px;
-    border: 1px dashed rgba(15, 23, 42, 0.18);
-    background: #fff;
-    font-weight: 700;
+    border-radius: 16px;
+    border: 1px dashed rgba(15, 23, 42, 0.22);
+    background: rgba(255, 255, 255, 0.6);
     cursor: pointer;
+
+    padding: 24px;
+    /* ✅ */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+
+    font-family: "Inter", sans-serif;
 }
 
-/* Social rows */
+.kce-addCardPlus {
+    font-size: 18px;
+    font-weight: 700;
+    color: rgba(15, 23, 42, 0.75);
+    line-height: 1;
+    font-family: "Inter", sans-serif;
+}
+
+.kce-addCardText {
+    font-size: 12px;
+    font-weight: 400;
+    color: var(--kc-text-primary, #0f172a);
+    font-family: "Inter", sans-serif;
+}
+
+.kce-addCard:hover {
+    box-shadow: 0 10px 26px rgba(15, 23, 42, 0.08);
+    transform: translateY(-1px);
+    transition: transform 0.12s ease, box-shadow 0.15s ease;
+}
+
+/* ---------- Social rows ---------- */
 .kce-social {
     display: grid;
     gap: 10px;
@@ -518,20 +589,6 @@
     opacity: 0.9;
 }
 
-/* Footer */
-.kce-footer {
-    position: sticky;
-    bottom: 0;
-    z-index: 6;
-    background: #fff;
-    border-top: 1px solid rgba(15, 23, 42, 0.08);
-    padding-top: 12px;
-
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 12px;
-}
-
-.kce-footerPad {
-    height: 14px;
+.kce-bottomPad {
+    height: 18px;
 }
