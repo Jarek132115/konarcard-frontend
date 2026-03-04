@@ -1,8 +1,10 @@
 /* frontend/src/styling/dashboard/editor.css */
 /* =========================================================
-   KonarCard Editor — NEW isolated class system (kce-*)
-   ✅ No clashes with other dashboard CSS
-   ✅ Matches the reference screenshot layout
+   KonarCard Editor — isolated class system (kce-*)
+   ✅ Pills are FIT-CONTENT (not full width)
+   ✅ Each section is a #fafafa rounded panel with inner padding
+   ✅ Divider between panels with 24px gap top/bottom
+   ✅ Removed duplicated bottom CTAs
 ========================================================= */
 
 .kce-root {
@@ -107,37 +109,37 @@
     color: #0b1220;
 }
 
-.kce-btnWide {
-    width: 100%;
-}
+/* ---------- Panels ---------- */
+.kce-panel {
+    background: #fafafa;
+    border: 1px solid rgba(15, 23, 42, 0.08);
+    border-radius: 16px;
+    padding: 16px;
 
-/* ---------- Section layout ---------- */
-.kce-section {
     display: grid;
     gap: 12px;
 }
 
-/* Dark centered bar like screenshot */
-.kce-sectionBar {
-    width: 100%;
-    border: 0;
+/* FIT-CONTENT chip inside panel */
+.kce-chip {
+    width: fit-content;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    padding: 8px 12px;
     border-radius: 999px;
-    padding: 10px 14px;
+
     background: #0b1220;
     color: #fff;
 
     font-family: "Inter", sans-serif;
     font-size: 12px;
-    font-weight: 700;
+    font-weight: 800;
     letter-spacing: 0.02em;
-
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    cursor: default;
 }
 
-/* divider blocks between sections: 24px gap above/below + line */
+/* Divider between panels: 24px gap above/below + line */
 .kce-dividerBlock {
     height: 1px;
     background: rgba(15, 23, 42, 0.08);
@@ -219,7 +221,7 @@
     color: var(--kc-text-primary, #0f172a);
 }
 
-/* ---------- Blocks ---------- */
+/* ---------- Blocks (white inner surfaces inside panels) ---------- */
 .kce-block {
     background: #fff;
     border: 1px solid rgba(15, 23, 42, 0.10);
@@ -227,7 +229,7 @@
     padding: 14px;
 }
 
-/* labels like screenshot */
+/* labels */
 .kce-label {
     font-family: "Inter", sans-serif;
     font-size: 12px;
@@ -277,7 +279,7 @@
     min-height: 110px;
 }
 
-/* two-column fields like screenshot */
+/* two-column fields */
 .kce-grid2 {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -457,22 +459,4 @@
     height: 20px;
     object-fit: contain;
     opacity: 0.9;
-}
-
-/* ---------- Footer bar ---------- */
-.kce-footer {
-    position: sticky;
-    bottom: 0;
-    z-index: 6;
-    background: #fff;
-    border-top: 1px solid rgba(15, 23, 42, 0.08);
-    padding-top: 12px;
-
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 12px;
-}
-
-.kce-footerPad {
-    height: 14px;
 }

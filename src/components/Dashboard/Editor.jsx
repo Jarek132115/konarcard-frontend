@@ -1,5 +1,5 @@
 // frontend/src/components/Dashboard/Editor.jsx
-import React, { useEffect, useMemo, useRef, useState } from "react";
+import React, { useEffect, useMemo, useRef } from "react";
 import { previewPlaceholders } from "../../store/businessCardStore";
 
 /* Social icons */
@@ -124,11 +124,6 @@ export default function Editor({
 
     const avatarSrc = state.avatarPreview || (isBlobUrl(state.avatar) ? "" : state.avatar) || "";
 
-    // Optional: if you ever re-enable collapsible sections, these toggles remain wired.
-    const toggleOrKeepOpen = (setter, current) => {
-        if (typeof setter === "function") setter(!current);
-    };
-
     return (
         <div className="kce-root">
             {/* Header (title area is already correct) */}
@@ -154,15 +149,8 @@ export default function Editor({
             {/* Scroll body */}
             <div className="kce-scroll">
                 {/* TEMPLATES */}
-                <div className="kce-section">
-                    <button
-                        type="button"
-                        className="kce-sectionBar"
-                        onClick={() => toggleOrKeepOpen(() => { }, true)}
-                        aria-label="Templates"
-                    >
-                        Templates
-                    </button>
+                <div className="kce-panel">
+                    <div className="kce-chip">Templates</div>
 
                     <div className="kce-helpTitle">Choose a template</div>
                     <div className="body kce-helpSub">
@@ -202,15 +190,8 @@ export default function Editor({
 
                 {/* MAIN */}
                 {showMainSection !== false && (
-                    <div className="kce-section">
-                        <button
-                            type="button"
-                            className="kce-sectionBar"
-                            onClick={() => toggleOrKeepOpen(setShowMainSection, !!showMainSection)}
-                            aria-label="Main Section"
-                        >
-                            Main Section
-                        </button>
+                    <div className="kce-panel">
+                        <div className="kce-chip">Main Section</div>
 
                         <div className="kce-block">
                             <div className="kce-label">Cover Photo</div>
@@ -232,11 +213,7 @@ export default function Editor({
                                 style={{ display: "none" }}
                             />
 
-                            <button
-                                type="button"
-                                className="kce-upload"
-                                onClick={() => coverInputRef.current?.click()}
-                            >
+                            <button type="button" className="kce-upload" onClick={() => coverInputRef.current?.click()}>
                                 {coverSrc ? (
                                     <img src={coverSrc} alt="Cover" className="kce-uploadImg" />
                                 ) : (
@@ -251,9 +228,9 @@ export default function Editor({
                                         className="kce-x"
                                         role="button"
                                         aria-label="Remove cover"
-                                        onClick={(e) => {
-                                            e.preventDefault();
-                                            e.stopPropagation();
+                                        onClick={(ev) => {
+                                            ev.preventDefault();
+                                            ev.stopPropagation();
                                             updateState({ coverPhotoPreview: "", coverPhotoFile: null });
                                             onRemoveCover?.();
                                         }}
@@ -292,15 +269,8 @@ export default function Editor({
 
                 {/* ABOUT */}
                 {showAboutMeSection !== false && (
-                    <div className="kce-section">
-                        <button
-                            type="button"
-                            className="kce-sectionBar"
-                            onClick={() => toggleOrKeepOpen(setShowAboutMeSection, !!showAboutMeSection)}
-                            aria-label="About Me Section"
-                        >
-                            About Me Section
-                        </button>
+                    <div className="kce-panel">
+                        <div className="kce-chip">About Me Section</div>
 
                         <div className="kce-block">
                             <div className="kce-label">Profile Photo / Logo</div>
@@ -341,9 +311,9 @@ export default function Editor({
                                         className="kce-x"
                                         role="button"
                                         aria-label="Remove avatar"
-                                        onClick={(e) => {
-                                            e.preventDefault();
-                                            e.stopPropagation();
+                                        onClick={(ev) => {
+                                            ev.preventDefault();
+                                            ev.stopPropagation();
                                             updateState({ avatarPreview: "", avatarFile: null });
                                             onRemoveAvatar?.();
                                         }}
@@ -393,15 +363,8 @@ export default function Editor({
 
                 {/* WORK */}
                 {showWorkSection !== false && (
-                    <div className="kce-section">
-                        <button
-                            type="button"
-                            className="kce-sectionBar"
-                            onClick={() => toggleOrKeepOpen(setShowWorkSection, !!showWorkSection)}
-                            aria-label="My Work Section"
-                        >
-                            My Work Section
-                        </button>
+                    <div className="kce-panel">
+                        <div className="kce-chip">My Work Section</div>
 
                         <div className="body kce-miniSub">Upload up to 12 images</div>
 
@@ -439,9 +402,7 @@ export default function Editor({
                             accept="image/*"
                             style={{ display: "none" }}
                             onChange={(e) => {
-                                const files = Array.from(e.target.files || []).filter(
-                                    (f) => f && f.type.startsWith("image/")
-                                );
+                                const files = Array.from(e.target.files || []).filter((f) => f && f.type.startsWith("image/"));
                                 if (!files.length) return;
 
                                 const items = files.map((file) => {
@@ -463,15 +424,8 @@ export default function Editor({
 
                 {/* SERVICES */}
                 {showServicesSection !== false && (
-                    <div className="kce-section">
-                        <button
-                            type="button"
-                            className="kce-sectionBar"
-                            onClick={() => toggleOrKeepOpen(setShowServicesSection, !!showServicesSection)}
-                            aria-label="My Services Section"
-                        >
-                            My Services Section
-                        </button>
+                    <div className="kce-panel">
+                        <div className="kce-chip">My Services Section</div>
 
                         <div className="kce-repeat">
                             {(state.services || []).map((s, i) => (
@@ -481,7 +435,7 @@ export default function Editor({
                                             <div className="kce-label">Service Name</div>
                                             <input
                                                 className="kce-input"
-                                                placeholder="Enter your name"
+                                                placeholder="Enter service name"
                                                 value={s.name || ""}
                                                 onChange={(e) => handleServiceChange(i, "name", e.target.value)}
                                             />
@@ -491,18 +445,14 @@ export default function Editor({
                                             <div className="kce-label">Price / detail</div>
                                             <input
                                                 className="kce-input"
-                                                placeholder="Enter your email"
+                                                placeholder="£50 / from £... / call for quote"
                                                 value={s.price || ""}
                                                 onChange={(e) => handleServiceChange(i, "price", e.target.value)}
                                             />
                                         </div>
                                     </div>
 
-                                    <button
-                                        type="button"
-                                        className="kce-dangerOutline"
-                                        onClick={() => handleRemoveService(i)}
-                                    >
+                                    <button type="button" className="kce-dangerOutline" onClick={() => handleRemoveService(i)}>
                                         Remove Service
                                     </button>
                                 </div>
@@ -519,15 +469,8 @@ export default function Editor({
 
                 {/* REVIEWS */}
                 {showReviewsSection !== false && (
-                    <div className="kce-section">
-                        <button
-                            type="button"
-                            className="kce-sectionBar"
-                            onClick={() => toggleOrKeepOpen(setShowReviewsSection, !!showReviewsSection)}
-                            aria-label="Reviews Section"
-                        >
-                            Reviews Section
-                        </button>
+                    <div className="kce-panel">
+                        <div className="kce-chip">Reviews Section</div>
 
                         <div className="kce-repeat">
                             {(state.reviews || []).map((r, i) => (
@@ -537,7 +480,7 @@ export default function Editor({
                                             <div className="kce-label">Name</div>
                                             <input
                                                 className="kce-input"
-                                                placeholder="Enter your name"
+                                                placeholder="Reviewer name"
                                                 value={r.name || ""}
                                                 onChange={(e) => handleReviewChange(i, "name", e.target.value)}
                                             />
@@ -568,11 +511,7 @@ export default function Editor({
                                         />
                                     </div>
 
-                                    <button
-                                        type="button"
-                                        className="kce-dangerOutline"
-                                        onClick={() => handleRemoveReview(i)}
-                                    >
+                                    <button type="button" className="kce-dangerOutline" onClick={() => handleRemoveReview(i)}>
                                         Remove Review
                                     </button>
                                 </div>
@@ -589,15 +528,8 @@ export default function Editor({
 
                 {/* CONTACT */}
                 {showContactSection !== false && (
-                    <div className="kce-section">
-                        <button
-                            type="button"
-                            className="kce-sectionBar"
-                            onClick={() => toggleOrKeepOpen(setShowContactSection, !!showContactSection)}
-                            aria-label="Contact Section"
-                        >
-                            Contact Section
-                        </button>
+                    <div className="kce-panel">
+                        <div className="kce-chip">Contact Section</div>
 
                         <div className="kce-block">
                             <div className="kce-grid2">
@@ -633,7 +565,7 @@ export default function Editor({
                                     <img src={FacebookIcon} alt="" />
                                     <input
                                         className="kce-input"
-                                        placeholder="Enter your name"
+                                        placeholder="Facebook URL"
                                         value={state.facebook_url || ""}
                                         onChange={(e) => updateState({ facebook_url: e.target.value })}
                                     />
@@ -643,7 +575,7 @@ export default function Editor({
                                     <img src={InstagramIcon} alt="" />
                                     <input
                                         className="kce-input"
-                                        placeholder="Enter your name"
+                                        placeholder="Instagram URL"
                                         value={state.instagram_url || ""}
                                         onChange={(e) => updateState({ instagram_url: e.target.value })}
                                     />
@@ -653,7 +585,7 @@ export default function Editor({
                                     <img src={LinkedInIcon} alt="" />
                                     <input
                                         className="kce-input"
-                                        placeholder="Enter your name"
+                                        placeholder="LinkedIn URL"
                                         value={state.linkedin_url || ""}
                                         onChange={(e) => updateState({ linkedin_url: e.target.value })}
                                     />
@@ -663,7 +595,7 @@ export default function Editor({
                                     <img src={XIcon} alt="" />
                                     <input
                                         className="kce-input"
-                                        placeholder="Enter your name"
+                                        placeholder="X (Twitter) URL"
                                         value={state.x_url || ""}
                                         onChange={(e) => updateState({ x_url: e.target.value })}
                                     />
@@ -673,7 +605,7 @@ export default function Editor({
                                     <img src={TikTokIcon} alt="" />
                                     <input
                                         className="kce-input"
-                                        placeholder="Enter your name"
+                                        placeholder="TikTok URL"
                                         value={state.tiktok_url || ""}
                                         onChange={(e) => updateState({ tiktok_url: e.target.value })}
                                     />
@@ -683,18 +615,8 @@ export default function Editor({
                     </div>
                 )}
 
-                {/* bottom padding so footer doesn’t overlap last section */}
-                <div className="kce-footerPad" />
-            </div>
-
-            {/* Bottom action bar like screenshot */}
-            <div className="kce-footer">
-                <button type="button" className="kce-btn kce-btnGhost kce-btnWide" onClick={onResetPage}>
-                    Reset Page
-                </button>
-                <button type="button" className="kce-btn kce-btnPrimary kce-btnWide" onClick={onSubmit}>
-                    Save / Publish Profile
-                </button>
+                {/* bottom padding so last panel isn't jammed */}
+                <div style={{ height: 8 }} />
             </div>
         </div>
     );
