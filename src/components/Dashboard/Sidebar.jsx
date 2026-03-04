@@ -1,4 +1,4 @@
-// src/components/Dashboard/Sidebar.jsx
+// frontend/src/components/Dashboard/Sidebar.jsx
 import React, { useContext, useEffect, useMemo, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { AuthContext } from "../AuthContext.jsx";
@@ -108,17 +108,17 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen }) {
                     ))}
                 </nav>
 
-                {/* ✅ Gap under Contact Book to divider */}
+                {/* Gap under Contact Book to divider */}
                 <div className="sb3-gap36" />
                 <div className="sb3-divider" />
                 <div className="sb3-gap36" />
 
-                {/* ✅ Upgrade (inside nav so it aligns perfectly) */}
+                {/* ✅ Upgrade Plan (fixed route) */}
                 <nav className="sb3-nav" aria-label="Upgrade">
                     <Link
-                        to="/upgrade"
+                        to="/upgrade-plan"
                         onClick={closeSidebar}
-                        className={`sb3-link ${isActive("/upgrade") ? "active" : ""}`}
+                        className={`sb3-link ${isActive("/upgrade-plan") ? "active" : ""}`}
                     >
                         <span className="sb3-icoWrap" aria-hidden="true">
                             <img className="sb3-ico" src={UpgradeIcon} alt="" />
@@ -127,12 +127,12 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen }) {
                     </Link>
                 </nav>
 
-                {/* ✅ 36px gap under Upgrade Plan */}
+                {/* 36px gap under Upgrade Plan */}
                 <div className="sb3-gap36" />
                 <div className="sb3-divider" />
                 <div className="sb3-gap36" />
 
-                {/* ✅ Help (inside nav so it aligns perfectly) */}
+                {/* Help */}
                 <nav className="sb3-nav" aria-label="Help">
                     <Link
                         to="/helpcentreinterface"
