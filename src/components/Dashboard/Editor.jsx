@@ -35,6 +35,11 @@ function SectionHeader({ pill, title, subtitle, open, onToggle }) {
     );
 }
 
+/** Divider + 24px spacing top/bottom between sections */
+function SectionDivider() {
+    return <div className="kc-editor-divider" aria-hidden="true" />;
+}
+
 export default function Editor({
     state,
     updateState,
@@ -87,15 +92,12 @@ export default function Editor({
         };
     }, []);
 
-    // ✅ collapse sections on first load (reduces scrolling)
-    // - Template stays open by default
-    // - Everything else starts collapsed
+    // ✅ collapse sections on first load
     const didInitRef = useRef(false);
     useEffect(() => {
         if (didInitRef.current) return;
         didInitRef.current = true;
 
-        // If parent already passed booleans, force them collapsed once:
         setShowMainSection?.(false);
         setShowAboutMeSection?.(false);
         setShowWorkSection?.(false);
@@ -105,9 +107,7 @@ export default function Editor({
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
-    // ---------------------------------------------------------
     // Templates
-    // ---------------------------------------------------------
     const TEMPLATE_IDS = useMemo(
         () => ["template-1", "template-2", "template-3", "template-4", "template-5"],
         []
@@ -124,12 +124,9 @@ export default function Editor({
         updateState({ templateId: id });
     };
 
-    // Template accordion local state (separate from show/hide section toggles)
     const [openTemplates, setOpenTemplates] = useState(true);
 
-    // ---------------------------------------------------------
     // Services
-    // ---------------------------------------------------------
     const handleServiceChange = (i, field, value) => {
         const next = [...(state.services || [])];
         next[i] = { ...(next[i] || {}), [field]: value };
@@ -142,14 +139,15 @@ export default function Editor({
     const handleRemoveService = (i) =>
         updateState({ services: (state.services || []).filter((_, idx) => idx !== i) });
 
-    // ---------------------------------------------------------
     // Reviews
-    // ---------------------------------------------------------
     const handleReviewChange = (i, field, value) => {
         const next = [...(state.reviews || [])];
         if (field === "rating") {
             const n = parseInt(value, 10);
-            next[i] = { ...(next[i] || {}), rating: Number.isFinite(n) ? Math.min(5, Math.max(1, n)) : "" };
+            next[i] = {
+                ...(next[i] || {}),
+                rating: Number.isFinite(n) ? Math.min(5, Math.max(1, n)) : "",
+            };
         } else {
             next[i] = { ...(next[i] || {}), [field]: value };
         }
@@ -162,7 +160,7 @@ export default function Editor({
     const handleRemoveReview = (i) =>
         updateState({ reviews: (state.reviews || []).filter((_, idx) => idx !== i) });
 
-    // Prefer explicit preview fields, then persisted URLs, but NEVER force blob into persisted field.
+    // Prefer explicit preview fields, then persisted URLs
     const coverSrc =
         state.coverPhotoPreview ||
         (isBlobUrl(state.coverPhoto) ? "" : state.coverPhoto) ||
@@ -172,10 +170,10 @@ export default function Editor({
 
     return (
         <div className="kc-editor-scope">
-            {/* ✅ sticky editor header: title/subtitle + actions (does not scroll away) */}
+            {/* Sticky header */}
             <div className="kc-editor-top">
                 <div className="kc-editor-topLeft">
-                    <div className="kc-editor-title title">Edit Your Profile</div>
+                    <div className="kc-editor-title kc-title">Edit Your Profile</div>
                     <div className="kc-editor-sub body">Choose one to edit or share.</div>
                 </div>
 
@@ -189,7 +187,7 @@ export default function Editor({
                 </div>
             </div>
 
-            {/* ✅ only THIS scrolls */}
+            {/* ✅ 24px gap after header divider */}
             <div className="kc-editor-scroll">
                 <form onSubmit={onSubmit} className="kc-editor-card">
                     {/* TEMPLATES */}
@@ -212,14 +210,17 @@ export default function Editor({
                                             <button
                                                 key={t}
                                                 type="button"
-                                                className={`kc-template-chip ${active ? "active" : ""} ${locked ? "locked" : ""}`}
+                                                className={`kc-template-chip ${active ? "active" : ""} ${locked ? "locked" : ""
+                                                    }`}
                                                 onClick={() => handleTemplateSelect(t)}
                                                 title={locked ? "Upgrade to unlock this template" : "Select template"}
                                                 aria-label={locked ? `${t} locked` : t}
                                                 role="tab"
                                                 aria-selected={active}
                                             >
-                                                <span className="kc-template-chip-label">{t.replace("-", " ").toUpperCase()}</span>
+                                                <span className="kc-template-chip-label">
+                                                    {t.replace("-", " ").toUpperCase()}
+                                                </span>
                                                 {locked ? <span className="kc-lock" aria-hidden="true">🔒</span> : null}
                                             </button>
                                         );
@@ -234,6 +235,8 @@ export default function Editor({
                             </div>
                         ) : null}
                     </div>
+
+                    <SectionDivider />
 
                     {/* MAIN */}
                     <div className="kc-section">
@@ -324,6 +327,8 @@ export default function Editor({
                             </div>
                         ) : null}
                     </div>
+
+                    <SectionDivider />
 
                     {/* ABOUT */}
                     <div className="kc-section">
@@ -426,6 +431,8 @@ export default function Editor({
                         ) : null}
                     </div>
 
+                    <SectionDivider />
+
                     {/* WORK */}
                     <div className="kc-section">
                         <SectionHeader
@@ -492,6 +499,8 @@ export default function Editor({
                         ) : null}
                     </div>
 
+                    <SectionDivider />
+
                     {/* SERVICES */}
                     <div className="kc-section">
                         <SectionHeader
@@ -542,12 +551,18 @@ export default function Editor({
                                     ))}
                                 </div>
 
-                                <button type="button" className="kc-btn kc-btn-ghost kc-btn-wide" onClick={handleAddService}>
+                                <button
+                                    type="button"
+                                    className="kc-btn kc-btn-ghost kc-btn-wide"
+                                    onClick={handleAddService}
+                                >
                                     + Add service
                                 </button>
                             </div>
                         ) : null}
                     </div>
+
+                    <SectionDivider />
 
                     {/* REVIEWS */}
                     <div className="kc-section">
@@ -613,12 +628,18 @@ export default function Editor({
                                     ))}
                                 </div>
 
-                                <button type="button" className="kc-btn kc-btn-ghost kc-btn-wide" onClick={handleAddReview}>
+                                <button
+                                    type="button"
+                                    className="kc-btn kc-btn-ghost kc-btn-wide"
+                                    onClick={handleAddReview}
+                                >
                                     + Add review
                                 </button>
                             </div>
                         ) : null}
                     </div>
+
+                    <SectionDivider />
 
                     {/* CONTACT */}
                     <div className="kc-section">
@@ -717,7 +738,7 @@ export default function Editor({
                         ) : null}
                     </div>
 
-                    {/* bottom spacing so last accordion isn't jammed */}
+                    {/* small breathing room */}
                     <div style={{ height: 8 }} />
                 </form>
             </div>
