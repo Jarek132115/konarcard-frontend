@@ -1,7 +1,4 @@
 /* frontend/src/styling/dashboard/editor.css */
-/* =========================================================
-   KonarCard Editor — isolated class system (kce-*)
-========================================================= */
 
 .kce-root {
     width: 100%;
@@ -48,7 +45,6 @@
     flex: 0 0 auto;
 }
 
-/* 24px gap under header divider */
 .kce-spacer24 {
     height: 24px;
 }
@@ -119,7 +115,15 @@
     gap: 12px;
 }
 
-/* ✅ black pill is FIT-CONTENT (not full width) */
+/* ✅ pill + toggle row */
+.kce-secHead {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+}
+
+/* ✅ black pill fit-content */
 .kce-pillBar {
     border: 0;
     border-radius: 999px;
@@ -140,7 +144,36 @@
     justify-content: center;
 }
 
-/* divider blocks between sections: 24px gap above/below + line */
+/* ✅ 16px gap from pill row to first label */
+.kce-section>.kce-secHead+* {
+    margin-top: 16px;
+}
+
+/* Hide/show button (top-right) */
+.kce-toggle {
+    appearance: none;
+    border: 1px solid rgba(15, 23, 42, 0.14);
+    background: #fff;
+    color: var(--kc-text-primary, #0f172a);
+    border-radius: 12px;
+    padding: 10px 12px;
+    font-family: "Inter", sans-serif;
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: transform 0.12s ease, box-shadow 0.15s ease, background-color 0.15s ease;
+    white-space: nowrap;
+}
+
+.kce-toggle:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 10px 26px rgba(15, 23, 42, 0.08);
+}
+
+.kce-toggle.is-off {
+    opacity: 0.8;
+}
+
 .kce-dividerBlock {
     height: 1px;
     background: rgba(15, 23, 42, 0.08);
@@ -222,33 +255,29 @@
     color: var(--kc-text-primary, #0f172a);
 }
 
-/* ---------- Blocks (inner white panels where still needed) ---------- */
-.kce-block {
-    background: #fff;
-    border: 1px solid rgba(15, 23, 42, 0.1);
-    border-radius: 14px;
-    padding: 14px;
-}
-
-/* ✅ Main-section labels use body class in JSX, but we force the requested 12px/regular/primary here */
+/* ---------- Labels (Inter semi-bold 14px) ---------- */
 .kce-label {
     font-family: "Inter", sans-serif;
-    font-size: 12px;
-    font-weight: 400;
+    font-size: 14px;
+    font-weight: 600;
     color: var(--kc-text-primary, #0f172a);
-    margin-bottom: 8px;
+    margin: 0;
 }
 
-.kce-mt16 {
-    margin-top: 16px;
-}
-
-/* ---------- Inputs (12px regular, primary text) ---------- */
+/* ✅ gap label -> input = 8px (field controls spacing) */
 .kce-field {
     display: grid;
     gap: 8px;
 }
 
+.kce-muted {
+    font-family: "Inter", sans-serif;
+    font-size: 12px;
+    font-weight: 600;
+    color: rgba(71, 85, 105, 0.85);
+}
+
+/* ---------- Inputs (keep your 12px regular requirement) ---------- */
 .kce-input {
     width: 100%;
     border: 1px solid rgba(15, 23, 42, 0.1);
@@ -285,11 +314,10 @@
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 12px;
-    margin-top: 14px;
 }
 
 .kce-grid2Tight {
-    margin-top: 12px;
+    margin-top: 0;
 }
 
 @media (max-width: 560px) {
@@ -298,7 +326,7 @@
     }
 }
 
-/* ---------- Main cover layout (2-up row, but only 1 upload shown) ---------- */
+/* ---------- Main cover layout ---------- */
 .kce-mediaGrid {
     display: grid;
     grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
@@ -323,7 +351,7 @@
     }
 }
 
-/* ---------- Uploads (cover aspect ratio 4 x 2.75) ---------- */
+/* ---------- Uploads ---------- */
 .kce-upload {
     width: 100%;
     border-radius: 12px;
@@ -358,7 +386,6 @@
     line-height: 1;
 }
 
-/* ✅ upload text: Inter regular 12px, primary */
 .kce-uploadText {
     font-family: "Inter", sans-serif;
     font-size: 12px;
@@ -389,11 +416,7 @@
     font-weight: 800;
 }
 
-/* ---------- Work grid ---------- */
-.kce-miniSub {
-    margin-top: -6px;
-}
-
+/* Work grid */
 .kce-workGrid {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -439,7 +462,7 @@
     cursor: pointer;
 }
 
-/* ---------- Repeat cards (services/reviews) ---------- */
+/* Repeat cards */
 .kce-repeat {
     display: grid;
     gap: 12px;
@@ -465,7 +488,6 @@
     cursor: pointer;
 }
 
-/* dashed add button */
 .kce-dashedAdd {
     width: 100%;
     border-radius: 12px;
@@ -476,11 +498,10 @@
     cursor: pointer;
 }
 
-/* ---------- Social rows ---------- */
+/* Social rows */
 .kce-social {
     display: grid;
     gap: 10px;
-    margin-top: 10px;
 }
 
 .kce-socialRow {
@@ -497,7 +518,7 @@
     opacity: 0.9;
 }
 
-/* ---------- Footer bar ---------- */
+/* Footer */
 .kce-footer {
     position: sticky;
     bottom: 0;
