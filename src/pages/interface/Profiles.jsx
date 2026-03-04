@@ -98,7 +98,7 @@ export default function Profiles() {
     const isPlus = plan === "plus";
     const isFree = !isTeams && !isPlus;
 
-    // ✅ cap logic (important)
+    // ✅ cap logic
     const teamsCap = Math.max(1, Number(authUser?.teamsProfilesQty || 1));
     const maxProfiles = isTeams ? teamsCap : 1;
 
@@ -107,7 +107,7 @@ export default function Profiles() {
     const createProfile = useCreateProfile();
     const deleteProfile = useDeleteProfile();
 
-    // If plan changes (e.g., cancel/subscription updates), refetch list
+    // When plan changes (downgrade/upgrade), refresh list
     useEffect(() => {
         if (!authUser) return;
         refetchProfiles?.();
@@ -165,17 +165,19 @@ export default function Profiles() {
         return xs;
     }, [profiles]);
 
-    // ✅ mark over-cap profiles as locked (so UI doesn’t lie)
+    // ✅ lock anything over cap (kept in DB, but not usable)
     const cappedProfiles = useMemo(() => {
         return sortedProfiles.map((p, idx) => ({
             ...p,
-            isOverCap: idx >= maxProfiles,
+            isLockedByPlan: idx >= maxProfiles,
         }));
     }, [sortedProfiles, maxProfiles]);
 
+    const lockedCount = useMemo(() => Math.max(0, cappedProfiles.length - maxProfiles), [cappedProfiles.length, maxProfiles]);
+
     const [selectedSlug, setSelectedSlug] = useState(null);
 
-    // ✅ ensure selected profile is never over-cap
+    // ✅ ensure selected profile is never a locked one
     useEffect(() => {
         if (!sortedProfiles.length) {
             setSelectedSlug(null);
@@ -189,7 +191,6 @@ export default function Profiles() {
             const idx = sortedProfiles.findIndex((p) => p.slug === prev);
             if (idx === -1) return firstAllowed;
 
-            // if user downgraded and current selection is now over cap, snap back
             if (idx >= maxProfiles) return firstAllowed;
 
             return prev;
@@ -202,9 +203,7 @@ export default function Profiles() {
         const found = sortedProfiles.find((p) => p.slug === selectedSlug) || sortedProfiles[0];
         const idx = sortedProfiles.findIndex((p) => p.slug === found.slug);
 
-        // never return over-cap as selected
         if (idx >= maxProfiles) return sortedProfiles[0] || null;
-
         return found;
     }, [sortedProfiles, selectedSlug, maxProfiles]);
 
@@ -217,6 +216,25 @@ export default function Profiles() {
     const selectedPublicUrl = useMemo(() => {
         return selectedProfile?.slug ? buildPublicUrl(selectedProfile.slug) : "";
     }, [selectedProfile?.slug]);
+
+    // =========================================================
+    // ✅ Locked overlay (shown when user clicks locked profile)
+    // =========================================================
+    const [lockedOverlayOpen, setLockedOverlayOpen] = useState(false);
+    const [lockedClickedSlug, setLockedClickedSlug] = useState("");
+
+    const openLockedOverlay = (slug) => {
+        setLockedClickedSlug(slug || "");
+        setLockedOverlayOpen(true);
+    };
+
+    const closeLockedOverlay = () => {
+        setLockedOverlayOpen(false);
+        setLockedClickedSlug("");
+    };
+
+    const overlayPlanName = isFree ? "Free" : isPlus ? "Plus" : "your current";
+    const overlayLimitText = `This plan is limited to ${maxProfiles} profile${maxProfiles === 1 ? "" : "s"}.`;
 
     // =========================================================
     // ✅ REAL PREVIEW DATA (fetch selected profile full record)
@@ -381,7 +399,7 @@ export default function Profiles() {
         alert("Wallet not wired yet. If you have an endpoint/URL for pass creation, send it and I’ll connect it.");
     };
 
-    const goUpgrade = () => navigate("/pricing");
+    const goUpgradeTeams = () => navigate("/pricing"); // keep simple (your pricing page can choose Teams)
 
     // =========================================================
     // INLINE "ADD PROFILE" (REPLACES THE DASHED CARD)
@@ -415,7 +433,8 @@ export default function Profiles() {
 
     const validateClaimSlug = (raw) => {
         const s = normalizeSlug(raw);
-        if (!s || s.length < 3) return { ok: false, slug: s, msg: "Slug must be at least 3 characters (a-z, 0-9, hyphen)." };
+        if (!s || s.length < 3)
+            return { ok: false, slug: s, msg: "Slug must be at least 3 characters (a-z, 0-9, hyphen)." };
         if (s === "main") return { ok: false, slug: s, msg: "Please choose a real slug (not “main”)." };
         return { ok: true, slug: s, msg: "" };
     };
@@ -461,22 +480,23 @@ export default function Profiles() {
             return;
         }
 
-        // Free/Plus cap guard (you currently only allow extra profiles on Teams)
+        // Free/Plus: limited to 1 profile in your current rules
         if (!isTeams && sortedProfiles.length >= maxProfiles) {
-            setClaimStatus("error");
-            setClaimMessage("Your current plan allows 1 profile. Upgrade to create more.");
+            // instead of inline hint, just open overlay (same message style)
+            openLockedOverlay(v.slug);
             return;
         }
 
         // Teams cap guard
         if (isTeams && sortedProfiles.length >= maxProfiles) {
             setClaimStatus("error");
-            setClaimMessage(`You’re at your Teams limit (${sortedProfiles.length}/${maxProfiles}). Increase your Teams quantity to add more profiles.`);
+            setClaimMessage(
+                `You’re at your Teams limit (${sortedProfiles.length}/${maxProfiles}). Increase your Teams quantity to add more profiles.`
+            );
             return;
         }
 
         if (!isTeams) {
-            // If you later allow Plus to have >1 profile, change maxProfiles for plus above.
             handleEdit(v.slug);
             return;
         }
@@ -528,7 +548,8 @@ export default function Profiles() {
                 desiredQuantity: desiredNewCount,
             });
 
-            const url = res?.data?.url || res?.data?.checkoutUrl || res?.data?.sessionUrl || res?.data?.redirectUrl;
+            const url =
+                res?.data?.url || res?.data?.checkoutUrl || res?.data?.sessionUrl || res?.data?.redirectUrl;
 
             if (url) {
                 window.location.href = url;
@@ -636,8 +657,6 @@ export default function Profiles() {
         );
     }
 
-    const hasOverCapProfiles = cappedProfiles.some((p) => p.isOverCap);
-
     // =========================================================
     // Main render
     // =========================================================
@@ -648,23 +667,6 @@ export default function Profiles() {
                     title="Profiles"
                     subtitle="Profiles are your public digital business cards. Each profile has its own link you can share after every job."
                 />
-
-                {hasOverCapProfiles ? (
-                    <section className="profiles-card" style={{ marginBottom: 16 }}>
-                        <h2 className="profiles-card-title" style={{ marginBottom: 6 }}>
-                            Some profiles are locked
-                        </h2>
-                        <p className="profiles-muted" style={{ marginBottom: 12 }}>
-                            Your plan allows <strong>{maxProfiles}</strong> profile{maxProfiles === 1 ? "" : "s"}.
-                            Upgrade to unlock the extra profile{cappedProfiles.length - maxProfiles === 1 ? "" : "s"}.
-                        </p>
-                        <div className="profiles-actions-row">
-                            <button type="button" className="kx-btn kx-btn--orange" onClick={goUpgrade}>
-                                Upgrade plan
-                            </button>
-                        </div>
-                    </section>
-                ) : null}
 
                 {sortedProfiles.length === 0 ? (
                     <section className="profiles-card profiles-empty">
@@ -702,21 +704,21 @@ export default function Profiles() {
                             <div className="profiles-listScroll">
                                 {cappedProfiles.map((p) => {
                                     const active = selectedProfile?.slug === p.slug;
-                                    const locked = p.isOverCap;
+                                    const locked = p.isLockedByPlan;
 
                                     return (
                                         <article
                                             key={p.slug}
                                             className={`profiles-profileCard ${active ? "is-active" : ""} ${locked ? "is-locked" : ""}`}
                                             onClick={() => {
-                                                if (locked) return goUpgrade();
+                                                if (locked) return openLockedOverlay(p.slug);
                                                 setSelectedSlug(p.slug);
                                             }}
                                             role="button"
                                             tabIndex={0}
                                             onKeyDown={(e) => {
                                                 if (e.key === "Enter" || e.key === " ") {
-                                                    if (locked) return goUpgrade();
+                                                    if (locked) return openLockedOverlay(p.slug);
                                                     setSelectedSlug(p.slug);
                                                 }
                                             }}
@@ -743,11 +745,6 @@ export default function Profiles() {
 
                                                     <div className="profiles-slug">{p.slug}</div>
                                                     <div className="profiles-updated">{p.updatedAt}</div>
-                                                    {locked ? (
-                                                        <div className="profiles-updated" style={{ marginTop: 6 }}>
-                                                            Upgrade to use this profile.
-                                                        </div>
-                                                    ) : null}
                                                 </div>
 
                                                 <div className="profiles-profileRight">
@@ -759,7 +756,7 @@ export default function Profiles() {
                                                                 disabled={locked}
                                                                 onClick={(e) => {
                                                                     e.stopPropagation();
-                                                                    if (locked) return goUpgrade();
+                                                                    if (locked) return openLockedOverlay(p.slug);
                                                                     handleEdit(p.slug);
                                                                 }}
                                                             >
@@ -772,7 +769,7 @@ export default function Profiles() {
                                                                 disabled={locked}
                                                                 onClick={(e) => {
                                                                     e.stopPropagation();
-                                                                    if (locked) return goUpgrade();
+                                                                    if (locked) return openLockedOverlay(p.slug);
                                                                     shareSlug(p.slug);
                                                                 }}
                                                             >
@@ -808,7 +805,12 @@ export default function Profiles() {
                                     <div ref={claimRef} className="profiles-addInline">
                                         <div className="profiles-addInlineHead">
                                             <div className="profiles-addInlineTitle">Claim your link</div>
-                                            <button type="button" className="profiles-addInlineClose" onClick={closeClaimPanel} aria-label="Close">
+                                            <button
+                                                type="button"
+                                                className="profiles-addInlineClose"
+                                                onClick={closeClaimPanel}
+                                                aria-label="Close"
+                                            >
                                                 ✕
                                             </button>
                                         </div>
@@ -836,7 +838,9 @@ export default function Profiles() {
                                                 type="button"
                                                 className="kx-btn kx-btn--black"
                                                 onClick={checkSlugAvailability}
-                                                disabled={claimStatus === "checking" || claimStatus === "subscribing" || claimStatus === "creating"}
+                                                disabled={
+                                                    claimStatus === "checking" || claimStatus === "subscribing" || claimStatus === "creating"
+                                                }
                                             >
                                                 {claimStatus === "checking" ? "Checking..." : "Check availability"}
                                             </button>
@@ -881,23 +885,13 @@ export default function Profiles() {
                                                     <button
                                                         type="button"
                                                         className="kx-btn kx-btn--orange"
-                                                        onClick={() => {
-                                                            // Free/Plus currently capped at 1 here
-                                                            if (sortedProfiles.length >= maxProfiles) return goUpgrade();
-                                                            createProfileNow();
-                                                        }}
+                                                        onClick={createProfileNow}
                                                     >
-                                                        {sortedProfiles.length >= maxProfiles ? "Upgrade to add profiles" : "Continue to editor"}
+                                                        Continue to editor
                                                     </button>
                                                 )}
                                             </div>
                                         )}
-
-                                        {!isTeams && sortedProfiles.length >= maxProfiles ? (
-                                            <div className="profiles-hint">
-                                                Your current plan allows <strong>1 profile</strong>. Upgrade to create more.
-                                            </div>
-                                        ) : null}
                                     </div>
                                 )}
                             </div>
@@ -1024,6 +1018,109 @@ export default function Profiles() {
                         </aside>
                     </div>
                 )}
+
+                {/* =====================================================
+            Locked overlay modal (no CSS file changes required)
+           ===================================================== */}
+                {lockedOverlayOpen ? (
+                    <div
+                        role="dialog"
+                        aria-modal="true"
+                        onMouseDown={(e) => {
+                            if (e.target === e.currentTarget) closeLockedOverlay();
+                        }}
+                        style={{
+                            position: "fixed",
+                            inset: 0,
+                            zIndex: 9999,
+                            background: "rgba(15, 23, 42, 0.55)",
+                            display: "grid",
+                            placeItems: "center",
+                            padding: 16,
+                        }}
+                    >
+                        <div
+                            style={{
+                                width: "min(520px, 100%)",
+                                background: "#fff",
+                                borderRadius: 18,
+                                border: "1px solid rgba(15,23,42,0.12)",
+                                boxShadow: "0 30px 80px rgba(15,23,42,0.28)",
+                                padding: 18,
+                                fontFamily: "Inter, sans-serif",
+                                color: "var(--kc-text-primary, #0f172a)",
+                            }}
+                        >
+                            <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: 12 }}>
+                                <div>
+                                    <div style={{ fontSize: 16, fontWeight: 800, marginBottom: 6 }}>This profile is locked</div>
+                                    <div style={{ fontSize: 13, fontWeight: 500, color: "rgba(15,23,42,0.75)" }}>
+                                        You downgraded to the <strong>{overlayPlanName}</strong> plan.
+                                    </div>
+                                </div>
+
+                                <button
+                                    type="button"
+                                    onClick={closeLockedOverlay}
+                                    aria-label="Close"
+                                    style={{
+                                        border: "1px solid rgba(15,23,42,0.12)",
+                                        background: "#fff",
+                                        borderRadius: 12,
+                                        width: 38,
+                                        height: 38,
+                                        cursor: "pointer",
+                                        fontWeight: 900,
+                                        lineHeight: 1,
+                                    }}
+                                >
+                                    ✕
+                                </button>
+                            </div>
+
+                            <div style={{ marginTop: 12, fontSize: 13, color: "rgba(15,23,42,0.85)", lineHeight: 1.5 }}>
+                                {overlayLimitText}{" "}
+                                {lockedCount > 0 ? (
+                                    <>
+                                        You currently have <strong>{lockedCount}</strong> profile{lockedCount === 1 ? "" : "s"} locked.
+                                    </>
+                                ) : null}
+                            </div>
+
+                            <div style={{ marginTop: 10, fontSize: 13, color: "rgba(15,23,42,0.85)", lineHeight: 1.5 }}>
+                                To unlock your old profiles, upgrade back to <strong>Teams</strong>. If you don’t upgrade, your locked profiles
+                                will be permanently removed in <strong>30 days</strong>.
+                            </div>
+
+                            {lockedClickedSlug ? (
+                                <div style={{ marginTop: 10, fontSize: 12, color: "rgba(15,23,42,0.6)" }}>
+                                    Locked profile: <strong>{lockedClickedSlug}</strong>
+                                </div>
+                            ) : null}
+
+                            <div style={{ display: "flex", gap: 10, marginTop: 16, justifyContent: "flex-end", flexWrap: "wrap" }}>
+                                <button
+                                    type="button"
+                                    className="kx-btn kx-btn--white"
+                                    onClick={closeLockedOverlay}
+                                >
+                                    Not now
+                                </button>
+
+                                <button
+                                    type="button"
+                                    className="kx-btn kx-btn--orange"
+                                    onClick={() => {
+                                        closeLockedOverlay();
+                                        goUpgradeTeams();
+                                    }}
+                                >
+                                    Upgrade to Teams
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                ) : null}
             </div>
         </DashboardLayout>
     );
