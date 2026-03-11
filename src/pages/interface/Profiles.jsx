@@ -151,6 +151,11 @@ export default function Profiles() {
     const createProfile = useCreateProfile();
     const deleteProfile = useDeleteProfile();
 
+    const railRef = useRef(null);
+    const dragActiveRef = useRef(false);
+    const dragStartXRef = useRef(0);
+    const dragStartScrollLeftRef = useRef(0);
+
     useEffect(() => {
         if (!authUser) return;
         refetchProfiles?.();
@@ -605,6 +610,46 @@ export default function Profiles() {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [location.search, refetchProfiles, refetchAuthUser]);
 
+    const handleRailPointerDown = (e) => {
+        const rail = railRef.current;
+        if (!rail) return;
+
+        dragActiveRef.current = true;
+        dragStartXRef.current = e.clientX;
+        dragStartScrollLeftRef.current = rail.scrollLeft;
+
+        rail.classList.add("is-dragging");
+        try {
+            rail.setPointerCapture?.(e.pointerId);
+        } catch { }
+    };
+
+    const handleRailPointerMove = (e) => {
+        const rail = railRef.current;
+        if (!rail || !dragActiveRef.current) return;
+
+        const dx = e.clientX - dragStartXRef.current;
+        rail.scrollLeft = dragStartScrollLeftRef.current - dx;
+    };
+
+    const handleRailPointerUp = (e) => {
+        const rail = railRef.current;
+        dragActiveRef.current = false;
+        if (!rail) return;
+
+        rail.classList.remove("is-dragging");
+        try {
+            rail.releasePointerCapture?.(e.pointerId);
+        } catch { }
+    };
+
+    const handleRailPointerLeave = () => {
+        const rail = railRef.current;
+        dragActiveRef.current = false;
+        if (!rail) return;
+        rail.classList.remove("is-dragging");
+    };
+
     if (isLoading) {
         return (
             <DashboardLayout hideDesktopHeader>
@@ -667,7 +712,7 @@ export default function Profiles() {
                             <div className="profiles-listHeader">
                                 <div className="profiles-listHeader-left">
                                     <h2 className="profiles-listTitle">Your Profiles</h2>
-                                    <p className="profiles-listSub">Scroll sideways to browse your cards.</p>
+                                    <p className="profiles-listSub">Drag sideways to browse your cards.</p>
                                 </div>
 
                                 <span className="profiles-countPill">
@@ -677,7 +722,15 @@ export default function Profiles() {
 
                             <div className="profiles-listDivider" />
 
-                            <div className="profiles-listRail">
+                            <div
+                                ref={railRef}
+                                className="profiles-listRail"
+                                onPointerDown={handleRailPointerDown}
+                                onPointerMove={handleRailPointerMove}
+                                onPointerUp={handleRailPointerUp}
+                                onPointerCancel={handleRailPointerUp}
+                                onPointerLeave={handleRailPointerLeave}
+                            >
                                 {cappedProfiles.map((p) => {
                                     const active = selectedProfile?.slug === p.slug;
                                     const locked = p.isLockedByPlan;
