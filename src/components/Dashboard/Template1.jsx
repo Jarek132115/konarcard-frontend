@@ -1,4 +1,3 @@
-// frontend/src/components/Dashboard/Template1.jsx
 import React from "react";
 import "../../styling/dashboard/templates/template1.css";
 
@@ -7,6 +6,7 @@ const asArray = (v) => (Array.isArray(v) ? v : []);
 
 function Stars({ rating = 0 }) {
     const r = Math.max(0, Math.min(5, Number(rating) || 0));
+
     return (
         <div className="t1-stars" aria-label={`Rating ${r} out of 5`}>
             {Array(5)
@@ -20,25 +20,46 @@ function Stars({ rating = 0 }) {
     );
 }
 
+function formatSocialLabel(key) {
+    const map = {
+        facebook_url: "Facebook",
+        instagram_url: "Instagram",
+        linkedin_url: "LinkedIn",
+        x_url: "X",
+        tiktok_url: "TikTok",
+    };
+    return map[key] || key.replace("_url", "");
+}
+
 export default function Template1(props) {
-    // ✅ Support BOTH (Preview passes data sometimes; UserPage passes vm)
     const v = props?.vm || props?.data || {};
 
     const cover = v.cover || "";
-    const avatar = v.avatar || "";
+    const logo = v.logo || v.avatar || "";
+
+    const businessName = v.businessName || v.mainHeading || "Your Business Name";
+    const tradeTitle = v.tradeTitle || v.subHeading || "";
+    const location = v.location || "";
+
+    const aboutName = v.fullName || "";
+    const aboutTrade = v.jobTitle || "";
+    const aboutBio = v.bio || "";
 
     const works = asArray(v.works)
         .map((x) => x?.preview || x?.url || x)
         .filter(Boolean);
 
-    const services = asArray(v.services).filter((s) => s?.name || s?.price);
+    const services = asArray(v.services).filter((s) => s?.name || s?.description || s?.price);
     const reviews = asArray(v.reviews).filter((r) => r?.name || r?.text);
 
+    const socialEntries = Object.entries(v.socials || {}).filter(([, url]) => nonEmpty(url));
+
     const hasHeroCtas = !!(v.hasExchangeContact || nonEmpty(v.email) || nonEmpty(v.phone));
+    const hasAbout = nonEmpty(aboutName) || nonEmpty(aboutTrade) || nonEmpty(aboutBio);
+    const hasContact = nonEmpty(v.email) || nonEmpty(v.phone) || socialEntries.length > 0;
 
     return (
-        <div className="kc-tpl kc-tpl-1">
-            {/* HERO */}
+        <div className={`kc-tpl kc-tpl-1 ${v.themeMode === "dark" ? "t1-theme-dark" : "t1-theme-light"}`}>
             {v.showMainSection && (
                 <section className="t1-hero">
                     <div className="t1-hero-card">
@@ -51,25 +72,41 @@ export default function Template1(props) {
                         )}
 
                         <div className="t1-hero-body">
-                            <div className="t1-hero-top">
-                                {nonEmpty(avatar) ? (
-                                    <img src={avatar} alt="Avatar" className="t1-avatar" />
+                            <div className="t1-logoWrap">
+                                {nonEmpty(logo) ? (
+                                    <img src={logo} alt="Logo" className="t1-logo" />
                                 ) : (
-                                    <div className="t1-avatar t1-avatar--placeholder" aria-hidden="true" />
+                                    <div className="t1-logo t1-logo--placeholder" aria-hidden="true" />
                                 )}
+                            </div>
 
-                                <div className="t1-hero-names">
-                                    <h1 className="t1-h1">{v.mainHeading || "Your Main Heading"}</h1>
-                                    {nonEmpty(v.subHeading) ? <p className="t1-sub">{v.subHeading}</p> : null}
-                                </div>
+                            <div className="t1-hero-copy">
+                                <h1 className="t1-h1">{businessName}</h1>
+
+                                {nonEmpty(tradeTitle) ? (
+                                    <p className="t1-sub">{tradeTitle}</p>
+                                ) : null}
+
+                                {nonEmpty(location) ? (
+                                    <p className="t1-location">{location}</p>
+                                ) : null}
                             </div>
 
                             {hasHeroCtas ? (
                                 <div className="t1-cta-row">
-                                    <button type="button" className="t1-btn t1-btn-primary" onClick={v.onSaveMyNumber}>
+                                    <button
+                                        type="button"
+                                        className="t1-btn t1-btn-primary"
+                                        onClick={v.onSaveMyNumber}
+                                    >
                                         Save My Number
                                     </button>
-                                    <button type="button" className="t1-btn t1-btn-ghost" onClick={v.onOpenExchangeContact}>
+
+                                    <button
+                                        type="button"
+                                        className="t1-btn t1-btn-ghost"
+                                        onClick={v.onOpenExchangeContact}
+                                    >
                                         Exchange Contact
                                     </button>
                                 </div>
@@ -79,28 +116,24 @@ export default function Template1(props) {
                 </section>
             )}
 
-            {/* ABOUT */}
-            {v.showAboutMeSection && (nonEmpty(v.fullName) || nonEmpty(v.jobTitle) || nonEmpty(v.bio)) ? (
+            {v.showAboutMeSection && hasAbout ? (
                 <section className="t1-section">
                     <div className="t1-section-head">
-                        <h2 className="t1-h2">About</h2>
-                        <div className="t1-divider" />
+                        <h2 className="t1-h2">About Me</h2>
                     </div>
 
                     <div className="t1-about-card">
-                        {nonEmpty(v.fullName) ? <div className="t1-name">{v.fullName}</div> : null}
-                        {nonEmpty(v.jobTitle) ? <div className="t1-role">{v.jobTitle}</div> : null}
-                        {nonEmpty(v.bio) ? <p className="t1-bio">{v.bio}</p> : null}
+                        {nonEmpty(aboutName) ? <div className="t1-name">{aboutName}</div> : null}
+                        {nonEmpty(aboutTrade) ? <div className="t1-role">{aboutTrade}</div> : null}
+                        {nonEmpty(aboutBio) ? <p className="t1-bio">{aboutBio}</p> : null}
                     </div>
                 </section>
             ) : null}
 
-            {/* WORK */}
             {v.showWorkSection && works.length > 0 ? (
                 <section className="t1-section">
                     <div className="t1-section-head">
-                        <h2 className="t1-h2">My work</h2>
-                        <div className="t1-divider" />
+                        <h2 className="t1-h2">My Work</h2>
                     </div>
 
                     <div className="t1-work-grid">
@@ -113,35 +146,33 @@ export default function Template1(props) {
                 </section>
             ) : null}
 
-            {/* SERVICES */}
             {v.showServicesSection && services.length > 0 ? (
                 <section className="t1-section">
                     <div className="t1-section-head">
-                        <h2 className="t1-h2">Services</h2>
-                        <div className="t1-divider" />
+                        <h2 className="t1-h2">My Services</h2>
                     </div>
 
                     <div className="t1-services">
                         {services.slice(0, 12).map((s, i) => (
                             <div key={i} className="t1-service">
                                 <div className="t1-service-name">{s?.name}</div>
-                                {nonEmpty(s?.price) ? <div className="t1-service-sub">{s.price}</div> : null}
+                                {nonEmpty(s?.description || s?.price) ? (
+                                    <div className="t1-service-sub">{s.description || s.price}</div>
+                                ) : null}
                             </div>
                         ))}
                     </div>
                 </section>
             ) : null}
 
-            {/* REVIEWS */}
             {v.showReviewsSection && reviews.length > 0 ? (
                 <section className="t1-section">
                     <div className="t1-section-head">
-                        <h2 className="t1-h2">Reviews</h2>
-                        <div className="t1-divider" />
+                        <h2 className="t1-h2">My Reviews</h2>
                     </div>
 
                     <div className="t1-reviews">
-                        {reviews.slice(0, 10).map((r, i) => (
+                        {reviews.slice(0, 12).map((r, i) => (
                             <div key={i} className="t1-review">
                                 <Stars rating={r?.rating} />
                                 {nonEmpty(r?.text) ? <p className="t1-review-text">“{r.text}”</p> : null}
@@ -152,12 +183,10 @@ export default function Template1(props) {
                 </section>
             ) : null}
 
-            {/* CONTACT */}
-            {v.showContactSection && (nonEmpty(v.email) || nonEmpty(v.phone)) ? (
+            {v.showContactSection && hasContact ? (
                 <section className="t1-section t1-section-last">
                     <div className="t1-section-head">
-                        <h2 className="t1-h2">Contact</h2>
-                        <div className="t1-divider" />
+                        <h2 className="t1-h2">Get In Touch</h2>
                     </div>
 
                     <div className="t1-contact">
@@ -175,15 +204,21 @@ export default function Template1(props) {
                             </a>
                         ) : null}
 
-                        <div className="t1-socials">
-                            {Object.entries(v.socials || {})
-                                .filter(([, url]) => nonEmpty(url))
-                                .map(([key, url]) => (
-                                    <a key={key} className="t1-social" href={url} target="_blank" rel="noreferrer">
-                                        {key.replace("_url", "").toUpperCase()}
+                        {socialEntries.length > 0 ? (
+                            <div className="t1-socials">
+                                {socialEntries.map(([key, url]) => (
+                                    <a
+                                        key={key}
+                                        className="t1-social"
+                                        href={url}
+                                        target="_blank"
+                                        rel="noreferrer"
+                                    >
+                                        {formatSocialLabel(key)}
                                     </a>
                                 ))}
-                        </div>
+                            </div>
+                        ) : null}
                     </div>
                 </section>
             ) : null}

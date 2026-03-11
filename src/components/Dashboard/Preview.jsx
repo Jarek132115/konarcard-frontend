@@ -3,7 +3,6 @@ import { createPortal } from "react-dom";
 import { previewPlaceholders } from "../../store/businessCardStore";
 import "../../styling/dashboard/preview.css";
 
-/* ✅ Your 5 template components */
 import Template1 from "./Template1";
 import Template2 from "./Template2";
 import Template3 from "./Template3";
@@ -16,18 +15,18 @@ const isBlobUrl = (v) => typeof v === "string" && v.startsWith("blob:");
 
 const getTemplateId = (raw) => {
     const t = (raw || "template-1").toString();
-    const allowed = new Set(["template-1", "template-2", "template-3", "template-4", "template-5"]);
+    const allowed = new Set([
+        "template-1",
+        "template-2",
+        "template-3",
+        "template-4",
+        "template-5",
+    ]);
     return allowed.has(t) ? t : "template-1";
 };
 
-// ✅ Fixed order. Users cannot reorder.
 const SECTION_ORDER = ["main", "about", "work", "services", "reviews", "contact"];
 
-/* -------------------------------------------------------
-   IFRAME RENDERER
-   - makes media queries match preview panel size (desktop)
-   - clones parent styles into iframe so templates look identical
--------------------------------------------------------- */
 function IframePreview({ className, children, title = "Preview" }) {
     const iframeRef = useRef(null);
     const [mountNode, setMountNode] = useState(null);
@@ -49,8 +48,10 @@ function IframePreview({ className, children, title = "Preview" }) {
             doc.body.style.margin = "0";
             doc.body.style.background = "transparent";
 
-            // ✅ clone parent styles into iframe
-            const parentHeadNodes = Array.from(document.head.querySelectorAll('link[rel="stylesheet"], style'));
+            const parentHeadNodes = Array.from(
+                document.head.querySelectorAll('link[rel="stylesheet"], style')
+            );
+
             parentHeadNodes.forEach((node) => {
                 const clone = node.cloneNode(true);
                 doc.head.appendChild(clone);
@@ -66,7 +67,6 @@ function IframePreview({ className, children, title = "Preview" }) {
             setMountNode(root);
         };
 
-        // ensure it builds even if load already fired
         if (iframe.contentDocument?.readyState === "complete") build();
         iframe.addEventListener("load", build);
 
@@ -91,7 +91,6 @@ export default function Preview({
     isMobile,
     hasSavedData,
 
-    // ✅ Only thing user can control: show/hide sections
     showMainSection,
     showAboutMeSection,
     showWorkSection,
@@ -111,24 +110,45 @@ export default function Preview({
     const shouldShowPlaceholders = !hasSavedData;
 
     const templateId = getTemplateId(s.template_id || s.templateId || "template-1");
+    const themeMode = asString(s.themeMode || s.pageTheme || "light") || "light";
 
     const vm = useMemo(() => {
-        const fullName = asString(s.full_name) || (shouldShowPlaceholders ? asString(ph.full_name) : "");
-        const jobTitle = asString(s.job_title) || (shouldShowPlaceholders ? asString(ph.job_title) : "");
-        const bio = asString(s.bio) || (shouldShowPlaceholders ? asString(ph.bio) : "");
-
-        const mainHeading =
+        const businessName =
+            asString(s.business_name) ||
+            asString(s.businessName) ||
             asString(s.mainHeading) ||
             asString(s.main_heading) ||
-            (shouldShowPlaceholders ? asString(ph.main_heading) : "");
+            (shouldShowPlaceholders ? asString(ph.business_name || ph.main_heading) : "");
 
-        const subHeading =
+        const tradeTitle =
+            asString(s.trade_title) ||
             asString(s.subHeading) ||
             asString(s.sub_heading) ||
-            (shouldShowPlaceholders ? asString(ph.sub_heading) : "");
+            (shouldShowPlaceholders ? asString(ph.trade_title || ph.sub_heading) : "");
 
-        const email = asString(s.contact_email) || (shouldShowPlaceholders ? asString(ph.contact_email) : "");
-        const phone = asString(s.phone_number) || (shouldShowPlaceholders ? asString(ph.phone_number) : "");
+        const location =
+            asString(s.location) ||
+            (shouldShowPlaceholders ? asString(ph.location) : "");
+
+        const fullName =
+            asString(s.full_name) ||
+            (shouldShowPlaceholders ? asString(ph.full_name) : "");
+
+        const jobTitle =
+            asString(s.job_title) ||
+            (shouldShowPlaceholders ? asString(ph.job_title) : "");
+
+        const bio =
+            asString(s.bio) ||
+            (shouldShowPlaceholders ? asString(ph.bio) : "");
+
+        const email =
+            asString(s.contact_email) ||
+            (shouldShowPlaceholders ? asString(ph.contact_email) : "");
+
+        const phone =
+            asString(s.phone_number) ||
+            (shouldShowPlaceholders ? asString(ph.phone_number) : "");
 
         const cover =
             s.coverPhotoPreview ||
@@ -136,21 +156,56 @@ export default function Preview({
             (isBlobUrl(s.cover_photo) ? "" : s.cover_photo) ||
             (shouldShowPlaceholders ? ph.coverPhoto : "");
 
+        const logo =
+            s.logoPreview ||
+            (isBlobUrl(s.logo) ? "" : s.logo) ||
+            s.avatarPreview ||
+            (isBlobUrl(s.avatar) ? "" : s.avatar) ||
+            (shouldShowPlaceholders ? asString(ph.logo) : "");
+
         const avatar =
             s.avatarPreview ||
             (isBlobUrl(s.avatar) ? "" : s.avatar) ||
             (isBlobUrl(s.avatar_url) ? "" : s.avatar_url) ||
-            (shouldShowPlaceholders ? ph.avatar : "");
+            s.logoPreview ||
+            (isBlobUrl(s.logo) ? "" : s.logo) ||
+            (shouldShowPlaceholders ? asString(ph.avatar) : "");
 
         const worksRaw = asArray(s.workImages || s.works);
         const worksPlaceholders = asArray(ph.workImages || ph.works);
-        const works = worksRaw.length ? worksRaw : shouldShowPlaceholders ? worksPlaceholders : [];
+        const works = worksRaw.length
+            ? worksRaw
+            : shouldShowPlaceholders
+                ? worksPlaceholders
+                : [];
 
         const servicesRaw = asArray(s.services);
-        const services = servicesRaw.length ? servicesRaw : shouldShowPlaceholders ? asArray(ph.services) : [];
+        const servicesPlaceholders = asArray(ph.services);
+        const servicesSource = servicesRaw.length
+            ? servicesRaw
+            : shouldShowPlaceholders
+                ? servicesPlaceholders
+                : [];
+
+        const services = servicesSource.map((item) => ({
+            name: asString(item?.name),
+            description: asString(item?.description || item?.price),
+            price: asString(item?.price || item?.description),
+        }));
 
         const reviewsRaw = asArray(s.reviews);
-        const reviews = reviewsRaw.length ? reviewsRaw : shouldShowPlaceholders ? asArray(ph.reviews) : [];
+        const reviewsPlaceholders = asArray(ph.reviews);
+        const reviewsSource = reviewsRaw.length
+            ? reviewsRaw
+            : shouldShowPlaceholders
+                ? reviewsPlaceholders
+                : [];
+
+        const reviews = reviewsSource.map((item) => ({
+            name: asString(item?.name),
+            text: asString(item?.text),
+            rating: Number(item?.rating) || 5,
+        }));
 
         const socials = {
             facebook_url: asString(s.facebook_url),
@@ -164,6 +219,7 @@ export default function Preview({
 
         return {
             templateId,
+            themeMode,
             sectionOrder: SECTION_ORDER,
 
             showMainSection: !!showMainSection,
@@ -173,10 +229,12 @@ export default function Preview({
             showReviewsSection: !!showReviewsSection,
             showContactSection: !!showContactSection,
 
+            // new preferred fields
             cover,
-            avatar,
-            mainHeading,
-            subHeading,
+            logo,
+            businessName,
+            tradeTitle,
+            location,
             fullName,
             jobTitle,
             bio,
@@ -187,11 +245,15 @@ export default function Preview({
             phone,
             socials,
 
+            // legacy compatibility fields
+            avatar,
+            mainHeading: businessName,
+            subHeading: tradeTitle,
+
             hasContact,
             hasExchangeContact: !!hasExchangeContact,
             visitUrl: visitUrl || "#",
 
-            // ✅ preview-only actions
             onSaveMyNumber: () => { },
             onOpenExchangeContact: () => { },
             onExchangeContact: () => { },
@@ -201,6 +263,7 @@ export default function Preview({
         ph,
         shouldShowPlaceholders,
         templateId,
+        themeMode,
         hasExchangeContact,
         visitUrl,
         showMainSection,
@@ -211,7 +274,6 @@ export default function Preview({
         showContactSection,
     ]);
 
-    // mobile expand/collapse
     useEffect(() => {
         if (!isMobile) return;
         const el = mpWrapRef.current;
@@ -265,11 +327,10 @@ export default function Preview({
 
     const templateProps = { vm, data: vm, isMobile };
 
-    // MOBILE (direct)
     if (isMobile) {
         return (
             <div className="preview-scope myprofile-preview-wrapper" style={columnScrollStyle}>
-                <div className={`myprofile-preview template-${templateId}`}>
+                <div className={`myprofile-preview template-${templateId} theme-${themeMode}`}>
                     <div className="mp-toolbar" role="tablist" aria-label="Preview controls">
                         <button
                             type="button"
@@ -302,10 +363,9 @@ export default function Preview({
         );
     }
 
-    // DESKTOP (iframe)
     return (
         <div className="preview-scope myprofile-preview-wrapper" style={columnScrollStyle}>
-            <div className={`myprofile-preview template-${templateId}`}>
+            <div className={`myprofile-preview template-${templateId} theme-${themeMode}`}>
                 <IframePreview className="preview-iframe-mode" title={`Template Preview (${templateId})`}>
                     <div className="preview-iframe-padding">
                         <TemplateComponent {...templateProps} />

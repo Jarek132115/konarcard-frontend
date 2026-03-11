@@ -8,10 +8,10 @@ import LinkedInIcon from "../../assets/icons/icons8-linkedin.svg";
 import XIcon from "../../assets/icons/icons8-x.svg";
 import TikTokIcon from "../../assets/icons/icons8-tiktok.svg";
 
-/* ✅ Upgrade badge icon (premium) */
+/* Upgrade badge icon */
 import UpgradePlanIcon from "../../assets/icons/UpgradePlanIcon.svg";
 
-/* ✅ Use ANY 5 images from the Home hero carousel (UP1–UP8) */
+/* Template thumbs */
 import UP1 from "../../assets/images/UP1.jpg";
 import UP2 from "../../assets/images/UP2.jpg";
 import UP3 from "../../assets/images/UP3.jpg";
@@ -26,7 +26,7 @@ export default function Editor({
     state,
     updateState,
 
-    isSubscribed, // ✅ plus/teams = true, free = false
+    isSubscribed,
 
     onStartSubscription,
     onResetPage,
@@ -48,13 +48,15 @@ export default function Editor({
 
     onCoverUpload,
     onRemoveCover,
+
     onAvatarUpload,
     onRemoveAvatar,
+
     onAddWorkImages,
     onRemoveWorkImage,
 }) {
     const coverInputRef = useRef(null);
-    const avatarInputRef = useRef(null);
+    const logoInputRef = useRef(null);
     const workImageInputRef = useRef(null);
 
     const [upgradeOpen, setUpgradeOpen] = useState(false);
@@ -78,7 +80,6 @@ export default function Editor({
 
     const closeUpgrade = () => setUpgradeOpen(false);
 
-    // close on ESC
     useEffect(() => {
         const onKey = (e) => {
             if (e.key === "Escape") closeUpgrade();
@@ -87,7 +88,6 @@ export default function Editor({
         return () => window.removeEventListener("keydown", onKey);
     }, [upgradeOpen]);
 
-    // Templates
     const TEMPLATE_IDS = useMemo(
         () => ["template-1", "template-2", "template-3", "template-4", "template-5"],
         []
@@ -105,6 +105,8 @@ export default function Editor({
     );
 
     const currentTemplate = (state.templateId || "template-1").toString();
+    const currentThemeMode = (state.themeMode || state.pageTheme || "light").toString();
+
     const isTemplateLocked = (templateId) => !isSubscribed && templateId !== "template-1";
 
     const handleTemplateSelect = (id) => {
@@ -115,24 +117,43 @@ export default function Editor({
         updateState({ templateId: id });
     };
 
-    // Services
+    const handleThemeModeChange = (mode) => {
+        updateState({
+            themeMode: mode,
+            pageTheme: mode, // legacy compatibility
+        });
+    };
+
     const handleServiceChange = (i, field, value) => {
         const next = [...(state.services || [])];
-        next[i] = { ...(next[i] || {}), [field]: value };
+
+        if (field === "description") {
+            next[i] = {
+                ...(next[i] || {}),
+                description: value,
+                price: value,
+            };
+        } else {
+            next[i] = { ...(next[i] || {}), [field]: value };
+        }
+
         updateState({ services: next });
     };
 
     const handleAddService = () => {
         if (!isSubscribed && servicesCount >= FREE_MAX) return openUpgrade("services");
-        updateState({ services: [...(state.services || []), { name: "", price: "" }] });
+
+        updateState({
+            services: [...(state.services || []), { name: "", description: "", price: "" }],
+        });
     };
 
     const handleRemoveService = (i) =>
         updateState({ services: (state.services || []).filter((_, idx) => idx !== i) });
 
-    // Reviews
     const handleReviewChange = (i, field, value) => {
         const next = [...(state.reviews || [])];
+
         if (field === "rating") {
             const n = parseInt(value, 10);
             next[i] = {
@@ -142,28 +163,35 @@ export default function Editor({
         } else {
             next[i] = { ...(next[i] || {}), [field]: value };
         }
+
         updateState({ reviews: next });
     };
 
     const handleAddReview = () => {
         if (!isSubscribed && reviewsCount >= FREE_MAX) return openUpgrade("reviews");
-        updateState({ reviews: [...(state.reviews || []), { name: "", text: "", rating: 5 }] });
+
+        updateState({
+            reviews: [...(state.reviews || []), { name: "", text: "", rating: 5 }],
+        });
     };
 
     const handleRemoveReview = (i) =>
         updateState({ reviews: (state.reviews || []).filter((_, idx) => idx !== i) });
 
-    // Prefer preview fields first
     const coverSrc =
         state.coverPhotoPreview ||
         (isBlobUrl(state.coverPhoto) ? "" : state.coverPhoto) ||
         previewPlaceholders.coverPhoto;
 
-    const avatarSrc = state.avatarPreview || (isBlobUrl(state.avatar) ? "" : state.avatar) || "";
+    const logoSrc =
+        state.logoPreview ||
+        (isBlobUrl(state.logo) ? "" : state.logo) ||
+        state.avatarPreview ||
+        (isBlobUrl(state.avatar) ? "" : state.avatar) ||
+        "";
 
     const sectionToggle = (isShown, setter) => setter?.(!isShown);
 
-    // Work add click handler (locks on free at 6)
     const handleWorkAddClick = () => {
         if (!isSubscribed && worksCount >= FREE_MAX) return openUpgrade("work");
         workImageInputRef.current?.click();
@@ -173,7 +201,6 @@ export default function Editor({
         const files = Array.from(e.target.files || []).filter((f) => f && f.type.startsWith("image/"));
         if (!files.length) return;
 
-        // free cap: only allow up to remaining slots
         if (!isSubscribed) {
             const remaining = Math.max(0, FREE_MAX - worksCount);
             if (remaining <= 0) {
@@ -186,32 +213,38 @@ export default function Editor({
             return;
         }
 
-        // subscribed cap: up to 12 total (UI cap)
         const remaining = Math.max(0, PRO_MAX - worksCount);
         const trimmed = files.slice(0, remaining);
         if (!trimmed.length) {
             e.target.value = "";
             return;
         }
+
         onAddWorkImages?.(trimmed);
         e.target.value = "";
     };
 
     const capLine = (type) => {
-        if (isSubscribed) return `Plus: up to ${PRO_MAX}.`;
-        if (type === "work") return `Free plan: up to ${FREE_MAX} images. Upgrade for ${PRO_MAX}.`;
+        if (isSubscribed) {
+            if (type === "work") return `Plus / Teams: up to ${PRO_MAX} work images.`;
+            if (type === "services") return `Plus / Teams: up to ${PRO_MAX} services.`;
+            if (type === "reviews") return `Plus / Teams: up to ${PRO_MAX} reviews.`;
+            return `Plus / Teams limits apply.`;
+        }
+
+        if (type === "work") return `Free plan: up to ${FREE_MAX} work images. Upgrade for ${PRO_MAX}.`;
         if (type === "services") return `Free plan: up to ${FREE_MAX} services. Upgrade for ${PRO_MAX}.`;
         if (type === "reviews") return `Free plan: up to ${FREE_MAX} reviews. Upgrade for ${PRO_MAX}.`;
+
         return `Free plan limits apply.`;
     };
 
     return (
         <div className="kce-root">
-            {/* Header */}
             <div className="kce-top">
                 <div className="kce-topLeft">
                     <div className="kc-title kce-title">Edit Your Profile</div>
-                    <div className="body kce-sub">Choose one to edit or share.</div>
+                    <div className="body kce-sub">Choose a template and add your business details.</div>
                 </div>
 
                 <div className="kce-topRight">
@@ -224,10 +257,8 @@ export default function Editor({
                 </div>
             </div>
 
-            {/* 24px gap below divider */}
             <div className="kce-spacer24" />
 
-            {/* ✅ Upgrade modal */}
             {upgradeOpen ? (
                 <div className="kce-modalOverlay" role="dialog" aria-modal="true" aria-label="Upgrade to Plus">
                     <div className="kce-modal" onClick={(e) => e.stopPropagation()}>
@@ -237,12 +268,13 @@ export default function Editor({
 
                         <div className="kce-modalTitle">Upgrade to Plus</div>
                         <div className="kce-modalText">
-                            Unlock all features:
+                            Unlock all premium features:
                             <ul className="kce-modalList">
                                 <li>All templates</li>
-                                <li>Detailed analytics</li>
-                                <li>Upload 2× more images</li>
-                                <li>More reviews and services</li>
+                                <li>Light and dark template options</li>
+                                <li>Up to 12 work images</li>
+                                <li>Up to 12 services</li>
+                                <li>Up to 12 reviews</li>
                             </ul>
                         </div>
 
@@ -264,17 +296,23 @@ export default function Editor({
                         </div>
 
                         <div className="kce-modalFoot">
-                            {upgradeContext === "templates" ? "This template is a Plus feature." : "This action is a Plus feature."}
+                            {upgradeContext === "templates"
+                                ? "This template is a Plus feature."
+                                : "This action is a Plus feature."}
                         </div>
                     </div>
 
-                    <button type="button" className="kce-modalBackdrop" onClick={closeUpgrade} aria-label="Close modal" />
+                    <button
+                        type="button"
+                        className="kce-modalBackdrop"
+                        onClick={closeUpgrade}
+                        aria-label="Close modal"
+                    />
                 </div>
             ) : null}
 
-            {/* Scroll body */}
             <div className="kce-scroll">
-                {/* TEMPLATES */}
+                {/* Templates */}
                 <div className="kce-section">
                     <div className="kce-sectionTop">
                         <span className="kce-pill">Templates</span>
@@ -283,7 +321,7 @@ export default function Editor({
                     <div className="kce-sectionBody">
                         <div className="kce-helpTitle">Choose a template</div>
                         <div className="body kce-helpSub">
-                            Templates control the design (fonts, colors, layout). You only add your content.
+                            Templates control the layout, fonts and styling. You only add your content.
                         </div>
 
                         <div className="kce-templatePhones" role="tablist" aria-label="Template selector">
@@ -311,7 +349,6 @@ export default function Editor({
                                             decoding="async"
                                         />
 
-                                        {/* ✅ premium badge icon on templates 2–5 for free plan */}
                                         {locked ? (
                                             <span className="kce-premiumBadge" aria-hidden="true">
                                                 <img src={UpgradePlanIcon} alt="" />
@@ -320,6 +357,41 @@ export default function Editor({
                                     </button>
                                 );
                             })}
+                        </div>
+
+                        <div className="kce-themeModeWrap">
+                            <div className="kce-themeModeTop">
+                                <div className="kce-helpTitle">Choose mode</div>
+                                <div className="kce-themeModeHint">
+                                    Select how this template should appear on the public profile.
+                                </div>
+                            </div>
+
+                            <div
+                                className="kce-themeModeToggle"
+                                role="tablist"
+                                aria-label="Theme mode selector"
+                            >
+                                <button
+                                    type="button"
+                                    role="tab"
+                                    aria-selected={currentThemeMode === "light"}
+                                    className={`kce-themeModeBtn ${currentThemeMode === "light" ? "is-active" : ""}`}
+                                    onClick={() => handleThemeModeChange("light")}
+                                >
+                                    Light Mode
+                                </button>
+
+                                <button
+                                    type="button"
+                                    role="tab"
+                                    aria-selected={currentThemeMode === "dark"}
+                                    className={`kce-themeModeBtn ${currentThemeMode === "dark" ? "is-active" : ""}`}
+                                    onClick={() => handleThemeModeChange("dark")}
+                                >
+                                    Dark Mode
+                                </button>
+                            </div>
                         </div>
 
                         {!isSubscribed ? (
@@ -332,7 +404,7 @@ export default function Editor({
 
                 <div className="kce-dividerBlock" />
 
-                {/* MAIN */}
+                {/* Main */}
                 <div className="kce-section">
                     <div className="kce-sectionTop">
                         <span className="kce-pill">Main Section</span>
@@ -367,7 +439,7 @@ export default function Editor({
                                 <div className="kce-mediaRow">
                                     <button
                                         type="button"
-                                        className="kce-upload kce-uploadHalf"
+                                        className="kce-upload"
                                         onClick={() => coverInputRef.current?.click()}
                                     >
                                         {coverSrc ? (
@@ -375,7 +447,7 @@ export default function Editor({
                                         ) : (
                                             <div className="kce-uploadInner">
                                                 <div className="kce-plus">+</div>
-                                                <div className="kce-uploadText">Upload Cover Image</div>
+                                                <div className="kce-uploadText">Upload Cover Photo</div>
                                             </div>
                                         )}
 
@@ -397,54 +469,11 @@ export default function Editor({
                                 </div>
                             </div>
 
-                            <div className="kce-grid2">
-                                <div className="kce-field">
-                                    <div className="kce-label">Main heading</div>
-                                    <input
-                                        className="kce-input"
-                                        value={state.mainHeading || ""}
-                                        onChange={(e) => updateState({ mainHeading: e.target.value })}
-                                        placeholder={previewPlaceholders.main_heading}
-                                    />
-                                </div>
-
-                                <div className="kce-field">
-                                    <div className="kce-label">Subheading</div>
-                                    <input
-                                        className="kce-input"
-                                        value={state.subHeading || ""}
-                                        onChange={(e) => updateState({ subHeading: e.target.value })}
-                                        placeholder={previewPlaceholders.sub_heading}
-                                    />
-                                </div>
-                            </div>
-                        </div>
-                    ) : null}
-                </div>
-
-                <div className="kce-dividerBlock" />
-
-                {/* ABOUT */}
-                <div className="kce-section">
-                    <div className="kce-sectionTop">
-                        <span className="kce-pill">About Me Section</span>
-
-                        <button
-                            type="button"
-                            className="kce-hideBtn"
-                            onClick={() => sectionToggle(!!showAboutMeSection, setShowAboutMeSection)}
-                        >
-                            {showAboutMeSection ? "Hide section" : "Show section"}
-                        </button>
-                    </div>
-
-                    {showAboutMeSection ? (
-                        <div className="kce-sectionBody">
                             <div className="kce-field">
-                                <div className="kce-label">Profile Photo / Logo</div>
+                                <div className="kce-label">Logo</div>
 
                                 <input
-                                    ref={avatarInputRef}
+                                    ref={logoInputRef}
                                     type="file"
                                     accept="image/*"
                                     onChange={(e) => {
@@ -459,23 +488,23 @@ export default function Editor({
                                 <div className="kce-mediaRow">
                                     <button
                                         type="button"
-                                        className="kce-upload kce-uploadHalf"
-                                        onClick={() => avatarInputRef.current?.click()}
+                                        className="kce-upload kce-uploadLogo"
+                                        onClick={() => logoInputRef.current?.click()}
                                     >
-                                        {avatarSrc ? (
-                                            <img src={avatarSrc} alt="Avatar" className="kce-uploadImg" />
+                                        {logoSrc ? (
+                                            <img src={logoSrc} alt="Logo" className="kce-uploadImg kce-uploadImgContain" />
                                         ) : (
                                             <div className="kce-uploadInner">
                                                 <div className="kce-plus">+</div>
-                                                <div className="kce-uploadText">Upload Profile Photo / Logo</div>
+                                                <div className="kce-uploadText">Upload Logo</div>
                                             </div>
                                         )}
 
-                                        {avatarSrc ? (
+                                        {logoSrc ? (
                                             <span
                                                 className="kce-x"
                                                 role="button"
-                                                aria-label="Remove avatar"
+                                                aria-label="Remove logo"
                                                 onClick={(ev) => {
                                                     ev.preventDefault();
                                                     ev.stopPropagation();
@@ -491,22 +520,85 @@ export default function Editor({
 
                             <div className="kce-grid2">
                                 <div className="kce-field">
-                                    <div className="kce-label">Full name</div>
+                                    <div className="kce-label">Business Name</div>
                                     <input
                                         className="kce-input"
-                                        value={state.full_name || ""}
-                                        onChange={(e) => updateState({ full_name: e.target.value })}
-                                        placeholder={previewPlaceholders.full_name}
+                                        value={state.business_name || state.mainHeading || ""}
+                                        onChange={(e) =>
+                                            updateState({
+                                                business_name: e.target.value,
+                                                mainHeading: e.target.value,
+                                            })
+                                        }
+                                        placeholder="Carter Electrical Services"
                                     />
                                 </div>
 
                                 <div className="kce-field">
-                                    <div className="kce-label">Job title</div>
+                                    <div className="kce-label">Trade Title</div>
+                                    <input
+                                        className="kce-input"
+                                        value={state.trade_title || state.subHeading || ""}
+                                        onChange={(e) =>
+                                            updateState({
+                                                trade_title: e.target.value,
+                                                subHeading: e.target.value,
+                                            })
+                                        }
+                                        placeholder="Domestic & Commercial Electrician"
+                                    />
+                                </div>
+                            </div>
+
+                            <div className="kce-field">
+                                <div className="kce-label">Location</div>
+                                <input
+                                    className="kce-input"
+                                    value={state.location || ""}
+                                    onChange={(e) => updateState({ location: e.target.value })}
+                                    placeholder="Liverpool, England"
+                                />
+                            </div>
+                        </div>
+                    ) : null}
+                </div>
+
+                <div className="kce-dividerBlock" />
+
+                {/* About */}
+                <div className="kce-section">
+                    <div className="kce-sectionTop">
+                        <span className="kce-pill">About Me Section</span>
+
+                        <button
+                            type="button"
+                            className="kce-hideBtn"
+                            onClick={() => sectionToggle(!!showAboutMeSection, setShowAboutMeSection)}
+                        >
+                            {showAboutMeSection ? "Hide section" : "Show section"}
+                        </button>
+                    </div>
+
+                    {showAboutMeSection ? (
+                        <div className="kce-sectionBody">
+                            <div className="kce-grid2">
+                                <div className="kce-field">
+                                    <div className="kce-label">Name</div>
+                                    <input
+                                        className="kce-input"
+                                        value={state.full_name || ""}
+                                        onChange={(e) => updateState({ full_name: e.target.value })}
+                                        placeholder={previewPlaceholders.full_name || "James Carter"}
+                                    />
+                                </div>
+
+                                <div className="kce-field">
+                                    <div className="kce-label">Trade Title</div>
                                     <input
                                         className="kce-input"
                                         value={state.job_title || ""}
                                         onChange={(e) => updateState({ job_title: e.target.value })}
-                                        placeholder={previewPlaceholders.job_title}
+                                        placeholder={previewPlaceholders.job_title || "Electrician"}
                                     />
                                 </div>
                             </div>
@@ -527,7 +619,7 @@ export default function Editor({
 
                 <div className="kce-dividerBlock" />
 
-                {/* WORK */}
+                {/* Work */}
                 <div className="kce-section">
                     <div className="kce-sectionTop">
                         <span className="kce-pill">My Work Section</span>
@@ -560,7 +652,6 @@ export default function Editor({
                                     </div>
                                 ))}
 
-                                {/* ✅ add card always shown, but locked if free+cap */}
                                 <button type="button" className="kce-upload kce-workAdd" onClick={handleWorkAddClick}>
                                     <div className="kce-uploadInner">
                                         <div className="kce-plus">+</div>
@@ -589,7 +680,7 @@ export default function Editor({
 
                 <div className="kce-dividerBlock" />
 
-                {/* SERVICES */}
+                {/* Services */}
                 <div className="kce-section">
                     <div className="kce-sectionTop">
                         <span className="kce-pill">My Services Section</span>
@@ -610,26 +701,24 @@ export default function Editor({
                             <div className="kce-repeat">
                                 {(state.services || []).slice(0, maxServices).map((s, i) => (
                                     <div key={i} className="kce-repeatCard">
-                                        <div className="kce-grid2">
-                                            <div className="kce-field">
-                                                <div className="kce-label">Service Name</div>
-                                                <input
-                                                    className="kce-input"
-                                                    placeholder="Enter service"
-                                                    value={s.name || ""}
-                                                    onChange={(e) => handleServiceChange(i, "name", e.target.value)}
-                                                />
-                                            </div>
+                                        <div className="kce-field">
+                                            <div className="kce-label">Service Name</div>
+                                            <input
+                                                className="kce-input"
+                                                placeholder="Fuse Board Upgrades"
+                                                value={s.name || ""}
+                                                onChange={(e) => handleServiceChange(i, "name", e.target.value)}
+                                            />
+                                        </div>
 
-                                            <div className="kce-field">
-                                                <div className="kce-label">Price / detail</div>
-                                                <input
-                                                    className="kce-input"
-                                                    placeholder="£ / from £ / call for quote"
-                                                    value={s.price || ""}
-                                                    onChange={(e) => handleServiceChange(i, "price", e.target.value)}
-                                                />
-                                            </div>
+                                        <div className="kce-field">
+                                            <div className="kce-label">Short Description</div>
+                                            <input
+                                                className="kce-input"
+                                                placeholder="Modern consumer unit installations for safer homes."
+                                                value={s.description || s.price || ""}
+                                                onChange={(e) => handleServiceChange(i, "description", e.target.value)}
+                                            />
                                         </div>
 
                                         <button type="button" className="kce-dangerPill" onClick={() => handleRemoveService(i)}>
@@ -655,7 +744,7 @@ export default function Editor({
 
                 <div className="kce-dividerBlock" />
 
-                {/* REVIEWS */}
+                {/* Reviews */}
                 <div className="kce-section">
                     <div className="kce-sectionTop">
                         <span className="kce-pill">Reviews Section</span>
@@ -681,7 +770,7 @@ export default function Editor({
                                                 <div className="kce-label">Name</div>
                                                 <input
                                                     className="kce-input"
-                                                    placeholder="Enter name"
+                                                    placeholder="Sarah Thompson"
                                                     value={r.name || ""}
                                                     onChange={(e) => handleReviewChange(i, "name", e.target.value)}
                                                 />
@@ -706,7 +795,7 @@ export default function Editor({
                                             <textarea
                                                 className="kce-input kce-textarea"
                                                 rows={3}
-                                                placeholder="Write the review…"
+                                                placeholder="Write the review..."
                                                 value={r.text || ""}
                                                 onChange={(e) => handleReviewChange(i, "text", e.target.value)}
                                             />
@@ -735,7 +824,7 @@ export default function Editor({
 
                 <div className="kce-dividerBlock" />
 
-                {/* CONTACT */}
+                {/* Contact */}
                 <div className="kce-section">
                     <div className="kce-sectionTop">
                         <span className="kce-pill">Contact Section</span>

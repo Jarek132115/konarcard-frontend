@@ -1,4 +1,3 @@
-// frontend/src/pages/interface/MyProfile.jsx
 import React, { useEffect, useState, useContext, useMemo } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { toast } from "react-hot-toast";
@@ -33,22 +32,49 @@ const safeRevoke = (url) => {
 
 const revokeAllLocalPreviews = (st) => {
   safeRevoke(st?.coverPhotoPreview);
+  safeRevoke(st?.logoPreview);
   safeRevoke(st?.avatarPreview);
   (st?.workImages || []).forEach((w) => safeRevoke(w?.preview));
 };
 
+const normaliseServicesForSave = (services = []) =>
+  (Array.isArray(services) ? services : [])
+    .map((s) => ({
+      name: norm(s?.name),
+      description: norm(s?.description || s?.price),
+      // keep legacy backend compatibility
+      price: norm(s?.description || s?.price),
+    }))
+    .filter((s) => s.name || s.description);
+
+const normaliseReviewsForSave = (reviews = []) =>
+  (Array.isArray(reviews) ? reviews : [])
+    .map((r) => ({
+      name: norm(r?.name),
+      text: norm(r?.text),
+      rating: Number(r?.rating) || 5,
+    }))
+    .filter((r) => r.name || r.text);
+
 const buildBusinessCardFormData = ({
   profile_slug,
   template_id,
+  theme_mode,
 
   business_card_name,
+  business_name,
+  trade_title,
+  location,
+
   main_heading,
   sub_heading,
+
   job_title,
   full_name,
   bio,
 
   cover_photo,
+  logo,
   avatar,
 
   works_existing_urls,
@@ -61,6 +87,7 @@ const buildBusinessCardFormData = ({
   phone_number,
 
   cover_photo_removed,
+  logo_removed,
   avatar_removed,
 
   show_main_section,
@@ -80,11 +107,19 @@ const buildBusinessCardFormData = ({
 
   fd.append("profile_slug", (profile_slug || "main").toString());
   fd.append("template_id", (template_id || "template-1").toString());
+  fd.append("theme_mode", (theme_mode || "light").toString());
 
-  // Content
-  fd.append("business_card_name", business_card_name || "");
-  fd.append("main_heading", main_heading || "");
-  fd.append("sub_heading", sub_heading || "");
+  // New preferred fields
+  fd.append("business_name", business_name || "");
+  fd.append("trade_title", trade_title || "");
+  fd.append("location", location || "");
+
+  // Legacy-compatible fields
+  fd.append("business_card_name", business_card_name || business_name || "");
+  fd.append("main_heading", main_heading || business_name || "");
+  fd.append("sub_heading", sub_heading || trade_title || "");
+
+  // About
   fd.append("job_title", job_title || "");
   fd.append("full_name", full_name || "");
   fd.append("bio", bio || "");
@@ -98,12 +133,21 @@ const buildBusinessCardFormData = ({
   fd.append("reviews", JSON.stringify(Array.isArray(reviews) ? reviews : []));
 
   // Existing works URLs
-  const existing = Array.isArray(works_existing_urls) ? works_existing_urls.filter(Boolean) : [];
+  const existing = Array.isArray(works_existing_urls)
+    ? works_existing_urls.filter(Boolean)
+    : [];
   existing.forEach((url) => fd.append("existing_works", url));
 
   // New uploads
   if (cover_photo instanceof File) fd.append("cover_photo", cover_photo);
-  if (avatar instanceof File) fd.append("avatar", avatar);
+
+  // Prefer new key, but also append avatar for backend compatibility
+  if (logo instanceof File) {
+    fd.append("logo", logo);
+    fd.append("avatar", logo);
+  } else if (avatar instanceof File) {
+    fd.append("avatar", avatar);
+  }
 
   const workFiles = Array.isArray(work_images_files) ? work_images_files : [];
   workFiles.forEach((f) => {
@@ -112,9 +156,10 @@ const buildBusinessCardFormData = ({
 
   // Removed flags
   fd.append("cover_photo_removed", cover_photo_removed ? "1" : "0");
+  fd.append("logo_removed", logo_removed ? "1" : "0");
   fd.append("avatar_removed", avatar_removed ? "1" : "0");
 
-  // Show/hide toggles
+  // Show / hide section toggles
   fd.append("show_main_section", show_main_section === false ? "0" : "1");
   fd.append("show_about_me_section", show_about_me_section === false ? "0" : "1");
   fd.append("show_work_section", show_work_section === false ? "0" : "1");
@@ -142,16 +187,15 @@ function getSlugFromSearch(search) {
   }
 }
 
-// ✅ small completion helper (for pills)
 const calcCompletionPctFromState = (st) => {
   const checks = [
-    !!norm(st?.businessName),
-    !!norm(st?.mainHeading),
-    !!norm(st?.subHeading),
-    !!norm(st?.job_title),
+    !!norm(st?.business_name || st?.businessName || st?.mainHeading),
+    !!norm(st?.trade_title || st?.subHeading),
+    !!norm(st?.location),
     !!norm(st?.full_name),
+    !!norm(st?.job_title),
     !!norm(st?.bio),
-    !!norm(st?.avatar) || !!norm(st?.avatarPreview),
+    !!norm(st?.logo) || !!norm(st?.logoPreview) || !!norm(st?.avatar) || !!norm(st?.avatarPreview),
     !!norm(st?.coverPhoto) || !!norm(st?.coverPhotoPreview),
     Array.isArray(st?.workImages) && st.workImages.length > 0,
     Array.isArray(st?.services) && st.services.length > 0,
@@ -159,6 +203,7 @@ const calcCompletionPctFromState = (st) => {
     !!norm(st?.contact_email),
     !!norm(st?.phone_number),
   ];
+
   const total = checks.length;
   const done = checks.filter(Boolean).length;
   return total ? Math.round((done / total) * 100) : 0;
@@ -205,7 +250,6 @@ export default function MyProfile() {
       retry: 1,
     });
 
-  // If slug not found -> fallback to first profile
   useEffect(() => {
     if (!authUser) return;
     if (isCardLoading) return;
@@ -225,9 +269,7 @@ export default function MyProfile() {
         url.searchParams.set("slug", firstSlug);
         window.history.replaceState({}, document.title, url.toString());
         navigate(url.pathname + url.search, { replace: true });
-      } catch {
-        // ignore
-      }
+      } catch { }
     })();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [authUser, isCardLoading, businessCard, activeSlug]);
@@ -240,12 +282,16 @@ export default function MyProfile() {
   const [showShareModal, setShowShareModal] = useState(false);
 
   const [coverPhotoRemoved, setCoverPhotoRemoved] = useState(false);
-  const [isAvatarRemoved, setIsAvatarRemoved] = useState(false);
+  const [logoRemoved, setLogoRemoved] = useState(false);
 
   const mqDesktopToMobile = "(max-width: 1000px)";
   const mqSmallMobile = "(max-width: 520px)";
-  const [isMobile, setIsMobile] = useState(() => window.matchMedia(mqDesktopToMobile).matches);
-  const [isSmallMobile, setIsSmallMobile] = useState(() => window.matchMedia(mqSmallMobile).matches);
+  const [isMobile, setIsMobile] = useState(() =>
+    window.matchMedia(mqDesktopToMobile).matches
+  );
+  const [isSmallMobile, setIsSmallMobile] = useState(() =>
+    window.matchMedia(mqSmallMobile).matches
+  );
 
   const [showMainSection, setShowMainSection] = useState(true);
   const [showAboutMeSection, setShowAboutMeSection] = useState(true);
@@ -258,7 +304,6 @@ export default function MyProfile() {
     (state.contact_email && state.contact_email.trim()) ||
     (state.phone_number && state.phone_number.trim());
 
-  // Stripe return handler (unchanged)
   useEffect(() => {
     const params = new URLSearchParams(location.search);
     const sessionId = params.get("session_id");
@@ -297,7 +342,6 @@ export default function MyProfile() {
     })();
   }, [location.search, refetchAuthUser]);
 
-  // Media queries
   useEffect(() => {
     const mm1 = window.matchMedia(mqDesktopToMobile);
     const mm2 = window.matchMedia(mqSmallMobile);
@@ -316,7 +360,6 @@ export default function MyProfile() {
     };
   }, []);
 
-  // Verification cooldown
   useEffect(() => {
     if (resendCooldown <= 0) return;
     const t = setTimeout(() => setResendCooldown((s) => s - 1), 1000);
@@ -324,11 +367,13 @@ export default function MyProfile() {
   }, [resendCooldown]);
 
   useEffect(() => {
-    if (!authLoading && authUser && !isUserVerified && userEmail) setShowVerificationPrompt(true);
-    else if (!authLoading && isUserVerified) setShowVerificationPrompt(false);
+    if (!authLoading && authUser && !isUserVerified && userEmail) {
+      setShowVerificationPrompt(true);
+    } else if (!authLoading && isUserVerified) {
+      setShowVerificationPrompt(false);
+    }
   }, [authLoading, authUser, isUserVerified, userEmail]);
 
-  // Hydrate editor from backend
   useEffect(() => {
     if (isCardLoading) return;
 
@@ -337,26 +382,68 @@ export default function MyProfile() {
     if (businessCard) {
       updateState({
         templateId: businessCard.template_id || "template-1",
+        themeMode: businessCard.theme_mode || businessCard.page_theme || "light",
+        pageTheme: businessCard.theme_mode || businessCard.page_theme || "light",
 
-        businessName: businessCard.business_card_name || "",
-        mainHeading: businessCard.main_heading || "",
-        subHeading: businessCard.sub_heading || "",
+        business_name:
+          businessCard.business_name ||
+          businessCard.business_card_name ||
+          businessCard.main_heading ||
+          "",
+        businessName:
+          businessCard.business_card_name ||
+          businessCard.business_name ||
+          businessCard.main_heading ||
+          "",
+
+        trade_title:
+          businessCard.trade_title ||
+          businessCard.sub_heading ||
+          "",
+        location: businessCard.location || "",
+
+        mainHeading:
+          businessCard.main_heading ||
+          businessCard.business_name ||
+          businessCard.business_card_name ||
+          "",
+        subHeading:
+          businessCard.sub_heading ||
+          businessCard.trade_title ||
+          "",
+
         job_title: businessCard.job_title || "",
         full_name: businessCard.full_name || "",
         bio: businessCard.bio || "",
 
-        avatar: businessCard.avatar || null,
+        logo: businessCard.logo || businessCard.avatar || null,
+        avatar: businessCard.avatar || businessCard.logo || null,
         coverPhoto: businessCard.cover_photo || null,
 
+        logoPreview: "",
         avatarPreview: "",
         coverPhotoPreview: "",
+
+        logoFile: null,
         avatarFile: null,
         coverPhotoFile: null,
 
-        workImages: (businessCard.works || []).map((url) => ({ file: null, preview: url })),
+        workImages: (businessCard.works || []).map((url) => ({
+          file: null,
+          preview: url,
+        })),
 
-        services: businessCard.services || [],
-        reviews: businessCard.reviews || [],
+        services: (businessCard.services || []).map((s) => ({
+          name: s?.name || "",
+          description: s?.description || s?.price || "",
+          price: s?.price || s?.description || "",
+        })),
+
+        reviews: (businessCard.reviews || []).map((r) => ({
+          name: r?.name || "",
+          text: r?.text || "",
+          rating: Number(r?.rating) || 5,
+        })),
 
         contact_email: businessCard.contact_email || "",
         phone_number: businessCard.phone_number || "",
@@ -376,9 +463,10 @@ export default function MyProfile() {
       setShowContactSection(businessCard.show_contact_section !== false);
 
       setCoverPhotoRemoved(false);
-      setIsAvatarRemoved(false);
+      setLogoRemoved(false);
     } else {
       resetState();
+
       setShowMainSection(true);
       setShowAboutMeSection(true);
       setShowWorkSection(true);
@@ -388,10 +476,17 @@ export default function MyProfile() {
 
       updateState({
         templateId: "template-1",
+        themeMode: "light",
+        pageTheme: "light",
 
+        business_name: "",
         businessName: "",
+        trade_title: "",
+        location: "",
+
         mainHeading: "",
         subHeading: "",
+
         job_title: "",
         full_name: "",
         bio: "",
@@ -405,11 +500,15 @@ export default function MyProfile() {
         contact_email: "",
         phone_number: "",
 
+        logo: null,
         avatar: null,
         coverPhoto: null,
 
+        logoPreview: "",
         avatarPreview: "",
         coverPhotoPreview: "",
+
+        logoFile: null,
         avatarFile: null,
         coverPhotoFile: null,
 
@@ -419,12 +518,11 @@ export default function MyProfile() {
       });
 
       setCoverPhotoRemoved(false);
-      setIsAvatarRemoved(false);
+      setLogoRemoved(false);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [businessCard, isCardLoading, resetState, updateState]);
 
-  // Upload handlers (unchanged)
   const onCoverUpload = (file) => {
     if (!file || !file.type?.startsWith("image/")) return;
 
@@ -442,15 +540,19 @@ export default function MyProfile() {
   const onAvatarUpload = (file) => {
     if (!file || !file.type?.startsWith("image/")) return;
 
+    safeRevoke(state.logoPreview);
     safeRevoke(state.avatarPreview);
+
     const url = URL.createObjectURL(file);
 
     updateState({
+      logoPreview: url,
       avatarPreview: url,
+      logoFile: file,
       avatarFile: file,
     });
 
-    setIsAvatarRemoved(false);
+    setLogoRemoved(false);
   };
 
   const onAddWorkImages = (files) => {
@@ -463,9 +565,7 @@ export default function MyProfile() {
     }));
 
     const existing = Array.isArray(state.workImages) ? state.workImages : [];
-
     const maxWorks = isFree ? 6 : 12;
-
     const merged = [...existing, ...items].slice(0, maxWorks);
 
     updateState({ workImages: merged });
@@ -485,14 +585,19 @@ export default function MyProfile() {
   };
 
   const handleRemoveAvatar = () => {
-    if (state.avatar && !isBlobUrl(state.avatar)) setIsAvatarRemoved(true);
-    else setIsAvatarRemoved(false);
+    const existingLogoOrAvatar = state.logo || state.avatar;
+    if (existingLogoOrAvatar && !isBlobUrl(existingLogoOrAvatar)) setLogoRemoved(true);
+    else setLogoRemoved(false);
 
+    safeRevoke(state.logoPreview);
     safeRevoke(state.avatarPreview);
 
     updateState({
+      logo: null,
       avatar: null,
+      logoPreview: "",
       avatarPreview: "",
+      logoFile: null,
       avatarFile: null,
     });
   };
@@ -500,10 +605,11 @@ export default function MyProfile() {
   const handleRemoveWorkImage = (idx) => {
     const item = state.workImages?.[idx];
     safeRevoke(item?.preview);
-    updateState({ workImages: (state.workImages || []).filter((_, i) => i !== idx) });
+    updateState({
+      workImages: (state.workImages || []).filter((_, i) => i !== idx),
+    });
   };
 
-  // Verification
   const sendVerificationCode = async () => {
     if (!userEmail) return toast.error("Email not found. Please log in again.");
     try {
@@ -550,14 +656,21 @@ export default function MyProfile() {
     setShowContactSection(true);
 
     setCoverPhotoRemoved(false);
-    setIsAvatarRemoved(false);
+    setLogoRemoved(false);
 
     updateState({
       templateId: "template-1",
+      themeMode: "light",
+      pageTheme: "light",
 
+      business_name: "",
       businessName: "",
+      trade_title: "",
+      location: "",
+
       mainHeading: "",
       subHeading: "",
+
       job_title: "",
       full_name: "",
       bio: "",
@@ -571,11 +684,15 @@ export default function MyProfile() {
       x_url: "",
       tiktok_url: "",
 
+      logo: null,
       avatar: null,
       coverPhoto: null,
 
+      logoPreview: "",
       avatarPreview: "",
       coverPhotoPreview: "",
+
+      logoFile: null,
       avatarFile: null,
       coverPhotoFile: null,
 
@@ -590,22 +707,34 @@ export default function MyProfile() {
   const hasProfileChanges = () => {
     const hasNewFiles =
       state.coverPhotoFile instanceof File ||
+      state.logoFile instanceof File ||
       state.avatarFile instanceof File ||
       (state.workImages || []).some((w) => w?.file instanceof File);
 
-    if (hasNewFiles || coverPhotoRemoved || isAvatarRemoved) return true;
+    if (hasNewFiles || coverPhotoRemoved || logoRemoved) return true;
 
     const original = businessCard || {};
 
-    const normalizeServices = (arr) => (arr || []).map((s) => ({ name: norm(s.name), price: norm(s.price) }));
+    const normalizeServices = (arr) =>
+      (arr || []).map((s) => ({
+        name: norm(s?.name),
+        description: norm(s?.description || s?.price),
+      }));
+
     const normalizeReviews = (arr) =>
-      (arr || []).map((r) => ({ name: norm(r.name), text: norm(r.text), rating: Number(r.rating) || 0 }));
+      (arr || []).map((r) => ({
+        name: norm(r?.name),
+        text: norm(r?.text),
+        rating: Number(r?.rating) || 0,
+      }));
 
     const servicesChanged = (() => {
       const a = normalizeServices(state.services);
       const b = normalizeServices(original.services);
       if (a.length !== b.length) return true;
-      for (let i = 0; i < a.length; i++) if (a[i].name !== b[i].name || a[i].price !== b[i].price) return true;
+      for (let i = 0; i < a.length; i++) {
+        if (a[i].name !== b[i].name || a[i].description !== b[i].description) return true;
+      }
       return false;
     })();
 
@@ -613,24 +742,37 @@ export default function MyProfile() {
       const a = normalizeReviews(state.reviews);
       const b = normalizeReviews(original.reviews);
       if (a.length !== b.length) return true;
-      for (let i = 0; i < a.length; i++)
-        if (a[i].name !== b[i].name || a[i].text !== b[i].text || a[i].rating !== b[i].rating) return true;
+      for (let i = 0; i < a.length; i++) {
+        if (
+          a[i].name !== b[i].name ||
+          a[i].text !== b[i].text ||
+          a[i].rating !== b[i].rating
+        ) {
+          return true;
+        }
+      }
       return false;
     })();
 
     const currentWorks = (state.workImages || [])
       .map((w) => (w?.preview && !w.preview.startsWith("blob:") ? w.preview : null))
       .filter(Boolean);
+
     const originalWorks = original.works || [];
 
     const worksChanged = (() => {
       if (currentWorks.length !== originalWorks.length) return true;
-      for (let i = 0; i < currentWorks.length; i++) if (currentWorks[i] !== originalWorks[i]) return true;
+      for (let i = 0; i < currentWorks.length; i++) {
+        if (currentWorks[i] !== originalWorks[i]) return true;
+      }
       return false;
     })();
 
     const origTemplate = original.template_id || "template-1";
     const currentTemplate = state.templateId || "template-1";
+
+    const origTheme = original.theme_mode || original.page_theme || "light";
+    const currentTheme = state.themeMode || state.pageTheme || "light";
 
     const origShowMain = original.show_main_section !== false;
     const origShowAbout = original.show_about_me_section !== false;
@@ -639,30 +781,60 @@ export default function MyProfile() {
     const origShowReviews = original.show_reviews_section !== false;
     const origShowContact = original.show_contact_section !== false;
 
+    const originalBusinessName =
+      original.business_name ||
+      original.business_card_name ||
+      original.main_heading ||
+      "";
+
+    const originalTradeTitle =
+      original.trade_title ||
+      original.sub_heading ||
+      "";
+
+    const originalLogo =
+      original.logo ||
+      original.avatar ||
+      "";
+
+    const currentLogo =
+      state.logo ||
+      state.avatar ||
+      "";
+
     return (
       currentTemplate !== origTemplate ||
-      state.businessName !== (original.business_card_name || "") ||
-      state.mainHeading !== (original.main_heading || "") ||
-      state.subHeading !== (original.sub_heading || "") ||
-      state.job_title !== (original.job_title || "") ||
-      state.full_name !== (original.full_name || "") ||
-      state.bio !== (original.bio || "") ||
-      state.contact_email !== (original.contact_email || "") ||
-      state.phone_number !== (original.phone_number || "") ||
+      currentTheme !== origTheme ||
+
+      norm(state.business_name || state.businessName || state.mainHeading) !== norm(originalBusinessName) ||
+      norm(state.trade_title || state.subHeading) !== norm(originalTradeTitle) ||
+      norm(state.location) !== norm(original.location || "") ||
+
+      norm(state.job_title) !== norm(original.job_title || "") ||
+      norm(state.full_name) !== norm(original.full_name || "") ||
+      norm(state.bio) !== norm(original.bio || "") ||
+
+      norm(currentLogo) !== norm(originalLogo) ||
+
+      norm(state.contact_email) !== norm(original.contact_email || "") ||
+      norm(state.phone_number) !== norm(original.phone_number || "") ||
+
       servicesChanged ||
       reviewsChanged ||
       worksChanged ||
+
       showMainSection !== origShowMain ||
       showAboutMeSection !== origShowAbout ||
       showWorkSection !== origShowWork ||
       showServicesSection !== origShowServices ||
       showReviewsSection !== origShowReviews ||
       showContactSection !== origShowContact ||
-      state.facebook_url !== (original.facebook_url || "") ||
-      state.instagram_url !== (original.instagram_url || "") ||
-      state.linkedin_url !== (original.linkedin_url || "") ||
-      state.x_url !== (original.x_url || "") ||
-      state.tiktok_url !== (original.tiktok_url || "")
+
+      norm(state.facebook_url) !== norm(original.facebook_url || "") ||
+      norm(state.instagram_url) !== norm(original.instagram_url || "") ||
+      norm(state.linkedin_url) !== norm(original.linkedin_url || "") ||
+      norm(state.x_url) !== norm(original.x_url || "") ||
+      norm(state.tiktok_url) !== norm(original.tiktok_url || "")
     );
   };
 
@@ -678,31 +850,60 @@ export default function MyProfile() {
       .map((item) => (item?.file instanceof File ? item.file : null))
       .filter(Boolean);
 
+    const servicesPayload = normaliseServicesForSave(state.services);
+    const reviewsPayload = normaliseReviewsForSave(state.reviews);
+
     const formData = buildBusinessCardFormData({
       profile_slug: activeSlug,
       template_id: state.templateId || "template-1",
+      theme_mode: state.themeMode || state.pageTheme || "light",
 
-      business_card_name: state.businessName,
-      main_heading: state.mainHeading,
-      sub_heading: state.subHeading,
+      business_card_name:
+        state.business_name ||
+        state.businessName ||
+        state.mainHeading ||
+        "",
+      business_name:
+        state.business_name ||
+        state.businessName ||
+        state.mainHeading ||
+        "",
+      trade_title:
+        state.trade_title ||
+        state.subHeading ||
+        "",
+      location: state.location || "",
+
+      main_heading:
+        state.mainHeading ||
+        state.business_name ||
+        state.businessName ||
+        "",
+      sub_heading:
+        state.subHeading ||
+        state.trade_title ||
+        "",
+
       job_title: state.job_title,
       full_name: state.full_name,
       bio: state.bio,
 
       cover_photo: state.coverPhotoFile,
+      logo: state.logoFile,
       avatar: state.avatarFile,
 
       works_existing_urls: existingWorkUrls,
       work_images_files: newWorkFiles,
 
-      services: (state.services || []).filter((s) => s?.name || s?.price),
-      reviews: (state.reviews || []).filter((r) => r?.name || r?.text),
+      services: servicesPayload,
+      reviews: reviewsPayload,
 
       contact_email: state.contact_email,
       phone_number: state.phone_number,
 
       cover_photo_removed: coverPhotoRemoved,
-      avatar_removed: isAvatarRemoved,
+      logo_removed: logoRemoved,
+      avatar_removed: logoRemoved,
 
       show_main_section: showMainSection,
       show_about_me_section: showAboutMeSection,
@@ -727,15 +928,18 @@ export default function MyProfile() {
       queryClient.invalidateQueries({ queryKey: ["businessCard", "profile", activeSlug] });
 
       revokeAllLocalPreviews(state);
+
       updateState({
         coverPhotoPreview: "",
+        logoPreview: "",
         avatarPreview: "",
         coverPhotoFile: null,
+        logoFile: null,
         avatarFile: null,
       });
 
       setCoverPhotoRemoved(false);
-      setIsAvatarRemoved(false);
+      setLogoRemoved(false);
     } catch (err) {
       toast.error(
         err?.response?.data?.error ||
@@ -758,12 +962,10 @@ export default function MyProfile() {
     return `${window.location.origin}/u/${userUsername}/${encodeURIComponent(activeSlug)}`;
   }, [userUsername, activeSlug]);
 
-  // ✅ preview pills (simple + premium)
   const completionPct = useMemo(() => calcCompletionPctFromState(state), [state]);
   const completionTone = useMemo(() => pctTone(completionPct), [completionPct]);
 
   const isLive = useMemo(() => {
-    // prefer backend flags if present, fallback to completion
     if (businessCard?.is_live === true) return true;
     if (businessCard?.published === true) return true;
     if (String(businessCard?.status || "").toLowerCase() === "live") return true;
@@ -862,7 +1064,6 @@ export default function MyProfile() {
             )}
 
             <div className="myprofile-grid">
-              {/* ✅ EDITOR LEFT (NO outer card border) */}
               <section className="myprofile-editorCol">
                 <div className="myprofile-editorSurface">
                   <div className="myprofile-editorBody">
@@ -897,7 +1098,6 @@ export default function MyProfile() {
                 </div>
               </section>
 
-              {/* ✅ PREVIEW RIGHT (new header + fill) */}
               <aside className="profiles-card myprofile-cardShell myprofile-previewCard">
                 <div className="myprofile-previewTop">
                   <div className="myprofile-previewTopLeft">
@@ -947,7 +1147,10 @@ export default function MyProfile() {
         contactDetails={{
           full_name: businessCard?.full_name || "",
           job_title: businessCard?.job_title || "",
-          business_card_name: businessCard?.business_card_name || "",
+          business_card_name:
+            businessCard?.business_name ||
+            businessCard?.business_card_name ||
+            "",
           bio: businessCard?.bio || "",
           isSubscribed: !isFree,
           contact_email: businessCard?.contact_email || "",

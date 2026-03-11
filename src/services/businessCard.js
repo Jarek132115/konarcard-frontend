@@ -2,16 +2,15 @@
 import api from "./api";
 
 /**
- * Small helper to safely unwrap common API shapes:
- * - { data: <thing> }
- * - { data: { data: <thing> } }  (older pattern)
- * - <thing> (public)
+ * Safely unwrap common API response shapes:
+ * - { data: thing }
+ * - { data: { data: thing } }
+ * - thing
  */
 const unwrap = (res) => {
     const d = res?.data;
     if (d && typeof d === "object") {
         if ("data" in d) {
-            // could be { data: thing } or { data: { data: thing } }
             const inner = d.data;
             if (inner && typeof inner === "object" && "data" in inner) return inner.data;
             return inner;
@@ -28,16 +27,15 @@ const unwrap = (res) => {
 
 export const getMyBusinessCard = async () => {
     try {
-        // Your new backend returns 400 NO_DEFAULT_PROFILE; treat as null.
         const res = await api.get("/api/business-card/me");
         return unwrap(res);
     } catch (err) {
         const status = err?.response?.status;
 
-        // New backend stub: no default profile
+        // New backend: no default profile
         if (status === 400) return null;
 
-        // backend too old -> fallback
+        // Older backend fallback
         if (status === 404) {
             try {
                 const res2 = await api.get("/api/business-card/my_card");
@@ -55,15 +53,13 @@ export const getMyBusinessCard = async () => {
 
 /**
  * =========================================================
- * SAVE (UPSERT)
+ * SAVE / UPSERT PROFILE DATA
  * =========================================================
  *
- * Canonical backend route (your routes file):
- *   POST /api/business-card
- *
  * IMPORTANT:
- * - Do NOT set Content-Type manually.
- * - Do NOT pass headers: {} (can break multipart boundary handling in some Axios setups)
+ * - Expects FormData
+ * - Do not manually set Content-Type
+ * - Parent code must decide which fields/files are appended
  */
 export const saveMyBusinessCard = async (formData) => {
     if (!(formData instanceof FormData)) {
@@ -71,14 +67,20 @@ export const saveMyBusinessCard = async (formData) => {
     }
 
     const res = await api.post("/api/business-card", formData);
-
     return unwrap(res);
 };
 
+/**
+ * Alias kept for readability if you later want profile-specific save calls.
+ * Can point to the same route for now.
+ */
+export const updateMyBusinessCard = async (formData) => {
+    return saveMyBusinessCard(formData);
+};
 
 /**
  * =========================================================
- * MULTI PROFILE (canonical)
+ * MULTI PROFILE
  * =========================================================
  */
 
@@ -96,7 +98,11 @@ export const getMyProfileBySlug = async (slug) => {
     return unwrap(res);
 };
 
-export const createMyProfile = async ({ profile_slug, template_id, business_card_name } = {}) => {
+export const createMyProfile = async ({
+    profile_slug,
+    template_id,
+    business_card_name,
+} = {}) => {
     const res = await api.post("/api/business-card/profiles", {
         profile_slug,
         template_id,
@@ -109,7 +115,6 @@ export const setDefaultProfile = async (slug) => {
     const s = (slug || "").toString().trim();
     if (!s) throw new Error("slug is required");
 
-    // backend returns 400 (no default profile) — keep for compatibility
     const res = await api.patch(`/api/business-card/profiles/${encodeURIComponent(s)}/default`);
     return unwrap(res);
 };
@@ -124,7 +129,7 @@ export const deleteMyProfile = async (slug) => {
 
 /**
  * =========================================================
- * PUBLIC PROFILE FETCH (deprecated username endpoints)
+ * PUBLIC PROFILE FETCH (legacy username endpoints)
  * =========================================================
  */
 

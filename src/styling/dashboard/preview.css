@@ -190,3 +190,11 @@
     outline: 2px solid rgb(var(--accent-rgb) / 0.6);
     outline-offset: 2px;
 }
+
+.preview-scope .myprofile-preview.theme-light {
+    color-scheme: light;
+}
+
+.preview-scope .myprofile-preview.theme-dark {
+    color-scheme: dark;
+}
