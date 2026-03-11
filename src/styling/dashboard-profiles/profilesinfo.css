@@ -32,6 +32,7 @@
 .profiles-divider {
     height: 1px;
     background: var(--p-softLine);
+    width: 100%;
 }
 
 .profiles-actionsTop {
@@ -152,7 +153,7 @@
 }
 
 .profiles-actionBtn--wide {
-    width: min(100%, 280px);
+    width: 100%;
 }
 
 .profiles-btnIcon {
@@ -170,6 +171,13 @@
     display: block;
 }
 
+.profiles-qrBlock {
+    width: min(100%, 280px);
+    max-width: 280px;
+    display: grid;
+    gap: 12px;
+}
+
 .profiles-qrWrap {
     width: 100%;
     max-width: 280px;
@@ -184,8 +192,8 @@
 }
 
 .profiles-qrWrap--wide {
-    width: min(100%, 280px);
-    max-width: 280px;
+    width: 100%;
+    max-width: 100%;
 }
 
 .profiles-qrImage {
@@ -212,7 +220,7 @@
 }
 
 .profiles-singleAction--wide {
-    width: min(100%, 280px);
+    width: 100%;
 }
 
 .profiles-deleteBtn {
@@ -275,6 +283,11 @@
 
     .profiles-infoSection--last {
         padding-bottom: 0;
+    }
+
+    .profiles-qrBlock {
+        width: 100%;
+        max-width: 100%;
     }
 
     .profiles-actionBtn--wide,

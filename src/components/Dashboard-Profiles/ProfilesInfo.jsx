@@ -206,27 +206,29 @@ export default function ProfilesInfo({
                             <div className="profiles-actionGroup">
                                 <h3 className="profiles-groupTitle">QR code</h3>
 
-                                <div className="profiles-qrWrap profiles-qrWrap--wide">
-                                    {selectedProfile.qrCodeUrl ? (
-                                        <img
-                                            src={selectedProfile.qrCodeUrl}
-                                            alt={`${selectedProfile.slug} QR code`}
-                                            className="profiles-qrImage"
-                                        />
-                                    ) : (
-                                        <div className="profiles-qrPlaceholder">QR not available yet</div>
-                                    )}
-                                </div>
+                                <div className="profiles-qrBlock">
+                                    <div className="profiles-qrWrap profiles-qrWrap--wide">
+                                        {selectedProfile.qrCodeUrl ? (
+                                            <img
+                                                src={selectedProfile.qrCodeUrl}
+                                                alt={`${selectedProfile.slug} QR code`}
+                                                className="profiles-qrImage"
+                                            />
+                                        ) : (
+                                            <div className="profiles-qrPlaceholder">QR not available yet</div>
+                                        )}
+                                    </div>
 
-                                <div className="profiles-singleAction profiles-singleAction--wide">
-                                    <button
-                                        type="button"
-                                        className="kx-btn kx-btn--white profiles-actionBtn profiles-actionBtn--wide"
-                                        onClick={onDownloadQr}
-                                    >
-                                        <ActionIcon><IconQr /></ActionIcon>
-                                        <span>Download QR code</span>
-                                    </button>
+                                    <div className="profiles-singleAction profiles-singleAction--wide">
+                                        <button
+                                            type="button"
+                                            className="kx-btn kx-btn--white profiles-actionBtn profiles-actionBtn--wide"
+                                            onClick={onDownloadQr}
+                                        >
+                                            <ActionIcon><IconQr /></ActionIcon>
+                                            <span>Download QR code</span>
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
                         </div>

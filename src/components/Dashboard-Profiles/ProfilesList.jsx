@@ -299,7 +299,7 @@ export default function ProfilesList({
                                     </div>
                                 </div>
 
-                                <div className="profiles-cardBtns profiles-cardBtns--stack">
+                                <div className="profiles-cardBtns profiles-cardBtns--responsiveRow">
                                     <button
                                         type="button"
                                         className="kx-btn kx-btn--white profiles-cardBtn"
