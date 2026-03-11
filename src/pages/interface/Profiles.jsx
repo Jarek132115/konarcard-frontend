@@ -12,6 +12,7 @@ import api from "../../services/api";
 import CopyLinkIcon from "../../assets/icons/CopyLink.svg";
 
 const TEAMS_CHECKOUT_ENDPOINT = "/api/checkout/teams";
+const DRAG_THRESHOLD = 8;
 
 const centerTrim = (v) => (v ?? "").toString().trim();
 const safeLower = (v) => centerTrim(v).toLowerCase();
@@ -279,7 +280,9 @@ export default function Profiles() {
     const deleteProfile = useDeleteProfile();
 
     const railRef = useRef(null);
+    const pointerDownRef = useRef(false);
     const dragActiveRef = useRef(false);
+    const suppressClickRef = useRef(false);
     const dragStartXRef = useRef(0);
     const dragStartScrollLeftRef = useRef(0);
 
@@ -737,44 +740,79 @@ export default function Profiles() {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [location.search, refetchProfiles, refetchAuthUser]);
 
+    const isInteractiveTarget = (target) => {
+        if (!(target instanceof Element)) return false;
+        return !!target.closest("button, a, input, textarea, select, label, [data-no-rail-drag='true']");
+    };
+
     const handleRailPointerDown = (e) => {
         const rail = railRef.current;
         if (!rail) return;
 
-        dragActiveRef.current = true;
+        if (isInteractiveTarget(e.target)) {
+            pointerDownRef.current = false;
+            dragActiveRef.current = false;
+            return;
+        }
+
+        pointerDownRef.current = true;
+        dragActiveRef.current = false;
+        suppressClickRef.current = false;
         dragStartXRef.current = e.clientX;
         dragStartScrollLeftRef.current = rail.scrollLeft;
-
-        rail.classList.add("is-dragging");
-        try {
-            rail.setPointerCapture?.(e.pointerId);
-        } catch { }
     };
 
     const handleRailPointerMove = (e) => {
         const rail = railRef.current;
-        if (!rail || !dragActiveRef.current) return;
+        if (!rail || !pointerDownRef.current) return;
 
         const dx = e.clientX - dragStartXRef.current;
+
+        if (!dragActiveRef.current && Math.abs(dx) > DRAG_THRESHOLD) {
+            dragActiveRef.current = true;
+            suppressClickRef.current = true;
+            rail.classList.add("is-dragging");
+        }
+
+        if (!dragActiveRef.current) return;
+
+        e.preventDefault();
         rail.scrollLeft = dragStartScrollLeftRef.current - dx;
     };
 
-    const handleRailPointerUp = (e) => {
+    const handleRailPointerUp = () => {
         const rail = railRef.current;
-        dragActiveRef.current = false;
-        if (!rail) return;
 
-        rail.classList.remove("is-dragging");
-        try {
-            rail.releasePointerCapture?.(e.pointerId);
-        } catch { }
+        pointerDownRef.current = false;
+        dragActiveRef.current = false;
+
+        if (rail) {
+            rail.classList.remove("is-dragging");
+        }
+
+        window.setTimeout(() => {
+            suppressClickRef.current = false;
+        }, 0);
     };
 
     const handleRailPointerLeave = () => {
         const rail = railRef.current;
+        pointerDownRef.current = false;
         dragActiveRef.current = false;
-        if (!rail) return;
-        rail.classList.remove("is-dragging");
+
+        if (rail) {
+            rail.classList.remove("is-dragging");
+        }
+
+        window.setTimeout(() => {
+            suppressClickRef.current = false;
+        }, 0);
+    };
+
+    const handleCardSelect = (slug, locked) => {
+        if (suppressClickRef.current) return;
+        if (locked) return openLockedOverlay(slug);
+        setSelectedSlug(slug);
     };
 
     if (isLoading) {
@@ -866,10 +904,7 @@ export default function Profiles() {
                                         <article
                                             key={p.slug}
                                             className={`profiles-profileCard profiles-profileCard--rail ${active ? "is-active" : ""} ${locked ? "is-locked" : ""}`}
-                                            onClick={() => {
-                                                if (locked) return openLockedOverlay(p.slug);
-                                                setSelectedSlug(p.slug);
-                                            }}
+                                            onClick={() => handleCardSelect(p.slug, locked)}
                                             role="button"
                                             tabIndex={0}
                                             onKeyDown={(e) => {
@@ -924,8 +959,10 @@ export default function Profiles() {
                                                         type="button"
                                                         className="kx-btn kx-btn--white profiles-cardBtn"
                                                         disabled={locked}
+                                                        data-no-rail-drag="true"
                                                         onClick={(e) => {
                                                             e.stopPropagation();
+                                                            if (suppressClickRef.current) return;
                                                             if (locked) return openLockedOverlay(p.slug);
                                                             handleEdit(p.slug);
                                                         }}
@@ -937,8 +974,10 @@ export default function Profiles() {
                                                         type="button"
                                                         className="kx-btn kx-btn--black profiles-cardBtn"
                                                         disabled={locked}
+                                                        data-no-rail-drag="true"
                                                         onClick={(e) => {
                                                             e.stopPropagation();
+                                                            if (suppressClickRef.current) return;
                                                             if (locked) return openLockedOverlay(p.slug);
                                                             handleVisitProfile(p.slug);
                                                         }}
@@ -955,7 +994,11 @@ export default function Profiles() {
                                     <button
                                         type="button"
                                         className="profiles-addCard profiles-addCard--rail profiles-addCard--pretty"
-                                        onClick={openClaimPanel}
+                                        data-no-rail-drag="true"
+                                        onClick={() => {
+                                            if (suppressClickRef.current) return;
+                                            openClaimPanel();
+                                        }}
                                     >
                                         <div className="profiles-addCardInner">
                                             <div className="profiles-addBadge">New</div>
@@ -975,7 +1018,11 @@ export default function Profiles() {
                                         </div>
                                     </button>
                                 ) : (
-                                    <div ref={claimRef} className="profiles-addInline profiles-addInline--rail profiles-addInline--pretty">
+                                    <div
+                                        ref={claimRef}
+                                        className="profiles-addInline profiles-addInline--rail profiles-addInline--pretty"
+                                        data-no-rail-drag="true"
+                                    >
                                         <div className="profiles-addInlineHead">
                                             <div>
                                                 <div className="profiles-addInlineEyebrow">Create new profile</div>
