@@ -1,5 +1,3 @@
-/* src/styling/dashboard/profiles.css */
-
 :root {
     --p-ink: var(--kc-text-primary, #0f172a);
     --p-muted: var(--kc-text-secondary, #475569);
@@ -13,11 +11,9 @@
     width: 100%;
     margin: 0;
     padding: 0;
-
     display: flex;
     flex-direction: column;
     min-height: 0;
-
     height: calc(100vh - (var(--dash-gutter, 24px) * 2));
 }
 
@@ -37,13 +33,11 @@
     box-shadow: var(--p-softShadow);
     padding: 24px;
     min-width: 0;
-
     display: flex;
     flex-direction: column;
     min-height: 0;
 }
 
-/* LEFT header row */
 .profiles-listHeader {
     display: flex;
     align-items: center;
@@ -74,17 +68,14 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
-
     height: 40px;
     padding: 0 14px;
     border-radius: 999px;
     background: #ffffff;
-
     font-family: "Inter", sans-serif;
     font-weight: 600;
     font-size: 14px;
     color: rgba(15, 23, 42, 0.86);
-
     box-shadow: var(--p-softShadow);
     flex: 0 0 auto;
 }
@@ -106,15 +97,12 @@
     padding-right: 6px;
 }
 
-/* Profile card */
 .profiles-profileCard {
     border-radius: 24px;
     border: 1px solid rgba(15, 23, 42, 0.10);
     background: #ffffff;
-
-    padding: 18px;
+    padding: 24px;
     cursor: pointer;
-
     box-shadow: var(--p-softShadow);
     transition: transform 0.08s ease, background 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease;
 }
@@ -130,13 +118,13 @@
 .profiles-profileCard.is-active {
     background: #f5f5f5;
     border-color: rgba(15, 23, 42, 0.12);
-    box-shadow: inset 0 0 0 4px rgba(15, 23, 42, 0.10);
+    box-shadow: inset 0 0 0 1px rgba(15, 23, 42, 0.05);
 }
 
 .profiles-profileMain {
     display: grid;
     grid-template-columns: minmax(0, 1fr) auto;
-    gap: 14px;
+    gap: 16px;
     align-items: center;
 }
 
@@ -151,21 +139,19 @@
     align-items: center;
     gap: 10px;
     margin: 0 0 8px;
+    flex-wrap: wrap;
 }
 
 .profiles-pill {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-
     padding: 6px 10px;
     border-radius: 999px;
-
     font-family: "Inter", sans-serif;
     font-weight: 600;
     font-size: 12px;
     line-height: 1;
-
     border: 1px solid transparent;
     white-space: nowrap;
 }
@@ -195,13 +181,17 @@
     color: rgba(153, 27, 27, 0.95);
 }
 
+.profiles-pill--locked {
+    background: #0b1220;
+    color: #fff;
+}
+
 .profiles-slug {
     font-family: "Inter", sans-serif;
     font-weight: 600;
     font-size: 20px;
     letter-spacing: -0.01em;
     color: var(--p-ink);
-
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -242,7 +232,6 @@
     justify-content: center;
 }
 
-/* ✅ metrics styling (used by list AND preview stats) */
 .profiles-metrics {
     display: flex;
     align-items: center;
@@ -273,21 +262,17 @@
     text-align: center;
 }
 
-/* Add profile dashed card */
 .profiles-addCard {
     width: 100%;
     border-radius: 24px;
     border: 2px dashed rgba(15, 23, 42, 0.18);
     background: #ffffff;
-
     padding: 26px 18px;
     cursor: pointer;
-
     display: flex;
     align-items: center;
     justify-content: center;
     gap: 10px;
-
     box-shadow: var(--p-softShadow);
     transition: transform 0.08s ease, background 0.18s ease, border-color 0.18s ease;
 }
@@ -316,7 +301,6 @@
     color: rgba(15, 23, 42, 0.88);
 }
 
-/* ✅ Add profile inline (replaces dashed card) */
 .profiles-addInline {
     width: 100%;
     border-radius: 24px;
@@ -324,7 +308,6 @@
     background: rgba(15, 23, 42, 0.02);
     padding: 16px;
     box-shadow: var(--p-softShadow);
-
     display: grid;
     gap: 12px;
 }
@@ -373,7 +356,6 @@
     flex-wrap: wrap;
 }
 
-/* input styles (reused) */
 .profiles-input-wrap {
     display: flex;
     align-items: center;
@@ -446,10 +428,6 @@
     color: var(--kc-accent-primary, #f97316);
 }
 
-/* =========================
-   PREVIEW PANEL
-   ========================= */
-
 .profiles-right {
     display: flex;
     flex-direction: column;
@@ -492,14 +470,12 @@
     font-size: 20px;
     color: var(--p-ink);
     letter-spacing: -0.01em;
-
     min-width: 0;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
 }
 
-/* icon-only copy button */
 .profiles-copyIconBtn {
     flex: 0 0 auto;
     width: 24px;
@@ -542,7 +518,6 @@
     justify-content: flex-end;
 }
 
-/* preview fill remaining space */
 .profiles-previewFrame {
     margin-top: 24px;
     flex: 1;
@@ -550,7 +525,6 @@
     overflow: hidden;
 }
 
-/* Override Preview’s forced 100vh height ONLY inside Profiles */
 .profiles-previewFrame .preview-scope.myprofile-preview-wrapper {
     height: 100% !important;
     max-height: 100% !important;
@@ -558,7 +532,6 @@
     flex: 1 !important;
 }
 
-/* Ensure the real scroll is inside the Preview column */
 .profiles-previewFrame .preview-scope .myprofile-preview {
     height: 100% !important;
     max-height: 100% !important;
@@ -567,19 +540,16 @@
     overflow-x: hidden !important;
 }
 
-/* Iframe mode must also stretch + obey parent */
 .profiles-previewFrame .preview-iframe-shell,
 .profiles-previewFrame .preview-iframe {
     height: 100% !important;
     min-height: 0 !important;
 }
 
-/* Remove inner padding so preview is full-width to the card padding */
 .profiles-previewFrame .preview-iframe-padding {
     padding: 0 !important;
 }
 
-/* loading/error */
 .profiles-previewLoading,
 .profiles-previewError {
     width: 100%;
@@ -593,7 +563,6 @@
     color: rgba(71, 85, 105, 0.95);
 }
 
-/* Buttons under preview */
 .profiles-previewActions {
     margin-top: 16px;
     display: grid;
@@ -601,7 +570,6 @@
     gap: 12px;
 }
 
-/* ✅ delete styling (matches your screenshot vibe) */
 .profiles-deleteBtn {
     border-color: rgba(239, 68, 68, 0.55) !important;
     color: rgba(239, 68, 68, 0.95) !important;
@@ -611,7 +579,104 @@
     background: rgba(239, 68, 68, 0.06) !important;
 }
 
-/* Responsive */
+.profiles-shareOverlay {
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    background: rgba(15, 23, 42, 0.55);
+    display: grid;
+    place-items: center;
+    padding: 16px;
+}
+
+.profiles-shareModal {
+    width: min(560px, 100%);
+    background: #fff;
+    border-radius: 20px;
+    border: 1px solid rgba(15, 23, 42, 0.12);
+    box-shadow: 0 30px 80px rgba(15, 23, 42, 0.28);
+    padding: 20px;
+    display: grid;
+    gap: 16px;
+}
+
+.profiles-shareModalTop {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 12px;
+}
+
+.profiles-shareModalTitle {
+    font-family: "Inter", sans-serif;
+    font-size: 18px;
+    font-weight: 800;
+    color: var(--p-ink);
+}
+
+.profiles-shareModalSub {
+    margin-top: 4px;
+    font-family: "Inter", sans-serif;
+    font-size: 13px;
+    font-weight: 500;
+    color: rgba(71, 85, 105, 0.92);
+}
+
+.profiles-shareModalClose {
+    width: 38px;
+    height: 38px;
+    border-radius: 12px;
+    border: 1px solid rgba(15, 23, 42, 0.12);
+    background: #fff;
+    cursor: pointer;
+    font-weight: 900;
+    line-height: 1;
+}
+
+.profiles-shareModalUrl {
+    width: 100%;
+    min-width: 0;
+    padding: 14px 16px;
+    border-radius: 14px;
+    border: 1px solid rgba(15, 23, 42, 0.10);
+    background: rgba(15, 23, 42, 0.03);
+    font-family: "Inter", sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--p-ink);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.profiles-shareModalGrid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+}
+
+.profiles-shareAction {
+    appearance: none;
+    width: 100%;
+    min-height: 52px;
+    padding: 14px 16px;
+    border-radius: 14px;
+    border: 1px solid rgba(15, 23, 42, 0.12);
+    background: #fff;
+    color: var(--p-ink);
+    font-family: "Inter", sans-serif;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: transform 0.12s ease, box-shadow 0.15s ease, background-color 0.15s ease;
+}
+
+.profiles-shareAction:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 10px 24px rgba(15, 23, 42, 0.08);
+    background: rgba(15, 23, 42, 0.02);
+}
+
 @media (max-width: 1100px) {
     .profiles-shell {
         height: auto;
@@ -619,6 +684,16 @@
 
     .profiles-grid {
         grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 768px) {
+    .profiles-card {
+        padding: 20px;
+    }
+
+    .profiles-profileCard {
+        padding: 20px;
     }
 }
 
@@ -664,9 +739,21 @@
     .profiles-addInlineRow {
         grid-template-columns: 1fr;
     }
+
+    .profiles-shareModalGrid {
+        grid-template-columns: 1fr;
+    }
 }
 
 @media (max-width: 520px) {
+    .profiles-card {
+        padding: 16px;
+    }
+
+    .profiles-profileCard {
+        padding: 16px;
+    }
+
     .profiles-previewActions {
         grid-template-columns: 1fr;
         gap: 10px;

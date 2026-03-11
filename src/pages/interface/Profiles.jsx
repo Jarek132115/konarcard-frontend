@@ -1,4 +1,3 @@
-// src/pages/interface/Profiles.jsx
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 
@@ -12,7 +11,6 @@ import api from "../../services/api";
 
 import Preview from "../../components/Dashboard/Preview";
 
-// ✅ new icon
 import CopyLinkIcon from "../../assets/icons/CopyLink.svg";
 
 const TEAMS_CHECKOUT_ENDPOINT = "/api/checkout/teams";
@@ -26,16 +24,15 @@ const normalizeSlug = (raw) =>
         .replace(/-+/g, "-")
         .replace(/^-|-$/g, "");
 
-// Completion based on common fields we expect to exist on the card record
 const calcCompletionPct = (c) => {
     const checks = [
-        !!centerTrim(c?.business_card_name),
-        !!centerTrim(c?.main_heading),
-        !!centerTrim(c?.sub_heading),
+        !!centerTrim(c?.business_card_name || c?.business_name),
+        !!centerTrim(c?.main_heading || c?.business_name),
+        !!centerTrim(c?.sub_heading || c?.trade_title),
         !!centerTrim(c?.job_title),
         !!centerTrim(c?.full_name),
         !!centerTrim(c?.bio),
-        !!centerTrim(c?.avatar),
+        !!centerTrim(c?.avatar || c?.logo),
         !!centerTrim(c?.cover_photo),
         Array.isArray(c?.works) && c.works.length > 0,
         Array.isArray(c?.services) && c.services.length > 0,
@@ -67,7 +64,6 @@ export default function Profiles() {
     const navigate = useNavigate();
     const location = useLocation();
 
-    // ✅ Responsive (for Preview props)
     const mqDesktopToMobile = "(max-width: 1000px)";
     const mqSmallMobile = "(max-width: 520px)";
     const [isMobile, setIsMobile] = useState(() => window.matchMedia(mqDesktopToMobile).matches);
@@ -91,23 +87,19 @@ export default function Profiles() {
         };
     }, []);
 
-    // ✅ User + plan
     const { data: authUser, refetch: refetchAuthUser } = useAuthUser();
     const plan = safeLower(authUser?.plan || "free");
     const isTeams = plan === "teams";
     const isPlus = plan === "plus";
     const isFree = !isTeams && !isPlus;
 
-    // ✅ cap logic
     const teamsCap = Math.max(1, Number(authUser?.teamsProfilesQty || 1));
     const maxProfiles = isTeams ? teamsCap : 1;
 
-    // ✅ list of profiles
     const { data: cards, isLoading, isError, refetch: refetchProfiles } = useMyProfiles();
     const createProfile = useCreateProfile();
     const deleteProfile = useDeleteProfile();
 
-    // When plan changes (downgrade/upgrade), refresh list
     useEffect(() => {
         if (!authUser) return;
         refetchProfiles?.();
@@ -119,12 +111,11 @@ export default function Profiles() {
         return xs.map((c) => {
             const displayName =
                 centerTrim(c.business_card_name) ||
+                centerTrim(c.business_name) ||
                 centerTrim(c.full_name) ||
                 (c.profile_slug === "main" ? "Main Profile" : "Profile");
 
             const slug = c.profile_slug || "";
-
-            // ✅ store ms for sorting
             const updatedMs = toMs(c.updatedAt || c.updated_at || c.lastUpdated || c.last_updated);
 
             const updatedAtText = updatedMs
@@ -133,7 +124,6 @@ export default function Profiles() {
 
             const pct = calcCompletionPct(c);
             const tone = pctTone(pct);
-
             const isLive = pct > 0;
 
             const views = Number(c?.views ?? c?.profile_views ?? c?.total_views ?? c?.profileViews ?? 0) || 0;
@@ -154,7 +144,6 @@ export default function Profiles() {
         });
     }, [cards]);
 
-    // ✅ Sort newest updated first (fallback: slug)
     const sortedProfiles = useMemo(() => {
         const xs = [...profiles].filter((p) => !!p.slug);
         xs.sort((a, b) => {
@@ -165,7 +154,6 @@ export default function Profiles() {
         return xs;
     }, [profiles]);
 
-    // ✅ lock anything over cap (kept in DB, but not usable)
     const cappedProfiles = useMemo(() => {
         return sortedProfiles.map((p, idx) => ({
             ...p,
@@ -177,7 +165,6 @@ export default function Profiles() {
 
     const [selectedSlug, setSelectedSlug] = useState(null);
 
-    // ✅ ensure selected profile is never a locked one
     useEffect(() => {
         if (!sortedProfiles.length) {
             setSelectedSlug(null);
@@ -190,7 +177,6 @@ export default function Profiles() {
 
             const idx = sortedProfiles.findIndex((p) => p.slug === prev);
             if (idx === -1) return firstAllowed;
-
             if (idx >= maxProfiles) return firstAllowed;
 
             return prev;
@@ -217,9 +203,6 @@ export default function Profiles() {
         return selectedProfile?.slug ? buildPublicUrl(selectedProfile.slug) : "";
     }, [selectedProfile?.slug]);
 
-    // =========================================================
-    // ✅ Locked overlay (shown when user clicks locked profile)
-    // =========================================================
     const [lockedOverlayOpen, setLockedOverlayOpen] = useState(false);
     const [lockedClickedSlug, setLockedClickedSlug] = useState("");
 
@@ -236,9 +219,6 @@ export default function Profiles() {
     const overlayPlanName = isFree ? "Free" : isPlus ? "Plus" : "your current";
     const overlayLimitText = `This plan is limited to ${maxProfiles} profile${maxProfiles === 1 ? "" : "s"}.`;
 
-    // =========================================================
-    // ✅ REAL PREVIEW DATA (fetch selected profile full record)
-    // =========================================================
     const [previewLoading, setPreviewLoading] = useState(false);
     const [previewError, setPreviewError] = useState("");
     const [previewCard, setPreviewCard] = useState(null);
@@ -283,24 +263,30 @@ export default function Profiles() {
 
         return {
             templateId: bc.template_id || "template-1",
+            themeMode: bc.theme_mode || bc.page_theme || "light",
+            pageTheme: bc.page_theme || bc.theme_mode || "light",
 
-            businessName: bc.business_card_name || "",
-            mainHeading: bc.main_heading || "",
-            subHeading: bc.sub_heading || "",
+            businessName: bc.business_name || bc.business_card_name || "",
+            mainHeading: bc.business_name || bc.business_card_name || bc.main_heading || "",
+            subHeading: bc.trade_title || bc.sub_heading || "",
+            trade_title: bc.trade_title || "",
+            location: bc.location || "",
             job_title: bc.job_title || "",
             full_name: bc.full_name || "",
             bio: bc.bio || "",
 
-            avatar: bc.avatar || null,
+            logo: bc.logo || bc.avatar || null,
+            avatar: bc.avatar || bc.logo || null,
             coverPhoto: bc.cover_photo || null,
 
             avatarPreview: "",
             coverPhotoPreview: "",
+            logoPreview: "",
             avatarFile: null,
             coverPhotoFile: null,
+            logoFile: null,
 
             workImages: Array.isArray(bc.works) ? bc.works.map((url) => ({ file: null, preview: url })) : [],
-
             services: Array.isArray(bc.services) ? bc.services : [],
             reviews: Array.isArray(bc.reviews) ? bc.reviews : [],
 
@@ -331,40 +317,55 @@ export default function Profiles() {
         (previewState.contact_email && previewState.contact_email.trim()) ||
         (previewState.phone_number && previewState.phone_number.trim());
 
-    // =========================================================
-    // Actions
-    // =========================================================
-    const shareSlug = async (slug) => {
-        const link = buildPublicUrl(slug);
+    const [shareModalOpen, setShareModalOpen] = useState(false);
+    const [shareModalSlug, setShareModalSlug] = useState("");
+    const [shareModalUrl, setShareModalUrl] = useState("");
 
-        if (navigator.share) {
-            try {
-                await navigator.share({
-                    title: "My KonarCard Profile",
-                    text: "Here’s my profile link:",
-                    url: link,
-                });
-            } catch {
-                // ignore cancel
-            }
-        } else {
-            try {
-                await navigator.clipboard.writeText(link);
-                alert("Link copied ✅");
-            } catch {
-                alert("Copy failed — please copy manually: " + link);
-            }
+    const openShareModal = (slug) => {
+        const s = normalizeSlug(slug || "");
+        if (!s) return;
+        setShareModalSlug(s);
+        setShareModalUrl(buildPublicUrl(s));
+        setShareModalOpen(true);
+    };
+
+    const closeShareModal = () => {
+        setShareModalOpen(false);
+        setShareModalSlug("");
+        setShareModalUrl("");
+    };
+
+    const copyLink = async (link) => {
+        if (!link) return;
+        try {
+            await navigator.clipboard.writeText(link);
+            alert("Link copied ✅");
+        } catch {
+            alert("Copy failed — please copy manually: " + link);
         }
     };
 
-    const copySelectedLink = async () => {
-        if (!selectedPublicUrl) return;
-        try {
-            await navigator.clipboard.writeText(selectedPublicUrl);
-            alert("Link copied ✅");
-        } catch {
-            alert("Copy failed — please copy manually: " + selectedPublicUrl);
-        }
+    const visitProfileFromModal = () => {
+        if (!shareModalUrl) return;
+        window.open(shareModalUrl, "_blank", "noopener,noreferrer");
+    };
+
+    const handleDownloadQr = async () => {
+        if (!selectedProfile?.slug) return;
+        alert("QR download endpoint not wired yet. Tell me your backend QR endpoint and I’ll connect it.");
+    };
+
+    const handleDownloadQrForSlug = async (slug) => {
+        if (!slug) return;
+        alert("QR download endpoint not wired yet. Tell me your backend QR endpoint and I’ll connect it.");
+    };
+
+    const handleAppleWallet = async () => {
+        alert("Apple Wallet not wired yet. Send me the backend endpoint and I’ll connect it.");
+    };
+
+    const handleGoogleWallet = async () => {
+        alert("Google Wallet not wired yet. Send me the backend endpoint and I’ll connect it.");
     };
 
     const handleEdit = (slug) => {
@@ -390,20 +391,8 @@ export default function Profiles() {
         }
     };
 
-    const handleDownloadQr = async () => {
-        if (!selectedProfile?.slug) return;
-        alert("QR download endpoint not wired yet. Tell me your backend QR endpoint and I’ll connect it.");
-    };
+    const goUpgradeTeams = () => navigate("/pricing");
 
-    const handleWalletCombined = async () => {
-        alert("Wallet not wired yet. If you have an endpoint/URL for pass creation, send it and I’ll connect it.");
-    };
-
-    const goUpgradeTeams = () => navigate("/pricing"); // keep simple (your pricing page can choose Teams)
-
-    // =========================================================
-    // INLINE "ADD PROFILE" (REPLACES THE DASHED CARD)
-    // =========================================================
     const [claimOpen, setClaimOpen] = useState(false);
     const [claimSlugInput, setClaimSlugInput] = useState("");
     const [claimSlugNormalized, setClaimSlugNormalized] = useState("");
@@ -411,7 +400,6 @@ export default function Profiles() {
     const [claimMessage, setClaimMessage] = useState("");
 
     const claimRef = useRef(null);
-    const desiredNewCount = Math.max(2, sortedProfiles.length + 1);
 
     const resetClaim = () => {
         setClaimSlugInput("");
@@ -433,8 +421,9 @@ export default function Profiles() {
 
     const validateClaimSlug = (raw) => {
         const s = normalizeSlug(raw);
-        if (!s || s.length < 3)
+        if (!s || s.length < 3) {
             return { ok: false, slug: s, msg: "Slug must be at least 3 characters (a-z, 0-9, hyphen)." };
+        }
         if (s === "main") return { ok: false, slug: s, msg: "Please choose a real slug (not “main”)." };
         return { ok: true, slug: s, msg: "" };
     };
@@ -470,7 +459,7 @@ export default function Profiles() {
         }
     };
 
-    const createProfileNow = async () => {
+    const createTeamsProfileNow = async () => {
         const v = validateClaimSlug(claimSlugInput);
         setClaimSlugNormalized(v.slug);
 
@@ -480,24 +469,17 @@ export default function Profiles() {
             return;
         }
 
-        // Free/Plus: limited to 1 profile in your current rules
-        if (!isTeams && sortedProfiles.length >= maxProfiles) {
-            // instead of inline hint, just open overlay (same message style)
-            openLockedOverlay(v.slug);
+        if (!isTeams) {
+            setClaimStatus("error");
+            setClaimMessage("Only Teams can add extra profiles.");
             return;
         }
 
-        // Teams cap guard
-        if (isTeams && sortedProfiles.length >= maxProfiles) {
+        if (sortedProfiles.length >= maxProfiles) {
             setClaimStatus("error");
             setClaimMessage(
                 `You’re at your Teams limit (${sortedProfiles.length}/${maxProfiles}). Increase your Teams quantity to add more profiles.`
             );
-            return;
-        }
-
-        if (!isTeams) {
-            handleEdit(v.slug);
             return;
         }
 
@@ -511,6 +493,8 @@ export default function Profiles() {
                 profile_slug: v.slug,
                 template_id: "template-1",
                 business_card_name: "",
+                business_name: "",
+                trade_title: "",
             });
 
             await refetchProfiles();
@@ -530,14 +514,16 @@ export default function Profiles() {
     };
 
     const startTeamsCheckout = async () => {
-        if (claimStatus !== "available") return;
-
         const v = validateClaimSlug(claimSlugInput);
+        setClaimSlugNormalized(v.slug);
+
         if (!v.ok) {
             setClaimStatus("invalid");
             setClaimMessage(v.msg);
             return;
         }
+
+        if (claimStatus !== "available") return;
 
         setClaimStatus("subscribing");
         setClaimMessage("");
@@ -545,7 +531,7 @@ export default function Profiles() {
         try {
             const res = await api.post(TEAMS_CHECKOUT_ENDPOINT, {
                 claimedSlug: v.slug,
-                desiredQuantity: desiredNewCount,
+                desiredQuantity: Math.max(2, sortedProfiles.length + 1),
             });
 
             const url =
@@ -553,15 +539,6 @@ export default function Profiles() {
 
             if (url) {
                 window.location.href = url;
-                return;
-            }
-
-            if (res?.data?.updated) {
-                setClaimMessage("Subscription updated ✅ Finishing setup...");
-                await refetchAuthUser?.();
-                await refetchProfiles();
-                setClaimStatus("created");
-                setTimeout(() => closeClaimPanel(), 600);
                 return;
             }
 
@@ -573,7 +550,6 @@ export default function Profiles() {
         }
     };
 
-    // Handle return from Teams checkout (kept)
     useEffect(() => {
         const params = new URLSearchParams(location.search);
 
@@ -622,9 +598,6 @@ export default function Profiles() {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [location.search, refetchProfiles, refetchAuthUser]);
 
-    // =========================================================
-    // Loading / Error states
-    // =========================================================
     if (isLoading) {
         return (
             <DashboardLayout hideDesktopHeader>
@@ -657,9 +630,6 @@ export default function Profiles() {
         );
     }
 
-    // =========================================================
-    // Main render
-    // =========================================================
     return (
         <DashboardLayout hideDesktopHeader>
             <div className="profiles-shell">
@@ -686,7 +656,6 @@ export default function Profiles() {
                     </section>
                 ) : (
                     <div className="profiles-grid">
-                        {/* LEFT */}
                         <section className="profiles-card profiles-list-card">
                             <div className="profiles-listHeader">
                                 <div className="profiles-listHeader-left">
@@ -737,9 +706,7 @@ export default function Profiles() {
                                                         </span>
 
                                                         {locked ? (
-                                                            <span className="profiles-pill" style={{ background: "#0b1220", color: "#fff" }}>
-                                                                Locked
-                                                            </span>
+                                                            <span className="profiles-pill profiles-pill--locked">Locked</span>
                                                         ) : null}
                                                     </div>
 
@@ -770,7 +737,7 @@ export default function Profiles() {
                                                                 onClick={(e) => {
                                                                     e.stopPropagation();
                                                                     if (locked) return openLockedOverlay(p.slug);
-                                                                    shareSlug(p.slug);
+                                                                    openShareModal(p.slug);
                                                                 }}
                                                             >
                                                                 Share
@@ -795,7 +762,6 @@ export default function Profiles() {
                                     );
                                 })}
 
-                                {/* ✅ Add Profile card now transforms into inline claim UI */}
                                 {!claimOpen ? (
                                     <button type="button" className="profiles-addCard" onClick={openClaimPanel}>
                                         <span className="profiles-addPlus">＋</span>
@@ -849,55 +815,62 @@ export default function Profiles() {
                                         {claimMessage ? (
                                             <div
                                                 className={`profiles-alert ${claimStatus === "available"
-                                                        ? "success"
-                                                        : claimStatus === "error" || claimStatus === "invalid"
-                                                            ? "danger"
-                                                            : "neutral"
+                                                    ? "success"
+                                                    : claimStatus === "error" || claimStatus === "invalid" || claimStatus === "taken"
+                                                        ? "danger"
+                                                        : "neutral"
                                                     }`}
                                             >
                                                 {claimMessage}
                                             </div>
                                         ) : null}
 
-                                        {claimStatus === "available" && (
+                                        {claimStatus === "available" ? (
                                             <div className="profiles-addInlineActions">
+                                                <button
+                                                    type="button"
+                                                    className="kx-btn kx-btn--white"
+                                                    onClick={closeClaimPanel}
+                                                >
+                                                    Cancel
+                                                </button>
+
                                                 {isTeams ? (
-                                                    sortedProfiles.length < maxProfiles ? (
-                                                        <button
-                                                            type="button"
-                                                            className="kx-btn kx-btn--orange"
-                                                            onClick={createProfileNow}
-                                                            disabled={claimStatus === "creating"}
-                                                        >
-                                                            {claimStatus === "creating" ? "Creating..." : "Create profile"}
-                                                        </button>
-                                                    ) : (
-                                                        <button
-                                                            type="button"
-                                                            className="kx-btn kx-btn--orange"
-                                                            onClick={startTeamsCheckout}
-                                                            disabled={claimStatus === "subscribing"}
-                                                        >
-                                                            {claimStatus === "subscribing" ? "Opening checkout..." : "Subscribe / Update Teams to add it"}
-                                                        </button>
-                                                    )
+                                                    <button
+                                                        type="button"
+                                                        className="kx-btn kx-btn--orange"
+                                                        onClick={createTeamsProfileNow}
+                                                        disabled={claimStatus === "creating"}
+                                                    >
+                                                        {claimStatus === "creating" ? "Adding..." : "Add Profile"}
+                                                    </button>
                                                 ) : (
                                                     <button
                                                         type="button"
                                                         className="kx-btn kx-btn--orange"
-                                                        onClick={createProfileNow}
+                                                        onClick={startTeamsCheckout}
+                                                        disabled={claimStatus === "subscribing"}
                                                     >
-                                                        Continue to editor
+                                                        {claimStatus === "subscribing" ? "Opening checkout..." : "Upgrade Plan"}
                                                     </button>
                                                 )}
                                             </div>
-                                        )}
+                                        ) : null}
+
+                                        {(isFree || isPlus) && claimOpen ? (
+                                            <div className="profiles-hint">
+                                                {sortedProfiles.length >= 1 ? (
+                                                    <>
+                                                        Free and Plus allow <strong>1 profile</strong>. Upgrade to <strong>Teams</strong> to add more.
+                                                    </>
+                                                ) : null}
+                                            </div>
+                                        ) : null}
                                     </div>
                                 )}
                             </div>
                         </section>
 
-                        {/* RIGHT */}
                         <aside className="profiles-right">
                             <section className="profiles-card profiles-preview-card">
                                 {selectedProfile ? (
@@ -921,7 +894,7 @@ export default function Profiles() {
                                             <button
                                                 type="button"
                                                 className="profiles-copyIconBtn"
-                                                onClick={copySelectedLink}
+                                                onClick={() => copyLink(selectedPublicUrl)}
                                                 aria-label="Copy profile link"
                                             >
                                                 <img src={CopyLinkIcon} alt="" className="profiles-copyIcon24" />
@@ -976,12 +949,11 @@ export default function Profiles() {
                                     )}
                                 </div>
 
-                                {/* ✅ New 4 buttons order + labels */}
                                 <div className="profiles-previewActions">
                                     <button
                                         type="button"
                                         className="kx-btn kx-btn--black"
-                                        onClick={() => shareSlug(selectedProfile?.slug)}
+                                        onClick={() => openShareModal(selectedProfile?.slug)}
                                         disabled={!selectedProfile}
                                     >
                                         Share profile
@@ -999,7 +971,9 @@ export default function Profiles() {
                                     <button
                                         type="button"
                                         className="kx-btn kx-btn--white"
-                                        onClick={handleWalletCombined}
+                                        onClick={() => {
+                                            alert("Choose Apple Wallet or Google Wallet from Share.");
+                                        }}
                                         disabled={!selectedProfile}
                                     >
                                         Google / Apple Wallet
@@ -1019,9 +993,6 @@ export default function Profiles() {
                     </div>
                 )}
 
-                {/* =====================================================
-            Locked overlay modal (no CSS file changes required)
-           ===================================================== */}
                 {lockedOverlayOpen ? (
                     <div
                         role="dialog"
@@ -1116,6 +1087,84 @@ export default function Profiles() {
                                     }}
                                 >
                                     Upgrade to Teams
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                ) : null}
+
+                {shareModalOpen ? (
+                    <div
+                        className="profiles-shareOverlay"
+                        role="dialog"
+                        aria-modal="true"
+                        aria-label="Share profile"
+                        onMouseDown={(e) => {
+                            if (e.target === e.currentTarget) closeShareModal();
+                        }}
+                    >
+                        <div className="profiles-shareModal">
+                            <div className="profiles-shareModalTop">
+                                <div>
+                                    <div className="profiles-shareModalTitle">Share profile</div>
+                                    <div className="profiles-shareModalSub">
+                                        Choose what you want to do with this profile.
+                                    </div>
+                                </div>
+
+                                <button
+                                    type="button"
+                                    className="profiles-shareModalClose"
+                                    onClick={closeShareModal}
+                                    aria-label="Close"
+                                >
+                                    ✕
+                                </button>
+                            </div>
+
+                            <div className="profiles-shareModalUrl" title={shareModalUrl}>
+                                {shareModalUrl}
+                            </div>
+
+                            <div className="profiles-shareModalGrid">
+                                <button
+                                    type="button"
+                                    className="profiles-shareAction"
+                                    onClick={visitProfileFromModal}
+                                >
+                                    Visit profile
+                                </button>
+
+                                <button
+                                    type="button"
+                                    className="profiles-shareAction"
+                                    onClick={() => copyLink(shareModalUrl)}
+                                >
+                                    Copy link
+                                </button>
+
+                                <button
+                                    type="button"
+                                    className="profiles-shareAction"
+                                    onClick={() => handleDownloadQrForSlug(shareModalSlug)}
+                                >
+                                    Download QR code
+                                </button>
+
+                                <button
+                                    type="button"
+                                    className="profiles-shareAction"
+                                    onClick={handleAppleWallet}
+                                >
+                                    Save to Apple Wallet
+                                </button>
+
+                                <button
+                                    type="button"
+                                    className="profiles-shareAction"
+                                    onClick={handleGoogleWallet}
+                                >
+                                    Save to Google Wallet
                                 </button>
                             </div>
                         </div>
