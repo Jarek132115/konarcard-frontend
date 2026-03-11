@@ -88,10 +88,12 @@
 }
 
 .profiles-listDivider,
-.profiles-actionsDivider {
+.profiles-actionsDivider,
+.profiles-divider {
     height: 1px;
     background: var(--p-softLine);
-    margin-top: 16px;
+    margin-top: 24px;
+    margin-bottom: 24px;
 }
 
 .profiles-listRail {
@@ -524,6 +526,11 @@
     align-items: stretch;
 }
 
+.profiles-addCardInner--center {
+    align-items: center;
+    text-align: center;
+}
+
 .profiles-addBadge {
     align-self: flex-start;
     display: inline-flex;
@@ -537,6 +544,10 @@
     font-family: "Inter", sans-serif;
     font-weight: 700;
     font-size: 12px;
+}
+
+.profiles-addCardInner--center .profiles-addBadge {
+    align-self: flex-start;
 }
 
 .profiles-addHero {
@@ -579,6 +590,10 @@
     text-align: left;
 }
 
+.profiles-addCardInner--center .profiles-addHeadline {
+    text-align: center;
+}
+
 .profiles-addSubcopy {
     margin-top: 10px;
     font-family: "Inter", sans-serif;
@@ -587,11 +602,19 @@
     color: rgba(71, 85, 105, 0.92);
 }
 
+.profiles-addCardInner--center .profiles-addSubcopy {
+    text-align: center;
+}
+
 .profiles-addFeatureList {
     margin-top: 14px;
     display: flex;
     flex-wrap: wrap;
     gap: 8px;
+}
+
+.profiles-addCardInner--center .profiles-addFeatureList {
+    justify-content: center;
 }
 
 .profiles-addFeature {
@@ -612,6 +635,7 @@
 .profiles-addPrimaryCta {
     margin-top: auto;
     min-height: 48px;
+    width: 100%;
     border-radius: 14px;
     background: #0b1220;
     color: #ffffff;
@@ -621,21 +645,6 @@
     font-family: "Inter", sans-serif;
     font-size: 14px;
     font-weight: 700;
-}
-
-.profiles-addPlus {
-    font-family: "Inter", sans-serif;
-    font-weight: 700;
-    font-size: 22px;
-    color: rgba(15, 23, 42, 0.85);
-    line-height: 1;
-}
-
-.profiles-addText {
-    font-family: "Inter", sans-serif;
-    font-weight: 600;
-    font-size: 16px;
-    color: rgba(15, 23, 42, 0.88);
 }
 
 .profiles-addInline {
@@ -667,6 +676,10 @@
     align-items: flex-start;
     justify-content: space-between;
     gap: 10px;
+}
+
+.profiles-addInlineHeadCopy {
+    width: 100%;
 }
 
 .profiles-addInlineEyebrow {
@@ -713,6 +726,7 @@
     background: rgba(15, 23, 42, 0.06);
 }
 
+.profiles-addInlineForm,
 .profiles-addInlineRow {
     display: grid;
     grid-template-columns: minmax(0, 1fr) auto;
@@ -751,6 +765,10 @@
     font-weight: 700;
     color: var(--p-ink);
     word-break: break-word;
+}
+
+.profiles-claimBtn {
+    min-width: 180px;
 }
 
 .profiles-input-wrap {
@@ -919,7 +937,6 @@
 }
 
 .profiles-actionGroup {
-    margin-top: 16px;
     display: grid;
     gap: 16px;
 }
@@ -1088,12 +1105,197 @@
         height: auto;
     }
 
+    .profiles-list-card,
     .profiles-actionsCard {
         overflow: visible;
     }
 
     .profiles-listRail {
-        min-height: 560px;
+        flex: initial;
+        min-height: 0;
+        height: auto;
+        align-items: stretch;
+    }
+
+    .profiles-profileCard--rail,
+    .profiles-addCard--rail {
+        flex: 0 0 360px;
+        width: 360px;
+        min-height: unset;
+        height: auto;
+    }
+
+    .profiles-addInline--rail {
+        flex: 0 0 360px;
+        width: 360px;
+        min-height: unset;
+        height: auto;
+    }
+}
+
+@media (max-width: 900px) {
+    .profiles-card {
+        padding: 20px;
+    }
+
+    .profiles-profileCard--rail,
+    .profiles-addCard--rail {
+        flex: 0 0 300px;
+        width: 300px;
+        padding: 16px;
+    }
+
+    .profiles-addInline--rail {
+        flex: 0 0 300px;
+        width: 300px;
+        padding: 16px;
+    }
+
+    .profiles-slug {
+        font-size: 18px;
+    }
+
+    .profiles-pill {
+        font-size: 11px;
+        padding: 5px 9px;
+    }
+
+    .profiles-updated {
+        font-size: 11px;
+    }
+
+    .profiles-metricVal {
+        font-size: 13px;
+    }
+
+    .profiles-metricLab {
+        font-size: 11px;
+    }
+
+    .profiles-mini-cover {
+        height: 92px;
+    }
+
+    .profiles-mini-avatar {
+        width: 46px;
+        height: 46px;
+        border-radius: 13px;
+    }
+
+    .profiles-mini-avatar--placeholder {
+        font-size: 18px;
+    }
+
+    .profiles-mini-body {
+        padding: 0 12px 14px;
+    }
+
+    .profiles-mini-copy {
+        margin-top: 10px;
+        gap: 5px;
+    }
+
+    .profiles-mini-title {
+        font-size: 18px;
+    }
+
+    .profiles-mini-subtitle {
+        font-size: 11px;
+    }
+
+    .profiles-mini-meta {
+        font-size: 10px;
+    }
+
+    .profiles-mini-ctaRow {
+        margin-top: 10px;
+        gap: 6px;
+    }
+
+    .profiles-mini-btn {
+        height: 28px;
+        padding: 0 10px;
+        font-size: 10px;
+    }
+
+    .profiles-profileBottom {
+        padding-top: 14px;
+        gap: 10px;
+    }
+
+    .profiles-addBadge {
+        height: 24px;
+        padding: 0 9px;
+        font-size: 11px;
+    }
+
+    .profiles-addHeroIcon {
+        width: 58px;
+        height: 58px;
+        border-radius: 18px;
+        font-size: 28px;
+    }
+
+    .profiles-addHeadline {
+        font-size: 22px;
+    }
+
+    .profiles-addSubcopy {
+        font-size: 12px;
+    }
+
+    .profiles-addFeature {
+        min-height: 26px;
+        padding: 4px 8px;
+        font-size: 11px;
+    }
+
+    .profiles-addPrimaryCta {
+        min-height: 42px;
+        font-size: 13px;
+    }
+
+    .profiles-addInlineEyebrow {
+        font-size: 11px;
+    }
+
+    .profiles-addInlineTitle {
+        font-size: 22px;
+    }
+
+    .profiles-addInlineIntro {
+        font-size: 12px;
+    }
+
+    .profiles-input-prefix,
+    .profiles-input {
+        font-size: 12px;
+        padding-top: 10px;
+        padding-bottom: 10px;
+    }
+
+    .profiles-claimBtn {
+        min-width: 0;
+        width: 100%;
+    }
+
+    .profiles-previewLinkUrl {
+        font-size: 18px;
+    }
+
+    .profiles-groupTitle {
+        font-size: 17px;
+    }
+
+    .profiles-actionBtn {
+        gap: 8px;
+        font-size: 13px;
+    }
+
+    .profiles-btnIcon,
+    .profiles-btnIconSvg {
+        width: 16px;
+        height: 16px;
     }
 }
 
@@ -1102,19 +1304,57 @@
         padding: 18px;
     }
 
+    .profiles-listHeader {
+        align-items: flex-start;
+    }
+
+    .profiles-listRail {
+        margin-top: 16px;
+    }
+
     .profiles-profileCard--rail,
     .profiles-addCard--rail {
-        flex-basis: 82vw;
+        flex: 0 0 82vw;
         width: 82vw;
+        min-height: unset;
+        height: auto;
     }
 
     .profiles-addInline--rail {
-        flex-basis: 88vw;
-        width: 88vw;
+        flex: 0 0 82vw;
+        width: 82vw;
+        min-height: unset;
+        height: auto;
     }
 
+    .profiles-addInlineHead {
+        text-align: center;
+        align-items: center;
+    }
+
+    .profiles-addInlineHeadCopy {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+    }
+
+    .profiles-addInlineIntro {
+        text-align: center;
+    }
+
+    .profiles-addInlineForm,
     .profiles-addInlineRow {
         grid-template-columns: 1fr;
+    }
+
+    .profiles-addInlineActions {
+        justify-content: center;
+    }
+
+    .profiles-claimPreviewRow {
+        align-items: center;
+        text-align: center;
     }
 
     .profiles-input-prefix {
@@ -1129,13 +1369,274 @@
         width: 100%;
         max-width: 100%;
     }
+
+    .profiles-actionsTop {
+        gap: 6px;
+    }
+
+    .profiles-previewMetricsRow {
+        margin-top: 12px;
+    }
+
+    .profiles-metrics--preview {
+        justify-content: flex-start;
+    }
+
+    .profiles-divider {
+        margin-top: 24px;
+        margin-bottom: 24px;
+    }
 }
 
 @media (max-width: 640px) {
+    .profiles-shell {
+        height: auto;
+    }
 
-    .profiles-actionGrid,
-    .profiles-actionGrid--two {
-        grid-template-columns: 1fr;
+    .profiles-grid {
+        gap: 14px;
+    }
+
+    .profiles-card {
+        padding: 16px;
+        border-radius: 20px;
+    }
+
+    .profiles-listTitle,
+    .profiles-card-title {
+        font-size: 30px;
+        line-height: 1;
+    }
+
+    .profiles-listSub,
+    .profiles-muted {
+        font-size: 14px;
+    }
+
+    .profiles-countPill {
+        height: 36px;
+        padding: 0 12px;
+        font-size: 13px;
+    }
+
+    .profiles-profileCard--rail,
+    .profiles-addCard--rail,
+    .profiles-addInline--rail {
+        flex: 0 0 88vw;
+        width: 88vw;
+    }
+
+    .profiles-profileCard--rail {
+        padding: 14px;
+    }
+
+    .profiles-addCard--rail,
+    .profiles-addInline--rail {
+        padding: 14px;
+    }
+
+    .profiles-pillRow {
+        gap: 8px;
+    }
+
+    .profiles-pill {
+        font-size: 10px;
+        padding: 5px 8px;
+    }
+
+    .profiles-slug {
+        font-size: 17px;
+    }
+
+    .profiles-updated {
+        font-size: 10px;
+    }
+
+    .profiles-staticFrame {
+        margin-top: 12px;
+        border-radius: 16px;
+    }
+
+    .profiles-mini-cover {
+        height: 82px;
+    }
+
+    .profiles-mini-avatarWrap {
+        margin-top: -22px;
+    }
+
+    .profiles-mini-avatar {
+        width: 40px;
+        height: 40px;
+        border-radius: 12px;
+        border-width: 2px;
+    }
+
+    .profiles-mini-avatar--placeholder {
+        font-size: 16px;
+    }
+
+    .profiles-mini-body {
+        padding: 0 10px 12px;
+    }
+
+    .profiles-mini-copy {
+        margin-top: 8px;
+        gap: 4px;
+    }
+
+    .profiles-mini-title {
+        font-size: 16px;
+    }
+
+    .profiles-mini-subtitle,
+    .profiles-mini-meta {
+        line-height: 1.3;
+    }
+
+    .profiles-mini-subtitle {
+        font-size: 10px;
+    }
+
+    .profiles-mini-meta {
+        font-size: 9px;
+    }
+
+    .profiles-mini-ctaRow {
+        margin-top: 8px;
+        gap: 6px;
+    }
+
+    .profiles-mini-btn {
+        height: 24px;
+        font-size: 9px;
+        padding: 0 8px;
+    }
+
+    .profiles-profileBottom {
+        padding-top: 12px;
+        gap: 10px;
+    }
+
+    .profiles-metrics {
+        gap: 14px;
+    }
+
+    .profiles-metricVal {
+        font-size: 12px;
+    }
+
+    .profiles-metricLab {
+        font-size: 10px;
+    }
+
+    .profiles-cardBtns {
+        gap: 10px;
+    }
+
+    .profiles-cardBtn {
+        min-height: 40px;
+    }
+
+    .profiles-addBadge {
+        height: 22px;
+        font-size: 10px;
+        padding: 0 8px;
+    }
+
+    .profiles-addHero {
+        margin-top: 12px;
+        border-radius: 16px;
+    }
+
+    .profiles-addHeroIcon {
+        width: 52px;
+        height: 52px;
+        border-radius: 16px;
+        font-size: 24px;
+    }
+
+    .profiles-addHeadline {
+        margin-top: 12px;
+        font-size: 18px;
+    }
+
+    .profiles-addSubcopy {
+        margin-top: 8px;
+        font-size: 11px;
+        line-height: 1.45;
+    }
+
+    .profiles-addFeatureList {
+        margin-top: 10px;
+        gap: 6px;
+    }
+
+    .profiles-addFeature {
+        min-height: 24px;
+        font-size: 10px;
+        padding: 4px 8px;
+    }
+
+    .profiles-addPrimaryCta {
+        min-height: 40px;
+        margin-top: 14px;
+        font-size: 12px;
+    }
+
+    .profiles-addInlineEyebrow {
+        font-size: 10px;
+    }
+
+    .profiles-addInlineTitle {
+        font-size: 20px;
+    }
+
+    .profiles-addInlineIntro {
+        font-size: 11px;
+    }
+
+    .profiles-input-wrap {
+        border-radius: 12px;
+    }
+
+    .profiles-input-prefix {
+        font-size: 11px;
+        padding: 10px;
+        max-width: 42%;
+    }
+
+    .profiles-input {
+        font-size: 12px;
+        padding: 10px;
+    }
+
+    .profiles-claimBtn {
+        min-height: 42px;
+    }
+
+    .profiles-claimPreviewRow {
+        padding: 10px 12px;
+        border-radius: 12px;
+    }
+
+    .profiles-claimPreviewLabel {
+        font-size: 10px;
+    }
+
+    .profiles-claimPreviewUrl {
+        font-size: 12px;
+    }
+
+    .profiles-alert {
+        font-size: 12px;
+        padding: 10px 12px;
+        border-radius: 12px;
+    }
+
+    .profiles-hint {
+        font-size: 12px;
+        text-align: center;
     }
 
     .profiles-previewLinkRow {
@@ -1148,29 +1649,41 @@
         word-break: break-word;
     }
 
+    .profiles-previewHint {
+        font-size: 14px;
+    }
+
+    .profiles-metrics--preview {
+        width: 100%;
+        justify-content: space-between;
+    }
+
+    .profiles-actionGrid,
+    .profiles-actionGrid--two {
+        grid-template-columns: 1fr;
+    }
+
+    .profiles-groupTitle {
+        font-size: 16px;
+    }
+
+    .profiles-actionBtn {
+        min-height: 44px;
+        font-size: 13px;
+    }
+
     .profiles-qrWrap {
+        max-width: 100%;
+        width: 100%;
+    }
+
+    .profiles-singleAction--wide,
+    .profiles-actionBtn--wide {
+        width: 100%;
         max-width: 100%;
     }
 
-    .profiles-profileCard--rail,
-    .profiles-addCard--rail {
-        flex-basis: 88vw;
-        width: 88vw;
-    }
-
-    .profiles-mini-cover {
-        height: 108px;
-    }
-
-    .profiles-mini-title {
-        font-size: 20px;
-    }
-
-    .profiles-addHeadline {
-        font-size: 22px;
-    }
-
-    .profiles-addInlineTitle {
-        font-size: 24px;
+    .profiles-actionsCard {
+        overflow: visible;
     }
 }

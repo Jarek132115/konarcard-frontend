@@ -286,6 +286,18 @@ export default function Profiles() {
     const dragStartXRef = useRef(0);
     const dragStartScrollLeftRef = useRef(0);
 
+    const [claimOpen, setClaimOpen] = useState(false);
+    const [claimSlugInput, setClaimSlugInput] = useState("");
+    const [claimSlugNormalized, setClaimSlugNormalized] = useState("");
+    const [claimStatus, setClaimStatus] = useState("idle");
+    const [claimMessage, setClaimMessage] = useState("");
+
+    const [selectedSlug, setSelectedSlug] = useState(null);
+    const [lockedOverlayOpen, setLockedOverlayOpen] = useState(false);
+    const [lockedClickedSlug, setLockedClickedSlug] = useState("");
+
+    const claimRef = useRef(null);
+
     useEffect(() => {
         if (!authUser) return;
         refetchProfiles?.();
@@ -354,8 +366,6 @@ export default function Profiles() {
         [cappedProfiles.length, maxProfiles]
     );
 
-    const [selectedSlug, setSelectedSlug] = useState(null);
-
     useEffect(() => {
         if (!sortedProfiles.length) {
             setSelectedSlug(null);
@@ -393,9 +403,6 @@ export default function Profiles() {
     const selectedPublicUrl = useMemo(() => {
         return selectedProfile?.slug ? buildPublicUrl(selectedProfile.slug) : "";
     }, [selectedProfile?.slug]);
-
-    const [lockedOverlayOpen, setLockedOverlayOpen] = useState(false);
-    const [lockedClickedSlug, setLockedClickedSlug] = useState("");
 
     const openLockedOverlay = (slug) => {
         setLockedClickedSlug(slug || "");
@@ -507,14 +514,6 @@ export default function Profiles() {
     };
 
     const goUpgradeTeams = () => navigate("/pricing");
-
-    const [claimOpen, setClaimOpen] = useState(false);
-    const [claimSlugInput, setClaimSlugInput] = useState("");
-    const [claimSlugNormalized, setClaimSlugNormalized] = useState("");
-    const [claimStatus, setClaimStatus] = useState("idle");
-    const [claimMessage, setClaimMessage] = useState("");
-
-    const claimRef = useRef(null);
 
     const resetClaim = () => {
         setClaimSlugInput("");
@@ -786,9 +785,7 @@ export default function Profiles() {
         pointerDownRef.current = false;
         dragActiveRef.current = false;
 
-        if (rail) {
-            rail.classList.remove("is-dragging");
-        }
+        if (rail) rail.classList.remove("is-dragging");
 
         window.setTimeout(() => {
             suppressClickRef.current = false;
@@ -800,9 +797,7 @@ export default function Profiles() {
         pointerDownRef.current = false;
         dragActiveRef.current = false;
 
-        if (rail) {
-            rail.classList.remove("is-dragging");
-        }
+        if (rail) rail.classList.remove("is-dragging");
 
         window.setTimeout(() => {
             suppressClickRef.current = false;
@@ -1000,20 +995,25 @@ export default function Profiles() {
                                             openClaimPanel();
                                         }}
                                     >
-                                        <div className="profiles-addCardInner">
+                                        <div className="profiles-addCardInner profiles-addCardInner--center">
                                             <div className="profiles-addBadge">New</div>
+
                                             <div className="profiles-addHero">
                                                 <div className="profiles-addHeroIcon">＋</div>
                                             </div>
+
                                             <div className="profiles-addHeadline">Add Profile</div>
+
                                             <div className="profiles-addSubcopy">
                                                 Claim a new public link for another service, team, or location.
                                             </div>
+
                                             <div className="profiles-addFeatureList">
                                                 <div className="profiles-addFeature">Unique link</div>
                                                 <div className="profiles-addFeature">Own QR code</div>
                                                 <div className="profiles-addFeature">Separate analytics</div>
                                             </div>
+
                                             <div className="profiles-addPrimaryCta">Claim your link</div>
                                         </div>
                                     </button>
@@ -1024,7 +1024,7 @@ export default function Profiles() {
                                         data-no-rail-drag="true"
                                     >
                                         <div className="profiles-addInlineHead">
-                                            <div>
+                                            <div className="profiles-addInlineHeadCopy">
                                                 <div className="profiles-addInlineEyebrow">Create new profile</div>
                                                 <div className="profiles-addInlineTitle">Claim your link</div>
                                             </div>
@@ -1043,8 +1043,8 @@ export default function Profiles() {
                                             Pick a clean public URL for this profile. This will be the link customers visit.
                                         </div>
 
-                                        <div className="profiles-addInlineRow">
-                                            <div className="profiles-input-wrap" aria-label="Claim link input">
+                                        <div className="profiles-addInlineForm">
+                                            <div className="profiles-input-wrap">
                                                 <span className="profiles-input-prefix">{window.location.origin}/u/</span>
                                                 <input
                                                     className="profiles-input"
@@ -1064,7 +1064,7 @@ export default function Profiles() {
 
                                             <button
                                                 type="button"
-                                                className="kx-btn kx-btn--black"
+                                                className="kx-btn kx-btn--black profiles-claimBtn"
                                                 onClick={checkSlugAvailability}
                                                 disabled={
                                                     claimStatus === "checking" ||
@@ -1160,6 +1160,7 @@ export default function Profiles() {
                                                 <span className={`profiles-pill ${selectedProfile.isLive ? "live" : "draft"}`}>
                                                     {selectedProfile.isLive ? "Live" : "Draft"}
                                                 </span>
+
                                                 <span className={`profiles-pill completion ${selectedProfile.tone}`}>
                                                     {selectedProfile.pct >= 95 ? "Profile Complete" : `${selectedProfile.pct}% Complete`}
                                                 </span>
@@ -1206,45 +1207,7 @@ export default function Profiles() {
                                             </div>
                                         </div>
 
-                                        <div className="profiles-actionsDivider" />
-
-                                        <div className="profiles-actionGroup">
-                                            <h3 className="profiles-groupTitle">Share your card</h3>
-
-                                            <div className="profiles-actionGrid">
-                                                <button type="button" className="kx-btn kx-btn--white profiles-actionBtn" onClick={shareToFacebook}>
-                                                    <ActionIcon><IconFacebook /></ActionIcon>
-                                                    <span>Share on Facebook</span>
-                                                </button>
-
-                                                <button type="button" className="kx-btn kx-btn--white profiles-actionBtn" onClick={shareToInstagram}>
-                                                    <ActionIcon><IconInstagram /></ActionIcon>
-                                                    <span>Share on Instagram</span>
-                                                </button>
-
-                                                <button type="button" className="kx-btn kx-btn--white profiles-actionBtn" onClick={shareToMessenger}>
-                                                    <ActionIcon><IconMessenger /></ActionIcon>
-                                                    <span>Share on Messenger</span>
-                                                </button>
-
-                                                <button type="button" className="kx-btn kx-btn--white profiles-actionBtn" onClick={shareToWhatsApp}>
-                                                    <ActionIcon><IconWhatsApp /></ActionIcon>
-                                                    <span>Share on WhatsApp</span>
-                                                </button>
-
-                                                <button type="button" className="kx-btn kx-btn--white profiles-actionBtn" onClick={shareByText}>
-                                                    <ActionIcon><IconSms /></ActionIcon>
-                                                    <span>Share by text</span>
-                                                </button>
-
-                                                <button type="button" className="kx-btn kx-btn--black profiles-actionBtn" onClick={() => copyLink(selectedPublicUrl)}>
-                                                    <ActionIcon><IconLink /></ActionIcon>
-                                                    <span>Copy link</span>
-                                                </button>
-                                            </div>
-                                        </div>
-
-                                        <div className="profiles-actionsDivider" />
+                                        <div className="profiles-divider" />
 
                                         <div className="profiles-actionGroup">
                                             <h3 className="profiles-groupTitle">QR code</h3>
@@ -1273,25 +1236,63 @@ export default function Profiles() {
                                             </div>
                                         </div>
 
-                                        <div className="profiles-actionsDivider" />
+                                        <div className="profiles-divider" />
 
                                         <div className="profiles-actionGroup">
-                                            <h3 className="profiles-groupTitle">Save to wallet</h3>
+                                            <h3 className="profiles-groupTitle">Share your profile</h3>
 
-                                            <div className="profiles-actionGrid profiles-actionGrid--two">
-                                                <button type="button" className="kx-btn kx-btn--white profiles-actionBtn" onClick={handleAppleWallet}>
-                                                    <ActionIcon><IconApple /></ActionIcon>
-                                                    <span>Add to Apple Wallet</span>
+                                            <div className="profiles-actionGrid">
+                                                <button type="button" className="kx-btn kx-btn--white profiles-actionBtn" onClick={shareToFacebook}>
+                                                    <ActionIcon><IconFacebook /></ActionIcon>
+                                                    <span>Facebook</span>
                                                 </button>
 
-                                                <button type="button" className="kx-btn kx-btn--white profiles-actionBtn" onClick={handleGoogleWallet}>
-                                                    <ActionIcon><IconGoogle /></ActionIcon>
-                                                    <span>Add to Google Wallet</span>
+                                                <button type="button" className="kx-btn kx-btn--white profiles-actionBtn" onClick={shareToInstagram}>
+                                                    <ActionIcon><IconInstagram /></ActionIcon>
+                                                    <span>Instagram</span>
+                                                </button>
+
+                                                <button type="button" className="kx-btn kx-btn--white profiles-actionBtn" onClick={shareToMessenger}>
+                                                    <ActionIcon><IconMessenger /></ActionIcon>
+                                                    <span>Messenger</span>
+                                                </button>
+
+                                                <button type="button" className="kx-btn kx-btn--white profiles-actionBtn" onClick={shareToWhatsApp}>
+                                                    <ActionIcon><IconWhatsApp /></ActionIcon>
+                                                    <span>WhatsApp</span>
+                                                </button>
+
+                                                <button type="button" className="kx-btn kx-btn--white profiles-actionBtn" onClick={shareByText}>
+                                                    <ActionIcon><IconSms /></ActionIcon>
+                                                    <span>Text</span>
+                                                </button>
+
+                                                <button type="button" className="kx-btn kx-btn--black profiles-actionBtn" onClick={() => copyLink(selectedPublicUrl)}>
+                                                    <ActionIcon><IconLink /></ActionIcon>
+                                                    <span>Copy link</span>
                                                 </button>
                                             </div>
                                         </div>
 
-                                        <div className="profiles-actionsDivider" />
+                                        <div className="profiles-divider" />
+
+                                        <div className="profiles-actionGroup">
+                                            <h3 className="profiles-groupTitle">Add to wallet</h3>
+
+                                            <div className="profiles-actionGrid profiles-actionGrid--two">
+                                                <button type="button" className="kx-btn kx-btn--white profiles-actionBtn" onClick={handleAppleWallet}>
+                                                    <ActionIcon><IconApple /></ActionIcon>
+                                                    <span>Apple Wallet</span>
+                                                </button>
+
+                                                <button type="button" className="kx-btn kx-btn--white profiles-actionBtn" onClick={handleGoogleWallet}>
+                                                    <ActionIcon><IconGoogle /></ActionIcon>
+                                                    <span>Google Wallet</span>
+                                                </button>
+                                            </div>
+                                        </div>
+
+                                        <div className="profiles-divider" />
 
                                         <div className="profiles-actionGroup">
                                             <h3 className="profiles-groupTitle">Manage profile</h3>
@@ -1303,7 +1304,7 @@ export default function Profiles() {
                                                     onClick={() => handleEdit(selectedProfile.slug)}
                                                 >
                                                     <ActionIcon><IconEdit /></ActionIcon>
-                                                    <span>Edit profile</span>
+                                                    <span>Edit</span>
                                                 </button>
 
                                                 <button
