@@ -9,8 +9,6 @@ import { useAuthUser } from "../../hooks/useAuthUser";
 import { useMyProfiles, useCreateProfile, useDeleteProfile } from "../../hooks/useBusinessCard";
 import api from "../../services/api";
 
-import Preview from "../../components/Dashboard/Preview";
-
 import CopyLinkIcon from "../../assets/icons/CopyLink.svg";
 
 const TEAMS_CHECKOUT_ENDPOINT = "/api/checkout/teams";
@@ -43,9 +41,7 @@ const calcCompletionPct = (c) => {
 
     const total = checks.length;
     const done = checks.filter(Boolean).length;
-
-    if (!total) return 0;
-    return Math.round((done / total) * 100);
+    return total ? Math.round((done / total) * 100) : 0;
 };
 
 const pctTone = (pct) => {
@@ -63,29 +59,6 @@ const toMs = (d) => {
 export default function Profiles() {
     const navigate = useNavigate();
     const location = useLocation();
-
-    const mqDesktopToMobile = "(max-width: 1000px)";
-    const mqSmallMobile = "(max-width: 520px)";
-    const [isMobile, setIsMobile] = useState(() => window.matchMedia(mqDesktopToMobile).matches);
-    const [isSmallMobile, setIsSmallMobile] = useState(() => window.matchMedia(mqSmallMobile).matches);
-
-    useEffect(() => {
-        const mm1 = window.matchMedia(mqDesktopToMobile);
-        const mm2 = window.matchMedia(mqSmallMobile);
-
-        const onChange = () => {
-            setIsMobile(mm1.matches);
-            setIsSmallMobile(mm2.matches);
-        };
-
-        mm1.addEventListener("change", onChange);
-        mm2.addEventListener("change", onChange);
-
-        return () => {
-            mm1.removeEventListener("change", onChange);
-            mm2.removeEventListener("change", onChange);
-        };
-    }, []);
 
     const { data: authUser, refetch: refetchAuthUser } = useAuthUser();
     const plan = safeLower(authUser?.plan || "free");
@@ -131,6 +104,7 @@ export default function Profiles() {
 
             return {
                 id: c._id,
+                raw: c,
                 slug,
                 name: displayName,
                 updatedAt: updatedAtText,
@@ -140,6 +114,7 @@ export default function Profiles() {
                 isLive,
                 views,
                 linkTaps,
+                qrCodeUrl: c?.qr_code_url || "",
             };
         });
     }, [cards]);
@@ -219,120 +194,13 @@ export default function Profiles() {
     const overlayPlanName = isFree ? "Free" : isPlus ? "Plus" : "your current";
     const overlayLimitText = `This plan is limited to ${maxProfiles} profile${maxProfiles === 1 ? "" : "s"}.`;
 
-    const [previewLoading, setPreviewLoading] = useState(false);
-    const [previewError, setPreviewError] = useState("");
-    const [previewCard, setPreviewCard] = useState(null);
-
-    useEffect(() => {
-        const slug = selectedProfile?.slug;
-        if (!slug) {
-            setPreviewCard(null);
-            setPreviewError("");
-            return;
-        }
-
-        let cancelled = false;
-
-        (async () => {
-            try {
-                setPreviewLoading(true);
-                setPreviewError("");
-
-                const res = await api.get(`/api/business-card/profiles/${encodeURIComponent(slug)}`);
-                const data = res?.data?.data ?? null;
-
-                if (cancelled) return;
-                setPreviewCard(data);
-            } catch (e) {
-                if (cancelled) return;
-                setPreviewCard(null);
-                setPreviewError(e?.response?.data?.error || e?.message || "Could not load preview.");
-            } finally {
-                if (cancelled) return;
-                setPreviewLoading(false);
-            }
-        })();
-
-        return () => {
-            cancelled = true;
-        };
-    }, [selectedProfile?.slug]);
-
-    const previewState = useMemo(() => {
-        const bc = previewCard || {};
-
-        return {
-            templateId: bc.template_id || "template-1",
-            themeMode: bc.theme_mode || bc.page_theme || "light",
-            pageTheme: bc.page_theme || bc.theme_mode || "light",
-
-            businessName: bc.business_name || bc.business_card_name || "",
-            mainHeading: bc.business_name || bc.business_card_name || bc.main_heading || "",
-            subHeading: bc.trade_title || bc.sub_heading || "",
-            trade_title: bc.trade_title || "",
-            location: bc.location || "",
-            job_title: bc.job_title || "",
-            full_name: bc.full_name || "",
-            bio: bc.bio || "",
-
-            logo: bc.logo || bc.avatar || null,
-            avatar: bc.avatar || bc.logo || null,
-            coverPhoto: bc.cover_photo || null,
-
-            avatarPreview: "",
-            coverPhotoPreview: "",
-            logoPreview: "",
-            avatarFile: null,
-            coverPhotoFile: null,
-            logoFile: null,
-
-            workImages: Array.isArray(bc.works) ? bc.works.map((url) => ({ file: null, preview: url })) : [],
-            services: Array.isArray(bc.services) ? bc.services : [],
-            reviews: Array.isArray(bc.reviews) ? bc.reviews : [],
-
-            contact_email: bc.contact_email || "",
-            phone_number: bc.phone_number || "",
-
-            facebook_url: bc.facebook_url || "",
-            instagram_url: bc.instagram_url || "",
-            linkedin_url: bc.linkedin_url || "",
-            x_url: bc.x_url || "",
-            tiktok_url: bc.tiktok_url || "",
-        };
-    }, [previewCard]);
-
-    const previewToggles = useMemo(() => {
-        const bc = previewCard || {};
-        return {
-            showMainSection: bc.show_main_section !== false,
-            showAboutMeSection: bc.show_about_me_section !== false,
-            showWorkSection: bc.show_work_section !== false,
-            showServicesSection: bc.show_services_section !== false,
-            showReviewsSection: bc.show_reviews_section !== false,
-            showContactSection: bc.show_contact_section !== false,
-        };
-    }, [previewCard]);
-
-    const hasExchangeContact =
-        (previewState.contact_email && previewState.contact_email.trim()) ||
-        (previewState.phone_number && previewState.phone_number.trim());
-
-    const [shareModalOpen, setShareModalOpen] = useState(false);
-    const [shareModalSlug, setShareModalSlug] = useState("");
-    const [shareModalUrl, setShareModalUrl] = useState("");
-
-    const openShareModal = (slug) => {
-        const s = normalizeSlug(slug || "");
-        if (!s) return;
-        setShareModalSlug(s);
-        setShareModalUrl(buildPublicUrl(s));
-        setShareModalOpen(true);
+    const handleEdit = (slug) => {
+        navigate(`/profiles/edit?slug=${encodeURIComponent(slug || "")}`);
     };
 
-    const closeShareModal = () => {
-        setShareModalOpen(false);
-        setShareModalSlug("");
-        setShareModalUrl("");
+    const handleVisitProfile = (slug) => {
+        const link = buildPublicUrl(slug);
+        window.open(link, "_blank", "noopener,noreferrer");
     };
 
     const copyLink = async (link) => {
@@ -345,31 +213,23 @@ export default function Profiles() {
         }
     };
 
-    const visitProfileFromModal = () => {
-        if (!shareModalUrl) return;
-        window.open(shareModalUrl, "_blank", "noopener,noreferrer");
-    };
-
     const handleDownloadQr = async () => {
         if (!selectedProfile?.slug) return;
-        alert("QR download endpoint not wired yet. Tell me your backend QR endpoint and I’ll connect it.");
-    };
+        if (!selectedProfile?.qrCodeUrl) {
+            alert("QR code not available yet for this profile.");
+            return;
+        }
 
-    const handleDownloadQrForSlug = async (slug) => {
-        if (!slug) return;
-        alert("QR download endpoint not wired yet. Tell me your backend QR endpoint and I’ll connect it.");
-    };
-
-    const handleAppleWallet = async () => {
-        alert("Apple Wallet not wired yet. Send me the backend endpoint and I’ll connect it.");
-    };
-
-    const handleGoogleWallet = async () => {
-        alert("Google Wallet not wired yet. Send me the backend endpoint and I’ll connect it.");
-    };
-
-    const handleEdit = (slug) => {
-        navigate(`/profiles/edit?slug=${encodeURIComponent(slug || "")}`);
+        try {
+            const a = document.createElement("a");
+            a.href = selectedProfile.qrCodeUrl;
+            a.download = `${selectedProfile.slug}-qr.png`;
+            document.body.appendChild(a);
+            a.click();
+            a.remove();
+        } catch {
+            window.open(selectedProfile.qrCodeUrl, "_blank", "noopener,noreferrer");
+        }
     };
 
     const handleDelete = async (slug) => {
@@ -391,12 +251,51 @@ export default function Profiles() {
         }
     };
 
+    const shareToFacebook = () => {
+        if (!selectedPublicUrl) return;
+        const url = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(selectedPublicUrl)}`;
+        window.open(url, "_blank", "noopener,noreferrer,width=680,height=720");
+    };
+
+    const shareToInstagram = () => {
+        alert("Instagram does not support direct web share links. Usually users copy the link and paste it into Instagram bio, DM, or story tools.");
+    };
+
+    const shareToMessenger = () => {
+        if (!selectedPublicUrl) return;
+        const url = `https://www.facebook.com/dialog/send?link=${encodeURIComponent(
+            selectedPublicUrl
+        )}&app_id=291494419107518&redirect_uri=${encodeURIComponent(selectedPublicUrl)}`;
+        window.open(url, "_blank", "noopener,noreferrer,width=680,height=720");
+    };
+
+    const shareToWhatsApp = () => {
+        if (!selectedPublicUrl) return;
+        const text = `Check out my profile: ${selectedPublicUrl}`;
+        const url = `https://wa.me/?text=${encodeURIComponent(text)}`;
+        window.open(url, "_blank", "noopener,noreferrer");
+    };
+
+    const shareByText = () => {
+        if (!selectedPublicUrl) return;
+        const body = `Check out my profile: ${selectedPublicUrl}`;
+        window.location.href = `sms:?&body=${encodeURIComponent(body)}`;
+    };
+
+    const handleAppleWallet = () => {
+        alert("Apple Wallet not wired yet. Send me the backend endpoint and I’ll connect it.");
+    };
+
+    const handleGoogleWallet = () => {
+        alert("Google Wallet not wired yet. Send me the backend endpoint and I’ll connect it.");
+    };
+
     const goUpgradeTeams = () => navigate("/pricing");
 
     const [claimOpen, setClaimOpen] = useState(false);
     const [claimSlugInput, setClaimSlugInput] = useState("");
     const [claimSlugNormalized, setClaimSlugNormalized] = useState("");
-    const [claimStatus, setClaimStatus] = useState("idle"); // idle|invalid|checking|available|taken|creating|created|error|subscribing
+    const [claimStatus, setClaimStatus] = useState("idle");
     const [claimMessage, setClaimMessage] = useState("");
 
     const claimRef = useRef(null);
@@ -475,14 +374,6 @@ export default function Profiles() {
             return;
         }
 
-        if (sortedProfiles.length >= maxProfiles) {
-            setClaimStatus("error");
-            setClaimMessage(
-                `You’re at your Teams limit (${sortedProfiles.length}/${maxProfiles}). Increase your Teams quantity to add more profiles.`
-            );
-            return;
-        }
-
         if (claimStatus !== "available") return;
 
         setClaimStatus("creating");
@@ -503,7 +394,6 @@ export default function Profiles() {
 
             setClaimStatus("created");
             setClaimMessage("Profile created ✅");
-
             setSelectedSlug(createdSlug);
             setTimeout(() => closeClaimPanel(), 450);
         } catch (e) {
@@ -650,7 +540,7 @@ export default function Profiles() {
                                 + Add profile
                             </button>
                             <button type="button" className="kx-btn kx-btn--white" onClick={() => handleEdit("")}>
-                                Skip slug (open editor)
+                                Open editor
                             </button>
                         </div>
                     </section>
@@ -660,7 +550,7 @@ export default function Profiles() {
                             <div className="profiles-listHeader">
                                 <div className="profiles-listHeader-left">
                                     <h2 className="profiles-listTitle">Your Profiles</h2>
-                                    <p className="profiles-listSub">Choose one to edit or share.</p>
+                                    <p className="profiles-listSub">Choose one to edit or open.</p>
                                 </div>
 
                                 <span className="profiles-countPill">
@@ -737,10 +627,10 @@ export default function Profiles() {
                                                                 onClick={(e) => {
                                                                     e.stopPropagation();
                                                                     if (locked) return openLockedOverlay(p.slug);
-                                                                    openShareModal(p.slug);
+                                                                    handleVisitProfile(p.slug);
                                                                 }}
                                                             >
-                                                                Share
+                                                                Visit profile
                                                             </button>
                                                         </div>
 
@@ -815,10 +705,10 @@ export default function Profiles() {
                                         {claimMessage ? (
                                             <div
                                                 className={`profiles-alert ${claimStatus === "available"
-                                                    ? "success"
-                                                    : claimStatus === "error" || claimStatus === "invalid" || claimStatus === "taken"
-                                                        ? "danger"
-                                                        : "neutral"
+                                                        ? "success"
+                                                        : claimStatus === "error" || claimStatus === "invalid" || claimStatus === "taken"
+                                                            ? "danger"
+                                                            : "neutral"
                                                     }`}
                                             >
                                                 {claimMessage}
@@ -836,14 +726,25 @@ export default function Profiles() {
                                                 </button>
 
                                                 {isTeams ? (
-                                                    <button
-                                                        type="button"
-                                                        className="kx-btn kx-btn--orange"
-                                                        onClick={createTeamsProfileNow}
-                                                        disabled={claimStatus === "creating"}
-                                                    >
-                                                        {claimStatus === "creating" ? "Adding..." : "Add Profile"}
-                                                    </button>
+                                                    sortedProfiles.length < maxProfiles ? (
+                                                        <button
+                                                            type="button"
+                                                            className="kx-btn kx-btn--orange"
+                                                            onClick={createTeamsProfileNow}
+                                                            disabled={claimStatus === "creating"}
+                                                        >
+                                                            {claimStatus === "creating" ? "Adding..." : "Add Profile"}
+                                                        </button>
+                                                    ) : (
+                                                        <button
+                                                            type="button"
+                                                            className="kx-btn kx-btn--orange"
+                                                            onClick={startTeamsCheckout}
+                                                            disabled={claimStatus === "subscribing"}
+                                                        >
+                                                            {claimStatus === "subscribing" ? "Opening checkout..." : "Add profile (+£1.95)"}
+                                                        </button>
+                                                    )
                                                 ) : (
                                                     <button
                                                         type="button"
@@ -859,11 +760,7 @@ export default function Profiles() {
 
                                         {(isFree || isPlus) && claimOpen ? (
                                             <div className="profiles-hint">
-                                                {sortedProfiles.length >= 1 ? (
-                                                    <>
-                                                        Free and Plus allow <strong>1 profile</strong>. Upgrade to <strong>Teams</strong> to add more.
-                                                    </>
-                                                ) : null}
+                                                Free and Plus allow <strong>1 profile</strong>. Upgrade to <strong>Teams</strong> to add more.
                                             </div>
                                         ) : null}
                                     </div>
@@ -872,122 +769,163 @@ export default function Profiles() {
                         </section>
 
                         <aside className="profiles-right">
-                            <section className="profiles-card profiles-preview-card">
+                            <section className="profiles-card profiles-actionsCard">
                                 {selectedProfile ? (
-                                    <div className="profiles-previewTop">
-                                        <div className="profiles-pillRow profiles-previewPills">
-                                            <span className={`profiles-pill ${selectedProfile.isLive ? "live" : "draft"}`}>
-                                                {selectedProfile.isLive ? "Live" : "Draft"}
-                                            </span>
-                                            <span className={`profiles-pill completion ${selectedProfile.tone}`}>
-                                                {selectedProfile.pct >= 95 ? "Profile Complete" : `${selectedProfile.pct}% Complete`}
-                                            </span>
-                                        </div>
-
-                                        <div className="profiles-previewLinkLabel">Profile link</div>
-
-                                        <div className="profiles-previewLinkRow">
-                                            <div className="profiles-previewLinkUrl" title={selectedPublicUrl}>
-                                                {selectedPublicUrl}
+                                    <>
+                                        <div className="profiles-actionsTop">
+                                            <div className="profiles-pillRow profiles-previewPills">
+                                                <span className={`profiles-pill ${selectedProfile.isLive ? "live" : "draft"}`}>
+                                                    {selectedProfile.isLive ? "Live" : "Draft"}
+                                                </span>
+                                                <span className={`profiles-pill completion ${selectedProfile.tone}`}>
+                                                    {selectedProfile.pct >= 95 ? "Profile Complete" : `${selectedProfile.pct}% Complete`}
+                                                </span>
                                             </div>
 
-                                            <button
-                                                type="button"
-                                                className="profiles-copyIconBtn"
-                                                onClick={() => copyLink(selectedPublicUrl)}
-                                                aria-label="Copy profile link"
-                                            >
-                                                <img src={CopyLinkIcon} alt="" className="profiles-copyIcon24" />
-                                            </button>
-                                        </div>
+                                            <div className="profiles-previewLinkLabel">Profile link</div>
 
-                                        <div className="profiles-previewHint">
-                                            This is your profile link — share it after every job, quote, or enquiry.
-                                        </div>
-
-                                        <div className="profiles-previewMetricsRow">
-                                            <div className="profiles-metrics profiles-metrics--preview">
-                                                <div className="profiles-metric">
-                                                    <div className="profiles-metricVal">{selectedProfile.views}</div>
-                                                    <div className="profiles-metricLab">Views</div>
+                                            <div className="profiles-previewLinkRow">
+                                                <div className="profiles-previewLinkUrl" title={selectedPublicUrl}>
+                                                    {selectedPublicUrl}
                                                 </div>
 
-                                                <div className="profiles-metric">
-                                                    <div className="profiles-metricVal">{selectedProfile.linkTaps}</div>
-                                                    <div className="profiles-metricLab">Link Taps</div>
-                                                </div>
+                                                <button
+                                                    type="button"
+                                                    className="profiles-copyIconBtn"
+                                                    onClick={() => copyLink(selectedPublicUrl)}
+                                                    aria-label="Copy profile link"
+                                                >
+                                                    <img src={CopyLinkIcon} alt="" className="profiles-copyIcon24" />
+                                                </button>
+                                            </div>
 
-                                                <div className="profiles-metric">
-                                                    <div className="profiles-metricVal">{selectedProfile.pct}%</div>
-                                                    <div className="profiles-metricLab">Completion</div>
+                                            <div className="profiles-previewHint">
+                                                This is your profile link — share it after every job, quote, or enquiry.
+                                            </div>
+
+                                            <div className="profiles-previewMetricsRow">
+                                                <div className="profiles-metrics profiles-metrics--preview">
+                                                    <div className="profiles-metric">
+                                                        <div className="profiles-metricVal">{selectedProfile.views}</div>
+                                                        <div className="profiles-metricLab">Views</div>
+                                                    </div>
+
+                                                    <div className="profiles-metric">
+                                                        <div className="profiles-metricVal">{selectedProfile.linkTaps}</div>
+                                                        <div className="profiles-metricLab">Link Taps</div>
+                                                    </div>
+
+                                                    <div className="profiles-metric">
+                                                        <div className="profiles-metricVal">{selectedProfile.pct}%</div>
+                                                        <div className="profiles-metricLab">Completion</div>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
-                                    </div>
-                                ) : null}
 
-                                <div className="profiles-previewFrame">
-                                    {previewLoading ? (
-                                        <div className="profiles-previewLoading">Loading preview…</div>
-                                    ) : previewError ? (
-                                        <div className="profiles-previewError">{previewError}</div>
-                                    ) : (
-                                        <Preview
-                                            state={previewState}
-                                            isMobile={isMobile}
-                                            hasSavedData={!!previewCard}
-                                            showMainSection={previewToggles.showMainSection}
-                                            showAboutMeSection={previewToggles.showAboutMeSection}
-                                            showWorkSection={previewToggles.showWorkSection}
-                                            showServicesSection={previewToggles.showServicesSection}
-                                            showReviewsSection={previewToggles.showReviewsSection}
-                                            showContactSection={previewToggles.showContactSection}
-                                            hasExchangeContact={hasExchangeContact}
-                                            visitUrl={selectedProfile?.slug ? buildPublicUrl(selectedProfile.slug) : ""}
-                                            columnScrollStyle={{ height: "100%", maxHeight: "100%" }}
-                                        />
-                                    )}
-                                </div>
+                                        <div className="profiles-actionsDivider" />
 
-                                <div className="profiles-previewActions">
-                                    <button
-                                        type="button"
-                                        className="kx-btn kx-btn--black"
-                                        onClick={() => openShareModal(selectedProfile?.slug)}
-                                        disabled={!selectedProfile}
-                                    >
-                                        Share profile
-                                    </button>
+                                        <div className="profiles-actionGroup">
+                                            <h3 className="profiles-groupTitle">Share your card</h3>
 
-                                    <button
-                                        type="button"
-                                        className="kx-btn kx-btn--white"
-                                        onClick={handleDownloadQr}
-                                        disabled={!selectedProfile}
-                                    >
-                                        Download QR code
-                                    </button>
+                                            <div className="profiles-actionGrid">
+                                                <button type="button" className="kx-btn kx-btn--white" onClick={shareToFacebook}>
+                                                    Share on Facebook
+                                                </button>
 
-                                    <button
-                                        type="button"
-                                        className="kx-btn kx-btn--white"
-                                        onClick={() => {
-                                            alert("Choose Apple Wallet or Google Wallet from Share.");
-                                        }}
-                                        disabled={!selectedProfile}
-                                    >
-                                        Google / Apple Wallet
-                                    </button>
+                                                <button type="button" className="kx-btn kx-btn--white" onClick={shareToInstagram}>
+                                                    Share on Instagram
+                                                </button>
 
-                                    <button
-                                        type="button"
-                                        className="kx-btn kx-btn--white profiles-deleteBtn"
-                                        onClick={() => handleDelete(selectedProfile?.slug)}
-                                        disabled={!selectedProfile}
-                                    >
-                                        Delete
-                                    </button>
-                                </div>
+                                                <button type="button" className="kx-btn kx-btn--white" onClick={shareToMessenger}>
+                                                    Share on Messenger
+                                                </button>
+
+                                                <button type="button" className="kx-btn kx-btn--white" onClick={shareToWhatsApp}>
+                                                    Share on WhatsApp
+                                                </button>
+
+                                                <button type="button" className="kx-btn kx-btn--white" onClick={shareByText}>
+                                                    Share by text
+                                                </button>
+
+                                                <button type="button" className="kx-btn kx-btn--black" onClick={() => copyLink(selectedPublicUrl)}>
+                                                    Copy link
+                                                </button>
+                                            </div>
+                                        </div>
+
+                                        <div className="profiles-actionsDivider" />
+
+                                        <div className="profiles-actionGroup">
+                                            <h3 className="profiles-groupTitle">QR code</h3>
+
+                                            <div className="profiles-qrWrap">
+                                                {selectedProfile.qrCodeUrl ? (
+                                                    <img
+                                                        src={selectedProfile.qrCodeUrl}
+                                                        alt={`${selectedProfile.slug} QR code`}
+                                                        className="profiles-qrImage"
+                                                    />
+                                                ) : (
+                                                    <div className="profiles-qrPlaceholder">QR not available yet</div>
+                                                )}
+                                            </div>
+
+                                            <div className="profiles-singleAction">
+                                                <button
+                                                    type="button"
+                                                    className="kx-btn kx-btn--white"
+                                                    onClick={handleDownloadQr}
+                                                >
+                                                    Download QR code
+                                                </button>
+                                            </div>
+                                        </div>
+
+                                        <div className="profiles-actionsDivider" />
+
+                                        <div className="profiles-actionGroup">
+                                            <h3 className="profiles-groupTitle">Save to wallet</h3>
+
+                                            <div className="profiles-actionGrid profiles-actionGrid--two">
+                                                <button type="button" className="kx-btn kx-btn--white" onClick={handleAppleWallet}>
+                                                    Add to Apple Wallet
+                                                </button>
+
+                                                <button type="button" className="kx-btn kx-btn--white" onClick={handleGoogleWallet}>
+                                                    Add to Google Wallet
+                                                </button>
+                                            </div>
+                                        </div>
+
+                                        <div className="profiles-actionsDivider" />
+
+                                        <div className="profiles-actionGroup">
+                                            <h3 className="profiles-groupTitle">Manage profile</h3>
+
+                                            <div className="profiles-actionGrid profiles-actionGrid--two">
+                                                <button
+                                                    type="button"
+                                                    className="kx-btn kx-btn--white"
+                                                    onClick={() => handleEdit(selectedProfile.slug)}
+                                                >
+                                                    Edit profile
+                                                </button>
+
+                                                <button
+                                                    type="button"
+                                                    className="kx-btn kx-btn--white profiles-deleteBtn"
+                                                    onClick={() => handleDelete(selectedProfile.slug)}
+                                                >
+                                                    Delete
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </>
+                                ) : (
+                                    <div className="profiles-previewLoading">Select a profile to see actions.</div>
+                                )}
                             </section>
                         </aside>
                     </div>
@@ -1087,84 +1025,6 @@ export default function Profiles() {
                                     }}
                                 >
                                     Upgrade to Teams
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                ) : null}
-
-                {shareModalOpen ? (
-                    <div
-                        className="profiles-shareOverlay"
-                        role="dialog"
-                        aria-modal="true"
-                        aria-label="Share profile"
-                        onMouseDown={(e) => {
-                            if (e.target === e.currentTarget) closeShareModal();
-                        }}
-                    >
-                        <div className="profiles-shareModal">
-                            <div className="profiles-shareModalTop">
-                                <div>
-                                    <div className="profiles-shareModalTitle">Share profile</div>
-                                    <div className="profiles-shareModalSub">
-                                        Choose what you want to do with this profile.
-                                    </div>
-                                </div>
-
-                                <button
-                                    type="button"
-                                    className="profiles-shareModalClose"
-                                    onClick={closeShareModal}
-                                    aria-label="Close"
-                                >
-                                    ✕
-                                </button>
-                            </div>
-
-                            <div className="profiles-shareModalUrl" title={shareModalUrl}>
-                                {shareModalUrl}
-                            </div>
-
-                            <div className="profiles-shareModalGrid">
-                                <button
-                                    type="button"
-                                    className="profiles-shareAction"
-                                    onClick={visitProfileFromModal}
-                                >
-                                    Visit profile
-                                </button>
-
-                                <button
-                                    type="button"
-                                    className="profiles-shareAction"
-                                    onClick={() => copyLink(shareModalUrl)}
-                                >
-                                    Copy link
-                                </button>
-
-                                <button
-                                    type="button"
-                                    className="profiles-shareAction"
-                                    onClick={() => handleDownloadQrForSlug(shareModalSlug)}
-                                >
-                                    Download QR code
-                                </button>
-
-                                <button
-                                    type="button"
-                                    className="profiles-shareAction"
-                                    onClick={handleAppleWallet}
-                                >
-                                    Save to Apple Wallet
-                                </button>
-
-                                <button
-                                    type="button"
-                                    className="profiles-shareAction"
-                                    onClick={handleGoogleWallet}
-                                >
-                                    Save to Google Wallet
                                 </button>
                             </div>
                         </div>

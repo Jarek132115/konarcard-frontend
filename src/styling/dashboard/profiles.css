@@ -19,7 +19,7 @@
 
 .profiles-grid {
     display: grid;
-    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    grid-template-columns: minmax(0, 1fr) minmax(420px, 0.95fr);
     gap: 16px;
     align-items: stretch;
     flex: 1;
@@ -45,7 +45,8 @@
     gap: 12px;
 }
 
-.profiles-listTitle {
+.profiles-listTitle,
+.profiles-card-title {
     margin: 0;
     font-family: "Cal Sans", sans-serif;
     font-weight: 400;
@@ -55,7 +56,8 @@
     letter-spacing: -0.01em;
 }
 
-.profiles-listSub {
+.profiles-listSub,
+.profiles-muted {
     margin: 4px 0 0;
     font-family: "Inter", sans-serif;
     font-weight: 400;
@@ -80,7 +82,8 @@
     flex: 0 0 auto;
 }
 
-.profiles-listDivider {
+.profiles-listDivider,
+.profiles-actionsDivider {
     height: 1px;
     background: var(--p-softLine);
     margin-top: 16px;
@@ -118,7 +121,7 @@
 .profiles-profileCard.is-active {
     background: #f5f5f5;
     border-color: rgba(15, 23, 42, 0.12);
-    box-shadow: inset 0 0 0 1px rgba(15, 23, 42, 0.05);
+    box-shadow: inset 0 0 0 1px rgba(15, 23, 42, 0.04);
 }
 
 .profiles-profileMain {
@@ -138,7 +141,7 @@
     display: flex;
     align-items: center;
     gap: 10px;
-    margin: 0 0 8px;
+    margin: 0 0 10px;
     flex-wrap: wrap;
 }
 
@@ -183,12 +186,12 @@
 
 .profiles-pill--locked {
     background: #0b1220;
-    color: #fff;
+    color: #ffffff;
 }
 
 .profiles-slug {
     font-family: "Inter", sans-serif;
-    font-weight: 600;
+    font-weight: 700;
     font-size: 20px;
     letter-spacing: -0.01em;
     color: var(--p-ink);
@@ -228,7 +231,7 @@
 }
 
 .profiles-cardBtn {
-    min-width: 96px;
+    min-width: 120px;
     justify-content: center;
 }
 
@@ -387,6 +390,7 @@
     font-weight: 600;
     font-size: 14px;
     color: var(--p-ink);
+    background: transparent;
 }
 
 .profiles-input::placeholder {
@@ -434,17 +438,19 @@
     min-height: 0;
 }
 
-.profiles-preview-card {
+.profiles-actionsCard {
     flex: 1;
     min-height: 0;
+    overflow: auto;
 }
 
-.profiles-previewTop {
-    margin-top: 0;
+.profiles-actionsTop {
+    display: grid;
+    gap: 4px;
 }
 
 .profiles-previewPills {
-    margin-bottom: 16px;
+    margin-bottom: 10px;
 }
 
 .profiles-previewLinkLabel {
@@ -466,7 +472,7 @@
 
 .profiles-previewLinkUrl {
     font-family: "Inter", sans-serif;
-    font-weight: 600;
+    font-weight: 700;
     font-size: 20px;
     color: var(--p-ink);
     letter-spacing: -0.01em;
@@ -509,65 +515,80 @@
 }
 
 .profiles-previewMetricsRow {
-    margin-top: 16px;
+    margin-top: 14px;
     display: flex;
 }
 
 .profiles-metrics--preview {
     width: auto;
-    justify-content: flex-end;
+    justify-content: flex-start;
 }
 
-.profiles-previewFrame {
-    margin-top: 24px;
-    flex: 1;
-    min-height: 0;
-    overflow: hidden;
-}
-
-.profiles-previewFrame .preview-scope.myprofile-preview-wrapper {
-    height: 100% !important;
-    max-height: 100% !important;
-    min-height: 0 !important;
-    flex: 1 !important;
-}
-
-.profiles-previewFrame .preview-scope .myprofile-preview {
-    height: 100% !important;
-    max-height: 100% !important;
-    min-height: 0 !important;
-    overflow-y: auto !important;
-    overflow-x: hidden !important;
-}
-
-.profiles-previewFrame .preview-iframe-shell,
-.profiles-previewFrame .preview-iframe {
-    height: 100% !important;
-    min-height: 0 !important;
-}
-
-.profiles-previewFrame .preview-iframe-padding {
-    padding: 0 !important;
-}
-
-.profiles-previewLoading,
-.profiles-previewError {
-    width: 100%;
-    padding: 16px;
-    border-radius: 14px;
-    background: rgba(15, 23, 42, 0.03);
-    border: 1px solid rgba(15, 23, 42, 0.10);
-    font-family: "Inter", sans-serif;
-    font-weight: 700;
-    font-size: 13px;
-    color: rgba(71, 85, 105, 0.95);
-}
-
-.profiles-previewActions {
+.profiles-actionGroup {
     margin-top: 16px;
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+}
+
+.profiles-groupTitle {
+    margin: 0;
+    font-family: "Cal Sans", sans-serif;
+    font-weight: 400;
+    font-size: 18px;
+    line-height: 1.1;
+    letter-spacing: -0.01em;
+    color: var(--kc-text-primary);
+}
+
+.profiles-actionGrid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 12px;
+}
+
+.profiles-actionGrid .kx-btn {
+    width: 100%;
+    justify-content: center;
+}
+
+.profiles-actionGrid--two {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.profiles-qrWrap {
+    width: 100%;
+    max-width: 280px;
+    aspect-ratio: 1 / 1;
+    border-radius: 20px;
+    border: 1px solid rgba(15, 23, 42, 0.10);
+    background: #ffffff;
+    overflow: hidden;
+    display: grid;
+    place-items: center;
+    box-shadow: var(--p-softShadow);
+}
+
+.profiles-qrImage {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    display: block;
+    background: #fff;
+}
+
+.profiles-qrPlaceholder {
+    padding: 18px;
+    text-align: center;
+    font-family: "Inter", sans-serif;
+    font-weight: 600;
+    font-size: 13px;
+    color: rgba(71, 85, 105, 0.85);
+}
+
+.profiles-singleAction {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
 }
 
 .profiles-deleteBtn {
@@ -579,125 +600,71 @@
     background: rgba(239, 68, 68, 0.06) !important;
 }
 
-.profiles-shareOverlay {
-    position: fixed;
-    inset: 0;
-    z-index: 9999;
-    background: rgba(15, 23, 42, 0.55);
-    display: grid;
-    place-items: center;
+.profiles-previewLoading {
+    width: 100%;
     padding: 16px;
+    border-radius: 14px;
+    background: rgba(15, 23, 42, 0.03);
+    border: 1px solid rgba(15, 23, 42, 0.10);
+    font-family: "Inter", sans-serif;
+    font-weight: 700;
+    font-size: 13px;
+    color: rgba(71, 85, 105, 0.95);
 }
 
-.profiles-shareModal {
-    width: min(560px, 100%);
-    background: #fff;
-    border-radius: 20px;
-    border: 1px solid rgba(15, 23, 42, 0.12);
-    box-shadow: 0 30px 80px rgba(15, 23, 42, 0.28);
-    padding: 20px;
+.profiles-actions-row {
+    margin-top: 16px;
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.profiles-empty {
+    max-width: 760px;
+}
+
+.profiles-skeleton {
     display: grid;
     gap: 16px;
 }
 
-.profiles-shareModalTop {
-    display: flex;
-    align-items: flex-start;
-    justify-content: space-between;
-    gap: 12px;
+.profiles-skel-card {
+    height: 180px;
+    border-radius: 22px;
+    border: 1px solid rgba(15, 23, 42, 0.08);
+    background: linear-gradient(90deg,
+            rgba(15, 23, 42, 0.04) 25%,
+            rgba(15, 23, 42, 0.07) 37%,
+            rgba(15, 23, 42, 0.04) 63%);
+    background-size: 400% 100%;
+    animation: profilesShimmer 1.2s ease infinite;
 }
 
-.profiles-shareModalTitle {
-    font-family: "Inter", sans-serif;
-    font-size: 18px;
-    font-weight: 800;
-    color: var(--p-ink);
+@keyframes profilesShimmer {
+    0% {
+        background-position: 100% 0;
+    }
+
+    100% {
+        background-position: 0 0;
+    }
 }
 
-.profiles-shareModalSub {
-    margin-top: 4px;
-    font-family: "Inter", sans-serif;
-    font-size: 13px;
-    font-weight: 500;
-    color: rgba(71, 85, 105, 0.92);
-}
+@media (max-width: 1180px) {
+    .profiles-grid {
+        grid-template-columns: 1fr;
+    }
 
-.profiles-shareModalClose {
-    width: 38px;
-    height: 38px;
-    border-radius: 12px;
-    border: 1px solid rgba(15, 23, 42, 0.12);
-    background: #fff;
-    cursor: pointer;
-    font-weight: 900;
-    line-height: 1;
-}
-
-.profiles-shareModalUrl {
-    width: 100%;
-    min-width: 0;
-    padding: 14px 16px;
-    border-radius: 14px;
-    border: 1px solid rgba(15, 23, 42, 0.10);
-    background: rgba(15, 23, 42, 0.03);
-    font-family: "Inter", sans-serif;
-    font-size: 14px;
-    font-weight: 600;
-    color: var(--p-ink);
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
-
-.profiles-shareModalGrid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 12px;
-}
-
-.profiles-shareAction {
-    appearance: none;
-    width: 100%;
-    min-height: 52px;
-    padding: 14px 16px;
-    border-radius: 14px;
-    border: 1px solid rgba(15, 23, 42, 0.12);
-    background: #fff;
-    color: var(--p-ink);
-    font-family: "Inter", sans-serif;
-    font-size: 14px;
-    font-weight: 700;
-    cursor: pointer;
-    transition: transform 0.12s ease, box-shadow 0.15s ease, background-color 0.15s ease;
-}
-
-.profiles-shareAction:hover {
-    transform: translateY(-1px);
-    box-shadow: 0 10px 24px rgba(15, 23, 42, 0.08);
-    background: rgba(15, 23, 42, 0.02);
-}
-
-@media (max-width: 1100px) {
     .profiles-shell {
         height: auto;
     }
 
-    .profiles-grid {
-        grid-template-columns: 1fr;
+    .profiles-actionsCard {
+        overflow: visible;
     }
 }
 
-@media (max-width: 768px) {
-    .profiles-card {
-        padding: 20px;
-    }
-
-    .profiles-profileCard {
-        padding: 20px;
-    }
-}
-
-@media (max-width: 640px) {
+@media (max-width: 760px) {
     .profiles-profileMain {
         grid-template-columns: 1fr;
         align-items: start;
@@ -709,10 +676,12 @@
 
     .profiles-profileRightInner {
         align-items: flex-start;
+        width: 100%;
     }
 
     .profiles-cardBtns {
         justify-content: flex-start;
+        flex-wrap: wrap;
     }
 
     .profiles-metrics {
@@ -728,39 +697,42 @@
         text-align: left;
     }
 
-    .profiles-previewMetricsRow {
-        justify-content: flex-start;
+    .profiles-addInlineRow {
+        grid-template-columns: 1fr;
+    }
+
+    .profiles-input-prefix {
+        max-width: 46%;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+}
+
+@media (max-width: 640px) {
+    .profiles-card {
+        padding: 18px;
+    }
+
+    .profiles-profileCard {
+        padding: 18px;
+    }
+
+    .profiles-actionGrid,
+    .profiles-actionGrid--two {
+        grid-template-columns: 1fr;
     }
 
     .profiles-previewLinkRow {
         align-items: flex-start;
     }
 
-    .profiles-addInlineRow {
-        grid-template-columns: 1fr;
+    .profiles-previewLinkUrl {
+        font-size: 16px;
+        white-space: normal;
+        word-break: break-word;
     }
 
-    .profiles-shareModalGrid {
-        grid-template-columns: 1fr;
-    }
-}
-
-@media (max-width: 520px) {
-    .profiles-card {
-        padding: 16px;
-    }
-
-    .profiles-profileCard {
-        padding: 16px;
-    }
-
-    .profiles-previewActions {
-        grid-template-columns: 1fr;
-        gap: 10px;
-    }
-
-    .profiles-previewActions .kx-btn {
-        width: 100%;
-        justify-content: center;
+    .profiles-qrWrap {
+        max-width: 100%;
     }
 }
