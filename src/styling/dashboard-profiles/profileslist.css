@@ -215,7 +215,6 @@
     text-align: center;
 }
 
-/* keep desktop same */
 .profiles-staticFrame {
     margin-top: 14px;
     width: 100%;
@@ -793,7 +792,6 @@
     }
 }
 
-/* keep the card feeling like a phone at this range */
 @media (max-width: 860px) {
 
     .profiles-profileCard--rail,
@@ -830,7 +828,6 @@
         font-size: 11px;
     }
 
-    /* key fix: no more wide square preview */
     .profiles-staticFrame {
         aspect-ratio: 0.82 / 1;
         margin-top: 12px;
@@ -930,18 +927,17 @@
     }
 }
 
-/* when the overall page has gone smaller / stacked, make the cards clearly shorter */
 @media (max-width: 760px) {
     .profiles-listRail {
         margin-top: 16px;
-        gap: 12px;
+        gap: 10px;
     }
 
     .profiles-profileCard--rail,
     .profiles-addCard--rail,
     .profiles-addInline--rail {
-        flex: 0 0 74vw;
-        width: 74vw;
+        flex: 0 0 228px;
+        width: 228px;
         min-height: unset;
         height: auto;
     }
@@ -949,7 +945,7 @@
     .profiles-profileCard--rail,
     .profiles-addCard,
     .profiles-addInline {
-        padding: 14px;
+        padding: 12px;
     }
 
     .profiles-profileTopCentered {
@@ -957,83 +953,82 @@
     }
 
     .profiles-pillRow {
-        gap: 6px;
+        gap: 5px;
         margin-bottom: 2px;
     }
 
     .profiles-pill {
-        font-size: 10px;
-        padding: 4px 7px;
+        font-size: 9px;
+        padding: 4px 6px;
     }
 
     .profiles-slug {
-        font-size: 15px;
+        font-size: 14px;
     }
 
     .profiles-updated {
-        font-size: 10px;
+        font-size: 9px;
     }
 
-    /* main fix: shorter preview so ctas fit inside */
     .profiles-staticFrame {
         margin-top: 10px;
         border-radius: 14px;
-        aspect-ratio: 0.9 / 1;
+        aspect-ratio: 0.92 / 1;
     }
 
     .profiles-mini {
-        transform: scale(0.88);
+        transform: scale(0.82);
     }
 
     .profiles-mini-cover {
-        height: 58px;
+        height: 50px;
     }
 
     .profiles-mini-avatarWrap {
-        margin-top: -16px;
+        margin-top: -14px;
     }
 
     .profiles-mini-avatar {
-        width: 30px;
-        height: 30px;
-        border-radius: 9px;
+        width: 28px;
+        height: 28px;
+        border-radius: 8px;
         border-width: 2px;
     }
 
     .profiles-mini-avatar--placeholder {
-        font-size: 13px;
+        font-size: 12px;
     }
 
     .profiles-mini-body {
-        padding: 0 7px 9px;
+        padding: 0 6px 8px;
     }
 
     .profiles-mini-copy {
-        margin-top: 5px;
+        margin-top: 4px;
         gap: 2px;
     }
 
     .profiles-mini-title {
-        font-size: 12px;
+        font-size: 11px;
     }
 
     .profiles-mini-subtitle {
-        font-size: 8px;
-    }
-
-    .profiles-mini-meta {
         font-size: 7px;
     }
 
+    .profiles-mini-meta {
+        font-size: 6px;
+    }
+
     .profiles-mini-ctaRow {
-        margin-top: 5px;
+        margin-top: 4px;
         gap: 4px;
     }
 
     .profiles-mini-btn {
-        height: 18px;
-        padding: 0 6px;
-        font-size: 7px;
+        height: 16px;
+        padding: 0 5px;
+        font-size: 6px;
     }
 
     .profiles-profileBottom {
@@ -1042,97 +1037,97 @@
     }
 
     .profiles-metrics {
-        gap: 10px;
+        gap: 8px;
     }
 
     .profiles-metricVal {
-        font-size: 10px;
+        font-size: 9px;
     }
 
     .profiles-metricLab {
-        font-size: 8px;
+        font-size: 7px;
     }
 
     .profiles-cardBtns--responsiveRow {
         flex-direction: row;
-        gap: 8px;
+        gap: 6px;
     }
 
     .profiles-cardBtn {
-        min-height: 34px;
-        font-size: 11px;
-        padding: 0 10px;
-    }
-
-    .profiles-addBadge {
-        height: 22px;
+        min-height: 32px;
         font-size: 10px;
         padding: 0 8px;
     }
 
+    .profiles-addBadge {
+        height: 21px;
+        font-size: 9px;
+        padding: 0 8px;
+    }
+
     .profiles-addPlainPlus {
-        margin-top: 10px;
-        font-size: 30px;
+        margin-top: 8px;
+        font-size: 28px;
     }
 
     .profiles-addHeadline {
-        margin-top: 9px;
-        font-size: 17px;
+        margin-top: 8px;
+        font-size: 16px;
     }
 
     .profiles-addSubcopy {
         margin-top: 6px;
-        font-size: 10px;
-        line-height: 1.35;
-        max-width: 185px;
+        font-size: 9px;
+        line-height: 1.3;
+        max-width: 170px;
     }
 
     .profiles-addFeatureList {
         margin-top: 8px;
-        gap: 5px;
+        gap: 4px;
     }
 
     .profiles-addFeature {
-        min-height: 20px;
-        font-size: 9px;
+        min-height: 18px;
+        font-size: 8px;
         padding: 3px 6px;
     }
 
     .profiles-addPrimaryBtn {
-        min-height: 36px;
-        font-size: 11px;
-        padding: 0 10px;
+        min-height: 34px;
+        font-size: 10px;
+        padding: 0 8px;
     }
 
     .profiles-addInlineTop {
-        min-height: 28px;
+        min-height: 26px;
     }
 
     .profiles-addInlineClose {
-        width: 28px;
-        height: 28px;
+        width: 26px;
+        height: 26px;
     }
 
     .profiles-addInlineHeadCopy--center {
-        margin-top: 8px;
+        margin-top: 6px;
     }
 
     .profiles-addInlineEyebrow {
-        font-size: 10px;
+        font-size: 9px;
     }
 
     .profiles-addInlineTitle {
-        font-size: 19px;
+        font-size: 17px;
     }
 
     .profiles-addInlineIntro {
-        margin-top: 8px;
-        font-size: 11px;
-        line-height: 1.4;
+        margin-top: 7px;
+        font-size: 10px;
+        line-height: 1.35;
     }
 
     .profiles-addInlineForm--stack {
-        margin-top: 10px;
+        margin-top: 8px;
         gap: 8px;
     }
 
@@ -1141,51 +1136,62 @@
     }
 
     .profiles-input-prefix {
-        max-width: 48%;
-        font-size: 10px;
-        padding: 9px;
+        max-width: 46%;
+        font-size: 9px;
+        padding: 8px;
     }
 
     .profiles-input {
-        font-size: 11px;
-        padding: 9px;
+        font-size: 10px;
+        padding: 8px;
     }
 
     .profiles-claimPreviewRow {
-        padding: 10px 12px;
+        padding: 9px 10px;
         border-radius: 12px;
     }
 
     .profiles-claimPreviewLabel {
-        font-size: 10px;
+        font-size: 9px;
     }
 
     .profiles-claimPreviewUrl {
-        font-size: 11px;
+        font-size: 10px;
     }
 
     .profiles-alert {
-        font-size: 11px;
-        padding: 10px 12px;
+        font-size: 10px;
+        padding: 9px 10px;
         border-radius: 12px;
     }
 
     .profiles-hint {
-        font-size: 11px;
+        font-size: 10px;
     }
 }
 
 @media (max-width: 640px) {
+    .profiles-listRail {
+        gap: 10px;
+    }
 
     .profiles-profileCard--rail,
     .profiles-addCard--rail,
     .profiles-addInline--rail {
-        flex: 0 0 82vw;
-        width: 82vw;
+        flex: 0 0 210px;
+        width: 210px;
     }
 
-    /* keep the compact phone feel */
     .profiles-staticFrame {
-        aspect-ratio: 0.9 / 1;
+        aspect-ratio: 0.94 / 1;
+    }
+
+    .profiles-mini {
+        transform: scale(0.78);
+    }
+
+    .profiles-cardBtn {
+        min-height: 30px;
+        font-size: 9px;
     }
 }
