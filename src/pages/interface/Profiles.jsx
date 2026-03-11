@@ -56,6 +56,84 @@ const toMs = (d) => {
     return Number.isFinite(t) ? t : 0;
 };
 
+const getThemeMode = (c) => {
+    const raw = safeLower(c?.theme_mode || c?.page_theme || "light");
+    return raw === "dark" ? "dark" : "light";
+};
+
+const getMainPreviewData = (c) => {
+    return {
+        themeMode: getThemeMode(c),
+        coverPhoto: centerTrim(c?.cover_photo),
+        logo: centerTrim(c?.logo || c?.avatar),
+        businessName:
+            centerTrim(c?.main_heading) ||
+            centerTrim(c?.business_name) ||
+            centerTrim(c?.business_card_name) ||
+            "Your business name",
+        tradeTitle:
+            centerTrim(c?.sub_heading) ||
+            centerTrim(c?.trade_title) ||
+            centerTrim(c?.job_title) ||
+            "Your trade title",
+        fullName: centerTrim(c?.full_name),
+        location: centerTrim(c?.location),
+        accentColor: centerTrim(c?.button_bg_color) || "#F47629",
+        buttonTextColor: safeLower(c?.button_text_color) === "black" ? "#111827" : "#ffffff",
+        textAlignment: safeLower(c?.text_alignment || "left"),
+    };
+};
+
+function ProfileMiniMainPreview({ card }) {
+    const p = getMainPreviewData(card);
+    const isDark = p.themeMode === "dark";
+
+    return (
+        <div className={`profiles-mini ${isDark ? "is-dark" : "is-light"} align-${p.textAlignment}`}>
+            <div className="profiles-mini-cover">
+                {p.coverPhoto ? (
+                    <img src={p.coverPhoto} alt="" className="profiles-mini-coverImg" />
+                ) : (
+                    <div className="profiles-mini-coverFallback" />
+                )}
+            </div>
+
+            <div className="profiles-mini-body">
+                <div className="profiles-mini-avatarWrap">
+                    {p.logo ? (
+                        <img src={p.logo} alt="" className="profiles-mini-avatar" />
+                    ) : (
+                        <div className="profiles-mini-avatar profiles-mini-avatar--placeholder">
+                            {p.businessName?.charAt(0)?.toUpperCase() || "K"}
+                        </div>
+                    )}
+                </div>
+
+                <div className="profiles-mini-copy">
+                    <h4 className="profiles-mini-title">{p.businessName}</h4>
+                    <div className="profiles-mini-subtitle">{p.tradeTitle}</div>
+
+                    {p.fullName ? <div className="profiles-mini-meta">{p.fullName}</div> : null}
+                    {p.location ? <div className="profiles-mini-meta">{p.location}</div> : null}
+                </div>
+
+                <div className="profiles-mini-ctaRow">
+                    <div
+                        className="profiles-mini-btn"
+                        style={{
+                            background: p.accentColor,
+                            color: p.buttonTextColor,
+                        }}
+                    >
+                        Get in touch
+                    </div>
+                    <div className="profiles-mini-btn profiles-mini-btn--ghost">View work</div>
+                </div>
+            </div>
+        </div>
+    );
+}
+
 export default function Profiles() {
     const navigate = useNavigate();
     const location = useLocation();
@@ -455,8 +533,6 @@ export default function Profiles() {
                 return;
             }
 
-            // Existing Teams user branch:
-            // backend updates Stripe qty and creates profile immediately
             if (data?.updated || data?.created || data?.mode === "subscription_update") {
                 await refetchAuthUser?.();
                 await refetchProfiles?.();
@@ -591,7 +667,7 @@ export default function Profiles() {
                             <div className="profiles-listHeader">
                                 <div className="profiles-listHeader-left">
                                     <h2 className="profiles-listTitle">Your Profiles</h2>
-                                    <p className="profiles-listSub">Choose one to edit or open.</p>
+                                    <p className="profiles-listSub">Scroll sideways to browse your cards.</p>
                                 </div>
 
                                 <span className="profiles-countPill">
@@ -601,7 +677,7 @@ export default function Profiles() {
 
                             <div className="profiles-listDivider" />
 
-                            <div className="profiles-listScroll">
+                            <div className="profiles-listRail">
                                 {cappedProfiles.map((p) => {
                                     const active = selectedProfile?.slug === p.slug;
                                     const locked = p.isLockedByPlan;
@@ -609,7 +685,7 @@ export default function Profiles() {
                                     return (
                                         <article
                                             key={p.slug}
-                                            className={`profiles-profileCard ${active ? "is-active" : ""} ${locked ? "is-locked" : ""}`}
+                                            className={`profiles-profileCard profiles-profileCard--rail ${active ? "is-active" : ""} ${locked ? "is-locked" : ""}`}
                                             onClick={() => {
                                                 if (locked) return openLockedOverlay(p.slug);
                                                 setSelectedSlug(p.slug);
@@ -625,68 +701,70 @@ export default function Profiles() {
                                             aria-disabled={locked ? "true" : "false"}
                                             style={locked ? { opacity: 0.62, cursor: "pointer" } : undefined}
                                         >
-                                            <div className="profiles-profileMain">
-                                                <div className="profiles-profileLeft">
-                                                    <div className="profiles-pillRow">
-                                                        <span className={`profiles-pill ${p.isLive ? "live" : "draft"}`}>
-                                                            {p.isLive ? "Live" : "Draft"}
-                                                        </span>
+                                            <div className="profiles-profileTopCentered">
+                                                <div className="profiles-pillRow profiles-pillRow--centered">
+                                                    <span className={`profiles-pill ${p.isLive ? "live" : "draft"}`}>
+                                                        {p.isLive ? "Live" : "Draft"}
+                                                    </span>
 
-                                                        <span className={`profiles-pill completion ${p.tone}`}>
-                                                            {p.pct >= 95 ? "Profile Complete" : `${p.pct}% Complete`}
-                                                        </span>
+                                                    <span className={`profiles-pill completion ${p.tone}`}>
+                                                        {p.pct >= 95 ? "Profile Complete" : `${p.pct}% Complete`}
+                                                    </span>
 
-                                                        {locked ? (
-                                                            <span className="profiles-pill profiles-pill--locked">Locked</span>
-                                                        ) : null}
-                                                    </div>
-
-                                                    <div className="profiles-slug">{p.slug}</div>
-                                                    <div className="profiles-updated">{p.updatedAt}</div>
+                                                    {locked ? (
+                                                        <span className="profiles-pill profiles-pill--locked">Locked</span>
+                                                    ) : null}
                                                 </div>
 
-                                                <div className="profiles-profileRight">
-                                                    <div className="profiles-profileRightInner">
-                                                        <div className="profiles-cardBtns">
-                                                            <button
-                                                                type="button"
-                                                                className="kx-btn kx-btn--white profiles-cardBtn"
-                                                                disabled={locked}
-                                                                onClick={(e) => {
-                                                                    e.stopPropagation();
-                                                                    if (locked) return openLockedOverlay(p.slug);
-                                                                    handleEdit(p.slug);
-                                                                }}
-                                                            >
-                                                                Edit
-                                                            </button>
+                                                <div className="profiles-slug profiles-slug--centered">{p.slug}</div>
+                                                <div className="profiles-updated profiles-updated--centered">{p.updatedAt}</div>
+                                            </div>
 
-                                                            <button
-                                                                type="button"
-                                                                className="kx-btn kx-btn--black profiles-cardBtn"
-                                                                disabled={locked}
-                                                                onClick={(e) => {
-                                                                    e.stopPropagation();
-                                                                    if (locked) return openLockedOverlay(p.slug);
-                                                                    handleVisitProfile(p.slug);
-                                                                }}
-                                                            >
-                                                                Visit profile
-                                                            </button>
-                                                        </div>
+                                            <div className="profiles-staticFrame">
+                                                <div className="profiles-staticViewport">
+                                                    <ProfileMiniMainPreview card={p.raw} />
+                                                </div>
+                                            </div>
 
-                                                        <div className="profiles-metrics">
-                                                            <div className="profiles-metric">
-                                                                <div className="profiles-metricVal">{p.views}</div>
-                                                                <div className="profiles-metricLab">Views</div>
-                                                            </div>
-
-                                                            <div className="profiles-metric">
-                                                                <div className="profiles-metricVal">{p.linkTaps}</div>
-                                                                <div className="profiles-metricLab">Link Taps</div>
-                                                            </div>
-                                                        </div>
+                                            <div className="profiles-profileBottom">
+                                                <div className="profiles-metrics profiles-metrics--card">
+                                                    <div className="profiles-metric">
+                                                        <div className="profiles-metricVal">{p.views}</div>
+                                                        <div className="profiles-metricLab">Views</div>
                                                     </div>
+
+                                                    <div className="profiles-metric">
+                                                        <div className="profiles-metricVal">{p.linkTaps}</div>
+                                                        <div className="profiles-metricLab">Link Taps</div>
+                                                    </div>
+                                                </div>
+
+                                                <div className="profiles-cardBtns profiles-cardBtns--stack">
+                                                    <button
+                                                        type="button"
+                                                        className="kx-btn kx-btn--white profiles-cardBtn"
+                                                        disabled={locked}
+                                                        onClick={(e) => {
+                                                            e.stopPropagation();
+                                                            if (locked) return openLockedOverlay(p.slug);
+                                                            handleEdit(p.slug);
+                                                        }}
+                                                    >
+                                                        Edit
+                                                    </button>
+
+                                                    <button
+                                                        type="button"
+                                                        className="kx-btn kx-btn--black profiles-cardBtn"
+                                                        disabled={locked}
+                                                        onClick={(e) => {
+                                                            e.stopPropagation();
+                                                            if (locked) return openLockedOverlay(p.slug);
+                                                            handleVisitProfile(p.slug);
+                                                        }}
+                                                    >
+                                                        Visit profile
+                                                    </button>
                                                 </div>
                                             </div>
                                         </article>
@@ -694,12 +772,12 @@ export default function Profiles() {
                                 })}
 
                                 {!claimOpen ? (
-                                    <button type="button" className="profiles-addCard" onClick={openClaimPanel}>
+                                    <button type="button" className="profiles-addCard profiles-addCard--rail" onClick={openClaimPanel}>
                                         <span className="profiles-addPlus">＋</span>
                                         <span className="profiles-addText">Add Profile</span>
                                     </button>
                                 ) : (
-                                    <div ref={claimRef} className="profiles-addInline">
+                                    <div ref={claimRef} className="profiles-addInline profiles-addInline--rail">
                                         <div className="profiles-addInlineHead">
                                             <div className="profiles-addInlineTitle">Claim your link</div>
                                             <button
