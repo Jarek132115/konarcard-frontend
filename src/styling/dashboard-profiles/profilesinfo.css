@@ -1,0 +1,344 @@
+:root {
+    --p-ink: var(--kc-text-primary, #0f172a);
+    --p-softLine: rgba(15, 23, 42, 0.08);
+    --p-softShadow: 0 0 1px rgba(0, 0, 0, 0.25);
+}
+
+.profiles-right {
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+}
+
+.profiles-actionsCard {
+    flex: 1;
+    min-height: 0;
+    overflow: auto;
+}
+
+.profiles-infoSection {
+    padding-top: 24px;
+    padding-bottom: 24px;
+}
+
+.profiles-infoSection--first {
+    padding-top: 0;
+}
+
+.profiles-infoSection--last {
+    padding-bottom: 0;
+}
+
+.profiles-divider {
+    height: 1px;
+    background: var(--p-softLine);
+}
+
+.profiles-actionsTop {
+    display: grid;
+    gap: 4px;
+}
+
+.profiles-previewPills {
+    margin-bottom: 10px;
+}
+
+.profiles-previewLinkLabel {
+    font-family: "Inter", sans-serif;
+    font-weight: 400;
+    font-size: 12px;
+    font-style: italic;
+    color: rgba(71, 85, 105, 0.85);
+}
+
+.profiles-previewLinkRow {
+    margin-top: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    min-width: 0;
+}
+
+.profiles-previewLinkUrl {
+    font-family: "Inter", sans-serif;
+    font-weight: 700;
+    font-size: 20px;
+    color: var(--p-ink);
+    letter-spacing: -0.01em;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.profiles-copyIconBtn {
+    flex: 0 0 auto;
+    width: 24px;
+    height: 24px;
+    padding: 0;
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.profiles-copyIconBtn:active {
+    transform: translateY(1px);
+}
+
+.profiles-copyIcon24 {
+    width: 24px;
+    height: 24px;
+    display: block;
+}
+
+.profiles-previewHint {
+    margin-top: 4px;
+    font-family: "Inter", sans-serif;
+    font-weight: 400;
+    font-size: var(--kc-body-size);
+    line-height: var(--kc-body-line);
+    color: var(--kc-text-secondary);
+}
+
+.profiles-previewMetricsRow {
+    margin-top: 14px;
+    display: flex;
+}
+
+.profiles-metrics--preview {
+    width: auto;
+    justify-content: flex-start;
+}
+
+.profiles-actionGroup {
+    display: grid;
+    gap: 16px;
+}
+
+.profiles-groupTitle {
+    margin: 0;
+    font-family: "Cal Sans", sans-serif;
+    font-weight: 400;
+    font-size: 18px;
+    line-height: 1.1;
+    letter-spacing: -0.01em;
+    color: var(--kc-text-primary);
+}
+
+.profiles-actionGrid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+}
+
+.profiles-actionGrid .kx-btn {
+    width: 100%;
+    justify-content: center;
+}
+
+.profiles-actionGrid--two {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.profiles-actionBtn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+
+.profiles-actionBtn--wide {
+    width: min(100%, 280px);
+}
+
+.profiles-btnIcon {
+    width: 18px;
+    height: 18px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex: 0 0 auto;
+}
+
+.profiles-btnIconSvg {
+    width: 18px;
+    height: 18px;
+    display: block;
+}
+
+.profiles-qrWrap {
+    width: 100%;
+    max-width: 280px;
+    aspect-ratio: 1 / 1;
+    border-radius: 20px;
+    border: 1px solid rgba(15, 23, 42, 0.10);
+    background: #ffffff;
+    overflow: hidden;
+    display: grid;
+    place-items: center;
+    box-shadow: var(--p-softShadow);
+}
+
+.profiles-qrWrap--wide {
+    width: min(100%, 280px);
+    max-width: 280px;
+}
+
+.profiles-qrImage {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    display: block;
+    background: #fff;
+}
+
+.profiles-qrPlaceholder {
+    padding: 18px;
+    text-align: center;
+    font-family: "Inter", sans-serif;
+    font-weight: 600;
+    font-size: 13px;
+    color: rgba(71, 85, 105, 0.85);
+}
+
+.profiles-singleAction {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+}
+
+.profiles-singleAction--wide {
+    width: min(100%, 280px);
+}
+
+.profiles-deleteBtn {
+    border-color: rgba(239, 68, 68, 0.55) !important;
+    color: rgba(239, 68, 68, 0.95) !important;
+}
+
+.profiles-deleteBtn:hover {
+    background: rgba(239, 68, 68, 0.06) !important;
+}
+
+.profiles-previewLoading {
+    width: 100%;
+    padding: 16px;
+    border-radius: 14px;
+    background: rgba(15, 23, 42, 0.03);
+    border: 1px solid rgba(15, 23, 42, 0.10);
+    font-family: "Inter", sans-serif;
+    font-weight: 700;
+    font-size: 13px;
+    color: rgba(71, 85, 105, 0.95);
+}
+
+@media (max-width: 1180px) {
+    .profiles-actionsCard {
+        overflow: visible;
+    }
+}
+
+@media (max-width: 900px) {
+    .profiles-previewLinkUrl {
+        font-size: 18px;
+    }
+
+    .profiles-groupTitle {
+        font-size: 17px;
+    }
+
+    .profiles-actionBtn {
+        gap: 8px;
+        font-size: 13px;
+    }
+
+    .profiles-btnIcon,
+    .profiles-btnIconSvg {
+        width: 16px;
+        height: 16px;
+    }
+}
+
+@media (max-width: 760px) {
+    .profiles-infoSection {
+        padding-top: 24px;
+        padding-bottom: 24px;
+    }
+
+    .profiles-infoSection--first {
+        padding-top: 0;
+    }
+
+    .profiles-infoSection--last {
+        padding-bottom: 0;
+    }
+
+    .profiles-actionBtn--wide,
+    .profiles-singleAction--wide,
+    .profiles-qrWrap--wide {
+        width: 100%;
+        max-width: 100%;
+    }
+
+    .profiles-actionsTop {
+        gap: 6px;
+    }
+
+    .profiles-previewMetricsRow {
+        margin-top: 12px;
+    }
+
+    .profiles-metrics--preview {
+        justify-content: flex-start;
+    }
+}
+
+@media (max-width: 640px) {
+    .profiles-previewLinkRow {
+        align-items: flex-start;
+    }
+
+    .profiles-previewLinkUrl {
+        font-size: 16px;
+        white-space: normal;
+        word-break: break-word;
+    }
+
+    .profiles-previewHint {
+        font-size: 14px;
+    }
+
+    .profiles-metrics--preview {
+        width: 100%;
+        justify-content: space-between;
+    }
+
+    .profiles-actionGrid,
+    .profiles-actionGrid--two {
+        grid-template-columns: 1fr;
+    }
+
+    .profiles-groupTitle {
+        font-size: 16px;
+    }
+
+    .profiles-actionBtn {
+        min-height: 44px;
+        font-size: 13px;
+    }
+
+    .profiles-qrWrap {
+        max-width: 100%;
+        width: 100%;
+    }
+
+    .profiles-singleAction--wide,
+    .profiles-actionBtn--wide {
+        width: 100%;
+        max-width: 100%;
+    }
+}
