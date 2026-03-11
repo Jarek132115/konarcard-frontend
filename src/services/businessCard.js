@@ -19,6 +19,15 @@ const unwrap = (res) => {
     return d ?? null;
 };
 
+const getStatus = (resOrErr) =>
+    Number(resOrErr?.status || resOrErr?.response?.status || 0);
+
+const getErrorMessage = (resOrErr, fallback) =>
+    resOrErr?.data?.error ||
+    resOrErr?.response?.data?.error ||
+    resOrErr?.message ||
+    fallback;
+
 /**
  * =========================================================
  * SINGLE PROFILE (legacy / default profile)
@@ -26,29 +35,26 @@ const unwrap = (res) => {
  */
 
 export const getMyBusinessCard = async () => {
-    try {
-        const res = await api.get("/api/business-card/me");
-        return unwrap(res);
-    } catch (err) {
-        const status = err?.response?.status;
+    const res = await api.get("/api/business-card/me");
+    const status = getStatus(res);
 
-        // New backend: no default profile
-        if (status === 400) return null;
+    // New backend: no default profile
+    if (status === 400) return null;
 
-        // Older backend fallback
-        if (status === 404) {
-            try {
-                const res2 = await api.get("/api/business-card/my_card");
-                return unwrap(res2);
-            } catch (err2) {
-                const s2 = err2?.response?.status;
-                if (s2 === 404) return null;
-                throw err2;
-            }
-        }
-
-        throw err;
+    // Older backend fallback
+    if (status === 404) {
+        const res2 = await api.get("/api/business-card/my_card");
+        const s2 = getStatus(res2);
+        if (s2 === 404) return null;
+        if (s2 >= 400) throw new Error(getErrorMessage(res2, "Failed to load business card"));
+        return unwrap(res2);
     }
+
+    if (status >= 400) {
+        throw new Error(getErrorMessage(res, "Failed to load business card"));
+    }
+
+    return unwrap(res);
 };
 
 /**
@@ -67,6 +73,12 @@ export const saveMyBusinessCard = async (formData) => {
     }
 
     const res = await api.post("/api/business-card", formData);
+    const status = getStatus(res);
+
+    if (status >= 400) {
+        throw new Error(getErrorMessage(res, "Failed to save business card"));
+    }
+
     return unwrap(res);
 };
 
@@ -86,6 +98,12 @@ export const updateMyBusinessCard = async (formData) => {
 
 export const getMyProfiles = async () => {
     const res = await api.get("/api/business-card/profiles");
+    const status = getStatus(res);
+
+    if (status >= 400) {
+        throw new Error(getErrorMessage(res, "Failed to load profiles"));
+    }
+
     const data = unwrap(res);
     return Array.isArray(data) ? data : [];
 };
@@ -95,6 +113,12 @@ export const getMyProfileBySlug = async (slug) => {
     if (!s) throw new Error("slug is required");
 
     const res = await api.get(`/api/business-card/profiles/${encodeURIComponent(s)}`);
+    const status = getStatus(res);
+
+    if (status >= 400) {
+        throw new Error(getErrorMessage(res, "Failed to load profile"));
+    }
+
     return unwrap(res);
 };
 
@@ -108,6 +132,13 @@ export const createMyProfile = async ({
         template_id,
         business_card_name,
     });
+
+    const status = getStatus(res);
+
+    if (status >= 400) {
+        throw new Error(getErrorMessage(res, "Failed to create profile"));
+    }
+
     return unwrap(res);
 };
 
@@ -116,6 +147,12 @@ export const setDefaultProfile = async (slug) => {
     if (!s) throw new Error("slug is required");
 
     const res = await api.patch(`/api/business-card/profiles/${encodeURIComponent(s)}/default`);
+    const status = getStatus(res);
+
+    if (status >= 400) {
+        throw new Error(getErrorMessage(res, "Failed to set default profile"));
+    }
+
     return unwrap(res);
 };
 
@@ -124,6 +161,12 @@ export const deleteMyProfile = async (slug) => {
     if (!s) throw new Error("slug is required");
 
     const res = await api.delete(`/api/business-card/profiles/${encodeURIComponent(s)}`);
+    const status = getStatus(res);
+
+    if (status >= 400) {
+        throw new Error(getErrorMessage(res, "Failed to delete profile"));
+    }
+
     return unwrap(res);
 };
 
@@ -141,6 +184,12 @@ export const getBusinessCardByUsername = async (username) => {
         headers: { "x-no-auth": "1" },
     });
 
+    const status = getStatus(res);
+
+    if (status >= 400) {
+        throw new Error(getErrorMessage(res, "Failed to load public business card"));
+    }
+
     return unwrap(res);
 };
 
@@ -155,6 +204,12 @@ export const getBusinessCardByUsernameAndSlug = async (username, slug) => {
         `/api/business-card/by_username/${encodeURIComponent(u)}/${encodeURIComponent(s)}`,
         { headers: { "x-no-auth": "1" } }
     );
+
+    const status = getStatus(res);
+
+    if (status >= 400) {
+        throw new Error(getErrorMessage(res, "Failed to load public business card"));
+    }
 
     return unwrap(res);
 };

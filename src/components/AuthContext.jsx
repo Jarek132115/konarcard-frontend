@@ -1,11 +1,11 @@
 // src/components/AuthContext.jsx
-import React, { createContext, useEffect, useMemo, useRef, useState, useCallback } from 'react';
-import api from '../services/api';
+import React, { createContext, useEffect, useMemo, useRef, useState, useCallback } from "react";
+import api from "../services/api";
 
 export const AuthContext = createContext();
 
-const TOKEN_KEY = 'token';
-const USER_KEY = 'authUser';
+const TOKEN_KEY = "token";
+const USER_KEY = "authUser";
 
 export const AuthProvider = ({ children }) => {
     const [user, setUser] = useState(null);
@@ -23,7 +23,7 @@ export const AuthProvider = ({ children }) => {
 
     const readCachedUser = useCallback(() => {
         try {
-            return JSON.parse(localStorage.getItem(USER_KEY) || 'null');
+            return JSON.parse(localStorage.getItem(USER_KEY) || "null");
         } catch {
             return null;
         }
@@ -33,16 +33,32 @@ export const AuthProvider = ({ children }) => {
         try {
             if (fresh) localStorage.setItem(USER_KEY, JSON.stringify(fresh));
             else localStorage.removeItem(USER_KEY);
-        } catch { }
+        } catch {
+            // ignore storage issues
+        }
     }, []);
 
+    const clearAuth = useCallback(() => {
+        try {
+            localStorage.removeItem(TOKEN_KEY);
+            localStorage.removeItem(USER_KEY);
+        } catch {
+            // ignore
+        }
+        attachAuthHeader(null);
+        setUser(null);
+    }, [attachAuthHeader]);
+
     const fetchUser = useCallback(async () => {
-        const token = localStorage.getItem(TOKEN_KEY);
+        let token = "";
+        try {
+            token = localStorage.getItem(TOKEN_KEY) || "";
+        } catch {
+            token = "";
+        }
 
         if (!token) {
-            setUser(null);
-            writeCachedUser(null);
-            attachAuthHeader(null);
+            clearAuth();
             return null;
         }
 
@@ -50,34 +66,45 @@ export const AuthProvider = ({ children }) => {
         setHydrating(true);
 
         try {
-            const res = await api.get('/profile');
+            const res = await api.get("/profile");
+            const status = Number(res?.status || 0);
+
+            if (status === 401 || status === 403) {
+                clearAuth();
+                return null;
+            }
+
+            if (status >= 400) {
+                return null;
+            }
+
             const fresh = res?.data?.data || null;
+
+            if (!fresh) {
+                return null;
+            }
 
             setUser(fresh);
             writeCachedUser(fresh);
             return fresh;
-        } catch (err) {
-            const status = err?.response?.status;
-
-            if (status === 401 || status === 403) {
-                try {
-                    localStorage.removeItem(TOKEN_KEY);
-                    localStorage.removeItem(USER_KEY);
-                } catch { }
-                attachAuthHeader(null);
-                setUser(null);
-            }
+        } catch {
             return null;
         } finally {
             setHydrating(false);
         }
-    }, [attachAuthHeader, writeCachedUser]);
+    }, [attachAuthHeader, clearAuth, writeCachedUser]);
 
     useEffect(() => {
         if (bootstrappedRef.current) return;
         bootstrappedRef.current = true;
 
-        const token = localStorage.getItem(TOKEN_KEY);
+        let token = "";
+        try {
+            token = localStorage.getItem(TOKEN_KEY) || "";
+        } catch {
+            token = "";
+        }
+
         const cached = readCachedUser();
 
         if (token) attachAuthHeader(token);
@@ -88,10 +115,6 @@ export const AuthProvider = ({ children }) => {
         if (token) void fetchUser();
     }, [attachAuthHeader, fetchUser, readCachedUser]);
 
-    /**
-     * ✅ OAuth uses login(token, null) then fetchUser()
-     * Do NOT wipe authUser when userData is null.
-     */
     const login = useCallback(
         (token, userData) => {
             try {
@@ -100,16 +123,18 @@ export const AuthProvider = ({ children }) => {
                 if (userData) {
                     localStorage.setItem(USER_KEY, JSON.stringify(userData));
                 } else {
-                    // keep any existing cached user (don’t wipe)
                     const cached = readCachedUser();
                     if (!cached) localStorage.removeItem(USER_KEY);
                 }
-            } catch { }
+            } catch {
+                // ignore
+            }
 
             attachAuthHeader(token);
 
-            if (userData) setUser(userData);
-            else {
+            if (userData) {
+                setUser(userData);
+            } else {
                 const cached = readCachedUser();
                 if (cached) setUser(cached);
             }
@@ -120,13 +145,8 @@ export const AuthProvider = ({ children }) => {
     );
 
     const logout = useCallback(() => {
-        try {
-            localStorage.removeItem(TOKEN_KEY);
-            localStorage.removeItem(USER_KEY);
-        } catch { }
-        attachAuthHeader(null);
-        setUser(null);
-    }, [attachAuthHeader]);
+        clearAuth();
+    }, [clearAuth]);
 
     const value = useMemo(
         () => ({

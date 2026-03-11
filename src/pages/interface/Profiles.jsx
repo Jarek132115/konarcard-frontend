@@ -136,7 +136,10 @@ export default function Profiles() {
         }));
     }, [sortedProfiles, maxProfiles]);
 
-    const lockedCount = useMemo(() => Math.max(0, cappedProfiles.length - maxProfiles), [cappedProfiles.length, maxProfiles]);
+    const lockedCount = useMemo(
+        () => Math.max(0, cappedProfiles.length - maxProfiles),
+        [cappedProfiles.length, maxProfiles]
+    );
 
     const [selectedSlug, setSelectedSlug] = useState(null);
 
@@ -343,6 +346,13 @@ export default function Profiles() {
         try {
             const headers = { "x-no-auth": "1" };
             const r = await api.get(`/api/business-card/slug-available/${encodeURIComponent(v.slug)}`, { headers });
+
+            if ((r?.status || 0) >= 400) {
+                setClaimStatus("error");
+                setClaimMessage(r?.data?.error || "Could not check availability. Try again.");
+                return;
+            }
+
             const available = !!r?.data?.available;
 
             if (available) {
@@ -388,9 +398,14 @@ export default function Profiles() {
                 trade_title: "",
             });
 
-            await refetchProfiles();
+            await refetchAuthUser?.();
+            await refetchProfiles?.();
 
-            const createdSlug = createdResp?.profile_slug || createdResp?.data?.profile_slug || v.slug;
+            const createdSlug =
+                createdResp?.profile_slug ||
+                createdResp?.data?.profile_slug ||
+                createdResp?.raw?.profile_slug ||
+                v.slug;
 
             setClaimStatus("created");
             setClaimMessage("Profile created ✅");
@@ -424,16 +439,42 @@ export default function Profiles() {
                 desiredQuantity: Math.max(2, sortedProfiles.length + 1),
             });
 
-            const url =
-                res?.data?.url || res?.data?.checkoutUrl || res?.data?.sessionUrl || res?.data?.redirectUrl;
+            const status = Number(res?.status || 0);
+            const data = res?.data || {};
+
+            if (status >= 400) {
+                setClaimStatus("error");
+                setClaimMessage(data?.error || "Could not start checkout.");
+                return;
+            }
+
+            const url = data?.url || data?.checkoutUrl || data?.sessionUrl || data?.redirectUrl;
 
             if (url) {
                 window.location.href = url;
                 return;
             }
 
+            // Existing Teams user branch:
+            // backend updates Stripe qty and creates profile immediately
+            if (data?.updated || data?.created || data?.mode === "subscription_update") {
+                await refetchAuthUser?.();
+                await refetchProfiles?.();
+
+                const createdSlug =
+                    data?.profile?.profile_slug ||
+                    data?.profile?.data?.profile_slug ||
+                    v.slug;
+
+                setSelectedSlug(createdSlug);
+                setClaimStatus("created");
+                setClaimMessage("Profile created ✅");
+                setTimeout(() => closeClaimPanel(), 450);
+                return;
+            }
+
             setClaimStatus("error");
-            setClaimMessage("Checkout was created but no redirect URL was returned.");
+            setClaimMessage(data?.error || "Checkout was created but no redirect URL was returned.");
         } catch (e) {
             setClaimStatus("error");
             setClaimMessage(e?.response?.data?.error || e?.message || "Could not start checkout.");
@@ -695,7 +736,9 @@ export default function Profiles() {
                                                 className="kx-btn kx-btn--black"
                                                 onClick={checkSlugAvailability}
                                                 disabled={
-                                                    claimStatus === "checking" || claimStatus === "subscribing" || claimStatus === "creating"
+                                                    claimStatus === "checking" ||
+                                                    claimStatus === "subscribing" ||
+                                                    claimStatus === "creating"
                                                 }
                                             >
                                                 {claimStatus === "checking" ? "Checking..." : "Check availability"}
@@ -705,10 +748,10 @@ export default function Profiles() {
                                         {claimMessage ? (
                                             <div
                                                 className={`profiles-alert ${claimStatus === "available"
-                                                        ? "success"
-                                                        : claimStatus === "error" || claimStatus === "invalid" || claimStatus === "taken"
-                                                            ? "danger"
-                                                            : "neutral"
+                                                    ? "success"
+                                                    : claimStatus === "error" || claimStatus === "invalid" || claimStatus === "taken"
+                                                        ? "danger"
+                                                        : "neutral"
                                                     }`}
                                             >
                                                 {claimMessage}

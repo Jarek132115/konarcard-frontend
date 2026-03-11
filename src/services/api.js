@@ -8,7 +8,7 @@ const FALLBACK_BASE =
 
 function normalizeBase(url) {
   if (!url) return "";
-  let u = url.trim();
+  let u = String(url).trim();
   u = u.replace(/\/+$/, "");
   if (u.endsWith("/api")) u = u.slice(0, -4);
   u = u.replace(/\/+$/, "");
@@ -22,12 +22,9 @@ const api = axios.create({
   withCredentials: false,
 
   /**
-   * ✅ CRITICAL:
-   * Do NOT throw on 4xx (especially 401), because the app expects:
-   *   res.data.resend === true
-   * and then it shows the "Verify email" step.
-   *
-   * We still throw on 5xx so real server crashes are visible.
+   * Keep 4xx as resolved responses because parts of the auth flow
+   * expect to inspect res.data on verification/login responses.
+   * Still reject 5xx.
    */
   validateStatus: (status) => status >= 200 && status < 500,
 });
@@ -35,14 +32,12 @@ const api = axios.create({
 api.interceptors.request.use((config) => {
   const H = axios.AxiosHeaders
     ? axios.AxiosHeaders.from(config.headers || {})
-    : (config.headers || {});
+    : { ...(config.headers || {}) };
 
-  // ✅ If sending FormData, NEVER allow JSON content-type
   const isFormData =
     typeof FormData !== "undefined" && config.data instanceof FormData;
 
   if (isFormData) {
-    // Let browser/axios set boundary. Remove any forced content-type.
     try {
       if (typeof H.delete === "function") {
         H.delete("Content-Type");
@@ -88,13 +83,12 @@ api.interceptors.request.use((config) => {
 
   config.headers = H;
 
-  // cache-buster only on sensitive reads
   if (typeof config.url === "string") {
     const u = config.url;
 
-    // ✅ match "/profiles" not "/profile"
     if (
       u.includes("/profiles") ||
+      u.includes("/profile") ||
       u.includes("/me/orders") ||
       u.includes("/subscription-status") ||
       u.includes("/billing/summary") ||
