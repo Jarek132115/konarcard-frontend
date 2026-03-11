@@ -105,9 +105,6 @@
 
 /* =========================
    SECTION LAYOUT
-   - no grey cards
-   - no section background
-   - just clean spacing
 ========================= */
 .kce-section {
     background: transparent;
@@ -137,22 +134,19 @@
 }
 
 /* =========================
-   PILLS + SECTION LABELS
+   SECTION TITLES
 ========================= */
 .kce-pill {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: fit-content;
-    padding: 8px 12px;
-    border-radius: 999px;
-    background: #0b1220;
-    color: #fff;
+    display: inline-block;
+    padding: 0;
+    background: transparent;
+    color: #0f172a;
+    border-radius: 0;
     font-family: "Inter", sans-serif;
-    font-size: 12px;
+    font-size: 16px;
     font-weight: 700;
-    line-height: 1;
-    letter-spacing: 0.02em;
+    line-height: 1.2;
+    letter-spacing: 0;
 }
 
 .kce-helpTitle {
@@ -411,6 +405,10 @@
     }
 }
 
+.kce-mediaGrid {
+    align-items: start;
+}
+
 .kce-mt12 {
     margin-top: 12px;
 }
@@ -436,12 +434,6 @@
     aspect-ratio: 4 / 2.75;
     display: grid;
     place-items: center;
-}
-
-.kce-uploadLogo {
-    width: 180px;
-    max-width: 100%;
-    aspect-ratio: 1 / 1;
 }
 
 .kce-mediaRow {

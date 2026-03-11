@@ -120,7 +120,7 @@ export default function Editor({
     const handleThemeModeChange = (mode) => {
         updateState({
             themeMode: mode,
-            pageTheme: mode, // legacy compatibility
+            pageTheme: mode,
         });
     };
 
@@ -312,7 +312,6 @@ export default function Editor({
             ) : null}
 
             <div className="kce-scroll">
-                {/* Templates */}
                 <div className="kce-section">
                     <div className="kce-sectionTop">
                         <span className="kce-pill">Templates</span>
@@ -404,7 +403,6 @@ export default function Editor({
 
                 <div className="kce-dividerBlock" />
 
-                {/* Main */}
                 <div className="kce-section">
                     <div className="kce-sectionTop">
                         <span className="kce-pill">Main Section</span>
@@ -420,23 +418,23 @@ export default function Editor({
 
                     {showMainSection ? (
                         <div className="kce-sectionBody">
-                            <div className="kce-field">
-                                <div className="kce-label">Cover Photo</div>
+                            <div className="kce-grid2 kce-mediaGrid">
+                                <div className="kce-field">
+                                    <div className="kce-label">Cover Photo</div>
 
-                                <input
-                                    ref={coverInputRef}
-                                    type="file"
-                                    accept="image/*"
-                                    onChange={(e) => {
-                                        const file = e.target.files?.[0];
-                                        if (!file) return;
-                                        onCoverUpload?.(file);
-                                        e.target.value = "";
-                                    }}
-                                    style={{ display: "none" }}
-                                />
+                                    <input
+                                        ref={coverInputRef}
+                                        type="file"
+                                        accept="image/*"
+                                        onChange={(e) => {
+                                            const file = e.target.files?.[0];
+                                            if (!file) return;
+                                            onCoverUpload?.(file);
+                                            e.target.value = "";
+                                        }}
+                                        style={{ display: "none" }}
+                                    />
 
-                                <div className="kce-mediaRow">
                                     <button
                                         type="button"
                                         className="kce-upload"
@@ -467,28 +465,26 @@ export default function Editor({
                                         ) : null}
                                     </button>
                                 </div>
-                            </div>
 
-                            <div className="kce-field">
-                                <div className="kce-label">Logo</div>
+                                <div className="kce-field">
+                                    <div className="kce-label">Logo</div>
 
-                                <input
-                                    ref={logoInputRef}
-                                    type="file"
-                                    accept="image/*"
-                                    onChange={(e) => {
-                                        const file = e.target.files?.[0];
-                                        if (!file) return;
-                                        onAvatarUpload?.(file);
-                                        e.target.value = "";
-                                    }}
-                                    style={{ display: "none" }}
-                                />
+                                    <input
+                                        ref={logoInputRef}
+                                        type="file"
+                                        accept="image/*"
+                                        onChange={(e) => {
+                                            const file = e.target.files?.[0];
+                                            if (!file) return;
+                                            onAvatarUpload?.(file);
+                                            e.target.value = "";
+                                        }}
+                                        style={{ display: "none" }}
+                                    />
 
-                                <div className="kce-mediaRow">
                                     <button
                                         type="button"
-                                        className="kce-upload kce-uploadLogo"
+                                        className="kce-upload"
                                         onClick={() => logoInputRef.current?.click()}
                                     >
                                         {logoSrc ? (
@@ -565,7 +561,6 @@ export default function Editor({
 
                 <div className="kce-dividerBlock" />
 
-                {/* About */}
                 <div className="kce-section">
                     <div className="kce-sectionTop">
                         <span className="kce-pill">About Me Section</span>
@@ -619,7 +614,6 @@ export default function Editor({
 
                 <div className="kce-dividerBlock" />
 
-                {/* Work */}
                 <div className="kce-section">
                     <div className="kce-sectionTop">
                         <span className="kce-pill">My Work Section</span>
@@ -680,7 +674,6 @@ export default function Editor({
 
                 <div className="kce-dividerBlock" />
 
-                {/* Services */}
                 <div className="kce-section">
                     <div className="kce-sectionTop">
                         <span className="kce-pill">My Services Section</span>
@@ -744,7 +737,6 @@ export default function Editor({
 
                 <div className="kce-dividerBlock" />
 
-                {/* Reviews */}
                 <div className="kce-section">
                     <div className="kce-sectionTop">
                         <span className="kce-pill">Reviews Section</span>
@@ -824,7 +816,6 @@ export default function Editor({
 
                 <div className="kce-dividerBlock" />
 
-                {/* Contact */}
                 <div className="kce-section">
                     <div className="kce-sectionTop">
                         <span className="kce-pill">Contact Section</span>
