@@ -13,37 +13,27 @@
     align-items: flex-start;
 }
 
-/* Neutral page backgrounds behind the template card */
 .userpage-shell--light {
-    background: #f5f6f8;
+    background: #f5f5f5;
 }
 
 .userpage-shell--dark {
-    background: #07090d;
+    background: #0f1115;
 }
 
-/* Keep template readable on desktop without stretching too wide */
 .userpage-inner {
     width: 100%;
-    max-width: 920px;
+    max-width: 100%;
 }
 
-/* Desktop breathing room */
 @media (min-width: 900px) {
     .userpage-shell {
         padding: 28px 18px;
     }
 }
 
-/* IMPORTANT:
-   Do NOT style .kc-tpl / template classes here.
-   Templates own their fonts, padding, colors, backgrounds.
-*/
-
-
 /* =========================================================
    Legacy states (invalid / loading / unavailable)
-   UserPage.jsx uses .user-landing-page for these
    ========================================================= */
 
 .user-landing-page {
@@ -60,7 +50,8 @@
     background: #fff;
 }
 
-/* ===== Unavailable (empty/disabled) profile ===== */
+/* ===== Unavailable profile ===== */
+
 .unavailable-wrap {
     background: #f7f7f7;
     min-height: 100vh;
@@ -165,20 +156,23 @@
     }
 }
 
-/* Dark unavailable card support (kept from your previous logic) */
-.user-landing-page[style*="background-color: rgb(31, 31, 31)"] .unavailable-wrap {
-    background: #1f1f1f !important;
+/* Optional dark unavailable support */
+.user-landing-page[style*="background-color: rgb(19, 20, 22)"] .unavailable-wrap,
+.user-landing-page[style*="background-color:#131416"] .unavailable-wrap {
+    background: #131416 !important;
 }
 
-.user-landing-page[style*="background-color: rgb(31, 31, 31)"] .unavailable-card {
-    background: #202020;
+.user-landing-page[style*="background-color: rgb(19, 20, 22)"] .unavailable-card,
+.user-landing-page[style*="background-color:#131416"] .unavailable-card {
+    background: #17181c;
     color: #fff;
     border-color: rgba(255, 255, 255, 0.08);
     box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
 }
 
-.user-landing-page[style*="background-color: rgb(31, 31, 31)"] .unavailable-item {
-    background: #151515;
+.user-landing-page[style*="background-color: rgb(19, 20, 22)"] .unavailable-item,
+.user-landing-page[style*="background-color:#131416"] .unavailable-item {
+    background: #151519;
     border-color: rgba(255, 255, 255, 0.08);
     color: #fff;
 }

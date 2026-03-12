@@ -1,27 +1,20 @@
-// frontend/src/pages/interface/UserPage.jsx
 import React, { useContext, useMemo, useState } from "react";
 import { useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
-import api from "../../services/api";
-import { AuthContext } from "../../components/AuthContext";
 import { toast } from "react-hot-toast";
 
-/* ✅ TEMPLATES */
+import api from "../../services/api";
+import { AuthContext } from "../../components/AuthContext";
+
+/* Templates */
 import Template1 from "../../components/Dashboard/Template1";
 import Template2 from "../../components/Dashboard/Template2";
 import Template3 from "../../components/Dashboard/Template3";
 import Template4 from "../../components/Dashboard/Template4";
 import Template5 from "../../components/Dashboard/Template5";
 
-/* ✅ UserPage shell CSS (SAFE: does not style templates) */
+/* Shell CSS only */
 import "../../styling/userpage.css";
-
-/* Social icons */
-import FacebookIcon from "../../assets/icons/icons8-facebook.svg";
-import InstagramIcon from "../../assets/icons/icons8-instagram.svg";
-import LinkedInIcon from "../../assets/icons/icons8-linkedin.svg";
-import XIcon from "../../assets/icons/icons8-x.svg";
-import TikTokIcon from "../../assets/icons/icons8-tiktok.svg";
 
 /* ---------------------------
    Helpers
@@ -36,22 +29,10 @@ const arr = (v) => (Array.isArray(v) ? v : []);
 
 const read = (o, keys, fb = undefined) => {
     for (const k of keys) {
-        if (o?.[k] !== undefined && o?.[k] !== null) return o[k];
+        const value = o?.[k];
+        if (value !== undefined && value !== null) return value;
     }
     return fb;
-};
-
-const filterRealImages = (xs) => arr(xs).filter((u) => nonEmpty(u) && !looksLikePlaceholderUrl(u));
-const filterRealServices = (xs) => arr(xs).filter((s) => s && (nonEmpty(s.name) || nonEmpty(s.price)));
-const filterRealReviews = (xs) =>
-    arr(xs).filter((r) => r && (nonEmpty(r.name) || nonEmpty(r.text) || (r.rating ?? 0) > 0));
-
-const centerPage = {
-    textAlign: "center",
-    display: "flex",
-    justifyContent: "center",
-    alignItems: "center",
-    minHeight: "100vh",
 };
 
 const normalizeSlug = (raw) =>
@@ -62,9 +43,110 @@ const normalizeSlug = (raw) =>
         .replace(/-+/g, "-")
         .replace(/^-|-$/g, "");
 
-/* Small input cleaners for exchange modal */
 const cleanEmail = (v) => String(v || "").trim().toLowerCase();
 const cleanPhone = (v) => String(v || "").replace(/[^\d+]/g, "").slice(0, 20);
+
+const normalizeBool = (value, fallback = false) => {
+    if (typeof value === "boolean") return value;
+    if (typeof value === "string") {
+        const x = value.trim().toLowerCase();
+        if (x === "true") return true;
+        if (x === "false") return false;
+    }
+    return fallback;
+};
+
+const normalizeThemeMode = (value) => {
+    const x = String(value || "light").trim().toLowerCase();
+    return x === "dark" ? "dark" : "light";
+};
+
+const normalizeTextAlign = (value) => {
+    const x = String(value || "left").trim().toLowerCase();
+    if (x === "center" || x === "right") return x;
+    return "left";
+};
+
+const normalizeButtonTextColor = (value) => {
+    const x = String(value || "white").trim().toLowerCase();
+    return x === "black" ? "black" : "white";
+};
+
+const normalizeWorks = (raw) =>
+    arr(raw)
+        .map((item) => {
+            if (typeof item === "string") {
+                return nonEmpty(item) && !looksLikePlaceholderUrl(item)
+                    ? { url: item, preview: item }
+                    : null;
+            }
+
+            const preview = read(item, ["preview", "url", "image", "src"], "");
+            if (!nonEmpty(preview) || looksLikePlaceholderUrl(preview)) return null;
+
+            return {
+                ...item,
+                url: preview,
+                preview,
+            };
+        })
+        .filter(Boolean);
+
+const normalizeServices = (raw) =>
+    arr(raw)
+        .map((item) => {
+            if (!item || typeof item !== "object") return null;
+
+            const name = read(item, ["name", "title"], "");
+            const description = read(item, ["description", "subtitle", "text"], "");
+            const price = read(item, ["price"], "");
+
+            if (!nonEmpty(name) && !nonEmpty(description) && !nonEmpty(price)) return null;
+
+            return {
+                ...item,
+                name,
+                description,
+                price,
+            };
+        })
+        .filter(Boolean);
+
+const normalizeReviews = (raw) =>
+    arr(raw)
+        .map((item) => {
+            if (!item || typeof item !== "object") return null;
+
+            const name = read(item, ["name", "author", "customer_name"], "");
+            const text = read(item, ["text", "review", "content", "message"], "");
+            const rating = Number(read(item, ["rating", "stars"], 0)) || 0;
+
+            if (!nonEmpty(name) && !nonEmpty(text) && rating <= 0) return null;
+
+            return {
+                ...item,
+                name,
+                text,
+                rating,
+            };
+        })
+        .filter(Boolean);
+
+const normalizeSocials = (card) => {
+    const facebook = read(card, ["facebook_url", "facebookUrl"], "");
+    const instagram = read(card, ["instagram_url", "instagramUrl"], "");
+    const linkedin = read(card, ["linkedin_url", "linkedinUrl"], "");
+    const x = read(card, ["x_url", "xUrl", "twitter_url", "twitterUrl"], "");
+    const tiktok = read(card, ["tiktok_url", "tiktokUrl"], "");
+
+    return {
+        facebook_url: nonEmpty(facebook) ? facebook : "",
+        instagram_url: nonEmpty(instagram) ? instagram : "",
+        linkedin_url: nonEmpty(linkedin) ? linkedin : "",
+        x_url: nonEmpty(x) ? x : "",
+        tiktok_url: nonEmpty(tiktok) ? tiktok : "",
+    };
+};
 
 function ExchangeContactModal({ open, onClose, profileSlug, ownerName }) {
     const [name, setName] = useState("");
@@ -93,8 +175,9 @@ function ExchangeContactModal({ open, onClose, profileSlug, ownerName }) {
 
         setSubmitting(true);
         try {
-            // ✅ PUBLIC endpoint
-            const res = await api.post("/exchange-contact", payload, { headers: { "x-no-auth": "1" } });
+            const res = await api.post("/exchange-contact", payload, {
+                headers: { "x-no-auth": "1" },
+            });
 
             if (res.data?.error) {
                 toast.error(res.data.error);
@@ -168,12 +251,22 @@ function ExchangeContactModal({ open, onClose, profileSlug, ownerName }) {
                 <form onSubmit={submit} style={{ marginTop: 14 }}>
                     <div style={{ display: "grid", gap: 10 }}>
                         <div>
-                            <label style={{ display: "block", fontSize: 12, fontWeight: 700, marginBottom: 6 }}>Your name</label>
-                            <input value={name} onChange={(e) => setName(e.target.value)} className="kc-input" placeholder="John Smith" required />
+                            <label style={{ display: "block", fontSize: 12, fontWeight: 700, marginBottom: 6 }}>
+                                Your name
+                            </label>
+                            <input
+                                value={name}
+                                onChange={(e) => setName(e.target.value)}
+                                className="kc-input"
+                                placeholder="John Smith"
+                                required
+                            />
                         </div>
 
                         <div>
-                            <label style={{ display: "block", fontSize: 12, fontWeight: 700, marginBottom: 6 }}>Email (optional)</label>
+                            <label style={{ display: "block", fontSize: 12, fontWeight: 700, marginBottom: 6 }}>
+                                Email (optional)
+                            </label>
                             <input
                                 value={email}
                                 onChange={(e) => setEmail(e.target.value)}
@@ -184,7 +277,9 @@ function ExchangeContactModal({ open, onClose, profileSlug, ownerName }) {
                         </div>
 
                         <div>
-                            <label style={{ display: "block", fontSize: 12, fontWeight: 700, marginBottom: 6 }}>Phone (optional)</label>
+                            <label style={{ display: "block", fontSize: 12, fontWeight: 700, marginBottom: 6 }}>
+                                Phone (optional)
+                            </label>
                             <input
                                 value={phone}
                                 onChange={(e) => setPhone(cleanPhone(e.target.value))}
@@ -241,8 +336,9 @@ export default function UserPage() {
         queryKey: ["public-business-card", publicSlug || "missing-slug"],
         queryFn: async () => {
             if (!isValidSlug) return null;
-            const headers = { "x-no-auth": "1" };
-            const res = await api.get(`/api/business-card/public/${encodeURIComponent(publicSlug)}`, { headers });
+            const res = await api.get(`/api/business-card/public/${encodeURIComponent(publicSlug)}`, {
+                headers: { "x-no-auth": "1" },
+            });
             return res.data;
         },
         enabled: isValidSlug,
@@ -268,7 +364,7 @@ export default function UserPage() {
 
     if (!isValidSlug) {
         return (
-            <div className="user-landing-page" style={{ ...centerPage, padding: 24 }}>
+            <div className="user-landing-page" style={{ textAlign: "center", display: "flex", justifyContent: "center", alignItems: "center", minHeight: "100vh", padding: 24 }}>
                 <div style={{ maxWidth: 560, width: "100%", textAlign: "center" }}>
                     <h2 style={{ margin: 0, fontSize: "1.6rem", fontWeight: 800 }}>Invalid link</h2>
                     <p style={{ marginTop: 10, opacity: 0.8 }}>This profile link is not valid. Please check the URL and try again.</p>
@@ -277,35 +373,48 @@ export default function UserPage() {
         );
     }
 
-    if (isLoading) return <div className="user-landing-page" style={centerPage}><p>Loading business card...</p></div>;
+    if (isLoading) {
+        return (
+            <div className="user-landing-page" style={{ textAlign: "center", display: "flex", justifyContent: "center", alignItems: "center", minHeight: "100vh" }}>
+                <p>Loading business card...</p>
+            </div>
+        );
+    }
 
     if (isError) {
         console.error(error);
         return unavailable(publicSlug, goEditProfile, goContactSupportSmart);
     }
 
-    if (!businessCard) return <div className="user-landing-page" style={centerPage}><p>No business card found for “{publicSlug}”.</p></div>;
+    if (!businessCard) {
+        return (
+            <div className="user-landing-page" style={{ textAlign: "center", display: "flex", justifyContent: "center", alignItems: "center", minHeight: "100vh" }}>
+                <p>No business card found for “{publicSlug}”.</p>
+            </div>
+        );
+    }
 
     const templateId = read(businessCard, ["template_id", "templateId"], "template-1");
+    const tid = String(templateId || "template-1");
 
-    const pageTheme = read(businessCard, ["page_theme", "pageTheme"], "light");
+    const themeMode = normalizeThemeMode(read(businessCard, ["theme_mode", "page_theme", "pageTheme"], "light"));
+    const textAlign = normalizeTextAlign(read(businessCard, ["text_alignment", "textAlignment"], "left"));
     const font = read(businessCard, ["style", "font"], "Inter");
-    const textAlign = read(businessCard, ["text_alignment", "textAlignment"], "left");
 
-    const buttonBg = read(businessCard, ["button_bg_color", "buttonBgColor"], "#F47629");
-    const buttonTxt = read(businessCard, ["button_text_color", "buttonTextColor"], "white");
+    const buttonBgColor = read(businessCard, ["button_bg_color", "buttonBgColor"], "#F47629");
+    const buttonTextColor = normalizeButtonTextColor(read(businessCard, ["button_text_color", "buttonTextColor"], "white"));
 
     const aboutLayout = read(businessCard, ["about_me_layout", "aboutMeLayout"], "side-by-side");
-    const workMode = read(businessCard, ["work_display_mode", "workDisplayMode"], "list");
+    const workMode = read(businessCard, ["work_display_mode", "workDisplayMode"], "grid");
     const servicesMode = read(businessCard, ["services_display_mode", "servicesDisplayMode"], "list");
     const reviewsMode = read(businessCard, ["reviews_display_mode", "reviewsDisplayMode"], "list");
 
-    const showMain = read(businessCard, ["show_main_section", "showMainSection"], true);
-    const showAbout = read(businessCard, ["show_about_me_section", "showAboutMeSection"], true);
-    const showWork = read(businessCard, ["show_work_section", "showWorkSection"], true);
-    const showServices = read(businessCard, ["show_services_section", "showServicesSection"], true);
-    const showReviews = read(businessCard, ["show_reviews_section", "showReviewsSection"], true);
-    const showContact = read(businessCard, ["show_contact_section", "showContactSection"], true);
+    const showMain = normalizeBool(read(businessCard, ["show_main_section", "showMainSection"], true), true);
+    const showAbout = normalizeBool(read(businessCard, ["show_about_me_section", "showAboutMeSection"], true), true);
+    const showWork = normalizeBool(read(businessCard, ["show_work_section", "showWorkSection"], true), true);
+    const showServices = normalizeBool(read(businessCard, ["show_services_section", "showServicesSection"], true), true);
+    const showReviews = normalizeBool(read(businessCard, ["show_reviews_section", "showReviewsSection"], true), true);
+    const showContact = normalizeBool(read(businessCard, ["show_contact_section", "showContactSection"], true), true);
 
     const defaultOrder = ["main", "about", "work", "services", "reviews", "contact"];
     const savedOrderRaw = read(businessCard, ["section_order", "sectionOrder"], []);
@@ -315,19 +424,35 @@ export default function UserPage() {
             : defaultOrder;
 
     const cover = read(businessCard, ["cover_photo", "coverPhoto"], "");
-    const avatar = read(businessCard, ["avatar"], "");
-    const mainHeading = read(businessCard, ["main_heading", "mainHeading"], "");
+    const avatar = read(businessCard, ["avatar", "logo"], "");
+    const logo = read(businessCard, ["logo", "avatar"], "");
+    const businessName =
+        read(businessCard, ["business_card_name", "businessCardName"], "") ||
+        read(businessCard, ["main_heading", "mainHeading"], "") ||
+        read(businessCard, ["business_name", "businessName"], "") ||
+        "";
+    const mainHeading = read(businessCard, ["main_heading", "mainHeading"], "") || businessName;
     const subHeading = read(businessCard, ["sub_heading", "subHeading"], "");
+    const tradeTitle = subHeading || read(businessCard, ["trade_title", "tradeTitle", "job_title", "jobTitle"], "");
     const fullName = read(businessCard, ["full_name", "fullName"], "");
     const jobTitle = read(businessCard, ["job_title", "jobTitle"], "");
+    const location = read(businessCard, ["location"], "");
     const bio = read(businessCard, ["bio"], "");
-    const works = filterRealImages(read(businessCard, ["works", "workImages"], []));
-    const services = filterRealServices(read(businessCard, ["services"], []));
-    const reviews = filterRealReviews(read(businessCard, ["reviews"], []));
-    const email = read(businessCard, ["contact_email", "contactEmail"], "");
-    const phone = read(businessCard, ["phone_number", "phoneNumber"], "");
+
+    const works = normalizeWorks(read(businessCard, ["works", "workImages"], []));
+    const services = normalizeServices(read(businessCard, ["services"], []));
+    const reviews = normalizeReviews(read(businessCard, ["reviews"], []));
+
+    const email = read(businessCard, ["contact_email", "contactEmail", "email"], "");
+    const phone = read(businessCard, ["phone_number", "phoneNumber", "phone"], "");
+
+    const socials = normalizeSocials(businessCard);
+    const socialLinks = Object.entries(socials)
+        .filter(([, url]) => nonEmpty(url))
+        .map(([key, url]) => ({ key, url }));
 
     const hasContact = nonEmpty(email) || nonEmpty(phone);
+    const hasExchangeContact = true;
 
     const subscriptionFieldPresent =
         typeof businessCard?.isSubscribed !== "undefined" || typeof businessCard?.trialExpires !== "undefined";
@@ -335,59 +460,56 @@ export default function UserPage() {
     if (subscriptionFieldPresent) {
         const isSubscribed = !!businessCard.isSubscribed;
         const isTrialActive = businessCard.trialExpires && new Date(businessCard.trialExpires) > new Date();
-        if (!(isSubscribed || isTrialActive)) return unavailable(publicSlug, goEditProfile, goContactSupportSmart);
+        if (!(isSubscribed || isTrialActive)) {
+            return unavailable(publicSlug, goEditProfile, goContactSupportSmart);
+        }
     }
 
-    const showMainSection = showMain && (nonEmpty(cover) || nonEmpty(mainHeading) || nonEmpty(subHeading) || hasContact);
-    const showAboutMeSection = showAbout && (nonEmpty(avatar) || nonEmpty(fullName) || nonEmpty(jobTitle) || nonEmpty(bio));
+    const showMainSection = showMain && (nonEmpty(cover) || nonEmpty(mainHeading) || nonEmpty(subHeading) || hasContact || nonEmpty(location));
+    const showAboutMeSection = showAbout && (nonEmpty(avatar) || nonEmpty(fullName) || nonEmpty(jobTitle) || nonEmpty(bio) || nonEmpty(logo));
     const showWorkSection = showWork && works.length > 0;
     const showServicesSection = showServices && services.length > 0;
     const showReviewsSection = showReviews && reviews.length > 0;
-    const showContactSection = showContact && hasContact;
+    const showContactSection = showContact && (hasContact || socialLinks.length > 0 || hasExchangeContact);
 
     const nothingToShow =
-        !showMainSection && !showAboutMeSection && !showWorkSection && !showServicesSection && !showReviewsSection && !showContactSection;
+        !showMainSection &&
+        !showAboutMeSection &&
+        !showWorkSection &&
+        !showServicesSection &&
+        !showReviewsSection &&
+        !showContactSection;
 
     const themeStyles = {
-        backgroundColor: pageTheme === "dark" ? "#1F1F1F" : "#FFFFFF",
-        color: pageTheme === "dark" ? "#FFFFFF" : "#000000",
+        backgroundColor: themeMode === "dark" ? "#131416" : "#f5f5f5",
+        color: themeMode === "dark" ? "#ffffff" : "#171717",
         fontFamily: font,
     };
 
-    const contentAlign = { textAlign: textAlign || "left" };
+    const contentAlign = { textAlign };
     const ctaStyle = {
-        backgroundColor: buttonBg,
-        color: buttonTxt === "black" ? "#000000" : "#FFFFFF",
+        backgroundColor: buttonBgColor,
+        color: buttonTextColor === "black" ? "#000000" : "#FFFFFF",
     };
-
     const flexJustify = textAlign === "center" ? "center" : textAlign === "right" ? "flex-end" : "flex-start";
 
-    const socialLinks = [
-        { key: "facebook_url", url: read(businessCard, ["facebook_url", "facebookUrl"]), icon: FacebookIcon, label: "Facebook" },
-        { key: "instagram_url", url: read(businessCard, ["instagram_url", "instagramUrl"]), icon: InstagramIcon, label: "Instagram" },
-        { key: "linkedin_url", url: read(businessCard, ["linkedin_url", "linkedinUrl"]), icon: LinkedInIcon, label: "LinkedIn" },
-        { key: "x_url", url: read(businessCard, ["x_url", "xUrl", "twitter_url", "twitterUrl"]), icon: XIcon, label: "X" },
-        { key: "tiktok_url", url: read(businessCard, ["tiktok_url", "tiktokUrl"]), icon: TikTokIcon, label: "TikTok" },
-    ].filter((x) => nonEmpty(x.url));
-
     const handleSaveMyNumber = () => {
-        if (!hasContact) return;
+        if (!hasContact && !nonEmpty(fullName)) return;
 
         const derivedPublicUrl = `${window.location.origin}/u/${encodeURIComponent(publicSlug)}`;
         const publicUrl = read(businessCard, ["publicProfileUrl"], derivedPublicUrl);
 
-        const nameParts = (fullName || "").split(" ");
+        const nameParts = String(fullName || "").trim().split(" ").filter(Boolean);
         const firstName = nameParts[0] || "";
-        const lastName = nameParts.slice(1).join(" ") || "";
-        const middle = nameParts.slice(1, -1).join(" ") || "";
+        const lastName = nameParts.length > 1 ? nameParts[nameParts.length - 1] : "";
+        const middle = nameParts.length > 2 ? nameParts.slice(1, -1).join(" ") : "";
 
         let vCard = "BEGIN:VCARD\nVERSION:3.0\n";
-        vCard += `FN:${fullName || ""}\n`;
+        vCard += `FN:${fullName || businessName || publicSlug}\n`;
         vCard += `N:${lastName};${firstName};${middle};;\n`;
 
-        const org = read(businessCard, ["business_card_name", "businessCardName"], "");
-        if (org) vCard += `ORG:${org}\n`;
-        if (jobTitle) vCard += `TITLE:${jobTitle}\n`;
+        if (businessName) vCard += `ORG:${businessName}\n`;
+        if (jobTitle || tradeTitle) vCard += `TITLE:${jobTitle || tradeTitle}\n`;
         if (phone) vCard += `TEL;TYPE=CELL,VOICE:${phone}\n`;
         if (email) vCard += `EMAIL;TYPE=PREF,INTERNET:${email}\n`;
         if (publicUrl) vCard += `URL:${publicUrl}\n`;
@@ -398,7 +520,7 @@ export default function UserPage() {
         const url = URL.createObjectURL(blob);
         const a = document.createElement("a");
         a.href = url;
-        a.download = `${(fullName || publicSlug || "contact").replace(/\s/g, "_")}.vcf`;
+        a.download = `${(fullName || businessName || publicSlug || "contact").replace(/\s/g, "_")}.vcf`;
         document.body.appendChild(a);
         a.click();
         document.body.removeChild(a);
@@ -409,7 +531,7 @@ export default function UserPage() {
 
     if (nothingToShow) {
         return (
-            <div className="user-landing-page" style={{ ...themeStyles, ...centerPage, padding: 24 }}>
+            <div className="user-landing-page" style={{ ...themeStyles, textAlign: "center", display: "flex", justifyContent: "center", alignItems: "center", minHeight: "100vh", padding: 24 }}>
                 <div style={{ maxWidth: 560, width: "100%", textAlign: "center" }}>
                     <h2 style={{ margin: 0, fontSize: "1.6rem", fontWeight: 800 }}>This profile isn’t set up yet</h2>
                     <p style={{ marginTop: 10, opacity: 0.8 }}>This profile hasn’t published any content here yet.</p>
@@ -419,29 +541,68 @@ export default function UserPage() {
     }
 
     const vm = {
+        /* base visual settings */
+        themeMode,
+        pageTheme: themeMode,
         themeStyles,
         contentAlign,
         ctaStyle,
         flexJustify,
+        textAlignment: textAlign,
+        buttonBgColor,
+        buttonTextColor,
+        font,
 
+        /* identity */
         username: publicSlug,
         profileSlug: publicSlug,
 
+        /* hero / top */
         cover,
+        coverPhoto: cover,
         avatar,
+        logo,
+        businessName,
+        business_card_name: businessName,
+        businessCardName: businessName,
         mainHeading,
+        main_heading: mainHeading,
         subHeading,
+        sub_heading: subHeading,
+        tradeTitle,
+        trade_title: tradeTitle,
+        location,
+
+        /* about */
         fullName,
+        full_name: fullName,
         jobTitle,
+        job_title: jobTitle,
         bio,
+
+        /* content */
         works,
         services,
         reviews,
-        email,
-        phone,
-        hasContact,
-        socialLinks,
 
+        /* contact */
+        email,
+        contact_email: email,
+        phone,
+        phone_number: phone,
+        hasContact,
+        hasExchangeContact,
+
+        /* socials */
+        socials,
+        socialLinks,
+        facebook_url: socials.facebook_url,
+        instagram_url: socials.instagram_url,
+        linkedin_url: socials.linkedin_url,
+        x_url: socials.x_url,
+        tiktok_url: socials.tiktok_url,
+
+        /* display options */
         aboutLayout,
         workMode,
         servicesMode,
@@ -455,19 +616,15 @@ export default function UserPage() {
         showReviewsSection,
         showContactSection,
 
-        // ✅ new actions
+        /* actions */
         onSaveMyNumber: handleSaveMyNumber,
         onOpenExchangeContact: openExchangeModal,
 
-        // ✅ backwards compatibility for Templates 1–4 (they call onExchangeContact today)
+        /* backwards compatibility */
         onExchangeContact: handleSaveMyNumber,
     };
 
-    const tid = (templateId || "template-1").toString();
-
-    // ✅ shell background: keeps page looking premium, templates remain untouched
-    const isDarkTemplate = tid === "template-2" || tid === "template-5";
-    const shellClass = `userpage-shell ${isDarkTemplate ? "userpage-shell--dark" : "userpage-shell--light"}`;
+    const shellClass = `userpage-shell ${themeMode === "dark" ? "userpage-shell--dark" : "userpage-shell--light"}`;
 
     return (
         <>
@@ -475,7 +632,7 @@ export default function UserPage() {
                 open={exchangeOpen}
                 onClose={() => setExchangeOpen(false)}
                 profileSlug={publicSlug}
-                ownerName={fullName || publicSlug}
+                ownerName={fullName || businessName || publicSlug}
             />
 
             <div className={shellClass}>
@@ -499,6 +656,7 @@ export default function UserPage() {
                     <div className="unavailable-badge">Profile status</div>
                     <h1 className="unavailable-title">This profile isn’t live yet</h1>
                     <p className="unavailable-sub">There are a couple of common reasons:</p>
+
                     <ul className="unavailable-list">
                         <li className="unavailable-item">
                             <span className="dot" />
@@ -509,6 +667,7 @@ export default function UserPage() {
                                 <div className="desktop-body-xs">The owner might not have created their page.</div>
                             </div>
                         </li>
+
                         <li className="unavailable-item">
                             <span className="dot" />
                             <div className="reason">
@@ -519,6 +678,7 @@ export default function UserPage() {
                             </div>
                         </li>
                     </ul>
+
                     <div className="unavailable-actions">
                         <button className="desktop-button cta-blue-button" onClick={onEdit}>
                             Create / Edit My Profile
@@ -527,6 +687,7 @@ export default function UserPage() {
                             Contact us
                         </button>
                     </div>
+
                     {slugValue ? (
                         <div style={{ marginTop: 12, opacity: 0.7, fontSize: 12 }}>
                             Requested link: <strong>/u/{slugValue}</strong>

@@ -3,7 +3,7 @@ import React, { useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 
 import Navbar from "../../components/Navbar";
-import Footer from "../../components/Footer";
+import Footer from "../../components/Home/Footer";
 
 /* Global typography/tokens */
 import "../../styling/fonts.css";

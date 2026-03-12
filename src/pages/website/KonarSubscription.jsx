@@ -2,7 +2,7 @@ import React, { useState, useContext, useEffect, useCallback } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import Navbar from '../../components/Navbar';
 import Breadcrumbs from '../../components/Breadcrumbs';
-import Footer from '../../components/Footer';
+import Footer from '../../components/Home/Footer';
 import ReviewStars from '../../assets/icons/Stars-Icon.svg';
 
 import pp1 from '../../assets/images/pp1.png';

@@ -1,7 +1,7 @@
 // frontend/src/pages/website/Reviews.jsx
 import React, { useMemo } from "react";
 import Navbar from "../../components/Navbar";
-import Footer from "../../components/Footer";
+import Footer from "../../components/Home/Footer";
 
 /* Global typography/tokens */
 import "../../styling/fonts.css";

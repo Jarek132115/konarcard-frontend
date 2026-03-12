@@ -1,6 +1,6 @@
 import React, { useMemo, useState } from "react";
 import Navbar from "../../components/Navbar";
-import Footer from "../../components/Footer";
+import Footer from "../../components/Home/Footer";
 import DotIcon from "../../assets/icons/Dot-Icon.svg";
 import RightArrow from "../../assets/icons/RightArrow.svg";
 

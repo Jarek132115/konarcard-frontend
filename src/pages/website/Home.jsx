@@ -1,7 +1,7 @@
 // frontend/src/pages/home/Home.jsx
 import React, { useEffect } from "react";
 import Navbar from "../../components/Navbar";
-import Footer from "../../components/Footer";
+import Footer from "../../components/Home/Footer";
 
 /* Sections */
 import Hero from "../../components/Home/Hero";

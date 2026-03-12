@@ -2,7 +2,7 @@
 import React, { useMemo, useState } from "react";
 import { toast } from "react-hot-toast";
 import Navbar from "../../components/Navbar";
-import Footer from "../../components/Footer";
+import Footer from "../../components/Home/Footer";
 
 import "../../styling/fonts.css";
 import "../../styling/pricingpage/pricingpagehero.css";

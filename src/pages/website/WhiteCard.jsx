@@ -3,7 +3,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { loadStripe } from '@stripe/stripe-js';
 import Navbar from '../../components/Navbar';
 import Breadcrumbs from '../../components/Breadcrumbs';
-import Footer from '../../components/Footer';
+import Footer from '../../components/Home/Footer';
 import ReviewStars from '../../assets/icons/Stars-Icon.svg';
 import DeliveryIcon from '../../assets/icons/Delivery-Icon.svg';
 import { toast } from 'react-hot-toast';

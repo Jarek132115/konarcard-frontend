@@ -3,7 +3,7 @@ import React, { useEffect, useMemo, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 
 import Navbar from "../../../components/Navbar";
-import Footer from "../../../components/Footer";
+import Footer from "../../../components/Home/Footer";
 import PlasticCard3D from "../../../components/PlasticCard3D";
 
 import "../../../styling/fonts.css";

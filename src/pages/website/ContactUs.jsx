@@ -4,7 +4,7 @@ import { toast } from "react-hot-toast";
 import { Link } from "react-router-dom";
 
 import Navbar from "../../components/Navbar";
-import Footer from "../../components/Footer";
+import Footer from "../../components/Home/Footer";
 
 import "../../styling/fonts.css";
 
