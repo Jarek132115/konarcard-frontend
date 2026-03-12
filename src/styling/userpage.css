@@ -17,12 +17,6 @@
     max-width: 100%;
 }
 
-@media (min-width: 900px) {
-    .userpage-shell {
-        padding: 28px 18px;
-    }
-}
-
 /* =========================================================
    Legacy states (invalid / loading / unavailable)
    ========================================================= */
