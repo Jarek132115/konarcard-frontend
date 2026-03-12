@@ -1,11 +1,3 @@
-/* =========================================================
-   TEMPLATE 2 — FULL REDESIGN
-   Poppins everywhere
-   Bold uppercase centered headings
-   Slider-based work / services / reviews
-   Controlled drag / swipe
-   ========================================================= */
-
 .kc-tpl {
     width: 100%;
 }
@@ -17,31 +9,32 @@
     --t2-card-radius: 20px;
     --t2-accent: #000483;
     --t2-accent-strong: #161bb0;
-    --t2-card-border: 1px solid transparent;
     --t2-heading: #141414;
     --t2-text: #222222;
     --t2-text-soft: #6f6f6f;
     --t2-border: #e8e8e8;
     --t2-card-bg: #ffffff;
+    --t2-soft-bg: #fafafa;
     --t2-secondary-bg: #ffffff;
     --t2-primary-bg: #000483;
     --t2-primary-text: #ffffff;
     --t2-secondary-text: #000483;
-    --t2-dot: #c8ccd4;
+    --t2-dot: #bfc4d2;
     --t2-dot-active: #000483;
     --t2-shadow: 0 10px 30px rgba(0, 4, 131, 0.06);
     --t2-social-size: 30px;
+    --t2-contact-icon-size: var(--t2-social-size);
 
     width: 100%;
     min-height: 100%;
-    font-family: "Poppins", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    font-family: "Poppins", sans-serif;
     background: var(--t2-page-bg);
     color: var(--t2-text);
 }
 
 .kc-tpl-2,
 .kc-tpl-2 * {
-    font-family: "Poppins", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    font-family: "Poppins", sans-serif;
 }
 
 .kc-tpl-2.t2-theme-light {
@@ -51,13 +44,13 @@
     --t2-text-soft: #777777;
     --t2-border: #ececf3;
     --t2-card-bg: #ffffff;
+    --t2-soft-bg: #fafafa;
     --t2-secondary-bg: #ffffff;
     --t2-primary-bg: #000483;
     --t2-primary-text: #ffffff;
     --t2-secondary-text: #000483;
     --t2-dot: #c9ccde;
     --t2-dot-active: #000483;
-    --t2-card-border: 1px solid #ececf3;
     --t2-shadow: 0 12px 34px rgba(0, 4, 131, 0.05);
 }
 
@@ -69,14 +62,14 @@
     --t2-text: #f2f3f6;
     --t2-text-soft: #c7cad2;
     --t2-border: rgba(255, 255, 255, 0.08);
-    --t2-card-bg: #16181d;
+    --t2-card-bg: #181a20;
+    --t2-soft-bg: #181a20;
     --t2-secondary-bg: #ffffff;
     --t2-primary-bg: #000483;
     --t2-primary-text: #ffffff;
     --t2-secondary-text: #000483;
     --t2-dot: rgba(255, 255, 255, 0.28);
     --t2-dot-active: #000483;
-    --t2-card-border: 1px solid rgba(255, 255, 255, 0.08);
     --t2-shadow: 0 12px 32px rgba(0, 0, 0, 0.22);
 }
 
@@ -86,8 +79,6 @@
     padding: var(--t2-page-pad);
     box-sizing: border-box;
 }
-
-/* ---------- HERO ---------- */
 
 .kc-tpl-2 .t2-hero {
     margin-bottom: var(--t2-section-gap);
@@ -138,7 +129,7 @@
 .kc-tpl-2 .t2-h1 {
     margin: 0;
     color: var(--t2-heading);
-    font-weight: 800;
+    font-weight: 900;
     text-transform: uppercase;
     letter-spacing: -0.04em;
     line-height: 1.04;
@@ -210,8 +201,6 @@
     flex: 0 0 auto;
 }
 
-/* ---------- SHARED SECTIONS ---------- */
-
 .kc-tpl-2 .t2-section {
     margin-top: var(--t2-section-gap);
 }
@@ -229,16 +218,30 @@
     margin: 0;
     font-size: clamp(24px, 4.6vw, 40px);
     line-height: 1;
-    font-weight: 800;
+    font-weight: 900;
     text-transform: uppercase;
     letter-spacing: -0.04em;
     color: var(--t2-heading);
 }
 
-/* ---------- ABOUT ---------- */
+.kc-tpl-2 .t2-section-head::after {
+    content: "";
+    display: block;
+    width: 64px;
+    height: 10px;
+    margin: 10px auto 0;
+    background: no-repeat center / contain;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='64' height='10' viewBox='0 0 64 10' fill='none'%3E%3Cpath d='M4 7.4C10.8 6.2 17.5 5.3 24.4 5C31 4.7 37.3 4.8 43.9 5.5C48.7 6 53.5 6.8 58.1 7.6' stroke='%23000483' stroke-width='3.2' stroke-linecap='round'/%3E%3C/svg%3E");
+    opacity: 0.98;
+}
 
 .kc-tpl-2 .t2-aboutCard {
     text-align: center;
+    background: var(--t2-soft-bg);
+    border: 1px solid var(--t2-border);
+    border-radius: 18px;
+    box-shadow: var(--t2-shadow);
+    padding: 24px 20px;
 }
 
 .kc-tpl-2 .t2-aboutTop {
@@ -291,8 +294,6 @@
     color: var(--t2-text);
 }
 
-/* ---------- SLIDER ---------- */
-
 .kc-tpl-2 .t2-sliderTrack {
     display: grid;
     grid-auto-flow: column;
@@ -306,7 +307,7 @@
     overscroll-behavior-y: auto;
     -webkit-overflow-scrolling: touch;
     scrollbar-width: none;
-    touch-action: pan-x pan-y;
+    touch-action: pan-y;
     scroll-padding-inline: 0;
     cursor: grab;
 }
@@ -325,11 +326,6 @@
     scroll-snap-stop: always;
     user-select: none;
     -webkit-user-select: none;
-}
-
-.kc-tpl-2 .t2-sliderTrack--media .t2-slide,
-.kc-tpl-2 .t2-sliderTrack--content .t2-slide {
-    width: 100%;
 }
 
 .kc-tpl-2 .t2-dots {
@@ -356,16 +352,12 @@
     background: var(--t2-dot-active);
 }
 
-/* ---------- WORK ---------- */
-
 .kc-tpl-2 .t2-mediaCard {
     width: 100%;
     border-radius: 18px;
     overflow: hidden;
-    background:
-        linear-gradient(180deg, rgba(0, 4, 131, 0.04), rgba(0, 4, 131, 0.01)),
-        var(--t2-card-bg);
-    border: var(--t2-card-border);
+    background: var(--t2-soft-bg);
+    border: 1px solid var(--t2-border);
     box-shadow: var(--t2-shadow);
     aspect-ratio: 4 / 3;
 }
@@ -378,17 +370,13 @@
     pointer-events: none;
 }
 
-/* ---------- INFO CARDS ---------- */
-
 .kc-tpl-2 .t2-infoCard {
     width: 100%;
     min-height: 168px;
     box-sizing: border-box;
     border-radius: 18px;
-    background:
-        linear-gradient(180deg, rgba(0, 4, 131, 0.04), rgba(0, 4, 131, 0.01)),
-        var(--t2-card-bg);
-    border: var(--t2-card-border);
+    background: var(--t2-soft-bg);
+    border: 1px solid var(--t2-border);
     box-shadow: var(--t2-shadow);
     padding: 26px 20px;
     display: flex;
@@ -427,8 +415,8 @@
     margin-top: 16px;
     font-size: clamp(15px, 2vw, 19px);
     line-height: 1.35;
-    font-weight: 400;
-    color: var(--t2-text-soft);
+    font-weight: 500;
+    color: var(--t2-accent);
 }
 
 .kc-tpl-2 .t2-stars {
@@ -451,8 +439,6 @@
     color: rgba(255, 255, 255, 0.2);
 }
 
-/* ---------- CONTACT ---------- */
-
 .kc-tpl-2 .t2-contactStack {
     display: grid;
     gap: 10px;
@@ -461,10 +447,8 @@
 .kc-tpl-2 .t2-contactCard,
 .kc-tpl-2 .t2-socialsCard {
     border-radius: 14px;
-    background:
-        linear-gradient(180deg, rgba(0, 4, 131, 0.04), rgba(0, 4, 131, 0.01)),
-        var(--t2-card-bg);
-    border: var(--t2-card-border);
+    background: var(--t2-soft-bg);
+    border: 1px solid var(--t2-border);
     box-shadow: var(--t2-shadow);
     padding: 16px 18px;
     text-decoration: none;
@@ -473,14 +457,14 @@
 
 .kc-tpl-2 .t2-contactCardInner {
     display: grid;
-    grid-template-columns: 30px minmax(0, 1fr);
+    grid-template-columns: var(--t2-contact-icon-size) minmax(0, 1fr);
     gap: 14px;
     align-items: center;
 }
 
 .kc-tpl-2 .t2-contactIcon {
-    width: 30px;
-    height: 30px;
+    width: var(--t2-contact-icon-size);
+    height: var(--t2-contact-icon-size);
     display: block;
     object-fit: contain;
     flex: 0 0 auto;
@@ -526,13 +510,18 @@
     height: 52px;
     border-radius: 12px;
     text-decoration: none;
-    border: var(--t2-card-border);
-    background: rgba(0, 4, 131, 0.03);
+    border: 1px solid var(--t2-border);
+    background: #ffffff;
     color: var(--t2-heading);
     display: inline-flex;
     align-items: center;
     justify-content: center;
     box-sizing: border-box;
+}
+
+.kc-tpl-2.t2-theme-dark .t2-social {
+    background: #ffffff;
+    border-color: rgba(255, 255, 255, 0.08);
 }
 
 .kc-tpl-2 .t2-socialIcon {
@@ -542,35 +531,38 @@
     object-fit: contain;
 }
 
-/* ---------- RESPONSIVE ---------- */
-
 @media (max-width: 460px) {
     .kc-tpl-2 {
         --t2-social-size: 28px;
+        --t2-contact-icon-size: 28px;
     }
 }
 
 @media (max-width: 420px) {
     .kc-tpl-2 {
         --t2-social-size: 26px;
+        --t2-contact-icon-size: 26px;
     }
 }
 
 @media (max-width: 390px) {
     .kc-tpl-2 {
         --t2-social-size: 24px;
+        --t2-contact-icon-size: 24px;
     }
 }
 
 @media (max-width: 360px) {
     .kc-tpl-2 {
         --t2-social-size: 22px;
+        --t2-contact-icon-size: 22px;
     }
 }
 
 @media (max-width: 340px) {
     .kc-tpl-2 {
         --t2-social-size: 20px;
+        --t2-contact-icon-size: 20px;
     }
 }
 
@@ -635,11 +627,6 @@
     .kc-tpl-2 .t2-infoCard--review {
         min-height: 236px;
     }
-
-    .kc-tpl-2 .t2-btn {
-        font-size: 12px;
-        line-height: 18px;
-    }
 }
 
 @media (min-width: 980px) {
@@ -653,12 +640,11 @@
     }
 
     .kc-tpl-2 .t2-mediaCard,
-    .kc-tpl-2 .t2-infoCard {
+    .kc-tpl-2 .t2-infoCard,
+    .kc-tpl-2 .t2-aboutCard {
         border-radius: 20px;
     }
 }
-
-/* ---------- ACCESSIBILITY ---------- */
 
 .kc-tpl-2 .t2-btn:focus-visible,
 .kc-tpl-2 .t2-contactCard:focus-visible,
