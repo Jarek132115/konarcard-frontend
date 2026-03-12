@@ -53,53 +53,29 @@ function SliderSection({
     const dragStateRef = useRef({
         isDown: false,
         startX: 0,
-        startScrollLeft: 0,
+        startY: 0,
         draggingX: false,
+        isVerticalIntent: false,
         pointerId: null,
     });
 
-    const scrollToIndex = (index) => {
-        const track = trackRef.current;
-        if (!track) return;
-
-        const slides = Array.from(track.children || []);
-        const next = slides[index];
-        if (!next) return;
-
-        track.scrollTo({
-            left: next.offsetLeft,
-            behavior: "smooth",
-        });
-        setActiveIndex(index);
-    };
-
-    const updateActiveIndex = () => {
+    const scrollToIndex = (index, behavior = "smooth") => {
         const track = trackRef.current;
         if (!track) return;
 
         const slides = Array.from(track.children || []);
         if (!slides.length) return;
 
-        const center = track.scrollLeft + track.clientWidth / 2;
+        const nextIndex = ((index % slides.length) + slides.length) % slides.length;
+        const target = slides[nextIndex];
+        if (!target) return;
 
-        let bestIndex = 0;
-        let bestDistance = Infinity;
-
-        slides.forEach((slide, i) => {
-            const slideCenter = slide.offsetLeft + slide.clientWidth / 2;
-            const distance = Math.abs(center - slideCenter);
-            if (distance < bestDistance) {
-                bestDistance = distance;
-                bestIndex = i;
-            }
+        track.scrollTo({
+            left: target.offsetLeft,
+            behavior,
         });
-
-        setActiveIndex(bestIndex);
+        setActiveIndex(nextIndex);
     };
-
-    useEffect(() => {
-        updateActiveIndex();
-    }, [items.length]);
 
     const handlePointerDown = (e) => {
         const track = trackRef.current;
@@ -108,58 +84,92 @@ function SliderSection({
         dragStateRef.current = {
             isDown: true,
             startX: e.clientX,
-            startScrollLeft: track.scrollLeft,
+            startY: e.clientY,
             draggingX: false,
+            isVerticalIntent: false,
             pointerId: e.pointerId,
         };
-
-        try {
-            track.setPointerCapture(e.pointerId);
-        } catch { }
     };
 
     const handlePointerMove = (e) => {
-        const track = trackRef.current;
         const state = dragStateRef.current;
+        const track = trackRef.current;
         if (!track || !state.isDown) return;
 
         const dx = e.clientX - state.startX;
+        const dy = e.clientY - state.startY;
+        const absX = Math.abs(dx);
+        const absY = Math.abs(dy);
 
-        if (!state.draggingX && Math.abs(dx) > 8) {
-            state.draggingX = true;
-            track.classList.add("is-dragging");
+        if (!state.draggingX && !state.isVerticalIntent) {
+            if (absY > 6 && absY > absX) {
+                state.isVerticalIntent = true;
+                return;
+            }
+
+            if (absX > 5 && absX > absY) {
+                state.draggingX = true;
+                track.classList.add("is-dragging");
+            }
         }
 
         if (state.draggingX) {
             e.preventDefault();
-            track.scrollLeft = state.startScrollLeft - dx;
         }
     };
 
+    const finishSwipe = (e) => {
+        const state = dragStateRef.current;
+        const track = trackRef.current;
+        if (!track) return;
+
+        const dx = e.clientX - state.startX;
+        const dy = e.clientY - state.startY;
+        const absX = Math.abs(dx);
+        const absY = Math.abs(dy);
+
+        if (state.draggingX && absX > absY && absX > 18) {
+            if (dx < 0) {
+                scrollToIndex(activeIndex + 1);
+            } else {
+                scrollToIndex(activeIndex - 1);
+            }
+        } else {
+            scrollToIndex(activeIndex);
+        }
+
+        dragStateRef.current = {
+            isDown: false,
+            startX: 0,
+            startY: 0,
+            draggingX: false,
+            isVerticalIntent: false,
+            pointerId: null,
+        };
+
+        track.classList.remove("is-dragging");
+    };
+
     const handlePointerUp = (e) => {
-        const track = trackRef.current;
-        if (!track) return;
-
-        dragStateRef.current.isDown = false;
-        dragStateRef.current.draggingX = false;
-        track.classList.remove("is-dragging");
-
-        try {
-            track.releasePointerCapture(e.pointerId);
-        } catch { }
-
-        updateActiveIndex();
+        finishSwipe(e);
     };
 
-    const handlePointerLeave = () => {
-        const track = trackRef.current;
-        if (!track) return;
-
-        dragStateRef.current.isDown = false;
-        dragStateRef.current.draggingX = false;
-        track.classList.remove("is-dragging");
-        updateActiveIndex();
+    const handlePointerCancel = (e) => {
+        finishSwipe(e);
     };
+
+    const handlePointerLeave = (e) => {
+        if (!dragStateRef.current.isDown) return;
+        finishSwipe(e);
+    };
+
+    useEffect(() => {
+        setActiveIndex(0);
+        requestAnimationFrame(() => {
+            scrollToIndex(0, "auto");
+        });
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [items.length]);
 
     if (!items.length) return null;
 
@@ -172,11 +182,10 @@ function SliderSection({
             <div
                 ref={trackRef}
                 className={`t2-sliderTrack ${trackClassName}`.trim()}
-                onScroll={updateActiveIndex}
                 onPointerDown={handlePointerDown}
                 onPointerMove={handlePointerMove}
                 onPointerUp={handlePointerUp}
-                onPointerCancel={handlePointerUp}
+                onPointerCancel={handlePointerCancel}
                 onPointerLeave={handlePointerLeave}
                 role="region"
                 aria-label={title}
@@ -255,12 +264,6 @@ export default function Template2({ vm }) {
                         </div>
 
                         <div className="t2-hero-copy">
-                            <div className="t2-hero-avatarRow">
-                                {nonEmpty(avatar) ? (
-                                    <img src={avatar} alt="Avatar" className="t2-hero-avatar" />
-                                ) : null}
-                            </div>
-
                             <h1 className="t2-h1">{v.mainHeading || "YOUR MAIN HEADING"}</h1>
 
                             {nonEmpty(v.subHeading) ? <p className="t2-sub">{v.subHeading}</p> : null}

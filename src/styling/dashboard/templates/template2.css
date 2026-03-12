@@ -5,7 +5,7 @@
 .kc-tpl-2 {
     --t2-shell-max: 920px;
     --t2-page-pad: 22px;
-    --t2-section-gap: 48px;
+    --t2-section-gap: 56px;
     --t2-card-radius: 20px;
     --t2-accent: #000483;
     --t2-accent-strong: #161bb0;
@@ -107,23 +107,6 @@
 .kc-tpl-2 .t2-hero-copy {
     padding-top: 22px;
     text-align: center;
-}
-
-.kc-tpl-2 .t2-hero-avatarRow {
-    display: flex;
-    justify-content: center;
-    margin-bottom: 10px;
-}
-
-.kc-tpl-2 .t2-hero-avatar {
-    width: 58px;
-    height: 58px;
-    border-radius: 16px;
-    object-fit: cover;
-    display: block;
-    background: #ffffff;
-    border: 1px solid var(--t2-border);
-    box-shadow: var(--t2-shadow);
 }
 
 .kc-tpl-2 .t2-h1 {
@@ -301,29 +284,24 @@
     gap: 14px;
     overflow-x: auto;
     overflow-y: hidden;
-    scroll-snap-type: x mandatory;
-    scroll-behavior: smooth;
-    overscroll-behavior-x: contain;
-    overscroll-behavior-y: auto;
-    -webkit-overflow-scrolling: touch;
     scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
     touch-action: pan-y;
-    scroll-padding-inline: 0;
     cursor: grab;
-}
-
-.kc-tpl-2 .t2-sliderTrack.is-dragging {
-    cursor: grabbing;
+    user-select: none;
+    -webkit-user-select: none;
 }
 
 .kc-tpl-2 .t2-sliderTrack::-webkit-scrollbar {
     display: none;
 }
 
+.kc-tpl-2 .t2-sliderTrack.is-dragging {
+    cursor: grabbing;
+}
+
 .kc-tpl-2 .t2-slide {
     width: 100%;
-    scroll-snap-align: start;
-    scroll-snap-stop: always;
     user-select: none;
     -webkit-user-select: none;
 }
@@ -569,7 +547,7 @@
 @media (min-width: 560px) {
     .kc-tpl-2 {
         --t2-page-pad: 28px;
-        --t2-section-gap: 48px;
+        --t2-section-gap: 56px;
     }
 
     .kc-tpl-2 .t2-hero-copy {
@@ -593,16 +571,7 @@
 @media (min-width: 760px) {
     .kc-tpl-2 {
         --t2-page-pad: 34px;
-        --t2-section-gap: 48px;
-    }
-
-    .kc-tpl-2 .t2-hero-avatar {
-        width: 68px;
-        height: 68px;
-    }
-
-    .kc-tpl-2 .t2-hero-copy {
-        padding-top: 26px;
+        --t2-section-gap: 56px;
     }
 
     .kc-tpl-2 .t2-ctaRow {
@@ -632,7 +601,7 @@
 @media (min-width: 980px) {
     .kc-tpl-2 {
         --t2-page-pad: 38px;
-        --t2-section-gap: 48px;
+        --t2-section-gap: 56px;
     }
 
     .kc-tpl-2 .t2-hero-media {
