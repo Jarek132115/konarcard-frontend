@@ -7,7 +7,7 @@
     --t1-page-pad-x: 20px;
     --t1-page-pad-y: 0px;
     --t1-section-gap: 40px;
-    --t1-section-head-gap: 12px;
+    --t1-section-head-gap: 16px;
     --t1-hero-radius: 24px;
     --t1-card-radius: 16px;
     --t1-btn-radius: 14px;
@@ -81,7 +81,7 @@
 
 .kc-tpl-1 .t1-h2 {
     margin: 0;
-    font-size: 12px;
+    font-size: 14px;
     line-height: 1.2;
     font-weight: 600;
     letter-spacing: 0;
@@ -89,8 +89,8 @@
 }
 
 .kc-tpl-1 .t1-assetIcon {
-    width: 20px;
-    height: 20px;
+    width: 30px;
+    height: 30px;
     display: block;
     object-fit: contain;
     flex: 0 0 auto;
@@ -455,7 +455,7 @@
 
 .kc-tpl-1 .t1-contact-row {
     display: grid;
-    grid-template-columns: 44px minmax(0, 1fr);
+    grid-template-columns: 54px minmax(0, 1fr);
     gap: 12px;
     align-items: center;
     padding: 12px;
@@ -479,8 +479,8 @@
 }
 
 .kc-tpl-1 .t1-contactIcon {
-    width: 38px;
-    height: 38px;
+    width: 42px;
+    height: 42px;
     border-radius: 10px;
     border: 1px solid var(--t1-border);
     background: var(--t1-icon-surface);
@@ -517,7 +517,7 @@
 }
 
 .kc-tpl-1 .t1-social {
-    min-height: 46px;
+    min-height: 54px;
     border-radius: 10px;
     border: 1px solid var(--t1-border);
     background: var(--t1-social-bg);
@@ -566,6 +566,7 @@
 @media (min-width: 480px) {
     .kc-tpl-1 {
         --t1-page-pad-x: 24px;
+        --t1-section-gap: 44px;
     }
 
     .kc-tpl-1 .t1-logo {
@@ -579,6 +580,10 @@
 
     .kc-tpl-1 .t1-h1 {
         font-size: 30px;
+    }
+
+    .kc-tpl-1 .t1-h2 {
+        font-size: 15px;
     }
 
     .kc-tpl-1 .t1-sub {
@@ -595,7 +600,7 @@
     }
 
     .kc-tpl-1 .t1-name {
-        font-size: 15px;
+        font-size: 16px;
     }
 
     .kc-tpl-1 .t1-role,
@@ -603,26 +608,31 @@
     .kc-tpl-1 .t1-service-sub,
     .kc-tpl-1 .t1-review-name,
     .kc-tpl-1 .t1-contact-v {
-        font-size: 13px;
+        font-size: 14px;
     }
 
     .kc-tpl-1 .t1-service-name,
     .kc-tpl-1 .t1-contact-k {
-        font-size: 15px;
+        font-size: 16px;
     }
 
     .kc-tpl-1 .t1-review-text {
-        font-size: 15px;
+        font-size: 16px;
     }
 }
 
 @media (min-width: 640px) {
     .kc-tpl-1 {
         --t1-page-pad-x: 28px;
+        --t1-section-gap: 52px;
     }
 
     .kc-tpl-1 .t1-h1 {
         font-size: 36px;
+    }
+
+    .kc-tpl-1 .t1-h2 {
+        font-size: 16px;
     }
 
     .kc-tpl-1 .t1-heroCard {
@@ -648,15 +658,15 @@
     }
 
     .kc-tpl-1 .t1-name {
-        font-size: 18px;
+        font-size: 20px;
     }
 
     .kc-tpl-1 .t1-role {
-        font-size: 14px;
+        font-size: 15px;
     }
 
     .kc-tpl-1 .t1-bio {
-        font-size: 15px;
+        font-size: 16px;
     }
 
     .kc-tpl-1 .t1-service {
@@ -676,45 +686,45 @@
     }
 
     .kc-tpl-1 .t1-service-name {
-        font-size: 18px;
+        font-size: 20px;
     }
 
     .kc-tpl-1 .t1-service-sub {
-        font-size: 15px;
+        font-size: 16px;
     }
 
     .kc-tpl-1 .t1-review-text {
-        font-size: 17px;
+        font-size: 18px;
     }
 
     .kc-tpl-1 .t1-review-name {
-        font-size: 14px;
+        font-size: 15px;
     }
 
     .kc-tpl-1 .t1-contact-row {
-        grid-template-columns: 54px minmax(0, 1fr);
+        grid-template-columns: 60px minmax(0, 1fr);
         gap: 14px;
         padding: 14px;
         border-radius: 14px;
     }
 
     .kc-tpl-1 .t1-contactIcon {
-        width: 42px;
-        height: 42px;
+        width: 48px;
+        height: 48px;
         border-radius: 12px;
     }
 
     .kc-tpl-1 .t1-assetIcon {
-        width: 22px;
-        height: 22px;
+        width: 34px;
+        height: 34px;
     }
 
     .kc-tpl-1 .t1-contact-k {
-        font-size: 18px;
+        font-size: 20px;
     }
 
     .kc-tpl-1 .t1-contact-v {
-        font-size: 14px;
+        font-size: 15px;
     }
 
     .kc-tpl-1 .t1-socials {
@@ -722,7 +732,7 @@
     }
 
     .kc-tpl-1 .t1-social {
-        min-height: 54px;
+        min-height: 60px;
         border-radius: 12px;
     }
 }
@@ -739,11 +749,54 @@
 }
 
 @media (min-width: 900px) {
+    .kc-tpl-1 {
+        --t1-section-gap: 60px;
+    }
+
     .kc-tpl-1 .t1-h1 {
         font-size: 44px;
     }
 
+    .kc-tpl-1 .t1-h2 {
+        font-size: 18px;
+    }
+
     .kc-tpl-1 .t1-cover {
         max-height: 520px;
+    }
+
+    .kc-tpl-1 .t1-sub {
+        font-size: 16px;
+    }
+
+    .kc-tpl-1 .t1-location {
+        font-size: 15px;
+    }
+
+    .kc-tpl-1 .t1-name {
+        font-size: 22px;
+    }
+
+    .kc-tpl-1 .t1-role {
+        font-size: 16px;
+    }
+
+    .kc-tpl-1 .t1-bio,
+    .kc-tpl-1 .t1-service-sub,
+    .kc-tpl-1 .t1-contact-v {
+        font-size: 17px;
+    }
+
+    .kc-tpl-1 .t1-service-name,
+    .kc-tpl-1 .t1-contact-k {
+        font-size: 22px;
+    }
+
+    .kc-tpl-1 .t1-review-text {
+        font-size: 19px;
+    }
+
+    .kc-tpl-1 .t1-review-name {
+        font-size: 16px;
     }
 }
