@@ -5,7 +5,7 @@ import EmailIconSrc from "../../assets/icons/Template1Icon-Email.svg";
 import ExchangeContactIconSrc from "../../assets/icons/Template1Icon-Exchange.svg";
 import FacebookIconSrc from "../../assets/icons/Template1Icon-Facebook.svg";
 import InstagramIconSrc from "../../assets/icons/Template1Icon-Instagram.svg";
-import LinkedInIconSrc from "../../assets/icons/Template1Icon-Linkedin.svg";
+import LinkedInIconSrc from "../../assets/icons/Template1Icon-LinkedIn.svg";
 import PhoneIconSrc from "../../assets/icons/Template1Icon-Phone.svg";
 import TikTokIconSrc from "../../assets/icons/Template1Icon-TikTok.svg";
 import XIconSrc from "../../assets/icons/Template1Icon-X.svg";
