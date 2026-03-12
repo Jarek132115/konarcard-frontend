@@ -30,6 +30,7 @@
     --t2-dot: #c8ccd4;
     --t2-dot-active: #000483;
     --t2-shadow: 0 10px 30px rgba(0, 4, 131, 0.06);
+    --t2-social-size: 30px;
 
     width: 100%;
     min-height: 100%;
@@ -188,7 +189,6 @@
     transform: translateY(1px);
 }
 
-.kc-tpl-2 .t2-btnPrimary,
 .kc-tpl-2 .t2-btn-primary {
     background: var(--t2-primary-bg);
     color: var(--t2-primary-text);
@@ -303,9 +303,10 @@
     scroll-snap-type: x mandatory;
     scroll-behavior: smooth;
     overscroll-behavior-x: contain;
+    overscroll-behavior-y: auto;
     -webkit-overflow-scrolling: touch;
     scrollbar-width: none;
-    touch-action: pan-x;
+    touch-action: pan-x pan-y;
     scroll-padding-inline: 0;
     cursor: grab;
 }
@@ -374,6 +375,7 @@
     height: 100%;
     object-fit: cover;
     display: block;
+    pointer-events: none;
 }
 
 /* ---------- INFO CARDS ---------- */
@@ -484,6 +486,11 @@
     flex: 0 0 auto;
 }
 
+.kc-tpl-2.t2-theme-dark .t2-contactIcon,
+.kc-tpl-2.t2-theme-dark .t2-socialIcon {
+    filter: brightness(0) saturate(100%) invert(100%);
+}
+
 .kc-tpl-2 .t2-contactText {
     min-width: 0;
 }
@@ -507,15 +514,15 @@
 }
 
 .kc-tpl-2 .t2-socials {
-    display: flex;
+    display: grid;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: clamp(8px, 2.5vw, 16px);
     align-items: center;
-    justify-content: center;
-    gap: 10px;
-    flex-wrap: wrap;
+    width: 100%;
 }
 
 .kc-tpl-2 .t2-social {
-    width: 52px;
+    min-width: 0;
     height: 52px;
     border-radius: 12px;
     text-decoration: none;
@@ -529,13 +536,43 @@
 }
 
 .kc-tpl-2 .t2-socialIcon {
-    width: 30px;
-    height: 30px;
+    width: var(--t2-social-size);
+    height: var(--t2-social-size);
     display: block;
     object-fit: contain;
 }
 
 /* ---------- RESPONSIVE ---------- */
+
+@media (max-width: 460px) {
+    .kc-tpl-2 {
+        --t2-social-size: 28px;
+    }
+}
+
+@media (max-width: 420px) {
+    .kc-tpl-2 {
+        --t2-social-size: 26px;
+    }
+}
+
+@media (max-width: 390px) {
+    .kc-tpl-2 {
+        --t2-social-size: 24px;
+    }
+}
+
+@media (max-width: 360px) {
+    .kc-tpl-2 {
+        --t2-social-size: 22px;
+    }
+}
+
+@media (max-width: 340px) {
+    .kc-tpl-2 {
+        --t2-social-size: 20px;
+    }
+}
 
 @media (min-width: 560px) {
     .kc-tpl-2 {

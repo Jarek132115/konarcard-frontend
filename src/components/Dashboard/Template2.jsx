@@ -53,7 +53,6 @@ function SliderSection({
     const dragStateRef = useRef({
         isDown: false,
         startX: 0,
-        startY: 0,
         startScrollLeft: 0,
         draggingX: false,
         pointerId: null,
@@ -109,7 +108,6 @@ function SliderSection({
         dragStateRef.current = {
             isDown: true,
             startX: e.clientX,
-            startY: e.clientY,
             startScrollLeft: track.scrollLeft,
             draggingX: false,
             pointerId: e.pointerId,
@@ -126,22 +124,10 @@ function SliderSection({
         if (!track || !state.isDown) return;
 
         const dx = e.clientX - state.startX;
-        const dy = e.clientY - state.startY;
 
-        if (!state.draggingX) {
-            if (Math.abs(dx) < 8 && Math.abs(dy) < 8) return;
-
-            if (Math.abs(dx) > Math.abs(dy)) {
-                state.draggingX = true;
-                track.classList.add("is-dragging");
-            } else {
-                state.isDown = false;
-                track.classList.remove("is-dragging");
-                try {
-                    track.releasePointerCapture(state.pointerId);
-                } catch { }
-                return;
-            }
+        if (!state.draggingX && Math.abs(dx) > 8) {
+            state.draggingX = true;
+            track.classList.add("is-dragging");
         }
 
         if (state.draggingX) {
@@ -152,12 +138,7 @@ function SliderSection({
 
     const handlePointerUp = (e) => {
         const track = trackRef.current;
-        const state = dragStateRef.current;
         if (!track) return;
-
-        if (state.draggingX) {
-            e.preventDefault();
-        }
 
         dragStateRef.current.isDown = false;
         dragStateRef.current.draggingX = false;
@@ -333,7 +314,7 @@ export default function Template2({ vm }) {
                         trackClassName="t2-sliderTrack--media"
                         renderItem={(url, i) => (
                             <article className="t2-mediaCard">
-                                <img src={url} alt={`Work ${i + 1}`} className="t2-mediaImg" />
+                                <img src={url} alt={`Work ${i + 1}`} className="t2-mediaImg" draggable="false" />
                             </article>
                         )}
                     />
