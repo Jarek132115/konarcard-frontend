@@ -1,5 +1,9 @@
 /* =========================================================
-   TEMPLATE 2 — Dark / Premium / Poppins / Slider Sections
+   TEMPLATE 2 — FULL REDESIGN
+   Poppins everywhere
+   Bold uppercase centered headings
+   Slider-based work / services / reviews
+   Controlled one-at-a-time snapping
    ========================================================= */
 
 .kc-tpl {
@@ -7,21 +11,63 @@
 }
 
 .kc-tpl-2 {
-    --t2-shell-max: 900px;
-    --t2-page-pad: 18px;
-    --t2-section-gap: 24px;
-    --t2-card-radius: 22px;
-    --t2-pill-radius: 16px;
+    --t2-shell-max: 920px;
+    --t2-page-pad: 22px;
+    --t2-section-gap: 34px;
+    --t2-card-radius: 20px;
+    --t2-card-border: 1px solid transparent;
+    --t2-heading: #141414;
+    --t2-text: #222222;
+    --t2-text-soft: #6f6f6f;
+    --t2-border: #e8e8e8;
+    --t2-card-bg: #ffffff;
+    --t2-secondary-bg: #ffffff;
+    --t2-primary-bg: #1018b5;
+    --t2-primary-text: #ffffff;
+    --t2-secondary-text: #1018b5;
+    --t2-dot: #c8ccd4;
+    --t2-dot-active: #7b7f86;
+    --t2-shadow: 0 6px 24px rgba(15, 23, 42, 0.04);
 
-    color: rgba(255, 255, 255, 0.94);
-    font-family: "Poppins", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-    background:
-        radial-gradient(1000px 500px at 20% 0%, rgba(124, 58, 237, 0.16), transparent 55%),
-        radial-gradient(900px 520px at 90% 10%, rgba(34, 211, 238, 0.10), transparent 55%),
-        radial-gradient(700px 520px at 50% 100%, rgba(249, 115, 22, 0.08), transparent 60%),
-        #0a0d14;
+    width: 100%;
     min-height: 100%;
-    border-radius: 22px;
+    font-family: "Poppins", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    background: var(--t2-page-bg);
+    color: var(--t2-text);
+}
+
+.kc-tpl-2.t2-theme-light {
+    --t2-page-bg: #ffffff;
+    --t2-heading: #171717;
+    --t2-text: #242424;
+    --t2-text-soft: #7a7a7a;
+    --t2-border: #ececec;
+    --t2-card-bg: #ffffff;
+    --t2-secondary-bg: #ffffff;
+    --t2-primary-bg: #1018b5;
+    --t2-primary-text: #ffffff;
+    --t2-secondary-text: #1018b5;
+    --t2-dot: #c7cad1;
+    --t2-dot-active: #7f838a;
+    --t2-card-border: 1px solid #eeeeee;
+    --t2-shadow: 0 6px 24px rgba(15, 23, 42, 0.04);
+}
+
+.kc-tpl-2.t2-theme-dark {
+    --t2-page-bg: #121315;
+    --t2-heading: #ffffff;
+    --t2-text: #f3f4f6;
+    --t2-text-soft: #c7c9cf;
+    --t2-border: rgba(255, 255, 255, 0.08);
+    --t2-card-bg: #16181b;
+    --t2-secondary-bg: #ffffff;
+    --t2-primary-bg: #1018b5;
+    --t2-primary-text: #ffffff;
+    --t2-secondary-text: #1018b5;
+    --t2-dot: rgba(255, 255, 255, 0.34);
+    --t2-dot-active: rgba(255, 255, 255, 0.78);
+    --t2-card-border: 1px solid rgba(255, 255, 255, 0.08);
+    --t2-shadow: none;
 }
 
 .kc-tpl-2 .t2-shell {
@@ -32,128 +78,94 @@
 }
 
 /* ---------- HERO ---------- */
+
 .kc-tpl-2 .t2-hero {
-    position: relative;
     margin-bottom: var(--t2-section-gap);
 }
 
-.kc-tpl-2 .t2-heroMedia {
-    position: relative;
-    border-radius: 22px;
+.kc-tpl-2 .t2-hero-media {
+    width: 100%;
+    border-radius: 18px;
     overflow: hidden;
     aspect-ratio: 16 / 10;
-    border: 1px solid rgba(255, 255, 255, 0.08);
+    background: #d9d9d9;
 }
 
-.kc-tpl-2 .t2-heroImage {
+.kc-tpl-2 .t2-hero-cover {
     width: 100%;
     height: 100%;
     object-fit: cover;
     display: block;
-    filter: saturate(1.04) contrast(1.04);
-    transform: scale(1.03);
-    background: linear-gradient(135deg, #202532, #111827);
 }
 
-.kc-tpl-2 .t2-heroImage--placeholder {
-    background: linear-gradient(135deg, #202532, #111827);
+.kc-tpl-2 .t2-hero-cover--placeholder {
+    background: linear-gradient(135deg, #dde2e7, #cfd5db);
 }
 
-.kc-tpl-2 .t2-heroOverlay {
-    position: absolute;
-    inset: 0;
-    background:
-        linear-gradient(180deg, rgba(10, 13, 20, 0.18), rgba(10, 13, 20, 0.74));
-    pointer-events: none;
+.kc-tpl-2 .t2-hero-copy {
+    padding-top: 22px;
+    text-align: center;
 }
 
-.kc-tpl-2 .t2-heroCard {
-    position: relative;
-    margin-top: -34px;
-    margin-inline: 12px;
-    padding: 16px;
-    border-radius: 22px;
-    border: 1px solid rgba(255, 255, 255, 0.12);
-    background: rgba(255, 255, 255, 0.07);
-    box-shadow: 0 18px 44px rgba(0, 0, 0, 0.34);
-    backdrop-filter: blur(14px);
-}
-
-.kc-tpl-2 .t2-heroTop {
+.kc-tpl-2 .t2-hero-avatarRow {
     display: flex;
-    gap: 14px;
-    align-items: center;
-    min-width: 0;
+    justify-content: center;
+    margin-bottom: 10px;
 }
 
-.kc-tpl-2 .t2-avatar {
-    width: 62px;
-    height: 62px;
-    border-radius: 18px;
+.kc-tpl-2 .t2-hero-avatar {
+    width: 58px;
+    height: 58px;
+    border-radius: 16px;
     object-fit: cover;
-    border: 1px solid rgba(255, 255, 255, 0.14);
-    background: rgba(255, 255, 255, 0.08);
-    flex: 0 0 auto;
-}
-
-.kc-tpl-2 .t2-avatar--ph {
-    background: linear-gradient(135deg, rgba(255, 255, 255, 0.10), rgba(255, 255, 255, 0.03));
-}
-
-.kc-tpl-2 .t2-heroText {
-    min-width: 0;
+    display: block;
+    background: #ffffff;
+    border: 1px solid var(--t2-border);
 }
 
 .kc-tpl-2 .t2-h1 {
     margin: 0;
-    font-weight: 700;
-    letter-spacing: -0.03em;
-    line-height: 1.08;
-    font-size: clamp(24px, 4.8vw, 42px);
-    word-break: break-word;
+    color: var(--t2-heading);
+    font-family: "Poppins", sans-serif;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: -0.04em;
+    line-height: 1.04;
+    font-size: clamp(34px, 7vw, 64px);
 }
 
 .kc-tpl-2 .t2-sub {
-    margin: 7px 0 0;
-    font-weight: 500;
-    line-height: 1.5;
-    color: rgba(255, 255, 255, 0.78);
-    font-size: clamp(14px, 2.2vw, 16px);
-    word-break: break-word;
+    margin: 12px 0 0;
+    font-size: clamp(15px, 2.3vw, 20px);
+    line-height: 1.45;
+    font-weight: 600;
+    color: var(--t2-heading);
 }
 
 .kc-tpl-2 .t2-location {
     margin: 4px 0 0;
-    font-weight: 500;
-    line-height: 1.5;
-    color: rgba(255, 255, 255, 0.58);
-    font-size: clamp(13px, 2vw, 15px);
-    word-break: break-word;
+    font-size: clamp(14px, 2vw, 18px);
+    line-height: 1.45;
+    font-weight: 400;
+    color: var(--t2-text-soft);
 }
 
 .kc-tpl-2 .t2-ctaRow {
     display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 10px;
-    margin-top: 14px;
+    gap: 12px;
+    margin-top: 20px;
 }
 
 .kc-tpl-2 .t2-btn {
-    min-height: 46px;
-    border-radius: 14px;
-    border: 1px solid rgba(255, 255, 255, 0.14);
-    font-family: inherit;
+    min-height: 56px;
+    border-radius: 12px;
+    border: 1px solid var(--t2-border);
+    padding: 0 18px;
+    font-family: "Poppins", sans-serif;
+    font-size: 16px;
     font-weight: 600;
-    font-size: 13px;
     cursor: pointer;
-    color: rgba(255, 255, 255, 0.94);
-    background: rgba(255, 255, 255, 0.06);
-    transition: transform 0.06s ease, opacity 0.18s ease, box-shadow 0.18s ease, background 0.18s ease;
-    -webkit-tap-highlight-color: transparent;
-}
-
-.kc-tpl-2 .t2-btn:hover {
-    opacity: 0.96;
+    transition: transform 0.08s ease, opacity 0.18s ease, background 0.18s ease;
 }
 
 .kc-tpl-2 .t2-btn:active {
@@ -161,95 +173,113 @@
 }
 
 .kc-tpl-2 .t2-btn-primary {
-    border-color: rgba(124, 58, 237, 0.34);
-    background: linear-gradient(135deg, rgba(124, 58, 237, 0.96), rgba(34, 211, 238, 0.48));
-    box-shadow: 0 16px 34px rgba(124, 58, 237, 0.24);
+    background: var(--t2-primary-bg);
+    color: var(--t2-primary-text);
+    border-color: transparent;
 }
 
-.kc-tpl-2 .t2-btn-ghost {
-    background: rgba(255, 255, 255, 0.06);
+.kc-tpl-2 .t2-btn-secondary {
+    background: var(--t2-secondary-bg);
+    color: var(--t2-secondary-text);
 }
 
-.kc-tpl-2 .t2-mini {
-    display: flex;
-    justify-content: space-between;
-    align-items: baseline;
-    gap: 10px;
-    margin-top: 14px;
-    padding-top: 12px;
-    border-top: 1px solid rgba(255, 255, 255, 0.10);
-    flex-wrap: wrap;
-}
+/* ---------- SHARED SECTIONS ---------- */
 
-.kc-tpl-2 .t2-name {
-    font-weight: 600;
-    font-size: 14px;
-    color: rgba(255, 255, 255, 0.92);
-}
-
-.kc-tpl-2 .t2-role {
-    font-weight: 500;
-    font-size: 13px;
-    color: rgba(255, 255, 255, 0.66);
-}
-
-/* ---------- SECTIONS ---------- */
 .kc-tpl-2 .t2-section {
     margin-top: var(--t2-section-gap);
 }
 
 .kc-tpl-2 .t2-section-last {
-    padding-bottom: 8px;
+    padding-bottom: 10px;
 }
 
 .kc-tpl-2 .t2-section-head {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 10px;
-    margin: 0 2px 12px;
+    margin-bottom: 16px;
+    text-align: center;
 }
 
-.kc-tpl-2 .t2-title {
+.kc-tpl-2 .t2-section-title {
     margin: 0;
-    font-size: 18px;
-    font-weight: 600;
-    letter-spacing: -0.02em;
-    color: rgba(255, 255, 255, 0.94);
-}
-
-/* ---------- CARDS ---------- */
-.kc-tpl-2 .t2-card {
-    border: 1px solid rgba(255, 255, 255, 0.12);
-    background: rgba(255, 255, 255, 0.06);
-    border-radius: var(--t2-card-radius);
-    box-shadow: 0 16px 34px rgba(0, 0, 0, 0.22);
-    backdrop-filter: blur(12px);
+    font-family: "Poppins", sans-serif;
+    font-size: clamp(24px, 4.6vw, 40px);
+    line-height: 1;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: -0.04em;
+    color: var(--t2-heading);
 }
 
 /* ---------- ABOUT ---------- */
+
 .kc-tpl-2 .t2-aboutCard {
-    padding: 16px;
+    text-align: center;
 }
 
-.kc-tpl-2 .t2-bio {
-    margin: 0;
-    font-size: 14px;
-    line-height: 1.72;
+.kc-tpl-2 .t2-aboutTop {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    margin: 0 auto 16px;
+    text-align: left;
+}
+
+.kc-tpl-2 .t2-aboutAvatar {
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+    object-fit: cover;
+    background: #ffffff;
+    border: 1px solid var(--t2-border);
+    flex: 0 0 auto;
+}
+
+.kc-tpl-2 .t2-aboutAvatar--placeholder {
+    background: #ececec;
+}
+
+.kc-tpl-2 .t2-aboutMeta {
+    min-width: 0;
+}
+
+.kc-tpl-2 .t2-aboutName {
+    font-size: clamp(15px, 2.2vw, 22px);
+    line-height: 1.2;
+    font-weight: 600;
+    color: var(--t2-heading);
+}
+
+.kc-tpl-2 .t2-aboutRole {
+    font-size: clamp(13px, 1.9vw, 18px);
+    line-height: 1.35;
     font-weight: 400;
-    color: rgba(255, 255, 255, 0.80);
-    word-break: break-word;
+    color: var(--t2-text-soft);
 }
 
-/* ---------- SHARED SLIDER ---------- */
+.kc-tpl-2 .t2-aboutBio {
+    margin: 0 auto;
+    max-width: 720px;
+    font-size: clamp(15px, 2.1vw, 20px);
+    line-height: 1.7;
+    font-weight: 400;
+    color: var(--t2-text);
+}
+
+/* ---------- SLIDER ---------- */
+
 .kc-tpl-2 .t2-sliderTrack {
     display: grid;
     grid-auto-flow: column;
+    grid-auto-columns: 100%;
+    gap: 14px;
     overflow-x: auto;
+    overflow-y: hidden;
     scroll-snap-type: x mandatory;
+    scroll-behavior: smooth;
     overscroll-behavior-x: contain;
     -webkit-overflow-scrolling: touch;
     scrollbar-width: none;
+    touch-action: pan-x;
+    scroll-padding-inline: 0;
 }
 
 .kc-tpl-2 .t2-sliderTrack::-webkit-scrollbar {
@@ -257,258 +287,297 @@
 }
 
 .kc-tpl-2 .t2-slide {
+    width: 100%;
     scroll-snap-align: start;
+    scroll-snap-stop: always;
+}
+
+.kc-tpl-2 .t2-sliderTrack--media .t2-slide,
+.kc-tpl-2 .t2-sliderTrack--content .t2-slide {
+    width: 100%;
 }
 
 .kc-tpl-2 .t2-dots {
+    margin-top: 12px;
     display: flex;
     justify-content: center;
     align-items: center;
-    gap: 7px;
-    margin-top: 12px;
+    gap: 6px;
 }
 
 .kc-tpl-2 .t2-dot {
-    width: 7px;
-    height: 7px;
+    width: 8px;
+    height: 8px;
     border-radius: 999px;
     border: 0;
-    background: rgba(255, 255, 255, 0.28);
+    background: var(--t2-dot);
+    padding: 0;
     cursor: pointer;
-    transition: transform 0.16s ease, background 0.16s ease, width 0.16s ease;
+    transition: width 0.16s ease, background 0.16s ease;
 }
 
 .kc-tpl-2 .t2-dot.is-active {
-    width: 22px;
-    background: rgba(255, 255, 255, 0.84);
+    width: 20px;
+    background: var(--t2-dot-active);
 }
 
 /* ---------- WORK ---------- */
-.kc-tpl-2 .t2-mediaTrack {
-    grid-auto-columns: 100%;
-    gap: 12px;
-}
 
-.kc-tpl-2 .t2-workCard {
-    border-radius: 20px;
+.kc-tpl-2 .t2-mediaCard {
+    width: 100%;
+    border-radius: 18px;
     overflow: hidden;
-    border: 1px solid rgba(255, 255, 255, 0.12);
-    background: rgba(255, 255, 255, 0.06);
+    background: var(--t2-card-bg);
+    border: var(--t2-card-border);
+    box-shadow: var(--t2-shadow);
     aspect-ratio: 4 / 3;
 }
 
-.kc-tpl-2 .t2-workImg {
+.kc-tpl-2 .t2-mediaImg {
     width: 100%;
     height: 100%;
     object-fit: cover;
     display: block;
 }
 
-/* ---------- SERVICES + REVIEWS ---------- */
-.kc-tpl-2 .t2-contentTrack {
-    grid-auto-columns: 100%;
-    gap: 12px;
-}
+/* ---------- INFO CARDS ---------- */
 
-.kc-tpl-2 .t2-serviceCard,
-.kc-tpl-2 .t2-reviewCard {
-    min-height: 190px;
-    padding: 18px;
+.kc-tpl-2 .t2-infoCard {
+    width: 100%;
+    min-height: 168px;
+    box-sizing: border-box;
+    border-radius: 18px;
+    background: var(--t2-card-bg);
+    border: var(--t2-card-border);
+    box-shadow: var(--t2-shadow);
+    padding: 26px 20px;
     display: flex;
     flex-direction: column;
+    align-items: center;
     justify-content: center;
+    text-align: center;
 }
 
-.kc-tpl-2 .t2-serviceName {
-    font-size: 20px;
+.kc-tpl-2 .t2-infoCard--review {
+    min-height: 190px;
+}
+
+.kc-tpl-2 .t2-cardTitle {
+    margin: 0;
+    font-size: clamp(18px, 2.6vw, 28px);
     line-height: 1.25;
     font-weight: 600;
-    letter-spacing: -0.02em;
-    color: rgba(255, 255, 255, 0.94);
-    word-break: break-word;
+    color: var(--t2-heading);
 }
 
-.kc-tpl-2 .t2-serviceDesc {
-    margin-top: 10px;
-    font-size: 14px;
-    line-height: 1.72;
-    color: rgba(255, 255, 255, 0.76);
-    word-break: break-word;
+.kc-tpl-2 .t2-cardBody {
+    margin: 10px 0 0;
+    max-width: 680px;
+    font-size: clamp(15px, 2.1vw, 20px);
+    line-height: 1.7;
+    font-weight: 400;
+    color: var(--t2-text);
 }
 
-.kc-tpl-2 .t2-servicePrice {
-    margin-top: 12px;
-    font-size: 13px;
-    font-weight: 600;
-    color: rgba(255, 255, 255, 0.56);
-    word-break: break-word;
+.kc-tpl-2 .t2-cardBody--review {
+    margin-top: 0;
+}
+
+.kc-tpl-2 .t2-reviewName {
+    margin-top: 16px;
+    font-size: clamp(15px, 2vw, 19px);
+    line-height: 1.35;
+    font-weight: 400;
+    color: var(--t2-text-soft);
 }
 
 .kc-tpl-2 .t2-stars {
     display: flex;
     gap: 2px;
-    font-size: 14px;
-    margin-bottom: 10px;
+    margin-top: 10px;
+    font-size: clamp(14px, 1.8vw, 18px);
+    line-height: 1;
 }
 
 .kc-tpl-2 .t2-star.on {
-    color: rgba(34, 211, 238, 0.94);
-    text-shadow: 0 10px 18px rgba(34, 211, 238, 0.16);
+    color: #ff6b3d;
 }
 
 .kc-tpl-2 .t2-star.off {
-    color: rgba(255, 255, 255, 0.18);
+    color: #d6d6d6;
 }
 
-.kc-tpl-2 .t2-reviewText {
-    font-size: 15px;
-    line-height: 1.72;
-    font-weight: 400;
-    color: rgba(255, 255, 255, 0.86);
-    word-break: break-word;
-}
-
-.kc-tpl-2 .t2-reviewName {
-    margin-top: 14px;
-    font-weight: 600;
-    font-size: 13px;
-    letter-spacing: 0.01em;
-    color: rgba(255, 255, 255, 0.62);
+.kc-tpl-2.t2-theme-dark .t2-star.off {
+    color: rgba(255, 255, 255, 0.2);
 }
 
 /* ---------- CONTACT ---------- */
-.kc-tpl-2 .t2-contactCard {
-    padding: 14px;
-}
 
-.kc-tpl-2 .t2-contactActions {
+.kc-tpl-2 .t2-contactStack {
     display: grid;
     gap: 10px;
 }
 
-.kc-tpl-2 .t2-pill {
-    display: grid;
-    grid-template-columns: 74px 1fr;
-    gap: 12px;
-    align-items: center;
-    padding: 13px 14px;
-    border-radius: var(--t2-pill-radius);
+.kc-tpl-2 .t2-contactCard,
+.kc-tpl-2 .t2-socialsCard {
+    border-radius: 14px;
+    background: var(--t2-card-bg);
+    border: var(--t2-card-border);
+    box-shadow: var(--t2-shadow);
+    padding: 16px 18px;
     text-decoration: none;
-    color: inherit;
-    border: 1px solid rgba(255, 255, 255, 0.10);
-    background: rgba(0, 0, 0, 0.18);
+    display: block;
 }
 
-.kc-tpl-2 .t2-pillK {
-    font-size: 11px;
+.kc-tpl-2 .t2-contactLabel {
+    display: block;
+    font-size: clamp(18px, 2.4vw, 26px);
+    line-height: 1.2;
     font-weight: 600;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    color: rgba(255, 255, 255, 0.50);
+    color: var(--t2-heading);
 }
 
-.kc-tpl-2 .t2-pillV {
-    font-size: 14px;
-    font-weight: 500;
-    color: rgba(255, 255, 255, 0.86);
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
+.kc-tpl-2 .t2-contactValue {
+    display: block;
+    margin-top: 4px;
+    font-size: clamp(14px, 1.9vw, 18px);
+    line-height: 1.45;
+    font-weight: 400;
+    color: var(--t2-text-soft);
+    word-break: break-word;
 }
 
 .kc-tpl-2 .t2-socials {
     display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
     flex-wrap: wrap;
-    gap: 8px;
-    margin-top: 12px;
 }
 
 .kc-tpl-2 .t2-social {
+    min-width: 46px;
+    min-height: 46px;
+    padding: 0 12px;
+    border-radius: 12px;
     text-decoration: none;
-    font-size: 12px;
+    border: var(--t2-card-border);
+    background: transparent;
+    color: var(--t2-heading);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    line-height: 1;
     font-weight: 600;
-    letter-spacing: 0.06em;
-    text-transform: capitalize;
-    padding: 9px 12px;
-    border-radius: 999px;
-    border: 1px solid rgba(255, 255, 255, 0.14);
-    background: rgba(255, 255, 255, 0.06);
-    color: rgba(255, 255, 255, 0.84);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
 }
 
 /* ---------- RESPONSIVE ---------- */
-@media (max-width: 420px) {
-    .kc-tpl-2 .t2-ctaRow {
-        grid-template-columns: 1fr;
-    }
-}
 
 @media (min-width: 560px) {
     .kc-tpl-2 {
-        --t2-page-pad: 22px;
-        --t2-section-gap: 28px;
+        --t2-page-pad: 28px;
+        --t2-section-gap: 40px;
     }
 
-    .kc-tpl-2 .t2-mediaTrack,
-    .kc-tpl-2 .t2-contentTrack {
-        grid-auto-columns: 86%;
+    .kc-tpl-2 .t2-hero-copy {
+        padding-top: 24px;
     }
 
-    .kc-tpl-2 .t2-serviceCard,
-    .kc-tpl-2 .t2-reviewCard {
-        min-height: 210px;
+    .kc-tpl-2 .t2-ctaRow {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .kc-tpl-2 .t2-btn {
+        min-height: 58px;
+        font-size: 17px;
+    }
+
+    .kc-tpl-2 .t2-infoCard {
+        min-height: 188px;
+        padding: 30px 26px;
+    }
+
+    .kc-tpl-2 .t2-infoCard--review {
+        min-height: 212px;
+    }
+
+    .kc-tpl-2 .t2-contactCard,
+    .kc-tpl-2 .t2-socialsCard {
+        padding: 18px 20px;
     }
 }
 
 @media (min-width: 760px) {
     .kc-tpl-2 {
-        --t2-page-pad: 26px;
-        --t2-section-gap: 32px;
+        --t2-page-pad: 34px;
+        --t2-section-gap: 48px;
     }
 
-    .kc-tpl-2 .t2-heroCard {
-        padding: 18px;
+    .kc-tpl-2 .t2-hero-avatar {
+        width: 68px;
+        height: 68px;
     }
 
-    .kc-tpl-2 .t2-avatar {
-        width: 72px;
-        height: 72px;
+    .kc-tpl-2 .t2-hero-copy {
+        padding-top: 26px;
     }
 
-    .kc-tpl-2 .t2-title {
-        font-size: 20px;
+    .kc-tpl-2 .t2-ctaRow {
+        max-width: 720px;
+        margin-left: auto;
+        margin-right: auto;
     }
 
-    .kc-tpl-2 .t2-bio,
-    .kc-tpl-2 .t2-serviceDesc,
-    .kc-tpl-2 .t2-reviewText {
-        font-size: 15px;
+    .kc-tpl-2 .t2-aboutTop {
+        gap: 14px;
     }
 
-    .kc-tpl-2 .t2-mediaTrack {
-        grid-auto-columns: 68%;
+    .kc-tpl-2 .t2-aboutAvatar {
+        width: 52px;
+        height: 52px;
     }
 
-    .kc-tpl-2 .t2-contentTrack {
-        grid-auto-columns: 68%;
+    .kc-tpl-2 .t2-infoCard {
+        min-height: 210px;
+    }
+
+    .kc-tpl-2 .t2-infoCard--review {
+        min-height: 236px;
     }
 }
 
 @media (min-width: 980px) {
-    .kc-tpl-2 .t2-mediaTrack {
-        grid-auto-columns: 56%;
+    .kc-tpl-2 {
+        --t2-page-pad: 38px;
+        --t2-section-gap: 56px;
     }
 
-    .kc-tpl-2 .t2-contentTrack {
-        grid-auto-columns: 52%;
+    .kc-tpl-2 .t2-hero-media {
+        border-radius: 22px;
+    }
+
+    .kc-tpl-2 .t2-mediaCard,
+    .kc-tpl-2 .t2-infoCard {
+        border-radius: 20px;
     }
 }
 
-/* ---------- A11Y ---------- */
+/* ---------- ACCESSIBILITY ---------- */
+
 .kc-tpl-2 .t2-btn:focus-visible,
-.kc-tpl-2 .t2-pill:focus-visible,
+.kc-tpl-2 .t2-contactCard:focus-visible,
 .kc-tpl-2 .t2-social:focus-visible,
 .kc-tpl-2 .t2-dot:focus-visible {
-    outline: 2px solid rgba(34, 211, 238, 0.55);
+    outline: 2px solid rgba(16, 24, 181, 0.35);
     outline-offset: 2px;
+}
+
+.kc-tpl-2.t2-theme-dark .t2-btn:focus-visible,
+.kc-tpl-2.t2-theme-dark .t2-contactCard:focus-visible,
+.kc-tpl-2.t2-theme-dark .t2-social:focus-visible,
+.kc-tpl-2.t2-theme-dark .t2-dot:focus-visible {
+    outline: 2px solid rgba(255, 255, 255, 0.3);
 }

@@ -1,4 +1,4 @@
-import React, { useMemo, useRef, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import "../../styling/dashboard/templates/template2.css";
 
 const nonEmpty = (v) => typeof v === "string" && v.trim().length > 0;
@@ -19,25 +19,12 @@ function Stars({ rating = 0 }) {
     );
 }
 
-function SlideDots({ count, activeIndex, onSelect }) {
-    if (count <= 1) return null;
-
-    return (
-        <div className="t2-dots" aria-label="Slider navigation">
-            {Array.from({ length: count }).map((_, i) => (
-                <button
-                    key={i}
-                    type="button"
-                    className={`t2-dot ${i === activeIndex ? "is-active" : ""}`}
-                    onClick={() => onSelect(i)}
-                    aria-label={`Go to slide ${i + 1}`}
-                />
-            ))}
-        </div>
-    );
-}
-
-function useSlider(total) {
+function SliderSection({
+    title,
+    items,
+    renderItem,
+    trackClassName = "",
+}) {
     const trackRef = useRef(null);
     const [activeIndex, setActiveIndex] = useState(0);
 
@@ -45,35 +32,34 @@ function useSlider(total) {
         const track = trackRef.current;
         if (!track) return;
 
-        const clamped = Math.max(0, Math.min(total - 1, index));
-        const child = track.children?.[clamped];
-        if (!child) return;
+        const slides = Array.from(track.children || []);
+        const next = slides[index];
+        if (!next) return;
 
-        child.scrollIntoView({
+        track.scrollTo({
+            left: next.offsetLeft,
             behavior: "smooth",
-            inline: "start",
-            block: "nearest",
         });
-        setActiveIndex(clamped);
+        setActiveIndex(index);
     };
 
     const handleScroll = () => {
         const track = trackRef.current;
         if (!track) return;
 
-        const children = Array.from(track.children || []);
-        if (!children.length) return;
+        const slides = Array.from(track.children || []);
+        if (!slides.length) return;
 
-        const trackLeft = track.getBoundingClientRect().left;
+        const center = track.scrollLeft + track.clientWidth / 2;
 
         let bestIndex = 0;
-        let bestDistance = Number.POSITIVE_INFINITY;
+        let bestDistance = Infinity;
 
-        children.forEach((child, i) => {
-            const rect = child.getBoundingClientRect();
-            const distance = Math.abs(rect.left - trackLeft);
-            if (distance < bestDistance) {
-                bestDistance = distance;
+        slides.forEach((slide, i) => {
+            const slideCenter = slide.offsetLeft + slide.clientWidth / 2;
+            const dist = Math.abs(center - slideCenter);
+            if (dist < bestDistance) {
+                bestDistance = dist;
                 bestIndex = i;
             }
         });
@@ -81,30 +67,17 @@ function useSlider(total) {
         setActiveIndex(bestIndex);
     };
 
-    return {
-        trackRef,
-        activeIndex,
-        scrollToIndex,
-        handleScroll,
-    };
-}
-
-function SectionSlider({
-    title,
-    items,
-    renderItem,
-    sectionClassName = "",
-    trackClassName = "",
-    cardClassName = "",
-}) {
-    const { trackRef, activeIndex, scrollToIndex, handleScroll } = useSlider(items.length);
+    useEffect(() => {
+        handleScroll();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [items.length]);
 
     if (!items.length) return null;
 
     return (
-        <section className={`t2-section ${sectionClassName}`.trim()}>
+        <section className="t2-section">
             <div className="t2-section-head">
-                <h2 className="t2-title">{title}</h2>
+                <h2 className="t2-section-title">{title}</h2>
             </div>
 
             <div
@@ -114,14 +87,26 @@ function SectionSlider({
                 role="region"
                 aria-label={title}
             >
-                {items.map((item, i) => (
-                    <div key={i} className={`t2-slide ${cardClassName}`.trim()}>
-                        {renderItem(item, i)}
+                {items.map((item, index) => (
+                    <div key={index} className="t2-slide">
+                        {renderItem(item, index)}
                     </div>
                 ))}
             </div>
 
-            <SlideDots count={items.length} activeIndex={activeIndex} onSelect={scrollToIndex} />
+            {items.length > 1 ? (
+                <div className="t2-dots" aria-label={`${title} navigation`}>
+                    {items.map((_, i) => (
+                        <button
+                            key={i}
+                            type="button"
+                            className={`t2-dot ${activeIndex === i ? "is-active" : ""}`}
+                            aria-label={`Go to ${title} slide ${i + 1}`}
+                            onClick={() => scrollToIndex(i)}
+                        />
+                    ))}
+                </div>
+            ) : null}
         </section>
     );
 }
@@ -158,165 +143,149 @@ export default function Template2({ vm }) {
             }));
     }, [v.socials]);
 
+    const hasAbout = nonEmpty(v.bio) || nonEmpty(v.fullName) || nonEmpty(v.jobTitle) || nonEmpty(avatar);
+    const hasContact = nonEmpty(v.email) || nonEmpty(v.phone) || socials.length > 0;
+
     return (
-        <div className="kc-tpl kc-tpl-2">
+        <div className={`kc-tpl kc-tpl-2 ${v.themeMode === "dark" ? "t2-theme-dark" : "t2-theme-light"}`}>
             <div className="t2-shell">
                 {v.showMainSection && (
                     <section className="t2-hero">
-                        <div className="t2-heroMedia">
+                        <div className="t2-hero-media">
                             {nonEmpty(cover) ? (
-                                <img src={cover} alt="" className="t2-heroImage" />
+                                <img src={cover} alt="" className="t2-hero-cover" />
                             ) : (
-                                <div className="t2-heroImage t2-heroImage--placeholder" aria-hidden="true" />
+                                <div className="t2-hero-cover t2-hero-cover--placeholder" aria-hidden="true" />
                             )}
-                            <div className="t2-heroOverlay" />
                         </div>
 
-                        <div className="t2-heroCard">
-                            <div className="t2-heroTop">
+                        <div className="t2-hero-copy">
+                            <div className="t2-hero-avatarRow">
                                 {nonEmpty(avatar) ? (
-                                    <img src={avatar} alt="Avatar" className="t2-avatar" />
-                                ) : (
-                                    <div className="t2-avatar t2-avatar--ph" aria-hidden="true" />
-                                )}
-
-                                <div className="t2-heroText">
-                                    <h1 className="t2-h1">{v.mainHeading || "Your Main Heading"}</h1>
-                                    {nonEmpty(v.subHeading) ? <p className="t2-sub">{v.subHeading}</p> : null}
-                                    {nonEmpty(v.location) ? <p className="t2-location">{v.location}</p> : null}
-                                </div>
+                                    <img src={avatar} alt="Avatar" className="t2-hero-avatar" />
+                                ) : null}
                             </div>
+
+                            <h1 className="t2-h1">{v.mainHeading || "YOUR MAIN HEADING"}</h1>
+
+                            {nonEmpty(v.subHeading) ? <p className="t2-sub">{v.subHeading}</p> : null}
+                            {nonEmpty(v.location) ? <p className="t2-location">{v.location}</p> : null}
 
                             {hasHeroCtas ? (
                                 <div className="t2-ctaRow">
-                                    <button
-                                        type="button"
-                                        className="t2-btn t2-btn-primary"
-                                        onClick={v.onSaveMyNumber}
-                                    >
+                                    <button type="button" className="t2-btn t2-btn-primary" onClick={v.onSaveMyNumber}>
                                         Save My Number
                                     </button>
-                                    <button
-                                        type="button"
-                                        className="t2-btn t2-btn-ghost"
-                                        onClick={v.onOpenExchangeContact}
-                                    >
+                                    <button type="button" className="t2-btn t2-btn-secondary" onClick={v.onOpenExchangeContact}>
                                         Exchange Contact
                                     </button>
                                 </div>
                             ) : null}
-
-                            {(nonEmpty(v.fullName) || nonEmpty(v.jobTitle)) && (
-                                <div className="t2-mini">
-                                    {nonEmpty(v.fullName) ? <div className="t2-name">{v.fullName}</div> : null}
-                                    {nonEmpty(v.jobTitle) ? <div className="t2-role">{v.jobTitle}</div> : null}
-                                </div>
-                            )}
                         </div>
                     </section>
                 )}
 
-                {v.showAboutMeSection && (nonEmpty(v.bio) || nonEmpty(v.fullName) || nonEmpty(v.jobTitle)) ? (
+                {v.showAboutMeSection && hasAbout ? (
                     <section className="t2-section">
                         <div className="t2-section-head">
-                            <h2 className="t2-title">About</h2>
+                            <h2 className="t2-section-title">ABOUT ME</h2>
                         </div>
 
-                        <div className="t2-card t2-aboutCard">
-                            {nonEmpty(v.bio) ? <p className="t2-bio">{v.bio}</p> : null}
+                        <div className="t2-aboutCard">
+                            <div className="t2-aboutTop">
+                                {nonEmpty(avatar) ? (
+                                    <img src={avatar} alt="" className="t2-aboutAvatar" />
+                                ) : (
+                                    <div className="t2-aboutAvatar t2-aboutAvatar--placeholder" />
+                                )}
+
+                                <div className="t2-aboutMeta">
+                                    {nonEmpty(v.fullName) ? <div className="t2-aboutName">{v.fullName}</div> : null}
+                                    {nonEmpty(v.jobTitle) ? <div className="t2-aboutRole">{v.jobTitle}</div> : null}
+                                </div>
+                            </div>
+
+                            {nonEmpty(v.bio) ? <p className="t2-aboutBio">{v.bio}</p> : null}
                         </div>
                     </section>
                 ) : null}
 
                 {v.showWorkSection && works.length > 0 ? (
-                    <SectionSlider
-                        title="My Work"
+                    <SliderSection
+                        title="MY WORK"
                         items={works.slice(0, 14)}
-                        sectionClassName="t2-workSection"
-                        trackClassName="t2-mediaTrack"
-                        cardClassName="t2-mediaSlide"
+                        trackClassName="t2-sliderTrack--media"
                         renderItem={(url, i) => (
-                            <div className="t2-workCard">
-                                <img src={url} alt={`Work ${i + 1}`} className="t2-workImg" />
-                            </div>
+                            <article className="t2-mediaCard">
+                                <img src={url} alt={`Work ${i + 1}`} className="t2-mediaImg" />
+                            </article>
                         )}
                     />
                 ) : null}
 
                 {v.showServicesSection && services.length > 0 ? (
-                    <SectionSlider
-                        title="Services"
+                    <SliderSection
+                        title="MY SERVICES"
                         items={services.slice(0, 12)}
-                        sectionClassName="t2-servicesSection"
-                        trackClassName="t2-contentTrack"
-                        cardClassName="t2-contentSlide"
+                        trackClassName="t2-sliderTrack--content"
                         renderItem={(s) => (
-                            <div className="t2-card t2-serviceCard">
-                                <div className="t2-serviceName">{s?.name || "Service"}</div>
+                            <article className="t2-infoCard">
+                                <h3 className="t2-cardTitle">{s?.name || "Service"}</h3>
                                 {nonEmpty(s?.description) ? (
-                                    <div className="t2-serviceDesc">{s.description}</div>
+                                    <p className="t2-cardBody">{s.description}</p>
+                                ) : nonEmpty(s?.price) ? (
+                                    <p className="t2-cardBody">{s.price}</p>
                                 ) : null}
-                                {nonEmpty(s?.price) ? (
-                                    <div className="t2-servicePrice">{s.price}</div>
-                                ) : null}
-                            </div>
+                            </article>
                         )}
                     />
                 ) : null}
 
                 {v.showReviewsSection && reviews.length > 0 ? (
-                    <SectionSlider
-                        title="Reviews"
+                    <SliderSection
+                        title="MY REVIEWS"
                         items={reviews.slice(0, 10)}
-                        sectionClassName="t2-reviewsSection"
-                        trackClassName="t2-contentTrack"
-                        cardClassName="t2-contentSlide"
+                        trackClassName="t2-sliderTrack--content"
                         renderItem={(r) => (
-                            <div className="t2-card t2-reviewCard">
-                                <Stars rating={r?.rating} />
-                                {nonEmpty(r?.text) ? <div className="t2-reviewText">“{r.text}”</div> : null}
+                            <article className="t2-infoCard t2-infoCard--review">
+                                {nonEmpty(r?.text) ? <p className="t2-cardBody t2-cardBody--review">“{r.text}”</p> : null}
                                 {nonEmpty(r?.name) ? <div className="t2-reviewName">{r.name}</div> : null}
-                            </div>
+                                <Stars rating={r?.rating} />
+                            </article>
                         )}
                     />
                 ) : null}
 
-                {v.showContactSection && (nonEmpty(v.email) || nonEmpty(v.phone) || socials.length > 0) ? (
+                {v.showContactSection && hasContact ? (
                     <section className="t2-section t2-section-last">
                         <div className="t2-section-head">
-                            <h2 className="t2-title">Contact</h2>
+                            <h2 className="t2-section-title">GET IN TOUCH</h2>
                         </div>
 
-                        <div className="t2-card t2-contactCard">
-                            <div className="t2-contactActions">
-                                {nonEmpty(v.email) ? (
-                                    <a className="t2-pill" href={`mailto:${v.email}`}>
-                                        <span className="t2-pillK">Email</span>
-                                        <span className="t2-pillV">{v.email}</span>
-                                    </a>
-                                ) : null}
+                        <div className="t2-contactStack">
+                            {nonEmpty(v.email) ? (
+                                <a className="t2-contactCard" href={`mailto:${v.email}`}>
+                                    <span className="t2-contactLabel">Email</span>
+                                    <span className="t2-contactValue">{v.email}</span>
+                                </a>
+                            ) : null}
 
-                                {nonEmpty(v.phone) ? (
-                                    <a className="t2-pill" href={`tel:${v.phone}`}>
-                                        <span className="t2-pillK">Phone</span>
-                                        <span className="t2-pillV">{v.phone}</span>
-                                    </a>
-                                ) : null}
-                            </div>
+                            {nonEmpty(v.phone) ? (
+                                <a className="t2-contactCard" href={`tel:${v.phone}`}>
+                                    <span className="t2-contactLabel">Phone Number</span>
+                                    <span className="t2-contactValue">{v.phone}</span>
+                                </a>
+                            ) : null}
 
                             {socials.length > 0 ? (
-                                <div className="t2-socials" aria-label="Social links">
-                                    {socials.map((s) => (
-                                        <a
-                                            key={s.key}
-                                            className="t2-social"
-                                            href={s.url}
-                                            target="_blank"
-                                            rel="noreferrer"
-                                        >
-                                            {s.label}
-                                        </a>
-                                    ))}
+                                <div className="t2-socialsCard">
+                                    <div className="t2-socials">
+                                        {socials.map((s) => (
+                                            <a key={s.key} className="t2-social" href={s.url} target="_blank" rel="noreferrer">
+                                                {s.label}
+                                            </a>
+                                        ))}
+                                    </div>
                                 </div>
                             ) : null}
                         </div>
