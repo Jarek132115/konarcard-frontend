@@ -6,25 +6,25 @@ import { gsap } from "gsap";
 import { Draggable } from "gsap/all";
 gsap.registerPlugin(Draggable);
 
-import LogoIcon from "../assets/icons/Logo-Icon.svg";
-import CopyrightIcon from "../assets/icons/Copyright-Icon.svg";
+import LogoIcon from "../../assets/icons/Logo-Icon.svg";
+import CopyrightIcon from "../../assets/icons/Copyright-Icon.svg";
 
 /* ===== Social icons (your exact files) ===== */
-import FooterInstagram from "../assets/icons/Footer_Insta.svg";
-import FooterFacebook from "../assets/icons/Footer_Facebook.svg";
-import FooterLinkedIn from "../assets/icons/Footer_LinkedIn.svg";
-import FooterTiktok from "../assets/icons/Footer_Tiktok.svg";
-import FooterYoutube from "../assets/icons/Footer_Youtube.svg";
+import FooterInstagram from "../../assets/icons/Footer_Insta.svg";
+import FooterFacebook from "../../assets/icons/Footer_Facebook.svg";
+import FooterLinkedIn from "../../assets/icons/Footer_LinkedIn.svg";
+import FooterTiktok from "../../assets/icons/Footer_Tiktok.svg";
+import FooterYoutube from "../../assets/icons/Footer_Youtube.svg";
 
 /* ===== Carousel icons (exact names you confirmed) ===== */
-import WorksOnEveryPhone from "../assets/icons/Works_On_Every_Phone.svg";
-import NoAppNeeded from "../assets/icons/No_App_Needed.svg";
-import OneLinkForEverything from "../assets/icons/One_Link_For_Everything.svg";
-import EasyToUpdateAnytime from "../assets/icons/Easy_To_Update_Anytime.svg";
-import ShareByTapQR from "../assets/icons/Share_By_Tap_QR.svg";
-import BuiltForRealTrades from "../assets/icons/Built_For_Real_Trades.svg";
-import LooksProfessional from "../assets/icons/Looks_Professional.svg";
-import SetUpInMinutes from "../assets/icons/Set_Up_In_Minutes.svg";
+import WorksOnEveryPhone from "../../assets/icons/Works_On_Every_Phone.svg";
+import NoAppNeeded from "../../assets/icons/No_App_Needed.svg";
+import OneLinkForEverything from "../../assets/icons/One_Link_For_Everything.svg";
+import EasyToUpdateAnytime from "../../assets/icons/Easy_To_Update_Anytime.svg";
+import ShareByTapQR from "../../assets/icons/Share_By_Tap_QR.svg";
+import BuiltForRealTrades from "../../assets/icons/Built_For_Real_Trades.svg";
+import LooksProfessional from "../../assets/icons/Looks_Professional.svg";
+import SetUpInMinutes from "../../assets/icons/Set_Up_In_Minutes.svg";
 
 export default function Footer() {
     const carouselItems = useMemo(
