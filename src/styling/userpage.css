@@ -12,10 +12,6 @@
     align-items: flex-start;
 }
 
-.userpage-shell--dark {
-    background: #0f1115;
-}
-
 .userpage-inner {
     width: 100%;
     max-width: 100%;
