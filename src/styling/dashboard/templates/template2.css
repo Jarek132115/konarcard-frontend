@@ -3,7 +3,7 @@
    Poppins everywhere
    Bold uppercase centered headings
    Slider-based work / services / reviews
-   Controlled one-at-a-time snapping
+   Controlled drag / swipe
    ========================================================= */
 
 .kc-tpl {
@@ -13,8 +13,10 @@
 .kc-tpl-2 {
     --t2-shell-max: 920px;
     --t2-page-pad: 22px;
-    --t2-section-gap: 34px;
+    --t2-section-gap: 48px;
     --t2-card-radius: 20px;
+    --t2-accent: #000483;
+    --t2-accent-strong: #161bb0;
     --t2-card-border: 1px solid transparent;
     --t2-heading: #141414;
     --t2-text: #222222;
@@ -22,12 +24,12 @@
     --t2-border: #e8e8e8;
     --t2-card-bg: #ffffff;
     --t2-secondary-bg: #ffffff;
-    --t2-primary-bg: #1018b5;
+    --t2-primary-bg: #000483;
     --t2-primary-text: #ffffff;
-    --t2-secondary-text: #1018b5;
+    --t2-secondary-text: #000483;
     --t2-dot: #c8ccd4;
-    --t2-dot-active: #7b7f86;
-    --t2-shadow: 0 6px 24px rgba(15, 23, 42, 0.04);
+    --t2-dot-active: #000483;
+    --t2-shadow: 0 10px 30px rgba(0, 4, 131, 0.06);
 
     width: 100%;
     min-height: 100%;
@@ -36,38 +38,45 @@
     color: var(--t2-text);
 }
 
+.kc-tpl-2,
+.kc-tpl-2 * {
+    font-family: "Poppins", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+
 .kc-tpl-2.t2-theme-light {
-    --t2-page-bg: #ffffff;
+    --t2-page-bg: linear-gradient(180deg, #ffffff 0%, #fbfbff 100%);
     --t2-heading: #171717;
     --t2-text: #242424;
-    --t2-text-soft: #7a7a7a;
-    --t2-border: #ececec;
+    --t2-text-soft: #777777;
+    --t2-border: #ececf3;
     --t2-card-bg: #ffffff;
     --t2-secondary-bg: #ffffff;
-    --t2-primary-bg: #1018b5;
+    --t2-primary-bg: #000483;
     --t2-primary-text: #ffffff;
-    --t2-secondary-text: #1018b5;
-    --t2-dot: #c7cad1;
-    --t2-dot-active: #7f838a;
-    --t2-card-border: 1px solid #eeeeee;
-    --t2-shadow: 0 6px 24px rgba(15, 23, 42, 0.04);
+    --t2-secondary-text: #000483;
+    --t2-dot: #c9ccde;
+    --t2-dot-active: #000483;
+    --t2-card-border: 1px solid #ececf3;
+    --t2-shadow: 0 12px 34px rgba(0, 4, 131, 0.05);
 }
 
 .kc-tpl-2.t2-theme-dark {
-    --t2-page-bg: #121315;
+    --t2-page-bg:
+        radial-gradient(900px 500px at 20% 0%, rgba(0, 4, 131, 0.22), transparent 55%),
+        linear-gradient(180deg, #121316 0%, #121316 100%);
     --t2-heading: #ffffff;
-    --t2-text: #f3f4f6;
-    --t2-text-soft: #c7c9cf;
+    --t2-text: #f2f3f6;
+    --t2-text-soft: #c7cad2;
     --t2-border: rgba(255, 255, 255, 0.08);
-    --t2-card-bg: #16181b;
+    --t2-card-bg: #16181d;
     --t2-secondary-bg: #ffffff;
-    --t2-primary-bg: #1018b5;
+    --t2-primary-bg: #000483;
     --t2-primary-text: #ffffff;
-    --t2-secondary-text: #1018b5;
-    --t2-dot: rgba(255, 255, 255, 0.34);
-    --t2-dot-active: rgba(255, 255, 255, 0.78);
+    --t2-secondary-text: #000483;
+    --t2-dot: rgba(255, 255, 255, 0.28);
+    --t2-dot-active: #000483;
     --t2-card-border: 1px solid rgba(255, 255, 255, 0.08);
-    --t2-shadow: none;
+    --t2-shadow: 0 12px 32px rgba(0, 0, 0, 0.22);
 }
 
 .kc-tpl-2 .t2-shell {
@@ -89,6 +98,7 @@
     overflow: hidden;
     aspect-ratio: 16 / 10;
     background: #d9d9d9;
+    box-shadow: var(--t2-shadow);
 }
 
 .kc-tpl-2 .t2-hero-cover {
@@ -121,12 +131,12 @@
     display: block;
     background: #ffffff;
     border: 1px solid var(--t2-border);
+    box-shadow: var(--t2-shadow);
 }
 
 .kc-tpl-2 .t2-h1 {
     margin: 0;
     color: var(--t2-heading);
-    font-family: "Poppins", sans-serif;
     font-weight: 800;
     text-transform: uppercase;
     letter-spacing: -0.04em;
@@ -157,30 +167,47 @@
 }
 
 .kc-tpl-2 .t2-btn {
-    min-height: 56px;
+    min-height: unset;
+    padding: 12px 18px;
     border-radius: 12px;
     border: 1px solid var(--t2-border);
-    padding: 0 18px;
-    font-family: "Poppins", sans-serif;
-    font-size: 16px;
+    font-size: 12px;
+    line-height: 18px;
     font-weight: 600;
     cursor: pointer;
-    transition: transform 0.08s ease, opacity 0.18s ease, background 0.18s ease;
+    transition: transform 0.08s ease, opacity 0.18s ease, background 0.18s ease, box-shadow 0.18s ease;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    text-align: center;
+    box-sizing: border-box;
 }
 
 .kc-tpl-2 .t2-btn:active {
     transform: translateY(1px);
 }
 
+.kc-tpl-2 .t2-btnPrimary,
 .kc-tpl-2 .t2-btn-primary {
     background: var(--t2-primary-bg);
     color: var(--t2-primary-text);
     border-color: transparent;
+    box-shadow: 0 10px 24px rgba(0, 4, 131, 0.18);
 }
 
 .kc-tpl-2 .t2-btn-secondary {
     background: var(--t2-secondary-bg);
     color: var(--t2-secondary-text);
+    box-shadow: var(--t2-shadow);
+}
+
+.kc-tpl-2 .t2-btnIcon {
+    width: 18px;
+    height: 18px;
+    display: block;
+    object-fit: contain;
+    flex: 0 0 auto;
 }
 
 /* ---------- SHARED SECTIONS ---------- */
@@ -194,13 +221,12 @@
 }
 
 .kc-tpl-2 .t2-section-head {
-    margin-bottom: 16px;
+    margin-bottom: 18px;
     text-align: center;
 }
 
 .kc-tpl-2 .t2-section-title {
     margin: 0;
-    font-family: "Poppins", sans-serif;
     font-size: clamp(24px, 4.6vw, 40px);
     line-height: 1;
     font-weight: 800;
@@ -230,6 +256,7 @@
     object-fit: cover;
     background: #ffffff;
     border: 1px solid var(--t2-border);
+    box-shadow: var(--t2-shadow);
     flex: 0 0 auto;
 }
 
@@ -280,6 +307,11 @@
     scrollbar-width: none;
     touch-action: pan-x;
     scroll-padding-inline: 0;
+    cursor: grab;
+}
+
+.kc-tpl-2 .t2-sliderTrack.is-dragging {
+    cursor: grabbing;
 }
 
 .kc-tpl-2 .t2-sliderTrack::-webkit-scrollbar {
@@ -290,6 +322,8 @@
     width: 100%;
     scroll-snap-align: start;
     scroll-snap-stop: always;
+    user-select: none;
+    -webkit-user-select: none;
 }
 
 .kc-tpl-2 .t2-sliderTrack--media .t2-slide,
@@ -327,7 +361,9 @@
     width: 100%;
     border-radius: 18px;
     overflow: hidden;
-    background: var(--t2-card-bg);
+    background:
+        linear-gradient(180deg, rgba(0, 4, 131, 0.04), rgba(0, 4, 131, 0.01)),
+        var(--t2-card-bg);
     border: var(--t2-card-border);
     box-shadow: var(--t2-shadow);
     aspect-ratio: 4 / 3;
@@ -347,7 +383,9 @@
     min-height: 168px;
     box-sizing: border-box;
     border-radius: 18px;
-    background: var(--t2-card-bg);
+    background:
+        linear-gradient(180deg, rgba(0, 4, 131, 0.04), rgba(0, 4, 131, 0.01)),
+        var(--t2-card-bg);
     border: var(--t2-card-border);
     box-shadow: var(--t2-shadow);
     padding: 26px 20px;
@@ -421,12 +459,33 @@
 .kc-tpl-2 .t2-contactCard,
 .kc-tpl-2 .t2-socialsCard {
     border-radius: 14px;
-    background: var(--t2-card-bg);
+    background:
+        linear-gradient(180deg, rgba(0, 4, 131, 0.04), rgba(0, 4, 131, 0.01)),
+        var(--t2-card-bg);
     border: var(--t2-card-border);
     box-shadow: var(--t2-shadow);
     padding: 16px 18px;
     text-decoration: none;
     display: block;
+}
+
+.kc-tpl-2 .t2-contactCardInner {
+    display: grid;
+    grid-template-columns: 30px minmax(0, 1fr);
+    gap: 14px;
+    align-items: center;
+}
+
+.kc-tpl-2 .t2-contactIcon {
+    width: 30px;
+    height: 30px;
+    display: block;
+    object-fit: contain;
+    flex: 0 0 auto;
+}
+
+.kc-tpl-2 .t2-contactText {
+    min-width: 0;
 }
 
 .kc-tpl-2 .t2-contactLabel {
@@ -456,22 +515,24 @@
 }
 
 .kc-tpl-2 .t2-social {
-    min-width: 46px;
-    min-height: 46px;
-    padding: 0 12px;
+    width: 52px;
+    height: 52px;
     border-radius: 12px;
     text-decoration: none;
     border: var(--t2-card-border);
-    background: transparent;
+    background: rgba(0, 4, 131, 0.03);
     color: var(--t2-heading);
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    font-size: 11px;
-    line-height: 1;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.04em;
+    box-sizing: border-box;
+}
+
+.kc-tpl-2 .t2-socialIcon {
+    width: 30px;
+    height: 30px;
+    display: block;
+    object-fit: contain;
 }
 
 /* ---------- RESPONSIVE ---------- */
@@ -479,7 +540,7 @@
 @media (min-width: 560px) {
     .kc-tpl-2 {
         --t2-page-pad: 28px;
-        --t2-section-gap: 40px;
+        --t2-section-gap: 48px;
     }
 
     .kc-tpl-2 .t2-hero-copy {
@@ -490,11 +551,6 @@
         grid-template-columns: 1fr 1fr;
     }
 
-    .kc-tpl-2 .t2-btn {
-        min-height: 58px;
-        font-size: 17px;
-    }
-
     .kc-tpl-2 .t2-infoCard {
         min-height: 188px;
         padding: 30px 26px;
@@ -502,11 +558,6 @@
 
     .kc-tpl-2 .t2-infoCard--review {
         min-height: 212px;
-    }
-
-    .kc-tpl-2 .t2-contactCard,
-    .kc-tpl-2 .t2-socialsCard {
-        padding: 18px 20px;
     }
 }
 
@@ -547,12 +598,17 @@
     .kc-tpl-2 .t2-infoCard--review {
         min-height: 236px;
     }
+
+    .kc-tpl-2 .t2-btn {
+        font-size: 12px;
+        line-height: 18px;
+    }
 }
 
 @media (min-width: 980px) {
     .kc-tpl-2 {
         --t2-page-pad: 38px;
-        --t2-section-gap: 56px;
+        --t2-section-gap: 48px;
     }
 
     .kc-tpl-2 .t2-hero-media {
@@ -571,7 +627,7 @@
 .kc-tpl-2 .t2-contactCard:focus-visible,
 .kc-tpl-2 .t2-social:focus-visible,
 .kc-tpl-2 .t2-dot:focus-visible {
-    outline: 2px solid rgba(16, 24, 181, 0.35);
+    outline: 2px solid rgba(0, 4, 131, 0.32);
     outline-offset: 2px;
 }
 

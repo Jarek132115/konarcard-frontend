@@ -1,6 +1,16 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import "../../styling/dashboard/templates/template2.css";
 
+import SaveMyNumberIcon from "../../assets/icons/SaveMyNumberIcon.svg";
+import ExchangeContactIcon from "../../assets/icons/ExchangeContactIcon.svg";
+import Template2IconEmail from "../../assets/icons/Template2Icon-Email.svg";
+import Template2IconFacebook from "../../assets/icons/Template2Icon-Facebook.svg";
+import Template2IconInstagram from "../../assets/icons/Template2Icon-Instagram.svg";
+import Template2IconLinkedin from "../../assets/icons/Template2Icon-Linkedin.svg";
+import Template2IconPhone from "../../assets/icons/Template2Icon-Phone.svg";
+import Template2IconTikTok from "../../assets/icons/Template2Icon-TikTok.svg";
+import Template2IconX from "../../assets/icons/Template2Icon-X.svg";
+
 const nonEmpty = (v) => typeof v === "string" && v.trim().length > 0;
 const asArray = (v) => (Array.isArray(v) ? v : []);
 
@@ -19,6 +29,18 @@ function Stars({ rating = 0 }) {
     );
 }
 
+function getSocialIcon(key) {
+    const map = {
+        facebook_url: Template2IconFacebook,
+        instagram_url: Template2IconInstagram,
+        linkedin_url: Template2IconLinkedin,
+        x_url: Template2IconX,
+        twitter_url: Template2IconX,
+        tiktok_url: Template2IconTikTok,
+    };
+    return map[key] || Template2IconX;
+}
+
 function SliderSection({
     title,
     items,
@@ -27,6 +49,15 @@ function SliderSection({
 }) {
     const trackRef = useRef(null);
     const [activeIndex, setActiveIndex] = useState(0);
+
+    const dragStateRef = useRef({
+        isDown: false,
+        startX: 0,
+        startY: 0,
+        startScrollLeft: 0,
+        draggingX: false,
+        pointerId: null,
+    });
 
     const scrollToIndex = (index) => {
         const track = trackRef.current;
@@ -43,7 +74,7 @@ function SliderSection({
         setActiveIndex(index);
     };
 
-    const handleScroll = () => {
+    const updateActiveIndex = () => {
         const track = trackRef.current;
         if (!track) return;
 
@@ -57,9 +88,9 @@ function SliderSection({
 
         slides.forEach((slide, i) => {
             const slideCenter = slide.offsetLeft + slide.clientWidth / 2;
-            const dist = Math.abs(center - slideCenter);
-            if (dist < bestDistance) {
-                bestDistance = dist;
+            const distance = Math.abs(center - slideCenter);
+            if (distance < bestDistance) {
+                bestDistance = distance;
                 bestIndex = i;
             }
         });
@@ -68,9 +99,86 @@ function SliderSection({
     };
 
     useEffect(() => {
-        handleScroll();
-        // eslint-disable-next-line react-hooks/exhaustive-deps
+        updateActiveIndex();
     }, [items.length]);
+
+    const handlePointerDown = (e) => {
+        const track = trackRef.current;
+        if (!track) return;
+
+        dragStateRef.current = {
+            isDown: true,
+            startX: e.clientX,
+            startY: e.clientY,
+            startScrollLeft: track.scrollLeft,
+            draggingX: false,
+            pointerId: e.pointerId,
+        };
+
+        try {
+            track.setPointerCapture(e.pointerId);
+        } catch { }
+    };
+
+    const handlePointerMove = (e) => {
+        const track = trackRef.current;
+        const state = dragStateRef.current;
+        if (!track || !state.isDown) return;
+
+        const dx = e.clientX - state.startX;
+        const dy = e.clientY - state.startY;
+
+        if (!state.draggingX) {
+            if (Math.abs(dx) < 8 && Math.abs(dy) < 8) return;
+
+            if (Math.abs(dx) > Math.abs(dy)) {
+                state.draggingX = true;
+                track.classList.add("is-dragging");
+            } else {
+                state.isDown = false;
+                track.classList.remove("is-dragging");
+                try {
+                    track.releasePointerCapture(state.pointerId);
+                } catch { }
+                return;
+            }
+        }
+
+        if (state.draggingX) {
+            e.preventDefault();
+            track.scrollLeft = state.startScrollLeft - dx;
+        }
+    };
+
+    const handlePointerUp = (e) => {
+        const track = trackRef.current;
+        const state = dragStateRef.current;
+        if (!track) return;
+
+        if (state.draggingX) {
+            e.preventDefault();
+        }
+
+        dragStateRef.current.isDown = false;
+        dragStateRef.current.draggingX = false;
+        track.classList.remove("is-dragging");
+
+        try {
+            track.releasePointerCapture(e.pointerId);
+        } catch { }
+
+        updateActiveIndex();
+    };
+
+    const handlePointerLeave = () => {
+        const track = trackRef.current;
+        if (!track) return;
+
+        dragStateRef.current.isDown = false;
+        dragStateRef.current.draggingX = false;
+        track.classList.remove("is-dragging");
+        updateActiveIndex();
+    };
 
     if (!items.length) return null;
 
@@ -83,7 +191,12 @@ function SliderSection({
             <div
                 ref={trackRef}
                 className={`t2-sliderTrack ${trackClassName}`.trim()}
-                onScroll={handleScroll}
+                onScroll={updateActiveIndex}
+                onPointerDown={handlePointerDown}
+                onPointerMove={handlePointerMove}
+                onPointerUp={handlePointerUp}
+                onPointerCancel={handlePointerUp}
+                onPointerLeave={handlePointerLeave}
                 role="region"
                 aria-label={title}
             >
@@ -140,6 +253,7 @@ export default function Template2({ vm }) {
                 key,
                 url,
                 label: key.replace("_url", "").replace(/_/g, " "),
+                icon: getSocialIcon(key),
             }));
     }, [v.socials]);
 
@@ -174,10 +288,12 @@ export default function Template2({ vm }) {
                             {hasHeroCtas ? (
                                 <div className="t2-ctaRow">
                                     <button type="button" className="t2-btn t2-btn-primary" onClick={v.onSaveMyNumber}>
-                                        Save My Number
+                                        <img src={SaveMyNumberIcon} alt="" className="t2-btnIcon" />
+                                        <span>Save My Number</span>
                                     </button>
                                     <button type="button" className="t2-btn t2-btn-secondary" onClick={v.onOpenExchangeContact}>
-                                        Exchange Contact
+                                        <img src={ExchangeContactIcon} alt="" className="t2-btnIcon" />
+                                        <span>Exchange Contact</span>
                                     </button>
                                 </div>
                             ) : null}
@@ -265,15 +381,25 @@ export default function Template2({ vm }) {
                         <div className="t2-contactStack">
                             {nonEmpty(v.email) ? (
                                 <a className="t2-contactCard" href={`mailto:${v.email}`}>
-                                    <span className="t2-contactLabel">Email</span>
-                                    <span className="t2-contactValue">{v.email}</span>
+                                    <div className="t2-contactCardInner">
+                                        <img src={Template2IconEmail} alt="" className="t2-contactIcon" />
+                                        <div className="t2-contactText">
+                                            <span className="t2-contactLabel">Email</span>
+                                            <span className="t2-contactValue">{v.email}</span>
+                                        </div>
+                                    </div>
                                 </a>
                             ) : null}
 
                             {nonEmpty(v.phone) ? (
                                 <a className="t2-contactCard" href={`tel:${v.phone}`}>
-                                    <span className="t2-contactLabel">Phone Number</span>
-                                    <span className="t2-contactValue">{v.phone}</span>
+                                    <div className="t2-contactCardInner">
+                                        <img src={Template2IconPhone} alt="" className="t2-contactIcon" />
+                                        <div className="t2-contactText">
+                                            <span className="t2-contactLabel">Phone Number</span>
+                                            <span className="t2-contactValue">{v.phone}</span>
+                                        </div>
+                                    </div>
                                 </a>
                             ) : null}
 
@@ -281,8 +407,8 @@ export default function Template2({ vm }) {
                                 <div className="t2-socialsCard">
                                     <div className="t2-socials">
                                         {socials.map((s) => (
-                                            <a key={s.key} className="t2-social" href={s.url} target="_blank" rel="noreferrer">
-                                                {s.label}
+                                            <a key={s.key} className="t2-social" href={s.url} target="_blank" rel="noreferrer" aria-label={s.label}>
+                                                <img src={s.icon} alt="" className="t2-socialIcon" />
                                             </a>
                                         ))}
                                     </div>
