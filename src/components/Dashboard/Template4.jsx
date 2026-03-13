@@ -9,7 +9,6 @@ const asArray = (v) => (Array.isArray(v) ? v : []);
 
 function Stars({ rating = 0 }) {
     const r = Math.max(0, Math.min(5, Number(rating) || 0));
-
     return (
         <div className="t4-stars" aria-label={`Rating ${r} out of 5`}>
             {Array(5)
@@ -122,28 +121,22 @@ function getSocialMeta(key) {
     return map[key] || { label: key.replace("_url", ""), icon: null };
 }
 
-function buildWorkRows(items) {
+function buildShowcaseRows(items) {
     const rows = [];
     let i = 0;
-    let pattern = 0;
+    let phase = 0;
 
     while (i < items.length) {
-        if (pattern % 3 === 0) {
-            const single = items.slice(i, i + 1);
-            rows.push({
-                type: "feature",
-                items: single,
-            });
-            i += 1;
+        if (phase % 3 === 0) {
+            const first = items.slice(i, i + 1);
+            rows.push({ type: "feature", items: first });
+            i += first.length;
         } else {
-            const double = items.slice(i, i + 2);
-            rows.push({
-                type: double.length === 1 ? "feature" : "double",
-                items: double,
-            });
-            i += double.length;
+            const pair = items.slice(i, i + 2);
+            rows.push({ type: pair.length === 1 ? "feature" : "pair", items: pair });
+            i += pair.length;
         }
-        pattern += 1;
+        phase += 1;
     }
 
     return rows;
@@ -162,7 +155,7 @@ export default function Template4({ vm }) {
             .filter(Boolean);
     }, [v.works]);
 
-    const workRows = useMemo(() => buildWorkRows(works.slice(0, 12)), [works]);
+    const showcaseRows = useMemo(() => buildShowcaseRows(works.slice(0, 12)), [works]);
 
     const services = useMemo(() => {
         return asArray(v.services).filter((s) => s?.name || s?.description || s?.price);
@@ -183,53 +176,55 @@ export default function Template4({ vm }) {
     const jobTitle = v.jobTitle || "";
     const bio = v.bio || "";
 
-    const hasAbout = nonEmpty(bio) || nonEmpty(fullName) || nonEmpty(jobTitle) || nonEmpty(avatar);
-    const hasContact = nonEmpty(v.email) || nonEmpty(v.phone) || v.hasExchangeContact || socials.length > 0;
     const showSaveButton = !!(nonEmpty(v.email) || nonEmpty(v.phone));
     const showExchangeButton = !!v.hasExchangeContact;
+
+    const hasAbout = nonEmpty(bio) || nonEmpty(fullName) || nonEmpty(jobTitle) || nonEmpty(avatar);
+    const hasContact = nonEmpty(v.email) || nonEmpty(v.phone) || v.hasExchangeContact || socials.length > 0;
 
     return (
         <div className={`kc-tpl kc-tpl-4 ${themeMode === "dark" ? "t4-theme-dark" : "t4-theme-light"}`}>
             <div className="t4-shell">
                 {v.showMainSection && (
                     <section className="t4-hero">
-                        <div className="t4-heroPanel">
-                            <div className="t4-heroMedia">
-                                {nonEmpty(cover) ? (
-                                    <img className="t4-coverImg" src={cover} alt="Cover" />
-                                ) : (
-                                    <div className="t4-coverPlaceholder" aria-hidden="true" />
-                                )}
-                            </div>
+                        <div className="t4-heroMediaPanel">
+                            {nonEmpty(cover) ? (
+                                <img className="t4-coverImg" src={cover} alt="Cover" />
+                            ) : (
+                                <div className="t4-coverPlaceholder" aria-hidden="true" />
+                            )}
+                        </div>
 
-                            <div className="t4-heroBody">
-                                <div className="t4-heroTop">
-                                    <div className="t4-heroIdentity">
-                                        <div className="t4-avatarWrap">
-                                            {nonEmpty(avatar) ? (
-                                                <img className="t4-avatar" src={avatar} alt="" />
-                                            ) : (
-                                                <div className="t4-avatar t4-avatar--ph" aria-hidden="true" />
-                                            )}
-                                        </div>
-
-                                        <div className="t4-heroCopy">
-                                            <h1 className="t4-h1">{businessName}</h1>
-                                            {nonEmpty(tradeTitle) ? <p className="t4-sub">{tradeTitle}</p> : null}
-                                            {nonEmpty(location) ? <p className="t4-location">{location}</p> : null}
-                                        </div>
+                        <div className="t4-introGrid">
+                            <div className="t4-introPrimary">
+                                <div className="t4-introIdentity">
+                                    <div className="t4-avatarWrap">
+                                        {nonEmpty(avatar) ? (
+                                            <img className="t4-avatar" src={avatar} alt="" />
+                                        ) : (
+                                            <div className="t4-avatar t4-avatar--ph" aria-hidden="true" />
+                                        )}
                                     </div>
 
-                                    {(nonEmpty(fullName) || nonEmpty(jobTitle)) ? (
-                                        <div className="t4-meta">
-                                            {nonEmpty(fullName) ? <span className="t4-pill">{fullName}</span> : null}
-                                            {nonEmpty(jobTitle) ? <span className="t4-pill t4-pill--soft">{jobTitle}</span> : null}
-                                        </div>
-                                    ) : null}
+                                    <div className="t4-introCopy">
+                                        <h1 className="t4-h1">{businessName}</h1>
+                                        {nonEmpty(tradeTitle) ? <p className="t4-sub">{tradeTitle}</p> : null}
+                                        {nonEmpty(location) ? <p className="t4-location">{location}</p> : null}
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div className="t4-introSide">
+                                <div className="t4-detailPanel">
+                                    <div className="t4-detailLabel">Profile</div>
+                                    <div className="t4-detailStack">
+                                        {nonEmpty(fullName) ? <div className="t4-detailMain">{fullName}</div> : null}
+                                        {nonEmpty(jobTitle) ? <div className="t4-detailSub">{jobTitle}</div> : null}
+                                    </div>
                                 </div>
 
                                 {(showSaveButton || showExchangeButton) ? (
-                                    <div className={`t4-cta ${showSaveButton && showExchangeButton ? "is-two" : "is-one"}`}>
+                                    <div className={`t4-ctaPanel ${showSaveButton && showExchangeButton ? "is-two" : "is-one"}`}>
                                         {showSaveButton ? (
                                             <button type="button" className="t4-btn t4-btn-primary" onClick={v.onSaveMyNumber}>
                                                 <span className="t4-btnIcon">
@@ -254,47 +249,122 @@ export default function Template4({ vm }) {
                     </section>
                 )}
 
-                {v.showAboutMeSection && hasAbout ? (
+                {(v.showAboutMeSection && hasAbout) || (v.showContactSection && hasContact) ? (
                     <section className="t4-section">
-                        <SectionHead kicker="Profile" title="About Me" />
+                        <SectionHead kicker="Profile System" title="Overview" />
 
-                        <div className="t4-aboutCard">
-                            <div className="t4-aboutTop">
-                                <div className="t4-aboutAvatarWrap">
-                                    {nonEmpty(avatar) ? (
-                                        <img className="t4-aboutAvatar" src={avatar} alt="" />
-                                    ) : (
-                                        <div className="t4-aboutAvatar t4-aboutAvatar--ph" aria-hidden="true" />
-                                    )}
+                        <div className="t4-overviewGrid">
+                            {v.showAboutMeSection && hasAbout ? (
+                                <div className="t4-overviewPanel t4-overviewPanel--about">
+                                    <div className="t4-panelTop">
+                                        <div className="t4-panelEyebrow">About</div>
+                                        <div className="t4-panelTitle">About Me</div>
+                                    </div>
+
+                                    <div className="t4-aboutBlock">
+                                        <div className="t4-aboutMetaRow">
+                                            <div className="t4-aboutAvatarWrap">
+                                                {nonEmpty(avatar) ? (
+                                                    <img className="t4-aboutAvatar" src={avatar} alt="" />
+                                                ) : (
+                                                    <div className="t4-aboutAvatar t4-aboutAvatar--ph" aria-hidden="true" />
+                                                )}
+                                            </div>
+
+                                            <div className="t4-aboutMeta">
+                                                {nonEmpty(fullName) ? <div className="t4-aboutName">{fullName}</div> : null}
+                                                {nonEmpty(jobTitle) ? <div className="t4-aboutRole">{jobTitle}</div> : null}
+                                            </div>
+                                        </div>
+
+                                        {nonEmpty(bio) ? <p className="t4-bio">{bio}</p> : null}
+                                    </div>
                                 </div>
+                            ) : null}
 
-                                <div className="t4-aboutMeta">
-                                    {nonEmpty(fullName) ? <div className="t4-aboutName">{fullName}</div> : null}
-                                    {nonEmpty(jobTitle) ? <div className="t4-aboutRole">{jobTitle}</div> : null}
+                            {v.showContactSection && hasContact ? (
+                                <div className="t4-overviewPanel t4-overviewPanel--contact">
+                                    <div className="t4-panelTop">
+                                        <div className="t4-panelEyebrow">Contact</div>
+                                        <div className="t4-panelTitle">Quick Contact</div>
+                                    </div>
+
+                                    <div className="t4-contactStack">
+                                        {nonEmpty(v.email) ? (
+                                            <a className="t4-quickContact" href={`mailto:${v.email}`}>
+                                                <span className="t4-contactIcon"><EmailIcon /></span>
+                                                <span className="t4-contactText">
+                                                    <span className="t4-contactLabel">Email</span>
+                                                    <span className="t4-contactValue">{v.email}</span>
+                                                </span>
+                                            </a>
+                                        ) : null}
+
+                                        {nonEmpty(v.phone) ? (
+                                            <a className="t4-quickContact" href={`tel:${v.phone}`}>
+                                                <span className="t4-contactIcon"><PhoneIcon /></span>
+                                                <span className="t4-contactText">
+                                                    <span className="t4-contactLabel">Phone</span>
+                                                    <span className="t4-contactValue">{v.phone}</span>
+                                                </span>
+                                            </a>
+                                        ) : null}
+
+                                        {v.hasExchangeContact ? (
+                                            <button type="button" className="t4-quickContact t4-quickContact--button" onClick={v.onOpenExchangeContact}>
+                                                <span className="t4-contactIcon">
+                                                    <img src={ExchangeContactIcon} alt="" className="t4-contactIconAsset" />
+                                                </span>
+                                                <span className="t4-contactText">
+                                                    <span className="t4-contactLabel">Exchange Contact</span>
+                                                    <span className="t4-contactValue">Share contact details with each other</span>
+                                                </span>
+                                            </button>
+                                        ) : null}
+
+                                        {socials.length > 0 ? (
+                                            <div className="t4-socials">
+                                                {socials.map(([key, url]) => {
+                                                    const meta = getSocialMeta(key);
+                                                    return (
+                                                        <a
+                                                            key={key}
+                                                            className="t4-social"
+                                                            href={url}
+                                                            target="_blank"
+                                                            rel="noreferrer"
+                                                            aria-label={meta.label}
+                                                            title={meta.label}
+                                                        >
+                                                            {meta.icon}
+                                                        </a>
+                                                    );
+                                                })}
+                                            </div>
+                                        ) : null}
+                                    </div>
                                 </div>
-                            </div>
-
-                            {nonEmpty(bio) ? <p className="t4-bio">{bio}</p> : null}
+                            ) : null}
                         </div>
                     </section>
                 ) : null}
 
                 {v.showWorkSection && works.length > 0 ? (
                     <section className="t4-section">
-                        <SectionHead kicker="Portfolio" title="Recent Work" />
+                        <SectionHead kicker="Portfolio" title="Project Showcase" />
 
-                        <div className="t4-workRows">
-                            {workRows.map((row, rowIndex) => (
+                        <div className="t4-showcaseWrap">
+                            {showcaseRows.map((row, rowIndex) => (
                                 <div
                                     key={rowIndex}
-                                    className={`t4-workRow ${row.type === "double" ? "t4-workRow--double" : "t4-workRow--feature"}`}
+                                    className={`t4-showcaseRow ${row.type === "pair" ? "t4-showcaseRow--pair" : "t4-showcaseRow--feature"}`}
                                 >
                                     {row.items.map((url, itemIndex) => (
                                         <div
                                             key={`${rowIndex}-${itemIndex}`}
-                                            className={`t4-workTile ${row.items.length === 1 ? "is-full" : ""}`}
+                                            className={`t4-showcaseTile ${row.items.length === 1 ? "is-feature" : ""}`}
                                         >
-                                            <img src={url} alt={`Work ${rowIndex + itemIndex + 1}`} className="t4-workImg" />
+                                            <img src={url} alt={`Work ${rowIndex + itemIndex + 1}`} className="t4-showcaseImg" />
                                         </div>
                                     ))}
                                 </div>
@@ -305,21 +375,21 @@ export default function Template4({ vm }) {
 
                 {v.showServicesSection && services.length > 0 ? (
                     <section className="t4-section">
-                        <SectionHead kicker="Services" title="What I Offer" />
+                        <SectionHead kicker="Services" title="Service Specification" />
 
-                        <div className="t4-servicesGrid">
+                        <div className="t4-specList">
                             {services.slice(0, 12).map((s, i) => (
-                                <article key={i} className="t4-serviceCard">
-                                    <div className="t4-serviceTop">
-                                        <div className="t4-serviceIndex">{String(i + 1).padStart(2, "0")}</div>
-                                        {nonEmpty(s?.price) ? <div className="t4-servicePrice">{s.price}</div> : null}
+                                <article key={i} className="t4-specRow">
+                                    <div className="t4-specIndex">{String(i + 1).padStart(2, "0")}</div>
+
+                                    <div className="t4-specMain">
+                                        <h3 className="t4-specName">{s?.name || "Service"}</h3>
+                                        {nonEmpty(s?.description || s?.price) ? (
+                                            <p className="t4-specBody">{s.description || s.price}</p>
+                                        ) : null}
                                     </div>
 
-                                    <h3 className="t4-serviceName">{s?.name || "Service"}</h3>
-
-                                    {nonEmpty(s?.description) ? (
-                                        <p className="t4-serviceBody">{s.description}</p>
-                                    ) : null}
+                                    {nonEmpty(s?.price) ? <div className="t4-specPrice">{s.price}</div> : <div className="t4-specArrow">↗</div>}
                                 </article>
                             ))}
                         </div>
@@ -330,15 +400,15 @@ export default function Template4({ vm }) {
                     <section className="t4-section">
                         <SectionHead kicker="Trust" title="Client Reviews" />
 
-                        <div className="t4-reviewsGrid">
+                        <div className="t4-quotesGrid">
                             {reviews.slice(0, 10).map((r, i) => (
-                                <article key={i} className="t4-reviewCard">
-                                    <div className="t4-reviewTop">
+                                <article key={i} className="t4-quoteCard">
+                                    <div className="t4-quoteMark">“</div>
+                                    <div className="t4-quoteTop">
                                         <Stars rating={r?.rating} />
                                     </div>
-
-                                    {nonEmpty(r?.text) ? <p className="t4-reviewText">“{r.text}”</p> : null}
-                                    {nonEmpty(r?.name) ? <div className="t4-reviewName">{r.name}</div> : null}
+                                    {nonEmpty(r?.text) ? <p className="t4-quoteText">{r.text}</p> : null}
+                                    {nonEmpty(r?.name) ? <div className="t4-quoteName">{r.name}</div> : null}
                                 </article>
                             ))}
                         </div>
@@ -347,64 +417,39 @@ export default function Template4({ vm }) {
 
                 {v.showContactSection && hasContact ? (
                     <section className="t4-section t4-section-last">
-                        <SectionHead kicker="Contact" title="Get In Touch" />
+                        <SectionHead kicker="Reach Out" title="Full Contact" />
 
-                        <div className="t4-contactWrap">
-                            {(nonEmpty(v.email) || nonEmpty(v.phone) || v.hasExchangeContact) ? (
-                                <div className="t4-contactGrid">
-                                    {nonEmpty(v.email) ? (
-                                        <a className="t4-contactCard" href={`mailto:${v.email}`}>
-                                            <span className="t4-contactIcon"><EmailIcon /></span>
-                                            <span className="t4-contactText">
-                                                <span className="t4-contactLabel">Email</span>
-                                                <span className="t4-contactValue">{v.email}</span>
-                                            </span>
-                                        </a>
-                                    ) : null}
-
-                                    {nonEmpty(v.phone) ? (
-                                        <a className="t4-contactCard" href={`tel:${v.phone}`}>
-                                            <span className="t4-contactIcon"><PhoneIcon /></span>
-                                            <span className="t4-contactText">
-                                                <span className="t4-contactLabel">Phone</span>
-                                                <span className="t4-contactValue">{v.phone}</span>
-                                            </span>
-                                        </a>
-                                    ) : null}
-
-                                    {v.hasExchangeContact ? (
-                                        <button type="button" className="t4-contactCard t4-contactCard--button" onClick={v.onOpenExchangeContact}>
-                                            <span className="t4-contactIcon">
-                                                <img src={ExchangeContactIcon} alt="" className="t4-contactIconAsset" />
-                                            </span>
-                                            <span className="t4-contactText">
-                                                <span className="t4-contactLabel">Exchange Contact</span>
-                                                <span className="t4-contactValue">Share contact details with each other</span>
-                                            </span>
-                                        </button>
-                                    ) : null}
-                                </div>
+                        <div className="t4-fullContactGrid">
+                            {nonEmpty(v.email) ? (
+                                <a className="t4-contactPanel" href={`mailto:${v.email}`}>
+                                    <span className="t4-contactPanelIcon"><EmailIcon /></span>
+                                    <span className="t4-contactPanelCopy">
+                                        <span className="t4-contactPanelLabel">Email</span>
+                                        <span className="t4-contactPanelValue">{v.email}</span>
+                                    </span>
+                                </a>
                             ) : null}
 
-                            {socials.length > 0 ? (
-                                <div className="t4-socials">
-                                    {socials.map(([key, url]) => {
-                                        const meta = getSocialMeta(key);
-                                        return (
-                                            <a
-                                                key={key}
-                                                className="t4-social"
-                                                href={url}
-                                                target="_blank"
-                                                rel="noreferrer"
-                                                aria-label={meta.label}
-                                                title={meta.label}
-                                            >
-                                                {meta.icon}
-                                            </a>
-                                        );
-                                    })}
-                                </div>
+                            {nonEmpty(v.phone) ? (
+                                <a className="t4-contactPanel" href={`tel:${v.phone}`}>
+                                    <span className="t4-contactPanelIcon"><PhoneIcon /></span>
+                                    <span className="t4-contactPanelCopy">
+                                        <span className="t4-contactPanelLabel">Phone</span>
+                                        <span className="t4-contactPanelValue">{v.phone}</span>
+                                    </span>
+                                </a>
+                            ) : null}
+
+                            {v.hasExchangeContact ? (
+                                <button type="button" className="t4-contactPanel t4-contactPanel--button" onClick={v.onOpenExchangeContact}>
+                                    <span className="t4-contactPanelIcon">
+                                        <img src={ExchangeContactIcon} alt="" className="t4-contactIconAsset" />
+                                    </span>
+                                    <span className="t4-contactPanelCopy">
+                                        <span className="t4-contactPanelLabel">Exchange Contact</span>
+                                        <span className="t4-contactPanelValue">Share contact details with each other</span>
+                                    </span>
+                                </button>
                             ) : null}
                         </div>
                     </section>
