@@ -1,6 +1,9 @@
 import React, { useMemo } from "react";
 import "../../styling/dashboard/templates/template3.css";
 
+import SaveMyNumberIcon from "../../assets/icons/SaveMyNumberIcon.svg";
+import ExchangeContactIcon from "../../assets/icons/ExchangeContactIcon.svg";
+
 const nonEmpty = (v) => typeof v === "string" && v.trim().length > 0;
 const asArray = (v) => (Array.isArray(v) ? v : []);
 
@@ -17,28 +20,6 @@ function Stars({ rating = 0 }) {
                     </span>
                 ))}
         </div>
-    );
-}
-
-function SaveIcon() {
-    return (
-        <svg viewBox="0 0 24 24" className="t3-btnIconSvg" aria-hidden="true">
-            <path
-                fill="currentColor"
-                d="M17 3H7a2 2 0 0 0-2 2v14l7-3 7 3V5a2 2 0 0 0-2-2Zm0 12.8-5-2.1-5 2.1V5h10v10.8Z"
-            />
-        </svg>
-    );
-}
-
-function ExchangeIcon() {
-    return (
-        <svg viewBox="0 0 24 24" className="t3-btnIconSvg" aria-hidden="true">
-            <path
-                fill="currentColor"
-                d="M7 7h8.2L13 4.8 14.4 3 20 8.6 14.4 14 13 12.2 15.2 10H7V7Zm10 10H8.8l2.2 2.2L9.6 21 4 15.4 9.6 10l1.4 1.8L8.8 14H17v3Z"
-            />
-        </svg>
     );
 }
 
@@ -216,12 +197,16 @@ export default function Template3({ vm }) {
                                 {hasHeroCtas ? (
                                     <div className="t3-cta">
                                         <button type="button" className="t3-btn t3-btn-primary" onClick={v.onSaveMyNumber}>
-                                            <span className="t3-btnIcon"><SaveIcon /></span>
+                                            <span className="t3-btnIcon">
+                                                <img src={SaveMyNumberIcon} alt="" className="t3-btnIconAsset" />
+                                            </span>
                                             <span>Save My Number</span>
                                         </button>
 
                                         <button type="button" className="t3-btn t3-btn-secondary" onClick={v.onOpenExchangeContact}>
-                                            <span className="t3-btnIcon"><ExchangeIcon /></span>
+                                            <span className="t3-btnIcon">
+                                                <img src={ExchangeContactIcon} alt="" className="t3-btnIconAsset" />
+                                            </span>
                                             <span>Exchange Contact</span>
                                         </button>
                                     </div>
@@ -360,7 +345,9 @@ export default function Template3({ vm }) {
 
                                     {v.hasExchangeContact ? (
                                         <button type="button" className="t3-contactCard t3-contactCard--button" onClick={v.onOpenExchangeContact}>
-                                            <span className="t3-contactIcon"><ExchangeIcon /></span>
+                                            <span className="t3-contactIcon">
+                                                <img src={ExchangeContactIcon} alt="" className="t3-contactIconAsset" />
+                                            </span>
                                             <span className="t3-contactText">
                                                 <span className="t3-contactLabel">Exchange Contact</span>
                                                 <span className="t3-contactValue">Share contact details with each other</span>
