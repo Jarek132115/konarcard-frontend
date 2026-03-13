@@ -198,16 +198,16 @@ export default function Template3({ vm }) {
                                     <div className="t3-cta">
                                         <button type="button" className="t3-btn t3-btn-primary" onClick={v.onSaveMyNumber}>
                                             <span className="t3-btnIcon">
-                                                <img src={SaveMyNumberIcon} alt="" className="t3-btnIconAsset" />
+                                                <img src={SaveMyNumberIcon} alt="" className="t3-btnIconAsset t3-btnIconAsset--primary" />
                                             </span>
-                                            <span>Save My Number</span>
+                                            <span className="t3-btnLabel t3-btnLabel--primary">Save My Number</span>
                                         </button>
 
-                                        <button type="button" className="t3-btn t3-btn-secondary" onClick={v.onOpenExchangeContact}>
+                                        <button type="button" className="t3-btn t3-btn-secondary t3-btn-exchange" onClick={v.onOpenExchangeContact}>
                                             <span className="t3-btnIcon">
-                                                <img src={ExchangeContactIcon} alt="" className="t3-btnIconAsset" />
+                                                <img src={ExchangeContactIcon} alt="" className="t3-btnIconAsset t3-btnIconAsset--exchange" />
                                             </span>
-                                            <span>Exchange Contact</span>
+                                            <span className="t3-btnLabel t3-btnLabel--exchange">Exchange Contact</span>
                                         </button>
                                     </div>
                                 ) : null}

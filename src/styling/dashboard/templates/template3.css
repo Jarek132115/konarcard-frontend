@@ -61,9 +61,7 @@
     padding: var(--t3-page-pad);
 }
 
-/* =========================
-   HERO
-========================= */
+/* HERO */
 
 .kc-tpl-3 .t3-hero {
     margin-bottom: var(--t3-section-gap);
@@ -170,7 +168,7 @@
     line-height: 1.2;
     font-weight: 600;
     cursor: pointer;
-    transition: transform 0.08s ease, box-shadow 0.18s ease, opacity 0.18s ease, background 0.18s ease, border-color 0.18s ease;
+    transition: transform 0.08s ease, box-shadow 0.18s ease, opacity 0.18s ease, background 0.18s ease, border-color 0.18s ease, color 0.18s ease;
     -webkit-tap-highlight-color: transparent;
 }
 
@@ -193,15 +191,34 @@
     background: var(--t3-accent-strong);
 }
 
-.kc-tpl-3.t3-theme-dark .t3-btn-primary {
-    background: var(--t3-accent);
-    color: #0f1115;
+.kc-tpl-3 .t3-btn-primary,
+.kc-tpl-3 .t3-btn-primary .t3-btnLabel--primary,
+.kc-tpl-3 .t3-btn-primary .t3-btnIconAsset--primary {
+    color: #ffffff;
 }
 
 .kc-tpl-3 .t3-btn-secondary {
     background: var(--t3-surface-soft);
     color: var(--t3-text);
     border-color: var(--t3-border);
+}
+
+.kc-tpl-3 .t3-btn-exchange {
+    background: #1a1f2b;
+    border-color: rgba(255, 255, 255, 0.08);
+    color: #ffffff;
+}
+
+.kc-tpl-3.t3-theme-light .t3-btn-exchange {
+    background: #111827;
+    border-color: #111827;
+    color: #ffffff;
+}
+
+.kc-tpl-3 .t3-btn-exchange,
+.kc-tpl-3 .t3-btn-exchange .t3-btnLabel--exchange,
+.kc-tpl-3 .t3-btn-exchange .t3-btnIconAsset--exchange {
+    color: #ffffff;
 }
 
 .kc-tpl-3 .t3-btnIcon {
@@ -218,11 +235,14 @@
     height: 18px;
     display: block;
     object-fit: contain;
+    filter: brightness(0) invert(1);
 }
 
-/* =========================
-   SECTIONS
-========================= */
+.kc-tpl-3 .t3-btnLabel {
+    display: inline-block;
+}
+
+/* SECTIONS */
 
 .kc-tpl-3 .t3-section {
     margin-top: var(--t3-section-gap);
@@ -256,9 +276,7 @@
     color: var(--t3-text);
 }
 
-/* =========================
-   ABOUT
-========================= */
+/* ABOUT */
 
 .kc-tpl-3 .t3-aboutCard {
     display: grid;
@@ -333,9 +351,7 @@
     word-break: break-word;
 }
 
-/* =========================
-   WORK
-========================= */
+/* WORK */
 
 .kc-tpl-3 .t3-workRows {
     display: grid;
@@ -375,9 +391,7 @@
     display: block;
 }
 
-/* =========================
-   SERVICES
-========================= */
+/* SERVICES */
 
 .kc-tpl-3 .t3-servicesGrid {
     display: grid;
@@ -434,9 +448,7 @@
     word-break: break-word;
 }
 
-/* =========================
-   REVIEWS
-========================= */
+/* REVIEWS */
 
 .kc-tpl-3 .t3-reviewsGrid {
     display: grid;
@@ -490,9 +502,7 @@
     word-break: break-word;
 }
 
-/* =========================
-   CONTACT
-========================= */
+/* CONTACT */
 
 .kc-tpl-3 .t3-contactWrap {
     display: grid;
@@ -593,9 +603,7 @@
     color: currentColor;
 }
 
-/* =========================
-   RESPONSIVE
-========================= */
+/* RESPONSIVE */
 
 @media (max-width: 560px) {
     .kc-tpl-3 {
@@ -664,9 +672,7 @@
     }
 }
 
-/* =========================
-   FOCUS
-========================= */
+/* FOCUS */
 
 .kc-tpl-3 .t3-btn:focus-visible,
 .kc-tpl-3 .t3-contactCard:focus-visible,
