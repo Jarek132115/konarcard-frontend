@@ -16,6 +16,7 @@
     --t4-surface: #ffffff;
     --t4-surface-soft: #faf8f7;
     --t4-border: rgba(17, 24, 39, 0.08);
+    --t4-divider: rgba(17, 24, 39, 0.08);
     --t4-text: #111827;
     --t4-text-soft: rgba(17, 24, 39, 0.7);
     --t4-text-faint: rgba(17, 24, 39, 0.48);
@@ -46,6 +47,7 @@
     --t4-surface: #17191d;
     --t4-surface-soft: #1d2025;
     --t4-border: rgba(255, 255, 255, 0.08);
+    --t4-divider: rgba(255, 255, 255, 0.08);
     --t4-text: #f5f7fb;
     --t4-text-soft: rgba(245, 247, 251, 0.72);
     --t4-text-faint: rgba(245, 247, 251, 0.48);
@@ -102,40 +104,25 @@
         linear-gradient(135deg, #2a1d1d 0%, #211818 100%);
 }
 
+/* remove main section bg/border/shadow */
 .kc-tpl-4 .t4-heroCard {
     margin-top: 14px;
-    padding: 24px 20px 22px;
-    background: var(--t4-surface);
-    border: 1px solid var(--t4-border);
-    border-radius: var(--t4-card-radius);
-    box-shadow: var(--t4-shadow-soft);
+    padding: 0;
+    background: transparent;
+    border: 0;
+    border-radius: 0;
+    box-shadow: none;
+}
+
+/* remove logo only in main section */
+.kc-tpl-4 .t4-hero .t4-avatarWrap {
+    display: none;
 }
 
 .kc-tpl-4 .t4-heroTop {
     display: grid;
-    gap: 16px;
+    gap: 14px;
     justify-items: center;
-}
-
-.kc-tpl-4 .t4-avatar {
-    width: 78px;
-    height: 78px;
-    border-radius: 22px;
-    object-fit: cover;
-    display: block;
-    background: var(--t4-surface-soft);
-    border: 1px solid var(--t4-border);
-    box-shadow: var(--t4-shadow-soft);
-}
-
-.kc-tpl-4 .t4-avatar--ph {
-    background:
-        linear-gradient(135deg, rgba(185, 28, 28, 0.12), rgba(185, 28, 28, 0.04));
-}
-
-.kc-tpl-4.t4-theme-dark .t4-avatar--ph {
-    background:
-        linear-gradient(135deg, rgba(239, 68, 68, 0.14), rgba(239, 68, 68, 0.05));
 }
 
 .kc-tpl-4 .t4-heroCopy {
@@ -321,14 +308,15 @@
 
 /* ABOUT */
 
+/* remove bg/border/shadow */
 .kc-tpl-4 .t4-aboutCard {
     display: grid;
     gap: 18px;
-    padding: 24px;
-    background: var(--t4-surface);
-    border: 1px solid var(--t4-border);
-    border-radius: var(--t4-card-radius);
-    box-shadow: var(--t4-shadow-soft);
+    padding: 0;
+    background: transparent;
+    border: 0;
+    border-radius: 0;
+    box-shadow: none;
     text-align: center;
 }
 
@@ -424,23 +412,33 @@
     display: block;
 }
 
-/* SERVICES */
+/* SERVICES - remove cards, add divider lines */
 
 .kc-tpl-4 .t4-servicesList {
     display: grid;
-    gap: 12px;
+    gap: 0;
 }
 
 .kc-tpl-4 .t4-serviceRow {
     display: grid;
     gap: 14px;
     justify-items: center;
-    padding: 20px;
-    background: var(--t4-surface);
-    border: 1px solid var(--t4-border);
-    border-radius: var(--t4-card-radius-sm);
-    box-shadow: var(--t4-shadow-soft);
+    padding: 18px 0;
+    background: transparent;
+    border: 0;
+    border-radius: 0;
+    box-shadow: none;
     text-align: center;
+    border-bottom: 1px solid var(--t4-divider);
+}
+
+.kc-tpl-4 .t4-serviceRow:last-child {
+    border-bottom: 0;
+    padding-bottom: 0;
+}
+
+.kc-tpl-4 .t4-serviceRow:first-child {
+    padding-top: 0;
 }
 
 .kc-tpl-4 .t4-serviceIndex {
@@ -481,23 +479,33 @@
     word-break: break-word;
 }
 
-/* REVIEWS */
+/* REVIEWS - remove cards, add divider lines */
 
 .kc-tpl-4 .t4-reviewsGrid {
     display: grid;
-    gap: 12px;
+    gap: 0;
 }
 
 .kc-tpl-4 .t4-reviewCard {
     display: grid;
     gap: 14px;
     justify-items: center;
-    padding: 22px;
-    background: var(--t4-surface);
-    border: 1px solid var(--t4-border);
-    border-radius: var(--t4-card-radius-sm);
-    box-shadow: var(--t4-shadow-soft);
+    padding: 18px 0;
+    background: transparent;
+    border: 0;
+    border-radius: 0;
+    box-shadow: none;
     text-align: center;
+    border-bottom: 1px solid var(--t4-divider);
+}
+
+.kc-tpl-4 .t4-reviewCard:last-child {
+    border-bottom: 0;
+    padding-bottom: 0;
+}
+
+.kc-tpl-4 .t4-reviewCard:first-child {
+    padding-top: 0;
 }
 
 .kc-tpl-4 .t4-stars {
@@ -539,16 +547,16 @@
     word-break: break-word;
 }
 
-/* CONTACT */
+/* CONTACT - remove cards, add divider lines */
 
 .kc-tpl-4 .t4-contactWrap {
     display: grid;
-    gap: 12px;
+    gap: 14px;
 }
 
 .kc-tpl-4 .t4-contactGrid {
     display: grid;
-    gap: 12px;
+    gap: 0;
 }
 
 .kc-tpl-4 .t4-contactCard {
@@ -556,14 +564,24 @@
     grid-template-columns: 52px minmax(0, 1fr);
     gap: 14px;
     align-items: center;
-    padding: 18px;
-    background: var(--t4-surface);
-    border: 1px solid var(--t4-border);
-    border-radius: var(--t4-card-radius-sm);
-    box-shadow: var(--t4-shadow-soft);
+    padding: 18px 0;
+    background: transparent;
+    border: 0;
+    border-radius: 0;
+    box-shadow: none;
     text-decoration: none;
     color: inherit;
     text-align: left;
+    border-bottom: 1px solid var(--t4-divider);
+}
+
+.kc-tpl-4 .t4-contactCard:last-child {
+    border-bottom: 0;
+    padding-bottom: 0;
+}
+
+.kc-tpl-4 .t4-contactCard:first-child {
+    padding-top: 0;
 }
 
 .kc-tpl-4 .t4-contactCard--button {
@@ -625,23 +643,27 @@
     word-break: break-word;
 }
 
+/* socials lose box styling */
 .kc-tpl-4 .t4-socials {
-    display: grid;
-    grid-template-columns: repeat(5, minmax(0, 1fr));
-    gap: 10px;
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 18px;
+    padding-top: 4px;
 }
 
 .kc-tpl-4 .t4-social {
-    min-height: 58px;
-    border-radius: 18px;
-    background: var(--t4-surface);
-    border: 1px solid var(--t4-border);
-    box-shadow: var(--t4-shadow-soft);
+    min-height: unset;
+    border-radius: 0;
+    background: transparent;
+    border: 0;
+    box-shadow: none;
     display: inline-flex;
     align-items: center;
     justify-content: center;
     text-decoration: none;
     color: var(--t4-accent);
+    padding: 0;
 }
 
 .kc-tpl-4 .t4-socialIconSvg {
@@ -653,17 +675,22 @@
 
 /* RESPONSIVE */
 
+@media (max-width: 760px) {
+    .kc-tpl-4 .t4-workRow--pair {
+        grid-template-columns: 1fr;
+    }
+
+    .kc-tpl-4 .t4-workTile,
+    .kc-tpl-4 .t4-workTile.is-feature {
+        grid-column: auto;
+        aspect-ratio: 16 / 10;
+    }
+}
+
 @media (max-width: 560px) {
     .kc-tpl-4 {
         --t4-page-pad: 18px;
         --t4-section-gap: 40px;
-    }
-
-    .kc-tpl-4 .t4-heroCard,
-    .kc-tpl-4 .t4-aboutCard,
-    .kc-tpl-4 .t4-serviceRow,
-    .kc-tpl-4 .t4-reviewCard {
-        padding: 18px;
     }
 
     .kc-tpl-4 .t4-cta.is-two {
@@ -671,17 +698,13 @@
     }
 
     .kc-tpl-4 .t4-workRows,
-    .kc-tpl-4 .t4-workRow,
-    .kc-tpl-4 .t4-servicesList,
-    .kc-tpl-4 .t4-reviewsGrid,
-    .kc-tpl-4 .t4-contactGrid,
-    .kc-tpl-4 .t4-contactWrap {
+    .kc-tpl-4 .t4-workRow {
         gap: 10px;
     }
 
     .kc-tpl-4 .t4-contactCard {
         grid-template-columns: 46px minmax(0, 1fr);
-        padding: 16px;
+        padding: 16px 0;
     }
 
     .kc-tpl-4 .t4-contactIcon {
@@ -691,18 +714,18 @@
     }
 
     .kc-tpl-4 .t4-socials {
-        gap: 8px;
+        gap: 16px;
     }
 
-    .kc-tpl-4 .t4-social {
-        min-height: 52px;
-        border-radius: 16px;
+    .kc-tpl-4 .t4-socialIconSvg {
+        width: 20px;
+        height: 20px;
     }
 }
 
 @media (min-width: 760px) {
     .kc-tpl-4 .t4-reviewsGrid {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
+        grid-template-columns: 1fr;
     }
 }
 
