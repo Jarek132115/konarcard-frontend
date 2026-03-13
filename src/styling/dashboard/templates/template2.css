@@ -278,10 +278,8 @@
 }
 
 .kc-tpl-2 .t2-sliderTrack {
-    display: grid;
-    grid-auto-flow: column;
-    grid-auto-columns: 100%;
-    gap: 14px;
+    display: flex;
+    gap: 0;
     overflow-x: auto;
     overflow-y: hidden;
     scrollbar-width: none;
@@ -290,6 +288,9 @@
     cursor: grab;
     user-select: none;
     -webkit-user-select: none;
+    scroll-behavior: smooth;
+    scroll-snap-type: x mandatory;
+    scroll-padding-inline: 0;
 }
 
 .kc-tpl-2 .t2-sliderTrack::-webkit-scrollbar {
@@ -301,9 +302,15 @@
 }
 
 .kc-tpl-2 .t2-slide {
+    flex: 0 0 100%;
     width: 100%;
+    min-width: 100%;
+    scroll-snap-align: center;
+    scroll-snap-stop: always;
     user-select: none;
     -webkit-user-select: none;
+    display: flex;
+    justify-content: center;
 }
 
 .kc-tpl-2 .t2-dots {
@@ -330,8 +337,12 @@
     background: var(--t2-dot-active);
 }
 
-.kc-tpl-2 .t2-mediaCard {
+.kc-tpl-2 .t2-mediaCard,
+.kc-tpl-2 .t2-infoCard {
     width: 100%;
+}
+
+.kc-tpl-2 .t2-mediaCard {
     border-radius: 18px;
     overflow: hidden;
     background: var(--t2-soft-bg);
@@ -349,7 +360,6 @@
 }
 
 .kc-tpl-2 .t2-infoCard {
-    width: 100%;
     min-height: 168px;
     box-sizing: border-box;
     border-radius: 18px;
@@ -448,11 +458,6 @@
     flex: 0 0 auto;
 }
 
-.kc-tpl-2.t2-theme-dark .t2-contactIcon,
-.kc-tpl-2.t2-theme-dark .t2-socialIcon {
-    filter: brightness(0) saturate(100%) invert(100%);
-}
-
 .kc-tpl-2 .t2-contactText {
     min-width: 0;
 }
@@ -507,6 +512,10 @@
     height: var(--t2-social-size);
     display: block;
     object-fit: contain;
+}
+
+.kc-tpl-2.t2-theme-dark .t2-socialIcon {
+    filter: brightness(0) saturate(100%) invert(8%);
 }
 
 @media (max-width: 460px) {

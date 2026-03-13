@@ -41,58 +41,74 @@ function getSocialIcon(key) {
     return map[key] || Template2IconX;
 }
 
-function SliderSection({
-    title,
-    items,
-    renderItem,
-    trackClassName = "",
-}) {
+function SliderSection({ title, items, renderItem, trackClassName = "" }) {
     const trackRef = useRef(null);
     const [activeIndex, setActiveIndex] = useState(0);
 
-    const dragStateRef = useRef({
+    const pointerRef = useRef({
         isDown: false,
         startX: 0,
         startY: 0,
         draggingX: false,
         isVerticalIntent: false,
-        pointerId: null,
     });
+
+    const getSlides = () => {
+        const track = trackRef.current;
+        return track ? Array.from(track.children || []) : [];
+    };
 
     const scrollToIndex = (index, behavior = "smooth") => {
         const track = trackRef.current;
-        if (!track) return;
-
-        const slides = Array.from(track.children || []);
-        if (!slides.length) return;
+        const slides = getSlides();
+        if (!track || !slides.length) return;
 
         const nextIndex = ((index % slides.length) + slides.length) % slides.length;
         const target = slides[nextIndex];
         if (!target) return;
 
+        const trackWidth = track.clientWidth;
+        const targetLeft = target.offsetLeft - (trackWidth - target.clientWidth) / 2;
+
         track.scrollTo({
-            left: target.offsetLeft,
+            left: Math.max(0, targetLeft),
             behavior,
         });
         setActiveIndex(nextIndex);
     };
 
-    const handlePointerDown = (e) => {
+    useEffect(() => {
         const track = trackRef.current;
         if (!track) return;
 
-        dragStateRef.current = {
+        const onResize = () => scrollToIndex(activeIndex, "auto");
+        window.addEventListener("resize", onResize);
+
+        requestAnimationFrame(() => scrollToIndex(0, "auto"));
+
+        return () => {
+            window.removeEventListener("resize", onResize);
+        };
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
+
+    useEffect(() => {
+        requestAnimationFrame(() => scrollToIndex(0, "auto"));
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [items.length]);
+
+    const handlePointerDown = (e) => {
+        pointerRef.current = {
             isDown: true,
             startX: e.clientX,
             startY: e.clientY,
             draggingX: false,
             isVerticalIntent: false,
-            pointerId: e.pointerId,
         };
     };
 
     const handlePointerMove = (e) => {
-        const state = dragStateRef.current;
+        const state = pointerRef.current;
         const track = trackRef.current;
         if (!track || !state.isDown) return;
 
@@ -119,7 +135,7 @@ function SliderSection({
     };
 
     const finishSwipe = (e) => {
-        const state = dragStateRef.current;
+        const state = pointerRef.current;
         const track = trackRef.current;
         if (!track) return;
 
@@ -138,40 +154,16 @@ function SliderSection({
             scrollToIndex(activeIndex);
         }
 
-        dragStateRef.current = {
+        pointerRef.current = {
             isDown: false,
             startX: 0,
             startY: 0,
             draggingX: false,
             isVerticalIntent: false,
-            pointerId: null,
         };
 
         track.classList.remove("is-dragging");
     };
-
-    const handlePointerUp = (e) => {
-        finishSwipe(e);
-    };
-
-    const handlePointerCancel = (e) => {
-        finishSwipe(e);
-    };
-
-    const handlePointerLeave = (e) => {
-        if (!dragStateRef.current.isDown) return;
-        finishSwipe(e);
-    };
-
-    useEffect(() => {
-        setActiveIndex(0);
-        requestAnimationFrame(() => {
-            scrollToIndex(0, "auto");
-        });
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [items.length]);
-
-    if (!items.length) return null;
 
     return (
         <section className="t2-section">
@@ -184,9 +176,11 @@ function SliderSection({
                 className={`t2-sliderTrack ${trackClassName}`.trim()}
                 onPointerDown={handlePointerDown}
                 onPointerMove={handlePointerMove}
-                onPointerUp={handlePointerUp}
-                onPointerCancel={handlePointerCancel}
-                onPointerLeave={handlePointerLeave}
+                onPointerUp={finishSwipe}
+                onPointerCancel={finishSwipe}
+                onPointerLeave={(e) => {
+                    if (pointerRef.current.isDown) finishSwipe(e);
+                }}
                 role="region"
                 aria-label={title}
             >
