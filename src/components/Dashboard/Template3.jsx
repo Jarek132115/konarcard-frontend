@@ -131,6 +131,25 @@ function getSocialMeta(key) {
     return map[key] || { label: key.replace("_url", ""), icon: null };
 }
 
+function buildWorkRows(items) {
+    const rows = [];
+    let i = 0;
+    let useSingle = true;
+
+    while (i < items.length) {
+        const take = useSingle ? 1 : 2;
+        const rowItems = items.slice(i, i + take);
+        rows.push({
+            type: rowItems.length === 1 ? "single" : "double",
+            items: rowItems,
+        });
+        i += take;
+        useSingle = !useSingle;
+    }
+
+    return rows;
+}
+
 export default function Template3({ vm }) {
     const v = vm || {};
     const themeMode = (v.themeMode || "light").toLowerCase();
@@ -143,6 +162,8 @@ export default function Template3({ vm }) {
             .map((x) => x?.preview || x?.url || x)
             .filter(Boolean);
     }, [v.works]);
+
+    const workRows = useMemo(() => buildWorkRows(works.slice(0, 12)), [works]);
 
     const services = useMemo(() => {
         return asArray(v.services).filter((s) => s?.name || s?.description || s?.price);
@@ -165,7 +186,7 @@ export default function Template3({ vm }) {
 
     const hasHeroCtas = !!(v.hasExchangeContact || nonEmpty(v.email) || nonEmpty(v.phone));
     const hasAbout = nonEmpty(bio) || nonEmpty(personName) || nonEmpty(personRole) || nonEmpty(avatar);
-    const hasContact = nonEmpty(v.email) || nonEmpty(v.phone) || socials.length > 0;
+    const hasContact = nonEmpty(v.email) || nonEmpty(v.phone) || v.hasExchangeContact || socials.length > 0;
 
     return (
         <div className={`kc-tpl kc-tpl-3 ${themeMode === "dark" ? "t3-theme-dark" : "t3-theme-light"}`}>
@@ -173,9 +194,15 @@ export default function Template3({ vm }) {
                 {v.showMainSection && (
                     <section className="t3-hero">
                         <div className="t3-heroGrid">
-                            <div className="t3-heroCopy">
-                                <div className="t3-eyebrow">Digital profile</div>
+                            <div className="t3-heroMedia">
+                                {nonEmpty(cover) ? (
+                                    <img src={cover} alt="Cover" className="t3-coverImg" />
+                                ) : (
+                                    <div className="t3-coverPlaceholder" aria-hidden="true" />
+                                )}
+                            </div>
 
+                            <div className="t3-heroCopy">
                                 <h1 className="t3-h1">{businessName}</h1>
 
                                 {nonEmpty(tradeTitle) ? (
@@ -199,14 +226,6 @@ export default function Template3({ vm }) {
                                         </button>
                                     </div>
                                 ) : null}
-                            </div>
-
-                            <div className="t3-heroMedia">
-                                {nonEmpty(cover) ? (
-                                    <img src={cover} alt="Cover" className="t3-coverImg" />
-                                ) : (
-                                    <div className="t3-coverPlaceholder" aria-hidden="true" />
-                                )}
                             </div>
                         </div>
                     </section>
@@ -243,14 +262,24 @@ export default function Template3({ vm }) {
                 {v.showWorkSection && works.length > 0 ? (
                     <section className="t3-section">
                         <div className="t3-sectionHead">
-                            <div className="t3-sectionKicker">Portfolio</div>
+                            <div className="t3-sectionKicker">Recent Jobs</div>
                             <h2 className="t3-sectionTitle">My Work</h2>
                         </div>
 
-                        <div className="t3-workGrid">
-                            {works.slice(0, 12).map((url, i) => (
-                                <div key={i} className={`t3-workTile ${i === 0 ? "is-featured" : ""}`}>
-                                    <img src={url} alt={`Work ${i + 1}`} className="t3-workImg" />
+                        <div className="t3-workRows">
+                            {workRows.map((row, rowIndex) => (
+                                <div
+                                    key={rowIndex}
+                                    className={`t3-workRow ${row.type === "double" ? "t3-workRow--double" : "t3-workRow--single"}`}
+                                >
+                                    {row.items.map((url, itemIndex) => (
+                                        <div
+                                            key={`${rowIndex}-${itemIndex}`}
+                                            className={`t3-workTile ${row.items.length === 1 ? "is-full" : ""}`}
+                                        >
+                                            <img src={url} alt={`Work ${rowIndex + itemIndex + 1}`} className="t3-workImg" />
+                                        </div>
+                                    ))}
                                 </div>
                             ))}
                         </div>
@@ -307,7 +336,7 @@ export default function Template3({ vm }) {
                         </div>
 
                         <div className="t3-contactWrap">
-                            {(nonEmpty(v.email) || nonEmpty(v.phone)) ? (
+                            {(nonEmpty(v.email) || nonEmpty(v.phone) || v.hasExchangeContact) ? (
                                 <div className="t3-contactGrid">
                                     {nonEmpty(v.email) ? (
                                         <a className="t3-contactCard" href={`mailto:${v.email}`}>
@@ -327,6 +356,16 @@ export default function Template3({ vm }) {
                                                 <span className="t3-contactValue">{v.phone}</span>
                                             </span>
                                         </a>
+                                    ) : null}
+
+                                    {v.hasExchangeContact ? (
+                                        <button type="button" className="t3-contactCard t3-contactCard--button" onClick={v.onOpenExchangeContact}>
+                                            <span className="t3-contactIcon"><ExchangeIcon /></span>
+                                            <span className="t3-contactText">
+                                                <span className="t3-contactLabel">Exchange Contact</span>
+                                                <span className="t3-contactValue">Share contact details with each other</span>
+                                            </span>
+                                        </button>
                                     ) : null}
                                 </div>
                             ) : null}
