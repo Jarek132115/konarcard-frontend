@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useMemo } from "react";
 import "../../styling/dashboard/templates/template1.css";
 
 import EmailIconSrc from "../../assets/icons/Template1Icon-Email.svg";
@@ -31,7 +31,7 @@ function Stars({ rating = 0 }) {
 
 function SaveIcon() {
     return (
-        <svg viewBox="0 0 24 24" className="t1-icon" aria-hidden="true">
+        <svg viewBox="0 0 24 24" className="t1-inlineIcon" aria-hidden="true">
             <path
                 fill="currentColor"
                 d="M17 3H7a2 2 0 0 0-2 2v14l7-3 7 3V5a2 2 0 0 0-2-2Zm0 12.8-5-2.1-5 2.1V5h10v10.8Z"
@@ -42,7 +42,7 @@ function SaveIcon() {
 
 function ExchangeIcon() {
     return (
-        <svg viewBox="0 0 24 24" className="t1-icon" aria-hidden="true">
+        <svg viewBox="0 0 24 24" className="t1-inlineIcon" aria-hidden="true">
             <path
                 fill="currentColor"
                 d="M7 7h8.2L13 4.8 14.4 3 20 8.6 14.4 14 13 12.2 15.2 10H7V7Zm10 10H8.8l2.2 2.2L9.6 21 4 15.4 9.6 10l1.4 1.8L8.8 14H17v3Z"
@@ -55,12 +55,22 @@ function TemplateIcon({ src, alt = "" }) {
     return <img src={src} alt={alt} className="t1-assetIcon" />;
 }
 
+function SectionHead({ kicker, title }) {
+    return (
+        <div className="t1-section-head">
+            <div className="t1-section-kicker">{kicker}</div>
+            <h2 className="t1-h2">{title}</h2>
+        </div>
+    );
+}
+
 function getSocialMeta(key) {
     const map = {
         facebook_url: { label: "Facebook", icon: <TemplateIcon src={FacebookIconSrc} alt="" /> },
         instagram_url: { label: "Instagram", icon: <TemplateIcon src={InstagramIconSrc} alt="" /> },
         linkedin_url: { label: "LinkedIn", icon: <TemplateIcon src={LinkedInIconSrc} alt="" /> },
         x_url: { label: "X", icon: <TemplateIcon src={XIconSrc} alt="" /> },
+        twitter_url: { label: "X", icon: <TemplateIcon src={XIconSrc} alt="" /> },
         tiktok_url: { label: "TikTok", icon: <TemplateIcon src={TikTokIconSrc} alt="" /> },
     };
 
@@ -69,6 +79,7 @@ function getSocialMeta(key) {
 
 export default function Template1(props) {
     const v = props?.vm || props?.data || {};
+    const themeMode = (v.themeMode || "light").toLowerCase();
 
     const cover = v.cover || "";
     const logo = v.logo || v.avatar || "";
@@ -81,21 +92,32 @@ export default function Template1(props) {
     const aboutTrade = v.jobTitle || "";
     const aboutBio = v.bio || "";
 
-    const works = asArray(v.works)
-        .map((x) => x?.preview || x?.url || x)
-        .filter(Boolean);
+    const works = useMemo(() => {
+        return asArray(v.works)
+            .map((x) => x?.preview || x?.url || x)
+            .filter(Boolean);
+    }, [v.works]);
 
-    const services = asArray(v.services).filter((s) => s?.name || s?.description || s?.price);
-    const reviews = asArray(v.reviews).filter((r) => r?.name || r?.text);
+    const services = useMemo(() => {
+        return asArray(v.services).filter((s) => s?.name || s?.description || s?.price);
+    }, [v.services]);
 
-    const socialEntries = Object.entries(v.socials || {}).filter(([, url]) => nonEmpty(url));
+    const reviews = useMemo(() => {
+        return asArray(v.reviews).filter((r) => r?.name || r?.text || Number(r?.rating) > 0);
+    }, [v.reviews]);
 
-    const hasHeroCtas = !!(v.hasExchangeContact || nonEmpty(v.email) || nonEmpty(v.phone));
+    const socialEntries = useMemo(() => {
+        return Object.entries(v.socials || {}).filter(([, url]) => nonEmpty(url));
+    }, [v.socials]);
+
+    const showSaveButton = !!(nonEmpty(v.email) || nonEmpty(v.phone));
+    const showExchangeButton = !!v.hasExchangeContact;
+
     const hasAbout = nonEmpty(aboutName) || nonEmpty(aboutTrade) || nonEmpty(aboutBio) || nonEmpty(logo);
     const hasContact = nonEmpty(v.email) || nonEmpty(v.phone) || v.hasExchangeContact || socialEntries.length > 0;
 
     return (
-        <div className={`kc-tpl kc-tpl-1 ${v.themeMode === "dark" ? "t1-theme-dark" : "t1-theme-light"}`}>
+        <div className={`kc-tpl kc-tpl-1 ${themeMode === "dark" ? "t1-theme-dark" : "t1-theme-light"}`}>
             <div className="t1-shell">
                 {v.showMainSection && (
                     <section className="t1-hero">
@@ -121,34 +143,36 @@ export default function Template1(props) {
                             <div className="t1-hero-copy">
                                 <h1 className="t1-h1">{businessName}</h1>
 
-                                {nonEmpty(tradeTitle) ? (
-                                    <p className="t1-sub">{tradeTitle}</p>
-                                ) : null}
-
-                                {nonEmpty(location) ? (
-                                    <p className="t1-location">{location}</p>
-                                ) : null}
+                                {nonEmpty(tradeTitle) ? <p className="t1-sub">{tradeTitle}</p> : null}
+                                {nonEmpty(location) ? <p className="t1-location">{location}</p> : null}
                             </div>
 
-                            {hasHeroCtas ? (
-                                <div className="t1-cta-row">
-                                    <button
-                                        type="button"
-                                        className="t1-btn t1-btn-ghost"
-                                        onClick={v.onSaveMyNumber}
-                                    >
-                                        <SaveIcon />
-                                        <span>Save My Number</span>
-                                    </button>
+                            {(showSaveButton || showExchangeButton) ? (
+                                <div
+                                    className={`t1-cta-row ${showSaveButton && showExchangeButton ? "is-two" : "is-one"
+                                        }`}
+                                >
+                                    {showSaveButton ? (
+                                        <button
+                                            type="button"
+                                            className="t1-btn t1-btn-ghost"
+                                            onClick={v.onSaveMyNumber}
+                                        >
+                                            <SaveIcon />
+                                            <span>Save My Number</span>
+                                        </button>
+                                    ) : null}
 
-                                    <button
-                                        type="button"
-                                        className="t1-btn t1-btn-primary"
-                                        onClick={v.onOpenExchangeContact}
-                                    >
-                                        <ExchangeIcon />
-                                        <span>Exchange Contact</span>
-                                    </button>
+                                    {showExchangeButton ? (
+                                        <button
+                                            type="button"
+                                            className="t1-btn t1-btn-primary"
+                                            onClick={v.onOpenExchangeContact}
+                                        >
+                                            <ExchangeIcon />
+                                            <span>Exchange Contact</span>
+                                        </button>
+                                    ) : null}
                                 </div>
                             ) : null}
                         </div>
@@ -157,12 +181,10 @@ export default function Template1(props) {
 
                 {v.showAboutMeSection && hasAbout ? (
                     <section className="t1-section">
-                        <div className="t1-section-head">
-                            <h2 className="t1-h2">About Me</h2>
-                        </div>
+                        <SectionHead kicker="About" title="About Me" />
 
                         <div className="t1-aboutCard">
-                            <div className="t1-aboutLeft">
+                            <div className="t1-aboutTop">
                                 <div className="t1-aboutAvatarWrap">
                                     {nonEmpty(logo) ? (
                                         <img src={logo} alt="" className="t1-aboutAvatar" />
@@ -184,13 +206,14 @@ export default function Template1(props) {
 
                 {v.showWorkSection && works.length > 0 ? (
                     <section className="t1-section">
-                        <div className="t1-section-head">
-                            <h2 className="t1-h2">My Work</h2>
-                        </div>
+                        <SectionHead kicker="Recent Work" title="My Work" />
 
                         <div className="t1-work-grid">
                             {works.slice(0, 12).map((url, i) => (
-                                <div key={i} className="t1-work-tile">
+                                <div
+                                    key={i}
+                                    className={`t1-work-tile ${i === 0 ? "t1-work-tile--feature" : ""}`}
+                                >
                                     <img src={url} alt={`Work ${i + 1}`} className="t1-work-img" />
                                 </div>
                             ))}
@@ -200,18 +223,20 @@ export default function Template1(props) {
 
                 {v.showServicesSection && services.length > 0 ? (
                     <section className="t1-section">
-                        <div className="t1-section-head">
-                            <h2 className="t1-h2">My Services</h2>
-                        </div>
+                        <SectionHead kicker="Services" title="What I Offer" />
 
                         <div className="t1-services">
                             {services.slice(0, 12).map((s, i) => (
-                                <div key={i} className="t1-service">
-                                    <div className="t1-service-name">{s?.name}</div>
-                                    {nonEmpty(s?.description || s?.price) ? (
-                                        <div className="t1-service-sub">{s.description || s.price}</div>
-                                    ) : null}
-                                </div>
+                                <article key={i} className="t1-service">
+                                    <div className="t1-serviceIndex">{String(i + 1).padStart(2, "0")}</div>
+
+                                    <div className="t1-serviceCopy">
+                                        <div className="t1-service-name">{s?.name || "Service"}</div>
+                                        {nonEmpty(s?.description || s?.price) ? (
+                                            <div className="t1-service-sub">{s.description || s.price}</div>
+                                        ) : null}
+                                    </div>
+                                </article>
                             ))}
                         </div>
                     </section>
@@ -219,17 +244,15 @@ export default function Template1(props) {
 
                 {v.showReviewsSection && reviews.length > 0 ? (
                     <section className="t1-section">
-                        <div className="t1-section-head">
-                            <h2 className="t1-h2">My Reviews</h2>
-                        </div>
+                        <SectionHead kicker="Reviews" title="Client Feedback" />
 
                         <div className="t1-reviews">
                             {reviews.slice(0, 12).map((r, i) => (
-                                <div key={i} className="t1-review">
+                                <article key={i} className="t1-review">
+                                    <Stars rating={r?.rating} />
                                     {nonEmpty(r?.text) ? <p className="t1-review-text">“{r.text}”</p> : null}
                                     {nonEmpty(r?.name) ? <div className="t1-review-name">{r.name}</div> : null}
-                                    <Stars rating={r?.rating} />
-                                </div>
+                                </article>
                             ))}
                         </div>
                     </section>
@@ -237,9 +260,7 @@ export default function Template1(props) {
 
                 {v.showContactSection && hasContact ? (
                     <section className="t1-section t1-section-last">
-                        <div className="t1-section-head">
-                            <h2 className="t1-h2">Get In Touch</h2>
-                        </div>
+                        <SectionHead kicker="Contact" title="Get In Touch" />
 
                         <div className="t1-contact">
                             {nonEmpty(v.email) ? (
@@ -267,13 +288,17 @@ export default function Template1(props) {
                             ) : null}
 
                             {v.hasExchangeContact ? (
-                                <button className="t1-contact-row t1-contact-row--button" type="button" onClick={v.onOpenExchangeContact}>
+                                <button
+                                    className="t1-contact-row t1-contact-row--button"
+                                    type="button"
+                                    onClick={v.onOpenExchangeContact}
+                                >
                                     <span className="t1-contactIcon">
                                         <TemplateIcon src={ExchangeContactIconSrc} alt="" />
                                     </span>
                                     <span className="t1-contactCopy">
-                                        <span className="t1-contact-k">Exchange Contacts</span>
-                                        <span className="t1-contact-v">Lets exchange contact with each other</span>
+                                        <span className="t1-contact-k">Exchange Contact</span>
+                                        <span className="t1-contact-v">Share contact details with each other</span>
                                     </span>
                                 </button>
                             ) : null}
