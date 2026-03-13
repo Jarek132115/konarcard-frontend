@@ -407,6 +407,10 @@
     color: var(--t2-accent);
 }
 
+.kc-tpl-2.t2-theme-dark .t2-reviewName {
+    color: #ffffff;
+}
+
 .kc-tpl-2 .t2-stars {
     display: flex;
     gap: 2px;
@@ -456,6 +460,11 @@
     display: block;
     object-fit: contain;
     flex: 0 0 auto;
+    filter: brightness(0) saturate(100%) invert(10%);
+}
+
+.kc-tpl-2.t2-theme-dark .t2-contactIcon {
+    filter: brightness(0) saturate(100%) invert(100%);
 }
 
 .kc-tpl-2 .t2-contactText {
