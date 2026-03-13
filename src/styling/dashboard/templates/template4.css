@@ -5,7 +5,7 @@
 .kc-tpl-4 {
     --t4-shell-max: 920px;
     --t4-page-pad: 22px;
-    --t4-section-gap: 50px;
+    --t4-section-gap: 54px;
     --t4-card-radius: 24px;
     --t4-card-radius-sm: 18px;
     --t4-accent: #b91c1c;
@@ -104,7 +104,6 @@
         linear-gradient(135deg, #2a1d1d 0%, #211818 100%);
 }
 
-/* remove main section bg/border/shadow */
 .kc-tpl-4 .t4-heroCard {
     margin-top: 14px;
     padding: 0;
@@ -114,7 +113,6 @@
     box-shadow: none;
 }
 
-/* remove logo only in main section */
 .kc-tpl-4 .t4-hero .t4-avatarWrap {
     display: none;
 }
@@ -155,6 +153,11 @@
     line-height: 1.45;
     color: var(--t4-text-soft);
     word-break: break-word;
+}
+
+/* remove pills under hero location */
+.kc-tpl-4 .t4-hero .t4-meta {
+    display: none;
 }
 
 .kc-tpl-4 .t4-meta {
@@ -238,9 +241,17 @@
     background: var(--t4-accent-strong);
 }
 
+/* second CTA black in light, reversed in dark */
 .kc-tpl-4 .t4-btn-secondary {
-    background: var(--t4-surface);
-    color: var(--t4-text);
+    background: #111111;
+    color: #ffffff;
+    border-color: #111111;
+}
+
+.kc-tpl-4.t4-theme-dark .t4-btn-secondary {
+    background: #ffffff;
+    color: #111111;
+    border-color: #ffffff;
 }
 
 .kc-tpl-4 .t4-btnIcon {
@@ -264,11 +275,11 @@
 }
 
 .kc-tpl-4 .t4-btnIconAsset--secondary {
-    filter: brightness(0) saturate(100%) invert(18%) sepia(76%) saturate(3055%) hue-rotate(351deg) brightness(83%) contrast(95%);
+    filter: brightness(0) invert(1);
 }
 
 .kc-tpl-4.t4-theme-dark .t4-btnIconAsset--secondary {
-    filter: brightness(0) saturate(100%) invert(51%) sepia(76%) saturate(1136%) hue-rotate(327deg) brightness(102%) contrast(87%);
+    filter: brightness(0) saturate(100%) invert(0);
 }
 
 /* SECTION HEADERS */
@@ -284,7 +295,7 @@
 .kc-tpl-4 .t4-sectionHead {
     display: grid;
     gap: 8px;
-    margin-bottom: 18px;
+    margin-bottom: 24px;
     justify-items: center;
 }
 
@@ -308,7 +319,6 @@
 
 /* ABOUT */
 
-/* remove bg/border/shadow */
 .kc-tpl-4 .t4-aboutCard {
     display: grid;
     gap: 18px;
@@ -320,10 +330,20 @@
     text-align: center;
 }
 
+/* logo left, text right */
 .kc-tpl-4 .t4-aboutTop {
-    display: grid;
+    display: inline-grid;
+    grid-template-columns: auto minmax(0, auto);
     gap: 12px;
-    justify-items: center;
+    align-items: center;
+    justify-content: center;
+    text-align: left;
+}
+
+.kc-tpl-4 .t4-aboutAvatarWrap {
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .kc-tpl-4 .t4-aboutAvatar {
@@ -412,7 +432,7 @@
     display: block;
 }
 
-/* SERVICES - remove cards, add divider lines */
+/* SERVICES */
 
 .kc-tpl-4 .t4-servicesList {
     display: grid;
@@ -441,16 +461,17 @@
     padding-top: 0;
 }
 
+/* service pill exact size */
 .kc-tpl-4 .t4-serviceIndex {
-    width: 54px;
-    height: 42px;
+    width: 44px;
+    height: 32px;
     border-radius: 999px;
     background: var(--t4-accent-soft);
     color: var(--t4-accent);
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    font-size: 13px;
+    font-size: 12px;
     line-height: 1;
     font-weight: 800;
     letter-spacing: -0.02em;
@@ -479,7 +500,7 @@
     word-break: break-word;
 }
 
-/* REVIEWS - remove cards, add divider lines */
+/* REVIEWS */
 
 .kc-tpl-4 .t4-reviewsGrid {
     display: grid;
@@ -547,7 +568,7 @@
     word-break: break-word;
 }
 
-/* CONTACT - remove cards, add divider lines */
+/* CONTACT */
 
 .kc-tpl-4 .t4-contactWrap {
     display: grid;
@@ -643,18 +664,19 @@
     word-break: break-word;
 }
 
-/* socials lose box styling */
+/* socials now same design as contact icon tiles */
 .kc-tpl-4 .t4-socials {
-    display: flex;
-    justify-content: center;
-    flex-wrap: wrap;
-    gap: 18px;
+    display: grid;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: 10px;
+    justify-items: stretch;
+    align-items: stretch;
     padding-top: 4px;
 }
 
 .kc-tpl-4 .t4-social {
-    min-height: unset;
-    border-radius: 0;
+    min-height: 52px;
+    border-radius: 16px;
     background: transparent;
     border: 0;
     box-shadow: none;
@@ -671,6 +693,24 @@
     height: 22px;
     display: block;
     color: currentColor;
+}
+
+/* create same icon tile look via pseudo container */
+.kc-tpl-4 .t4-social {
+    position: relative;
+}
+
+.kc-tpl-4 .t4-social::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: 16px;
+    background: var(--t4-accent-soft);
+}
+
+.kc-tpl-4 .t4-socialIconSvg {
+    position: relative;
+    z-index: 1;
 }
 
 /* RESPONSIVE */
@@ -690,7 +730,7 @@
 @media (max-width: 560px) {
     .kc-tpl-4 {
         --t4-page-pad: 18px;
-        --t4-section-gap: 40px;
+        --t4-section-gap: 48px;
     }
 
     .kc-tpl-4 .t4-cta.is-two {
@@ -714,12 +754,40 @@
     }
 
     .kc-tpl-4 .t4-socials {
-        gap: 16px;
+        gap: 8px;
+    }
+
+    .kc-tpl-4 .t4-social {
+        min-height: 46px;
+        border-radius: 14px;
+    }
+
+    .kc-tpl-4 .t4-social::before {
+        border-radius: 14px;
     }
 
     .kc-tpl-4 .t4-socialIconSvg {
         width: 20px;
         height: 20px;
+    }
+
+    .kc-tpl-4 .t4-aboutTop {
+        gap: 10px;
+    }
+}
+
+@media (max-width: 390px) {
+    .kc-tpl-4 .t4-socials {
+        gap: 6px;
+    }
+
+    .kc-tpl-4 .t4-social {
+        min-height: 42px;
+    }
+
+    .kc-tpl-4 .t4-socialIconSvg {
+        width: 18px;
+        height: 18px;
     }
 }
 
