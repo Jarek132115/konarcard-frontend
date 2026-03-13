@@ -51,8 +51,8 @@ function ExchangeIcon() {
     );
 }
 
-function TemplateIcon({ src, alt = "" }) {
-    return <img src={src} alt={alt} className="t1-assetIcon" />;
+function TemplateIcon({ src, alt = "", className = "t1-assetIcon" }) {
+    return <img src={src} alt={alt} className={className} />;
 }
 
 function SectionHead({ kicker, title }) {
@@ -66,12 +66,30 @@ function SectionHead({ kicker, title }) {
 
 function getSocialMeta(key) {
     const map = {
-        facebook_url: { label: "Facebook", icon: <TemplateIcon src={FacebookIconSrc} alt="" /> },
-        instagram_url: { label: "Instagram", icon: <TemplateIcon src={InstagramIconSrc} alt="" /> },
-        linkedin_url: { label: "LinkedIn", icon: <TemplateIcon src={LinkedInIconSrc} alt="" /> },
-        x_url: { label: "X", icon: <TemplateIcon src={XIconSrc} alt="" /> },
-        twitter_url: { label: "X", icon: <TemplateIcon src={XIconSrc} alt="" /> },
-        tiktok_url: { label: "TikTok", icon: <TemplateIcon src={TikTokIconSrc} alt="" /> },
+        facebook_url: {
+            label: "Facebook",
+            icon: <TemplateIcon src={FacebookIconSrc} alt="" className="t1-assetIcon t1-assetIcon--social" />,
+        },
+        instagram_url: {
+            label: "Instagram",
+            icon: <TemplateIcon src={InstagramIconSrc} alt="" className="t1-assetIcon t1-assetIcon--social" />,
+        },
+        linkedin_url: {
+            label: "LinkedIn",
+            icon: <TemplateIcon src={LinkedInIconSrc} alt="" className="t1-assetIcon t1-assetIcon--social" />,
+        },
+        x_url: {
+            label: "X",
+            icon: <TemplateIcon src={XIconSrc} alt="" className="t1-assetIcon t1-assetIcon--social" />,
+        },
+        twitter_url: {
+            label: "X",
+            icon: <TemplateIcon src={XIconSrc} alt="" className="t1-assetIcon t1-assetIcon--social" />,
+        },
+        tiktok_url: {
+            label: "TikTok",
+            icon: <TemplateIcon src={TikTokIconSrc} alt="" className="t1-assetIcon t1-assetIcon--social" />,
+        },
     };
 
     return map[key] || { label: key.replace("_url", ""), icon: null };
@@ -147,11 +165,8 @@ export default function Template1(props) {
                                 {nonEmpty(location) ? <p className="t1-location">{location}</p> : null}
                             </div>
 
-                            {(showSaveButton || showExchangeButton) ? (
-                                <div
-                                    className={`t1-cta-row ${showSaveButton && showExchangeButton ? "is-two" : "is-one"
-                                        }`}
-                                >
+                            {showSaveButton || showExchangeButton ? (
+                                <div className={`t1-cta-row ${showSaveButton && showExchangeButton ? "is-two" : "is-one"}`}>
                                     {showSaveButton ? (
                                         <button
                                             type="button"
@@ -209,14 +224,18 @@ export default function Template1(props) {
                         <SectionHead kicker="Recent Work" title="My Work" />
 
                         <div className="t1-work-grid">
-                            {works.slice(0, 12).map((url, i) => (
-                                <div
-                                    key={i}
-                                    className={`t1-work-tile ${i === 0 ? "t1-work-tile--feature" : ""}`}
-                                >
-                                    <img src={url} alt={`Work ${i + 1}`} className="t1-work-img" />
-                                </div>
-                            ))}
+                            {works.slice(0, 12).map((url, i) => {
+                                const isLastOdd = works.length % 2 === 1 && i === works.length - 1;
+
+                                return (
+                                    <div
+                                        key={i}
+                                        className={`t1-work-tile ${isLastOdd ? "t1-work-tile--full" : ""}`}
+                                    >
+                                        <img src={url} alt={`Work ${i + 1}`} className="t1-work-img" />
+                                    </div>
+                                );
+                            })}
                         </div>
                     </section>
                 ) : null}
@@ -266,7 +285,7 @@ export default function Template1(props) {
                             {nonEmpty(v.email) ? (
                                 <a className="t1-contact-row" href={`mailto:${v.email}`}>
                                     <span className="t1-contactIcon">
-                                        <TemplateIcon src={EmailIconSrc} alt="" />
+                                        <TemplateIcon src={EmailIconSrc} alt="" className="t1-assetIcon t1-assetIcon--contact" />
                                     </span>
                                     <span className="t1-contactCopy">
                                         <span className="t1-contact-k">Email</span>
@@ -278,7 +297,7 @@ export default function Template1(props) {
                             {nonEmpty(v.phone) ? (
                                 <a className="t1-contact-row" href={`tel:${v.phone}`}>
                                     <span className="t1-contactIcon">
-                                        <TemplateIcon src={PhoneIconSrc} alt="" />
+                                        <TemplateIcon src={PhoneIconSrc} alt="" className="t1-assetIcon t1-assetIcon--contact" />
                                     </span>
                                     <span className="t1-contactCopy">
                                         <span className="t1-contact-k">Phone Number</span>
@@ -294,7 +313,11 @@ export default function Template1(props) {
                                     onClick={v.onOpenExchangeContact}
                                 >
                                     <span className="t1-contactIcon">
-                                        <TemplateIcon src={ExchangeContactIconSrc} alt="" />
+                                        <TemplateIcon
+                                            src={ExchangeContactIconSrc}
+                                            alt=""
+                                            className="t1-assetIcon t1-assetIcon--contact"
+                                        />
                                     </span>
                                     <span className="t1-contactCopy">
                                         <span className="t1-contact-k">Exchange Contact</span>

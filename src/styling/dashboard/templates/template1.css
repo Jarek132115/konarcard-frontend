@@ -99,20 +99,23 @@
 }
 
 /* =========================
-   GLOBAL ICONS
+   ICONS
 ========================= */
 
 .kc-tpl-1 .t1-assetIcon {
-    width: 22px;
-    height: 22px;
     display: block;
     object-fit: contain;
     flex: 0 0 auto;
-    filter: brightness(0) saturate(100%) invert(11%) sepia(7%) saturate(14%) hue-rotate(338deg) brightness(96%) contrast(88%);
 }
 
-.kc-tpl-1.t1-theme-dark .t1-assetIcon {
-    filter: brightness(0) saturate(100%) invert(96%) sepia(5%) saturate(63%) hue-rotate(182deg) brightness(104%) contrast(96%);
+.kc-tpl-1 .t1-assetIcon--contact {
+    width: 30px;
+    height: 30px;
+}
+
+.kc-tpl-1 .t1-assetIcon--social {
+    width: 30px;
+    height: 30px;
 }
 
 .kc-tpl-1 .t1-inlineIcon {
@@ -420,7 +423,7 @@
     aspect-ratio: 1 / 1;
 }
 
-.kc-tpl-1 .t1-work-tile--feature {
+.kc-tpl-1 .t1-work-tile--full {
     grid-column: 1 / -1;
     aspect-ratio: 16 / 10;
 }
@@ -549,11 +552,11 @@
 
 .kc-tpl-1 .t1-contact-row {
     display: grid;
-    grid-template-columns: 52px minmax(0, 1fr);
-    gap: 14px;
+    grid-template-columns: 54px minmax(0, 1fr);
+    gap: 12px;
     align-items: center;
-    padding: 16px;
-    border-radius: var(--t1-card-radius-sm);
+    padding: 12px;
+    border-radius: 12px;
     text-decoration: none;
     color: inherit;
     transition: transform 0.08s ease, border-color 0.16s ease, background 0.16s ease;
@@ -572,10 +575,11 @@
 }
 
 .kc-tpl-1 .t1-contactIcon {
-    width: 52px;
-    height: 52px;
-    border-radius: 16px;
-    background: var(--t1-accent-soft);
+    width: 42px;
+    height: 42px;
+    border-radius: 10px;
+    border: 1px solid var(--t1-border);
+    background: var(--t1-surface);
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -583,21 +587,21 @@
 
 .kc-tpl-1 .t1-contactCopy {
     display: grid;
-    gap: 4px;
+    gap: 2px;
     min-width: 0;
 }
 
 .kc-tpl-1 .t1-contact-k {
-    font-size: clamp(18px, 2.2vw, 22px);
-    line-height: 1.12;
+    font-size: clamp(16px, 2.2vw, 20px);
+    line-height: 1.16;
     font-weight: 700;
     color: var(--t1-text);
     word-break: break-word;
 }
 
 .kc-tpl-1 .t1-contact-v {
-    font-size: clamp(14px, 1.9vw, 17px);
-    line-height: 1.48;
+    font-size: clamp(13px, 1.9vw, 15px);
+    line-height: 1.45;
     color: var(--t1-text-soft);
     word-break: break-word;
 }
@@ -605,12 +609,12 @@
 .kc-tpl-1 .t1-socials {
     display: grid;
     grid-template-columns: repeat(5, minmax(0, 1fr));
-    gap: 10px;
+    gap: 8px;
 }
 
 .kc-tpl-1 .t1-social {
-    min-height: 58px;
-    border-radius: 16px;
+    min-height: 54px;
+    border-radius: 10px;
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -658,22 +662,6 @@
     .kc-tpl-1 .t1-service {
         padding: 18px;
     }
-
-    .kc-tpl-1 .t1-contact-row {
-        padding: 14px;
-        grid-template-columns: 48px minmax(0, 1fr);
-    }
-
-    .kc-tpl-1 .t1-contactIcon {
-        width: 48px;
-        height: 48px;
-        border-radius: 14px;
-    }
-
-    .kc-tpl-1 .t1-social {
-        min-height: 54px;
-        border-radius: 14px;
-    }
 }
 
 @media (max-width: 390px) {
@@ -696,6 +684,12 @@
     .kc-tpl-1 .t1-contact {
         gap: 10px;
     }
+
+    .kc-tpl-1 .t1-assetIcon--contact,
+    .kc-tpl-1 .t1-assetIcon--social {
+        width: 28px;
+        height: 28px;
+    }
 }
 
 @media (min-width: 640px) {
@@ -713,15 +707,6 @@
     .kc-tpl-1 .t1-heroCard {
         padding: 88px 26px 0;
     }
-
-    .kc-tpl-1 .t1-work-grid {
-        grid-template-columns: repeat(3, minmax(0, 1fr));
-    }
-
-    .kc-tpl-1 .t1-work-tile--feature {
-        grid-column: 1 / -1;
-        aspect-ratio: 16 / 8.5;
-    }
 }
 
 @media (min-width: 760px) {
@@ -731,6 +716,34 @@
 
     .kc-tpl-1 .t1-reviews {
         grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .kc-tpl-1 .t1-contact-row {
+        grid-template-columns: 60px minmax(0, 1fr);
+        gap: 14px;
+        padding: 14px;
+        border-radius: 14px;
+    }
+
+    .kc-tpl-1 .t1-contactIcon {
+        width: 48px;
+        height: 48px;
+        border-radius: 12px;
+    }
+
+    .kc-tpl-1 .t1-assetIcon--contact,
+    .kc-tpl-1 .t1-assetIcon--social {
+        width: 34px;
+        height: 34px;
+    }
+
+    .kc-tpl-1 .t1-socials {
+        gap: 10px;
+    }
+
+    .kc-tpl-1 .t1-social {
+        min-height: 60px;
+        border-radius: 12px;
     }
 }
 
