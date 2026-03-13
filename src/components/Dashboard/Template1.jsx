@@ -1,6 +1,9 @@
 import React, { useMemo } from "react";
 import "../../styling/dashboard/templates/template1.css";
 
+import SaveMyNumberIcon from "../../assets/icons/SaveMyNumberIcon.svg";
+import ExchangeContactIcon from "../../assets/icons/ExchangeContactIcon.svg";
+
 import EmailIconSrc from "../../assets/icons/Template1Icon-Email.svg";
 import ExchangeContactIconSrc from "../../assets/icons/Template1Icon-Exchange.svg";
 import FacebookIconSrc from "../../assets/icons/Template1Icon-Facebook.svg";
@@ -26,28 +29,6 @@ function Stars({ rating = 0 }) {
                     </span>
                 ))}
         </div>
-    );
-}
-
-function SaveIcon() {
-    return (
-        <svg viewBox="0 0 24 24" className="t1-inlineIcon" aria-hidden="true">
-            <path
-                fill="currentColor"
-                d="M17 3H7a2 2 0 0 0-2 2v14l7-3 7 3V5a2 2 0 0 0-2-2Zm0 12.8-5-2.1-5 2.1V5h10v10.8Z"
-            />
-        </svg>
-    );
-}
-
-function ExchangeIcon() {
-    return (
-        <svg viewBox="0 0 24 24" className="t1-inlineIcon" aria-hidden="true">
-            <path
-                fill="currentColor"
-                d="M7 7h8.2L13 4.8 14.4 3 20 8.6 14.4 14 13 12.2 15.2 10H7V7Zm10 10H8.8l2.2 2.2L9.6 21 4 15.4 9.6 10l1.4 1.8L8.8 14H17v3Z"
-            />
-        </svg>
     );
 }
 
@@ -173,7 +154,13 @@ export default function Template1(props) {
                                             className="t1-btn t1-btn-ghost"
                                             onClick={v.onSaveMyNumber}
                                         >
-                                            <SaveIcon />
+                                            <span className="t1-btnIcon">
+                                                <img
+                                                    src={SaveMyNumberIcon}
+                                                    alt=""
+                                                    className="t1-btnIconAsset t1-btnIconAsset--ghost"
+                                                />
+                                            </span>
                                             <span>Save My Number</span>
                                         </button>
                                     ) : null}
@@ -184,7 +171,13 @@ export default function Template1(props) {
                                             className="t1-btn t1-btn-primary"
                                             onClick={v.onOpenExchangeContact}
                                         >
-                                            <ExchangeIcon />
+                                            <span className="t1-btnIcon">
+                                                <img
+                                                    src={ExchangeContactIcon}
+                                                    alt=""
+                                                    className="t1-btnIconAsset t1-btnIconAsset--primary"
+                                                />
+                                            </span>
                                             <span>Exchange Contact</span>
                                         </button>
                                     ) : null}
