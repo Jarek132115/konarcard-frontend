@@ -6,7 +6,7 @@
     --t1-max-width: 920px;
     --t1-page-pad-x: 20px;
     --t1-page-pad-y: 0px;
-    --t1-section-gap: 44px;
+    --t1-section-gap: 64px;
     --t1-section-head-gap: 18px;
     --t1-hero-radius: 28px;
     --t1-card-radius: 22px;
@@ -160,6 +160,7 @@
 .kc-tpl-1 .t1-coverShell {
     position: relative;
     width: 100%;
+    z-index: 1;
 }
 
 .kc-tpl-1 .t1-cover {
@@ -182,12 +183,12 @@
 
 .kc-tpl-1 .t1-heroCard {
     position: relative;
-    z-index: 1;
-    margin-top: 0;
-    padding: 24px 20px 0;
+    z-index: 2;
+    margin-top: -28px;
+    padding: 34px 20px 0;
     background: var(--t1-hero-card);
     color: var(--t1-hero-text);
-    border-radius: 0 0 var(--t1-hero-radius) var(--t1-hero-radius);
+    border-radius: var(--t1-hero-radius) var(--t1-hero-radius) 0 0;
     box-shadow: 0 -1px 0 var(--t1-border);
 }
 
@@ -656,11 +657,12 @@
 
 @media (max-width: 560px) {
     .kc-tpl-1 {
-        --t1-section-gap: 40px;
+        --t1-section-gap: 64px;
     }
 
     .kc-tpl-1 .t1-heroCard {
-        padding: 22px 18px 0;
+        margin-top: -24px;
+        padding: 30px 18px 0;
     }
 
     .kc-tpl-1 .t1-cta-row.is-two {
@@ -703,12 +705,13 @@
 @media (min-width: 640px) {
     .kc-tpl-1 {
         --t1-page-pad-x: 28px;
-        --t1-section-gap: 52px;
+        --t1-section-gap: 64px;
         --t1-section-head-gap: 20px;
     }
 
     .kc-tpl-1 .t1-heroCard {
-        padding: 28px 26px 0;
+        margin-top: -30px;
+        padding: 38px 26px 0;
     }
 }
 
@@ -753,7 +756,7 @@
 @media (min-width: 900px) {
     .kc-tpl-1 {
         --t1-page-pad-x: 34px;
-        --t1-section-gap: 60px;
+        --t1-section-gap: 64px;
     }
 
     .kc-tpl-1 .t1-cover {
@@ -761,6 +764,7 @@
     }
 
     .kc-tpl-1 .t1-heroCard {
-        padding: 30px 30px 0;
+        margin-top: -34px;
+        padding: 40px 30px 0;
     }
 }
