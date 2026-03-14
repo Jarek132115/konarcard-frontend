@@ -25,7 +25,6 @@
     --t2-social-size: 30px;
     --t2-contact-icon-size: var(--t2-social-size);
 
-    /* new richer section card blue */
     --t2-panel-blue: #1736b6;
     --t2-panel-blue-strong: #1230a5;
     --t2-panel-blue-border: rgba(23, 54, 182, 0.22);
@@ -53,10 +52,10 @@
     --t2-border: #ececf3;
     --t2-card-bg: #ffffff;
     --t2-soft-bg: #fafafa;
-    --t2-secondary-bg: #ffffff;
+    --t2-secondary-bg: #111111;
     --t2-primary-bg: #000483;
     --t2-primary-text: #ffffff;
-    --t2-secondary-text: #000483;
+    --t2-secondary-text: #ffffff;
     --t2-dot: #c9ccde;
     --t2-dot-active: #000483;
     --t2-shadow: 0 12px 34px rgba(0, 4, 131, 0.05);
@@ -82,7 +81,7 @@
     --t2-secondary-bg: #ffffff;
     --t2-primary-bg: #000483;
     --t2-primary-text: #ffffff;
-    --t2-secondary-text: #000483;
+    --t2-secondary-text: #111111;
     --t2-dot: rgba(255, 255, 255, 0.28);
     --t2-dot-active: #000483;
     --t2-shadow: 0 12px 32px rgba(0, 0, 0, 0.22);
@@ -172,7 +171,7 @@
     line-height: 18px;
     font-weight: 600;
     cursor: pointer;
-    transition: transform 0.08s ease, opacity 0.18s ease, background 0.18s ease, box-shadow 0.18s ease;
+    transition: transform 0.08s ease, opacity 0.18s ease, background 0.18s ease, box-shadow 0.18s ease, color 0.18s ease, border-color 0.18s ease;
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -195,6 +194,7 @@
 .kc-tpl-2 .t2-btn-secondary {
     background: var(--t2-secondary-bg);
     color: var(--t2-secondary-text);
+    border-color: transparent;
     box-shadow: var(--t2-shadow);
 }
 
@@ -204,6 +204,14 @@
     display: block;
     object-fit: contain;
     flex: 0 0 auto;
+}
+
+.kc-tpl-2.t2-theme-light .t2-btn-secondary .t2-btnIcon {
+    filter: brightness(0) invert(1);
+}
+
+.kc-tpl-2.t2-theme-dark .t2-btn-secondary .t2-btnIcon {
+    filter: brightness(0) saturate(100%) invert(0%);
 }
 
 .kc-tpl-2 .t2-section {
@@ -242,10 +250,10 @@
 
 .kc-tpl-2 .t2-aboutCard {
     text-align: center;
-    background: var(--t2-soft-bg);
-    border: 1px solid var(--t2-border);
+    background: var(--t2-panel-blue);
+    border: 1px solid var(--t2-panel-blue-border);
     border-radius: 18px;
-    box-shadow: var(--t2-shadow);
+    box-shadow: 0 14px 34px rgba(23, 54, 182, 0.18);
     padding: 24px 20px;
 }
 
@@ -263,13 +271,13 @@
     border-radius: 12px;
     object-fit: cover;
     background: #ffffff;
-    border: 1px solid var(--t2-border);
-    box-shadow: var(--t2-shadow);
+    border: 1px solid rgba(255, 255, 255, 0.16);
+    box-shadow: 0 10px 24px rgba(0, 0, 0, 0.18);
     flex: 0 0 auto;
 }
 
 .kc-tpl-2 .t2-aboutAvatar--placeholder {
-    background: #ececec;
+    background: rgba(255, 255, 255, 0.18);
 }
 
 .kc-tpl-2 .t2-aboutMeta {
@@ -280,14 +288,14 @@
     font-size: clamp(15px, 2.2vw, 22px);
     line-height: 1.2;
     font-weight: 600;
-    color: var(--t2-heading);
+    color: var(--t2-panel-text);
 }
 
 .kc-tpl-2 .t2-aboutRole {
     font-size: clamp(13px, 1.9vw, 18px);
     line-height: 1.35;
     font-weight: 400;
-    color: var(--t2-text-soft);
+    color: var(--t2-panel-text-soft);
 }
 
 .kc-tpl-2 .t2-aboutBio {
@@ -296,7 +304,7 @@
     font-size: clamp(15px, 2.1vw, 20px);
     line-height: 1.7;
     font-weight: 400;
-    color: var(--t2-text);
+    color: var(--t2-panel-text-soft);
 }
 
 .kc-tpl-2 .t2-sliderTrack {
@@ -567,6 +575,12 @@
         width: 26px;
         height: 26px;
     }
+
+    .kc-tpl-2 .t2-section-head::after {
+        width: 77px;
+        height: 12px;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='77' height='12' viewBox='0 0 77 12' fill='none'%3E%3Cpath d='M4 8.6C12.8 7.1 21 6.2 29.2 6C37.2 5.8 44.9 6 52.9 6.8C58.7 7.4 64.6 8.3 70.6 9.1' stroke='%23000483' stroke-width='3.2' stroke-linecap='round'/%3E%3C/svg%3E");
+    }
 }
 
 @media (max-width: 390px) {
@@ -649,6 +663,7 @@
 
     .kc-tpl-2 .t2-infoCard {
         min-height: 210px;
+        padding: 30px 26px;
     }
 
     .kc-tpl-2 .t2-infoCard--review {
