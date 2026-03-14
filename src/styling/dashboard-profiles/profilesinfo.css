@@ -1,6 +1,6 @@
 :root {
     --p-ink: var(--kc-text-primary, #0f172a);
-    --p-softLine: rgba(15, 23, 42, 0.08);
+    --p-softLine: rgba(15, 23, 42, 0.12);
     --p-softShadow: 0 0 1px rgba(0, 0, 0, 0.25);
 }
 
@@ -31,9 +31,13 @@
 }
 
 .profiles-divider {
+    display: block;
     height: 1px;
-    background: var(--p-softLine);
+    min-height: 1px;
+    background: rgba(15, 23, 42, 0.12);
     width: 100%;
+    border: 0;
+    opacity: 1;
 }
 
 .profiles-actionsTop {
@@ -189,17 +193,22 @@
     align-items: center;
     justify-content: center;
     flex: 0 0 auto;
-    height: 1em;
-    width: auto;
+    width: 16px;
+    height: 16px;
+    min-width: 16px;
+    min-height: 16px;
     color: currentColor;
 }
 
 .profiles-btnIconImg,
 .profiles-btnIconSvg {
     display: block;
-    height: 1em;
-    width: auto;
+    width: 16px;
+    height: 16px;
+    min-width: 16px;
+    min-height: 16px;
     max-width: none;
+    flex: 0 0 16px;
 }
 
 .profiles-qrBlock {
@@ -336,6 +345,10 @@
 
     .profiles-previewMetricsRow {
         margin-top: 12px;
+    }
+
+    .profiles-divider {
+        background: rgba(15, 23, 42, 0.12);
     }
 }
 
