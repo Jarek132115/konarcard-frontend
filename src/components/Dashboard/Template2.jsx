@@ -242,7 +242,7 @@ export default function Template2({ vm }) {
     }, [v.socials]);
 
     const hasAbout = nonEmpty(v.bio) || nonEmpty(v.fullName) || nonEmpty(v.jobTitle) || nonEmpty(avatar);
-    const hasContact = nonEmpty(v.email) || nonEmpty(v.phone) || socials.length > 0;
+    const hasContact = nonEmpty(v.email) || nonEmpty(v.phone) || v.hasExchangeContact || socials.length > 0;
 
     return (
         <div className={`kc-tpl kc-tpl-2 ${v.themeMode === "dark" ? "t2-theme-dark" : "t2-theme-light"}`}>
@@ -379,6 +379,18 @@ export default function Template2({ vm }) {
                                         </div>
                                     </div>
                                 </a>
+                            ) : null}
+
+                            {v.hasExchangeContact ? (
+                                <button type="button" className="t2-contactCard" onClick={v.onOpenExchangeContact}>
+                                    <div className="t2-contactCardInner">
+                                        <img src={ExchangeContactIcon} alt="" className="t2-contactIcon" />
+                                        <div className="t2-contactText">
+                                            <span className="t2-contactLabel">Exchange Contact</span>
+                                            <span className="t2-contactValue">Share contact details with each other</span>
+                                        </div>
+                                    </div>
+                                </button>
                             ) : null}
 
                             {socials.length > 0 ? (
