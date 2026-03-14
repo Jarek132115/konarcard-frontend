@@ -202,14 +202,6 @@
     max-width: none;
 }
 
-.profiles-btnIcon.is-inverted .profiles-btnIconImg {
-    filter: brightness(0) invert(1);
-}
-
-.profiles-btnIcon.is-inverted .profiles-btnIconSvg {
-    color: #ffffff;
-}
-
 .profiles-qrBlock {
     width: calc((100% - 12px) / 2);
     max-width: calc((100% - 12px) / 2);
@@ -262,12 +254,12 @@
 }
 
 .profiles-deleteBtn {
-    color: #ffffff !important;
-    border-color: transparent !important;
+    border-color: rgba(239, 68, 68, 0.55) !important;
+    color: rgba(239, 68, 68, 0.95) !important;
 }
 
 .profiles-deleteBtn:hover {
-    background: var(--kc-accent-secondary) !important;
+    background: rgba(239, 68, 68, 0.06) !important;
 }
 
 .profiles-previewLoading {

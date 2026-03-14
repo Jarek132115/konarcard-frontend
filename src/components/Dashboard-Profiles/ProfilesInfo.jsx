@@ -12,9 +12,9 @@ import ShareOnAppleWalletIcon from "../../assets/icons/ShareOnAppleWallet.svg";
 import ShareOnGoogleWalletIcon from "../../assets/icons/ShareOnGoogleWallet.svg";
 import ShareOnEditProfileIcon from "../../assets/icons/ShareOnEditProfile.svg";
 
-function ActionIcon({ src, alt = "", invert = false }) {
+function ActionIcon({ src, alt = "" }) {
     return (
-        <span className={`profiles-btnIcon ${invert ? "is-inverted" : ""}`} aria-hidden="true">
+        <span className="profiles-btnIcon" aria-hidden="true">
             <img src={src} alt={alt} className="profiles-btnIconImg" />
         </span>
     );
@@ -125,10 +125,10 @@ export default function ProfilesInfo({
                                     <div className="profiles-singleAction profiles-singleAction--wide">
                                         <button
                                             type="button"
-                                            className="kx-btn kx-btn--black profiles-actionBtn profiles-actionBtn--wide"
+                                            className="kx-btn kx-btn--white profiles-actionBtn profiles-actionBtn--wide"
                                             onClick={onDownloadQr}
                                         >
-                                            <ActionIcon src={ShareOnQRCodeIcon} invert />
+                                            <ActionIcon src={ShareOnQRCodeIcon} />
                                             <span>Download QR code</span>
                                         </button>
                                     </div>
@@ -143,37 +143,37 @@ export default function ProfilesInfo({
                                 <h3 className="profiles-groupTitle">Share your profile</h3>
 
                                 <div className="profiles-actionGrid">
-                                    <button type="button" className="kx-btn kx-btn--black profiles-actionBtn" onClick={onFacebook}>
+                                    <button type="button" className="kx-btn kx-btn--white profiles-actionBtn" onClick={onFacebook}>
                                         <ActionIcon src={ShareOnFacebookIcon} />
                                         <span>Facebook</span>
                                     </button>
 
-                                    <button type="button" className="kx-btn kx-btn--black profiles-actionBtn" onClick={onInstagram}>
+                                    <button type="button" className="kx-btn kx-btn--white profiles-actionBtn" onClick={onInstagram}>
                                         <ActionIcon src={ShareOnInstagramIcon} />
                                         <span>Instagram</span>
                                     </button>
 
-                                    <button type="button" className="kx-btn kx-btn--black profiles-actionBtn" onClick={onMessenger}>
+                                    <button type="button" className="kx-btn kx-btn--white profiles-actionBtn" onClick={onMessenger}>
                                         <ActionIcon src={ShareOnMessengerIcon} />
                                         <span>Messenger</span>
                                     </button>
 
-                                    <button type="button" className="kx-btn kx-btn--black profiles-actionBtn" onClick={onWhatsApp}>
+                                    <button type="button" className="kx-btn kx-btn--white profiles-actionBtn" onClick={onWhatsApp}>
                                         <ActionIcon src={ShareOnWhatsappIcon} />
                                         <span>WhatsApp</span>
                                     </button>
 
-                                    <button type="button" className="kx-btn kx-btn--black profiles-actionBtn" onClick={onText}>
+                                    <button type="button" className="kx-btn kx-btn--white profiles-actionBtn" onClick={onText}>
                                         <ActionIcon src={ShareOnTextIcon} />
                                         <span>Text</span>
                                     </button>
 
                                     <button
                                         type="button"
-                                        className="kx-btn kx-btn--black profiles-actionBtn"
+                                        className="kx-btn kx-btn--white profiles-actionBtn"
                                         onClick={() => onCopyLink(selectedPublicUrl)}
                                     >
-                                        <ActionIcon src={ShareOnCopyIcon} invert />
+                                        <ActionIcon src={ShareOnCopyIcon} />
                                         <span>Copy link</span>
                                     </button>
                                 </div>
@@ -187,12 +187,12 @@ export default function ProfilesInfo({
                                 <h3 className="profiles-groupTitle">Add to wallet</h3>
 
                                 <div className="profiles-actionGrid profiles-actionGrid--two">
-                                    <button type="button" className="kx-btn kx-btn--black profiles-actionBtn" onClick={onAppleWallet}>
-                                        <ActionIcon src={ShareOnAppleWalletIcon} invert />
+                                    <button type="button" className="kx-btn kx-btn--white profiles-actionBtn" onClick={onAppleWallet}>
+                                        <ActionIcon src={ShareOnAppleWalletIcon} />
                                         <span>Apple Wallet</span>
                                     </button>
 
-                                    <button type="button" className="kx-btn kx-btn--black profiles-actionBtn" onClick={onGoogleWallet}>
+                                    <button type="button" className="kx-btn kx-btn--white profiles-actionBtn" onClick={onGoogleWallet}>
                                         <ActionIcon src={ShareOnGoogleWalletIcon} />
                                         <span>Google Wallet</span>
                                     </button>
@@ -209,7 +209,7 @@ export default function ProfilesInfo({
                                 <div className="profiles-actionGrid profiles-actionGrid--two">
                                     <button
                                         type="button"
-                                        className="kx-btn kx-btn--black profiles-actionBtn"
+                                        className="kx-btn kx-btn--white profiles-actionBtn"
                                         onClick={() => onEdit(selectedProfile.slug)}
                                     >
                                         <ActionIcon src={ShareOnEditProfileIcon} />
@@ -218,10 +218,10 @@ export default function ProfilesInfo({
 
                                     <button
                                         type="button"
-                                        className="kx-btn kx-btn--black profiles-deleteBtn profiles-actionBtn"
+                                        className="kx-btn kx-btn--white profiles-deleteBtn profiles-actionBtn"
                                         onClick={() => onDelete(selectedProfile.slug)}
                                     >
-                                        <span className="profiles-btnIcon is-inverted" aria-hidden="true">
+                                        <span className="profiles-btnIcon" aria-hidden="true">
                                             <IconTrash />
                                         </span>
                                         <span>Delete</span>
