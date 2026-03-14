@@ -30,6 +30,17 @@ function Stars({ rating = 0 }) {
     );
 }
 
+function SectionHead({ title }) {
+    return (
+        <div className="t2-section-head">
+            <div className="t2-section-headInner">
+                <h2 className="t2-section-title">{title}</h2>
+                <span className="t2-section-stroke" aria-hidden="true" />
+            </div>
+        </div>
+    );
+}
+
 function getSocialIcon(key) {
     const map = {
         facebook_url: Template2IconFacebook,
@@ -48,8 +59,8 @@ function buildWorkRows(items) {
     let useSingle = true;
 
     while (i < items.length) {
-        const desiredCount = useSingle ? 1 : 2;
-        const rowItems = items.slice(i, i + desiredCount);
+        const count = useSingle ? 1 : 2;
+        const rowItems = items.slice(i, i + count);
 
         rows.push({
             type: rowItems.length === 1 ? "single" : "double",
@@ -126,6 +137,7 @@ export default function Template2({ vm }) {
                                         <img src={SaveMyNumberIcon} alt="" className="t2-btnIcon" />
                                         <span>Save My Number</span>
                                     </button>
+
                                     <button type="button" className="t2-btn t2-btn-secondary" onClick={v.onOpenExchangeContact}>
                                         <img src={ExchangeContactIcon} alt="" className="t2-btnIcon" />
                                         <span>Exchange Contact</span>
@@ -138,9 +150,7 @@ export default function Template2({ vm }) {
 
                 {v.showAboutMeSection && hasAbout ? (
                     <section className="t2-section">
-                        <div className="t2-section-head">
-                            <h2 className="t2-section-title">ABOUT ME</h2>
-                        </div>
+                        <SectionHead title="ABOUT ME" />
 
                         <div className="t2-aboutCard">
                             <div className="t2-aboutTop">
@@ -163,9 +173,7 @@ export default function Template2({ vm }) {
 
                 {v.showWorkSection && works.length > 0 ? (
                     <section className="t2-section">
-                        <div className="t2-section-head">
-                            <h2 className="t2-section-title">MY WORK</h2>
-                        </div>
+                        <SectionHead title="MY WORK" />
 
                         <div className="t2-workRows">
                             {workRows.map((row, rowIndex) => (
@@ -189,9 +197,7 @@ export default function Template2({ vm }) {
 
                 {v.showServicesSection && services.length > 0 ? (
                     <section className="t2-section">
-                        <div className="t2-section-head">
-                            <h2 className="t2-section-title">MY SERVICES</h2>
-                        </div>
+                        <SectionHead title="MY SERVICES" />
 
                         <div className="t2-servicesList">
                             {services.slice(0, 12).map((s, i) => (
@@ -213,9 +219,7 @@ export default function Template2({ vm }) {
 
                 {v.showReviewsSection && reviews.length > 0 ? (
                     <section className="t2-section">
-                        <div className="t2-section-head">
-                            <h2 className="t2-section-title">MY REVIEWS</h2>
-                        </div>
+                        <SectionHead title="MY REVIEWS" />
 
                         <div className="t2-reviewsList">
                             {reviews.slice(0, 10).map((r, i) => (
@@ -233,9 +237,7 @@ export default function Template2({ vm }) {
 
                 {v.showContactSection && hasContact ? (
                     <section className="t2-section t2-section-last">
-                        <div className="t2-section-head">
-                            <h2 className="t2-section-title">GET IN TOUCH</h2>
-                        </div>
+                        <SectionHead title="GET IN TOUCH" />
 
                         <div className="t2-contactStack">
                             {nonEmpty(v.email) ? (
