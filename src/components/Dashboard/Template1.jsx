@@ -61,11 +61,11 @@ function getSocialMeta(key) {
         },
         x_url: {
             label: "X",
-            icon: <TemplateIcon src={XIconSrc} alt="" className="t1-assetIcon t1-assetIcon--social" />,
+            icon: <TemplateIcon src={XIconSrc} alt="" className="t1-assetIcon t1-assetIcon--social t1-assetIcon--social-x" />,
         },
         twitter_url: {
             label: "X",
-            icon: <TemplateIcon src={XIconSrc} alt="" className="t1-assetIcon t1-assetIcon--social" />,
+            icon: <TemplateIcon src={XIconSrc} alt="" className="t1-assetIcon t1-assetIcon--social t1-assetIcon--social-x" />,
         },
         tiktok_url: {
             label: "TikTok",

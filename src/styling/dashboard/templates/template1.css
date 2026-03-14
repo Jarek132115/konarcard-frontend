@@ -120,6 +120,10 @@
     height: 30px;
 }
 
+.kc-tpl-1.t1-theme-dark .t1-assetIcon--social-x {
+    filter: brightness(0) saturate(100%) invert(100%);
+}
+
 .kc-tpl-1 .t1-btnIcon {
     width: 18px;
     height: 18px;
@@ -452,14 +456,15 @@
 .kc-tpl-1 .t1-services {
     display: grid;
     gap: 12px;
+    grid-template-columns: 1fr;
 }
 
 .kc-tpl-1 .t1-service {
     display: grid;
-    grid-template-columns: 48px minmax(0, 1fr);
-    gap: 14px;
-    align-items: start;
-    padding: 18px;
+    justify-items: center;
+    text-align: center;
+    gap: 12px;
+    padding: 20px;
     border-radius: var(--t1-card-radius-sm);
 }
 
@@ -480,6 +485,10 @@
 
 .kc-tpl-1 .t1-serviceCopy {
     min-width: 0;
+    display: grid;
+    gap: 7px;
+    justify-items: center;
+    text-align: center;
 }
 
 .kc-tpl-1 .t1-service-name {
@@ -489,14 +498,17 @@
     color: var(--t1-text);
     letter-spacing: -0.03em;
     word-break: break-word;
+    text-align: center;
 }
 
 .kc-tpl-1 .t1-service-sub {
-    margin-top: 7px;
+    margin-top: 0;
     font-size: clamp(14px, 1.9vw, 17px);
     line-height: 1.62;
     color: var(--t1-text-soft);
     word-break: break-word;
+    text-align: center;
+    max-width: 680px;
 }
 
 /* =========================
@@ -568,10 +580,12 @@
 
 .kc-tpl-1 .t1-contact-row {
     display: grid;
-    grid-template-columns: 54px minmax(0, 1fr);
-    gap: 12px;
+    grid-template-columns: 1fr;
+    gap: 10px;
     align-items: center;
-    padding: 12px;
+    justify-items: center;
+    text-align: center;
+    padding: 16px 14px;
     border-radius: 12px;
     text-decoration: none;
     color: inherit;
@@ -585,7 +599,6 @@
 
 .kc-tpl-1 .t1-contact-row--button {
     width: 100%;
-    text-align: left;
     cursor: pointer;
     font: inherit;
 }
@@ -605,6 +618,8 @@
     display: grid;
     gap: 2px;
     min-width: 0;
+    justify-items: center;
+    text-align: center;
 }
 
 .kc-tpl-1 .t1-contact-k {
@@ -613,6 +628,7 @@
     font-weight: 700;
     color: var(--t1-text);
     word-break: break-word;
+    text-align: center;
 }
 
 .kc-tpl-1 .t1-contact-v {
@@ -620,6 +636,7 @@
     line-height: 1.45;
     color: var(--t1-text-soft);
     word-break: break-word;
+    text-align: center;
 }
 
 .kc-tpl-1 .t1-socials {
@@ -716,18 +733,13 @@
 }
 
 @media (min-width: 760px) {
-    .kc-tpl-1 .t1-services {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-    }
-
     .kc-tpl-1 .t1-reviews {
         grid-template-columns: repeat(2, minmax(0, 1fr));
     }
 
     .kc-tpl-1 .t1-contact-row {
-        grid-template-columns: 60px minmax(0, 1fr);
-        gap: 14px;
-        padding: 14px;
+        gap: 12px;
+        padding: 18px 16px;
         border-radius: 14px;
     }
 
