@@ -419,21 +419,18 @@
 }
 
 .kc-tpl-3 .t3-serviceTopIcon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
     width: 48px;
     height: 48px;
     border-radius: 16px;
     background: var(--t3-accent-soft);
     color: var(--t3-accent);
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.kc-tpl-3 .t3-serviceIconSvg {
-    width: 22px;
-    height: 22px;
-    display: block;
-    color: currentColor;
+    font-size: 14px;
+    line-height: 1;
+    font-weight: 700;
+    letter-spacing: -0.02em;
 }
 
 .kc-tpl-3 .t3-serviceCopy {

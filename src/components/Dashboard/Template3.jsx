@@ -100,17 +100,6 @@ function XIcon() {
     );
 }
 
-function ServiceIcon() {
-    return (
-        <svg viewBox="0 0 24 24" className="t3-serviceIconSvg" aria-hidden="true">
-            <path
-                fill="currentColor"
-                d="M12 2.75a1 1 0 0 1 .98.8l.34 1.69a6.98 6.98 0 0 1 1.42.59l1.47-.9a1 1 0 0 1 1.25.14l1.4 1.4a1 1 0 0 1 .14 1.25l-.9 1.47c.24.46.44.94.59 1.42l1.69.34a1 1 0 0 1 .8.98v1.98a1 1 0 0 1-.8.98l-1.69.34a6.98 6.98 0 0 1-.59 1.42l.9 1.47a1 1 0 0 1-.14 1.25l-1.4 1.4a1 1 0 0 1-1.25.14l-1.47-.9c-.46.24-.94.44-1.42.59l-.34 1.69a1 1 0 0 1-.98.8h-1.98a1 1 0 0 1-.98-.8l-.34-1.69a6.98 6.98 0 0 1-1.42-.59l-1.47.9a1 1 0 0 1-1.25-.14l-1.4-1.4a1 1 0 0 1-.14-1.25l.9-1.47a6.98 6.98 0 0 1-.59-1.42l-1.69-.34a1 1 0 0 1-.8-.98v-1.98a1 1 0 0 1 .8-.98l1.69-.34c.15-.48.35-.96.59-1.42l-.9-1.47a1 1 0 0 1 .14-1.25l1.4-1.4a1 1 0 0 1 1.25-.14l1.47.9c.46-.24.94-.44 1.42-.59l.34-1.69a1 1 0 0 1 .98-.8H12Zm0 6a3.25 3.25 0 1 0 0 6.5a3.25 3.25 0 0 0 0-6.5Z"
-            />
-        </svg>
-    );
-}
-
 function getSocialMeta(key) {
     const map = {
         facebook_url: { label: "Facebook", icon: <FacebookIcon /> },
@@ -288,7 +277,7 @@ export default function Template3({ vm }) {
                             {services.slice(0, 12).map((s, i) => (
                                 <article key={i} className="t3-serviceCard">
                                     <div className="t3-serviceTopIcon">
-                                        <ServiceIcon />
+                                        {String(i + 1).padStart(2, "0")}
                                     </div>
 
                                     <div className="t3-serviceCopy">
