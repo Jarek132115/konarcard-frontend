@@ -449,10 +449,17 @@
 }
 
 .kc-tpl-4 .t4-serviceIconAsset {
-    width: 20px;
-    height: 20px;
+    width: 32px;
+    height: 32px;
     display: block;
     object-fit: contain;
+    filter: brightness(0) saturate(100%) invert(18%) sepia(76%) saturate(3055%) hue-rotate(351deg) brightness(83%) contrast(95%);
+}
+
+.kc-tpl-4.t4-theme-dark .t4-serviceIconAsset {
+    width: 32px;
+    height: 32px;
+    filter: brightness(0) saturate(100%) invert(51%) sepia(76%) saturate(1136%) hue-rotate(327deg) brightness(102%) contrast(87%);
 }
 
 .kc-tpl-4 .t4-serviceMain {
@@ -550,7 +557,8 @@
 
 .kc-tpl-4 .t4-contactWrap {
     display: grid;
-    gap: 14px;
+    gap: 0;
+    padding: 0 16px;
 }
 
 .kc-tpl-4 .t4-contactGrid {
@@ -576,7 +584,6 @@
 
 .kc-tpl-4 .t4-contactCard:last-child {
     border-bottom: 0;
-    padding-bottom: 0;
 }
 
 .kc-tpl-4 .t4-contactCard:first-child {
@@ -648,7 +655,9 @@
     gap: 10px;
     justify-items: stretch;
     align-items: stretch;
-    padding-top: 4px;
+    padding: 20px 0 0;
+    margin-top: 20px;
+    border-top: 1px solid var(--t4-divider);
 }
 
 .kc-tpl-4 .t4-social {
@@ -738,7 +747,8 @@
         gap: 10px;
     }
 
-    .kc-tpl-4 .t4-servicesList {
+    .kc-tpl-4 .t4-servicesList,
+    .kc-tpl-4 .t4-contactWrap {
         padding: 0 16px;
     }
 }
@@ -777,23 +787,4 @@
 .kc-tpl-4.t4-theme-dark .t4-contactCard:focus-visible,
 .kc-tpl-4.t4-theme-dark .t4-social:focus-visible {
     outline: 2px solid rgba(239, 68, 68, 0.28);
-}
-
-/* =========================================
-   TEMPLATE 4 — SERVICE ICON FIX (TEST)
-   ========================================= */
-
-.kc-tpl-4 .t4-serviceIconAsset {
-    width: 32px;
-    height: 32px;
-    display: block;
-    object-fit: contain;
-
-    /* force accent red */
-    filter: brightness(0) saturate(100%) invert(16%) sepia(84%) saturate(5145%) hue-rotate(352deg) brightness(90%) contrast(105%);
-}
-
-/* keep same red in dark mode */
-.kc-tpl-4.t4-theme-dark .t4-serviceIconAsset {
-    filter: brightness(0) saturate(100%) invert(16%) sepia(84%) saturate(5145%) hue-rotate(352deg) brightness(90%) contrast(105%);
 }
