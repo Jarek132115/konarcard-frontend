@@ -77,22 +77,10 @@ function getSocialMeta(key) {
 
 function buildWorkRows(items) {
     const rows = [];
-    let i = 0;
-    let useFeature = true;
-
-    while (i < items.length) {
-        if (useFeature) {
-            const one = items.slice(i, i + 1);
-            rows.push({ type: "feature", items: one });
-            i += one.length;
-        } else {
-            const pair = items.slice(i, i + 2);
-            rows.push({ type: pair.length === 1 ? "feature" : "pair", items: pair });
-            i += pair.length;
-        }
-        useFeature = !useFeature;
+    for (let i = 0; i < items.length; i += 2) {
+        const rowItems = items.slice(i, i + 2);
+        rows.push(rowItems);
     }
-
     return rows;
 }
 
@@ -211,14 +199,14 @@ export default function Template5({ vm }) {
                             {workRows.map((row, rowIndex) => (
                                 <div
                                     key={rowIndex}
-                                    className={`t5-workRow ${row.type === "pair" ? "t5-workRow--pair" : "t5-workRow--feature"}`}
+                                    className={`t5-workRow ${row.length === 1 ? "t5-workRow--single" : "t5-workRow--pair"}`}
                                 >
-                                    {row.items.map((url, itemIndex) => (
+                                    {row.map((url, itemIndex) => (
                                         <div
                                             key={`${rowIndex}-${itemIndex}`}
-                                            className={`t5-workTile ${row.items.length === 1 ? "is-feature" : ""}`}
+                                            className={`t5-workTile ${row.length === 1 ? "is-full" : ""}`}
                                         >
-                                            <img src={url} alt={`Work ${rowIndex + itemIndex + 1}`} className="t5-workImg" />
+                                            <img src={url} alt={`Work ${rowIndex * 2 + itemIndex + 1}`} className="t5-workImg" />
                                         </div>
                                     ))}
                                 </div>
@@ -234,6 +222,8 @@ export default function Template5({ vm }) {
                         <div className="t5-servicesList">
                             {services.slice(0, 12).map((s, i) => (
                                 <article key={i} className="t5-serviceRow">
+                                    <div className="t5-serviceIndex">{String(i + 1).padStart(2, "0")}</div>
+
                                     <div className="t5-serviceMain">
                                         <h3 className="t5-serviceName">{s?.name || "Service"}</h3>
                                         {nonEmpty(s?.description || s?.price) ? (
