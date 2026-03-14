@@ -1,4 +1,3 @@
-// frontend/src/App.jsx
 import { Routes, Route, useLocation, Navigate } from "react-router-dom";
 import { useContext } from "react";
 import { Toaster } from "react-hot-toast";
@@ -87,7 +86,7 @@ function TidioWrapper() {
     location.pathname.startsWith("/contact-book") ||
     location.pathname.startsWith("/settings") ||
     location.pathname.startsWith("/billing") ||
-    location.pathname.startsWith("/upgrade-plan") || // ✅ add
+    location.pathname.startsWith("/upgrade-plan") ||
     location.pathname.startsWith("/myorders") ||
     location.pathname.startsWith("/nfccards") ||
     location.pathname.startsWith("/notifications") ||
@@ -96,7 +95,11 @@ function TidioWrapper() {
     location.pathname.startsWith("/admin") ||
     location.pathname.startsWith("/claim");
 
-  const enableTidio = !isDashboardPath || location.pathname === "/contact-support";
+  const isPublicUserProfile = location.pathname.startsWith("/u/");
+
+  const enableTidio =
+    (!isDashboardPath && !isPublicUserProfile) ||
+    location.pathname === "/contact-support";
 
   return <TidioDelayedLoader enabled={enableTidio} delayMs={4000} />;
 }
@@ -131,14 +134,14 @@ export default function App() {
           {/* Public website pages */}
           <Route path="/products" element={<Products />} />
 
-          {/* ✅ CANONICAL ROUTES (these are the real pages) */}
+          {/* ✅ CANONICAL ROUTES */}
           <Route path="/products/plastic-card" element={<PlasticCard />} />
           <Route path="/products/metal-card" element={<MetalCard />} />
           <Route path="/products/konartag" element={<KonarTag />} />
           <Route path="/products/plastic-bundle" element={<PlasticBundle />} />
           <Route path="/products/metal-bundle" element={<MetalBundle />} />
 
-          {/* ✅ OLD ROUTES REDIRECT TO CANONICAL (one-way only) */}
+          {/* ✅ OLD ROUTES REDIRECT */}
           <Route path="/products/plastic" element={<Navigate to="/products/plastic-card" replace />} />
           <Route path="/products/metal" element={<Navigate to="/products/metal-card" replace />} />
 
@@ -220,7 +223,6 @@ export default function App() {
             }
           />
 
-          {/* ✅ NEW: dashboard pricing / upgrade page */}
           <Route
             path="/upgrade-plan"
             element={

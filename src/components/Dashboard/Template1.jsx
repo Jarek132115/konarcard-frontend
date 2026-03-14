@@ -128,14 +128,6 @@ export default function Template1(props) {
                             ) : (
                                 <div className="t1-cover t1-cover--placeholder" aria-hidden="true" />
                             )}
-
-                            <div className="t1-logoWrap">
-                                {nonEmpty(logo) ? (
-                                    <img src={logo} alt="Logo" className="t1-logo" />
-                                ) : (
-                                    <div className="t1-logo t1-logo--placeholder" aria-hidden="true" />
-                                )}
-                            </div>
                         </div>
 
                         <div className="t1-heroCard">
@@ -151,14 +143,14 @@ export default function Template1(props) {
                                     {showSaveButton ? (
                                         <button
                                             type="button"
-                                            className="t1-btn t1-btn-ghost"
+                                            className="t1-btn t1-btn-primary"
                                             onClick={v.onSaveMyNumber}
                                         >
                                             <span className="t1-btnIcon">
                                                 <img
                                                     src={SaveMyNumberIcon}
                                                     alt=""
-                                                    className="t1-btnIconAsset t1-btnIconAsset--ghost"
+                                                    className="t1-btnIconAsset t1-btnIconAsset--primary"
                                                 />
                                             </span>
                                             <span>Save My Number</span>
@@ -168,14 +160,14 @@ export default function Template1(props) {
                                     {showExchangeButton ? (
                                         <button
                                             type="button"
-                                            className="t1-btn t1-btn-primary"
+                                            className="t1-btn t1-btn-secondary"
                                             onClick={v.onOpenExchangeContact}
                                         >
                                             <span className="t1-btnIcon">
                                                 <img
                                                     src={ExchangeContactIcon}
                                                     alt=""
-                                                    className="t1-btnIconAsset t1-btnIconAsset--primary"
+                                                    className="t1-btnIconAsset t1-btnIconAsset--secondary"
                                                 />
                                             </span>
                                             <span>Exchange Contact</span>
