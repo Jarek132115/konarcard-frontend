@@ -54,11 +54,12 @@
     justify-content: space-between;
     align-items: flex-start;
     gap: 12px;
-    text-align: center;
+    text-align: left;
 }
 
 .exchange-modal__headerCopy {
     flex: 1 1 auto;
+    text-align: left;
 }
 
 .exchange-modal__title {
@@ -66,6 +67,7 @@
     font-weight: 800;
     line-height: 1.15;
     margin: 0;
+    text-align: left;
 }
 
 .exchange-modal__subtitle {
@@ -73,6 +75,7 @@
     font-size: 0.92rem;
     line-height: 1.45;
     opacity: 0.78;
+    text-align: left;
 }
 
 .exchange-modal__close {
@@ -285,7 +288,6 @@
     letter-spacing: -0.03em;
 }
 
-.exchange-modal--template-2 .exchange-modal__header,
 .exchange-modal--template-2 .exchange-modal__form,
 .exchange-modal--template-2 .exchange-modal__footnote {
     text-align: center;
