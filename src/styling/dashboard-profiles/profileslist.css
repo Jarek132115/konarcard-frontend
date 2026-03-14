@@ -10,6 +10,8 @@
 .profiles-list-card {
     min-height: 0;
     height: 100%;
+    display: flex;
+    flex-direction: column;
 }
 
 .profiles-listHeader {
@@ -63,9 +65,10 @@
     overflow-x: auto;
     overflow-y: hidden;
     padding: 2px;
-    flex: 1;
+    flex: 1 1 auto;
     min-height: 0;
-    align-items: flex-start;
+    height: 100%;
+    align-items: stretch;
     cursor: grab;
     user-select: none;
     -webkit-user-select: none;
@@ -100,9 +103,12 @@
 }
 
 .profiles-profileCard.is-active {
-    background: #f5f5f5;
-    border-color: rgba(15, 23, 42, 0.12);
-    box-shadow: inset 0 0 0 1px rgba(15, 23, 42, 0.04);
+    border-color: rgba(249, 115, 22, 0.82);
+    box-shadow:
+        inset 0 0 0 1px rgba(249, 115, 22, 0.18),
+        0 0 0 3px rgba(249, 115, 22, 0.10),
+        var(--p-softShadow);
+    background: #fffdfa;
 }
 
 .profiles-profileCard--rail,
@@ -110,8 +116,8 @@
 .profiles-addInline--rail {
     flex: 0 0 clamp(260px, 24vw, 320px);
     width: clamp(260px, 24vw, 320px);
-    min-height: unset;
-    height: auto;
+    min-height: 100%;
+    height: 100%;
 }
 
 .profiles-profileCard--rail {
@@ -228,11 +234,14 @@
     text-align: center;
 }
 
+/* PREVIEW */
 .profiles-mainPreview {
     width: 100%;
     position: relative;
     overflow: hidden;
     border-bottom: 1px solid rgba(15, 23, 42, 0.08);
+    aspect-ratio: 1 / 1;
+    max-height: 340px;
 }
 
 .profiles-mainPreview--light {
@@ -242,7 +251,7 @@
 
 .profiles-mainPreview--dark {
     background:
-        radial-gradient(circle at top right, rgba(249, 115, 22, 0.10), transparent 28%),
+        radial-gradient(circle at top right, rgba(249, 115, 22, 0.08), transparent 28%),
         #0f172a;
     color: #ffffff;
 }
@@ -259,11 +268,11 @@
 
 .profiles-mainPreviewCover {
     width: 100%;
-    flex: 0 0 48%;
-    min-height: 46%;
-    max-height: 58%;
+    aspect-ratio: 4 / 2.5;
+    flex: 0 0 auto;
     overflow: hidden;
     background: linear-gradient(135deg, #e2e8f0 0%, #cbd5e1 100%);
+    border-radius: 0;
 }
 
 .profiles-mainPreviewCoverImg {
@@ -271,6 +280,7 @@
     height: 100%;
     object-fit: cover;
     display: block;
+    border-radius: 0;
 }
 
 .profiles-mainPreviewCoverFallback {
@@ -284,18 +294,28 @@
 .profiles-mainPreviewBody {
     flex: 1 1 auto;
     min-height: 0;
-    padding: 16px 16px 14px;
+    padding: 14px 14px 14px;
     display: flex;
     flex-direction: column;
-    align-items: flex-start;
+    align-items: center;
     justify-content: flex-start;
-    gap: 8px;
+    gap: 10px;
     overflow: hidden;
+    text-align: center;
 }
 
 .profiles-mainPreview--dark .profiles-mainPreviewBody {
     background:
         linear-gradient(180deg, rgba(15, 23, 42, 0.00) 0%, rgba(15, 23, 42, 0.08) 100%);
+}
+
+.profiles-mainPreviewCopy {
+    width: 100%;
+    display: grid;
+    gap: 7px;
+    justify-items: center;
+    text-align: center;
+    overflow: hidden;
 }
 
 .profiles-mainPreviewName {
@@ -309,6 +329,7 @@
     -webkit-box-orient: vertical;
     -webkit-line-clamp: 2;
     line-clamp: 2;
+    max-width: 100%;
 }
 
 .profiles-mainPreviewTrade {
@@ -323,6 +344,7 @@
     -webkit-box-orient: vertical;
     -webkit-line-clamp: 2;
     line-clamp: 2;
+    max-width: 100%;
 }
 
 .profiles-mainPreviewLocation {
@@ -338,6 +360,35 @@
     max-width: 100%;
 }
 
+.profiles-mainPreviewCtaRow {
+    width: 100%;
+    margin-top: auto;
+    display: flex;
+    justify-content: center;
+    flex: 0 0 auto;
+}
+
+.profiles-mainPreviewBtn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 38px;
+    width: 100%;
+    border: 0;
+    border-radius: 999px;
+    padding: 0 16px;
+    background: var(--profiles-preview-accent, var(--kc-accent-primary, #f97316));
+    color: #ffffff;
+    font-family: "Inter", sans-serif;
+    font-weight: 700;
+    font-size: 12px;
+    line-height: 1;
+    box-shadow: none;
+    pointer-events: none;
+    max-width: 100%;
+}
+
+/* BOTTOM */
 .profiles-profileBottom {
     display: grid;
     gap: 12px;
@@ -354,15 +405,17 @@
 
 .profiles-cardBtns--responsiveRow {
     width: 100%;
-    flex-direction: column;
+    flex-direction: row;
 }
 
 .profiles-cardBtn {
     width: 100%;
     min-width: 0;
     justify-content: center;
+    min-height: 46px;
 }
 
+/* ADD CARD */
 .profiles-addCard,
 .profiles-addInline {
     border-radius: 24px;
@@ -675,12 +728,7 @@
     color: var(--kc-accent-primary, #f97316);
 }
 
-/* preview sizing */
-.profiles-mainPreview {
-    aspect-ratio: 1 / 1;
-    max-height: 320px;
-}
-
+/* RESPONSIVE SIZING */
 @media (max-width: 1280px) {
 
     .profiles-profileCard--rail,
@@ -691,15 +739,16 @@
     }
 
     .profiles-mainPreview {
-        max-height: 286px;
+        max-height: 300px;
     }
 }
 
 @media (max-width: 1180px) {
     .profiles-listRail {
-        flex: initial;
+        flex: 1 1 auto;
         min-height: 0;
-        align-items: flex-start;
+        height: 100%;
+        align-items: stretch;
     }
 
     .profiles-profileCard--rail,
@@ -707,11 +756,13 @@
     .profiles-addInline--rail {
         flex: 0 0 340px;
         width: 340px;
+        min-height: 100%;
+        height: 100%;
     }
 
     .profiles-mainPreview {
         aspect-ratio: 4 / 3;
-        max-height: 270px;
+        max-height: 268px;
     }
 }
 
@@ -726,22 +777,20 @@
 
     .profiles-mainPreview {
         aspect-ratio: 4 / 3;
-        max-height: 248px;
+        max-height: 246px;
     }
 
-    .profiles-cardBtns--responsiveRow {
-        flex-direction: row;
-        gap: 10px;
+    .profiles-cardContent {
+        padding: 14px;
     }
 
     .profiles-cardBtn {
-        min-height: 42px;
+        min-height: 44px;
         font-size: 13px;
-        padding: 0 12px;
     }
 
     .profiles-mainPreviewBody {
-        padding: 14px 14px 12px;
+        padding: 12px 12px 12px;
     }
 
     .profiles-mainPreviewName {
@@ -787,16 +836,12 @@
 
     .profiles-mainPreview {
         aspect-ratio: 4 / 3;
-        max-height: 228px;
-    }
-
-    .profiles-mainPreviewCover {
-        flex-basis: 50%;
+        max-height: 222px;
     }
 
     .profiles-mainPreviewBody {
-        padding: 12px 12px 10px;
-        gap: 6px;
+        padding: 10px 10px 10px;
+        gap: 8px;
     }
 
     .profiles-mainPreviewName {
@@ -811,8 +856,9 @@
         font-size: 10px;
     }
 
-    .profiles-profileBottom {
-        gap: 10px;
+    .profiles-mainPreviewBtn {
+        min-height: 34px;
+        font-size: 11px;
     }
 
     .profiles-addPlainPlus {
@@ -897,12 +943,12 @@
 
     .profiles-mainPreview {
         aspect-ratio: 4 / 3;
-        max-height: 166px;
+        max-height: 164px;
     }
 
     .profiles-mainPreviewBody {
-        padding: 10px 10px 8px;
-        gap: 5px;
+        padding: 8px 8px 8px;
+        gap: 6px;
     }
 
     .profiles-mainPreviewName {
@@ -918,17 +964,22 @@
         font-size: 7px;
     }
 
+    .profiles-mainPreviewBtn {
+        min-height: 24px;
+        font-size: 8px;
+        padding: 0 10px;
+    }
+
     .profiles-profileBottom {
         gap: 8px;
     }
 
     .profiles-cardBtns--responsiveRow {
-        flex-direction: row;
         gap: 6px;
     }
 
     .profiles-cardBtn {
-        min-height: 32px;
+        min-height: 34px;
         font-size: 10px;
         padding: 0 8px;
     }
@@ -1058,15 +1109,19 @@
 
     .profiles-mainPreview {
         aspect-ratio: 4 / 3;
-        max-height: 152px;
+        max-height: 150px;
     }
 
     .profiles-mainPreviewName {
         font-size: 13px;
     }
 
+    .profiles-cardBtns--responsiveRow {
+        flex-direction: column;
+    }
+
     .profiles-cardBtn {
-        min-height: 30px;
+        min-height: 32px;
         font-size: 9px;
     }
 }

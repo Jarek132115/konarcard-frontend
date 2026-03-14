@@ -14,8 +14,8 @@ function joinParts(parts = []) {
         .join(", ");
 }
 
-function getPreviewTheme(card) {
-    const raw = card?.raw || {};
+function getPreviewTheme(profile) {
+    const raw = profile?.raw || {};
     const themeCandidate = firstNonEmpty(
         raw?.theme,
         raw?.themeMode,
@@ -28,8 +28,8 @@ function getPreviewTheme(card) {
     return "light";
 }
 
-function getPreviewCover(card) {
-    const raw = card?.raw || {};
+function getPreviewCover(profile) {
+    const raw = profile?.raw || {};
     return (
         raw?.coverPhoto ||
         raw?.cover_photo ||
@@ -45,44 +45,79 @@ function getPreviewCover(card) {
     );
 }
 
-function getPreviewName(card) {
-    const raw = card?.raw || {};
-    return firstNonEmpty(
+function getPreviewName(profile) {
+    const raw = profile?.raw || {};
+    const found = firstNonEmpty(
         raw?.businessName,
         raw?.business_name,
         raw?.companyName,
         raw?.company_name,
         raw?.displayName,
         raw?.display_name,
-        raw?.name,
-        card?.slug
+        raw?.name
+    );
+
+    return found || `${profile?.slug || "profile"} profile`;
+}
+
+function getPreviewTrade(profile) {
+    const raw = profile?.raw || {};
+    return (
+        firstNonEmpty(
+            raw?.tradeTitle,
+            raw?.trade_title,
+            raw?.jobTitle,
+            raw?.job_title,
+            raw?.profession,
+            raw?.headline,
+            raw?.subtitle,
+            raw?.tagline
+        ) || "Trade title"
     );
 }
 
-function getPreviewTrade(card) {
-    const raw = card?.raw || {};
-    return firstNonEmpty(
-        raw?.tradeTitle,
-        raw?.trade_title,
-        raw?.jobTitle,
-        raw?.job_title,
-        raw?.profession,
-        raw?.headline,
-        raw?.subtitle,
-        raw?.tagline
+function getPreviewLocation(profile) {
+    const raw = profile?.raw || {};
+    return (
+        firstNonEmpty(
+            raw?.location,
+            raw?.addressLine,
+            raw?.address_line,
+            joinParts([raw?.city, raw?.region]),
+            joinParts([raw?.city, raw?.country]),
+            joinParts([raw?.town, raw?.country])
+        ) || "Location"
     );
 }
 
-function getPreviewLocation(card) {
-    const raw = card?.raw || {};
-    return firstNonEmpty(
-        raw?.location,
-        raw?.addressLine,
-        raw?.address_line,
-        joinParts([raw?.city, raw?.region]),
-        joinParts([raw?.city, raw?.country]),
-        joinParts([raw?.town, raw?.country])
+function getPreviewAccent(profile) {
+    const raw = profile?.raw || {};
+    const explicit = firstNonEmpty(
+        raw?.accentColor,
+        raw?.accent_color,
+        raw?.primaryColor,
+        raw?.primary_color,
+        raw?.brandColor,
+        raw?.brand_color
     );
+
+    if (explicit) return explicit;
+
+    const templateValue = String(
+        raw?.template ||
+        raw?.templateId ||
+        raw?.template_id ||
+        profile?.template ||
+        ""
+    ).toLowerCase();
+
+    if (templateValue.includes("1")) return "#f59e0b";
+    if (templateValue.includes("2")) return "#1d4ed8";
+    if (templateValue.includes("3")) return "#3b82f6";
+    if (templateValue.includes("4")) return "#ef4444";
+    if (templateValue.includes("5")) return "#16a34a";
+
+    return "var(--kc-accent-primary, #f97316)";
 }
 
 function ProfileMainPreview({ profile }) {
@@ -91,9 +126,13 @@ function ProfileMainPreview({ profile }) {
     const name = getPreviewName(profile);
     const trade = getPreviewTrade(profile);
     const location = getPreviewLocation(profile);
+    const accent = getPreviewAccent(profile);
 
     return (
-        <div className={`profiles-mainPreview profiles-mainPreview--${theme}`}>
+        <div
+            className={`profiles-mainPreview profiles-mainPreview--${theme}`}
+            style={{ "--profiles-preview-accent": accent }}
+        >
             <div className="profiles-mainPreviewInner">
                 <div className="profiles-mainPreviewCover">
                     {cover ? (
@@ -108,9 +147,22 @@ function ProfileMainPreview({ profile }) {
                 </div>
 
                 <div className="profiles-mainPreviewBody">
-                    {name ? <div className="profiles-mainPreviewName">{name}</div> : null}
-                    {trade ? <div className="profiles-mainPreviewTrade">{trade}</div> : null}
-                    {location ? <div className="profiles-mainPreviewLocation">{location}</div> : null}
+                    <div className="profiles-mainPreviewCopy">
+                        <div className="profiles-mainPreviewName">{name}</div>
+                        <div className="profiles-mainPreviewTrade">{trade}</div>
+                        <div className="profiles-mainPreviewLocation">{location}</div>
+                    </div>
+
+                    <div className="profiles-mainPreviewCtaRow">
+                        <button
+                            type="button"
+                            className="profiles-mainPreviewBtn"
+                            tabIndex={-1}
+                            aria-hidden="true"
+                        >
+                            Save My Number
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -417,7 +469,7 @@ export default function ProfilesList({
                                                 onEdit(p.slug);
                                             }}
                                         >
-                                            Edit
+                                            Edit profile
                                         </button>
 
                                         <button
