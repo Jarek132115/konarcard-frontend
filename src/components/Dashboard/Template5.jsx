@@ -192,27 +192,12 @@ export default function Template5({ vm }) {
 
                         <div className="t5-heroCard">
                             <div className="t5-brandRow">
-                                <div className="t5-avatarWrap">
-                                    {nonEmpty(avatar) ? (
-                                        <img className="t5-avatar" src={avatar} alt="" />
-                                    ) : (
-                                        <div className="t5-avatar t5-avatar--ph" aria-hidden="true" />
-                                    )}
-                                </div>
-
                                 <div className="t5-brandText">
                                     <h1 className="t5-h1">{v.mainHeading || "Your Main Heading"}</h1>
                                     {nonEmpty(v.subHeading) ? <p className="t5-sub">{v.subHeading}</p> : null}
                                     {nonEmpty(v.location) ? <p className="t5-location">{v.location}</p> : null}
                                 </div>
                             </div>
-
-                            {(nonEmpty(v.fullName) || nonEmpty(v.jobTitle)) ? (
-                                <div className="t5-metaRow">
-                                    {nonEmpty(v.fullName) ? <div className="t5-metaName">{v.fullName}</div> : null}
-                                    {nonEmpty(v.jobTitle) ? <div className="t5-metaRole">{v.jobTitle}</div> : null}
-                                </div>
-                            ) : null}
 
                             {hasHeroCtas ? (
                                 <div className="t5-cta">
