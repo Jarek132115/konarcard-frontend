@@ -5,7 +5,7 @@
 .kc-tpl-3 {
     --t3-shell-max: 960px;
     --t3-page-pad: 22px;
-    --t3-section-gap: 52px;
+    --t3-section-gap: 64px;
     --t3-card-radius: 24px;
     --t3-card-radius-sm: 18px;
     --t3-accent: #2563eb;
@@ -256,6 +256,8 @@
     display: grid;
     gap: 8px;
     margin-bottom: 18px;
+    justify-items: center;
+    text-align: center;
 }
 
 .kc-tpl-3 .t3-sectionKicker {
@@ -265,6 +267,7 @@
     letter-spacing: 0.12em;
     text-transform: uppercase;
     color: var(--t3-accent);
+    text-align: center;
 }
 
 .kc-tpl-3 .t3-sectionTitle {
@@ -274,6 +277,7 @@
     font-weight: 700;
     letter-spacing: -0.045em;
     color: var(--t3-text);
+    text-align: center;
 }
 
 /* ABOUT */
@@ -289,10 +293,13 @@
 }
 
 .kc-tpl-3 .t3-aboutTop {
-    display: flex;
+    display: inline-flex;
     align-items: center;
+    justify-content: center;
     gap: 14px;
     min-width: 0;
+    margin: 0 auto;
+    text-align: left;
 }
 
 .kc-tpl-3 .t3-aboutAvatarWrap {
@@ -342,13 +349,14 @@
 }
 
 .kc-tpl-3 .t3-aboutBio {
-    margin: 0;
+    margin: 0 auto;
     max-width: 820px;
     font-size: clamp(15px, 2vw, 18px);
     line-height: 1.72;
     font-weight: 400;
     color: var(--t3-text-soft);
     word-break: break-word;
+    text-align: center;
 }
 
 /* WORK */
@@ -400,9 +408,9 @@
 
 .kc-tpl-3 .t3-serviceCard {
     display: grid;
-    grid-template-columns: 48px minmax(0, 1fr);
     gap: 14px;
-    align-items: start;
+    justify-items: center;
+    text-align: center;
     padding: 20px;
     background: var(--t3-surface);
     border: 1px solid var(--t3-border);
@@ -410,19 +418,22 @@
     box-shadow: var(--t3-shadow-soft);
 }
 
-.kc-tpl-3 .t3-serviceIndex {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
+.kc-tpl-3 .t3-serviceTopIcon {
     width: 48px;
     height: 48px;
     border-radius: 16px;
     background: var(--t3-accent-soft);
     color: var(--t3-accent);
-    font-size: 14px;
-    line-height: 1;
-    font-weight: 700;
-    letter-spacing: -0.02em;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.kc-tpl-3 .t3-serviceIconSvg {
+    width: 22px;
+    height: 22px;
+    display: block;
+    color: currentColor;
 }
 
 .kc-tpl-3 .t3-serviceCopy {
@@ -437,6 +448,7 @@
     color: var(--t3-text);
     letter-spacing: -0.03em;
     word-break: break-word;
+    text-align: center;
 }
 
 .kc-tpl-3 .t3-serviceBody {
@@ -446,6 +458,7 @@
     font-weight: 400;
     color: var(--t3-text-soft);
     word-break: break-word;
+    text-align: center;
 }
 
 /* REVIEWS */
@@ -461,6 +474,9 @@
     border: 1px solid var(--t3-border);
     border-radius: var(--t3-card-radius-sm);
     box-shadow: var(--t3-shadow-soft);
+    display: grid;
+    justify-items: center;
+    text-align: center;
 }
 
 .kc-tpl-3 .t3-stars {
@@ -468,6 +484,7 @@
     gap: 3px;
     font-size: 14px;
     line-height: 1;
+    justify-content: center;
 }
 
 .kc-tpl-3 .t3-star.on {
@@ -489,6 +506,7 @@
     font-weight: 400;
     color: var(--t3-text);
     word-break: break-word;
+    text-align: center;
 }
 
 .kc-tpl-3 .t3-reviewName {
@@ -500,6 +518,7 @@
     text-transform: uppercase;
     color: var(--t3-accent);
     word-break: break-word;
+    text-align: center;
 }
 
 /* CONTACT */
@@ -620,7 +639,7 @@
 @media (max-width: 560px) {
     .kc-tpl-3 {
         --t3-page-pad: 18px;
-        --t3-section-gap: 40px;
+        --t3-section-gap: 64px;
     }
 
     .kc-tpl-3 .t3-heroCopy {
