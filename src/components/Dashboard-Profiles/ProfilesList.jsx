@@ -442,11 +442,9 @@ export default function ProfilesList({
                             </div>
 
                             <div className="profiles-cardContent">
-                                <div className="profiles-profileMetaOnly">
-                                    <div className="profiles-updated profiles-updated--centered">{p.updatedAt}</div>
-                                </div>
-
                                 <div className="profiles-profileBottom">
+                                    <div className="profiles-updated profiles-updated--centered">{p.updatedAt}</div>
+
                                     <div className="profiles-cardBtns profiles-cardBtns--responsiveRow">
                                         <button
                                             type="button"

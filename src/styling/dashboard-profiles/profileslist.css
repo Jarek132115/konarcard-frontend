@@ -134,18 +134,9 @@
 .profiles-cardContent {
     display: flex;
     flex-direction: column;
-    gap: 14px;
     padding: 14px 16px 16px;
     flex: 1 1 auto;
     min-height: 0;
-}
-
-.profiles-profileMetaOnly {
-    display: grid;
-    justify-items: center;
-    align-content: start;
-    gap: 4px;
-    flex: 0 0 auto;
 }
 
 .profiles-pill {
@@ -192,7 +183,7 @@
     overflow: hidden;
     border-bottom: 1px solid rgba(15, 23, 42, 0.08);
     aspect-ratio: 1 / 1;
-    max-height: 340px;
+    max-height: none;
 }
 
 .profiles-mainPreview--light {
@@ -210,8 +201,8 @@
 .profiles-mainPreviewInner {
     width: 100%;
     height: 100%;
-    display: grid;
-    grid-template-rows: auto minmax(0, 1fr);
+    display: flex;
+    flex-direction: column;
     overflow: hidden;
 }
 
@@ -251,12 +242,13 @@
 }
 
 .profiles-mainPreviewBody {
+    flex: 1 1 auto;
     min-height: 0;
     padding: 14px 14px 14px;
-    display: grid;
-    grid-template-rows: minmax(0, auto) auto;
-    align-content: start;
-    justify-items: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
     gap: 12px;
     overflow: hidden;
     text-align: center;
@@ -274,13 +266,12 @@
     justify-items: center;
     text-align: center;
     align-content: start;
-    min-height: 0;
-    overflow: hidden;
+    flex: 0 0 auto;
 }
 
 .profiles-mainPreviewName {
     font-family: "Cal Sans", sans-serif;
-    font-size: clamp(22px, 2vw, 30px);
+    font-size: 34px;
     line-height: 0.96;
     letter-spacing: -0.03em;
     color: currentColor;
@@ -290,13 +281,12 @@
     -webkit-box-orient: vertical;
     -webkit-line-clamp: 2;
     line-clamp: 2;
-    min-height: calc(0.96em * 2);
 }
 
 .profiles-mainPreviewTrade {
     font-family: "Inter", sans-serif;
     font-weight: 600;
-    font-size: 13px;
+    font-size: 14px;
     line-height: 1.35;
     color: currentColor;
     opacity: 0.82;
@@ -306,13 +296,12 @@
     -webkit-box-orient: vertical;
     -webkit-line-clamp: 2;
     line-clamp: 2;
-    min-height: calc(1.35em * 2);
 }
 
 .profiles-mainPreviewLocation {
     font-family: "Inter", sans-serif;
     font-weight: 500;
-    font-size: 12px;
+    font-size: 13px;
     line-height: 1.35;
     color: currentColor;
     opacity: 0.68;
@@ -320,22 +309,21 @@
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
-    min-height: 1.35em;
 }
 
 .profiles-mainPreviewCtaRow {
     width: 100%;
+    margin-top: auto;
     display: flex;
     justify-content: center;
     flex: 0 0 auto;
-    align-self: end;
 }
 
 .profiles-mainPreviewBtn {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    min-height: 38px;
+    min-height: 42px;
     width: 100%;
     border: 0;
     border-radius: 999px;
@@ -344,7 +332,7 @@
     color: #ffffff;
     font-family: "Inter", sans-serif;
     font-weight: 700;
-    font-size: 12px;
+    font-size: 13px;
     line-height: 1;
     box-shadow: none;
     pointer-events: none;
@@ -702,8 +690,8 @@
         width: 300px;
     }
 
-    .profiles-mainPreview {
-        max-height: 300px;
+    .profiles-mainPreviewName {
+        font-size: 30px;
     }
 }
 
@@ -726,7 +714,18 @@
 
     .profiles-mainPreview {
         aspect-ratio: 4 / 3;
-        max-height: 268px;
+    }
+
+    .profiles-mainPreviewName {
+        font-size: 28px;
+    }
+
+    .profiles-mainPreviewTrade {
+        font-size: 13px;
+    }
+
+    .profiles-mainPreviewLocation {
+        font-size: 12px;
     }
 }
 
@@ -741,7 +740,6 @@
 
     .profiles-mainPreview {
         aspect-ratio: 4 / 3;
-        max-height: 248px;
     }
 
     .profiles-cardContent {
@@ -776,7 +774,7 @@
     }
 
     .profiles-mainPreviewBtn {
-        min-height: 34px;
+        min-height: 36px;
         font-size: 11px;
     }
 }
@@ -802,7 +800,6 @@
 
     .profiles-mainPreview {
         aspect-ratio: 4 / 3;
-        max-height: 224px;
     }
 
     .profiles-mainPreviewTopbar {
@@ -880,8 +877,8 @@
     .profiles-profileCard--rail,
     .profiles-addCard--rail,
     .profiles-addInline--rail {
-        flex: 0 0 228px;
-        width: 228px;
+        flex: 0 0 244px;
+        width: 244px;
     }
 
     .profiles-cardContent,
@@ -895,8 +892,7 @@
     }
 
     .profiles-mainPreview {
-        aspect-ratio: 4 / 3;
-        max-height: 166px;
+        aspect-ratio: 4 / 3.35;
     }
 
     .profiles-mainPreviewTopbar {
@@ -914,21 +910,24 @@
         gap: 6px;
     }
 
+    .profiles-mainPreviewCopy {
+        gap: 0;
+    }
+
     .profiles-mainPreviewName {
-        font-size: 14px;
-        line-height: 0.98;
+        font-size: 16px;
+        line-height: 1;
+        -webkit-line-clamp: 2;
+        line-clamp: 2;
     }
 
-    .profiles-mainPreviewTrade {
-        font-size: 8px;
-    }
-
+    .profiles-mainPreviewTrade,
     .profiles-mainPreviewLocation {
-        font-size: 7px;
+        display: none;
     }
 
     .profiles-mainPreviewBtn {
-        min-height: 24px;
+        min-height: 26px;
         font-size: 8px;
         padding: 0 10px;
     }
@@ -1066,17 +1065,16 @@
     .profiles-profileCard--rail,
     .profiles-addCard--rail,
     .profiles-addInline--rail {
-        flex: 0 0 210px;
-        width: 210px;
+        flex: 0 0 232px;
+        width: 232px;
     }
 
     .profiles-mainPreview {
-        aspect-ratio: 4 / 3;
-        max-height: 152px;
+        aspect-ratio: 4 / 3.45;
     }
 
     .profiles-mainPreviewName {
-        font-size: 13px;
+        font-size: 15px;
     }
 
     .profiles-cardBtns--responsiveRow {
