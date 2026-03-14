@@ -148,7 +148,15 @@ const normalizeSocials = (card) => {
     };
 };
 
-function ExchangeContactModal({ open, onClose, profileSlug, ownerName }) {
+function ExchangeContactModal({
+    open,
+    onClose,
+    profileSlug,
+    ownerName,
+    templateId = "template-1",
+    themeMode = "light",
+    fontFamily = "Inter, sans-serif",
+}) {
     const [name, setName] = useState("");
     const [email, setEmail] = useState("");
     const [phone, setPhone] = useState("");
@@ -199,34 +207,22 @@ function ExchangeContactModal({ open, onClose, profileSlug, ownerName }) {
 
     return (
         <div
+            className={`exchange-modal-overlay exchange-modal-overlay--${themeMode}`}
             onMouseDown={(e) => {
                 if (e.target === e.currentTarget) onClose?.();
             }}
-            style={{
-                position: "fixed",
-                inset: 0,
-                background: "rgba(0,0,0,0.45)",
-                zIndex: 99999,
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                padding: 16,
-            }}
         >
             <div
-                style={{
-                    width: "100%",
-                    maxWidth: 460,
-                    background: "#fff",
-                    borderRadius: 16,
-                    padding: 18,
-                    boxShadow: "0 20px 60px rgba(0,0,0,0.25)",
-                }}
+                className={`exchange-modal exchange-modal--${templateId} exchange-modal--${themeMode}`}
+                style={{ fontFamily }}
+                role="dialog"
+                aria-modal="true"
+                aria-label="Exchange contact"
             >
-                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 12 }}>
-                    <div>
-                        <div style={{ fontSize: 18, fontWeight: 800 }}>Exchange contact</div>
-                        <div style={{ fontSize: 13, opacity: 0.75, marginTop: 2 }}>
+                <div className="exchange-modal__header">
+                    <div className="exchange-modal__headerCopy">
+                        <div className="exchange-modal__title">Exchange contact</div>
+                        <div className="exchange-modal__subtitle">
                             Share your details with {ownerName || "this person"}.
                         </div>
                     </div>
@@ -235,71 +231,55 @@ function ExchangeContactModal({ open, onClose, profileSlug, ownerName }) {
                         type="button"
                         onClick={onClose}
                         aria-label="Close"
-                        style={{
-                            border: "none",
-                            background: "transparent",
-                            fontSize: 26,
-                            lineHeight: 1,
-                            cursor: "pointer",
-                            padding: 4,
-                        }}
+                        className="exchange-modal__close"
                     >
                         ×
                     </button>
                 </div>
 
-                <form onSubmit={submit} style={{ marginTop: 14 }}>
-                    <div style={{ display: "grid", gap: 10 }}>
-                        <div>
-                            <label style={{ display: "block", fontSize: 12, fontWeight: 700, marginBottom: 6 }}>
-                                Your name
-                            </label>
+                <form onSubmit={submit} className="exchange-modal__form">
+                    <div className="exchange-modal__fields">
+                        <div className="exchange-modal__field">
+                            <label className="exchange-modal__label">Your name</label>
                             <input
                                 value={name}
                                 onChange={(e) => setName(e.target.value)}
-                                className="kc-input"
+                                className="exchange-modal__input"
                                 placeholder="John Smith"
                                 required
                             />
                         </div>
 
-                        <div>
-                            <label style={{ display: "block", fontSize: 12, fontWeight: 700, marginBottom: 6 }}>
-                                Email (optional)
-                            </label>
+                        <div className="exchange-modal__field">
+                            <label className="exchange-modal__label">Email (optional)</label>
                             <input
                                 value={email}
                                 onChange={(e) => setEmail(e.target.value)}
-                                className="kc-input"
+                                className="exchange-modal__input"
                                 placeholder="you@email.com"
                                 type="email"
                             />
                         </div>
 
-                        <div>
-                            <label style={{ display: "block", fontSize: 12, fontWeight: 700, marginBottom: 6 }}>
-                                Phone (optional)
-                            </label>
+                        <div className="exchange-modal__field">
+                            <label className="exchange-modal__label">Phone (optional)</label>
                             <input
                                 value={phone}
                                 onChange={(e) => setPhone(cleanPhone(e.target.value))}
-                                className="kc-input"
+                                className="exchange-modal__input"
                                 placeholder="+44..."
                                 inputMode="tel"
                             />
                         </div>
 
-                        <div>
-                            <label style={{ display: "block", fontSize: 12, fontWeight: 700, marginBottom: 6 }}>
-                                Message (optional)
-                            </label>
+                        <div className="exchange-modal__field">
+                            <label className="exchange-modal__label">Message (optional)</label>
                             <textarea
                                 value={message}
                                 onChange={(e) => setMessage(e.target.value)}
-                                className="kc-input"
+                                className="exchange-modal__input exchange-modal__textarea"
                                 placeholder="Hi — great profile!"
-                                rows={3}
-                                style={{ resize: "vertical" }}
+                                rows={4}
                             />
                         </div>
                     </div>
@@ -308,14 +288,13 @@ function ExchangeContactModal({ open, onClose, profileSlug, ownerName }) {
                         type="submit"
                         disabled={submitting}
                         aria-busy={submitting}
-                        className="kc-btn kc-btn-primary kc-btn-center"
-                        style={{ marginTop: 14 }}
+                        className="exchange-modal__submit"
                     >
                         {submitting ? "Sending…" : "Send my details"}
                     </button>
                 </form>
 
-                <div style={{ fontSize: 12, opacity: 0.65, marginTop: 10 }}>
+                <div className="exchange-modal__footnote">
                     Your details will be emailed to the profile owner and saved in their KonarCard contacts.
                 </div>
             </div>
@@ -364,7 +343,17 @@ export default function UserPage() {
 
     if (!isValidSlug) {
         return (
-            <div className="user-landing-page" style={{ textAlign: "center", display: "flex", justifyContent: "center", alignItems: "center", minHeight: "100vh", padding: 24 }}>
+            <div
+                className="user-landing-page"
+                style={{
+                    textAlign: "center",
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    minHeight: "100vh",
+                    padding: 24,
+                }}
+            >
                 <div style={{ maxWidth: 560, width: "100%", textAlign: "center" }}>
                     <h2 style={{ margin: 0, fontSize: "1.6rem", fontWeight: 800 }}>Invalid link</h2>
                     <p style={{ marginTop: 10, opacity: 0.8 }}>This profile link is not valid. Please check the URL and try again.</p>
@@ -375,7 +364,16 @@ export default function UserPage() {
 
     if (isLoading) {
         return (
-            <div className="user-landing-page" style={{ textAlign: "center", display: "flex", justifyContent: "center", alignItems: "center", minHeight: "100vh" }}>
+            <div
+                className="user-landing-page"
+                style={{
+                    textAlign: "center",
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    minHeight: "100vh",
+                }}
+            >
                 <p>Loading business card...</p>
             </div>
         );
@@ -388,7 +386,16 @@ export default function UserPage() {
 
     if (!businessCard) {
         return (
-            <div className="user-landing-page" style={{ textAlign: "center", display: "flex", justifyContent: "center", alignItems: "center", minHeight: "100vh" }}>
+            <div
+                className="user-landing-page"
+                style={{
+                    textAlign: "center",
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    minHeight: "100vh",
+                }}
+            >
                 <p>No business card found for “{publicSlug}”.</p>
             </div>
         );
@@ -399,7 +406,7 @@ export default function UserPage() {
 
     const themeMode = normalizeThemeMode(read(businessCard, ["theme_mode", "page_theme", "pageTheme"], "light"));
     const textAlign = normalizeTextAlign(read(businessCard, ["text_alignment", "textAlignment"], "left"));
-    const font = read(businessCard, ["style", "font"], "Inter");
+    const font = read(businessCard, ["style", "font"], "Inter, sans-serif");
 
     const buttonBgColor = read(businessCard, ["button_bg_color", "buttonBgColor"], "#F47629");
     const buttonTextColor = normalizeButtonTextColor(read(businessCard, ["button_text_color", "buttonTextColor"], "white"));
@@ -531,7 +538,18 @@ export default function UserPage() {
 
     if (nothingToShow) {
         return (
-            <div className="user-landing-page" style={{ ...themeStyles, textAlign: "center", display: "flex", justifyContent: "center", alignItems: "center", minHeight: "100vh", padding: 24 }}>
+            <div
+                className="user-landing-page"
+                style={{
+                    ...themeStyles,
+                    textAlign: "center",
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    minHeight: "100vh",
+                    padding: 24,
+                }}
+            >
                 <div style={{ maxWidth: 560, width: "100%", textAlign: "center" }}>
                     <h2 style={{ margin: 0, fontSize: "1.6rem", fontWeight: 800 }}>This profile isn’t set up yet</h2>
                     <p style={{ marginTop: 10, opacity: 0.8 }}>This profile hasn’t published any content here yet.</p>
@@ -541,7 +559,6 @@ export default function UserPage() {
     }
 
     const vm = {
-        /* base visual settings */
         themeMode,
         pageTheme: themeMode,
         themeStyles,
@@ -553,11 +570,9 @@ export default function UserPage() {
         buttonTextColor,
         font,
 
-        /* identity */
         username: publicSlug,
         profileSlug: publicSlug,
 
-        /* hero / top */
         cover,
         coverPhoto: cover,
         avatar,
@@ -573,19 +588,16 @@ export default function UserPage() {
         trade_title: tradeTitle,
         location,
 
-        /* about */
         fullName,
         full_name: fullName,
         jobTitle,
         job_title: jobTitle,
         bio,
 
-        /* content */
         works,
         services,
         reviews,
 
-        /* contact */
         email,
         contact_email: email,
         phone,
@@ -593,7 +605,6 @@ export default function UserPage() {
         hasContact,
         hasExchangeContact,
 
-        /* socials */
         socials,
         socialLinks,
         facebook_url: socials.facebook_url,
@@ -602,7 +613,6 @@ export default function UserPage() {
         x_url: socials.x_url,
         tiktok_url: socials.tiktok_url,
 
-        /* display options */
         aboutLayout,
         workMode,
         servicesMode,
@@ -616,11 +626,9 @@ export default function UserPage() {
         showReviewsSection,
         showContactSection,
 
-        /* actions */
         onSaveMyNumber: handleSaveMyNumber,
         onOpenExchangeContact: openExchangeModal,
 
-        /* backwards compatibility */
         onExchangeContact: handleSaveMyNumber,
     };
 
@@ -633,6 +641,9 @@ export default function UserPage() {
                 onClose={() => setExchangeOpen(false)}
                 profileSlug={publicSlug}
                 ownerName={fullName || businessName || publicSlug}
+                templateId={tid}
+                themeMode={themeMode}
+                fontFamily={font}
             />
 
             <div className={shellClass}>
