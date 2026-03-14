@@ -8,9 +8,9 @@
     --t5-section-gap: 54px;
     --t5-card-radius: 24px;
     --t5-card-radius-sm: 18px;
-    --t5-accent: #c8922e;
-    --t5-accent-strong: #d4a43a;
-    --t5-accent-soft: rgba(200, 146, 46, 0.12);
+    --t5-accent: #1f8a5b;
+    --t5-accent-strong: #18714a;
+    --t5-accent-soft: rgba(31, 138, 91, 0.12);
     --t5-border: rgba(17, 24, 39, 0.08);
     --t5-divider: rgba(17, 24, 39, 0.08);
     --t5-shadow: 0 18px 44px rgba(15, 23, 42, 0.08);
@@ -22,28 +22,28 @@
 }
 
 .kc-tpl-5.t5-theme-light {
-    --t5-page-bg: #f7f5f2;
+    --t5-page-bg: #f6f8f6;
     --t5-surface: #ffffff;
-    --t5-surface-soft: #faf8f5;
-    --t5-surface-strong: #f2ede6;
-    --t5-text: #111827;
-    --t5-text-soft: rgba(17, 24, 39, 0.72);
-    --t5-text-faint: rgba(17, 24, 39, 0.46);
+    --t5-surface-soft: #f7fbf8;
+    --t5-surface-strong: #edf6f1;
+    --t5-text: #0f172a;
+    --t5-text-soft: rgba(15, 23, 42, 0.72);
+    --t5-text-faint: rgba(15, 23, 42, 0.46);
 
     color: var(--t5-text);
     background:
-        radial-gradient(980px 520px at 50% 0%, rgba(200, 146, 46, 0.08), transparent 42%),
-        linear-gradient(180deg, #faf8f5 0%, #ffffff 100%);
+        radial-gradient(980px 520px at 50% 0%, rgba(31, 138, 91, 0.08), transparent 42%),
+        linear-gradient(180deg, #f7faf8 0%, #ffffff 100%);
 }
 
 .kc-tpl-5.t5-theme-dark {
-    --t5-page-bg: #0f1012;
-    --t5-surface: #17191d;
-    --t5-surface-soft: #1d2025;
-    --t5-surface-strong: #131519;
-    --t5-text: #f6f7fb;
-    --t5-text-soft: rgba(246, 247, 251, 0.72);
-    --t5-text-faint: rgba(246, 247, 251, 0.46);
+    --t5-page-bg: #0d1110;
+    --t5-surface: #151a18;
+    --t5-surface-soft: #1a211e;
+    --t5-surface-strong: #121715;
+    --t5-text: #f5f7f6;
+    --t5-text-soft: rgba(245, 247, 246, 0.72);
+    --t5-text-faint: rgba(245, 247, 246, 0.46);
     --t5-border: rgba(255, 255, 255, 0.08);
     --t5-divider: rgba(255, 255, 255, 0.08);
     --t5-shadow: 0 20px 48px rgba(0, 0, 0, 0.34);
@@ -51,8 +51,8 @@
 
     color: var(--t5-text);
     background:
-        radial-gradient(980px 520px at 50% 0%, rgba(200, 146, 46, 0.08), transparent 42%),
-        linear-gradient(180deg, #0f1012 0%, #121418 100%);
+        radial-gradient(980px 520px at 50% 0%, rgba(31, 138, 91, 0.08), transparent 42%),
+        linear-gradient(180deg, #0d1110 0%, #111615 100%);
 }
 
 .kc-tpl-5,
@@ -70,7 +70,8 @@
 .kc-tpl-5 .t5-sectionTitle,
 .kc-tpl-5 .t5-aboutName,
 .kc-tpl-5 .t5-serviceName,
-.kc-tpl-5 .t5-contactLabel {
+.kc-tpl-5 .t5-contactLabel,
+.kc-tpl-5 .t5-btn {
     font-family: "Sora", sans-serif;
 }
 
@@ -104,13 +105,13 @@
 .kc-tpl-5 .t5-coverPlaceholder {
     background:
         radial-gradient(circle at top left, rgba(255, 255, 255, 0.08), transparent 32%),
-        linear-gradient(135deg, #2c2a27 0%, #1d1b19 100%);
+        linear-gradient(135deg, #294137 0%, #16231d 100%);
 }
 
 .kc-tpl-5.t5-theme-light .t5-coverPlaceholder {
     background:
-        radial-gradient(circle at top left, rgba(17, 24, 39, 0.08), transparent 32%),
-        linear-gradient(135deg, #e7dfd3 0%, #d8cdbc 100%);
+        radial-gradient(circle at top left, rgba(15, 23, 42, 0.08), transparent 32%),
+        linear-gradient(135deg, #dcebe3 0%, #bdd7c8 100%);
 }
 
 .kc-tpl-5 .t5-heroCard {
@@ -119,14 +120,14 @@
 }
 
 .kc-tpl-5.t5-theme-dark .t5-heroCard {
-    background: linear-gradient(180deg, rgba(23, 25, 29, 0.98), rgba(19, 21, 25, 0.98));
+    background: linear-gradient(180deg, rgba(21, 26, 24, 0.98), rgba(18, 23, 21, 0.98));
     border: 1px solid var(--t5-border);
     border-radius: 0 0 var(--t5-card-radius) var(--t5-card-radius);
     box-shadow: var(--t5-shadow-soft);
 }
 
 .kc-tpl-5.t5-theme-light .t5-heroCard {
-    background: linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(248, 245, 240, 0.98));
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.99), rgba(247, 251, 248, 0.99));
     border: 1px solid var(--t5-border);
     border-top: 0;
     border-radius: 0 0 var(--t5-card-radius) var(--t5-card-radius);
@@ -192,6 +193,7 @@
     font-size: 14px;
     line-height: 1.2;
     font-weight: 700;
+    letter-spacing: -0.01em;
     cursor: pointer;
     transition: transform 0.08s ease, opacity 0.18s ease, background 0.18s ease, border-color 0.18s ease;
     -webkit-tap-highlight-color: transparent;
@@ -205,11 +207,16 @@
     transform: translateY(1px);
 }
 
+.kc-tpl-5 .t5-btnPrimary,
+.kc-tpl-5 .t5-btnSecondary {
+    font-family: "Sora", sans-serif;
+}
+
 .kc-tpl-5 .t5-btn-primary {
     background: var(--t5-accent);
-    color: #111111;
+    color: #ffffff;
     border-color: transparent;
-    box-shadow: 0 12px 28px rgba(200, 146, 46, 0.22);
+    box-shadow: 0 12px 28px rgba(31, 138, 91, 0.22);
 }
 
 .kc-tpl-5 .t5-btn-primary:hover {
@@ -226,6 +233,12 @@
     background: #111111;
     color: #ffffff;
     border-color: #111111;
+}
+
+.kc-tpl-5 .t5-btnLabel {
+    display: inline-block;
+    font: inherit;
+    color: inherit;
 }
 
 .kc-tpl-5 .t5-btnIcon {
@@ -245,13 +258,10 @@
 }
 
 .kc-tpl-5 .t5-btnIconAsset--primary {
-    filter: brightness(0) saturate(100%) invert(5%);
-}
-
-.kc-tpl-5.t5-theme-dark .t5-btnIconAsset--secondary {
     filter: brightness(0) invert(1);
 }
 
+.kc-tpl-5.t5-theme-dark .t5-btnIconAsset--secondary,
 .kc-tpl-5.t5-theme-light .t5-btnIconAsset--secondary {
     filter: brightness(0) invert(1);
 }
@@ -269,17 +279,8 @@
 
 .kc-tpl-5 .t5-sectionHead {
     display: grid;
-    gap: 8px;
+    gap: 10px;
     margin-bottom: 24px;
-}
-
-.kc-tpl-5 .t5-sectionKicker {
-    font-size: 12px;
-    line-height: 1;
-    font-weight: 800;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    color: var(--t5-accent);
 }
 
 .kc-tpl-5 .t5-sectionTitle {
@@ -289,6 +290,14 @@
     font-weight: 800;
     letter-spacing: -0.04em;
     color: var(--t5-text);
+}
+
+.kc-tpl-5 .t5-sectionUnderline {
+    width: 72px;
+    height: 10px;
+    display: block;
+    background: no-repeat center / contain;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='72' height='10' viewBox='0 0 72 10' fill='none'%3E%3Cpath d='M4 7.2C11.4 5.9 19 5.1 26.5 5C33.7 4.9 40.8 5.2 48 5.8C53.2 6.2 58.3 6.9 64 7.6' stroke='%231f8a5b' stroke-width='3.2' stroke-linecap='round'/%3E%3C/svg%3E");
 }
 
 /* ABOUT */
@@ -330,7 +339,7 @@
 
 .kc-tpl-5 .t5-aboutAvatar--ph {
     background:
-        linear-gradient(135deg, rgba(200, 146, 46, 0.16), rgba(200, 146, 46, 0.05));
+        linear-gradient(135deg, rgba(31, 138, 91, 0.16), rgba(31, 138, 91, 0.05));
 }
 
 .kc-tpl-5 .t5-aboutMeta {
@@ -389,10 +398,7 @@
     aspect-ratio: 4 / 3;
 }
 
-.kc-tpl-5.t5-theme-dark .t5-workTile {
-    background: var(--t5-surface);
-}
-
+.kc-tpl-5.t5-theme-dark .t5-workTile,
 .kc-tpl-5.t5-theme-light .t5-workTile {
     background: var(--t5-surface);
 }
@@ -418,37 +424,18 @@
 
 .kc-tpl-5 .t5-serviceRow {
     display: grid;
-    grid-template-columns: 48px minmax(0, 1fr);
-    gap: 14px;
+    grid-template-columns: 1fr;
+    gap: 0;
     align-items: start;
     padding: 18px;
     border-radius: var(--t5-card-radius-sm);
     box-shadow: var(--t5-shadow-soft);
 }
 
-.kc-tpl-5.t5-theme-dark .t5-serviceRow {
-    background: var(--t5-surface);
-    border: 1px solid var(--t5-border);
-}
-
+.kc-tpl-5.t5-theme-dark .t5-serviceRow,
 .kc-tpl-5.t5-theme-light .t5-serviceRow {
     background: var(--t5-surface);
     border: 1px solid var(--t5-border);
-}
-
-.kc-tpl-5 .t5-serviceIndex {
-    width: 48px;
-    height: 40px;
-    border-radius: 999px;
-    background: var(--t5-accent-soft);
-    color: var(--t5-accent);
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 13px;
-    line-height: 1;
-    font-weight: 800;
-    letter-spacing: -0.02em;
 }
 
 .kc-tpl-5 .t5-serviceMain {
@@ -486,11 +473,7 @@
     box-shadow: var(--t5-shadow-soft);
 }
 
-.kc-tpl-5.t5-theme-dark .t5-reviewCard {
-    background: var(--t5-surface);
-    border: 1px solid var(--t5-border);
-}
-
+.kc-tpl-5.t5-theme-dark .t5-reviewCard,
 .kc-tpl-5.t5-theme-light .t5-reviewCard {
     background: var(--t5-surface);
     border: 1px solid var(--t5-border);
@@ -558,11 +541,7 @@
     color: inherit;
 }
 
-.kc-tpl-5.t5-theme-dark .t5-contactCard {
-    background: var(--t5-surface);
-    border: 1px solid var(--t5-border);
-}
-
+.kc-tpl-5.t5-theme-dark .t5-contactCard,
 .kc-tpl-5.t5-theme-light .t5-contactCard {
     background: var(--t5-surface);
     border: 1px solid var(--t5-border);
@@ -579,28 +558,18 @@
     width: 52px;
     height: 52px;
     border-radius: 16px;
-    background: var(--t5-accent-soft);
-    color: var(--t5-accent);
     display: inline-flex;
     align-items: center;
     justify-content: center;
     flex: 0 0 auto;
+    background: transparent;
 }
 
-.kc-tpl-5 .t5-contactIconSvg,
-.kc-tpl-5 .t5-contactIconAsset {
-    width: 22px;
-    height: 22px;
+.kc-tpl-5 .t5-contactIconAssetRaw {
+    width: 30px;
+    height: 30px;
     display: block;
     object-fit: contain;
-}
-
-.kc-tpl-5 .t5-contactIconSvg {
-    color: currentColor;
-}
-
-.kc-tpl-5 .t5-contactIconAsset {
-    filter: brightness(0) saturate(100%) invert(73%) sepia(42%) saturate(631%) hue-rotate(358deg) brightness(89%) contrast(88%);
 }
 
 .kc-tpl-5 .t5-contactText {
@@ -638,24 +607,19 @@
     align-items: center;
     justify-content: center;
     text-decoration: none;
-    color: var(--t5-accent);
 }
 
-.kc-tpl-5.t5-theme-dark .t5-social {
-    background: var(--t5-surface);
-    border: 1px solid var(--t5-border);
-}
-
+.kc-tpl-5.t5-theme-dark .t5-social,
 .kc-tpl-5.t5-theme-light .t5-social {
     background: var(--t5-surface);
     border: 1px solid var(--t5-border);
 }
 
-.kc-tpl-5 .t5-socialIconSvg {
-    width: 22px;
-    height: 22px;
+.kc-tpl-5 .t5-socialIconAsset {
+    width: 26px;
+    height: 26px;
     display: block;
-    color: currentColor;
+    object-fit: contain;
 }
 
 /* RESPONSIVE */
@@ -694,7 +658,11 @@
     .kc-tpl-5 .t5-contactIcon {
         width: 46px;
         height: 46px;
-        border-radius: 14px;
+    }
+
+    .kc-tpl-5 .t5-contactIconAssetRaw {
+        width: 28px;
+        height: 28px;
     }
 
     .kc-tpl-5 .t5-socials {
@@ -704,6 +672,11 @@
     .kc-tpl-5 .t5-social {
         min-height: 52px;
         border-radius: 16px;
+    }
+
+    .kc-tpl-5 .t5-socialIconAsset {
+        width: 24px;
+        height: 24px;
     }
 
     .kc-tpl-5 .t5-section {
@@ -722,6 +695,6 @@
 .kc-tpl-5 .t5-btn:focus-visible,
 .kc-tpl-5 .t5-contactCard:focus-visible,
 .kc-tpl-5 .t5-social:focus-visible {
-    outline: 2px solid rgba(200, 146, 46, 0.34);
+    outline: 2px solid rgba(31, 138, 91, 0.34);
     outline-offset: 2px;
 }
