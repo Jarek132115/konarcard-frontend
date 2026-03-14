@@ -23,6 +23,7 @@
 
 .profiles-infoSection--first {
     padding-top: 0;
+    padding-bottom: 24px;
 }
 
 .profiles-infoSection--last {
@@ -190,6 +191,7 @@
     flex: 0 0 auto;
     height: 1em;
     width: auto;
+    color: currentColor;
 }
 
 .profiles-btnIconImg,
@@ -198,6 +200,14 @@
     height: 1em;
     width: auto;
     max-width: none;
+}
+
+.profiles-btnIcon.is-inverted .profiles-btnIconImg {
+    filter: brightness(0) invert(1);
+}
+
+.profiles-btnIcon.is-inverted .profiles-btnIconSvg {
+    color: #ffffff;
 }
 
 .profiles-qrBlock {
@@ -252,12 +262,12 @@
 }
 
 .profiles-deleteBtn {
-    border-color: rgba(239, 68, 68, 0.55) !important;
-    color: rgba(239, 68, 68, 0.95) !important;
+    color: #ffffff !important;
+    border-color: transparent !important;
 }
 
 .profiles-deleteBtn:hover {
-    background: rgba(239, 68, 68, 0.06) !important;
+    background: var(--kc-accent-secondary) !important;
 }
 
 .profiles-previewLoading {
@@ -309,6 +319,7 @@
 
     .profiles-infoSection--first {
         padding-top: 0;
+        padding-bottom: 24px;
     }
 
     .profiles-infoSection--last {
