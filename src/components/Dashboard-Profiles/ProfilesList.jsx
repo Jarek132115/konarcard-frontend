@@ -1,5 +1,122 @@
 import React from "react";
 
+function firstNonEmpty(...values) {
+    for (const value of values) {
+        if (typeof value === "string" && value.trim()) return value.trim();
+    }
+    return "";
+}
+
+function joinParts(parts = []) {
+    return parts
+        .map((part) => (typeof part === "string" ? part.trim() : ""))
+        .filter(Boolean)
+        .join(", ");
+}
+
+function getPreviewTheme(card) {
+    const raw = card?.raw || {};
+    const themeCandidate = firstNonEmpty(
+        raw?.theme,
+        raw?.themeMode,
+        raw?.theme_mode,
+        raw?.mode,
+        raw?.appearance
+    ).toLowerCase();
+
+    if (themeCandidate.includes("dark")) return "dark";
+    return "light";
+}
+
+function getPreviewCover(card) {
+    const raw = card?.raw || {};
+    return (
+        raw?.coverPhoto ||
+        raw?.cover_photo ||
+        raw?.coverImage ||
+        raw?.cover_image ||
+        raw?.heroImage ||
+        raw?.hero_image ||
+        raw?.bannerImage ||
+        raw?.banner_image ||
+        raw?.mainImage ||
+        raw?.main_image ||
+        ""
+    );
+}
+
+function getPreviewName(card) {
+    const raw = card?.raw || {};
+    return firstNonEmpty(
+        raw?.businessName,
+        raw?.business_name,
+        raw?.companyName,
+        raw?.company_name,
+        raw?.displayName,
+        raw?.display_name,
+        raw?.name,
+        card?.slug
+    );
+}
+
+function getPreviewTrade(card) {
+    const raw = card?.raw || {};
+    return firstNonEmpty(
+        raw?.tradeTitle,
+        raw?.trade_title,
+        raw?.jobTitle,
+        raw?.job_title,
+        raw?.profession,
+        raw?.headline,
+        raw?.subtitle,
+        raw?.tagline
+    );
+}
+
+function getPreviewLocation(card) {
+    const raw = card?.raw || {};
+    return firstNonEmpty(
+        raw?.location,
+        raw?.addressLine,
+        raw?.address_line,
+        joinParts([raw?.city, raw?.region]),
+        joinParts([raw?.city, raw?.country]),
+        joinParts([raw?.town, raw?.country])
+    );
+}
+
+function ProfileMainPreview({ profile }) {
+    const theme = getPreviewTheme(profile);
+    const cover = getPreviewCover(profile);
+    const name = getPreviewName(profile);
+    const trade = getPreviewTrade(profile);
+    const location = getPreviewLocation(profile);
+
+    return (
+        <div className={`profiles-mainPreview profiles-mainPreview--${theme}`}>
+            <div className="profiles-mainPreviewInner">
+                <div className="profiles-mainPreviewCover">
+                    {cover ? (
+                        <img
+                            src={cover}
+                            alt={name ? `${name} cover` : "Profile cover"}
+                            className="profiles-mainPreviewCoverImg"
+                        />
+                    ) : (
+                        <div className="profiles-mainPreviewCoverFallback" />
+                    )}
+                </div>
+
+                <div className="profiles-mainPreviewBody">
+                    {name ? <div className="profiles-mainPreviewName">{name}</div> : null}
+                    {trade ? <div className="profiles-mainPreviewTrade">{trade}</div> : null}
+                    {location ? <div className="profiles-mainPreviewLocation">{location}</div> : null}
+                </div>
+            </div>
+        </div>
+    );
+}
+
 function ClaimCardClosed({ onOpenClaim, suppressClickRef }) {
     return (
         <article className="profiles-addCard profiles-addCard--rail profiles-addCard--pretty">
@@ -126,7 +243,9 @@ function ClaimCardOpen({
                 <div
                     className={`profiles-alert profiles-alert--center ${claimStatus === "available"
                             ? "success"
-                            : claimStatus === "error" || claimStatus === "invalid" || claimStatus === "taken"
+                            : claimStatus === "error" ||
+                                claimStatus === "invalid" ||
+                                claimStatus === "taken"
                                 ? "danger"
                                 : "neutral"
                         }`}
@@ -137,11 +256,7 @@ function ClaimCardOpen({
 
             {claimStatus === "available" ? (
                 <div className="profiles-addInlineActions profiles-addInlineActions--center">
-                    <button
-                        type="button"
-                        className="kx-btn kx-btn--white"
-                        onClick={onCloseClaim}
-                    >
+                    <button type="button" className="kx-btn kx-btn--white" onClick={onCloseClaim}>
                         Cancel
                     </button>
 
@@ -162,7 +277,9 @@ function ClaimCardOpen({
                                 onClick={onStartTeamsCheckout}
                                 disabled={claimStatus === "subscribing"}
                             >
-                                {claimStatus === "subscribing" ? "Opening checkout..." : "Add profile (+£1.95)"}
+                                {claimStatus === "subscribing"
+                                    ? "Opening checkout..."
+                                    : "Add profile (+£1.95)"}
                             </button>
                         )
                     ) : (
@@ -180,7 +297,8 @@ function ClaimCardOpen({
 
             {(isFree || isPlus) ? (
                 <div className="profiles-hint profiles-hint--center">
-                    Free and Plus allow <strong>1 profile</strong>. Upgrade to <strong>Teams</strong> to add more.
+                    Free and Plus allow <strong>1 profile</strong>. Upgrade to <strong>Teams</strong> to add
+                    more.
                 </div>
             ) : null}
         </article>
@@ -203,7 +321,6 @@ export default function ProfilesList({
     isTeams,
     isPlus,
     isFree,
-    ProfileMiniMainPreview,
     onRailPointerDown,
     onRailPointerMove,
     onRailPointerUp,
@@ -248,7 +365,8 @@ export default function ProfilesList({
                     return (
                         <article
                             key={p.slug}
-                            className={`profiles-profileCard profiles-profileCard--rail ${active ? "is-active" : ""} ${locked ? "is-locked" : ""}`}
+                            className={`profiles-profileCard profiles-profileCard--rail ${active ? "is-active" : ""
+                                } ${locked ? "is-locked" : ""}`}
                             onClick={() => onCardSelect(p.slug, locked)}
                             role="button"
                             tabIndex={0}
@@ -261,74 +379,62 @@ export default function ProfilesList({
                             aria-disabled={locked ? "true" : "false"}
                             style={locked ? { opacity: 0.62, cursor: "pointer" } : undefined}
                         >
-                            <div className="profiles-profileTopCentered">
-                                <div className="profiles-pillRow profiles-pillRow--centered">
-                                    <span className={`profiles-pill ${p.isLive ? "live" : "draft"}`}>
-                                        {p.isLive ? "Live" : "Draft"}
-                                    </span>
-
-                                    <span className={`profiles-pill completion ${p.tone}`}>
-                                        {p.pct >= 95 ? "Profile Complete" : `${p.pct}% Complete`}
-                                    </span>
-
-                                    {locked ? (
-                                        <span className="profiles-pill profiles-pill--locked">Locked</span>
-                                    ) : null}
-                                </div>
-
-                                <div className="profiles-slug profiles-slug--centered">{p.slug}</div>
-                                <div className="profiles-updated profiles-updated--centered">{p.updatedAt}</div>
+                            <div className="profiles-cardPreviewWrap">
+                                <ProfileMainPreview profile={p} />
                             </div>
 
-                            <div className="profiles-staticFrame profiles-staticFrame--square">
-                                <div className="profiles-staticViewport">
-                                    <ProfileMiniMainPreview card={p.raw} />
-                                </div>
-                            </div>
+                            <div className="profiles-cardContent">
+                                <div className="profiles-profileTopCentered">
+                                    <div className="profiles-pillRow profiles-pillRow--centered">
+                                        <span className={`profiles-pill ${p.isLive ? "live" : "draft"}`}>
+                                            {p.isLive ? "Live" : "Draft"}
+                                        </span>
 
-                            <div className="profiles-profileBottom">
-                                <div className="profiles-metrics profiles-metrics--card">
-                                    <div className="profiles-metric">
-                                        <div className="profiles-metricVal">{p.views}</div>
-                                        <div className="profiles-metricLab">Views</div>
+                                        <span className={`profiles-pill completion ${p.tone}`}>
+                                            {p.pct >= 95 ? "Profile Complete" : `${p.pct}% Complete`}
+                                        </span>
+
+                                        {locked ? (
+                                            <span className="profiles-pill profiles-pill--locked">Locked</span>
+                                        ) : null}
                                     </div>
 
-                                    <div className="profiles-metric">
-                                        <div className="profiles-metricVal">{p.linkTaps}</div>
-                                        <div className="profiles-metricLab">Link Taps</div>
-                                    </div>
+                                    <div className="profiles-slug profiles-slug--centered">{p.slug}</div>
+                                    <div className="profiles-updated profiles-updated--centered">{p.updatedAt}</div>
                                 </div>
 
-                                <div className="profiles-cardBtns profiles-cardBtns--responsiveRow">
-                                    <button
-                                        type="button"
-                                        className="kx-btn kx-btn--white profiles-cardBtn"
-                                        disabled={locked}
-                                        data-no-rail-drag="true"
-                                        onClick={(e) => {
-                                            e.stopPropagation();
-                                            if (suppressClickRef.current) return;
-                                            if (locked) return onOpenLockedOverlay(p.slug);
-                                            onEdit(p.slug);
-                                        }}
-                                    >
-                                        Edit
-                                    </button>
+                                <div className="profiles-profileBottom">
+                                    <div className="profiles-cardBtns profiles-cardBtns--responsiveRow">
+                                        <button
+                                            type="button"
+                                            className="kx-btn kx-btn--white profiles-cardBtn"
+                                            disabled={locked}
+                                            data-no-rail-drag="true"
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                                if (suppressClickRef.current) return;
+                                                if (locked) return onOpenLockedOverlay(p.slug);
+                                                onEdit(p.slug);
+                                            }}
+                                        >
+                                            Edit
+                                        </button>
 
-                                    <button
-                                        type="button"
-                                        className="kx-btn kx-btn--black profiles-cardBtn"
-                                        disabled={locked}
-                                        data-no-rail-drag="true"
-                                        onClick={(e) => {
-                                            e.stopPropagation();
-                                            if (suppressClickRef.current) return;
-                                            if (locked) return onOpenLockedOverlay(p.slug);
-                                            onVisitProfile(p.slug);
-                                        }}
-                                    >
-                                        Visit profile
-                                    </button>
+                                        <button
+                                            type="button"
+                                            className="kx-btn kx-btn--black profiles-cardBtn"
+                                            disabled={locked}
+                                            data-no-rail-drag="true"
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                                if (suppressClickRef.current) return;
+                                                if (locked) return onOpenLockedOverlay(p.slug);
+                                                onVisitProfile(p.slug);
+                                            }}
+                                        >
+                                            Visit profile
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
                         </article>
@@ -336,10 +442,7 @@ export default function ProfilesList({
                 })}
 
                 {!claimOpen ? (
-                    <ClaimCardClosed
-                        onOpenClaim={onOpenClaim}
-                        suppressClickRef={suppressClickRef}
-                    />
+                    <ClaimCardClosed onOpenClaim={onOpenClaim} suppressClickRef={suppressClickRef} />
                 ) : (
                     <ClaimCardOpen
                         claimRef={claimRef}

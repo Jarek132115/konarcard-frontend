@@ -65,8 +65,7 @@
     padding: 2px;
     flex: 1;
     min-height: 0;
-    height: 100%;
-    align-items: stretch;
+    align-items: flex-start;
     cursor: grab;
     user-select: none;
     -webkit-user-select: none;
@@ -89,6 +88,7 @@
     cursor: pointer;
     box-shadow: var(--p-softShadow);
     transition: transform 0.08s ease, background 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease;
+    overflow: hidden;
 }
 
 .profiles-profileCard:hover {
@@ -110,14 +110,27 @@
 .profiles-addInline--rail {
     flex: 0 0 clamp(260px, 24vw, 320px);
     width: clamp(260px, 24vw, 320px);
-    min-height: 100%;
-    height: 100%;
+    min-height: unset;
+    height: auto;
 }
 
 .profiles-profileCard--rail {
     display: flex;
     flex-direction: column;
-    padding: 18px;
+    padding: 0;
+}
+
+.profiles-cardPreviewWrap {
+    width: 100%;
+    flex: 0 0 auto;
+}
+
+.profiles-cardContent {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    padding: 14px 16px 16px;
+    flex: 1 1 auto;
 }
 
 .profiles-profileTopCentered {
@@ -139,7 +152,7 @@
 
 .profiles-pillRow--centered {
     justify-content: center;
-    margin-bottom: 4px;
+    margin-bottom: 2px;
 }
 
 .profiles-pill {
@@ -203,7 +216,7 @@
 }
 
 .profiles-updated {
-    margin-top: 2px;
+    margin-top: 0;
     font-family: "Inter", sans-serif;
     font-style: italic;
     font-weight: 500;
@@ -215,172 +228,117 @@
     text-align: center;
 }
 
-.profiles-staticFrame {
-    margin-top: 14px;
+.profiles-mainPreview {
     width: 100%;
-    aspect-ratio: 1 / 1;
-    border-radius: 18px;
-    border: 1px solid rgba(15, 23, 42, 0.10);
-    background: #f8fafc;
-    overflow: hidden;
     position: relative;
-    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.55);
-    flex: 0 0 auto;
-}
-
-.profiles-staticViewport {
-    position: absolute;
-    inset: 0;
     overflow: hidden;
+    border-bottom: 1px solid rgba(15, 23, 42, 0.08);
 }
 
-.profiles-mini {
-    width: 100%;
-    min-height: 100%;
-    display: flex;
-    flex-direction: column;
-    transform: scale(0.98);
-    transform-origin: top center;
-}
-
-.profiles-mini.is-light {
+.profiles-mainPreview--light {
     background: #ffffff;
     color: #0f172a;
 }
 
-.profiles-mini.is-dark {
-    background: #0f172a;
+.profiles-mainPreview--dark {
+    background:
+        radial-gradient(circle at top right, rgba(249, 115, 22, 0.10), transparent 28%),
+        #0f172a;
     color: #ffffff;
 }
 
-.profiles-mini.align-center {
-    text-align: center;
-}
-
-.profiles-mini.align-right {
-    text-align: right;
-}
-
-.profiles-mini-cover {
-    position: relative;
+.profiles-mainPreviewInner {
     width: 100%;
-    height: 120px;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    justify-content: flex-start;
+    overflow: hidden;
+}
+
+.profiles-mainPreviewCover {
+    width: 100%;
+    flex: 0 0 48%;
+    min-height: 46%;
+    max-height: 58%;
     overflow: hidden;
     background: linear-gradient(135deg, #e2e8f0 0%, #cbd5e1 100%);
 }
 
-.profiles-mini-coverImg {
+.profiles-mainPreviewCoverImg {
     width: 100%;
     height: 100%;
     object-fit: cover;
     display: block;
 }
 
-.profiles-mini-coverFallback {
+.profiles-mainPreviewCoverFallback {
     width: 100%;
     height: 100%;
     background:
-        radial-gradient(circle at top right, rgba(244, 118, 41, 0.18), transparent 36%),
+        radial-gradient(circle at top right, rgba(244, 118, 41, 0.16), transparent 34%),
         linear-gradient(135deg, #e2e8f0 0%, #cbd5e1 100%);
 }
 
-.profiles-mini-body {
-    position: relative;
-    padding: 0 16px 18px;
+.profiles-mainPreviewBody {
+    flex: 1 1 auto;
+    min-height: 0;
+    padding: 16px 16px 14px;
     display: flex;
     flex-direction: column;
-    align-items: stretch;
+    align-items: flex-start;
+    justify-content: flex-start;
+    gap: 8px;
+    overflow: hidden;
 }
 
-.profiles-mini-avatarWrap {
-    margin-top: -28px;
-    display: flex;
+.profiles-mainPreview--dark .profiles-mainPreviewBody {
+    background:
+        linear-gradient(180deg, rgba(15, 23, 42, 0.00) 0%, rgba(15, 23, 42, 0.08) 100%);
 }
 
-.align-center .profiles-mini-avatarWrap {
-    justify-content: center;
-}
-
-.align-right .profiles-mini-avatarWrap {
-    justify-content: flex-end;
-}
-
-.profiles-mini-avatar {
-    width: 56px;
-    height: 56px;
-    border-radius: 16px;
-    object-fit: cover;
-    display: block;
-    background: #ffffff;
-    border: 3px solid rgba(255, 255, 255, 0.98);
-    box-shadow: 0 6px 20px rgba(15, 23, 42, 0.12);
-}
-
-.profiles-mini-avatar--placeholder {
-    display: grid;
-    place-items: center;
+.profiles-mainPreviewName {
     font-family: "Cal Sans", sans-serif;
-    font-size: 22px;
-    color: #0f172a;
-    background: #ffffff;
+    font-size: clamp(22px, 2vw, 30px);
+    line-height: 0.96;
+    letter-spacing: -0.03em;
+    color: currentColor;
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
 }
 
-.profiles-mini-copy {
-    margin-top: 12px;
-    display: grid;
-    gap: 6px;
-}
-
-.profiles-mini-title {
-    margin: 0;
-    font-family: "Cal Sans", sans-serif;
-    font-size: 24px;
-    line-height: 1;
-    letter-spacing: -0.02em;
-}
-
-.profiles-mini-subtitle {
+.profiles-mainPreviewTrade {
     font-family: "Inter", sans-serif;
     font-weight: 600;
     font-size: 13px;
-    opacity: 0.78;
+    line-height: 1.35;
+    color: currentColor;
+    opacity: 0.82;
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
 }
 
-.profiles-mini-meta {
+.profiles-mainPreviewLocation {
     font-family: "Inter", sans-serif;
     font-weight: 500;
     font-size: 12px;
-    opacity: 0.72;
-}
-
-.profiles-mini-ctaRow {
-    margin-top: 14px;
-    display: grid;
-    gap: 8px;
-}
-
-.profiles-mini-btn {
-    height: 34px;
-    border-radius: 999px;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    padding: 0 14px;
-    font-family: "Inter", sans-serif;
-    font-weight: 700;
-    font-size: 12px;
+    line-height: 1.35;
+    color: currentColor;
+    opacity: 0.68;
+    overflow: hidden;
+    text-overflow: ellipsis;
     white-space: nowrap;
-}
-
-.profiles-mini-btn--ghost {
-    background: transparent;
-    color: inherit;
-    border: 1px solid rgba(148, 163, 184, 0.38);
+    max-width: 100%;
 }
 
 .profiles-profileBottom {
-    margin-top: auto;
-    padding-top: 16px;
     display: grid;
     gap: 12px;
     align-content: end;
@@ -403,40 +361,6 @@
     width: 100%;
     min-width: 0;
     justify-content: center;
-}
-
-.profiles-metrics {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 18px;
-    width: 100%;
-}
-
-.profiles-metrics--card {
-    justify-content: center;
-}
-
-.profiles-metric {
-    display: grid;
-    justify-items: center;
-}
-
-.profiles-metricVal {
-    font-family: "Inter", sans-serif;
-    font-weight: 700;
-    font-size: 14px;
-    color: rgba(15, 23, 42, 0.90);
-    text-align: center;
-}
-
-.profiles-metricLab {
-    margin-top: 2px;
-    font-family: "Inter", sans-serif;
-    font-weight: 600;
-    font-size: 12px;
-    color: rgba(71, 85, 105, 0.80);
-    text-align: center;
 }
 
 .profiles-addCard,
@@ -751,21 +675,43 @@
     color: var(--kc-accent-primary, #f97316);
 }
 
+/* preview sizing */
+.profiles-mainPreview {
+    aspect-ratio: 1 / 1;
+    max-height: 320px;
+}
+
+@media (max-width: 1280px) {
+
+    .profiles-profileCard--rail,
+    .profiles-addCard--rail,
+    .profiles-addInline--rail {
+        flex: 0 0 300px;
+        width: 300px;
+    }
+
+    .profiles-mainPreview {
+        max-height: 286px;
+    }
+}
+
 @media (max-width: 1180px) {
     .profiles-listRail {
         flex: initial;
         min-height: 0;
-        height: auto;
-        align-items: stretch;
+        align-items: flex-start;
     }
 
     .profiles-profileCard--rail,
     .profiles-addCard--rail,
     .profiles-addInline--rail {
-        flex: 0 0 360px;
-        width: 360px;
-        min-height: unset;
-        height: auto;
+        flex: 0 0 340px;
+        width: 340px;
+    }
+
+    .profiles-mainPreview {
+        aspect-ratio: 4 / 3;
+        max-height: 270px;
     }
 }
 
@@ -776,8 +722,11 @@
     .profiles-addInline--rail {
         flex: 0 0 320px;
         width: 320px;
-        min-height: unset;
-        height: auto;
+    }
+
+    .profiles-mainPreview {
+        aspect-ratio: 4 / 3;
+        max-height: 248px;
     }
 
     .profiles-cardBtns--responsiveRow {
@@ -790,6 +739,22 @@
         font-size: 13px;
         padding: 0 12px;
     }
+
+    .profiles-mainPreviewBody {
+        padding: 14px 14px 12px;
+    }
+
+    .profiles-mainPreviewName {
+        font-size: 24px;
+    }
+
+    .profiles-mainPreviewTrade {
+        font-size: 12px;
+    }
+
+    .profiles-mainPreviewLocation {
+        font-size: 11px;
+    }
 }
 
 @media (max-width: 860px) {
@@ -801,10 +766,10 @@
         width: 292px;
     }
 
-    .profiles-profileCard--rail,
+    .profiles-cardContent,
     .profiles-addCard,
     .profiles-addInline {
-        padding: 16px;
+        padding: 14px;
     }
 
     .profiles-slug {
@@ -820,71 +785,33 @@
         font-size: 11px;
     }
 
-    .profiles-metricVal {
-        font-size: 13px;
+    .profiles-mainPreview {
+        aspect-ratio: 4 / 3;
+        max-height: 228px;
     }
 
-    .profiles-metricLab {
-        font-size: 11px;
+    .profiles-mainPreviewCover {
+        flex-basis: 50%;
     }
 
-    .profiles-staticFrame {
-        aspect-ratio: 0.82 / 1;
-        margin-top: 12px;
-    }
-
-    .profiles-mini {
-        transform: scale(0.94);
-    }
-
-    .profiles-mini-cover {
-        height: 88px;
-    }
-
-    .profiles-mini-avatar {
-        width: 44px;
-        height: 44px;
-        border-radius: 13px;
-    }
-
-    .profiles-mini-avatar--placeholder {
-        font-size: 18px;
-    }
-
-    .profiles-mini-body {
-        padding: 0 12px 14px;
-    }
-
-    .profiles-mini-copy {
-        margin-top: 10px;
-        gap: 5px;
-    }
-
-    .profiles-mini-title {
-        font-size: 18px;
-    }
-
-    .profiles-mini-subtitle {
-        font-size: 11px;
-    }
-
-    .profiles-mini-meta {
-        font-size: 10px;
-    }
-
-    .profiles-mini-ctaRow {
-        margin-top: 10px;
+    .profiles-mainPreviewBody {
+        padding: 12px 12px 10px;
         gap: 6px;
     }
 
-    .profiles-mini-btn {
-        height: 28px;
-        padding: 0 10px;
+    .profiles-mainPreviewName {
+        font-size: 20px;
+    }
+
+    .profiles-mainPreviewTrade {
+        font-size: 11px;
+    }
+
+    .profiles-mainPreviewLocation {
         font-size: 10px;
     }
 
     .profiles-profileBottom {
-        padding-top: 12px;
         gap: 10px;
     }
 
@@ -938,11 +865,9 @@
     .profiles-addInline--rail {
         flex: 0 0 228px;
         width: 228px;
-        min-height: unset;
-        height: auto;
     }
 
-    .profiles-profileCard--rail,
+    .profiles-cardContent,
     .profiles-addCard,
     .profiles-addInline {
         padding: 12px;
@@ -970,82 +895,31 @@
         font-size: 9px;
     }
 
-    .profiles-staticFrame {
-        margin-top: 10px;
-        border-radius: 14px;
-        aspect-ratio: 0.92 / 1;
+    .profiles-mainPreview {
+        aspect-ratio: 4 / 3;
+        max-height: 166px;
     }
 
-    .profiles-mini {
-        transform: scale(0.82);
+    .profiles-mainPreviewBody {
+        padding: 10px 10px 8px;
+        gap: 5px;
     }
 
-    .profiles-mini-cover {
-        height: 50px;
+    .profiles-mainPreviewName {
+        font-size: 14px;
+        line-height: 0.98;
     }
 
-    .profiles-mini-avatarWrap {
-        margin-top: -14px;
+    .profiles-mainPreviewTrade {
+        font-size: 8px;
     }
 
-    .profiles-mini-avatar {
-        width: 28px;
-        height: 28px;
-        border-radius: 8px;
-        border-width: 2px;
-    }
-
-    .profiles-mini-avatar--placeholder {
-        font-size: 12px;
-    }
-
-    .profiles-mini-body {
-        padding: 0 6px 8px;
-    }
-
-    .profiles-mini-copy {
-        margin-top: 4px;
-        gap: 2px;
-    }
-
-    .profiles-mini-title {
-        font-size: 11px;
-    }
-
-    .profiles-mini-subtitle {
+    .profiles-mainPreviewLocation {
         font-size: 7px;
-    }
-
-    .profiles-mini-meta {
-        font-size: 6px;
-    }
-
-    .profiles-mini-ctaRow {
-        margin-top: 4px;
-        gap: 4px;
-    }
-
-    .profiles-mini-btn {
-        height: 16px;
-        padding: 0 5px;
-        font-size: 6px;
     }
 
     .profiles-profileBottom {
-        padding-top: 8px;
         gap: 8px;
-    }
-
-    .profiles-metrics {
-        gap: 8px;
-    }
-
-    .profiles-metricVal {
-        font-size: 9px;
-    }
-
-    .profiles-metricLab {
-        font-size: 7px;
     }
 
     .profiles-cardBtns--responsiveRow {
@@ -1182,12 +1056,13 @@
         width: 210px;
     }
 
-    .profiles-staticFrame {
-        aspect-ratio: 0.94 / 1;
+    .profiles-mainPreview {
+        aspect-ratio: 4 / 3;
+        max-height: 152px;
     }
 
-    .profiles-mini {
-        transform: scale(0.78);
+    .profiles-mainPreviewName {
+        font-size: 13px;
     }
 
     .profiles-cardBtn {
