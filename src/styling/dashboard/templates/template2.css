@@ -25,6 +25,14 @@
     --t2-social-size: 30px;
     --t2-contact-icon-size: var(--t2-social-size);
 
+    /* new richer section card blue */
+    --t2-panel-blue: #1736b6;
+    --t2-panel-blue-strong: #1230a5;
+    --t2-panel-blue-border: rgba(23, 54, 182, 0.22);
+    --t2-panel-text: #ffffff;
+    --t2-panel-text-soft: rgba(255, 255, 255, 0.78);
+    --t2-panel-dot: rgba(255, 255, 255, 0.34);
+
     width: 100%;
     min-height: 100%;
     font-family: "Poppins", sans-serif;
@@ -52,6 +60,13 @@
     --t2-dot: #c9ccde;
     --t2-dot-active: #000483;
     --t2-shadow: 0 12px 34px rgba(0, 4, 131, 0.05);
+
+    --t2-panel-blue: #1736b6;
+    --t2-panel-blue-strong: #1230a5;
+    --t2-panel-blue-border: rgba(23, 54, 182, 0.2);
+    --t2-panel-text: #ffffff;
+    --t2-panel-text-soft: rgba(255, 255, 255, 0.82);
+    --t2-panel-dot: rgba(255, 255, 255, 0.34);
 }
 
 .kc-tpl-2.t2-theme-dark {
@@ -71,6 +86,13 @@
     --t2-dot: rgba(255, 255, 255, 0.28);
     --t2-dot-active: #000483;
     --t2-shadow: 0 12px 32px rgba(0, 0, 0, 0.22);
+
+    --t2-panel-blue: #1736b6;
+    --t2-panel-blue-strong: #1b3fcb;
+    --t2-panel-blue-border: rgba(255, 255, 255, 0.08);
+    --t2-panel-text: #ffffff;
+    --t2-panel-text-soft: rgba(255, 255, 255, 0.8);
+    --t2-panel-dot: rgba(255, 255, 255, 0.34);
 }
 
 .kc-tpl-2 .t2-shell {
@@ -363,9 +385,9 @@
     min-height: 168px;
     box-sizing: border-box;
     border-radius: 18px;
-    background: var(--t2-soft-bg);
-    border: 1px solid var(--t2-border);
-    box-shadow: var(--t2-shadow);
+    background: var(--t2-panel-blue);
+    border: 1px solid var(--t2-panel-blue-border);
+    box-shadow: 0 14px 34px rgba(23, 54, 182, 0.18);
     padding: 26px 20px;
     display: flex;
     flex-direction: column;
@@ -383,7 +405,7 @@
     font-size: clamp(18px, 2.6vw, 28px);
     line-height: 1.25;
     font-weight: 600;
-    color: var(--t2-heading);
+    color: var(--t2-panel-text);
 }
 
 .kc-tpl-2 .t2-cardBody {
@@ -392,7 +414,7 @@
     font-size: clamp(15px, 2.1vw, 20px);
     line-height: 1.7;
     font-weight: 400;
-    color: var(--t2-text);
+    color: var(--t2-panel-text-soft);
 }
 
 .kc-tpl-2 .t2-cardBody--review {
@@ -404,7 +426,7 @@
     font-size: clamp(15px, 2vw, 19px);
     line-height: 1.35;
     font-weight: 500;
-    color: var(--t2-accent);
+    color: #ffffff;
 }
 
 .kc-tpl-2.t2-theme-dark .t2-reviewName {
@@ -420,15 +442,15 @@
 }
 
 .kc-tpl-2 .t2-star.on {
-    color: #ff6b3d;
+    color: #ff8a5c;
 }
 
 .kc-tpl-2 .t2-star.off {
-    color: #d6d6d6;
+    color: var(--t2-panel-dot);
 }
 
 .kc-tpl-2.t2-theme-dark .t2-star.off {
-    color: rgba(255, 255, 255, 0.2);
+    color: var(--t2-panel-dot);
 }
 
 .kc-tpl-2 .t2-contactStack {
@@ -439,9 +461,9 @@
 .kc-tpl-2 .t2-contactCard,
 .kc-tpl-2 .t2-socialsCard {
     border-radius: 14px;
-    background: var(--t2-soft-bg);
-    border: 1px solid var(--t2-border);
-    box-shadow: var(--t2-shadow);
+    background: var(--t2-panel-blue);
+    border: 1px solid var(--t2-panel-blue-border);
+    box-shadow: 0 14px 34px rgba(23, 54, 182, 0.18);
     padding: 16px 18px;
     text-decoration: none;
     display: block;
@@ -460,7 +482,7 @@
     display: block;
     object-fit: contain;
     flex: 0 0 auto;
-    filter: brightness(0) saturate(100%) invert(10%);
+    filter: brightness(0) saturate(100%) invert(100%);
 }
 
 .kc-tpl-2.t2-theme-dark .t2-contactIcon {
@@ -476,7 +498,7 @@
     font-size: clamp(18px, 2.4vw, 26px);
     line-height: 1.2;
     font-weight: 600;
-    color: var(--t2-heading);
+    color: var(--t2-panel-text);
 }
 
 .kc-tpl-2 .t2-contactValue {
@@ -485,7 +507,7 @@
     font-size: clamp(14px, 1.9vw, 18px);
     line-height: 1.45;
     font-weight: 400;
-    color: var(--t2-text-soft);
+    color: var(--t2-panel-text-soft);
     word-break: break-word;
 }
 
@@ -504,7 +526,7 @@
     text-decoration: none;
     border: 0;
     background: transparent;
-    color: var(--t2-heading);
+    color: #ffffff;
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -518,7 +540,7 @@
     height: 30px;
     display: block;
     object-fit: contain;
-    filter: brightness(0) saturate(100%) invert(10%);
+    filter: brightness(0) saturate(100%) invert(100%);
 }
 
 .kc-tpl-2.t2-theme-dark .t2-socialIcon {
