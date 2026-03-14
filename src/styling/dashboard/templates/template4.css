@@ -778,3 +778,22 @@
 .kc-tpl-4.t4-theme-dark .t4-social:focus-visible {
     outline: 2px solid rgba(239, 68, 68, 0.28);
 }
+
+/* =========================================
+   TEMPLATE 4 — SERVICE ICON FIX (TEST)
+   ========================================= */
+
+.kc-tpl-4 .t4-serviceIconAsset {
+    width: 32px;
+    height: 32px;
+    display: block;
+    object-fit: contain;
+
+    /* force accent red */
+    filter: brightness(0) saturate(100%) invert(16%) sepia(84%) saturate(5145%) hue-rotate(352deg) brightness(90%) contrast(105%);
+}
+
+/* keep same red in dark mode */
+.kc-tpl-4.t4-theme-dark .t4-serviceIconAsset {
+    filter: brightness(0) saturate(100%) invert(16%) sepia(84%) saturate(5145%) hue-rotate(352deg) brightness(90%) contrast(105%);
+}
