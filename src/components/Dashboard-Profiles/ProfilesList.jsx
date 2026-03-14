@@ -135,6 +135,12 @@ function ProfileMainPreview({ profile }) {
         >
             <div className="profiles-mainPreviewInner">
                 <div className="profiles-mainPreviewCover">
+                    <div className="profiles-mainPreviewTopbar">
+                        <span className={`profiles-pill ${profile?.isLive ? "live" : "draft"}`}>
+                            {profile?.isLive ? "Live" : "Draft"}
+                        </span>
+                    </div>
+
                     {cover ? (
                         <img
                             src={cover}
@@ -436,22 +442,7 @@ export default function ProfilesList({
                             </div>
 
                             <div className="profiles-cardContent">
-                                <div className="profiles-profileTopCentered">
-                                    <div className="profiles-pillRow profiles-pillRow--centered">
-                                        <span className={`profiles-pill ${p.isLive ? "live" : "draft"}`}>
-                                            {p.isLive ? "Live" : "Draft"}
-                                        </span>
-
-                                        <span className={`profiles-pill completion ${p.tone}`}>
-                                            {p.pct >= 95 ? "Profile Complete" : `${p.pct}% Complete`}
-                                        </span>
-
-                                        {locked ? (
-                                            <span className="profiles-pill profiles-pill--locked">Locked</span>
-                                        ) : null}
-                                    </div>
-
-                                    <div className="profiles-slug profiles-slug--centered">{p.slug}</div>
+                                <div className="profiles-profileMetaOnly">
                                     <div className="profiles-updated profiles-updated--centered">{p.updatedAt}</div>
                                 </div>
 
