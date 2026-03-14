@@ -466,8 +466,7 @@
     gap: 10px;
 }
 
-.kc-tpl-2 .t2-contactCard,
-.kc-tpl-2 .t2-socialsCard {
+.kc-tpl-2 .t2-contactCard {
     border-radius: 14px;
     background: var(--t2-panel-blue);
     border: 1px solid var(--t2-panel-blue-border);
@@ -475,6 +474,22 @@
     padding: 16px 18px;
     text-decoration: none;
     display: block;
+    width: 100%;
+    text-align: left;
+}
+
+.kc-tpl-2 button.t2-contactCard {
+    appearance: none;
+    -webkit-appearance: none;
+    font: inherit;
+    color: inherit;
+    text-align: left;
+    cursor: pointer;
+}
+
+.kc-tpl-2 button.t2-contactCard .t2-contactCardInner {
+    width: 100%;
+    text-align: left;
 }
 
 .kc-tpl-2 .t2-contactCardInner {
@@ -482,41 +497,12 @@
     grid-template-columns: var(--t2-contact-icon-size) minmax(0, 1fr);
     gap: 14px;
     align-items: center;
-}
-
-.kc-tpl-2 .t2-contactIcon {
-    width: var(--t2-contact-icon-size);
-    height: var(--t2-contact-icon-size);
-    display: block;
-    object-fit: contain;
-    flex: 0 0 auto;
-    filter: brightness(0) saturate(100%) invert(100%);
-}
-
-.kc-tpl-2.t2-theme-dark .t2-contactIcon {
-    filter: brightness(0) saturate(100%) invert(100%);
+    width: 100%;
 }
 
 .kc-tpl-2 .t2-contactText {
     min-width: 0;
-}
-
-.kc-tpl-2 .t2-contactLabel {
-    display: block;
-    font-size: clamp(18px, 2.4vw, 26px);
-    line-height: 1.2;
-    font-weight: 600;
-    color: var(--t2-panel-text);
-}
-
-.kc-tpl-2 .t2-contactValue {
-    display: block;
-    margin-top: 4px;
-    font-size: clamp(14px, 1.9vw, 18px);
-    line-height: 1.45;
-    font-weight: 400;
-    color: var(--t2-panel-text-soft);
-    word-break: break-word;
+    text-align: left;
 }
 
 .kc-tpl-2 .t2-socials {
@@ -529,6 +515,7 @@
 
 .kc-tpl-2 .t2-social {
     min-width: 0;
+    min-height: 30px;
     height: auto;
     border-radius: 0;
     text-decoration: none;
@@ -574,12 +561,6 @@
     .kc-tpl-2 .t2-socialIcon {
         width: 26px;
         height: 26px;
-    }
-
-    .kc-tpl-2 .t2-section-head::after {
-        width: 77px;
-        height: 12px;
-        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='77' height='12' viewBox='0 0 77 12' fill='none'%3E%3Cpath d='M4 8.6C12.8 7.1 21 6.2 29.2 6C37.2 5.8 44.9 6 52.9 6.8C58.7 7.4 64.6 8.3 70.6 9.1' stroke='%23000483' stroke-width='3.2' stroke-linecap='round'/%3E%3C/svg%3E");
     }
 }
 
