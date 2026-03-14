@@ -128,22 +128,23 @@
 
 .profiles-cardPreviewWrap {
     width: 100%;
-    flex: 0 0 auto;
+    flex: 1 1 auto;
+    min-height: 0;
+    display: flex;
 }
 
 .profiles-cardContent {
     display: flex;
     flex-direction: column;
     padding: 14px 16px 16px;
-    flex: 1 1 auto;
-    min-height: 0;
+    flex: 0 0 auto;
 }
 
 .profiles-pill {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    padding: 6px 10px;
+    padding: 8px 12px;
     border-radius: 999px;
     font-family: "Inter", sans-serif;
     font-weight: 600;
@@ -179,11 +180,12 @@
 /* PREVIEW */
 .profiles-mainPreview {
     width: 100%;
+    flex: 1 1 auto;
+    min-height: 0;
     position: relative;
     overflow: hidden;
     border-bottom: 1px solid rgba(15, 23, 42, 0.08);
-    aspect-ratio: 1 / 1;
-    max-height: none;
+    display: flex;
 }
 
 .profiles-mainPreview--light {
@@ -201,6 +203,7 @@
 .profiles-mainPreviewInner {
     width: 100%;
     height: 100%;
+    min-height: 0;
     display: flex;
     flex-direction: column;
     overflow: hidden;
@@ -244,7 +247,7 @@
 .profiles-mainPreviewBody {
     flex: 1 1 auto;
     min-height: 0;
-    padding: 14px 14px 14px;
+    padding: 16px 14px 14px;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -262,11 +265,13 @@
 .profiles-mainPreviewCopy {
     width: 100%;
     display: grid;
-    gap: 7px;
+    gap: 8px;
     justify-items: center;
     text-align: center;
     align-content: start;
-    flex: 0 0 auto;
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow: hidden;
 }
 
 .profiles-mainPreviewName {
@@ -281,6 +286,7 @@
     -webkit-box-orient: vertical;
     -webkit-line-clamp: 2;
     line-clamp: 2;
+    flex: 0 0 auto;
 }
 
 .profiles-mainPreviewTrade {
@@ -296,6 +302,7 @@
     -webkit-box-orient: vertical;
     -webkit-line-clamp: 2;
     line-clamp: 2;
+    flex: 0 0 auto;
 }
 
 .profiles-mainPreviewLocation {
@@ -309,14 +316,15 @@
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
+    flex: 0 0 auto;
 }
 
 .profiles-mainPreviewCtaRow {
     width: 100%;
-    margin-top: auto;
     display: flex;
     justify-content: center;
     flex: 0 0 auto;
+    margin-top: auto;
 }
 
 .profiles-mainPreviewBtn {
@@ -344,8 +352,7 @@
     display: grid;
     gap: 12px;
     align-content: end;
-    flex: 1 1 auto;
-    min-height: 0;
+    flex: 0 0 auto;
 }
 
 .profiles-cardBtns {
@@ -696,24 +703,12 @@
 }
 
 @media (max-width: 1180px) {
-    .profiles-listRail {
-        flex: 1 1 auto;
-        min-height: 0;
-        height: 100%;
-        align-items: stretch;
-    }
 
     .profiles-profileCard--rail,
     .profiles-addCard--rail,
     .profiles-addInline--rail {
         flex: 0 0 340px;
         width: 340px;
-        min-height: 100%;
-        height: 100%;
-    }
-
-    .profiles-mainPreview {
-        aspect-ratio: 4 / 3;
     }
 
     .profiles-mainPreviewName {
@@ -736,10 +731,6 @@
     .profiles-addInline--rail {
         flex: 0 0 320px;
         width: 320px;
-    }
-
-    .profiles-mainPreview {
-        aspect-ratio: 4 / 3;
     }
 
     .profiles-cardContent {
@@ -796,10 +787,6 @@
 
     .profiles-updated {
         font-size: 11px;
-    }
-
-    .profiles-mainPreview {
-        aspect-ratio: 4 / 3;
     }
 
     .profiles-mainPreviewTopbar {
@@ -891,10 +878,6 @@
         font-size: 9px;
     }
 
-    .profiles-mainPreview {
-        aspect-ratio: 4 / 3.35;
-    }
-
     .profiles-mainPreviewTopbar {
         top: 8px;
         left: 8px;
@@ -902,7 +885,7 @@
 
     .profiles-pill {
         font-size: 9px;
-        padding: 4px 6px;
+        padding: 5px 8px;
     }
 
     .profiles-mainPreviewBody {
@@ -910,20 +893,17 @@
         gap: 6px;
     }
 
-    .profiles-mainPreviewCopy {
-        gap: 0;
-    }
-
     .profiles-mainPreviewName {
         font-size: 16px;
         line-height: 1;
-        -webkit-line-clamp: 2;
-        line-clamp: 2;
     }
 
-    .profiles-mainPreviewTrade,
+    .profiles-mainPreviewTrade {
+        font-size: 9px;
+    }
+
     .profiles-mainPreviewLocation {
-        display: none;
+        font-size: 8px;
     }
 
     .profiles-mainPreviewBtn {
@@ -1058,23 +1038,12 @@
 }
 
 @media (max-width: 640px) {
-    .profiles-listRail {
-        gap: 10px;
-    }
 
     .profiles-profileCard--rail,
     .profiles-addCard--rail,
     .profiles-addInline--rail {
         flex: 0 0 232px;
         width: 232px;
-    }
-
-    .profiles-mainPreview {
-        aspect-ratio: 4 / 3.45;
-    }
-
-    .profiles-mainPreviewName {
-        font-size: 15px;
     }
 
     .profiles-cardBtns--responsiveRow {
