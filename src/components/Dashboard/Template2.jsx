@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useRef, useState } from "react";
+import React, { useMemo } from "react";
 import "../../styling/dashboard/templates/template2.css";
 
 import SaveMyNumberIcon from "../../assets/icons/SaveMyNumberIcon.svg";
@@ -10,6 +10,7 @@ import Template2IconLinkedin from "../../assets/icons/Template2Icon-Linkedin.svg
 import Template2IconPhone from "../../assets/icons/Template2Icon-Phone.svg";
 import Template2IconTikTok from "../../assets/icons/Template2Icon-TikTok.svg";
 import Template2IconX from "../../assets/icons/Template2Icon-X.svg";
+import Template2ServiceIcon from "../../assets/icons/Template2ServiceIcon.svg";
 
 const nonEmpty = (v) => typeof v === "string" && v.trim().length > 0;
 const asArray = (v) => (Array.isArray(v) ? v : []);
@@ -41,171 +42,25 @@ function getSocialIcon(key) {
     return map[key] || Template2IconX;
 }
 
-function SliderSection({ title, items, renderItem, trackClassName = "" }) {
-    const trackRef = useRef(null);
-    const [activeIndex, setActiveIndex] = useState(0);
+function buildWorkRows(items) {
+    const rows = [];
+    let i = 0;
+    let useSingle = true;
 
-    const pointerRef = useRef({
-        isDown: false,
-        startX: 0,
-        startY: 0,
-        draggingX: false,
-        isVerticalIntent: false,
-    });
+    while (i < items.length) {
+        const desiredCount = useSingle ? 1 : 2;
+        const rowItems = items.slice(i, i + desiredCount);
 
-    const getSlides = () => {
-        const track = trackRef.current;
-        return track ? Array.from(track.children || []) : [];
-    };
-
-    const scrollToIndex = (index, behavior = "smooth") => {
-        const track = trackRef.current;
-        const slides = getSlides();
-        if (!track || !slides.length) return;
-
-        const nextIndex = ((index % slides.length) + slides.length) % slides.length;
-        const target = slides[nextIndex];
-        if (!target) return;
-
-        const trackWidth = track.clientWidth;
-        const targetLeft = target.offsetLeft - (trackWidth - target.clientWidth) / 2;
-
-        track.scrollTo({
-            left: Math.max(0, targetLeft),
-            behavior,
+        rows.push({
+            type: rowItems.length === 1 ? "single" : "double",
+            items: rowItems,
         });
-        setActiveIndex(nextIndex);
-    };
 
-    useEffect(() => {
-        const track = trackRef.current;
-        if (!track) return;
+        i += rowItems.length;
+        useSingle = !useSingle;
+    }
 
-        const onResize = () => scrollToIndex(activeIndex, "auto");
-        window.addEventListener("resize", onResize);
-
-        requestAnimationFrame(() => scrollToIndex(0, "auto"));
-
-        return () => {
-            window.removeEventListener("resize", onResize);
-        };
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []);
-
-    useEffect(() => {
-        requestAnimationFrame(() => scrollToIndex(0, "auto"));
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [items.length]);
-
-    const handlePointerDown = (e) => {
-        pointerRef.current = {
-            isDown: true,
-            startX: e.clientX,
-            startY: e.clientY,
-            draggingX: false,
-            isVerticalIntent: false,
-        };
-    };
-
-    const handlePointerMove = (e) => {
-        const state = pointerRef.current;
-        const track = trackRef.current;
-        if (!track || !state.isDown) return;
-
-        const dx = e.clientX - state.startX;
-        const dy = e.clientY - state.startY;
-        const absX = Math.abs(dx);
-        const absY = Math.abs(dy);
-
-        if (!state.draggingX && !state.isVerticalIntent) {
-            if (absY > 6 && absY > absX) {
-                state.isVerticalIntent = true;
-                return;
-            }
-
-            if (absX > 5 && absX > absY) {
-                state.draggingX = true;
-                track.classList.add("is-dragging");
-            }
-        }
-
-        if (state.draggingX) {
-            e.preventDefault();
-        }
-    };
-
-    const finishSwipe = (e) => {
-        const state = pointerRef.current;
-        const track = trackRef.current;
-        if (!track) return;
-
-        const dx = e.clientX - state.startX;
-        const dy = e.clientY - state.startY;
-        const absX = Math.abs(dx);
-        const absY = Math.abs(dy);
-
-        if (state.draggingX && absX > absY && absX > 18) {
-            if (dx < 0) {
-                scrollToIndex(activeIndex + 1);
-            } else {
-                scrollToIndex(activeIndex - 1);
-            }
-        } else {
-            scrollToIndex(activeIndex);
-        }
-
-        pointerRef.current = {
-            isDown: false,
-            startX: 0,
-            startY: 0,
-            draggingX: false,
-            isVerticalIntent: false,
-        };
-
-        track.classList.remove("is-dragging");
-    };
-
-    return (
-        <section className="t2-section">
-            <div className="t2-section-head">
-                <h2 className="t2-section-title">{title}</h2>
-            </div>
-
-            <div
-                ref={trackRef}
-                className={`t2-sliderTrack ${trackClassName}`.trim()}
-                onPointerDown={handlePointerDown}
-                onPointerMove={handlePointerMove}
-                onPointerUp={finishSwipe}
-                onPointerCancel={finishSwipe}
-                onPointerLeave={(e) => {
-                    if (pointerRef.current.isDown) finishSwipe(e);
-                }}
-                role="region"
-                aria-label={title}
-            >
-                {items.map((item, index) => (
-                    <div key={index} className="t2-slide">
-                        {renderItem(item, index)}
-                    </div>
-                ))}
-            </div>
-
-            {items.length > 1 ? (
-                <div className="t2-dots" aria-label={`${title} navigation`}>
-                    {items.map((_, i) => (
-                        <button
-                            key={i}
-                            type="button"
-                            className={`t2-dot ${activeIndex === i ? "is-active" : ""}`}
-                            aria-label={`Go to ${title} slide ${i + 1}`}
-                            onClick={() => scrollToIndex(i)}
-                        />
-                    ))}
-                </div>
-            ) : null}
-        </section>
-    );
+    return rows;
 }
 
 export default function Template2({ vm }) {
@@ -219,6 +74,8 @@ export default function Template2({ vm }) {
             .map((x) => x?.preview || x?.url || x)
             .filter(Boolean);
     }, [v.works]);
+
+    const workRows = useMemo(() => buildWorkRows(works.slice(0, 12)), [works]);
 
     const services = useMemo(() => {
         return asArray(v.services).filter((s) => s?.name || s?.description || s?.price);
@@ -305,49 +162,73 @@ export default function Template2({ vm }) {
                 ) : null}
 
                 {v.showWorkSection && works.length > 0 ? (
-                    <SliderSection
-                        title="MY WORK"
-                        items={works.slice(0, 14)}
-                        trackClassName="t2-sliderTrack--media"
-                        renderItem={(url, i) => (
-                            <article className="t2-mediaCard">
-                                <img src={url} alt={`Work ${i + 1}`} className="t2-mediaImg" draggable="false" />
-                            </article>
-                        )}
-                    />
+                    <section className="t2-section">
+                        <div className="t2-section-head">
+                            <h2 className="t2-section-title">MY WORK</h2>
+                        </div>
+
+                        <div className="t2-workRows">
+                            {workRows.map((row, rowIndex) => (
+                                <div
+                                    key={rowIndex}
+                                    className={`t2-workRow ${row.type === "double" ? "t2-workRow--double" : "t2-workRow--single"}`}
+                                >
+                                    {row.items.map((url, itemIndex) => (
+                                        <article
+                                            key={`${rowIndex}-${itemIndex}`}
+                                            className={`t2-mediaCard ${row.items.length === 1 ? "t2-mediaCard--full" : ""}`}
+                                        >
+                                            <img src={url} alt={`Work ${rowIndex + itemIndex + 1}`} className="t2-mediaImg" />
+                                        </article>
+                                    ))}
+                                </div>
+                            ))}
+                        </div>
+                    </section>
                 ) : null}
 
                 {v.showServicesSection && services.length > 0 ? (
-                    <SliderSection
-                        title="MY SERVICES"
-                        items={services.slice(0, 12)}
-                        trackClassName="t2-sliderTrack--content"
-                        renderItem={(s) => (
-                            <article className="t2-infoCard">
-                                <h3 className="t2-cardTitle">{s?.name || "Service"}</h3>
-                                {nonEmpty(s?.description) ? (
-                                    <p className="t2-cardBody">{s.description}</p>
-                                ) : nonEmpty(s?.price) ? (
-                                    <p className="t2-cardBody">{s.price}</p>
-                                ) : null}
-                            </article>
-                        )}
-                    />
+                    <section className="t2-section">
+                        <div className="t2-section-head">
+                            <h2 className="t2-section-title">MY SERVICES</h2>
+                        </div>
+
+                        <div className="t2-servicesList">
+                            {services.slice(0, 12).map((s, i) => (
+                                <article key={i} className="t2-serviceItem">
+                                    <div className="t2-serviceInner">
+                                        <img src={Template2ServiceIcon} alt="" className="t2-serviceIcon" />
+                                        <h3 className="t2-cardTitle">{s?.name || "Service"}</h3>
+                                        {nonEmpty(s?.description) ? (
+                                            <p className="t2-cardBody">{s.description}</p>
+                                        ) : nonEmpty(s?.price) ? (
+                                            <p className="t2-cardBody">{s.price}</p>
+                                        ) : null}
+                                    </div>
+                                </article>
+                            ))}
+                        </div>
+                    </section>
                 ) : null}
 
                 {v.showReviewsSection && reviews.length > 0 ? (
-                    <SliderSection
-                        title="MY REVIEWS"
-                        items={reviews.slice(0, 10)}
-                        trackClassName="t2-sliderTrack--content"
-                        renderItem={(r) => (
-                            <article className="t2-infoCard t2-infoCard--review">
-                                {nonEmpty(r?.text) ? <p className="t2-cardBody t2-cardBody--review">“{r.text}”</p> : null}
-                                {nonEmpty(r?.name) ? <div className="t2-reviewName">{r.name}</div> : null}
-                                <Stars rating={r?.rating} />
-                            </article>
-                        )}
-                    />
+                    <section className="t2-section">
+                        <div className="t2-section-head">
+                            <h2 className="t2-section-title">MY REVIEWS</h2>
+                        </div>
+
+                        <div className="t2-reviewsList">
+                            {reviews.slice(0, 10).map((r, i) => (
+                                <article key={i} className="t2-reviewItem">
+                                    <div className="t2-reviewInner">
+                                        {nonEmpty(r?.text) ? <p className="t2-cardBody t2-cardBody--review">“{r.text}”</p> : null}
+                                        {nonEmpty(r?.name) ? <div className="t2-reviewName">{r.name}</div> : null}
+                                        <Stars rating={r?.rating} />
+                                    </div>
+                                </article>
+                            ))}
+                        </div>
+                    </section>
                 ) : null}
 
                 {v.showContactSection && hasContact ? (
