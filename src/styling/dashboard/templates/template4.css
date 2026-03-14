@@ -5,7 +5,7 @@
 .kc-tpl-4 {
     --t4-shell-max: 920px;
     --t4-page-pad: 22px;
-    --t4-section-gap: 54px;
+    --t4-section-gap: 64px;
     --t4-card-radius: 24px;
     --t4-card-radius-sm: 18px;
     --t4-accent: #b91c1c;
@@ -78,7 +78,7 @@
     border: 1px solid var(--t4-border);
     background: var(--t4-surface);
     box-shadow: var(--t4-shadow);
-    aspect-ratio: 16 / 10;
+    aspect-ratio: 4 / 3;
 }
 
 .kc-tpl-4 .t4-coverImg,
@@ -155,7 +155,6 @@
     word-break: break-word;
 }
 
-/* remove pills under hero location */
 .kc-tpl-4 .t4-hero .t4-meta {
     display: none;
 }
@@ -241,7 +240,6 @@
     background: var(--t4-accent-strong);
 }
 
-/* second CTA black in light, reversed in dark */
 .kc-tpl-4 .t4-btn-secondary {
     background: #111111;
     color: #ffffff;
@@ -330,7 +328,6 @@
     text-align: center;
 }
 
-/* logo left, text right */
 .kc-tpl-4 .t4-aboutTop {
     display: inline-grid;
     grid-template-columns: auto minmax(0, auto);
@@ -393,22 +390,10 @@
 
 /* WORK */
 
-.kc-tpl-4 .t4-workRows {
+.kc-tpl-4 .t4-workGrid {
     display: grid;
-    gap: 12px;
-}
-
-.kc-tpl-4 .t4-workRow {
-    display: grid;
-    gap: 12px;
-}
-
-.kc-tpl-4 .t4-workRow--feature {
     grid-template-columns: 1fr;
-}
-
-.kc-tpl-4 .t4-workRow--pair {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
 }
 
 .kc-tpl-4 .t4-workTile {
@@ -418,11 +403,6 @@
     background: var(--t4-surface);
     box-shadow: var(--t4-shadow-soft);
     aspect-ratio: 4 / 3;
-}
-
-.kc-tpl-4 .t4-workTile.is-feature {
-    grid-column: 1 / -1;
-    aspect-ratio: 16 / 9;
 }
 
 .kc-tpl-4 .t4-workImg {
@@ -437,13 +417,14 @@
 .kc-tpl-4 .t4-servicesList {
     display: grid;
     gap: 0;
+    padding: 0 16px;
 }
 
 .kc-tpl-4 .t4-serviceRow {
     display: grid;
     gap: 14px;
     justify-items: center;
-    padding: 18px 0;
+    padding: 20px 0;
     background: transparent;
     border: 0;
     border-radius: 0;
@@ -461,20 +442,17 @@
     padding-top: 0;
 }
 
-/* service pill exact size */
-.kc-tpl-4 .t4-serviceIndex {
-    width: 44px;
-    height: 32px;
-    border-radius: 999px;
-    background: var(--t4-accent-soft);
-    color: var(--t4-accent);
+.kc-tpl-4 .t4-serviceIconWrap {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    font-size: 12px;
-    line-height: 1;
-    font-weight: 800;
-    letter-spacing: -0.02em;
+}
+
+.kc-tpl-4 .t4-serviceIconAsset {
+    width: 20px;
+    height: 20px;
+    display: block;
+    object-fit: contain;
 }
 
 .kc-tpl-4 .t4-serviceMain {
@@ -664,7 +642,6 @@
     word-break: break-word;
 }
 
-/* socials now same design as contact icon tiles */
 .kc-tpl-4 .t4-socials {
     display: grid;
     grid-template-columns: repeat(5, minmax(0, 1fr));
@@ -686,17 +663,6 @@
     text-decoration: none;
     color: var(--t4-accent);
     padding: 0;
-}
-
-.kc-tpl-4 .t4-socialIconSvg {
-    width: 22px;
-    height: 22px;
-    display: block;
-    color: currentColor;
-}
-
-/* create same icon tile look via pseudo container */
-.kc-tpl-4 .t4-social {
     position: relative;
 }
 
@@ -709,36 +675,33 @@
 }
 
 .kc-tpl-4 .t4-socialIconSvg {
+    width: 22px;
+    height: 22px;
+    display: block;
+    color: currentColor;
     position: relative;
     z-index: 1;
 }
 
 /* RESPONSIVE */
 
-@media (max-width: 760px) {
-    .kc-tpl-4 .t4-workRow--pair {
-        grid-template-columns: 1fr;
-    }
-
-    .kc-tpl-4 .t4-workTile,
-    .kc-tpl-4 .t4-workTile.is-feature {
-        grid-column: auto;
-        aspect-ratio: 16 / 10;
+@media (min-width: 700px) {
+    .kc-tpl-4 .t4-workGrid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
     }
 }
 
 @media (max-width: 560px) {
     .kc-tpl-4 {
         --t4-page-pad: 18px;
-        --t4-section-gap: 48px;
+        --t4-section-gap: 64px;
     }
 
     .kc-tpl-4 .t4-cta.is-two {
         grid-template-columns: 1fr;
     }
 
-    .kc-tpl-4 .t4-workRows,
-    .kc-tpl-4 .t4-workRow {
+    .kc-tpl-4 .t4-workGrid {
         gap: 10px;
     }
 
@@ -773,6 +736,10 @@
 
     .kc-tpl-4 .t4-aboutTop {
         gap: 10px;
+    }
+
+    .kc-tpl-4 .t4-servicesList {
+        padding: 0 16px;
     }
 }
 

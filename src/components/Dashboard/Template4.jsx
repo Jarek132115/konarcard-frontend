@@ -3,6 +3,7 @@ import "../../styling/dashboard/templates/template4.css";
 
 import SaveMyNumberIcon from "../../assets/icons/SaveMyNumberIcon.svg";
 import ExchangeContactIcon from "../../assets/icons/ExchangeContactIcon.svg";
+import Template2ServiceIcon from "../../assets/icons/Template2ServiceIcon.svg";
 
 const nonEmpty = (v) => typeof v === "string" && v.trim().length > 0;
 const asArray = (v) => (Array.isArray(v) ? v : []);
@@ -121,27 +122,6 @@ function getSocialMeta(key) {
     return map[key] || { label: key.replace("_url", ""), icon: null };
 }
 
-function buildWorkRows(items) {
-    const rows = [];
-    let i = 0;
-    let useFeature = true;
-
-    while (i < items.length) {
-        if (useFeature) {
-            const one = items.slice(i, i + 1);
-            rows.push({ type: "feature", items: one });
-            i += one.length;
-        } else {
-            const two = items.slice(i, i + 2);
-            rows.push({ type: two.length === 1 ? "feature" : "pair", items: two });
-            i += two.length;
-        }
-        useFeature = !useFeature;
-    }
-
-    return rows;
-}
-
 export default function Template4({ vm }) {
     const v = vm || {};
     const themeMode = (v.themeMode || "light").toLowerCase();
@@ -154,8 +134,6 @@ export default function Template4({ vm }) {
             .map((x) => x?.preview || x?.url || x)
             .filter(Boolean);
     }, [v.works]);
-
-    const workRows = useMemo(() => buildWorkRows(works.slice(0, 12)), [works]);
 
     const services = useMemo(() => {
         return asArray(v.services).filter((s) => s?.name || s?.description || s?.price);
@@ -273,20 +251,10 @@ export default function Template4({ vm }) {
                     <section className="t4-section">
                         <SectionHead kicker="Work" title="Recent Work" />
 
-                        <div className="t4-workRows">
-                            {workRows.map((row, rowIndex) => (
-                                <div
-                                    key={rowIndex}
-                                    className={`t4-workRow ${row.type === "pair" ? "t4-workRow--pair" : "t4-workRow--feature"}`}
-                                >
-                                    {row.items.map((url, itemIndex) => (
-                                        <div
-                                            key={`${rowIndex}-${itemIndex}`}
-                                            className={`t4-workTile ${row.items.length === 1 ? "is-feature" : ""}`}
-                                        >
-                                            <img src={url} alt={`Work ${rowIndex + itemIndex + 1}`} className="t4-workImg" />
-                                        </div>
-                                    ))}
+                        <div className="t4-workGrid">
+                            {works.slice(0, 12).map((url, i) => (
+                                <div key={i} className="t4-workTile">
+                                    <img src={url} alt={`Work ${i + 1}`} className="t4-workImg" />
                                 </div>
                             ))}
                         </div>
@@ -300,7 +268,9 @@ export default function Template4({ vm }) {
                         <div className="t4-servicesList">
                             {services.slice(0, 12).map((s, i) => (
                                 <article key={i} className="t4-serviceRow">
-                                    <div className="t4-serviceIndex">{String(i + 1).padStart(2, "0")}</div>
+                                    <div className="t4-serviceIconWrap">
+                                        <img src={Template2ServiceIcon} alt="" className="t4-serviceIconAsset" />
+                                    </div>
 
                                     <div className="t4-serviceMain">
                                         <h3 className="t4-serviceName">{s?.name || "Service"}</h3>
