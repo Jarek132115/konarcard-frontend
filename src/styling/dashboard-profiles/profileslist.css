@@ -259,7 +259,7 @@
 
 .profiles-mainPreview--dark .profiles-mainPreviewBody {
     background:
-        linear-gradient(180deg, rgba(15, 23, 42, 0.00) 0%, rgba(15, 23, 42, 0.08) 100%);
+        linear-gradient(180deg, rgba(15, 23, 42, 0) 0%, rgba(15, 23, 42, 0.08) 100%);
 }
 
 .profiles-mainPreviewCopy {
@@ -364,19 +364,24 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 12px;
+    gap: 8px;
 }
 
-.profiles-cardBtns--responsiveRow {
+.profiles-cardBtns--stack {
     width: 100%;
-    flex-direction: row;
+    flex-direction: column;
 }
 
 .profiles-cardBtn {
     width: 100%;
     min-width: 0;
     justify-content: center;
-    min-height: 46px;
+    min-height: 48px;
+    font-family: "Inter", sans-serif;
+    font-weight: 600;
+    font-size: var(--kc-btn-size);
+    line-height: var(--kc-btn-line);
+    letter-spacing: 0;
 }
 
 .profiles-cardBtn--withIcon {
@@ -386,9 +391,19 @@
     gap: 8px;
 }
 
+.profiles-cardBtn span:last-child {
+    font-family: "Inter", sans-serif;
+    font-weight: 600;
+    font-size: var(--kc-btn-size);
+    line-height: var(--kc-btn-line);
+    letter-spacing: 0;
+}
+
 .profiles-cardBtnIcon {
     width: 16px;
     height: 16px;
+    min-width: 16px;
+    min-height: 16px;
     display: block;
     flex: 0 0 auto;
 }
@@ -760,11 +775,6 @@
         padding: 14px;
     }
 
-    .profiles-cardBtn {
-        min-height: 44px;
-        font-size: 13px;
-    }
-
     .profiles-mainPreviewTopbar {
         top: 12px;
         left: 12px;
@@ -960,20 +970,26 @@
         gap: 8px;
     }
 
-    .profiles-cardBtns--responsiveRow {
-        flex-direction: column;
-        gap: 6px;
+    .profiles-cardBtns--stack {
+        gap: 8px;
     }
 
     .profiles-cardBtn {
-        min-height: 34px;
-        font-size: 10px;
-        padding: 0 8px;
+        min-height: 48px;
+        font-size: var(--kc-btn-size);
+        padding: 12px 18px;
+    }
+
+    .profiles-cardBtn span:last-child {
+        font-size: var(--kc-btn-size);
+        line-height: var(--kc-btn-line);
     }
 
     .profiles-cardBtnIcon {
-        width: 14px;
-        height: 14px;
+        width: 16px;
+        height: 16px;
+        min-width: 16px;
+        min-height: 16px;
     }
 
     .profiles-addBadge {
@@ -1096,12 +1112,21 @@
         width: 232px;
     }
 
-    .profiles-cardBtns--responsiveRow {
-        flex-direction: column;
+    .profiles-cardBtn {
+        min-height: 48px;
+        font-size: var(--kc-btn-size);
+        padding: 12px 18px;
     }
 
-    .profiles-cardBtn {
-        min-height: 32px;
-        font-size: 9px;
+    .profiles-cardBtn span:last-child {
+        font-size: var(--kc-btn-size);
+        line-height: var(--kc-btn-line);
+    }
+
+    .profiles-cardBtnIcon {
+        width: 16px;
+        height: 16px;
+        min-width: 16px;
+        min-height: 16px;
     }
 }

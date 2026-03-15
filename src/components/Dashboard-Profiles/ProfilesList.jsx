@@ -425,8 +425,8 @@ export default function ProfilesList({
                     return (
                         <article
                             key={p.slug}
-                            className={`profiles-profileCard profiles-profileCard--rail ${active ? "is-active" : ""} ${locked ? "is-locked" : ""
-                                }`}
+                            className={`profiles-profileCard profiles-profileCard--rail ${active ? "is-active" : ""
+                                } ${locked ? "is-locked" : ""}`}
                             onClick={() => onCardSelect(p.slug, locked)}
                             role="button"
                             tabIndex={0}
@@ -445,9 +445,11 @@ export default function ProfilesList({
 
                             <div className="profiles-cardContent">
                                 <div className="profiles-profileBottom">
-                                    <div className="profiles-updated profiles-updated--centered">{p.updatedAt}</div>
+                                    <div className="profiles-updated profiles-updated--centered">
+                                        {p.updatedAt}
+                                    </div>
 
-                                    <div className="profiles-cardBtns profiles-cardBtns--responsiveRow">
+                                    <div className="profiles-cardBtns profiles-cardBtns--stack">
                                         <button
                                             type="button"
                                             className="kx-btn kx-btn--orange profiles-cardBtn profiles-cardBtn--withIcon"
