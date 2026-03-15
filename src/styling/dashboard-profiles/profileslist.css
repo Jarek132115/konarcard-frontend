@@ -131,7 +131,6 @@
 .profiles-cardPreviewWrap,
 .profiles-addCardPreviewWrap {
     width: 100%;
-    flex: 1 1 auto;
     min-height: 0;
     display: flex;
 }
@@ -140,7 +139,7 @@
     display: flex;
     flex-direction: column;
     padding: 14px 16px 16px;
-    flex: 0 0 auto;
+    flex: 1 1 auto;
 }
 
 .profiles-pill {
@@ -360,7 +359,7 @@
     display: grid;
     gap: 12px;
     align-content: end;
-    flex: 0 0 auto;
+    flex: 1 1 auto;
 }
 
 .profiles-cardBtns {
@@ -428,7 +427,6 @@
 
 .profiles-addCardPreview {
     width: 100%;
-    flex: 1 1 auto;
     min-height: 0;
     position: relative;
     border-bottom: 1px solid rgba(15, 23, 42, 0.08);
@@ -438,6 +436,8 @@
     display: flex;
     align-items: center;
     justify-content: center;
+    aspect-ratio: 4 / 2.5;
+    flex: 0 0 auto;
 }
 
 .profiles-addCardPreviewTopbar {
@@ -479,6 +479,7 @@
 
 .profiles-addCardContent {
     padding: 16px 16px 16px;
+    flex: 1 1 auto;
 }
 
 .profiles-addBottom {
@@ -696,57 +697,55 @@
     min-height: 48px;
 }
 
-.profiles-cardBtn--priceStack {
-    display: inline-flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 2px;
-}
-
-.profiles-cardBtnPriceMain {
-    font-family: "Inter", sans-serif;
-    font-weight: 700;
-    font-size: 14px;
-    line-height: 1.1;
-}
-
-.profiles-cardBtnPriceSub {
-    font-family: "Inter", sans-serif;
-    font-weight: 600;
-    font-size: 11px;
-    line-height: 1;
-    opacity: 0.92;
-}
-
-.profiles-claimPreviewRow {
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-    padding: 12px 14px;
-    border-radius: 14px;
+.profiles-claimStatusCard {
+    padding: 14px;
+    border-radius: 16px;
+    border: 1px solid rgba(15, 23, 42, 0.08);
     background: rgba(15, 23, 42, 0.03);
-    border: 1px solid rgba(15, 23, 42, 0.06);
+    display: grid;
+    gap: 8px;
 }
 
-.profiles-claimPreviewRow--center {
-    align-items: center;
+.profiles-claimStatusCard--center {
     text-align: center;
 }
 
-.profiles-claimPreviewLabel {
-    font-family: "Inter", sans-serif;
-    font-size: 12px;
-    font-weight: 700;
-    color: rgba(71, 85, 105, 0.72);
-    text-transform: uppercase;
-    letter-spacing: 0.06em;
+.profiles-claimStatusCard.is-success {
+    background: rgba(22, 163, 74, 0.08);
+    border-color: rgba(22, 163, 74, 0.20);
 }
 
-.profiles-claimPreviewUrl {
+.profiles-claimStatusCard.is-danger {
+    background: rgba(220, 38, 38, 0.08);
+    border-color: rgba(220, 38, 38, 0.18);
+}
+
+.profiles-claimStatusCard.is-neutral {
+    background: rgba(15, 23, 42, 0.03);
+    border-color: rgba(15, 23, 42, 0.08);
+}
+
+.profiles-claimStatusTitle {
     font-family: "Inter", sans-serif;
-    font-size: 14px;
     font-weight: 700;
+    font-size: 14px;
+    line-height: 1.3;
+    color: var(--p-ink);
+}
+
+.profiles-claimStatusCard.is-success .profiles-claimStatusTitle {
+    color: rgba(21, 128, 61, 0.98);
+}
+
+.profiles-claimStatusCard.is-danger .profiles-claimStatusTitle {
+    color: rgba(185, 28, 28, 0.98);
+}
+
+.profiles-claimStatusUrl {
+    font-family: "Inter", sans-serif;
+    font-weight: 700;
+    font-size: 14px;
+    line-height: 1.35;
     color: var(--p-ink);
     word-break: break-word;
 }
@@ -1158,16 +1157,11 @@
         padding: 8px;
     }
 
-    .profiles-claimPreviewRow {
-        padding: 9px 10px;
-        border-radius: 12px;
+    .profiles-claimStatusTitle {
+        font-size: 11px;
     }
 
-    .profiles-claimPreviewLabel {
-        font-size: 9px;
-    }
-
-    .profiles-claimPreviewUrl {
+    .profiles-claimStatusUrl {
         font-size: 10px;
     }
 
@@ -1178,14 +1172,6 @@
     }
 
     .profiles-hint {
-        font-size: 10px;
-    }
-
-    .profiles-cardBtnPriceMain {
-        font-size: 13px;
-    }
-
-    .profiles-cardBtnPriceSub {
         font-size: 10px;
     }
 }
