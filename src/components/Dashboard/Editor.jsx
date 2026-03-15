@@ -299,10 +299,11 @@ export default function Editor({
             <div className="kce-scroll">
                 <div className="kce-section">
                     <div className="kce-sectionTop">
-                        <span className="kce-pill">CHOOSE MODE</span>
+                        <div className="kce-headingBlock">
+                            <span className="kce-pill">CHOOSE MODE</span>
+                            <div className="kce-accentLine" />
+                        </div>
                     </div>
-
-                    <div className="kce-accentLine" />
 
                     <div className="kce-sectionBody">
                         <div className="kce-themeModeWrap">
@@ -339,10 +340,11 @@ export default function Editor({
 
                 <div className="kce-section">
                     <div className="kce-sectionTop">
-                        <span className="kce-pill">CHOOSE TEMPLATE</span>
+                        <div className="kce-headingBlock">
+                            <span className="kce-pill">CHOOSE TEMPLATE</span>
+                            <div className="kce-accentLine" />
+                        </div>
                     </div>
-
-                    <div className="kce-accentLine" />
 
                     <div className="kce-sectionBody">
                         <div className="kce-templatePhones" role="tablist" aria-label="Template selector">
@@ -392,7 +394,10 @@ export default function Editor({
 
                 <div className="kce-section">
                     <div className="kce-sectionTop">
-                        <span className="kce-pill">MAIN SECTION</span>
+                        <div className="kce-headingBlock">
+                            <span className="kce-pill">MAIN SECTION</span>
+                            <div className="kce-accentLine" />
+                        </div>
 
                         <button
                             type="button"
@@ -402,8 +407,6 @@ export default function Editor({
                             {showMainSection ? "Hide section" : "Show section"}
                         </button>
                     </div>
-
-                    <div className="kce-accentLine" />
 
                     {showMainSection ? (
                         <div className="kce-sectionBody">
@@ -552,7 +555,10 @@ export default function Editor({
 
                 <div className="kce-section">
                     <div className="kce-sectionTop">
-                        <span className="kce-pill">ABOUT ME SECTION</span>
+                        <div className="kce-headingBlock">
+                            <span className="kce-pill">ABOUT ME SECTION</span>
+                            <div className="kce-accentLine" />
+                        </div>
 
                         <button
                             type="button"
@@ -562,8 +568,6 @@ export default function Editor({
                             {showAboutMeSection ? "Hide section" : "Show section"}
                         </button>
                     </div>
-
-                    <div className="kce-accentLine" />
 
                     {showAboutMeSection ? (
                         <div className="kce-sectionBody">
@@ -607,7 +611,10 @@ export default function Editor({
 
                 <div className="kce-section">
                     <div className="kce-sectionTop">
-                        <span className="kce-pill">MY WORK SECTION</span>
+                        <div className="kce-headingBlock">
+                            <span className="kce-pill">MY WORK SECTION</span>
+                            <div className="kce-accentLine" />
+                        </div>
 
                         <button
                             type="button"
@@ -617,8 +624,6 @@ export default function Editor({
                             {showWorkSection ? "Hide section" : "Show section"}
                         </button>
                     </div>
-
-                    <div className="kce-accentLine" />
 
                     {showWorkSection ? (
                         <div className="kce-sectionBody">
@@ -667,7 +672,10 @@ export default function Editor({
 
                 <div className="kce-section">
                     <div className="kce-sectionTop">
-                        <span className="kce-pill">MY SERVICES SECTION</span>
+                        <div className="kce-headingBlock">
+                            <span className="kce-pill">MY SERVICES SECTION</span>
+                            <div className="kce-accentLine" />
+                        </div>
 
                         <button
                             type="button"
@@ -677,8 +685,6 @@ export default function Editor({
                             {showServicesSection ? "Hide section" : "Show section"}
                         </button>
                     </div>
-
-                    <div className="kce-accentLine" />
 
                     {showServicesSection ? (
                         <div className="kce-sectionBody">
@@ -730,7 +736,10 @@ export default function Editor({
 
                 <div className="kce-section">
                     <div className="kce-sectionTop">
-                        <span className="kce-pill">REVIEWS SECTION</span>
+                        <div className="kce-headingBlock">
+                            <span className="kce-pill">REVIEWS SECTION</span>
+                            <div className="kce-accentLine" />
+                        </div>
 
                         <button
                             type="button"
@@ -740,8 +749,6 @@ export default function Editor({
                             {showReviewsSection ? "Hide section" : "Show section"}
                         </button>
                     </div>
-
-                    <div className="kce-accentLine" />
 
                     {showReviewsSection ? (
                         <div className="kce-sectionBody">
@@ -809,7 +816,10 @@ export default function Editor({
 
                 <div className="kce-section">
                     <div className="kce-sectionTop">
-                        <span className="kce-pill">CONTACT SECTION</span>
+                        <div className="kce-headingBlock">
+                            <span className="kce-pill">CONTACT SECTION</span>
+                            <div className="kce-accentLine" />
+                        </div>
 
                         <button
                             type="button"
@@ -819,8 +829,6 @@ export default function Editor({
                             {showContactSection ? "Hide section" : "Show section"}
                         </button>
                     </div>
-
-                    <div className="kce-accentLine" />
 
                     {showContactSection ? (
                         <div className="kce-sectionBody">

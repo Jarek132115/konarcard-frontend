@@ -116,9 +116,18 @@
 
 .kce-sectionTop {
     display: flex;
-    align-items: center;
+    align-items: flex-start;
     justify-content: space-between;
     gap: 12px;
+}
+
+.kce-headingBlock {
+    display: inline-flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+    width: fit-content;
+    flex: 0 0 auto;
 }
 
 .kce-sectionBody {
@@ -128,11 +137,10 @@
 }
 
 .kce-accentLine {
-    width: 72px;
+    width: 100%;
     height: 3px;
     border-radius: 999px;
     background: var(--kc-accent-primary, #f97316);
-    margin-top: 10px;
 }
 
 /* divider between sections */
@@ -157,6 +165,7 @@
     line-height: 1.2;
     letter-spacing: 0.08em;
     text-transform: uppercase;
+    white-space: nowrap;
 }
 
 .kce-helpTitle {
@@ -621,16 +630,17 @@
 
 .kce-socialRow {
     display: grid;
-    grid-template-columns: 28px minmax(0, 1fr);
-    gap: 10px;
+    grid-template-columns: 32px minmax(0, 1fr);
+    gap: 8px;
     align-items: center;
 }
 
 .kce-socialRow img {
-    width: 20px;
-    height: 20px;
+    width: 32px;
+    height: 32px;
     object-fit: contain;
     opacity: 0.95;
+    display: block;
 }
 
 .kce-bottomPad {
