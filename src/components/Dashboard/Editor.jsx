@@ -314,15 +314,48 @@ export default function Editor({
             <div className="kce-scroll">
                 <div className="kce-section">
                     <div className="kce-sectionTop">
-                        <span className="kce-pill">Templates</span>
+                        <span className="kce-pill">CHOOSE MODE</span>
                     </div>
 
                     <div className="kce-sectionBody">
-                        <div className="kce-helpTitle">Choose a template</div>
-                        <div className="body kce-helpSub">
-                            Templates control the layout, fonts and styling. You only add your content.
-                        </div>
+                        <div className="kce-themeModeWrap">
+                            <div
+                                className="kce-themeModeToggle"
+                                role="tablist"
+                                aria-label="Theme mode selector"
+                            >
+                                <button
+                                    type="button"
+                                    role="tab"
+                                    aria-selected={currentThemeMode === "light"}
+                                    className={`kce-themeModeBtn ${currentThemeMode === "light" ? "is-active" : ""}`}
+                                    onClick={() => handleThemeModeChange("light")}
+                                >
+                                    Light Mode
+                                </button>
 
+                                <button
+                                    type="button"
+                                    role="tab"
+                                    aria-selected={currentThemeMode === "dark"}
+                                    className={`kce-themeModeBtn ${currentThemeMode === "dark" ? "is-active" : ""}`}
+                                    onClick={() => handleThemeModeChange("dark")}
+                                >
+                                    Dark Mode
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div className="kce-dividerBlock" />
+
+                <div className="kce-section">
+                    <div className="kce-sectionTop">
+                        <span className="kce-pill">CHOOSE TEMPLATE</span>
+                    </div>
+
+                    <div className="kce-sectionBody">
                         <div className="kce-templatePhones" role="tablist" aria-label="Template selector">
                             {TEMPLATE_IDS.map((t) => {
                                 const locked = isTemplateLocked(t);
@@ -358,41 +391,6 @@ export default function Editor({
                             })}
                         </div>
 
-                        <div className="kce-themeModeWrap">
-                            <div className="kce-themeModeTop">
-                                <div className="kce-helpTitle">Choose mode</div>
-                                <div className="kce-themeModeHint">
-                                    Select how this template should appear on the public profile.
-                                </div>
-                            </div>
-
-                            <div
-                                className="kce-themeModeToggle"
-                                role="tablist"
-                                aria-label="Theme mode selector"
-                            >
-                                <button
-                                    type="button"
-                                    role="tab"
-                                    aria-selected={currentThemeMode === "light"}
-                                    className={`kce-themeModeBtn ${currentThemeMode === "light" ? "is-active" : ""}`}
-                                    onClick={() => handleThemeModeChange("light")}
-                                >
-                                    Light Mode
-                                </button>
-
-                                <button
-                                    type="button"
-                                    role="tab"
-                                    aria-selected={currentThemeMode === "dark"}
-                                    className={`kce-themeModeBtn ${currentThemeMode === "dark" ? "is-active" : ""}`}
-                                    onClick={() => handleThemeModeChange("dark")}
-                                >
-                                    Dark Mode
-                                </button>
-                            </div>
-                        </div>
-
                         {!isSubscribed ? (
                             <div className="kce-note">
                                 Free users can use <strong>Template 1</strong>. Upgrade to unlock Templates 2–5.
@@ -405,7 +403,7 @@ export default function Editor({
 
                 <div className="kce-section">
                     <div className="kce-sectionTop">
-                        <span className="kce-pill">Main Section</span>
+                        <span className="kce-pill">MAIN SECTION</span>
 
                         <button
                             type="button"
@@ -563,7 +561,7 @@ export default function Editor({
 
                 <div className="kce-section">
                     <div className="kce-sectionTop">
-                        <span className="kce-pill">About Me Section</span>
+                        <span className="kce-pill">ABOUT ME SECTION</span>
 
                         <button
                             type="button"
@@ -616,7 +614,7 @@ export default function Editor({
 
                 <div className="kce-section">
                     <div className="kce-sectionTop">
-                        <span className="kce-pill">My Work Section</span>
+                        <span className="kce-pill">MY WORK SECTION</span>
 
                         <button
                             type="button"
@@ -676,7 +674,7 @@ export default function Editor({
 
                 <div className="kce-section">
                     <div className="kce-sectionTop">
-                        <span className="kce-pill">My Services Section</span>
+                        <span className="kce-pill">MY SERVICES SECTION</span>
 
                         <button
                             type="button"
@@ -739,7 +737,7 @@ export default function Editor({
 
                 <div className="kce-section">
                     <div className="kce-sectionTop">
-                        <span className="kce-pill">Reviews Section</span>
+                        <span className="kce-pill">REVIEWS SECTION</span>
 
                         <button
                             type="button"
@@ -818,7 +816,7 @@ export default function Editor({
 
                 <div className="kce-section">
                     <div className="kce-sectionTop">
-                        <span className="kce-pill">Contact Section</span>
+                        <span className="kce-pill">CONTACT SECTION</span>
 
                         <button
                             type="button"

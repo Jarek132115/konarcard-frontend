@@ -29,6 +29,7 @@
     display: grid;
     gap: 4px;
     min-width: 0;
+    flex: 1 1 auto;
 }
 
 .kce-title,
@@ -143,10 +144,11 @@
     color: #0f172a;
     border-radius: 0;
     font-family: "Inter", sans-serif;
-    font-size: 16px;
-    font-weight: 700;
+    font-size: 13px;
+    font-weight: 800;
     line-height: 1.2;
-    letter-spacing: 0;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
 }
 
 .kce-helpTitle {
@@ -159,6 +161,7 @@
 .kce-helpSub {
     margin-top: -6px;
     color: rgba(71, 85, 105, 0.92);
+    display: none;
 }
 
 /* =========================
@@ -202,22 +205,12 @@
     display: grid;
     grid-template-columns: repeat(5, minmax(0, 1fr));
     gap: 12px;
-}
-
-@media (max-width: 900px) {
-    .kce-templatePhones {
-        grid-template-columns: repeat(3, minmax(0, 1fr));
-    }
-}
-
-@media (max-width: 560px) {
-    .kce-templatePhones {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-    }
+    align-items: start;
 }
 
 .kce-phoneCard {
     width: 100%;
+    min-width: 0;
     border-radius: 16px;
     border: 1px solid rgba(15, 23, 42, 0.12);
     background: #fff;
@@ -289,7 +282,7 @@
 .kce-themeModeWrap {
     display: grid;
     gap: 10px;
-    margin-top: 6px;
+    margin-top: 0;
 }
 
 .kce-themeModeTop {
@@ -298,10 +291,7 @@
 }
 
 .kce-themeModeHint {
-    font-family: "Inter", sans-serif;
-    font-size: 12px;
-    font-weight: 500;
-    color: rgba(71, 85, 105, 0.9);
+    display: none;
 }
 
 .kce-themeModeToggle {
@@ -418,6 +408,14 @@
     font-size: 12px;
     font-weight: 500;
     color: rgba(71, 85, 105, 0.9);
+}
+
+.kce-social .kce-label.kce-mt12,
+.kce-mt12.kce-label {
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    font-size: 12px;
+    font-weight: 800;
 }
 
 /* =========================
@@ -710,4 +708,27 @@
     font-size: 12px;
     font-weight: 600;
     color: rgba(71, 85, 105, 0.85);
+}
+
+/* =========================
+   RESPONSIVE
+========================= */
+@media (max-width: 500px) {
+    .kce-top {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .kce-topRight {
+        width: 100%;
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 10px;
+    }
+
+    .kce-topRight .kce-btn {
+        width: 100%;
+        min-width: 0;
+        justify-content: center;
+    }
 }
