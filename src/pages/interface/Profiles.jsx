@@ -728,7 +728,7 @@ export default function Profiles() {
             <div className="profiles-shell">
                 <PageHeader
                     title="Profiles"
-                    subtitle="Profiles are your public digital business cards. Each profile has its own link you can share after every job."
+                    subtitle="Profiles are your public digital business cards."
                 />
 
                 {sortedProfiles.length === 0 ? (
