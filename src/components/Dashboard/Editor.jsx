@@ -2,11 +2,11 @@ import React, { useEffect, useMemo, useRef, useState } from "react";
 import { previewPlaceholders } from "../../store/businessCardStore";
 
 /* Social icons */
-import FacebookIcon from "../../assets/icons/icons8-facebook.svg";
-import InstagramIcon from "../../assets/icons/icons8-instagram.svg";
-import LinkedInIcon from "../../assets/icons/icons8-linkedin.svg";
-import XIcon from "../../assets/icons/icons8-x.svg";
-import TikTokIcon from "../../assets/icons/icons8-tiktok.svg";
+import FacebookIcon from "../../assets/icons/Template1Icon-Facebook.svg";
+import InstagramIcon from "../../assets/icons/Template1Icon-Instagram.svg";
+import LinkedInIcon from "../../assets/icons/Template1Icon-LinkedIn.svg";
+import XIcon from "../../assets/icons/Template1Icon-X.svg";
+import TikTokIcon from "../../assets/icons/Template1Icon-TikTok.svg";
 
 /* Upgrade badge icon */
 import UpgradePlanIcon from "../../assets/icons/UpgradePlanIcon.svg";
@@ -224,21 +224,6 @@ export default function Editor({
         e.target.value = "";
     };
 
-    const capLine = (type) => {
-        if (isSubscribed) {
-            if (type === "work") return `Plus / Teams: up to ${PRO_MAX} work images.`;
-            if (type === "services") return `Plus / Teams: up to ${PRO_MAX} services.`;
-            if (type === "reviews") return `Plus / Teams: up to ${PRO_MAX} reviews.`;
-            return `Plus / Teams limits apply.`;
-        }
-
-        if (type === "work") return `Free plan: up to ${FREE_MAX} work images. Upgrade for ${PRO_MAX}.`;
-        if (type === "services") return `Free plan: up to ${FREE_MAX} services. Upgrade for ${PRO_MAX}.`;
-        if (type === "reviews") return `Free plan: up to ${FREE_MAX} reviews. Upgrade for ${PRO_MAX}.`;
-
-        return `Free plan limits apply.`;
-    };
-
     return (
         <div className="kce-root">
             <div className="kce-top">
@@ -317,6 +302,8 @@ export default function Editor({
                         <span className="kce-pill">CHOOSE MODE</span>
                     </div>
 
+                    <div className="kce-accentLine" />
+
                     <div className="kce-sectionBody">
                         <div className="kce-themeModeWrap">
                             <div
@@ -354,6 +341,8 @@ export default function Editor({
                     <div className="kce-sectionTop">
                         <span className="kce-pill">CHOOSE TEMPLATE</span>
                     </div>
+
+                    <div className="kce-accentLine" />
 
                     <div className="kce-sectionBody">
                         <div className="kce-templatePhones" role="tablist" aria-label="Template selector">
@@ -413,6 +402,8 @@ export default function Editor({
                             {showMainSection ? "Hide section" : "Show section"}
                         </button>
                     </div>
+
+                    <div className="kce-accentLine" />
 
                     {showMainSection ? (
                         <div className="kce-sectionBody">
@@ -572,6 +563,8 @@ export default function Editor({
                         </button>
                     </div>
 
+                    <div className="kce-accentLine" />
+
                     {showAboutMeSection ? (
                         <div className="kce-sectionBody">
                             <div className="kce-grid2">
@@ -625,10 +618,10 @@ export default function Editor({
                         </button>
                     </div>
 
+                    <div className="kce-accentLine" />
+
                     {showWorkSection ? (
                         <div className="kce-sectionBody">
-                            <div className="kce-capNote">{capLine("work")}</div>
-
                             <div className="kce-workGrid">
                                 {(state.workImages || []).slice(0, maxWorks).map((item, i) => (
                                     <div key={i} className="kce-workItem">
@@ -685,10 +678,10 @@ export default function Editor({
                         </button>
                     </div>
 
+                    <div className="kce-accentLine" />
+
                     {showServicesSection ? (
                         <div className="kce-sectionBody">
-                            <div className="kce-capNote">{capLine("services")}</div>
-
                             <div className="kce-repeat">
                                 {(state.services || []).slice(0, maxServices).map((s, i) => (
                                     <div key={i} className="kce-repeatCard">
@@ -748,10 +741,10 @@ export default function Editor({
                         </button>
                     </div>
 
+                    <div className="kce-accentLine" />
+
                     {showReviewsSection ? (
                         <div className="kce-sectionBody">
-                            <div className="kce-capNote">{capLine("reviews")}</div>
-
                             <div className="kce-repeat">
                                 {(state.reviews || []).slice(0, maxReviews).map((r, i) => (
                                     <div key={i} className="kce-repeatCard">
@@ -826,6 +819,8 @@ export default function Editor({
                             {showContactSection ? "Hide section" : "Show section"}
                         </button>
                     </div>
+
+                    <div className="kce-accentLine" />
 
                     {showContactSection ? (
                         <div className="kce-sectionBody">
