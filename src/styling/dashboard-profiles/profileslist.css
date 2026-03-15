@@ -120,13 +120,16 @@
     height: 100%;
 }
 
-.profiles-profileCard--rail {
+.profiles-profileCard--rail,
+.profiles-addCard--rail,
+.profiles-addInline--rail {
     display: flex;
     flex-direction: column;
     padding: 0;
 }
 
-.profiles-cardPreviewWrap {
+.profiles-cardPreviewWrap,
+.profiles-addCardPreviewWrap {
     width: 100%;
     flex: 1 1 auto;
     min-height: 0;
@@ -352,7 +355,7 @@
     white-space: nowrap;
 }
 
-/* BOTTOM */
+/* PROFILE CARD BOTTOM */
 .profiles-profileBottom {
     display: grid;
     gap: 12px;
@@ -414,37 +417,36 @@
     filter: brightness(0) invert(1);
 }
 
-/* ADD CARD */
-.profiles-addCard,
-.profiles-addInline {
+/* ADD CARD - CLOSED */
+.profiles-addCard {
     border-radius: 24px;
     border: 1px solid rgba(15, 23, 42, 0.10);
-    background:
-        radial-gradient(circle at top right, rgba(244, 118, 41, 0.10), transparent 30%),
-        linear-gradient(180deg, #ffffff 0%, #fbfbfc 100%);
+    background: #ffffff;
     box-shadow: var(--p-softShadow);
+    overflow: hidden;
 }
 
-.profiles-addCard {
-    display: flex;
-    align-items: stretch;
-    justify-content: stretch;
-    padding: 18px;
-}
-
-.profiles-addInline {
-    display: flex;
-    flex-direction: column;
-    padding: 18px;
-}
-
-.profiles-addCardInner {
+.profiles-addCardPreview {
     width: 100%;
-    min-height: 100%;
+    flex: 1 1 auto;
+    min-height: 0;
+    position: relative;
+    border-bottom: 1px solid rgba(15, 23, 42, 0.08);
+    background:
+        radial-gradient(circle at top right, rgba(244, 118, 41, 0.10), transparent 34%),
+        linear-gradient(180deg, #ffffff 0%, #fbfbfc 100%);
     display: flex;
-    flex-direction: column;
     align-items: center;
-    text-align: center;
+    justify-content: center;
+}
+
+.profiles-addCardPreviewTopbar {
+    position: absolute;
+    top: 14px;
+    left: 14px;
+    z-index: 2;
+    display: flex;
+    align-items: center;
 }
 
 .profiles-addBadge {
@@ -459,84 +461,107 @@
     font-family: "Inter", sans-serif;
     font-weight: 700;
     font-size: 12px;
+    line-height: 1;
 }
 
-.profiles-addBadge--centered {
-    align-self: center;
+.profiles-addBadge--preview {
+    height: auto;
+    min-height: 28px;
 }
 
-.profiles-addPlainPlus {
-    margin-top: 22px;
+.profiles-addCardPreviewPlus {
     font-family: "Inter", sans-serif;
-    font-size: 54px;
+    font-size: 56px;
     font-weight: 500;
     line-height: 1;
     color: var(--kc-accent-primary, #f47629);
 }
 
-.profiles-addHeadline {
-    margin-top: 18px;
-    font-family: "Cal Sans", sans-serif;
-    font-size: 26px;
-    line-height: 1;
-    letter-spacing: -0.02em;
-    color: var(--p-ink);
+.profiles-addCardContent {
+    padding: 16px 16px 16px;
+}
+
+.profiles-addBottom {
+    gap: 14px;
+}
+
+.profiles-addCopy {
+    display: grid;
+    gap: 10px;
+    justify-items: center;
     text-align: center;
+}
+
+.profiles-addHeadline {
+    margin: 0;
+    font-family: "Cal Sans", sans-serif;
+    font-size: 34px;
+    line-height: 0.96;
+    letter-spacing: -0.03em;
+    color: var(--p-ink);
 }
 
 .profiles-addSubcopy {
-    margin-top: 10px;
+    margin: 0;
+    max-width: 220px;
     font-family: "Inter", sans-serif;
-    font-size: 14px;
-    line-height: 1.5;
-    color: rgba(71, 85, 105, 0.92);
-    text-align: center;
-    max-width: 240px;
+    font-weight: 500;
+    font-size: 13px;
+    line-height: 1.35;
+    color: rgba(71, 85, 105, 0.72);
 }
 
 .profiles-addFeatureList {
-    margin-top: 14px;
     display: flex;
     flex-wrap: wrap;
-    gap: 8px;
     justify-content: center;
+    gap: 8px;
+    margin-top: 2px;
 }
 
 .profiles-addFeature {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    min-height: 30px;
+    min-height: 28px;
     padding: 6px 10px;
     border-radius: 999px;
     background: rgba(15, 23, 42, 0.05);
     border: 1px solid rgba(15, 23, 42, 0.06);
     font-family: "Inter", sans-serif;
-    font-size: 12px;
+    font-size: 11px;
     font-weight: 700;
-    color: rgba(15, 23, 42, 0.84);
+    color: rgba(15, 23, 42, 0.82);
+    line-height: 1;
 }
 
-.profiles-addPrimaryBtn {
-    width: 100%;
-    margin-top: auto;
-    justify-content: center;
+/* ADD CARD - OPEN */
+.profiles-addInline {
+    border-radius: 24px;
+    border: 1px solid rgba(15, 23, 42, 0.10);
+    background:
+        radial-gradient(circle at top right, rgba(244, 118, 41, 0.10), transparent 30%),
+        linear-gradient(180deg, #ffffff 0%, #fbfbfc 100%);
+    box-shadow: var(--p-softShadow);
+    padding: 16px;
+    gap: 12px;
+    overflow: hidden;
 }
 
 .profiles-addInlineTop {
     position: relative;
     display: flex;
-    justify-content: center;
     align-items: center;
-    min-height: 32px;
+    justify-content: flex-start;
+    min-height: 28px;
 }
 
 .profiles-addInlineClose {
     position: absolute;
     right: 0;
     top: 0;
-    width: 32px;
-    height: 32px;
+    width: 30px;
+    height: 30px;
     border: 0;
     background: transparent;
     cursor: pointer;
@@ -544,7 +569,9 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    color: rgba(15, 23, 42, 0.70);
+    color: rgba(15, 23, 42, 0.50);
+    font-size: 18px;
+    line-height: 1;
 }
 
 .profiles-addInlineClose:hover {
@@ -552,17 +579,17 @@
 }
 
 .profiles-addInlineHeadCopy--center {
-    margin-top: 10px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+    display: grid;
+    gap: 4px;
+    justify-items: center;
     text-align: center;
+    margin-top: 0;
 }
 
 .profiles-addInlineEyebrow {
     font-family: "Inter", sans-serif;
     font-weight: 700;
-    font-size: 12px;
+    font-size: 11px;
     text-transform: uppercase;
     letter-spacing: 0.08em;
     color: rgba(71, 85, 105, 0.72);
@@ -575,24 +602,26 @@
     line-height: 1;
     letter-spacing: -0.02em;
     color: var(--p-ink);
-    margin-top: 4px;
+    margin-top: 0;
 }
 
 .profiles-addInlineIntro {
     font-family: "Inter", sans-serif;
     font-weight: 500;
-    font-size: 14px;
-    line-height: 1.5;
-    color: rgba(71, 85, 105, 0.92);
+    font-size: 13px;
+    line-height: 1.45;
+    color: rgba(71, 85, 105, 0.90);
+    max-width: 260px;
+    margin-inline: auto;
 }
 
 .profiles-addInlineIntro--center {
-    margin-top: 10px;
     text-align: center;
+    margin-top: 0;
 }
 
 .profiles-addInlineForm--stack {
-    margin-top: 14px;
+    margin-top: 0;
     display: grid;
     gap: 10px;
 }
@@ -609,17 +638,17 @@
 }
 
 .profiles-input-prefix {
-    flex: 0 1 auto;
-    max-width: 58%;
-    min-width: 0;
+    flex: 0 0 20%;
+    max-width: 20%;
+    min-width: 20%;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
-    padding: 12px 12px;
+    padding: 12px 10px;
     font-family: "Inter", sans-serif;
     font-weight: 700;
-    font-size: 13px;
-    color: rgba(15, 23, 42, 0.60);
+    font-size: 12px;
+    color: rgba(15, 23, 42, 0.55);
     background: rgba(15, 23, 42, 0.03);
     border-right: 1px solid rgba(15, 23, 42, 0.10);
 }
@@ -640,6 +669,10 @@
 
 .profiles-input::placeholder {
     color: rgba(71, 85, 105, 0.75);
+}
+
+.profiles-cardBtn--claim {
+    min-height: 48px;
 }
 
 .profiles-claimPreviewRow {
@@ -675,13 +708,15 @@
 }
 
 .profiles-alert {
-    padding: 12px 12px;
+    padding: 12px;
     border-radius: 14px;
     border: 1px solid rgba(15, 23, 42, 0.10);
     background: #fff;
     font-family: "Inter", sans-serif;
     font-weight: 700;
     color: var(--p-ink);
+    font-size: 13px;
+    line-height: 1.35;
 }
 
 .profiles-alert--center {
@@ -708,7 +743,16 @@
     flex-wrap: wrap;
 }
 
-.profiles-addInlineActions--center {
+.profiles-addInlineActions--stack {
+    display: grid;
+    gap: 10px;
+    width: 100%;
+}
+
+.profiles-addSecondaryBtn {
+    width: auto;
+    min-width: 104px;
+    margin: 0 auto;
     justify-content: center;
 }
 
@@ -737,7 +781,8 @@
         width: 300px;
     }
 
-    .profiles-mainPreviewName {
+    .profiles-mainPreviewName,
+    .profiles-addHeadline {
         font-size: 30px;
     }
 }
@@ -751,7 +796,8 @@
         width: 340px;
     }
 
-    .profiles-mainPreviewName {
+    .profiles-mainPreviewName,
+    .profiles-addHeadline {
         font-size: 28px;
     }
 
@@ -777,7 +823,8 @@
         padding: 14px;
     }
 
-    .profiles-mainPreviewTopbar {
+    .profiles-mainPreviewTopbar,
+    .profiles-addCardPreviewTopbar {
         top: 12px;
         left: 12px;
     }
@@ -786,7 +833,8 @@
         padding: 14px 12px 16px;
     }
 
-    .profiles-mainPreviewName {
+    .profiles-mainPreviewName,
+    .profiles-addHeadline {
         font-size: 24px;
     }
 
@@ -827,6 +875,10 @@
         min-width: 14px;
         min-height: 14px;
     }
+
+    .profiles-addCardPreviewPlus {
+        font-size: 48px;
+    }
 }
 
 @media (max-width: 860px) {
@@ -839,7 +891,6 @@
     }
 
     .profiles-cardContent,
-    .profiles-addCard,
     .profiles-addInline {
         padding: 14px;
     }
@@ -848,7 +899,8 @@
         font-size: 12px;
     }
 
-    .profiles-mainPreviewTopbar {
+    .profiles-mainPreviewTopbar,
+    .profiles-addCardPreviewTopbar {
         top: 10px;
         left: 10px;
     }
@@ -862,7 +914,8 @@
         padding: 12px 10px 16px;
     }
 
-    .profiles-mainPreviewName {
+    .profiles-mainPreviewName,
+    .profiles-addHeadline {
         font-size: 20px;
     }
 
@@ -871,7 +924,8 @@
         margin-top: 7px;
     }
 
-    .profiles-mainPreviewLocation {
+    .profiles-mainPreviewLocation,
+    .profiles-addSubcopy {
         font-size: 10px;
         margin-top: 4px;
     }
@@ -912,35 +966,8 @@
         min-height: 13px;
     }
 
-    .profiles-addPlainPlus {
-        margin-top: 18px;
+    .profiles-addCardPreviewPlus {
         font-size: 42px;
-    }
-
-    .profiles-addHeadline {
-        font-size: 22px;
-    }
-
-    .profiles-addSubcopy {
-        font-size: 12px;
-    }
-
-    .profiles-addFeature {
-        min-height: 26px;
-        padding: 4px 8px;
-        font-size: 11px;
-    }
-
-    .profiles-addInlineEyebrow {
-        font-size: 11px;
-    }
-
-    .profiles-addInlineTitle {
-        font-size: 22px;
-    }
-
-    .profiles-addInlineIntro {
-        font-size: 12px;
     }
 
     .profiles-input-prefix,
@@ -965,7 +992,6 @@
     }
 
     .profiles-cardContent,
-    .profiles-addCard,
     .profiles-addInline {
         padding: 12px;
     }
@@ -974,7 +1000,8 @@
         font-size: 12px;
     }
 
-    .profiles-mainPreviewTopbar {
+    .profiles-mainPreviewTopbar,
+    .profiles-addCardPreviewTopbar {
         top: 8px;
         left: 8px;
     }
@@ -988,7 +1015,8 @@
         padding: 10px 8px 16px;
     }
 
-    .profiles-mainPreviewName {
+    .profiles-mainPreviewName,
+    .profiles-addHeadline {
         font-size: 16px;
         line-height: 1;
     }
@@ -1001,6 +1029,12 @@
     .profiles-mainPreviewLocation {
         font-size: 8px;
         margin-top: 3px;
+    }
+
+    .profiles-addSubcopy {
+        font-size: 9px;
+        line-height: 1.35;
+        max-width: 170px;
     }
 
     .profiles-mainPreviewCtaRow {
@@ -1042,30 +1076,15 @@
     }
 
     .profiles-addBadge {
-        height: 21px;
-        font-size: 9px;
+        font-size: 12px;
         padding: 0 8px;
     }
 
-    .profiles-addPlainPlus {
-        margin-top: 8px;
-        font-size: 28px;
-    }
-
-    .profiles-addHeadline {
-        margin-top: 8px;
-        font-size: 16px;
-    }
-
-    .profiles-addSubcopy {
-        margin-top: 6px;
-        font-size: 9px;
-        line-height: 1.3;
-        max-width: 170px;
+    .profiles-addCardPreviewPlus {
+        font-size: 34px;
     }
 
     .profiles-addFeatureList {
-        margin-top: 8px;
         gap: 4px;
     }
 
@@ -1075,12 +1094,6 @@
         padding: 3px 6px;
     }
 
-    .profiles-addPrimaryBtn {
-        min-height: 34px;
-        font-size: 10px;
-        padding: 0 8px;
-    }
-
     .profiles-addInlineTop {
         min-height: 26px;
     }
@@ -1088,10 +1101,7 @@
     .profiles-addInlineClose {
         width: 26px;
         height: 26px;
-    }
-
-    .profiles-addInlineHeadCopy--center {
-        margin-top: 6px;
+        font-size: 16px;
     }
 
     .profiles-addInlineEyebrow {
@@ -1103,13 +1113,11 @@
     }
 
     .profiles-addInlineIntro {
-        margin-top: 7px;
         font-size: 10px;
         line-height: 1.35;
     }
 
     .profiles-addInlineForm--stack {
-        margin-top: 8px;
         gap: 8px;
     }
 
@@ -1118,7 +1126,9 @@
     }
 
     .profiles-input-prefix {
-        max-width: 46%;
+        flex: 0 0 20%;
+        max-width: 20%;
+        min-width: 20%;
         font-size: 9px;
         padding: 8px;
     }

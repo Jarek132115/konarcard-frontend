@@ -1,6 +1,7 @@
 import React from "react";
 import ShareOnEditProfileIcon from "../../assets/icons/ShareOnEditProfile.svg";
 import ShareOnVisitProfileIcon from "../../assets/icons/ShareOnVisitProfile.svg";
+import AddYourProfilePlusIcon from "../../assets/icons/AddYourProfilePlus.svg";
 
 function firstNonEmpty(...values) {
     for (const value of values) {
@@ -180,37 +181,54 @@ function ProfileMainPreview({ profile }) {
 function ClaimCardClosed({ onOpenClaim, suppressClickRef }) {
     return (
         <article className="profiles-addCard profiles-addCard--rail profiles-addCard--pretty">
-            <div className="profiles-addCardInner profiles-addCardInner--center">
-                <div className="profiles-addBadge profiles-addBadge--centered">New</div>
+            <div className="profiles-addCardPreviewWrap">
+                <div className="profiles-addCardPreview">
+                    <div className="profiles-addCardPreviewTopbar">
+                        <span className="profiles-addBadge profiles-addBadge--preview">New</span>
+                    </div>
 
-                <div className="profiles-addPlainPlus" aria-hidden="true">
-                    +
+                    <div className="profiles-addCardPreviewPlus" aria-hidden="true">
+                        +
+                    </div>
                 </div>
+            </div>
 
-                <div className="profiles-addHeadline">Add Profile</div>
+            <div className="profiles-cardContent profiles-addCardContent">
+                <div className="profiles-profileBottom profiles-addBottom">
+                    <div className="profiles-addCopy">
+                        <div className="profiles-addHeadline">Add Profile</div>
+                        <div className="profiles-addSubcopy">
+                            Claim a new public link for another service, team, or location.
+                        </div>
 
-                <div className="profiles-addSubcopy">
-                    Claim a new public link for another service, team, or location.
+                        <div className="profiles-addFeatureList">
+                            <div className="profiles-addFeature">Unique link</div>
+                            <div className="profiles-addFeature">Own QR code</div>
+                            <div className="profiles-addFeature">Separate analytics</div>
+                        </div>
+                    </div>
+
+                    <div className="profiles-cardBtns profiles-cardBtns--stack">
+                        <button
+                            type="button"
+                            className="kx-btn kx-btn--orange profiles-cardBtn profiles-cardBtn--withIcon"
+                            data-no-rail-drag="true"
+                            onClick={(e) => {
+                                e.stopPropagation();
+                                if (suppressClickRef.current) return;
+                                onOpenClaim();
+                            }}
+                        >
+                            <img
+                                src={AddYourProfilePlusIcon}
+                                alt=""
+                                aria-hidden="true"
+                                className="profiles-cardBtnIcon profiles-cardBtnIcon--light"
+                            />
+                            <span>Add a profile</span>
+                        </button>
+                    </div>
                 </div>
-
-                <div className="profiles-addFeatureList">
-                    <div className="profiles-addFeature">Unique link</div>
-                    <div className="profiles-addFeature">Own QR code</div>
-                    <div className="profiles-addFeature">Separate analytics</div>
-                </div>
-
-                <button
-                    type="button"
-                    className="kx-btn kx-btn--black profiles-addPrimaryBtn"
-                    data-no-rail-drag="true"
-                    onClick={(e) => {
-                        e.stopPropagation();
-                        if (suppressClickRef.current) return;
-                        onOpenClaim();
-                    }}
-                >
-                    Claim your link
-                </button>
             </div>
         </article>
     );
@@ -240,7 +258,7 @@ function ClaimCardOpen({
             data-no-rail-drag="true"
         >
             <div className="profiles-addInlineTop">
-                <div className="profiles-addBadge profiles-addBadge--centered">New</div>
+                <span className="profiles-addBadge profiles-addBadge--preview">New</span>
 
                 <button
                     type="button"
@@ -278,7 +296,7 @@ function ClaimCardOpen({
 
                 <button
                     type="button"
-                    className="kx-btn kx-btn--black profiles-addPrimaryBtn"
+                    className="kx-btn kx-btn--black profiles-cardBtn profiles-cardBtn--claim"
                     onClick={onCheckAvailability}
                     disabled={
                         claimStatus === "checking" ||
@@ -315,8 +333,12 @@ function ClaimCardOpen({
             ) : null}
 
             {claimStatus === "available" ? (
-                <div className="profiles-addInlineActions profiles-addInlineActions--center">
-                    <button type="button" className="kx-btn kx-btn--white" onClick={onCloseClaim}>
+                <div className="profiles-addInlineActions profiles-addInlineActions--stack">
+                    <button
+                        type="button"
+                        className="kx-btn kx-btn--white profiles-addSecondaryBtn"
+                        onClick={onCloseClaim}
+                    >
                         Cancel
                     </button>
 
@@ -324,7 +346,7 @@ function ClaimCardOpen({
                         sortedProfiles.length < maxProfiles ? (
                             <button
                                 type="button"
-                                className="kx-btn kx-btn--orange"
+                                className="kx-btn kx-btn--orange profiles-cardBtn"
                                 onClick={onCreateTeamsProfile}
                                 disabled={claimStatus === "creating"}
                             >
@@ -333,7 +355,7 @@ function ClaimCardOpen({
                         ) : (
                             <button
                                 type="button"
-                                className="kx-btn kx-btn--orange"
+                                className="kx-btn kx-btn--orange profiles-cardBtn"
                                 onClick={onStartTeamsCheckout}
                                 disabled={claimStatus === "subscribing"}
                             >
@@ -345,7 +367,7 @@ function ClaimCardOpen({
                     ) : (
                         <button
                             type="button"
-                            className="kx-btn kx-btn--orange"
+                            className="kx-btn kx-btn--orange profiles-cardBtn"
                             onClick={onStartTeamsCheckout}
                             disabled={claimStatus === "subscribing"}
                         >
