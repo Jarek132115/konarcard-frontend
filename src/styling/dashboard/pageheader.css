@@ -18,7 +18,6 @@
     margin: 0 0 24px;
     display: flex;
     align-items: center;
-    /* ✅ center right side vertically */
     justify-content: space-between;
     gap: 16px;
 }
@@ -27,7 +26,7 @@
     min-width: 0;
     display: grid;
     gap: 4px;
-    /* ✅ exactly 4px */
+    flex: 1 1 auto;
 }
 
 .ph4-title {
@@ -66,6 +65,7 @@
     font-size: 12px;
     font-weight: 600;
     color: rgba(15, 23, 42, 0.78);
+    white-space: nowrap;
 }
 
 .ph4-pill strong {
@@ -215,13 +215,96 @@
 /* Responsive */
 @media (max-width: 1000px) {
     .ph4 {
-        flex-direction: column;
         align-items: flex-start;
     }
 
     .ph4-right {
-        width: 100%;
-        justify-content: flex-start;
-        flex-wrap: wrap;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        width: auto;
+        margin-left: auto;
+    }
+
+    .ph4-dd,
+    .ph4-avatarBtn {
+        flex: 0 0 auto;
+    }
+
+    .ph4-right .ph4-pill {
+        align-self: center;
+    }
+
+    .ph4-right .ph4-dd,
+    .ph4-right .ph4-avatarBtn {
+        display: inline-flex;
+    }
+
+    .ph4-right {
+        position: relative;
+    }
+
+    .ph4-right::after {
+        content: "";
+        display: block;
+    }
+
+    .ph4-right .ph4-dd {
+        order: 2;
+    }
+
+    .ph4-right .ph4-avatarBtn {
+        order: 3;
+    }
+
+    .ph4-right .ph4-pill {
+        order: 1;
+    }
+
+    .ph4-right {
+        --mobile-icons-gap: 10px;
+    }
+
+    .ph4-right {
+        display: grid;
+        grid-template-columns: auto auto;
+        grid-template-areas:
+            "pill pill"
+            "notif avatar";
+        justify-content: center;
+        align-items: center;
+        column-gap: 10px;
+        row-gap: 10px;
+    }
+
+    .ph4-right .ph4-pill {
+        grid-area: pill;
+        justify-self: center;
+    }
+
+    .ph4-right .ph4-dd {
+        grid-area: notif;
+        justify-self: center;
+    }
+
+    .ph4-right .ph4-avatarBtn {
+        grid-area: avatar;
+        justify-self: center;
+    }
+}
+
+@media (max-width: 640px) {
+    .ph4 {
+        gap: 14px;
+    }
+
+    .ph4-sub {
+        max-width: none;
+    }
+
+    .ph4-menu {
+        right: 0;
+        width: min(320px, calc(100vw - 32px));
     }
 }
