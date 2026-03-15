@@ -300,7 +300,7 @@ function ClaimCardOpen({
                 <div className="profiles-addInlineEyebrow">Create new profile</div>
                 <div className="profiles-addInlineTitle">Claim your link</div>
                 <div className="profiles-addInlineIntro profiles-addInlineIntro--center">
-                    Pick a clean public URL for this profile. This will be the link customers visit.
+                    Pick a clean public URL for this profile.
                 </div>
             </div>
 
