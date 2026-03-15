@@ -11,12 +11,19 @@ import TikTokIcon from "../../assets/icons/Template1Icon-TikTok.svg";
 /* Upgrade badge icon */
 import UpgradePlanIcon from "../../assets/icons/UpgradePlanIcon.svg";
 
-/* Template thumbs */
-import UP1 from "../../assets/images/UP1.jpg";
-import UP2 from "../../assets/images/UP2.jpg";
-import UP3 from "../../assets/images/UP3.jpg";
-import UP4 from "../../assets/images/UP4.jpg";
-import UP5 from "../../assets/images/UP5.jpg";
+/* Editor template thumbs - Light */
+import EditorTemplate1Light from "../../assets/images/editor-templates/EditorTemplate-1Light.png";
+import EditorTemplate2Light from "../../assets/images/editor-templates/EditorTemplate-2Light.png";
+import EditorTemplate3Light from "../../assets/images/editor-templates/EditorTemplate-3Light.png";
+import EditorTemplate4Light from "../../assets/images/editor-templates/EditorTemplate-4Light.png";
+import EditorTemplate5Light from "../../assets/images/editor-templates/EditorTemplate-5Light.png";
+
+/* Editor template thumbs - Dark */
+import EditorTemplate1Dark from "../../assets/images/editor-templates/EditorTemplate-1Dark.png";
+import EditorTemplate2Dark from "../../assets/images/editor-templates/EditorTemplate-2Dark.png";
+import EditorTemplate3Dark from "../../assets/images/editor-templates/EditorTemplate-3Dark.png";
+import EditorTemplate4Dark from "../../assets/images/editor-templates/EditorTemplate-4Dark.png";
+import EditorTemplate5Dark from "../../assets/images/editor-templates/EditorTemplate-5Dark.png";
 
 import "../../styling/dashboard/editor.css";
 
@@ -93,19 +100,32 @@ export default function Editor({
         []
     );
 
-    const templateThumbs = useMemo(
+    const templateThumbsLight = useMemo(
         () => ({
-            "template-1": UP1,
-            "template-2": UP2,
-            "template-3": UP3,
-            "template-4": UP4,
-            "template-5": UP5,
+            "template-1": EditorTemplate1Light,
+            "template-2": EditorTemplate2Light,
+            "template-3": EditorTemplate3Light,
+            "template-4": EditorTemplate4Light,
+            "template-5": EditorTemplate5Light,
+        }),
+        []
+    );
+
+    const templateThumbsDark = useMemo(
+        () => ({
+            "template-1": EditorTemplate1Dark,
+            "template-2": EditorTemplate2Dark,
+            "template-3": EditorTemplate3Dark,
+            "template-4": EditorTemplate4Dark,
+            "template-5": EditorTemplate5Dark,
         }),
         []
     );
 
     const currentTemplate = (state.templateId || "template-1").toString();
     const currentThemeMode = (state.themeMode || state.pageTheme || "light").toString();
+
+    const templateThumbs = currentThemeMode === "dark" ? templateThumbsDark : templateThumbsLight;
 
     const isTemplateLocked = (templateId) => !isSubscribed && templateId !== "template-1";
 
