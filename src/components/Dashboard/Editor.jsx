@@ -320,7 +320,7 @@ export default function Editor({
                 <div className="kce-section">
                     <div className="kce-sectionTop">
                         <div className="kce-headingBlock">
-                            <span className="kce-pill">CHOOSE MODE</span>
+                            <span className="kce-pill">Choose Mode</span>
                             <div className="kce-accentLine" />
                         </div>
                     </div>
@@ -361,7 +361,7 @@ export default function Editor({
                 <div className="kce-section">
                     <div className="kce-sectionTop">
                         <div className="kce-headingBlock">
-                            <span className="kce-pill">CHOOSE TEMPLATE</span>
+                            <span className="kce-pill">Choose Template</span>
                             <div className="kce-accentLine" />
                         </div>
                     </div>
@@ -415,7 +415,7 @@ export default function Editor({
                 <div className="kce-section">
                     <div className="kce-sectionTop">
                         <div className="kce-headingBlock">
-                            <span className="kce-pill">MAIN SECTION</span>
+                            <span className="kce-pill">Main Section</span>
                             <div className="kce-accentLine" />
                         </div>
 
@@ -576,7 +576,7 @@ export default function Editor({
                 <div className="kce-section">
                     <div className="kce-sectionTop">
                         <div className="kce-headingBlock">
-                            <span className="kce-pill">ABOUT ME SECTION</span>
+                            <span className="kce-pill">About Me Section</span>
                             <div className="kce-accentLine" />
                         </div>
 
@@ -632,7 +632,7 @@ export default function Editor({
                 <div className="kce-section">
                     <div className="kce-sectionTop">
                         <div className="kce-headingBlock">
-                            <span className="kce-pill">MY WORK SECTION</span>
+                            <span className="kce-pill">My Work Section</span>
                             <div className="kce-accentLine" />
                         </div>
 
@@ -693,7 +693,7 @@ export default function Editor({
                 <div className="kce-section">
                     <div className="kce-sectionTop">
                         <div className="kce-headingBlock">
-                            <span className="kce-pill">MY SERVICES SECTION</span>
+                            <span className="kce-pill">My Services Section</span>
                             <div className="kce-accentLine" />
                         </div>
 
@@ -757,7 +757,7 @@ export default function Editor({
                 <div className="kce-section">
                     <div className="kce-sectionTop">
                         <div className="kce-headingBlock">
-                            <span className="kce-pill">REVIEWS SECTION</span>
+                            <span className="kce-pill">Reviews Section</span>
                             <div className="kce-accentLine" />
                         </div>
 
@@ -837,7 +837,7 @@ export default function Editor({
                 <div className="kce-section">
                     <div className="kce-sectionTop">
                         <div className="kce-headingBlock">
-                            <span className="kce-pill">CONTACT SECTION</span>
+                            <span className="kce-pill">Contact Section</span>
                             <div className="kce-accentLine" />
                         </div>
 
