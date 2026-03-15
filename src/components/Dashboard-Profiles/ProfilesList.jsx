@@ -2,6 +2,7 @@ import React from "react";
 import ShareOnEditProfileIcon from "../../assets/icons/ShareOnEditProfile.svg";
 import ShareOnVisitProfileIcon from "../../assets/icons/ShareOnVisitProfile.svg";
 import AddYourProfilePlusIcon from "../../assets/icons/AddYourProfilePlus.svg";
+import CheckAvailabilityIcon from "../../assets/icons/CheckAvailability.svg";
 
 function firstNonEmpty(...values) {
     for (const value of values) {
@@ -197,6 +198,7 @@ function ClaimCardClosed({ onOpenClaim, suppressClickRef }) {
                 <div className="profiles-profileBottom profiles-addBottom">
                     <div className="profiles-addCopy">
                         <div className="profiles-addHeadline">Add Profile</div>
+
                         <div className="profiles-addSubcopy">
                             Claim a new public link for another service, team, or location.
                         </div>
@@ -206,6 +208,10 @@ function ClaimCardClosed({ onOpenClaim, suppressClickRef }) {
                             <div className="profiles-addFeature">Own QR code</div>
                             <div className="profiles-addFeature">Separate analytics</div>
                         </div>
+                    </div>
+
+                    <div className="profiles-updated profiles-updated--centered profiles-addPriceNote">
+                        £1.95 per extra profile / month
                     </div>
 
                     <div className="profiles-cardBtns profiles-cardBtns--stack">
@@ -251,6 +257,19 @@ function ClaimCardOpen({
     onStartTeamsCheckout,
     onClaimInputChange,
 }) {
+    const isAvailable = claimStatus === "available";
+    const primaryButtonLabel = isAvailable
+        ? isTeams
+            ? sortedProfiles.length < maxProfiles
+                ? "Add profile"
+                : "Add profile"
+            : "Add profile"
+        : claimStatus === "checking"
+            ? "Checking..."
+            : "Check availability";
+
+    const pricingText = isAvailable ? "+£1.95/m" : null;
+
     return (
         <article
             ref={claimRef}
@@ -273,116 +292,138 @@ function ClaimCardOpen({
             <div className="profiles-addInlineHeadCopy profiles-addInlineHeadCopy--center">
                 <div className="profiles-addInlineEyebrow">Create new profile</div>
                 <div className="profiles-addInlineTitle">Claim your link</div>
+                <div className="profiles-addInlineIntro profiles-addInlineIntro--center">
+                    Pick a clean public URL for this profile. This will be the link customers visit.
+                </div>
             </div>
 
-            <div className="profiles-addInlineIntro profiles-addInlineIntro--center">
-                Pick a clean public URL for this profile. This will be the link customers visit.
+            <div className="profiles-addInlineMid">
+                <div className="profiles-addInlineForm profiles-addInlineForm--stack">
+                    <div className="profiles-input-wrap">
+                        <span className="profiles-input-prefix">{window.location.origin}/u/</span>
+                        <input
+                            className="profiles-input"
+                            value={claimSlugInput}
+                            onChange={(e) => onClaimInputChange(e.target.value)}
+                            onKeyDown={(e) => {
+                                if (e.key === "Enter" && !isAvailable) onCheckAvailability();
+                            }}
+                            placeholder="plumbing-north-london"
+                            aria-label="Profile slug"
+                        />
+                    </div>
+                </div>
+
+                {claimSlugNormalized ? (
+                    <div className="profiles-claimPreviewRow profiles-claimPreviewRow--center">
+                        <span className="profiles-claimPreviewLabel">Preview</span>
+                        <span className="profiles-claimPreviewUrl">
+                            {window.location.origin}/u/{claimSlugNormalized || "your-link"}
+                        </span>
+                    </div>
+                ) : null}
+
+                {claimMessage ? (
+                    <div
+                        className={`profiles-alert profiles-alert--center ${claimStatus === "available"
+                                ? "success"
+                                : claimStatus === "error" ||
+                                    claimStatus === "invalid" ||
+                                    claimStatus === "taken"
+                                    ? "danger"
+                                    : "neutral"
+                            }`}
+                    >
+                        {claimMessage}
+                    </div>
+                ) : null}
             </div>
 
-            <div className="profiles-addInlineForm profiles-addInlineForm--stack">
-                <div className="profiles-input-wrap">
-                    <span className="profiles-input-prefix">{window.location.origin}/u/</span>
-                    <input
-                        className="profiles-input"
-                        value={claimSlugInput}
-                        onChange={(e) => onClaimInputChange(e.target.value)}
-                        onKeyDown={(e) => {
-                            if (e.key === "Enter") onCheckAvailability();
-                        }}
-                        placeholder="plumbing-north-london"
-                        aria-label="Profile slug"
-                    />
+            <div className="profiles-addInlineBottom">
+                <div className="profiles-updated profiles-updated--centered profiles-addCheckHint">
+                    {isAvailable
+                        ? "Your link is ready — add this profile to your plan."
+                        : "Check to see if this link hasn’t already been taken."}
                 </div>
 
-                <button
-                    type="button"
-                    className="kx-btn kx-btn--black profiles-cardBtn profiles-cardBtn--claim"
-                    onClick={onCheckAvailability}
-                    disabled={
-                        claimStatus === "checking" ||
-                        claimStatus === "subscribing" ||
-                        claimStatus === "creating"
-                    }
-                >
-                    {claimStatus === "checking" ? "Checking..." : "Check availability"}
-                </button>
-            </div>
-
-            {claimSlugNormalized ? (
-                <div className="profiles-claimPreviewRow profiles-claimPreviewRow--center">
-                    <span className="profiles-claimPreviewLabel">Preview</span>
-                    <span className="profiles-claimPreviewUrl">
-                        {window.location.origin}/u/{claimSlugNormalized || "your-link"}
-                    </span>
-                </div>
-            ) : null}
-
-            {claimMessage ? (
-                <div
-                    className={`profiles-alert profiles-alert--center ${claimStatus === "available"
-                            ? "success"
-                            : claimStatus === "error" ||
-                                claimStatus === "invalid" ||
-                                claimStatus === "taken"
-                                ? "danger"
-                                : "neutral"
-                        }`}
-                >
-                    {claimMessage}
-                </div>
-            ) : null}
-
-            {claimStatus === "available" ? (
-                <div className="profiles-addInlineActions profiles-addInlineActions--stack">
+                {!isAvailable ? (
                     <button
                         type="button"
-                        className="kx-btn kx-btn--white profiles-addSecondaryBtn"
-                        onClick={onCloseClaim}
+                        className="kx-btn kx-btn--black profiles-cardBtn profiles-cardBtn--withIcon profiles-cardBtn--claim"
+                        onClick={onCheckAvailability}
+                        disabled={
+                            claimStatus === "checking" ||
+                            claimStatus === "subscribing" ||
+                            claimStatus === "creating"
+                        }
                     >
-                        Cancel
+                        <img
+                            src={CheckAvailabilityIcon}
+                            alt=""
+                            aria-hidden="true"
+                            className="profiles-cardBtnIcon profiles-cardBtnIcon--light"
+                        />
+                        <span>{primaryButtonLabel}</span>
                     </button>
-
-                    {isTeams ? (
-                        sortedProfiles.length < maxProfiles ? (
-                            <button
-                                type="button"
-                                className="kx-btn kx-btn--orange profiles-cardBtn"
-                                onClick={onCreateTeamsProfile}
-                                disabled={claimStatus === "creating"}
-                            >
-                                {claimStatus === "creating" ? "Adding..." : "Add Profile"}
-                            </button>
+                ) : (
+                    <>
+                        {isTeams ? (
+                            sortedProfiles.length < maxProfiles ? (
+                                <button
+                                    type="button"
+                                    className="kx-btn kx-btn--orange profiles-cardBtn profiles-cardBtn--claim profiles-cardBtn--priceStack"
+                                    onClick={onCreateTeamsProfile}
+                                    disabled={claimStatus === "creating"}
+                                >
+                                    <span className="profiles-cardBtnPriceMain">
+                                        {claimStatus === "creating" ? "Adding..." : "Add profile"}
+                                    </span>
+                                    <span className="profiles-cardBtnPriceSub">{pricingText}</span>
+                                </button>
+                            ) : (
+                                <button
+                                    type="button"
+                                    className="kx-btn kx-btn--orange profiles-cardBtn profiles-cardBtn--claim profiles-cardBtn--priceStack"
+                                    onClick={onStartTeamsCheckout}
+                                    disabled={claimStatus === "subscribing"}
+                                >
+                                    <span className="profiles-cardBtnPriceMain">
+                                        {claimStatus === "subscribing" ? "Opening checkout..." : "Add profile"}
+                                    </span>
+                                    <span className="profiles-cardBtnPriceSub">{pricingText}</span>
+                                </button>
+                            )
                         ) : (
                             <button
                                 type="button"
-                                className="kx-btn kx-btn--orange profiles-cardBtn"
+                                className="kx-btn kx-btn--orange profiles-cardBtn profiles-cardBtn--claim profiles-cardBtn--priceStack"
                                 onClick={onStartTeamsCheckout}
                                 disabled={claimStatus === "subscribing"}
                             >
-                                {claimStatus === "subscribing"
-                                    ? "Opening checkout..."
-                                    : "Add profile (+£1.95)"}
+                                <span className="profiles-cardBtnPriceMain">
+                                    {claimStatus === "subscribing" ? "Opening checkout..." : "Add profile"}
+                                </span>
+                                <span className="profiles-cardBtnPriceSub">{pricingText}</span>
                             </button>
-                        )
-                    ) : (
+                        )}
+
                         <button
                             type="button"
-                            className="kx-btn kx-btn--orange profiles-cardBtn"
-                            onClick={onStartTeamsCheckout}
-                            disabled={claimStatus === "subscribing"}
+                            className="kx-btn kx-btn--white profiles-cardBtn profiles-cardBtn--claim"
+                            onClick={onCloseClaim}
                         >
-                            {claimStatus === "subscribing" ? "Opening checkout..." : "Upgrade Plan"}
+                            Cancel
                         </button>
-                    )}
-                </div>
-            ) : null}
+                    </>
+                )}
 
-            {(isFree || isPlus) ? (
-                <div className="profiles-hint profiles-hint--center">
-                    Free and Plus allow <strong>1 profile</strong>. Upgrade to <strong>Teams</strong> to add
-                    more.
-                </div>
-            ) : null}
+                {(isFree || isPlus) ? (
+                    <div className="profiles-hint profiles-hint--center">
+                        Free and Plus allow <strong>1 profile</strong>. Upgrade to <strong>Teams</strong> to add
+                        more.
+                    </div>
+                ) : null}
+            </div>
         </article>
     );
 }

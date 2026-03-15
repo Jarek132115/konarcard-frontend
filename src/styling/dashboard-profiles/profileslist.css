@@ -180,7 +180,7 @@
     text-align: center;
 }
 
-/* PREVIEW */
+/* PROFILE PREVIEW */
 .profiles-mainPreview {
     width: 100%;
     flex: 1 1 auto;
@@ -355,7 +355,7 @@
     white-space: nowrap;
 }
 
-/* PROFILE CARD BOTTOM */
+/* COMMON BUTTON AREA */
 .profiles-profileBottom {
     display: grid;
     gap: 12px;
@@ -417,7 +417,7 @@
     filter: brightness(0) invert(1);
 }
 
-/* ADD CARD - CLOSED */
+/* CLOSED ADD CARD */
 .profiles-addCard {
     border-radius: 24px;
     border: 1px solid rgba(15, 23, 42, 0.10);
@@ -482,12 +482,12 @@
 }
 
 .profiles-addBottom {
-    gap: 14px;
+    gap: 12px;
 }
 
 .profiles-addCopy {
     display: grid;
-    gap: 10px;
+    gap: 8px;
     justify-items: center;
     text-align: center;
 }
@@ -535,7 +535,11 @@
     line-height: 1;
 }
 
-/* ADD CARD - OPEN */
+.profiles-addPriceNote {
+    margin-top: 0;
+}
+
+/* OPEN ADD CARD */
 .profiles-addInline {
     border-radius: 24px;
     border: 1px solid rgba(15, 23, 42, 0.10);
@@ -543,8 +547,8 @@
         radial-gradient(circle at top right, rgba(244, 118, 41, 0.10), transparent 30%),
         linear-gradient(180deg, #ffffff 0%, #fbfbfc 100%);
     box-shadow: var(--p-softShadow);
-    padding: 16px;
-    gap: 12px;
+    padding: 18px 16px 16px;
+    gap: 0;
     overflow: hidden;
 }
 
@@ -583,7 +587,7 @@
     gap: 4px;
     justify-items: center;
     text-align: center;
-    margin-top: 0;
+    margin-top: 18px;
 }
 
 .profiles-addInlineEyebrow {
@@ -617,6 +621,23 @@
 
 .profiles-addInlineIntro--center {
     text-align: center;
+    margin-top: 0;
+}
+
+.profiles-addInlineMid {
+    margin-top: 18px;
+    display: grid;
+    gap: 12px;
+}
+
+.profiles-addInlineBottom {
+    margin-top: auto;
+    padding-top: 14px;
+    display: grid;
+    gap: 10px;
+}
+
+.profiles-addCheckHint {
     margin-top: 0;
 }
 
@@ -673,6 +694,29 @@
 
 .profiles-cardBtn--claim {
     min-height: 48px;
+}
+
+.profiles-cardBtn--priceStack {
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 2px;
+}
+
+.profiles-cardBtnPriceMain {
+    font-family: "Inter", sans-serif;
+    font-weight: 700;
+    font-size: 14px;
+    line-height: 1.1;
+}
+
+.profiles-cardBtnPriceSub {
+    font-family: "Inter", sans-serif;
+    font-weight: 600;
+    font-size: 11px;
+    line-height: 1;
+    opacity: 0.92;
 }
 
 .profiles-claimPreviewRow {
@@ -735,25 +779,6 @@
 
 .profiles-alert.neutral {
     background: rgba(15, 23, 42, 0.03);
-}
-
-.profiles-addInlineActions {
-    display: flex;
-    gap: 10px;
-    flex-wrap: wrap;
-}
-
-.profiles-addInlineActions--stack {
-    display: grid;
-    gap: 10px;
-    width: 100%;
-}
-
-.profiles-addSecondaryBtn {
-    width: auto;
-    min-width: 104px;
-    margin: 0 auto;
-    justify-content: center;
 }
 
 .profiles-hint {
@@ -924,10 +949,13 @@
         margin-top: 7px;
     }
 
-    .profiles-mainPreviewLocation,
-    .profiles-addSubcopy {
+    .profiles-mainPreviewLocation {
         font-size: 10px;
         margin-top: 4px;
+    }
+
+    .profiles-addSubcopy {
+        font-size: 10px;
     }
 
     .profiles-mainPreviewCtaRow {
@@ -1094,10 +1122,6 @@
         padding: 3px 6px;
     }
 
-    .profiles-addInlineTop {
-        min-height: 26px;
-    }
-
     .profiles-addInlineClose {
         width: 26px;
         height: 26px;
@@ -1115,10 +1139,6 @@
     .profiles-addInlineIntro {
         font-size: 10px;
         line-height: 1.35;
-    }
-
-    .profiles-addInlineForm--stack {
-        gap: 8px;
     }
 
     .profiles-input-wrap {
@@ -1158,6 +1178,14 @@
     }
 
     .profiles-hint {
+        font-size: 10px;
+    }
+
+    .profiles-cardBtnPriceMain {
+        font-size: 13px;
+    }
+
+    .profiles-cardBtnPriceSub {
         font-size: 10px;
     }
 }
