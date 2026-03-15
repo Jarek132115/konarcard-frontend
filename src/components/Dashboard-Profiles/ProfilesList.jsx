@@ -1,4 +1,6 @@
 import React from "react";
+import ShareOnEditProfileIcon from "../../assets/icons/ShareOnEditProfile.svg";
+import ShareOnVisitProfileIcon from "../../assets/icons/ShareOnVisitProfile.svg";
 
 function firstNonEmpty(...values) {
     for (const value of values) {
@@ -423,8 +425,8 @@ export default function ProfilesList({
                     return (
                         <article
                             key={p.slug}
-                            className={`profiles-profileCard profiles-profileCard--rail ${active ? "is-active" : ""
-                                } ${locked ? "is-locked" : ""}`}
+                            className={`profiles-profileCard profiles-profileCard--rail ${active ? "is-active" : ""} ${locked ? "is-locked" : ""
+                                }`}
                             onClick={() => onCardSelect(p.slug, locked)}
                             role="button"
                             tabIndex={0}
@@ -448,7 +450,7 @@ export default function ProfilesList({
                                     <div className="profiles-cardBtns profiles-cardBtns--responsiveRow">
                                         <button
                                             type="button"
-                                            className="kx-btn kx-btn--white profiles-cardBtn"
+                                            className="kx-btn kx-btn--orange profiles-cardBtn profiles-cardBtn--withIcon"
                                             disabled={locked}
                                             data-no-rail-drag="true"
                                             onClick={(e) => {
@@ -458,12 +460,18 @@ export default function ProfilesList({
                                                 onEdit(p.slug);
                                             }}
                                         >
-                                            Edit profile
+                                            <img
+                                                src={ShareOnEditProfileIcon}
+                                                alt=""
+                                                aria-hidden="true"
+                                                className="profiles-cardBtnIcon profiles-cardBtnIcon--light"
+                                            />
+                                            <span>Edit profile</span>
                                         </button>
 
                                         <button
                                             type="button"
-                                            className="kx-btn kx-btn--black profiles-cardBtn"
+                                            className="kx-btn kx-btn--black profiles-cardBtn profiles-cardBtn--withIcon"
                                             disabled={locked}
                                             data-no-rail-drag="true"
                                             onClick={(e) => {
@@ -473,7 +481,13 @@ export default function ProfilesList({
                                                 onVisitProfile(p.slug);
                                             }}
                                         >
-                                            Visit profile
+                                            <img
+                                                src={ShareOnVisitProfileIcon}
+                                                alt=""
+                                                aria-hidden="true"
+                                                className="profiles-cardBtnIcon profiles-cardBtnIcon--light"
+                                            />
+                                            <span>Visit profile</span>
                                         </button>
                                     </div>
                                 </div>
