@@ -456,7 +456,9 @@ export default function Preview({
                         {showEmptyPreview ? (
                             <PreviewEmptyState themeMode={themeMode} />
                         ) : (
-                            <TemplateComponent {...templateProps} />
+                            <div className="preview-page-gutter">
+                                <TemplateComponent {...templateProps} />
+                            </div>
                         )}
                     </div>
                 </div>
@@ -482,7 +484,9 @@ export default function Preview({
                 ) : (
                     <IframePreview className="preview-iframe-mode" title={`Template Preview (${templateId})`}>
                         <div className="preview-iframe-padding">
-                            <TemplateComponent {...templateProps} />
+                            <div className="preview-page-gutter">
+                                <TemplateComponent {...templateProps} />
+                            </div>
                         </div>
                     </IframePreview>
                 )}

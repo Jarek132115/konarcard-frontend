@@ -46,13 +46,6 @@
     flex-direction: column;
 }
 
-@media (min-width: 1001px) {
-    .preview-scope .myprofile-preview {
-        padding-left: 18px;
-        padding-right: 18px;
-    }
-}
-
 /* -------------------------------------------------------
    PREVIEW HEADER
 -------------------------------------------------------- */
@@ -71,6 +64,7 @@
 
 .preview-panel-topLeft {
     min-width: 0;
+    flex: 1 1 auto;
     display: flex;
     flex-direction: column;
     gap: 4px;
@@ -84,6 +78,7 @@
     line-height: var(--kc-title-line);
     color: #0f172a;
     letter-spacing: -0.01em;
+    word-break: break-word;
 }
 
 .preview-panel-sub {
@@ -93,10 +88,11 @@
     font-size: var(--kc-body-size);
     line-height: var(--kc-body-line);
     color: #475569;
+    word-break: break-word;
 }
 
 .preview-panel-topRight {
-    flex: 0 0 auto;
+    flex: 0 1 auto;
     min-width: 0;
     display: flex;
     align-items: center;
@@ -111,6 +107,7 @@
     justify-content: flex-end;
     gap: 8px;
     flex-wrap: wrap;
+    min-width: 0;
 }
 
 .preview-panel-pill {
@@ -202,6 +199,16 @@
 }
 
 /* -------------------------------------------------------
+   PREVIEW PAGE INNER GUTTER
+-------------------------------------------------------- */
+.preview-page-gutter {
+    box-sizing: border-box;
+    min-height: 100%;
+    padding-left: 18px;
+    padding-right: 18px;
+}
+
+/* -------------------------------------------------------
    SCROLLBAR ON OUTER WRAPPER OFF FOR DESKTOP CARD MODE
 -------------------------------------------------------- */
 .preview-scope .myprofile-preview::-webkit-scrollbar {
@@ -263,12 +270,6 @@
     min-height: 100%;
 }
 
-@media (min-width: 1001px) {
-    .preview-iframe-padding {
-        min-height: 100%;
-    }
-}
-
 /* -------------------------------------------------------
    EMPTY STATE
 -------------------------------------------------------- */
@@ -323,17 +324,11 @@
     overflow: hidden;
     will-change: max-height, opacity, transform;
     transition: max-height 0.28s ease, opacity 0.2s ease, transform 0.2s ease;
-    padding: 12px;
+    padding: 12px 0 0;
     flex: 1;
     min-height: 0;
     display: flex;
     flex-direction: column;
-}
-
-@media (min-width: 1001px) {
-    .preview-scope .mp-preview-wrap {
-        padding: 14px;
-    }
 }
 
 .preview-scope .mp-preview-wrap.closed {
@@ -372,6 +367,7 @@
         justify-content: flex-start;
         align-items: stretch;
         flex-direction: column;
+        gap: 12px;
     }
 
     .preview-panel-pills {
@@ -383,9 +379,19 @@
     }
 }
 
-@media (max-width: 640px) {
+@media (max-width: 760px) {
     .preview-panel-top {
         padding-bottom: 14px;
+    }
+
+    .preview-panel-title {
+        font-size: 18px;
+        line-height: 1.2;
+    }
+
+    .preview-panel-sub {
+        font-size: 14px;
+        line-height: 1.45;
     }
 
     .preview-panel-topRight {
@@ -405,6 +411,13 @@
     .preview-panel-visitBtn {
         min-height: 40px;
         font-size: 14px;
+    }
+}
+
+@media (max-width: 600px) {
+    .preview-page-gutter {
+        padding-left: 0;
+        padding-right: 0;
     }
 }
 
