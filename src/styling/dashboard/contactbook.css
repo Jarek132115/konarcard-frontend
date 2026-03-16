@@ -1,557 +1,170 @@
 :root {
-    --cb-border: rgba(15, 23, 42, 0.10);
-    --cb-border-soft: rgba(15, 23, 42, 0.08);
-    --cb-shadow: 0 0 1px rgba(0, 0, 0, 0.18);
-
-    --cb-card: #ffffff;
-    --cb-inner: #fafafa;
-    --cb-inner-active: #f5f5f5;
-    --cb-ink: var(--kc-text-primary, #0f172a);
-    --cb-muted: var(--kc-text-secondary, #475569);
-    --cb-accent: #f97316;
-    --cb-danger: #ff3b30;
-    --cb-navy: #0b1635;
-}
-
-.cb-shell .ph2-wrap {
-    margin-bottom: 0;
+    --cb-border: rgba(15, 23, 42, 0.1);
+    --cb-radius: 22px;
+    --cb-shadow: 0 0 1px rgba(0, 0, 0, 0.25);
 }
 
 .cb-shell {
-    width: 100%;
     display: flex;
     flex-direction: column;
-    gap: 14px;
-    min-height: 0;
-    height: calc(100dvh - (var(--dash-gutter, 24px) * 2));
-    overflow: hidden;
+    height: calc(100vh - (var(--dash-gutter, 24px) * 2));
 }
 
 .cb-grid {
     display: grid;
-    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-    gap: 18px;
-    align-items: stretch;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
     flex: 1;
     min-height: 0;
-    overflow: hidden;
 }
 
 .cb-card {
-    background: var(--cb-card);
-    border: 1px solid var(--cb-border-soft);
-    border-radius: 28px;
+    background: #fff;
+    border: 1px solid var(--cb-border);
+    border-radius: var(--cb-radius);
     box-shadow: var(--cb-shadow);
-    padding: 22px;
-    min-width: 0;
-    min-height: 0;
+    padding: 24px;
     display: flex;
     flex-direction: column;
-    overflow: hidden;
-}
-
-.cb-listCard,
-.cb-detailCard {
-    height: 100%;
     min-height: 0;
 }
 
-.cb-card-head {
-    display: flex;
-    align-items: flex-start;
-    justify-content: space-between;
-    gap: 16px;
-}
-
-.cb-card-head--stack {
-    flex-direction: column;
-    align-items: stretch;
-    flex: 0 0 auto;
-}
-
-.cb-titleWrap {
-    min-width: 0;
-}
-
-.cb-card-title {
+.cb-listHeader h3 {
+    font-family: "Cal Sans";
     margin: 0;
-    font-family: "Cal Sans", sans-serif;
-    font-weight: 500;
-    color: var(--cb-ink);
-    font-size: 18px;
-    letter-spacing: -0.01em;
 }
 
-.cb-muted {
-    margin: 8px 0 0;
-    color: var(--cb-muted);
-    font-family: "Inter", sans-serif;
-    font-weight: 500;
-    font-size: 14px;
-    line-height: 1.55;
+.cb-listHeader p {
+    margin: 4px 0 12px;
+    color: #475569;
 }
 
 .cb-search {
-    margin-top: 14px;
-    width: 100%;
-    position: relative;
+    height: 42px;
+    border-radius: 14px;
+    border: 1px solid var(--cb-border);
+    padding: 0 12px;
 }
 
-.cb-searchIcon {
-    position: absolute;
-    left: 18px;
-    top: 50%;
-    transform: translateY(-50%);
-    width: 20px;
-    height: 20px;
-    color: #0f172a;
-    opacity: 0.85;
-    pointer-events: none;
-}
-
-.cb-search-input {
-    width: 100%;
-    height: 44px;
-    padding: 0 16px 0 48px;
-    border-radius: 16px;
-    border: 1px solid rgba(15, 23, 42, 0.10);
-    background: #fff;
-    font-family: "Inter", sans-serif;
-    font-weight: 500;
-    font-size: 14px;
-    color: var(--cb-ink);
-    outline: none;
-    transition: box-shadow 0.15s ease, border-color 0.15s ease;
-}
-
-.cb-search-input::placeholder {
-    color: rgba(71, 85, 105, 0.95);
-}
-
-.cb-search-input:focus {
-    border-color: rgba(249, 115, 22, 0.45);
-    box-shadow: 0 0 0 3px rgba(249, 115, 22, 0.14);
-}
-
-.cb-listWrap {
-    flex: 1;
-    min-height: 0;
-    overflow: auto;
-    margin-top: 22px;
-    padding-right: 2px;
-}
-
-.cb-list {
+.cb-contactList {
+    margin-top: 16px;
+    overflow-y: auto;
     display: grid;
-    gap: 16px;
-    align-content: start;
+    gap: 12px;
 }
 
 .cb-contactCard {
-    width: 100%;
-    text-align: left;
-    background: var(--cb-inner);
+    background: #fafafa;
     border: 1px solid rgba(15, 23, 42, 0.08);
-    border-radius: 24px;
-    padding: 22px 24px;
+    border-radius: 18px;
+    padding: 16px;
+    text-align: left;
     cursor: pointer;
-    transition: transform 0.12s ease, box-shadow 0.15s ease, border-color 0.15s ease, background-color 0.15s ease;
 }
 
-.cb-contactCard:hover {
-    transform: translateY(-1px);
-    box-shadow: 0 10px 22px rgba(15, 23, 42, 0.04);
+.cb-contactCard.active {
+    background: #f5f5f5;
+    border-color: #f97316;
 }
 
-.cb-contactCard:focus-visible {
-    outline: none;
-    box-shadow: 0 0 0 3px rgba(249, 115, 22, 0.14);
+.cb-contactName {
+    font-family: "Cal Sans";
+    font-size: 18px;
 }
 
-.cb-contactCard.is-active {
-    background: var(--cb-inner-active);
-    border-color: rgba(249, 115, 22, 0.34);
-    box-shadow: none;
+.cb-contactMeta {
+    font-size: 14px;
+    color: #475569;
 }
 
-.cb-contactCard-title {
-    font-family: "Cal Sans", sans-serif;
-    font-size: 22px;
-    line-height: 1.1;
-    color: var(--cb-ink);
-    letter-spacing: -0.02em;
+.cb-contactDate {
+    font-size: 13px;
+    margin-top: 6px;
+    font-style: italic;
+}
+
+.cb-viewMore {
+    margin-top: 12px;
+    border: none;
+    background: #fff;
+    cursor: pointer;
+    color: #f97316;
+    font-weight: 600;
+}
+
+.cb-detailTop h3 {
     margin: 0;
+    font-family: "Cal Sans";
 }
 
-.cb-contactCard-lines {
-    margin-top: 14px;
-    display: grid;
-    gap: 8px;
-}
-
-.cb-contactLine {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    color: rgba(71, 85, 105, 0.98);
-    font-family: "Inter", sans-serif;
-    font-size: 15px;
-    font-weight: 500;
-    line-height: 1.4;
-    min-width: 0;
-}
-
-.cb-contactLine span {
-    min-width: 0;
-    overflow-wrap: anywhere;
-}
-
-.cb-inlineIcon {
-    width: 17px;
-    height: 17px;
-    color: #5b667b;
-    flex: 0 0 auto;
-}
-
-.cb-contactCard-date {
-    margin-top: 14px;
-    font-family: "Inter", sans-serif;
+.cb-detailDate {
     font-size: 13px;
-    line-height: 1.4;
-    color: rgba(15, 23, 42, 0.78);
-    font-style: italic;
-    font-weight: 500;
-}
-
-.cb-detailBody {
-    flex: 1;
-    min-height: 0;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    margin-top: 22px;
-    overflow: auto;
-    padding-right: 2px;
-}
-
-.cb-detailPanel {
-    background: var(--cb-card);
-    border: 1px solid rgba(15, 23, 42, 0.10);
-    border-radius: 28px;
-    padding: 22px 22px;
-}
-
-.cb-detailName {
-    font-family: "Cal Sans", sans-serif;
-    font-size: 20px;
-    line-height: 1.1;
-    letter-spacing: -0.01em;
-    color: var(--cb-ink);
-}
-
-.cb-detailReceived {
-    margin-top: 8px;
-    font-family: "Inter", sans-serif;
-    font-size: 13px;
-    line-height: 1.4;
-    color: rgba(15, 23, 42, 0.78);
-    font-style: italic;
-    font-weight: 500;
+    color: #475569;
+    margin-top: 4px;
 }
 
 .cb-detailRows {
-    margin-top: 18px;
+    margin-top: 16px;
     display: grid;
+    gap: 10px;
 }
 
 .cb-detailRow {
-    display: grid;
-    grid-template-columns: minmax(90px, 120px) minmax(0, 1fr);
-    gap: 16px;
-    padding: 16px 0;
+    display: flex;
+    justify-content: space-between;
     border-top: 1px solid rgba(15, 23, 42, 0.08);
+    padding: 10px 0;
 }
 
-.cb-detailRow:first-child {
-    border-top: 0;
-    padding-top: 0;
-}
-
-.cb-detailRow--message {
-    align-items: flex-start;
-}
-
-.cb-detailLabel {
-    font-family: "Inter", sans-serif;
-    font-size: 15px;
-    font-weight: 500;
-    color: rgba(71, 85, 105, 0.98);
-}
-
-.cb-detailValue {
-    font-family: "Inter", sans-serif;
-    font-size: 15px;
-    font-weight: 500;
-    color: var(--cb-ink);
-    justify-self: end;
-    text-align: right;
-    overflow-wrap: anywhere;
-}
-
-.cb-detailValue--message {
-    justify-self: stretch;
-    text-align: left;
-    line-height: 1.45;
-}
-
-.cb-detailActions {
+.cb-actions {
     display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 14px;
-    margin-top: 18px;
-    flex: 0 0 auto;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-top: auto;
 }
 
-.cb-actionBtn {
-    appearance: none;
-    min-height: 40px;
-    border-radius: 14px;
-    border: 1px solid transparent;
-    font-family: "Inter", sans-serif;
-    font-size: 14px;
-    font-weight: 600;
-    line-height: 1;
-    cursor: pointer;
-    transition: transform 0.12s ease, box-shadow 0.15s ease, background-color 0.15s ease, border-color 0.15s ease;
-    padding: 12px 16px;
-}
-
-.cb-actionBtn:hover {
-    transform: translateY(-1px);
-}
-
-.cb-actionBtn:active {
-    transform: translateY(0);
-}
-
-.cb-actionBtn:focus-visible {
-    outline: none;
-    box-shadow: 0 0 0 3px rgba(249, 115, 22, 0.14);
-}
-
-.cb-actionBtn--danger {
-    background: #fff;
-    border-color: rgba(255, 59, 48, 0.45);
-    color: var(--cb-danger);
-}
-
-.cb-actionBtn--primary {
-    background: var(--cb-navy);
-    color: #fff;
-    border-color: var(--cb-navy);
-}
-
-.cb-inlineState {
-    margin-top: 22px;
-    border-radius: 20px;
-    border: 1px solid rgba(15, 23, 42, 0.10);
-    background: rgba(15, 23, 42, 0.02);
-    padding: 18px;
-    display: grid;
+.cb-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
     gap: 8px;
+    height: 44px;
+    border-radius: 12px;
+    font-weight: 600;
+    cursor: pointer;
 }
 
-.cb-inlineState.cb-error {
-    background: rgba(220, 38, 38, 0.06);
-    border-color: rgba(220, 38, 38, 0.18);
+.cb-btn img {
+    width: 16px;
+    height: 16px;
 }
 
-.cb-emptyState {
-    margin-top: 22px;
+.cb-btn-delete {
+    background: #fff;
+    border: 1px solid #ff3b30;
+    color: #ff3b30;
 }
 
-.cb-inlineTitle {
-    font-family: "Cal Sans", sans-serif;
-    font-size: 18px;
-    color: var(--cb-ink);
-    letter-spacing: -0.01em;
+.cb-btn-delete img {
+    filter: brightness(0) saturate(100%) invert(22%) sepia(93%) saturate(4311%) hue-rotate(351deg) brightness(98%) contrast(104%);
 }
 
-.cb-inlineText {
-    font-family: "Inter", sans-serif;
-    font-weight: 500;
-    color: rgba(71, 85, 105, 0.95);
-    line-height: 1.5;
+.cb-btn-save {
+    background: #f97316;
+    color: #fff;
+    border: none;
 }
 
-.cb-empty-inline {
-    background: rgba(15, 23, 42, 0.02);
-    border: 1px dashed rgba(15, 23, 42, 0.18);
-    border-radius: 18px;
-    padding: 14px;
-    font-family: "Inter", sans-serif;
-    font-weight: 500;
-    color: rgba(71, 85, 105, 0.95);
+.cb-btn-save img {
+    filter: brightness(0) invert(1);
 }
 
-.cb-skelItem,
-.cb-skelHead,
-.cb-skelRow,
-.cb-skelNote {
-    border: 1px solid rgba(15, 23, 42, 0.08);
-    background: linear-gradient(90deg,
-            rgba(15, 23, 42, 0.05),
-            rgba(15, 23, 42, 0.03),
-            rgba(15, 23, 42, 0.05));
-    background-size: 200% 100%;
-    animation: cbShimmer 1.1s ease-in-out infinite;
-}
-
-.cb-skelItem {
-    height: 150px;
-    border-radius: 24px;
-}
-
-.cb-detailPanel--skeleton {
-    display: grid;
-    gap: 10px;
-    background: transparent;
-    border: 0;
-    padding: 0;
-}
-
-.cb-skelHead {
-    height: 74px;
-    border-radius: 22px;
-}
-
-.cb-skelRow {
-    height: 56px;
-    border-radius: 18px;
-}
-
-.cb-skelNote {
-    height: 120px;
-    border-radius: 22px;
-}
-
-@keyframes cbShimmer {
-    0% {
-        background-position: 0% 0;
-    }
-
-    100% {
-        background-position: 200% 0;
-    }
-}
-
-@media (max-width: 1200px) {
-    .cb-shell {
-        height: auto;
-        overflow: visible;
-    }
-
+@media(max-width:1180px) {
     .cb-grid {
         grid-template-columns: 1fr;
-        flex: initial;
-        overflow: visible;
     }
 
-    .cb-listCard,
-    .cb-detailCard {
-        height: auto;
-    }
-
-    .cb-listWrap,
-    .cb-detailBody {
-        overflow: visible;
-    }
-}
-
-@media (max-width: 760px) {
-    .cb-card {
-        padding: 18px;
-        border-radius: 24px;
-    }
-
-    .cb-contactCard {
-        padding: 20px 18px;
-        border-radius: 24px;
-    }
-
-    .cb-contactCard-title {
-        font-size: 20px;
-    }
-
-    .cb-detailPanel {
-        padding: 20px 18px;
-        border-radius: 24px;
-    }
-
-    .cb-detailActions {
-        grid-template-columns: 1fr;
-        gap: 12px;
-    }
-}
-
-@media (max-width: 560px) {
     .cb-shell {
-        gap: 14px;
-    }
-
-    .cb-grid {
-        gap: 14px;
-    }
-
-    .cb-card {
-        padding: 16px;
-        border-radius: 22px;
-    }
-
-    .cb-search {
-        margin-top: 12px;
-    }
-
-    .cb-search-input {
-        height: 44px;
-        font-size: 14px;
-    }
-
-    .cb-contactCard {
-        padding: 18px 16px;
-        border-radius: 22px;
-    }
-
-    .cb-contactCard-title {
-        font-size: 18px;
-    }
-
-    .cb-contactLine {
-        font-size: 14px;
-    }
-
-    .cb-contactCard-date {
-        font-size: 12px;
-    }
-
-    .cb-detailPanel {
-        padding: 18px 16px;
-        border-radius: 22px;
-    }
-
-    .cb-detailRow {
-        grid-template-columns: 1fr;
-        gap: 6px;
-        padding: 14px 0;
-    }
-
-    .cb-detailValue {
-        justify-self: start;
-        text-align: left;
-    }
-
-    .cb-inlineState {
-        margin-top: 16px;
-        padding: 16px;
+        height: auto;
     }
 }
