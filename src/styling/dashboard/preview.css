@@ -186,11 +186,12 @@
     transform: translateY(0);
 }
 
-.preview-panel-visitBtn img {
+.preview-panel-visitBtnIcon {
     width: 16px;
     height: 16px;
     display: block;
     flex: 0 0 auto;
+    filter: brightness(0) invert(1);
 }
 
 .preview-panel-visitBtn[aria-disabled="true"] {

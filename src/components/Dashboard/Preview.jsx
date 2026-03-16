@@ -141,7 +141,12 @@ function PreviewHeader({
                             if (!visitUrl || visitUrl === "#") e.preventDefault();
                         }}
                     >
-                        <img src={VisitProfileIcon} alt="" aria-hidden="true" />
+                        <img
+                            src={VisitProfileIcon}
+                            alt=""
+                            aria-hidden="true"
+                            className="preview-panel-visitBtnIcon"
+                        />
                         <span>Visit Profile</span>
                     </a>
                 </div>

@@ -956,11 +956,20 @@ export default function MyProfile() {
     setShowShareModal(true);
   };
 
+  const normalizeSlug = (raw) =>
+    (raw ?? "")
+      .toString()
+      .trim()
+      .toLowerCase()
+      .replace(/[^a-z0-9-]/g, "")
+      .replace(/-+/g, "-")
+      .replace(/^-|-$/g, "");
+
   const visitUrl = useMemo(() => {
-    if (!userUsername) return "#";
-    if (!activeSlug || activeSlug === "main") return `${window.location.origin}/u/${userUsername}`;
-    return `${window.location.origin}/u/${userUsername}/${encodeURIComponent(activeSlug)}`;
-  }, [userUsername, activeSlug]);
+    const slug = normalizeSlug(activeSlug);
+    if (!slug) return `${window.location.origin}/u/`;
+    return `${window.location.origin}/u/${encodeURIComponent(slug)}`;
+  }, [activeSlug]);
 
   const completionPct = useMemo(() => calcCompletionPctFromState(state), [state]);
   const completionTone = useMemo(() => pctTone(completionPct), [completionPct]);
