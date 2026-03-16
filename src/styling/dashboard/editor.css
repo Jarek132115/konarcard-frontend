@@ -646,6 +646,18 @@
     display: block;
 }
 
+/* =========================
+   BOTTOM SAVE
+========================= */
+.kce-bottomSaveWrap {
+    display: none;
+}
+
+.kce-bottomSaveBtn {
+    width: 100%;
+    justify-content: center;
+}
+
 .kce-bottomPad {
     height: 18px;
 }
@@ -732,6 +744,14 @@
 /* =========================
    RESPONSIVE
 ========================= */
+@media (max-width: 1000px) {
+    .kce-bottomSaveWrap {
+        display: block;
+        margin-top: 28px;
+        padding-top: 4px;
+    }
+}
+
 @media (max-width: 600px) {
     .kce-templatePhones {
         gap: 2px;

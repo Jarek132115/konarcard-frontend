@@ -935,6 +935,12 @@ export default function Editor({
                     ) : null}
                 </div>
 
+                <div className="kce-bottomSaveWrap">
+                    <button type="button" className="kce-btn kce-btnPrimary kce-bottomSaveBtn" onClick={onSubmit}>
+                        Save Profile
+                    </button>
+                </div>
+
                 <div className="kce-bottomPad" />
             </div>
         </div>
