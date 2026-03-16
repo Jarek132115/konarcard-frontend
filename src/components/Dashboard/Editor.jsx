@@ -8,8 +8,8 @@ import LinkedInIcon from "../../assets/icons/Template1Icon-LinkedIn.svg";
 import XIcon from "../../assets/icons/Template1Icon-X.svg";
 import TikTokIcon from "../../assets/icons/Template1Icon-TikTok.svg";
 
-/* Upgrade badge icon */
-import UpgradePlanIcon from "../../assets/icons/UpgradePlanIcon.svg";
+/* Locked template icon */
+import TemplateLockIcon from "../../assets/icons/TemplateLockIcon.svg";
 
 /* Editor template thumbs - Light */
 import EditorTemplate1Light from "../../assets/images/editor-templates/EditorTemplate-1Light.png";
@@ -271,17 +271,27 @@ export default function Editor({
                             ✕
                         </button>
 
+                        <div className="kce-modalHero">
+                            <div className="kce-modalHeroBadge">Plus</div>
+                            <div className="kce-modalHeroMedia">
+                                <div className="kce-modalHeroPlaceholder">
+                                    Upgrade image coming soon
+                                </div>
+                            </div>
+                        </div>
+
                         <div className="kce-modalTitle">Upgrade to Plus</div>
                         <div className="kce-modalText">
-                            Unlock all premium features:
-                            <ul className="kce-modalList">
-                                <li>All templates</li>
-                                <li>Light and dark template options</li>
-                                <li>Up to 12 work images</li>
-                                <li>Up to 12 services</li>
-                                <li>Up to 12 reviews</li>
-                            </ul>
+                            Unlock more flexibility and make your profile feel complete with access to premium tools and layouts.
                         </div>
+
+                        <ul className="kce-modalFeatureList">
+                            <li>All templates</li>
+                            <li>Light and dark template options</li>
+                            <li>Up to 12 work images</li>
+                            <li>Up to 12 services</li>
+                            <li>Up to 12 reviews</li>
+                        </ul>
 
                         <div className="kce-modalActions">
                             <button
@@ -394,7 +404,7 @@ export default function Editor({
 
                                         {locked ? (
                                             <span className="kce-premiumBadge" aria-hidden="true">
-                                                <img src={UpgradePlanIcon} alt="" />
+                                                <img src={TemplateLockIcon} alt="" />
                                             </span>
                                         ) : null}
                                     </button>
@@ -670,7 +680,7 @@ export default function Editor({
 
                                     {!isSubscribed && worksCount >= FREE_MAX ? (
                                         <span className="kce-premiumBadge" aria-hidden="true">
-                                            <img src={UpgradePlanIcon} alt="" />
+                                            <img src={TemplateLockIcon} alt="" />
                                         </span>
                                     ) : null}
                                 </button>
@@ -744,7 +754,7 @@ export default function Editor({
 
                                 {!isSubscribed && servicesCount >= FREE_MAX ? (
                                     <span className="kce-premiumBadge" aria-hidden="true">
-                                        <img src={UpgradePlanIcon} alt="" />
+                                        <img src={TemplateLockIcon} alt="" />
                                     </span>
                                 ) : null}
                             </button>
@@ -824,7 +834,7 @@ export default function Editor({
 
                                 {!isSubscribed && reviewsCount >= FREE_MAX ? (
                                     <span className="kce-premiumBadge" aria-hidden="true">
-                                        <img src={UpgradePlanIcon} alt="" />
+                                        <img src={TemplateLockIcon} alt="" />
                                     </span>
                                 ) : null}
                             </button>
