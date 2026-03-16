@@ -1099,25 +1099,7 @@ export default function MyProfile() {
               </section>
 
               <aside className="profiles-card myprofile-cardShell myprofile-previewCard">
-                <div className="myprofile-previewTop">
-                  <div className="myprofile-previewTopLeft">
-                    <h2 className="myprofile-previewTitle">Profile Preview</h2>
-                    <p className="myprofile-previewSub">Choose one to edit or share.</p>
-                  </div>
-
-                  <div className="myprofile-previewTopRight">
-                    <div className="profiles-pillRow myprofile-previewPills">
-                      <span className={`profiles-pill ${isLive ? "live" : "draft"}`}>
-                        {isLive ? "Live" : "Draft"}
-                      </span>
-                      <span className={`profiles-pill completion ${completionTone}`}>
-                        {completionPct >= 95 ? "Profile Complete" : `${completionPct}% Complete`}
-                      </span>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="myprofile-previewFrame">
+                <div className="myprofile-previewFrame myprofile-previewFrame--full">
                   <Preview
                     state={state}
                     isMobile={isMobile}
@@ -1130,6 +1112,9 @@ export default function MyProfile() {
                     showContactSection={showContactSection}
                     hasExchangeContact={hasExchangeContact}
                     visitUrl={visitUrl}
+                    isLive={isLive}
+                    completionPct={completionPct}
+                    completionTone={completionTone}
                     columnScrollStyle={{ height: "100%", maxHeight: "100%" }}
                   />
                 </div>

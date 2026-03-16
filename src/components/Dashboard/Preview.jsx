@@ -3,6 +3,8 @@ import { createPortal } from "react-dom";
 import { previewPlaceholders } from "../../store/businessCardStore";
 import "../../styling/dashboard/preview.css";
 
+import VisitProfileIcon from "../../assets/icons/VisitProfileIcon.svg";
+
 import Template1 from "./Template1";
 import Template2 from "./Template2";
 import Template3 from "./Template3";
@@ -11,7 +13,6 @@ import Template5 from "./Template5";
 
 const asArray = (v) => (Array.isArray(v) ? v : []);
 const asString = (v) => (typeof v === "string" ? v : "");
-const isBlobUrl = (v) => typeof v === "string" && v.startsWith("blob:");
 
 const getTemplateId = (raw) => {
     const t = (raw || "template-1").toString();
@@ -99,6 +100,56 @@ function PreviewEmptyState({ themeMode = "light" }) {
     );
 }
 
+function PreviewHeader({
+    isLive,
+    completionPct,
+    completionTone,
+    hasSavedData,
+    visitUrl,
+}) {
+    const completionLabel =
+        hasSavedData && completionPct >= 100
+            ? "Profile Complete"
+            : `${completionPct}% Complete`;
+
+    return (
+        <div className="preview-panel-top">
+            <div className="preview-panel-topMain">
+                <div className="preview-panel-topLeft">
+                    <h2 className="preview-panel-title">Profile Preview</h2>
+                    <p className="preview-panel-sub">See how your profile will look live.</p>
+                </div>
+
+                <div className="preview-panel-topRight">
+                    <div className="preview-panel-pills">
+                        <span className={`preview-panel-pill ${isLive ? "live" : "draft"}`}>
+                            {isLive ? "Live" : "Draft"}
+                        </span>
+
+                        <span className={`preview-panel-pill completion ${completionTone || "bad"}`}>
+                            {completionLabel}
+                        </span>
+                    </div>
+
+                    <a
+                        href={visitUrl || "#"}
+                        className="preview-panel-visitBtn"
+                        target="_blank"
+                        rel="noreferrer"
+                        aria-disabled={!visitUrl || visitUrl === "#"}
+                        onClick={(e) => {
+                            if (!visitUrl || visitUrl === "#") e.preventDefault();
+                        }}
+                    >
+                        <img src={VisitProfileIcon} alt="" aria-hidden="true" />
+                        <span>Visit Profile</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    );
+}
+
 export default function Preview({
     state,
     isMobile,
@@ -113,9 +164,12 @@ export default function Preview({
 
     hasExchangeContact,
     visitUrl,
+    isLive,
+    completionPct,
+    completionTone,
     columnScrollStyle,
 }) {
-    const [previewOpen, setPreviewOpen] = useState(true);
+    const [previewOpen] = useState(true);
     const mpWrapRef = useRef(null);
 
     const s = state || {};
@@ -390,6 +444,14 @@ export default function Preview({
         return (
             <div className="preview-scope myprofile-preview-wrapper" style={columnScrollStyle}>
                 <div className={`myprofile-preview template-${templateId} theme-${themeMode}`}>
+                    <PreviewHeader
+                        isLive={!!isLive}
+                        completionPct={Number(completionPct) || 0}
+                        completionTone={completionTone}
+                        hasSavedData={!!hasSavedData}
+                        visitUrl={visitUrl}
+                    />
+
                     <div className="mp-preview-wrap open" ref={mpWrapRef}>
                         {showEmptyPreview ? (
                             <PreviewEmptyState themeMode={themeMode} />
@@ -405,6 +467,14 @@ export default function Preview({
     return (
         <div className="preview-scope myprofile-preview-wrapper" style={columnScrollStyle}>
             <div className={`myprofile-preview template-${templateId} theme-${themeMode}`}>
+                <PreviewHeader
+                    isLive={!!isLive}
+                    completionPct={Number(completionPct) || 0}
+                    completionTone={completionTone}
+                    hasSavedData={!!hasSavedData}
+                    visitUrl={visitUrl}
+                />
+
                 {showEmptyPreview ? (
                     <div className="preview-empty-shell">
                         <PreviewEmptyState themeMode={themeMode} />
