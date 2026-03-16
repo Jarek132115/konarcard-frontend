@@ -93,7 +93,7 @@
 .cb-searchWrap {
     position: relative;
     width: 100%;
-    margin-top: 14px;
+    margin-top: 16px;
 }
 
 .cb-searchIcon {
@@ -190,7 +190,7 @@
 .cb-contactMetaGroup {
     margin-top: 8px;
     display: grid;
-    gap: 2px;
+    gap: 4px;
 }
 
 .cb-contactMeta {
@@ -199,6 +199,26 @@
     line-height: 1.45;
     font-weight: 500;
     color: #43506a;
+    overflow-wrap: anywhere;
+}
+
+.cb-contactMeta--withIcon {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+}
+
+.cb-contactMetaIcon {
+    width: 16px;
+    height: 16px;
+    display: block;
+    flex: 0 0 16px;
+    margin-top: 2px;
+    object-fit: contain;
+}
+
+.cb-contactMeta--withIcon span {
+    min-width: 0;
     overflow-wrap: anywhere;
 }
 
@@ -274,7 +294,7 @@
 }
 
 .cb-detailRows {
-    margin-top: 14px;
+    margin-top: 16px;
     display: grid;
 }
 
@@ -285,14 +305,6 @@
     align-items: start;
     padding: 14px 0;
     border-top: 1px solid rgba(15, 23, 42, 0.08);
-}
-
-.cb-detailRow:first-child {
-    border-top: 1px solid rgba(15, 23, 42, 0.08);
-}
-
-.cb-detailRow--message {
-    align-items: start;
 }
 
 .cb-detailLabel {

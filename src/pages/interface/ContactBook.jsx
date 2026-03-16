@@ -9,6 +9,8 @@ import { toast } from "react-hot-toast";
 
 import DeleteIcon from "../../assets/icons/ShareOnDelete.svg";
 import SaveIcon from "../../assets/icons/SaveProfileIcon.svg";
+import ContactBookPhoneIcon from "../../assets/icons/ContactBookPhone.svg";
+import ContactBookEmailIcon from "../../assets/icons/ContactBookEmail.svg";
 
 const nonEmpty = (v) => typeof v === "string" && v.trim().length > 0;
 
@@ -252,8 +254,25 @@ export default function ContactBook() {
                                                         <div className="cb-contactCard-title">{c.name || "Unknown"}</div>
 
                                                         <div className="cb-contactMetaGroup">
-                                                            <div className="cb-contactMeta">{nonEmpty(c.phone) ? c.phone : "No phone"}</div>
-                                                            <div className="cb-contactMeta">{nonEmpty(c.email) ? c.email : "No email"}</div>
+                                                            <div className="cb-contactMeta cb-contactMeta--withIcon">
+                                                                <img
+                                                                    src={ContactBookPhoneIcon}
+                                                                    alt=""
+                                                                    aria-hidden="true"
+                                                                    className="cb-contactMetaIcon"
+                                                                />
+                                                                <span>{nonEmpty(c.phone) ? c.phone : "No phone"}</span>
+                                                            </div>
+
+                                                            <div className="cb-contactMeta cb-contactMeta--withIcon">
+                                                                <img
+                                                                    src={ContactBookEmailIcon}
+                                                                    alt=""
+                                                                    aria-hidden="true"
+                                                                    className="cb-contactMetaIcon"
+                                                                />
+                                                                <span>{nonEmpty(c.email) ? c.email : "No email"}</span>
+                                                            </div>
                                                         </div>
 
                                                         <div className="cb-contactDate">Received: {c.received || "—"}</div>
