@@ -8,8 +8,15 @@ import LinkedInIcon from "../../assets/icons/Template1Icon-LinkedIn.svg";
 import XIcon from "../../assets/icons/Template1Icon-X.svg";
 import TikTokIcon from "../../assets/icons/Template1Icon-TikTok.svg";
 
+/* CTA icons */
+import SaveProfileIcon from "../../assets/icons/SaveProfileIcon.svg";
+import ResetProfileIcon from "../../assets/icons/ResetProfileIcon.svg";
+
 /* Locked template icon */
 import TemplateLockIcon from "../../assets/icons/TemplateLockIcon.svg";
+
+/* Upgrade modal image */
+import UpgradeToPlusImage from "../../assets/images/UpgradeToPlus.png";
 
 /* Editor template thumbs - Light */
 import EditorTemplate1Light from "../../assets/images/editor-templates/EditorTemplate-1Light.png";
@@ -254,10 +261,13 @@ export default function Editor({
 
                 <div className="kce-topRight">
                     <button type="button" className="kce-btn kce-btnGhost" onClick={onResetPage}>
-                        Reset
+                        <img src={ResetProfileIcon} alt="" className="kce-btnIcon kce-btnIconReset" />
+                        <span>Reset</span>
                     </button>
+
                     <button type="button" className="kce-btn kce-btnPrimary" onClick={onSubmit}>
-                        Save Profile
+                        <img src={SaveProfileIcon} alt="" className="kce-btnIcon kce-btnIconSave" />
+                        <span>Save Profile</span>
                     </button>
                 </div>
             </div>
@@ -267,31 +277,35 @@ export default function Editor({
             {upgradeOpen ? (
                 <div className="kce-modalOverlay" role="dialog" aria-modal="true" aria-label="Upgrade to Plus">
                     <div className="kce-modal" onClick={(e) => e.stopPropagation()}>
-                        <button type="button" className="kce-modalClose" onClick={closeUpgrade} aria-label="Close">
-                            ✕
-                        </button>
-
-                        <div className="kce-modalHero">
+                        <div className="kce-modalTopBar">
                             <div className="kce-modalHeroBadge">Plus</div>
-                            <div className="kce-modalHeroMedia">
-                                <div className="kce-modalHeroPlaceholder">
-                                    Upgrade image coming soon
-                                </div>
-                            </div>
+
+                            <button
+                                type="button"
+                                className="kce-modalClose"
+                                onClick={closeUpgrade}
+                                aria-label="Close"
+                            >
+                                ✕
+                            </button>
+                        </div>
+
+                        <div className="kce-modalHeroMedia">
+                            <img src={UpgradeToPlusImage} alt="" className="kce-modalHeroImg" />
                         </div>
 
                         <div className="kce-modalTitle">Upgrade to Plus</div>
                         <div className="kce-modalText">
-                            Unlock more flexibility and make your profile feel complete with access to premium tools and layouts.
+                            Unlock more flexibility and grow your profile with premium tools and features.
                         </div>
 
-                        <ul className="kce-modalFeatureList">
-                            <li>All templates</li>
-                            <li>Light and dark template options</li>
-                            <li>Up to 12 work images</li>
-                            <li>Up to 12 services</li>
-                            <li>Up to 12 reviews</li>
-                        </ul>
+                        <div className="kce-modalFeaturePills">
+                            <span className="kce-modalFeaturePill">Unlock all 5 templates</span>
+                            <span className="kce-modalFeaturePill">Add up to 12 images</span>
+                            <span className="kce-modalFeaturePill">Add up to 12 services</span>
+                            <span className="kce-modalFeaturePill">Add up to 12 reviews</span>
+                            <span className="kce-modalFeaturePill">Unlock detailed analytics</span>
+                        </div>
 
                         <div className="kce-modalActions">
                             <button
@@ -308,12 +322,6 @@ export default function Editor({
                             <button type="button" className="kce-btn kce-btnGhost" onClick={closeUpgrade}>
                                 Not now
                             </button>
-                        </div>
-
-                        <div className="kce-modalFoot">
-                            {upgradeContext === "templates"
-                                ? "This template is a Plus feature."
-                                : "This action is a Plus feature."}
                         </div>
                     </div>
 
@@ -947,7 +955,8 @@ export default function Editor({
 
                 <div className="kce-bottomSaveWrap">
                     <button type="button" className="kce-btn kce-btnPrimary kce-bottomSaveBtn" onClick={onSubmit}>
-                        Save Profile
+                        <img src={SaveProfileIcon} alt="" className="kce-btnIcon kce-btnIconSave" />
+                        <span>Save Profile</span>
                     </button>
                 </div>
 

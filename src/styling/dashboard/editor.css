@@ -76,6 +76,10 @@
     transition: transform 0.12s ease, box-shadow 0.15s ease, background-color 0.15s ease;
     background: #fff;
     color: var(--kc-text-primary, #0f172a);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
 }
 
 .kce-btn:hover {
@@ -102,6 +106,22 @@
 .kce-btnGhost {
     background: #fff;
     color: #0b1220;
+}
+
+.kce-btnIcon {
+    width: 16px;
+    height: 16px;
+    display: block;
+    flex: 0 0 16px;
+    object-fit: contain;
+}
+
+.kce-btnIconReset {
+    filter: brightness(0) saturate(100%) invert(7%) sepia(17%) saturate(1609%) hue-rotate(193deg) brightness(95%) contrast(95%);
+}
+
+.kce-btnIconSave {
+    filter: brightness(0) saturate(100%) invert(100%) sepia(0%) saturate(7455%) hue-rotate(1deg) brightness(105%) contrast(105%);
 }
 
 /* =========================
@@ -711,35 +731,21 @@
     border: 1px solid rgba(15, 23, 42, 0.10);
     background: #ffffff;
     box-shadow: 0 30px 80px rgba(15, 23, 42, 0.22);
-    padding: 20px;
+    padding: 18px 18px 20px;
     font-family: "Inter", sans-serif;
 }
 
-.kce-modalClose {
-    position: absolute;
-    top: 16px;
-    right: 16px;
-    width: 42px;
-    height: 42px;
-    border-radius: 14px;
-    border: 1px solid rgba(15, 23, 42, 0.10);
-    background: rgba(255, 255, 255, 0.96);
-    cursor: pointer;
-    font-weight: 500;
-    font-size: 24px;
-    line-height: 1;
-    color: #0f172a;
-}
-
-.kce-modalHero {
-    display: grid;
+.kce-modalTopBar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
     gap: 12px;
-    margin-bottom: 18px;
-    padding-right: 56px;
+    margin-bottom: 12px;
 }
 
 .kce-modalHeroBadge {
     width: fit-content;
+    min-height: 30px;
     padding: 8px 12px;
     border-radius: 999px;
     background: rgba(249, 115, 22, 0.10);
@@ -747,26 +753,39 @@
     font-size: 12px;
     font-weight: 700;
     line-height: 1;
+    display: inline-flex;
+    align-items: center;
+}
+
+.kce-modalClose {
+    appearance: none;
+    border: 0;
+    background: transparent;
+    padding: 0;
+    margin: 0;
+    min-height: 30px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 30px;
+    line-height: 1;
+    color: #0f172a;
+    cursor: pointer;
 }
 
 .kce-modalHeroMedia {
     width: 100%;
+    aspect-ratio: 4 / 3;
+    border-radius: 18px;
+    overflow: hidden;
+    margin-bottom: 8px;
 }
 
-.kce-modalHeroPlaceholder {
+.kce-modalHeroImg {
     width: 100%;
-    min-height: 170px;
-    border-radius: 18px;
-    border: 1px dashed rgba(15, 23, 42, 0.14);
-    background:
-        linear-gradient(180deg, rgba(249, 250, 251, 1) 0%, rgba(245, 245, 245, 1) 100%);
-    display: grid;
-    place-items: center;
-    text-align: center;
-    padding: 18px;
-    color: rgba(71, 85, 105, 0.88);
-    font-size: 13px;
-    font-weight: 600;
+    height: 100%;
+    display: block;
+    object-fit: cover;
 }
 
 .kce-modalTitle {
@@ -775,7 +794,8 @@
     line-height: 1.05;
     letter-spacing: -0.03em;
     color: rgba(15, 23, 42, 0.98);
-    margin: 0 0 10px;
+    margin: 0 0 4px;
+    text-align: center;
 }
 
 .kce-modalText {
@@ -783,54 +803,50 @@
     font-weight: 500;
     color: rgba(71, 85, 105, 0.96);
     line-height: 1.55;
-    margin-bottom: 16px;
+    margin: 0 0 8px;
+    text-align: center;
 }
 
-.kce-modalFeatureList {
-    margin: 0;
-    padding: 0;
-    list-style: none;
-    display: grid;
+.kce-modalFeaturePills {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
     gap: 10px;
+    padding: 0 16px;
+    margin-bottom: 18px;
 }
 
-.kce-modalFeatureList li {
-    position: relative;
-    padding-left: 20px;
-    font-size: 14px;
-    font-weight: 600;
-    color: rgba(15, 23, 42, 0.92);
-    line-height: 1.4;
-}
-
-.kce-modalFeatureList li::before {
-    content: "";
-    position: absolute;
-    left: 0;
-    top: 8px;
-    width: 8px;
-    height: 8px;
+.kce-modalFeaturePill {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 34px;
+    padding: 8px 14px;
     border-radius: 999px;
-    background: var(--kc-accent-primary, #f97316);
+    background: #f5f5f5;
+    border: 1px solid rgba(15, 23, 42, 0.08);
+    color: rgba(15, 23, 42, 0.92);
+    font-size: 12px;
+    font-weight: 700;
+    line-height: 1.2;
+    text-align: center;
 }
 
 .kce-modalActions {
     display: flex;
     gap: 10px;
-    margin-top: 22px;
+    margin-top: 0;
     flex-wrap: wrap;
 }
 
-.kce-modalFoot {
-    margin-top: 12px;
-    font-size: 12px;
-    font-weight: 600;
-    color: rgba(71, 85, 105, 0.86);
+.kce-modalActions .kce-btn {
+    flex: 1 1 0;
+    justify-content: center;
 }
 
 @media (max-width: 560px) {
     .kce-modal {
-        padding: 16px;
+        padding: 16px 16px 18px;
         border-radius: 22px;
     }
 
@@ -838,13 +854,12 @@
         font-size: 24px;
     }
 
-    .kce-modalHero {
-        padding-right: 48px;
+    .kce-modalHeroMedia {
+        border-radius: 16px;
     }
 
-    .kce-modalHeroPlaceholder {
-        min-height: 140px;
-        border-radius: 16px;
+    .kce-modalFeaturePills {
+        padding: 0 8px;
     }
 
     .kce-modalActions {
@@ -854,7 +869,6 @@
 
     .kce-modalActions .kce-btn {
         width: 100%;
-        justify-content: center;
     }
 }
 
