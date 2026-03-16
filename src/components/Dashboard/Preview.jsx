@@ -27,6 +27,9 @@ const getTemplateId = (raw) => {
 
 const SECTION_ORDER = ["main", "about", "work", "services", "reviews", "contact"];
 
+const hasValue = (v) => typeof v === "string" && v.trim().length > 0;
+const hasAsset = (v) => typeof v === "string" && v.trim().length > 0;
+
 function IframePreview({ className, children, title = "Preview" }) {
     const iframeRef = useRef(null);
     const [mountNode, setMountNode] = useState(null);
@@ -86,6 +89,16 @@ function IframePreview({ className, children, title = "Preview" }) {
     );
 }
 
+function PreviewEmptyState({ themeMode = "light" }) {
+    return (
+        <div className={`preview-empty-state theme-${themeMode}`}>
+            <div className="preview-empty-surface">
+                <p className="preview-empty-text">Add your info to see your preview.</p>
+            </div>
+        </div>
+    );
+}
+
 export default function Preview({
     state,
     isMobile,
@@ -107,10 +120,58 @@ export default function Preview({
 
     const s = state || {};
     const ph = previewPlaceholders || {};
-    const shouldShowPlaceholders = !hasSavedData;
 
     const templateId = getTemplateId(s.template_id || s.templateId || "template-1");
     const themeMode = asString(s.themeMode || s.pageTheme || "light") || "light";
+
+    const hasAnyEnteredContent = useMemo(() => {
+        const textFields = [
+            s.business_name,
+            s.businessName,
+            s.mainHeading,
+            s.main_heading,
+            s.trade_title,
+            s.subHeading,
+            s.sub_heading,
+            s.location,
+            s.full_name,
+            s.job_title,
+            s.bio,
+            s.contact_email,
+            s.phone_number,
+            s.facebook_url,
+            s.instagram_url,
+            s.linkedin_url,
+            s.x_url,
+            s.tiktok_url,
+        ];
+
+        const hasText = textFields.some(hasValue);
+
+        const hasImages = [
+            s.coverPhotoPreview,
+            s.coverPhoto,
+            s.cover_photo,
+            s.logoPreview,
+            s.logo,
+            s.avatarPreview,
+            s.avatar,
+            s.avatar_url,
+        ].some(hasAsset);
+
+        const hasWorks = asArray(s.workImages || s.works).length > 0;
+        const hasServices = asArray(s.services).some(
+            (item) => hasValue(item?.name) || hasValue(item?.description) || hasValue(item?.price)
+        );
+        const hasReviews = asArray(s.reviews).some(
+            (item) => hasValue(item?.name) || hasValue(item?.text) || Number(item?.rating) > 0
+        );
+
+        return hasText || hasImages || hasWorks || hasServices || hasReviews;
+    }, [s]);
+
+    const shouldShowPlaceholders = hasAnyEnteredContent && !hasSavedData;
+    const showEmptyPreview = !hasAnyEnteredContent;
 
     const vm = useMemo(() => {
         const businessName =
@@ -152,23 +213,23 @@ export default function Preview({
 
         const cover =
             s.coverPhotoPreview ||
-            (isBlobUrl(s.coverPhoto) ? "" : s.coverPhoto) ||
-            (isBlobUrl(s.cover_photo) ? "" : s.cover_photo) ||
+            s.coverPhoto ||
+            s.cover_photo ||
             (shouldShowPlaceholders ? ph.coverPhoto : "");
 
         const logo =
             s.logoPreview ||
-            (isBlobUrl(s.logo) ? "" : s.logo) ||
+            s.logo ||
             s.avatarPreview ||
-            (isBlobUrl(s.avatar) ? "" : s.avatar) ||
+            s.avatar ||
             (shouldShowPlaceholders ? asString(ph.logo) : "");
 
         const avatar =
             s.avatarPreview ||
-            (isBlobUrl(s.avatar) ? "" : s.avatar) ||
-            (isBlobUrl(s.avatar_url) ? "" : s.avatar_url) ||
+            s.avatar ||
+            s.avatar_url ||
             s.logoPreview ||
-            (isBlobUrl(s.logo) ? "" : s.logo) ||
+            s.logo ||
             (shouldShowPlaceholders ? asString(ph.avatar) : "");
 
         const worksRaw = asArray(s.workImages || s.works);
@@ -329,32 +390,12 @@ export default function Preview({
         return (
             <div className="preview-scope myprofile-preview-wrapper" style={columnScrollStyle}>
                 <div className={`myprofile-preview template-${templateId} theme-${themeMode}`}>
-                    <div className="mp-toolbar" role="tablist" aria-label="Preview controls">
-                        <button
-                            type="button"
-                            role="tab"
-                            aria-selected={previewOpen}
-                            className={`mp-tab ${previewOpen ? "active" : ""}`}
-                            onClick={() => setPreviewOpen((x) => !x)}
-                        >
-                            {previewOpen ? "Hide Preview" : "Show Preview"}
-                        </button>
-
-                        <a
-                            role="tab"
-                            aria-selected={!previewOpen}
-                            className={`mp-tab visit ${!previewOpen ? "active" : ""}`}
-                            href={visitUrl || "#"}
-                            target="_blank"
-                            rel="noreferrer"
-                            onClick={() => setPreviewOpen(false)}
-                        >
-                            Visit Page
-                        </a>
-                    </div>
-
-                    <div className={`mp-preview-wrap ${previewOpen ? "open" : "closed"}`} ref={mpWrapRef}>
-                        <TemplateComponent {...templateProps} />
+                    <div className="mp-preview-wrap open" ref={mpWrapRef}>
+                        {showEmptyPreview ? (
+                            <PreviewEmptyState themeMode={themeMode} />
+                        ) : (
+                            <TemplateComponent {...templateProps} />
+                        )}
                     </div>
                 </div>
             </div>
@@ -364,11 +405,17 @@ export default function Preview({
     return (
         <div className="preview-scope myprofile-preview-wrapper" style={columnScrollStyle}>
             <div className={`myprofile-preview template-${templateId} theme-${themeMode}`}>
-                <IframePreview className="preview-iframe-mode" title={`Template Preview (${templateId})`}>
-                    <div className="preview-iframe-padding">
-                        <TemplateComponent {...templateProps} />
+                {showEmptyPreview ? (
+                    <div className="preview-empty-shell">
+                        <PreviewEmptyState themeMode={themeMode} />
                     </div>
-                </IframePreview>
+                ) : (
+                    <IframePreview className="preview-iframe-mode" title={`Template Preview (${templateId})`}>
+                        <div className="preview-iframe-padding">
+                            <TemplateComponent {...templateProps} />
+                        </div>
+                    </IframePreview>
+                )}
             </div>
         </div>
     );
