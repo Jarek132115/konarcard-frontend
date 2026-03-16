@@ -1,183 +1,311 @@
-/* frontend/src/styling/dashboard/helpcentreinterface.css
-   Help Centre v3
-   - No topics/rail
-   - 10 video cards
-   - 24px spacing system
-*/
-
 :root {
-  --hc3-border: rgba(15, 23, 42, 0.10);
-  --hc3-shadow: 0 10px 22px rgba(15, 23, 42, 0.04);
-  --hc3-card: #fafafa;
+  --hc4-ink: var(--kc-text-primary, #0f172a);
+  --hc4-muted: var(--kc-text-secondary, #5b667b);
+  --hc4-border: rgba(15, 23, 42, 0.10);
+  --hc4-softLine: rgba(15, 23, 42, 0.08);
+  --hc4-radius: 22px;
+  --hc4-softShadow: 0 0 1px rgba(0, 0, 0, 0.25);
+  --hc4-orange: #f97316;
+  --hc4-orange-dark: #ea580c;
+  --hc4-navy: #0b1635;
 }
 
-.hc3-shell {
+.hc4-shell {
   width: 100%;
+  margin: 0;
+  padding: 0;
   display: flex;
   flex-direction: column;
-  gap: 24px;
-  /* ✅ header -> content gap */
+  gap: 14px;
 }
 
-/* PageHeader already handles padding/shape. This ensures we don't add extra spacing */
-.hc3-shell .ph2-wrap {
+.hc4-shell .ph2-wrap {
   margin-bottom: 0;
 }
 
-/* Header right slot */
-.hc3-headRight {
-  display: inline-flex;
+/* -------------------------------------------------------
+   SUPPORT BANNER
+-------------------------------------------------------- */
+.hc4-supportBanner {
+  background: #ffffff;
+  border: 1px solid var(--hc4-border);
+  border-radius: 24px;
+  box-shadow: var(--hc4-softShadow);
+  padding: 24px;
+  display: flex;
   align-items: center;
-  justify-content: flex-end;
-  gap: 10px;
-  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 18px;
 }
 
-.hc3-pillLink {
-  text-decoration: none;
+.hc4-supportLeft {
+  display: flex;
+  align-items: flex-start;
+  gap: 18px;
+  min-width: 0;
 }
 
-.hc3-pillLink:hover {
-  text-decoration: underline;
+.hc4-supportIcon {
+  width: 46px;
+  height: 46px;
+  flex: 0 0 46px;
+  display: grid;
+  place-items: center;
+  color: var(--hc4-orange);
 }
 
-/* Grid of videos */
-.hc3-grid {
+.hc4-supportIconSvg {
+  width: 44px;
+  height: 44px;
+  display: block;
+}
+
+.hc4-supportCopy {
+  min-width: 0;
+}
+
+.hc4-supportTitle {
+  margin: 0;
+  font-family: "Cal Sans", sans-serif;
+  font-size: 20px;
+  line-height: 1.1;
+  letter-spacing: -0.01em;
+  color: var(--hc4-ink);
+}
+
+.hc4-supportText {
+  margin: 8px 0 0;
+  font-family: "Inter", sans-serif;
+  font-size: 16px;
+  line-height: 1.5;
+  color: var(--hc4-muted);
+}
+
+.hc4-liveBtn {
+  appearance: none;
+  border: 0;
+  background: var(--hc4-orange);
+  color: #ffffff;
+  border-radius: 12px;
+  min-height: 44px;
+  padding: 0 18px;
+  font-family: "Inter", sans-serif;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background-color 0.15s ease, transform 0.12s ease, box-shadow 0.15s ease;
+}
+
+.hc4-liveBtn:hover {
+  background: var(--hc4-orange-dark);
+  transform: translateY(-1px);
+}
+
+.hc4-liveBtn:active {
+  transform: translateY(0);
+}
+
+/* -------------------------------------------------------
+   GRID
+-------------------------------------------------------- */
+.hc4-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 24px;
-  /* ✅ consistent */
+  gap: 16px;
   align-items: stretch;
 }
 
-/* Card */
-.hc3-card {
-  background: var(--hc3-card);
-  border: 1px solid var(--hc3-border);
-  border-radius: 22px;
-  box-shadow: var(--hc3-shadow);
-  padding: 24px;
-
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-
-  min-width: 0;
-}
-
-.hc3-top {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 16px;
-}
-
-.hc3-titleWrap {
-  display: flex;
-  align-items: flex-start;
-  gap: 12px;
-  min-width: 0;
-  flex: 1;
-}
-
-.hc3-ico {
-  width: 44px;
-  height: 44px;
-  border-radius: 16px;
-  background: rgba(249, 115, 22, 0.10);
-  border: 1px solid rgba(249, 115, 22, 0.16);
+/* -------------------------------------------------------
+   CARD
+-------------------------------------------------------- */
+.hc4-card {
+  background: #ffffff;
+  border: 1px solid var(--hc4-border);
+  border-radius: 24px;
+  box-shadow: var(--hc4-softShadow);
+  padding: 22px;
   display: grid;
-  place-items: center;
-  font-size: 18px;
-  flex: 0 0 auto;
-}
-
-.hc3-txt {
-  min-width: 0;
-  display: grid;
-  gap: 4px;
-}
-
-.hc3-title {
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.hc3-desc {
-  margin: 0;
-  display: -webkit-box;
-  line-clamp: 2;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-}
-
-/* Meta chips */
-.hc3-meta {
-  display: inline-flex;
+  grid-template-columns: minmax(180px, 220px) minmax(0, 1fr);
+  gap: 20px;
   align-items: center;
-  gap: 8px;
-  flex: 0 0 auto;
+  min-width: 0;
 }
 
-.hc3-chip {
+.hc4-cardMedia {
+  width: 100%;
+  min-height: 160px;
+  border-radius: 22px;
+  border: 1px solid rgba(15, 23, 42, 0.08);
+  background: #fafafa;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.hc4-cardMediaInner {
+  font-family: "Cal Sans", sans-serif;
+  font-size: 44px;
+  line-height: 1;
+  color: #101a38;
+  letter-spacing: -0.03em;
+}
+
+.hc4-cardBody {
+  min-width: 0;
+  display: grid;
+  gap: 10px;
+  align-content: center;
+}
+
+.hc4-cardTitle {
+  margin: 0;
+  font-family: "Cal Sans", sans-serif;
+  font-size: 20px;
+  line-height: 1.15;
+  letter-spacing: -0.01em;
+  color: var(--hc4-ink);
+}
+
+.hc4-cardDesc {
+  margin: 0;
+  font-family: "Inter", sans-serif;
+  font-size: 16px;
+  line-height: 1.55;
+  color: var(--hc4-muted);
+}
+
+.hc4-cardLength {
+  font-family: "Inter", sans-serif;
+  font-size: 15px;
+  line-height: 1.4;
+  font-style: italic;
+  color: var(--hc4-muted);
+}
+
+.hc4-watchBtn {
+  appearance: none;
+  border: 0;
+  background: var(--hc4-navy);
+  color: #ffffff;
+  border-radius: 14px;
+  min-height: 42px;
+  width: fit-content;
+  padding: 0 18px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  padding: 7px 10px;
-  border-radius: 999px;
-  border: 1px solid rgba(15, 23, 42, 0.12);
-  background: rgba(15, 23, 42, 0.03);
-  font-family: "Inter", sans-serif;
-  font-weight: 700;
-  font-size: 12px;
-  color: rgba(15, 23, 42, 0.80);
-  white-space: nowrap;
-}
-
-.hc3-chip--ghost {
-  background: #ffffff;
-}
-
-/* Actions */
-.hc3-actions {
-  display: flex;
   gap: 10px;
-  flex-wrap: wrap;
-  align-items: center;
+  font-family: "Inter", sans-serif;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.12s ease, box-shadow 0.15s ease, background-color 0.15s ease;
 }
 
-/* Responsive */
-@media (max-width: 1100px) {
-  .hc3-grid {
+.hc4-watchBtn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 10px 22px rgba(15, 23, 42, 0.12);
+}
+
+.hc4-watchBtn:active {
+  transform: translateY(0);
+}
+
+.hc4-watchBtnIcon {
+  width: 18px;
+  height: 18px;
+  display: block;
+  flex: 0 0 18px;
+}
+
+/* -------------------------------------------------------
+   RESPONSIVE
+-------------------------------------------------------- */
+@media (max-width: 1200px) {
+  .hc4-grid {
     grid-template-columns: 1fr;
   }
-
-  .hc3-headRight {
-    width: 100%;
-    justify-content: flex-start;
-  }
 }
 
-@media (max-width: 520px) {
-  .hc3-headRight {
+@media (max-width: 900px) {
+  .hc4-supportBanner {
     flex-direction: column;
     align-items: stretch;
   }
 
-  .hc3-headRight .kx-btn,
-  .hc3-headRight .kc-pill {
+  .hc4-liveBtn {
     width: 100%;
-    justify-content: center;
   }
 
-  .hc3-actions .kx-btn {
-    width: 100%;
-    justify-content: center;
+  .hc4-card {
+    grid-template-columns: 1fr;
+    gap: 16px;
   }
 
-  .hc3-title {
-    white-space: normal;
+  .hc4-cardMedia {
+    min-height: 180px;
+  }
+}
+
+@media (max-width: 640px) {
+  .hc4-shell {
+    gap: 12px;
+  }
+
+  .hc4-supportBanner {
+    padding: 18px;
+    border-radius: 20px;
+  }
+
+  .hc4-supportLeft {
+    gap: 14px;
+  }
+
+  .hc4-supportIcon {
+    width: 40px;
+    height: 40px;
+    flex-basis: 40px;
+  }
+
+  .hc4-supportIconSvg {
+    width: 38px;
+    height: 38px;
+  }
+
+  .hc4-supportTitle {
+    font-size: 18px;
+  }
+
+  .hc4-supportText {
+    font-size: 14px;
+  }
+
+  .hc4-card {
+    padding: 16px;
+    border-radius: 20px;
+  }
+
+  .hc4-cardMedia {
+    min-height: 150px;
+    border-radius: 18px;
+  }
+
+  .hc4-cardMediaInner {
+    font-size: 36px;
+  }
+
+  .hc4-cardTitle {
+    font-size: 18px;
+  }
+
+  .hc4-cardDesc,
+  .hc4-cardLength {
+    font-size: 14px;
+  }
+
+  .hc4-watchBtn {
+    width: 100%;
   }
 }

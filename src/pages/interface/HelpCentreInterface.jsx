@@ -1,6 +1,4 @@
-// src/pages/interface/HelpCentreInterface.jsx
 import React, { useContext, useMemo } from "react";
-import { Link } from "react-router-dom";
 import DashboardLayout from "../../components/Dashboard/DashboardLayout";
 import PageHeader from "../../components/Dashboard/PageHeader";
 import "../../styling/dashboard/helpcentreinterface.css";
@@ -12,14 +10,8 @@ export default function HelpCentreInterface() {
   const { user: authUser } = useContext(AuthContext);
 
   const userId = authUser?._id;
-  const userUsername = authUser?.username;
 
-  // keep your consistency hook
   useFetchBusinessCard(userId);
-
-  const currentProfileUrl = userUsername
-    ? `https://www.konarcard.com/u/${userUsername}`
-    : "";
 
   const openChat = () => {
     try {
@@ -33,146 +25,124 @@ export default function HelpCentreInterface() {
     () => [
       {
         id: "v1",
-        icon: "🚀",
-        title: "Getting started (2 minutes)",
-        desc: "Create your first profile, add the essentials, and share your link.",
-        length: "2:08",
-        level: "Beginner",
+        title: "Getting Started",
+        desc: "Set up your first profile and share it.",
+        length: "86 second video",
       },
       {
         id: "v2",
-        icon: "🧩",
-        title: "Edit your profile like a pro",
-        desc: "Update services, add links, and keep your details always current.",
-        length: "3:12",
-        level: "Beginner",
+        title: "Edit Your Profile",
+        desc: "Update your details, services, and contact info.",
+        length: "94 second video",
       },
       {
         id: "v3",
-        icon: "📸",
-        title: "Add photos that build trust",
-        desc: "Upload the right images to show proof, quality, and your best work.",
-        length: "2:41",
-        level: "Beginner",
+        title: "Add Photos",
+        desc: "Upload clean images that build trust and showcase your work.",
+        length: "73 second video",
       },
       {
         id: "v4",
-        icon: "⭐",
-        title: "Collect reviews (the simple method)",
-        desc: "Ask at the right moment and display reviews to win more quotes.",
-        length: "4:05",
-        level: "Intermediate",
+        title: "Collect Reviews",
+        desc: "Display customer reviews to help win more work.",
+        length: "102 second video",
       },
       {
         id: "v5",
-        icon: "🔗",
-        title: "Share your profile link (fast)",
-        desc: "Copy + send to customers, add to WhatsApp, and post to socials.",
-        length: "2:22",
-        level: "Beginner",
+        title: "Share Your Link",
+        desc: "Send your profile fast and make it easy for customers to save.",
+        length: "68 second video",
       },
       {
         id: "v6",
-        icon: "📲",
-        title: "Using your KonarCard (tap-to-share)",
-        desc: "How tap works, what customers see, and best practices on-site.",
-        length: "3:48",
-        level: "Beginner",
+        title: "Use Your KonarCard",
+        desc: "Understand tap-to-share and how customers view your profile.",
+        length: "91 second video",
       },
       {
         id: "v7",
-        icon: "🎨",
-        title: "Branding & themes",
-        desc: "Pick a clean theme, match colours, and keep everything consistent.",
-        length: "3:25",
-        level: "Intermediate",
+        title: "Branding & Themes",
+        desc: "Keep your profile looking clean, clear, and consistent.",
+        length: "88 second video",
       },
       {
         id: "v8",
-        icon: "📈",
-        title: "Analytics: understand what’s working",
-        desc: "See profile views, taps, and link clicks — then improve your results.",
-        length: "4:16",
-        level: "Intermediate",
-      },
-      {
-        id: "v9",
-        icon: "👥",
-        title: "Contact Book: follow up properly",
-        desc: "Track people who saved you and message them at the right time.",
-        length: "3:03",
-        level: "Intermediate",
-      },
-      {
-        id: "v10",
-        icon: "🛠️",
-        title: "Troubleshooting (quick fixes)",
-        desc: "If tap/share isn’t working, fix it in under 60 seconds.",
-        length: "1:18",
-        level: "Beginner",
+        title: "Analytics Basics",
+        desc: "See what’s working and improve your results over time.",
+        length: "97 second video",
       },
     ],
     []
   );
 
-  const headerRight = (
-    <div className="hc3-headRight">
-      {currentProfileUrl ? (
-        <a className="kc-pill hc3-pillLink" href={currentProfileUrl} target="_blank" rel="noreferrer">
-          Visit your profile
-        </a>
-      ) : (
-        <span className="kc-pill">Profile: —</span>
-      )}
-
-      <button type="button" className="kx-btn kx-btn--white" onClick={openChat}>
-        Live chat
-      </button>
-
-      <Link to="/contact" className="kx-btn kx-btn--orange">
-        Contact support
-      </Link>
-    </div>
-  );
-
   return (
     <DashboardLayout title={null} subtitle={null} hideDesktopHeader>
-      <div className="hc3-shell">
+      <div className="hc4-shell">
         <PageHeader
-          title="Help Centre"
-          subtitle="Watch quick tutorials and follow step-by-step guides."
-          rightSlot={headerRight}
+          title="Help Center"
+          subtitle="Find quick answers, tutorials, and best practices."
+          rightSlot={null}
         />
 
-        <section className="hc3-grid" aria-label="Help videos">
-          {videos.map((v) => (
-            <article key={v.id} className="hc3-card">
-              <div className="hc3-top">
-                <div className="hc3-titleWrap">
-                  <div className="hc3-ico" aria-hidden="true">
-                    {v.icon}
-                  </div>
+        <section className="hc4-supportBanner">
+          <div className="hc4-supportLeft">
+            <div className="hc4-supportIcon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" className="hc4-supportIconSvg">
+                <path
+                  d="M7 17l-4 4V6a3 3 0 0 1 3-3h8a3 3 0 0 1 3 3v8a3 3 0 0 1-3 3H7Zm10-3h1a3 3 0 0 0 3-3V7a3 3 0 0 0-3-3h-1"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="1.8"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+              </svg>
+            </div>
 
-                  <div className="hc3-txt">
-                    <div className="kc-title hc3-title">{v.title}</div>
-                    <div className="kc-body hc3-desc">{v.desc}</div>
-                  </div>
-                </div>
+            <div className="hc4-supportCopy">
+              <h2 className="hc4-supportTitle">We’re here to help</h2>
+              <p className="hc4-supportText">
+                Live chat is the quickest way to get support. Email is available anytime.
+              </p>
+            </div>
+          </div>
 
-                <div className="hc3-meta">
-                  <span className="hc3-chip">{v.level}</span>
-                  <span className="hc3-chip hc3-chip--ghost">{v.length}</span>
-                </div>
+          <button
+            type="button"
+            className="hc4-liveBtn"
+            onClick={openChat}
+          >
+            Start Live Chat
+          </button>
+        </section>
+
+        <section className="hc4-grid" aria-label="Help videos">
+          {videos.map((video) => (
+            <article key={video.id} className="hc4-card">
+              <div className="hc4-cardMedia" aria-hidden="true">
+                <div className="hc4-cardMediaInner">Image</div>
               </div>
 
-              <div className="hc3-actions">
-                {/* ✅ does nothing for now */}
-                <button type="button" className="kx-btn kx-btn--black" onClick={() => { }}>
-                  Watch video
-                </button>
+              <div className="hc4-cardBody">
+                <h3 className="hc4-cardTitle">{video.title}</h3>
+                <p className="hc4-cardDesc">{video.desc}</p>
+                <div className="hc4-cardLength">{video.length}</div>
 
-                <button type="button" className="kx-btn kx-btn--white" onClick={openChat}>
-                  Live chat
+                <button
+                  type="button"
+                  className="hc4-watchBtn"
+                  onClick={() => { }}
+                >
+                  <svg viewBox="0 0 24 24" className="hc4-watchBtnIcon" aria-hidden="true">
+                    <path
+                      d="M8 6.5v11l9-5.5-9-5.5Z"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="1.8"
+                      strokeLinejoin="round"
+                    />
+                  </svg>
+                  <span>Watch Video</span>
                 </button>
               </div>
             </article>
