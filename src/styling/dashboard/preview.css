@@ -279,6 +279,8 @@
     height: 100%;
     display: flex;
     flex-direction: column;
+    border-radius: 22px;
+    overflow: hidden;
 }
 
 .preview-empty-surface {
@@ -321,7 +323,7 @@
    MOBILE / TABLET PREVIEW CONTENT
 -------------------------------------------------------- */
 .preview-scope .mp-preview-wrap {
-    overflow: hidden;
+    overflow: visible;
     will-change: max-height, opacity, transform;
     transition: max-height 0.28s ease, opacity 0.2s ease, transform 0.2s ease;
     padding: 12px 0 0;
@@ -329,7 +331,7 @@
     min-height: 0;
     display: flex;
     flex-direction: column;
-    border-radius: 22px;
+    border-radius: 0;
 }
 
 .preview-scope .mp-preview-wrap.closed {
@@ -341,6 +343,17 @@
 .preview-scope .mp-preview-wrap.open {
     opacity: 1;
     transform: scale(1);
+}
+
+/* round the ACTUAL preview content on mobile/tablet instead of clipping the outer wrapper */
+.preview-scope .mp-preview-wrap .preview-page-gutter>* {
+    border-radius: 22px;
+    overflow: hidden;
+}
+
+.preview-scope .mp-preview-wrap .preview-empty-state {
+    border-radius: 22px;
+    overflow: hidden;
 }
 
 /* -------------------------------------------------------
