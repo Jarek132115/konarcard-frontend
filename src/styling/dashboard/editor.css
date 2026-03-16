@@ -871,7 +871,7 @@
 
 @media (max-width: 600px) {
     .kce-templatePhones {
-        gap: 2px;
+        gap: 8px;
     }
 
     .kce-phoneCard {
