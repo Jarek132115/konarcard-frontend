@@ -1,12 +1,17 @@
 :root {
   --hc4-ink: var(--kc-text-primary, #0f172a);
-  --hc4-muted: var(--kc-text-secondary, #5b667b);
+  --hc4-muted: var(--kc-text-secondary, #475569);
   --hc4-border: rgba(15, 23, 42, 0.10);
   --hc4-softLine: rgba(15, 23, 42, 0.08);
   --hc4-radius: 22px;
   --hc4-softShadow: 0 0 1px rgba(0, 0, 0, 0.25);
+
+  --hc4-card-bg: #ffffff;
+  --hc4-item-bg: #fafafa;
   --hc4-orange: #f97316;
   --hc4-orange-dark: #ea580c;
+  --hc4-orange-soft: rgba(249, 115, 22, 0.10);
+  --hc4-orange-border: rgba(249, 115, 22, 0.20);
   --hc4-navy: #0b1635;
 }
 
@@ -27,36 +32,37 @@
    SUPPORT BANNER
 -------------------------------------------------------- */
 .hc4-supportBanner {
-  background: #ffffff;
+  background: var(--hc4-card-bg);
   border: 1px solid var(--hc4-border);
-  border-radius: 24px;
+  border-radius: var(--hc4-radius);
   box-shadow: var(--hc4-softShadow);
   padding: 24px;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 18px;
+  gap: 16px;
 }
 
 .hc4-supportLeft {
   display: flex;
   align-items: flex-start;
-  gap: 18px;
+  gap: 16px;
   min-width: 0;
+  flex: 1;
 }
 
 .hc4-supportIcon {
-  width: 46px;
-  height: 46px;
-  flex: 0 0 46px;
+  width: 44px;
+  height: 44px;
+  flex: 0 0 44px;
   display: grid;
   place-items: center;
   color: var(--hc4-orange);
 }
 
 .hc4-supportIconSvg {
-  width: 44px;
-  height: 44px;
+  width: 38px;
+  height: 38px;
   display: block;
 }
 
@@ -67,33 +73,38 @@
 .hc4-supportTitle {
   margin: 0;
   font-family: "Cal Sans", sans-serif;
-  font-size: 20px;
+  font-weight: 400;
+  font-size: 18px;
   line-height: 1.1;
   letter-spacing: -0.01em;
   color: var(--hc4-ink);
 }
 
 .hc4-supportText {
-  margin: 8px 0 0;
+  margin: 6px 0 0;
   font-family: "Inter", sans-serif;
-  font-size: 16px;
+  font-weight: 400;
+  font-size: 14px;
   line-height: 1.5;
   color: var(--hc4-muted);
+  max-width: 720px;
 }
 
 .hc4-liveBtn {
   appearance: none;
-  border: 0;
+  border: 1px solid transparent;
   background: var(--hc4-orange);
   color: #ffffff;
-  border-radius: 12px;
-  min-height: 44px;
-  padding: 0 18px;
+  border-radius: 14px;
+  min-height: 42px;
+  padding: 10px 18px;
   font-family: "Inter", sans-serif;
-  font-size: 15px;
-  font-weight: 700;
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1;
   cursor: pointer;
   white-space: nowrap;
+  flex: 0 0 auto;
   transition: background-color 0.15s ease, transform 0.12s ease, box-shadow 0.15s ease;
 }
 
@@ -104,6 +115,11 @@
 
 .hc4-liveBtn:active {
   transform: translateY(0);
+}
+
+.hc4-liveBtn:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(249, 115, 22, 0.14);
 }
 
 /* -------------------------------------------------------
@@ -117,53 +133,58 @@
 }
 
 /* -------------------------------------------------------
-   CARD
+   VIDEO CARD
 -------------------------------------------------------- */
 .hc4-card {
-  background: #ffffff;
+  background: var(--hc4-card-bg);
   border: 1px solid var(--hc4-border);
-  border-radius: 24px;
+  border-radius: var(--hc4-radius);
   box-shadow: var(--hc4-softShadow);
-  padding: 22px;
+  padding: 20px;
   display: grid;
-  grid-template-columns: minmax(180px, 220px) minmax(0, 1fr);
-  gap: 20px;
-  align-items: center;
+  grid-template-columns: minmax(220px, 252px) minmax(0, 1fr);
+  gap: 18px;
+  align-items: stretch;
   min-width: 0;
 }
 
 .hc4-cardMedia {
   width: 100%;
-  min-height: 160px;
-  border-radius: 22px;
-  border: 1px solid rgba(15, 23, 42, 0.08);
-  background: #fafafa;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  aspect-ratio: 4 / 3;
+  border-radius: 20px;
+  border: 1px solid var(--hc4-softLine);
+  background: var(--hc4-item-bg);
   overflow: hidden;
+  align-self: stretch;
 }
 
-.hc4-cardMediaInner {
-  font-family: "Cal Sans", sans-serif;
-  font-size: 44px;
-  line-height: 1;
-  color: #101a38;
-  letter-spacing: -0.03em;
+.hc4-cardImg {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: cover;
 }
 
 .hc4-cardBody {
   min-width: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.hc4-cardText {
   display: grid;
-  gap: 10px;
-  align-content: center;
+  gap: 8px;
+  align-content: start;
 }
 
 .hc4-cardTitle {
   margin: 0;
   font-family: "Cal Sans", sans-serif;
-  font-size: 20px;
-  line-height: 1.15;
+  font-weight: 400;
+  font-size: 18px;
+  line-height: 1.1;
   letter-spacing: -0.01em;
   color: var(--hc4-ink);
 }
@@ -171,16 +192,18 @@
 .hc4-cardDesc {
   margin: 0;
   font-family: "Inter", sans-serif;
-  font-size: 16px;
-  line-height: 1.55;
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 1.5;
   color: var(--hc4-muted);
 }
 
 .hc4-cardLength {
   font-family: "Inter", sans-serif;
-  font-size: 15px;
-  line-height: 1.4;
+  font-size: 13px;
+  line-height: 1.45;
   font-style: italic;
+  font-weight: 500;
   color: var(--hc4-muted);
 }
 
@@ -192,25 +215,31 @@
   border-radius: 14px;
   min-height: 42px;
   width: fit-content;
-  padding: 0 18px;
+  padding: 10px 18px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 10px;
   font-family: "Inter", sans-serif;
-  font-size: 15px;
+  font-size: 14px;
   font-weight: 600;
+  line-height: 1;
   cursor: pointer;
   transition: transform 0.12s ease, box-shadow 0.15s ease, background-color 0.15s ease;
 }
 
 .hc4-watchBtn:hover {
   transform: translateY(-1px);
-  box-shadow: 0 10px 22px rgba(15, 23, 42, 0.12);
+  box-shadow: 0 10px 22px rgba(15, 23, 42, 0.10);
 }
 
 .hc4-watchBtn:active {
   transform: translateY(0);
+}
+
+.hc4-watchBtn:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(15, 23, 42, 0.12);
 }
 
 .hc4-watchBtnIcon {
@@ -226,6 +255,7 @@
 @media (max-width: 1200px) {
   .hc4-grid {
     grid-template-columns: 1fr;
+    gap: 14px;
   }
 }
 
@@ -245,18 +275,33 @@
   }
 
   .hc4-cardMedia {
-    min-height: 180px;
+    max-width: 100%;
+  }
+
+  .hc4-cardBody {
+    gap: 14px;
   }
 }
 
-@media (max-width: 640px) {
+@media (max-width: 760px) {
+  .hc4-supportBanner {
+    padding: 18px;
+  }
+
+  .hc4-card {
+    padding: 18px;
+  }
+}
+
+@media (max-width: 560px) {
   .hc4-shell {
     gap: 12px;
   }
 
   .hc4-supportBanner {
-    padding: 18px;
+    padding: 16px;
     border-radius: 20px;
+    gap: 14px;
   }
 
   .hc4-supportLeft {
@@ -266,34 +311,22 @@
   .hc4-supportIcon {
     width: 40px;
     height: 40px;
-    flex-basis: 40px;
+    flex: 0 0 40px;
   }
 
   .hc4-supportIconSvg {
-    width: 38px;
-    height: 38px;
-  }
-
-  .hc4-supportTitle {
-    font-size: 18px;
-  }
-
-  .hc4-supportText {
-    font-size: 14px;
+    width: 34px;
+    height: 34px;
   }
 
   .hc4-card {
     padding: 16px;
     border-radius: 20px;
+    gap: 14px;
   }
 
   .hc4-cardMedia {
-    min-height: 150px;
     border-radius: 18px;
-  }
-
-  .hc4-cardMediaInner {
-    font-size: 36px;
   }
 
   .hc4-cardTitle {

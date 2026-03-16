@@ -6,6 +6,8 @@ import "../../styling/dashboard/helpcentreinterface.css";
 import { AuthContext } from "../../components/AuthContext";
 import { useFetchBusinessCard } from "../../hooks/useFetchBusinessCard";
 
+import UpgradeToPlusImage from "../../assets/images/UpgradeToPlus.png";
+
 export default function HelpCentreInterface() {
   const { user: authUser } = useContext(AuthContext);
 
@@ -119,14 +121,21 @@ export default function HelpCentreInterface() {
         <section className="hc4-grid" aria-label="Help videos">
           {videos.map((video) => (
             <article key={video.id} className="hc4-card">
-              <div className="hc4-cardMedia" aria-hidden="true">
-                <div className="hc4-cardMediaInner">Image</div>
+              <div className="hc4-cardMedia">
+                <img
+                  src={UpgradeToPlusImage}
+                  alt=""
+                  aria-hidden="true"
+                  className="hc4-cardImg"
+                />
               </div>
 
               <div className="hc4-cardBody">
-                <h3 className="hc4-cardTitle">{video.title}</h3>
-                <p className="hc4-cardDesc">{video.desc}</p>
-                <div className="hc4-cardLength">{video.length}</div>
+                <div className="hc4-cardText">
+                  <h3 className="hc4-cardTitle">{video.title}</h3>
+                  <p className="hc4-cardDesc">{video.desc}</p>
+                  <div className="hc4-cardLength">{video.length}</div>
+                </div>
 
                 <button
                   type="button"
