@@ -12,6 +12,16 @@ import SaveIcon from "../../assets/icons/SaveProfileIcon.svg";
 
 const nonEmpty = (v) => typeof v === "string" && v.trim().length > 0;
 
+function safeDate(d) {
+    try {
+        const dt = new Date(d);
+        if (Number.isNaN(dt.getTime())) return "";
+        return dt.toISOString().slice(0, 10);
+    } catch {
+        return "";
+    }
+}
+
 function prettyDate(d) {
     try {
         const dt = new Date(d);
@@ -22,14 +32,33 @@ function prettyDate(d) {
     }
 }
 
+function SearchIcon() {
+    return (
+        <svg viewBox="0 0 24 24" aria-hidden="true" className="cb-searchIcon">
+            <path
+                d="M10.5 18a7.5 7.5 0 1 1 5.303-12.803A7.5 7.5 0 0 1 10.5 18Zm0-13a5.5 5.5 0 1 0 3.89 1.61A5.5 5.5 0 0 0 10.5 5Zm8.707 14.293-4.05-4.05 1.414-1.414 4.05 4.05-1.414 1.414Z"
+                fill="currentColor"
+            />
+        </svg>
+    );
+}
+
 export default function ContactBook() {
     const { user: authUser } = useContext(AuthContext);
     const queryClient = useQueryClient();
 
     const [search, setSearch] = useState("");
     const [selectedId, setSelectedId] = useState(null);
-
     const [visibleCount, setVisibleCount] = useState(10);
+    const [isCompact, setIsCompact] = useState(() =>
+        typeof window !== "undefined" ? window.innerWidth <= 1200 : false
+    );
+
+    useEffect(() => {
+        const onResize = () => setIsCompact(window.innerWidth <= 1200);
+        window.addEventListener("resize", onResize);
+        return () => window.removeEventListener("resize", onResize);
+    }, []);
 
     const {
         data: exchanges,
@@ -43,12 +72,12 @@ export default function ContactBook() {
             return Array.isArray(res.data) ? res.data : [];
         },
         enabled: !!authUser,
-        staleTime: 60000,
+        staleTime: 60 * 1000,
+        retry: 1,
     });
 
     const contacts = useMemo(() => {
         const xs = Array.isArray(exchanges) ? exchanges : [];
-
         return xs.map((x) => ({
             id: x._id,
             name: x.visitor_name || "Unknown Visitor",
@@ -56,65 +85,107 @@ export default function ContactBook() {
             phone: x.visitor_phone || "",
             message: x.message || "",
             profile: x.profile_slug || "",
+            source: "exchange_contact",
+            firstSeen: safeDate(x.createdAt),
             received: prettyDate(x.createdAt),
             raw: x,
         }));
     }, [exchanges]);
 
     useEffect(() => {
-        if (!selectedId && contacts.length) {
+        if (!selectedId && contacts.length > 0) {
             setSelectedId(contacts[0].id);
+            return;
         }
-    }, [contacts]);
 
-    const selected = useMemo(
-        () => contacts.find((c) => c.id === selectedId),
-        [contacts, selectedId]
-    );
+        if (selectedId && contacts.length > 0) {
+            const stillExists = contacts.some((c) => c.id === selectedId);
+            if (!stillExists) setSelectedId(contacts[0].id);
+        }
+    }, [contacts, selectedId]);
+
+    useEffect(() => {
+        setVisibleCount(10);
+    }, [search]);
+
+    const selected = useMemo(() => {
+        if (!contacts.length) return null;
+        return contacts.find((c) => c.id === selectedId) || contacts[0] || null;
+    }, [contacts, selectedId]);
 
     const filtered = useMemo(() => {
-        const q = search.toLowerCase().trim();
-
+        const q = search.trim().toLowerCase();
         if (!q) return contacts;
 
         return contacts.filter((c) =>
-            `${c.name} ${c.email} ${c.phone}`.toLowerCase().includes(q)
+            [c.name, c.email, c.phone, c.message, c.profile]
+                .filter(Boolean)
+                .join(" ")
+                .toLowerCase()
+                .includes(q)
         );
     }, [contacts, search]);
 
-    const displayedContacts = filtered.slice(0, visibleCount);
+    const displayedContacts = useMemo(() => {
+        if (!isCompact) return filtered;
+        return filtered.slice(0, visibleCount);
+    }, [filtered, isCompact, visibleCount]);
 
     const deleteContact = async (id) => {
-        const ok = window.confirm("Delete this contact?");
+        const ok = window.confirm("Delete this contact? This cannot be undone.");
         if (!ok) return;
 
         try {
             await api.delete(`/contact-exchanges/${id}`);
             toast.success("Contact deleted");
-            queryClient.invalidateQueries(["contact-exchanges"]);
-        } catch (e) {
-            toast.error("Failed to delete contact");
+            queryClient.invalidateQueries({ queryKey: ["contact-exchanges"] });
+        } catch (err) {
+            toast.error(err?.response?.data?.error || "Failed to delete contact");
         }
     };
 
-    const exportCSV = () => {
-        if (!selected) return;
+    const exportCSV = (rowsSource = contacts) => {
+        if (!rowsSource.length) {
+            toast.error("No contacts to export.");
+            return;
+        }
 
         const rows = [
-            ["Name", "Email", "Phone", "Profile", "Message"],
-            [selected.name, selected.email, selected.phone, selected.profile, selected.message],
+            ["Name", "Email", "Phone", "Profile", "Received", "Message"],
+            ...rowsSource.map((c) => [
+                c.name || "",
+                c.email || "",
+                c.phone || "",
+                c.profile || "",
+                c.firstSeen || "",
+                (c.message || "").replace(/\n/g, " "),
+            ]),
         ];
 
-        const csv = rows.map((r) => r.join(",")).join("\n");
+        const csv = rows
+            .map((row) => row.map((cell) => `"${String(cell).replace(/"/g, '""')}"`).join(","))
+            .join("\n");
 
-        const blob = new Blob([csv]);
+        const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
         const url = URL.createObjectURL(blob);
 
         const a = document.createElement("a");
         a.href = url;
-        a.download = "contact.csv";
+        a.download = "konarcard-contact-book.csv";
         a.click();
+
+        URL.revokeObjectURL(url);
     };
+
+    const exportSelected = () => {
+        if (!selected) {
+            toast.error("Select a contact first.");
+            return;
+        }
+        exportCSV([selected]);
+    };
+
+    const showEmpty = !isLoading && !isError && contacts.length === 0;
 
     return (
         <DashboardLayout hideDesktopHeader>
@@ -125,101 +196,176 @@ export default function ContactBook() {
                 />
 
                 <div className="cb-grid">
-                    {/* LEFT */}
                     <section className="cb-card cb-listCard">
-                        <div className="cb-listHeader">
-                            <h3>My Contacts</h3>
-                            <p>Search and select a contact to view details.</p>
+                        <div className="cb-card-head cb-card-head--stack">
+                            <div className="cb-titleWrap">
+                                <h2 className="cb-card-title">My Contacts</h2>
+                                <p className="cb-muted">Search and select a contact to view details.</p>
+                            </div>
 
-                            <input
-                                className="cb-search"
-                                placeholder="Search Contacts"
-                                value={search}
-                                onChange={(e) => setSearch(e.target.value)}
-                            />
+                            <div className="cb-searchWrap">
+                                <SearchIcon />
+                                <input
+                                    className="cb-searchInput"
+                                    value={search}
+                                    onChange={(e) => setSearch(e.target.value)}
+                                    placeholder="Search contacts"
+                                    aria-label="Search contacts"
+                                />
+                            </div>
                         </div>
 
-                        <div className="cb-contactList">
-                            {displayedContacts.map((c) => (
-                                <button
-                                    key={c.id}
-                                    className={`cb-contactCard ${selectedId === c.id ? "active" : ""
-                                        }`}
-                                    onClick={() => setSelectedId(c.id)}
-                                >
-                                    <div className="cb-contactName">{c.name}</div>
-                                    <div className="cb-contactMeta">{c.phone}</div>
-                                    <div className="cb-contactMeta">{c.email}</div>
-                                    <div className="cb-contactDate">
-                                        Received: {c.received}
+                        {isError ? (
+                            <div className="cb-inlineState cb-error">
+                                <div className="cb-inlineTitle">Couldn’t load contacts</div>
+                                <div className="cb-inlineText">
+                                    {error?.response?.data?.error || error?.message || "Something went wrong."}
+                                </div>
+                            </div>
+                        ) : showEmpty ? (
+                            <div className="cb-inlineState cb-emptyState">
+                                <div className="cb-inlineTitle">No contacts yet</div>
+                                <div className="cb-inlineText">
+                                    This page will populate when someone uses <strong>Exchange Contact</strong> on your public profile.
+                                </div>
+                            </div>
+                        ) : (
+                            <>
+                                <div className="cb-listWrap" aria-busy={isLoading ? "true" : "false"}>
+                                    <div className="cb-list">
+                                        {isLoading ? (
+                                            <>
+                                                <div className="cb-skelItem" />
+                                                <div className="cb-skelItem" />
+                                                <div className="cb-skelItem" />
+                                                <div className="cb-skelItem" />
+                                            </>
+                                        ) : (
+                                            <>
+                                                {displayedContacts.map((c) => (
+                                                    <button
+                                                        key={c.id}
+                                                        type="button"
+                                                        className={`cb-contactCard ${selected?.id === c.id ? "is-active" : ""}`}
+                                                        onClick={() => setSelectedId(c.id)}
+                                                    >
+                                                        <div className="cb-contactCard-title">{c.name || "Unknown"}</div>
+
+                                                        <div className="cb-contactMetaGroup">
+                                                            <div className="cb-contactMeta">{nonEmpty(c.phone) ? c.phone : "No phone"}</div>
+                                                            <div className="cb-contactMeta">{nonEmpty(c.email) ? c.email : "No email"}</div>
+                                                        </div>
+
+                                                        <div className="cb-contactDate">Received: {c.received || "—"}</div>
+                                                    </button>
+                                                ))}
+
+                                                {filtered.length === 0 && (
+                                                    <div className="cb-empty-inline">No contacts match “{search}”.</div>
+                                                )}
+                                            </>
+                                        )}
                                     </div>
-                                </button>
-                            ))}
-                        </div>
+                                </div>
 
-                        {visibleCount < filtered.length && (
-                            <button
-                                className="cb-viewMore"
-                                onClick={() => setVisibleCount((v) => v + 10)}
-                            >
-                                View More
-                            </button>
+                                {isCompact && visibleCount < filtered.length ? (
+                                    <button
+                                        type="button"
+                                        className="cb-viewMore"
+                                        onClick={() => setVisibleCount((v) => v + 10)}
+                                    >
+                                        View More
+                                    </button>
+                                ) : null}
+                            </>
                         )}
                     </section>
 
-                    {/* RIGHT */}
                     <section className="cb-card cb-detailCard">
-                        {selected ? (
-                            <>
-                                <div className="cb-detailTop">
-                                    <h3>{selected.name}</h3>
-                                    <div className="cb-detailDate">
-                                        Received: {selected.received}
+                        <div className="cb-card-head cb-card-head--stack">
+                            <div className="cb-titleWrap">
+                                <h2 className="cb-card-title">Details</h2>
+                                <p className="cb-muted">Information submitted through Exchange Contact.</p>
+                            </div>
+                        </div>
+
+                        {isLoading ? (
+                            <div className="cb-detailBody">
+                                <div className="cb-detailPanel cb-detailPanel--skeleton">
+                                    <div className="cb-skelHead" />
+                                    <div className="cb-skelRow" />
+                                    <div className="cb-skelRow" />
+                                    <div className="cb-skelRow" />
+                                    <div className="cb-skelRow" />
+                                    <div className="cb-skelNote" />
+                                </div>
+                            </div>
+                        ) : isError ? (
+                            <div className="cb-inlineState cb-error">
+                                <div className="cb-inlineTitle">Details unavailable</div>
+                                <div className="cb-inlineText">Fix the error on the left and try again.</div>
+                            </div>
+                        ) : showEmpty ? (
+                            <div className="cb-inlineState cb-emptyState">
+                                <div className="cb-inlineTitle">Nothing to show</div>
+                                <div className="cb-inlineText">When you receive contacts, they’ll appear here.</div>
+                            </div>
+                        ) : !selected ? (
+                            <div className="cb-inlineState cb-emptyState">
+                                <div className="cb-inlineTitle">Select a contact</div>
+                                <div className="cb-inlineText">Pick someone from the list to view their details.</div>
+                            </div>
+                        ) : (
+                            <div className="cb-detailBody">
+                                <div className="cb-detailPanel">
+                                    <div className="cb-detailName">{selected.name || "Unknown"}</div>
+                                    <div className="cb-detailReceived">Received: {selected.received || "—"}</div>
+
+                                    <div className="cb-detailRows">
+                                        <div className="cb-detailRow">
+                                            <div className="cb-detailLabel">Email</div>
+                                            <div className="cb-detailValue">{nonEmpty(selected.email) ? selected.email : "—"}</div>
+                                        </div>
+
+                                        <div className="cb-detailRow">
+                                            <div className="cb-detailLabel">Phone</div>
+                                            <div className="cb-detailValue">{nonEmpty(selected.phone) ? selected.phone : "—"}</div>
+                                        </div>
+
+                                        <div className="cb-detailRow">
+                                            <div className="cb-detailLabel">Profile</div>
+                                            <div className="cb-detailValue">{nonEmpty(selected.profile) ? selected.profile : "—"}</div>
+                                        </div>
+
+                                        <div className="cb-detailRow cb-detailRow--message">
+                                            <div className="cb-detailLabel">Message</div>
+                                            <div className="cb-detailValue cb-detailValue--message">
+                                                {nonEmpty(selected.message) ? selected.message : "No message."}
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
 
-                                <div className="cb-detailRows">
-                                    <div className="cb-detailRow">
-                                        <span>Email</span>
-                                        <span>{selected.email || "—"}</span>
-                                    </div>
-
-                                    <div className="cb-detailRow">
-                                        <span>Phone</span>
-                                        <span>{selected.phone || "—"}</span>
-                                    </div>
-
-                                    <div className="cb-detailRow">
-                                        <span>Profile</span>
-                                        <span>{selected.profile || "—"}</span>
-                                    </div>
-
-                                    <div className="cb-detailRow">
-                                        <span>Message</span>
-                                        <span>{selected.message || "No message."}</span>
-                                    </div>
-                                </div>
-
-                                <div className="cb-actions">
+                                <div className="cb-detailActions">
                                     <button
-                                        className="cb-btn cb-btn-delete"
+                                        type="button"
+                                        className="cb-actionBtn cb-actionBtn--delete"
                                         onClick={() => deleteContact(selected.id)}
                                     >
-                                        <img src={DeleteIcon} alt="" />
-                                        Delete Contact
+                                        <img src={DeleteIcon} alt="" aria-hidden="true" className="cb-actionIcon cb-actionIcon--delete" />
+                                        <span>Delete Contact</span>
                                     </button>
 
                                     <button
-                                        className="cb-btn cb-btn-save"
-                                        onClick={exportCSV}
+                                        type="button"
+                                        className="cb-actionBtn cb-actionBtn--save"
+                                        onClick={exportSelected}
                                     >
-                                        <img src={SaveIcon} alt="" />
-                                        Save Contact
+                                        <img src={SaveIcon} alt="" aria-hidden="true" className="cb-actionIcon cb-actionIcon--save" />
+                                        <span>Save Contact</span>
                                     </button>
                                 </div>
-                            </>
-                        ) : (
-                            <div className="cb-empty">Select a contact</div>
+                            </div>
                         )}
                     </section>
                 </div>
