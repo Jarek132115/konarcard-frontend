@@ -20,7 +20,7 @@
     display: flex;
     align-items: flex-start;
     justify-content: space-between;
-    gap: 12px;
+    gap: 16px;
     padding: 0 0 16px;
     border-bottom: 1px solid rgba(15, 23, 42, 0.08);
 }
@@ -37,10 +37,25 @@
     margin: 0;
 }
 
+.kce-title {
+    word-break: break-word;
+}
+
+.kce-sub {
+    word-break: break-word;
+}
+
 .kce-topRight {
     display: flex;
     align-items: center;
+    justify-content: flex-end;
     gap: 12px;
+    flex: 0 1 auto;
+    min-width: 0;
+    flex-wrap: wrap;
+}
+
+.kce-topRight .kce-btn {
     flex: 0 0 auto;
 }
 
@@ -80,6 +95,7 @@
     align-items: center;
     justify-content: center;
     gap: 8px;
+    white-space: nowrap;
 }
 
 .kce-btn:hover {
@@ -217,6 +233,7 @@
     line-height: 1;
     cursor: pointer;
     transition: transform 0.12s ease, box-shadow 0.15s ease, background-color 0.15s ease;
+    white-space: nowrap;
 }
 
 .kce-hideBtn:hover {
