@@ -47,6 +47,7 @@ function IframePreview({ className, children, title = "Preview" }) {
             doc.body.style.height = "100%";
             doc.body.style.margin = "0";
             doc.body.style.background = "transparent";
+            doc.body.style.overflow = "auto";
 
             const parentHeadNodes = Array.from(
                 document.head.querySelectorAll('link[rel="stylesheet"], style')
@@ -59,7 +60,6 @@ function IframePreview({ className, children, title = "Preview" }) {
 
             const root = doc.createElement("div");
             root.id = "preview-iframe-root";
-            root.style.height = "100%";
             root.style.minHeight = "100%";
             root.style.boxSizing = "border-box";
             doc.body.appendChild(root);
@@ -229,7 +229,6 @@ export default function Preview({
             showReviewsSection: !!showReviewsSection,
             showContactSection: !!showContactSection,
 
-            // new preferred fields
             cover,
             logo,
             businessName,
@@ -245,7 +244,6 @@ export default function Preview({
             phone,
             socials,
 
-            // legacy compatibility fields
             avatar,
             mainHeading: businessName,
             subHeading: tradeTitle,
