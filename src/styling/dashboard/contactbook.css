@@ -24,7 +24,11 @@
     flex-direction: column;
     min-height: 0;
     height: calc(100vh - (var(--dash-gutter, 24px) * 2));
-    gap: 14px;
+    gap: 0;
+}
+
+.cb-shell .ph2-wrap {
+    margin-bottom: 0;
 }
 
 .cb-grid {
@@ -541,10 +545,6 @@
 }
 
 @media (max-width: 560px) {
-    .cb-shell {
-        gap: 12px;
-    }
-
     .cb-grid {
         gap: 12px;
     }
