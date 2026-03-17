@@ -42,7 +42,6 @@ const normaliseServicesForSave = (services = []) =>
     .map((s) => ({
       name: norm(s?.name),
       description: norm(s?.description || s?.price),
-      // keep legacy backend compatibility
       price: norm(s?.description || s?.price),
     }))
     .filter((s) => s.name || s.description);
@@ -109,39 +108,31 @@ const buildBusinessCardFormData = ({
   fd.append("template_id", (template_id || "template-1").toString());
   fd.append("theme_mode", (theme_mode || "light").toString());
 
-  // New preferred fields
   fd.append("business_name", business_name || "");
   fd.append("trade_title", trade_title || "");
   fd.append("location", location || "");
 
-  // Legacy-compatible fields
   fd.append("business_card_name", business_card_name || business_name || "");
   fd.append("main_heading", main_heading || business_name || "");
   fd.append("sub_heading", sub_heading || trade_title || "");
 
-  // About
   fd.append("job_title", job_title || "");
   fd.append("full_name", full_name || "");
   fd.append("bio", bio || "");
 
-  // Contact
   fd.append("contact_email", contact_email || "");
   fd.append("phone_number", phone_number || "");
 
-  // Arrays
   fd.append("services", JSON.stringify(Array.isArray(services) ? services : []));
   fd.append("reviews", JSON.stringify(Array.isArray(reviews) ? reviews : []));
 
-  // Existing works URLs
   const existing = Array.isArray(works_existing_urls)
     ? works_existing_urls.filter(Boolean)
     : [];
   existing.forEach((url) => fd.append("existing_works", url));
 
-  // New uploads
   if (cover_photo instanceof File) fd.append("cover_photo", cover_photo);
 
-  // Prefer new key, but also append avatar for backend compatibility
   if (logo instanceof File) {
     fd.append("logo", logo);
     fd.append("avatar", logo);
@@ -154,12 +145,10 @@ const buildBusinessCardFormData = ({
     if (f instanceof File) fd.append("works", f);
   });
 
-  // Removed flags
   fd.append("cover_photo_removed", cover_photo_removed ? "1" : "0");
   fd.append("logo_removed", logo_removed ? "1" : "0");
   fd.append("avatar_removed", avatar_removed ? "1" : "0");
 
-  // Show / hide section toggles
   fd.append("show_main_section", show_main_section === false ? "0" : "1");
   fd.append("show_about_me_section", show_about_me_section === false ? "0" : "1");
   fd.append("show_work_section", show_work_section === false ? "0" : "1");
@@ -167,7 +156,6 @@ const buildBusinessCardFormData = ({
   fd.append("show_reviews_section", show_reviews_section === false ? "0" : "1");
   fd.append("show_contact_section", show_contact_section === false ? "0" : "1");
 
-  // Socials
   fd.append("facebook_url", facebook_url || "");
   fd.append("instagram_url", instagram_url || "");
   fd.append("linkedin_url", linkedin_url || "");
@@ -215,6 +203,52 @@ const pctTone = (pct) => {
   return "bad";
 };
 
+const hasMeaningfulProfileContent = (card) => {
+  if (!card || typeof card !== "object") return false;
+
+  const textFields = [
+    card.business_name,
+    card.business_card_name,
+    card.main_heading,
+    card.trade_title,
+    card.sub_heading,
+    card.location,
+    card.full_name,
+    card.job_title,
+    card.bio,
+    card.contact_email,
+    card.phone_number,
+    card.facebook_url,
+    card.instagram_url,
+    card.linkedin_url,
+    card.x_url,
+    card.tiktok_url,
+  ];
+
+  const hasText = textFields.some((v) => norm(v).length > 0);
+
+  const hasImages = [card.cover_photo, card.logo, card.avatar].some(
+    (v) => norm(v).length > 0
+  );
+
+  const hasWorks =
+    Array.isArray(card.works) && card.works.some((v) => norm(v).length > 0);
+
+  const hasServices =
+    Array.isArray(card.services) &&
+    card.services.some(
+      (s) => norm(s?.name) || norm(s?.description) || norm(s?.price)
+    );
+
+  const hasReviews =
+    Array.isArray(card.reviews) &&
+    card.reviews.some(
+      (r) => norm(r?.name) || norm(r?.text) || Number(r?.rating) > 0
+    );
+
+  return hasText || hasImages || hasWorks || hasServices || hasReviews;
+};
+
 export default function MyProfile() {
   const { state, updateState, resetState } = useBusinessCardStore();
   const queryClient = useQueryClient();
@@ -236,19 +270,22 @@ export default function MyProfile() {
 
   const activeSlug = useMemo(() => getSlugFromSearch(location.search), [location.search]);
 
-  const { data: businessCard, isLoading: isCardLoading, isError: isCardError } =
-    useQuery({
-      queryKey: ["businessCard", "profile", activeSlug],
-      queryFn: async () => {
-        const res = await api.get(
-          `/api/business-card/profiles/${encodeURIComponent(activeSlug)}`
-        );
-        return res?.data?.data ?? null;
-      },
-      enabled: !!authUser && !!activeSlug,
-      staleTime: 30 * 1000,
-      retry: 1,
-    });
+  const {
+    data: businessCard,
+    isLoading: isCardLoading,
+    isError: isCardError,
+  } = useQuery({
+    queryKey: ["businessCard", "profile", activeSlug],
+    queryFn: async () => {
+      const res = await api.get(
+        `/api/business-card/profiles/${encodeURIComponent(activeSlug)}`
+      );
+      return res?.data?.data ?? null;
+    },
+    enabled: !!authUser && !!activeSlug,
+    staleTime: 30 * 1000,
+    retry: 1,
+  });
 
   useEffect(() => {
     if (!authUser) return;
@@ -396,10 +433,7 @@ export default function MyProfile() {
           businessCard.main_heading ||
           "",
 
-        trade_title:
-          businessCard.trade_title ||
-          businessCard.sub_heading ||
-          "",
+        trade_title: businessCard.trade_title || businessCard.sub_heading || "",
         location: businessCard.location || "",
 
         mainHeading:
@@ -556,7 +590,9 @@ export default function MyProfile() {
   };
 
   const onAddWorkImages = (files) => {
-    const valid = Array.from(files || []).filter((f) => f && f.type.startsWith("image/"));
+    const valid = Array.from(files || []).filter(
+      (f) => f && f.type.startsWith("image/")
+    );
     if (!valid.length) return;
 
     const items = valid.map((file) => ({
@@ -733,7 +769,9 @@ export default function MyProfile() {
       const b = normalizeServices(original.services);
       if (a.length !== b.length) return true;
       for (let i = 0; i < a.length; i++) {
-        if (a[i].name !== b[i].name || a[i].description !== b[i].description) return true;
+        if (a[i].name !== b[i].name || a[i].description !== b[i].description) {
+          return true;
+        }
       }
       return false;
     })();
@@ -758,7 +796,7 @@ export default function MyProfile() {
       .map((w) => (w?.preview && !w.preview.startsWith("blob:") ? w.preview : null))
       .filter(Boolean);
 
-    const originalWorks = original.works || [];
+    const originalWorks = Array.isArray(original.works) ? original.works : [];
 
     const worksChanged = (() => {
       if (currentWorks.length !== originalWorks.length) return true;
@@ -792,15 +830,11 @@ export default function MyProfile() {
       original.sub_heading ||
       "";
 
-    const originalLogo =
-      original.logo ||
-      original.avatar ||
-      "";
+    const originalLogo = original.logo || original.avatar || "";
+    const currentLogo = state.logo || state.avatar || "";
 
-    const currentLogo =
-      state.logo ||
-      state.avatar ||
-      "";
+    const originalCover = original.cover_photo || "";
+    const currentCover = state.coverPhoto || "";
 
     return (
       currentTemplate !== origTemplate ||
@@ -815,6 +849,7 @@ export default function MyProfile() {
       norm(state.bio) !== norm(original.bio || "") ||
 
       norm(currentLogo) !== norm(originalLogo) ||
+      norm(currentCover) !== norm(originalCover) ||
 
       norm(state.contact_email) !== norm(original.contact_email || "") ||
       norm(state.phone_number) !== norm(original.phone_number || "") ||
@@ -839,11 +874,13 @@ export default function MyProfile() {
   };
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
+    e?.preventDefault?.();
     if (!hasProfileChanges()) return toast.error("You haven't made any changes.");
 
     const existingWorkUrls = (state.workImages || [])
-      .map((item) => (item?.preview && !item.preview.startsWith("blob:") ? item.preview : null))
+      .map((item) =>
+        item?.preview && !item.preview.startsWith("blob:") ? item.preview : null
+      )
       .filter(Boolean);
 
     const newWorkFiles = (state.workImages || [])
@@ -868,10 +905,7 @@ export default function MyProfile() {
         state.businessName ||
         state.mainHeading ||
         "",
-      trade_title:
-        state.trade_title ||
-        state.subHeading ||
-        "",
+      trade_title: state.trade_title || state.subHeading || "",
       location: state.location || "",
 
       main_heading:
@@ -879,10 +913,7 @@ export default function MyProfile() {
         state.business_name ||
         state.businessName ||
         "",
-      sub_heading:
-        state.subHeading ||
-        state.trade_title ||
-        "",
+      sub_heading: state.subHeading || state.trade_title || "",
 
       job_title: state.job_title,
       full_name: state.full_name,
@@ -919,13 +950,23 @@ export default function MyProfile() {
       tiktok_url: state.tiktok_url,
     });
 
-    try {
-      await saveBusinessCard.mutateAsync(formData);
-      toast.success("Saved ✅");
+    const savingToastId = "kc-save-profile";
 
-      queryClient.invalidateQueries({ queryKey: ["businessCard", "me"] });
-      queryClient.invalidateQueries({ queryKey: ["businessCard", "profiles"] });
-      queryClient.invalidateQueries({ queryKey: ["businessCard", "profile", activeSlug] });
+    try {
+      toast.loading("Saving...", { id: savingToastId });
+
+      await saveBusinessCard.mutateAsync(formData);
+
+      await queryClient.invalidateQueries({ queryKey: ["businessCard", "me"] });
+      await queryClient.invalidateQueries({ queryKey: ["businessCard", "profiles"] });
+      await queryClient.invalidateQueries({
+        queryKey: ["businessCard", "profile", activeSlug],
+      });
+
+      await queryClient.refetchQueries({
+        queryKey: ["businessCard", "profile", activeSlug],
+        exact: true,
+      });
 
       revokeAllLocalPreviews(state);
 
@@ -936,15 +977,22 @@ export default function MyProfile() {
         coverPhotoFile: null,
         logoFile: null,
         avatarFile: null,
+        workImages: (state.workImages || []).map((item) => ({
+          file: null,
+          preview: item?.preview || "",
+        })),
       });
 
       setCoverPhotoRemoved(false);
       setLogoRemoved(false);
+
+      toast.success("Saved ✅", { id: savingToastId });
     } catch (err) {
       toast.error(
         err?.response?.data?.error ||
         err?.response?.data?.message ||
-        "Something went wrong while saving."
+        "Something went wrong while saving.",
+        { id: savingToastId }
       );
     }
   };
@@ -952,7 +1000,9 @@ export default function MyProfile() {
   const handleStartSubscription = () => navigate("/pricing");
 
   const handleShareCard = () => {
-    if (!isUserVerified) return toast.error("Please verify your email to share your page.");
+    if (!isUserVerified) {
+      return toast.error("Please verify your email to share your page.");
+    }
     setShowShareModal(true);
   };
 
@@ -974,12 +1024,16 @@ export default function MyProfile() {
   const completionPct = useMemo(() => calcCompletionPctFromState(state), [state]);
   const completionTone = useMemo(() => pctTone(completionPct), [completionPct]);
 
+  const hasSavedData = useMemo(() => {
+    return hasMeaningfulProfileContent(businessCard);
+  }, [businessCard]);
+
   const isLive = useMemo(() => {
     if (businessCard?.is_live === true) return true;
     if (businessCard?.published === true) return true;
     if (String(businessCard?.status || "").toLowerCase() === "live") return true;
-    return completionPct >= 60;
-  }, [businessCard, completionPct]);
+    return hasSavedData && completionPct >= 60;
+  }, [businessCard, completionPct, hasSavedData]);
 
   return (
     <DashboardLayout title={null} subtitle={null} hideDesktopHeader>
@@ -1028,7 +1082,10 @@ export default function MyProfile() {
                   >
                     Retry
                   </button>
-                  <button className="profiles-btn profiles-btn-ghost" onClick={() => navigate("/profiles")}>
+                  <button
+                    className="profiles-btn profiles-btn-ghost"
+                    onClick={() => navigate("/profiles")}
+                  >
                     Back to Profiles
                   </button>
                 </div>
@@ -1112,7 +1169,7 @@ export default function MyProfile() {
                   <Preview
                     state={state}
                     isMobile={isMobile}
-                    hasSavedData={!!businessCard}
+                    hasSavedData={hasSavedData}
                     showMainSection={showMainSection}
                     showAboutMeSection={showAboutMeSection}
                     showWorkSection={showWorkSection}
@@ -1142,9 +1199,7 @@ export default function MyProfile() {
           full_name: businessCard?.full_name || "",
           job_title: businessCard?.job_title || "",
           business_card_name:
-            businessCard?.business_name ||
-            businessCard?.business_card_name ||
-            "",
+            businessCard?.business_name || businessCard?.business_card_name || "",
           bio: businessCard?.bio || "",
           isSubscribed: !isFree,
           contact_email: businessCard?.contact_email || "",

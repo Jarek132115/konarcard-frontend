@@ -19,10 +19,19 @@ import "../../styling/userpage.css";
 /* ---------------------------
    Helpers
 --------------------------- */
-const PLACEHOLDER_HINTS = ["placeholder", "sample", "demo", "stock", "default", "template", "card-mock"];
+const PLACEHOLDER_HINTS = [
+    "placeholder",
+    "sample",
+    "demo",
+    "stock",
+    "default",
+    "template",
+    "card-mock",
+];
 
 const looksLikePlaceholderUrl = (url = "") =>
-    typeof url === "string" && PLACEHOLDER_HINTS.some((h) => url.toLowerCase().includes(h));
+    typeof url === "string" &&
+    PLACEHOLDER_HINTS.some((h) => url.toLowerCase().includes(h));
 
 const nonEmpty = (v) => typeof v === "string" && v.trim().length > 0;
 const arr = (v) => (Array.isArray(v) ? v : []);
@@ -148,6 +157,43 @@ const normalizeSocials = (card) => {
     };
 };
 
+const hasMeaningfulProfileContent = (card) => {
+    if (!card || typeof card !== "object") return false;
+
+    const textFields = [
+        read(card, ["business_name", "businessName"], ""),
+        read(card, ["business_card_name", "businessCardName"], ""),
+        read(card, ["main_heading", "mainHeading"], ""),
+        read(card, ["trade_title", "tradeTitle"], ""),
+        read(card, ["sub_heading", "subHeading"], ""),
+        read(card, ["location"], ""),
+        read(card, ["full_name", "fullName"], ""),
+        read(card, ["job_title", "jobTitle"], ""),
+        read(card, ["bio"], ""),
+        read(card, ["contact_email", "contactEmail", "email"], ""),
+        read(card, ["phone_number", "phoneNumber", "phone"], ""),
+        read(card, ["facebook_url", "facebookUrl"], ""),
+        read(card, ["instagram_url", "instagramUrl"], ""),
+        read(card, ["linkedin_url", "linkedinUrl"], ""),
+        read(card, ["x_url", "xUrl", "twitter_url", "twitterUrl"], ""),
+        read(card, ["tiktok_url", "tiktokUrl"], ""),
+    ];
+
+    const hasText = textFields.some(nonEmpty);
+
+    const hasImages = [
+        read(card, ["cover_photo", "coverPhoto"], ""),
+        read(card, ["logo"], ""),
+        read(card, ["avatar"], ""),
+    ].some(nonEmpty);
+
+    const works = normalizeWorks(read(card, ["works", "workImages"], []));
+    const services = normalizeServices(read(card, ["services"], []));
+    const reviews = normalizeReviews(read(card, ["reviews"], []));
+
+    return hasText || hasImages || works.length > 0 || services.length > 0 || reviews.length > 0;
+};
+
 function ExchangeContactModal({
     open,
     onClose,
@@ -179,7 +225,9 @@ function ExchangeContactModal({
 
         if (!payload.profileSlug) return toast.error("Missing profile slug.");
         if (!payload.name) return toast.error("Please enter your name.");
-        if (!payload.email && !payload.phone) return toast.error("Please provide email or phone.");
+        if (!payload.email && !payload.phone) {
+            return toast.error("Please provide email or phone.");
+        }
 
         setSubmitting(true);
         try {
@@ -315,9 +363,12 @@ export default function UserPage() {
         queryKey: ["public-business-card", publicSlug || "missing-slug"],
         queryFn: async () => {
             if (!isValidSlug) return null;
-            const res = await api.get(`/api/business-card/public/${encodeURIComponent(publicSlug)}`, {
-                headers: { "x-no-auth": "1" },
-            });
+            const res = await api.get(
+                `/api/business-card/public/${encodeURIComponent(publicSlug)}`,
+                {
+                    headers: { "x-no-auth": "1" },
+                }
+            );
             return res.data;
         },
         enabled: isValidSlug,
@@ -355,8 +406,12 @@ export default function UserPage() {
                 }}
             >
                 <div style={{ maxWidth: 560, width: "100%", textAlign: "center" }}>
-                    <h2 style={{ margin: 0, fontSize: "1.6rem", fontWeight: 800 }}>Invalid link</h2>
-                    <p style={{ marginTop: 10, opacity: 0.8 }}>This profile link is not valid. Please check the URL and try again.</p>
+                    <h2 style={{ margin: 0, fontSize: "1.6rem", fontWeight: 800 }}>
+                        Invalid link
+                    </h2>
+                    <p style={{ marginTop: 10, opacity: 0.8 }}>
+                        This profile link is not valid. Please check the URL and try again.
+                    </p>
                 </div>
             </div>
         );
@@ -404,24 +459,68 @@ export default function UserPage() {
     const templateId = read(businessCard, ["template_id", "templateId"], "template-1");
     const tid = String(templateId || "template-1");
 
-    const themeMode = normalizeThemeMode(read(businessCard, ["theme_mode", "page_theme", "pageTheme"], "light"));
-    const textAlign = normalizeTextAlign(read(businessCard, ["text_alignment", "textAlignment"], "left"));
+    const themeMode = normalizeThemeMode(
+        read(businessCard, ["theme_mode", "page_theme", "pageTheme"], "light")
+    );
+    const textAlign = normalizeTextAlign(
+        read(businessCard, ["text_alignment", "textAlignment"], "left")
+    );
     const font = read(businessCard, ["style", "font"], "Inter, sans-serif");
 
-    const buttonBgColor = read(businessCard, ["button_bg_color", "buttonBgColor"], "#F47629");
-    const buttonTextColor = normalizeButtonTextColor(read(businessCard, ["button_text_color", "buttonTextColor"], "white"));
+    const buttonBgColor = read(
+        businessCard,
+        ["button_bg_color", "buttonBgColor"],
+        "#F47629"
+    );
+    const buttonTextColor = normalizeButtonTextColor(
+        read(businessCard, ["button_text_color", "buttonTextColor"], "white")
+    );
 
-    const aboutLayout = read(businessCard, ["about_me_layout", "aboutMeLayout"], "side-by-side");
-    const workMode = read(businessCard, ["work_display_mode", "workDisplayMode"], "grid");
-    const servicesMode = read(businessCard, ["services_display_mode", "servicesDisplayMode"], "list");
-    const reviewsMode = read(businessCard, ["reviews_display_mode", "reviewsDisplayMode"], "list");
+    const aboutLayout = read(
+        businessCard,
+        ["about_me_layout", "aboutMeLayout"],
+        "side-by-side"
+    );
+    const workMode = read(
+        businessCard,
+        ["work_display_mode", "workDisplayMode"],
+        "grid"
+    );
+    const servicesMode = read(
+        businessCard,
+        ["services_display_mode", "servicesDisplayMode"],
+        "list"
+    );
+    const reviewsMode = read(
+        businessCard,
+        ["reviews_display_mode", "reviewsDisplayMode"],
+        "list"
+    );
 
-    const showMain = normalizeBool(read(businessCard, ["show_main_section", "showMainSection"], true), true);
-    const showAbout = normalizeBool(read(businessCard, ["show_about_me_section", "showAboutMeSection"], true), true);
-    const showWork = normalizeBool(read(businessCard, ["show_work_section", "showWorkSection"], true), true);
-    const showServices = normalizeBool(read(businessCard, ["show_services_section", "showServicesSection"], true), true);
-    const showReviews = normalizeBool(read(businessCard, ["show_reviews_section", "showReviewsSection"], true), true);
-    const showContact = normalizeBool(read(businessCard, ["show_contact_section", "showContactSection"], true), true);
+    const showMain = normalizeBool(
+        read(businessCard, ["show_main_section", "showMainSection"], true),
+        true
+    );
+    const showAbout = normalizeBool(
+        read(businessCard, ["show_about_me_section", "showAboutMeSection"], true),
+        true
+    );
+    const showWork = normalizeBool(
+        read(businessCard, ["show_work_section", "showWorkSection"], true),
+        true
+    );
+    const showServices = normalizeBool(
+        read(businessCard, ["show_services_section", "showServicesSection"], true),
+        true
+    );
+    const showReviews = normalizeBool(
+        read(businessCard, ["show_reviews_section", "showReviewsSection"], true),
+        true
+    );
+    const showContact = normalizeBool(
+        read(businessCard, ["show_contact_section", "showContactSection"], true),
+        true
+    );
 
     const defaultOrder = ["main", "about", "work", "services", "reviews", "contact"];
     const savedOrderRaw = read(businessCard, ["section_order", "sectionOrder"], []);
@@ -433,14 +532,21 @@ export default function UserPage() {
     const cover = read(businessCard, ["cover_photo", "coverPhoto"], "");
     const avatar = read(businessCard, ["avatar", "logo"], "");
     const logo = read(businessCard, ["logo", "avatar"], "");
+
     const businessName =
         read(businessCard, ["business_card_name", "businessCardName"], "") ||
         read(businessCard, ["main_heading", "mainHeading"], "") ||
         read(businessCard, ["business_name", "businessName"], "") ||
         "";
-    const mainHeading = read(businessCard, ["main_heading", "mainHeading"], "") || businessName;
+
+    const mainHeading =
+        read(businessCard, ["main_heading", "mainHeading"], "") || businessName;
+
     const subHeading = read(businessCard, ["sub_heading", "subHeading"], "");
-    const tradeTitle = subHeading || read(businessCard, ["trade_title", "tradeTitle", "job_title", "jobTitle"], "");
+    const tradeTitle =
+        subHeading ||
+        read(businessCard, ["trade_title", "tradeTitle", "job_title", "jobTitle"], "");
+
     const fullName = read(businessCard, ["full_name", "fullName"], "");
     const jobTitle = read(businessCard, ["job_title", "jobTitle"], "");
     const location = read(businessCard, ["location"], "");
@@ -462,30 +568,19 @@ export default function UserPage() {
     const hasExchangeContact = true;
 
     const subscriptionFieldPresent =
-        typeof businessCard?.isSubscribed !== "undefined" || typeof businessCard?.trialExpires !== "undefined";
+        typeof businessCard?.isSubscribed !== "undefined" ||
+        typeof businessCard?.trialExpires !== "undefined";
 
     if (subscriptionFieldPresent) {
         const isSubscribed = !!businessCard.isSubscribed;
-        const isTrialActive = businessCard.trialExpires && new Date(businessCard.trialExpires) > new Date();
+        const isTrialActive =
+            businessCard.trialExpires && new Date(businessCard.trialExpires) > new Date();
         if (!(isSubscribed || isTrialActive)) {
             return unavailable(publicSlug, goEditProfile, goContactSupportSmart);
         }
     }
 
-    const showMainSection = showMain && (nonEmpty(cover) || nonEmpty(mainHeading) || nonEmpty(subHeading) || hasContact || nonEmpty(location));
-    const showAboutMeSection = showAbout && (nonEmpty(avatar) || nonEmpty(fullName) || nonEmpty(jobTitle) || nonEmpty(bio) || nonEmpty(logo));
-    const showWorkSection = showWork && works.length > 0;
-    const showServicesSection = showServices && services.length > 0;
-    const showReviewsSection = showReviews && reviews.length > 0;
-    const showContactSection = showContact && (hasContact || socialLinks.length > 0 || hasExchangeContact);
-
-    const nothingToShow =
-        !showMainSection &&
-        !showAboutMeSection &&
-        !showWorkSection &&
-        !showServicesSection &&
-        !showReviewsSection &&
-        !showContactSection;
+    const profileHasMeaningfulContent = hasMeaningfulProfileContent(businessCard);
 
     const themeStyles = {
         backgroundColor: themeMode === "dark" ? "#131416" : "#f5f5f5",
@@ -498,7 +593,12 @@ export default function UserPage() {
         backgroundColor: buttonBgColor,
         color: buttonTextColor === "black" ? "#000000" : "#FFFFFF",
     };
-    const flexJustify = textAlign === "center" ? "center" : textAlign === "right" ? "flex-end" : "flex-start";
+    const flexJustify =
+        textAlign === "center"
+            ? "center"
+            : textAlign === "right"
+                ? "flex-end"
+                : "flex-start";
 
     const handleSaveMyNumber = () => {
         if (!hasContact && !nonEmpty(fullName)) return;
@@ -536,6 +636,62 @@ export default function UserPage() {
 
     const openExchangeModal = () => setExchangeOpen(true);
 
+    if (!profileHasMeaningfulContent) {
+        return (
+            <div
+                className="user-landing-page"
+                style={{
+                    ...themeStyles,
+                    textAlign: "center",
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    minHeight: "100vh",
+                    padding: 24,
+                }}
+            >
+                <div style={{ maxWidth: 620, width: "100%", textAlign: "center" }}>
+                    <h2 style={{ margin: 0, fontSize: "1.6rem", fontWeight: 800 }}>
+                        {publicSlug} profile has not been set up yet
+                    </h2>
+                    <p style={{ marginTop: 10, opacity: 0.8 }}>
+                        Please save your business details to view your live profile.
+                    </p>
+                </div>
+            </div>
+        );
+    }
+
+    const showMainSection =
+        showMain &&
+        (nonEmpty(cover) ||
+            nonEmpty(mainHeading) ||
+            nonEmpty(subHeading) ||
+            hasContact ||
+            nonEmpty(location));
+
+    const showAboutMeSection =
+        showAbout &&
+        (nonEmpty(avatar) ||
+            nonEmpty(fullName) ||
+            nonEmpty(jobTitle) ||
+            nonEmpty(bio) ||
+            nonEmpty(logo));
+
+    const showWorkSection = showWork && works.length > 0;
+    const showServicesSection = showServices && services.length > 0;
+    const showReviewsSection = showReviews && reviews.length > 0;
+    const showContactSection =
+        showContact && (hasContact || socialLinks.length > 0 || hasExchangeContact);
+
+    const nothingToShow =
+        !showMainSection &&
+        !showAboutMeSection &&
+        !showWorkSection &&
+        !showServicesSection &&
+        !showReviewsSection &&
+        !showContactSection;
+
     if (nothingToShow) {
         return (
             <div
@@ -550,9 +706,13 @@ export default function UserPage() {
                     padding: 24,
                 }}
             >
-                <div style={{ maxWidth: 560, width: "100%", textAlign: "center" }}>
-                    <h2 style={{ margin: 0, fontSize: "1.6rem", fontWeight: 800 }}>This profile isn’t set up yet</h2>
-                    <p style={{ marginTop: 10, opacity: 0.8 }}>This profile hasn’t published any content here yet.</p>
+                <div style={{ maxWidth: 620, width: "100%", textAlign: "center" }}>
+                    <h2 style={{ margin: 0, fontSize: "1.6rem", fontWeight: 800 }}>
+                        {publicSlug} profile has not been set up yet
+                    </h2>
+                    <p style={{ marginTop: 10, opacity: 0.8 }}>
+                        Please save your business details to view your live profile.
+                    </p>
                 </div>
             </div>
         );
@@ -652,7 +812,8 @@ export default function UserPage() {
                     {tid === "template-3" ? <Template3 vm={vm} /> : null}
                     {tid === "template-4" ? <Template4 vm={vm} /> : null}
                     {tid === "template-5" ? <Template5 vm={vm} /> : null}
-                    {tid === "template-1" || !["template-2", "template-3", "template-4", "template-5"].includes(tid) ? (
+                    {tid === "template-1" ||
+                        !["template-2", "template-3", "template-4", "template-5"].includes(tid) ? (
                         <Template1 vm={vm} />
                     ) : null}
                 </div>
@@ -675,7 +836,9 @@ export default function UserPage() {
                                 <div className="desktop-body-s">
                                     <strong>No content published yet.</strong>
                                 </div>
-                                <div className="desktop-body-xs">The owner might not have created their page.</div>
+                                <div className="desktop-body-xs">
+                                    The owner might not have created their page.
+                                </div>
                             </div>
                         </li>
 
@@ -685,7 +848,9 @@ export default function UserPage() {
                                 <div className="desktop-body-s">
                                     <strong>Access expired.</strong>
                                 </div>
-                                <div className="desktop-body-xs">A subscription may be required to keep this profile live.</div>
+                                <div className="desktop-body-xs">
+                                    A subscription may be required to keep this profile live.
+                                </div>
                             </div>
                         </li>
                     </ul>

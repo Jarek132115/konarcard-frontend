@@ -1,6 +1,5 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { createPortal } from "react-dom";
-import { previewPlaceholders } from "../../store/businessCardStore";
 import "../../styling/dashboard/preview.css";
 
 import VisitProfileIcon from "../../assets/icons/VisitProfileIcon.svg";
@@ -13,6 +12,8 @@ import Template5 from "./Template5";
 
 const asArray = (v) => (Array.isArray(v) ? v : []);
 const asString = (v) => (typeof v === "string" ? v : "");
+const hasValue = (v) => typeof v === "string" && v.trim().length > 0;
+const hasAsset = (v) => typeof v === "string" && v.trim().length > 0;
 
 const getTemplateId = (raw) => {
     const t = (raw || "template-1").toString();
@@ -28,8 +29,61 @@ const getTemplateId = (raw) => {
 
 const SECTION_ORDER = ["main", "about", "work", "services", "reviews", "contact"];
 
-const hasValue = (v) => typeof v === "string" && v.trim().length > 0;
-const hasAsset = (v) => typeof v === "string" && v.trim().length > 0;
+const getWorkPreview = (item) => {
+    if (typeof item === "string") return item;
+    if (item && typeof item === "object") return item.preview || "";
+    return "";
+};
+
+const hasMeaningfulPreviewContent = (s = {}) => {
+    const textFields = [
+        s.business_name,
+        s.businessName,
+        s.mainHeading,
+        s.main_heading,
+        s.trade_title,
+        s.subHeading,
+        s.sub_heading,
+        s.location,
+        s.full_name,
+        s.job_title,
+        s.bio,
+        s.contact_email,
+        s.phone_number,
+        s.facebook_url,
+        s.instagram_url,
+        s.linkedin_url,
+        s.x_url,
+        s.tiktok_url,
+    ];
+
+    const hasText = textFields.some(hasValue);
+
+    const hasImages = [
+        s.coverPhotoPreview,
+        s.coverPhoto,
+        s.cover_photo,
+        s.logoPreview,
+        s.logo,
+        s.avatarPreview,
+        s.avatar,
+        s.avatar_url,
+    ].some(hasAsset);
+
+    const hasWorks = asArray(s.workImages || s.works).some((item) =>
+        hasValue(getWorkPreview(item))
+    );
+
+    const hasServices = asArray(s.services).some(
+        (item) => hasValue(item?.name) || hasValue(item?.description) || hasValue(item?.price)
+    );
+
+    const hasReviews = asArray(s.reviews).some(
+        (item) => hasValue(item?.name) || hasValue(item?.text) || Number(item?.rating) > 0
+    );
+
+    return hasText || hasImages || hasWorks || hasServices || hasReviews;
+};
 
 function IframePreview({ className, children, title = "Preview" }) {
     const iframeRef = useRef(null);
@@ -94,7 +148,9 @@ function PreviewEmptyState({ themeMode = "light" }) {
     return (
         <div className={`preview-empty-state theme-${themeMode}`}>
             <div className="preview-empty-surface">
-                <p className="preview-empty-text">Add your info to see your preview.</p>
+                <p className="preview-empty-text">
+                    Please add your info to preview your profile.
+                </p>
             </div>
         </div>
     );
@@ -178,58 +234,14 @@ export default function Preview({
     const mpWrapRef = useRef(null);
 
     const s = state || {};
-    const ph = previewPlaceholders || {};
 
     const templateId = getTemplateId(s.template_id || s.templateId || "template-1");
     const themeMode = asString(s.themeMode || s.pageTheme || "light") || "light";
 
     const hasAnyEnteredContent = useMemo(() => {
-        const textFields = [
-            s.business_name,
-            s.businessName,
-            s.mainHeading,
-            s.main_heading,
-            s.trade_title,
-            s.subHeading,
-            s.sub_heading,
-            s.location,
-            s.full_name,
-            s.job_title,
-            s.bio,
-            s.contact_email,
-            s.phone_number,
-            s.facebook_url,
-            s.instagram_url,
-            s.linkedin_url,
-            s.x_url,
-            s.tiktok_url,
-        ];
-
-        const hasText = textFields.some(hasValue);
-
-        const hasImages = [
-            s.coverPhotoPreview,
-            s.coverPhoto,
-            s.cover_photo,
-            s.logoPreview,
-            s.logo,
-            s.avatarPreview,
-            s.avatar,
-            s.avatar_url,
-        ].some(hasAsset);
-
-        const hasWorks = asArray(s.workImages || s.works).length > 0;
-        const hasServices = asArray(s.services).some(
-            (item) => hasValue(item?.name) || hasValue(item?.description) || hasValue(item?.price)
-        );
-        const hasReviews = asArray(s.reviews).some(
-            (item) => hasValue(item?.name) || hasValue(item?.text) || Number(item?.rating) > 0
-        );
-
-        return hasText || hasImages || hasWorks || hasServices || hasReviews;
+        return hasMeaningfulPreviewContent(s);
     }, [s]);
 
-    const shouldShowPlaceholders = hasAnyEnteredContent && !hasSavedData;
     const showEmptyPreview = !hasAnyEnteredContent;
 
     const vm = useMemo(() => {
@@ -237,51 +249,32 @@ export default function Preview({
             asString(s.business_name) ||
             asString(s.businessName) ||
             asString(s.mainHeading) ||
-            asString(s.main_heading) ||
-            (shouldShowPlaceholders ? asString(ph.business_name || ph.main_heading) : "");
+            asString(s.main_heading);
 
         const tradeTitle =
             asString(s.trade_title) ||
             asString(s.subHeading) ||
-            asString(s.sub_heading) ||
-            (shouldShowPlaceholders ? asString(ph.trade_title || ph.sub_heading) : "");
+            asString(s.sub_heading);
 
-        const location =
-            asString(s.location) ||
-            (shouldShowPlaceholders ? asString(ph.location) : "");
-
-        const fullName =
-            asString(s.full_name) ||
-            (shouldShowPlaceholders ? asString(ph.full_name) : "");
-
-        const jobTitle =
-            asString(s.job_title) ||
-            (shouldShowPlaceholders ? asString(ph.job_title) : "");
-
-        const bio =
-            asString(s.bio) ||
-            (shouldShowPlaceholders ? asString(ph.bio) : "");
-
-        const email =
-            asString(s.contact_email) ||
-            (shouldShowPlaceholders ? asString(ph.contact_email) : "");
-
-        const phone =
-            asString(s.phone_number) ||
-            (shouldShowPlaceholders ? asString(ph.phone_number) : "");
+        const location = asString(s.location);
+        const fullName = asString(s.full_name);
+        const jobTitle = asString(s.job_title);
+        const bio = asString(s.bio);
+        const email = asString(s.contact_email);
+        const phone = asString(s.phone_number);
 
         const cover =
             s.coverPhotoPreview ||
             s.coverPhoto ||
             s.cover_photo ||
-            (shouldShowPlaceholders ? ph.coverPhoto : "");
+            "";
 
         const logo =
             s.logoPreview ||
             s.logo ||
             s.avatarPreview ||
             s.avatar ||
-            (shouldShowPlaceholders ? asString(ph.logo) : "");
+            "";
 
         const avatar =
             s.avatarPreview ||
@@ -289,43 +282,50 @@ export default function Preview({
             s.avatar_url ||
             s.logoPreview ||
             s.logo ||
-            (shouldShowPlaceholders ? asString(ph.avatar) : "");
+            "";
 
-        const worksRaw = asArray(s.workImages || s.works);
-        const worksPlaceholders = asArray(ph.workImages || ph.works);
-        const works = worksRaw.length
-            ? worksRaw
-            : shouldShowPlaceholders
-                ? worksPlaceholders
-                : [];
+        const works = asArray(s.workImages || s.works)
+            .map((item) => {
+                if (typeof item === "string") return item;
+                if (item && typeof item === "object") {
+                    return {
+                        ...item,
+                        preview: item.preview || "",
+                    };
+                }
+                return null;
+            })
+            .filter((item) => {
+                if (!item) return false;
+                if (typeof item === "string") return hasValue(item);
+                return hasValue(item.preview);
+            });
 
-        const servicesRaw = asArray(s.services);
-        const servicesPlaceholders = asArray(ph.services);
-        const servicesSource = servicesRaw.length
-            ? servicesRaw
-            : shouldShowPlaceholders
-                ? servicesPlaceholders
-                : [];
+        const services = asArray(s.services)
+            .map((item) => ({
+                name: asString(item?.name),
+                description: asString(item?.description || item?.price),
+                price: asString(item?.price || item?.description),
+            }))
+            .filter(
+                (item) =>
+                    hasValue(item.name) ||
+                    hasValue(item.description) ||
+                    hasValue(item.price)
+            );
 
-        const services = servicesSource.map((item) => ({
-            name: asString(item?.name),
-            description: asString(item?.description || item?.price),
-            price: asString(item?.price || item?.description),
-        }));
-
-        const reviewsRaw = asArray(s.reviews);
-        const reviewsPlaceholders = asArray(ph.reviews);
-        const reviewsSource = reviewsRaw.length
-            ? reviewsRaw
-            : shouldShowPlaceholders
-                ? reviewsPlaceholders
-                : [];
-
-        const reviews = reviewsSource.map((item) => ({
-            name: asString(item?.name),
-            text: asString(item?.text),
-            rating: Number(item?.rating) || 5,
-        }));
+        const reviews = asArray(s.reviews)
+            .map((item) => ({
+                name: asString(item?.name),
+                text: asString(item?.text),
+                rating: Number(item?.rating) || 0,
+            }))
+            .filter(
+                (item) =>
+                    hasValue(item.name) ||
+                    hasValue(item.text) ||
+                    item.rating > 0
+            );
 
         const socials = {
             facebook_url: asString(s.facebook_url),
@@ -378,8 +378,6 @@ export default function Preview({
         };
     }, [
         s,
-        ph,
-        shouldShowPlaceholders,
         templateId,
         themeMode,
         hasExchangeContact,
