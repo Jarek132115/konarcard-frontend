@@ -196,8 +196,12 @@ export default function Settings() {
                                 </div>
 
                                 <div className="stg-accountMeta">
-                                    <div className="stg-accountName">{isBusy ? <span className="stg-skelText w52" /> : accountName}</div>
-                                    <div className="stg-accountEmail">{isBusy ? <span className="stg-skelText w72" /> : accountEmail}</div>
+                                    <div className="stg-accountName">
+                                        {isBusy ? <span className="stg-skelText w52" /> : accountName}
+                                    </div>
+                                    <div className="stg-accountEmail">
+                                        {isBusy ? <span className="stg-skelText w72" /> : accountEmail}
+                                    </div>
                                 </div>
                             </div>
 
@@ -396,7 +400,7 @@ export default function Settings() {
                                                 <div>{fmtDate(date)}</div>
                                                 <div>{fmtMoneyFromMinor(amountMinor, currency)}</div>
                                                 <div><span className={`stg-badge ${safeLower(status)}`}>{String(status)}</span></div>
-                                                <div className="stg-mono stg-ellipsis" title={String(desc)}>
+                                                <div className="stg-ellipsis" title={String(desc)}>
                                                     {String(desc)}
                                                 </div>
                                             </div>
