@@ -42,19 +42,19 @@
     margin: 0;
     font-family: "Cal Sans", sans-serif;
     font-weight: 400;
-    font-size: var(--kc-title-size);
-    line-height: var(--kc-title-line);
-    color: var(--kc-text-primary);
+    font-size: 18px;
+    line-height: 1.1;
+    color: var(--p-ink);
     letter-spacing: -0.01em;
 }
 
 .profiles-muted {
-    margin: 4px 0 0;
+    margin: 6px 0 0;
     font-family: "Inter", sans-serif;
     font-weight: 400;
-    font-size: var(--kc-body-size);
-    line-height: var(--kc-body-line);
-    color: var(--kc-text-secondary);
+    font-size: 14px;
+    line-height: 1.5;
+    color: var(--p-muted);
 }
 
 .profiles-actions-row {
@@ -64,8 +64,55 @@
     flex-wrap: wrap;
 }
 
-.profiles-empty {
-    max-width: 760px;
+.profiles-emptyCard,
+.profiles-emptyInfoCard {
+    height: 100%;
+}
+
+.profiles-emptyCard {
+    justify-content: flex-start;
+}
+
+.profiles-emptyInfoCard {
+    justify-content: flex-start;
+}
+
+.profiles-emptyInfoHead {
+    display: grid;
+    gap: 6px;
+}
+
+.profiles-emptyInfoPanel {
+    margin-top: 16px;
+    display: grid;
+    gap: 12px;
+}
+
+.profiles-emptyInfoBlock {
+    border: 1px solid var(--p-softLine);
+    background: #ffffff;
+    border-radius: 18px;
+    padding: 16px;
+    display: grid;
+    gap: 6px;
+}
+
+.profiles-emptyInfoLabel {
+    font-family: "Inter", sans-serif;
+    font-size: 12px;
+    line-height: 1.3;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: rgba(15, 23, 42, 0.55);
+}
+
+.profiles-emptyInfoValue {
+    font-family: "Inter", sans-serif;
+    font-size: 14px;
+    line-height: 1.5;
+    font-weight: 500;
+    color: var(--p-muted);
 }
 
 .profiles-skeleton {
@@ -103,6 +150,11 @@
     .profiles-shell {
         height: auto;
     }
+
+    .profiles-emptyCard,
+    .profiles-emptyInfoCard {
+        height: auto;
+    }
 }
 
 @media (max-width: 900px) {
@@ -131,12 +183,13 @@
         border-radius: 20px;
     }
 
-    .profiles-card-title {
-        font-size: 30px;
-        line-height: 1;
+    .profiles-muted,
+    .profiles-emptyInfoValue {
+        font-size: 14px;
     }
 
-    .profiles-muted {
-        font-size: 14px;
+    .profiles-actions-row .kx-btn {
+        width: 100%;
+        justify-content: center;
     }
 }

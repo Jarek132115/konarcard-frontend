@@ -1,4 +1,3 @@
-// src/pages/interface/Settings.jsx
 import React, { useEffect, useMemo, useState } from "react";
 import DashboardLayout from "../../components/Dashboard/DashboardLayout";
 import PageHeader from "../../components/Dashboard/PageHeader";
@@ -108,12 +107,10 @@ export default function Settings() {
 
     const isGoogle = provider === "google";
 
-    // Account
     const accountName = summary?.account?.name || authUser?.name || authUser?.full_name || "—";
     const accountEmail = summary?.account?.email || authUser?.email || "—";
     const accountAvatar = summary?.account?.avatar || authUser?.avatar || authUser?.picture || authUser?.photoURL || "";
 
-    // Billing
     const plan = summary?.plan || authUser?.plan || "free";
     const planInterval = summary?.planInterval || null;
     const subscriptionStatus = summary?.subscriptionStatus || "free";
@@ -141,7 +138,7 @@ export default function Settings() {
 
     const headerRight = (
         <div className="stg-headRight">
-            <span className="kc-pill">
+            <span className="stg-pill">
                 Plan: <strong>{String(plan || "free").toUpperCase()}</strong>
             </span>
 
@@ -168,21 +165,20 @@ export default function Settings() {
 
                 {hasError ? (
                     <div className="stg-banner stg-banner--danger">
-                        <div className="kc-title">Couldn’t load your settings</div>
-                        <div className="kc-body">{pick(loadErr, "Please try again.")}</div>
+                        <div className="stg-sectionTitle">Couldn’t load your settings</div>
+                        <div className="stg-sectionText">{pick(loadErr, "Please try again.")}</div>
                     </div>
                 ) : null}
 
                 <div className="stg-grid">
-                    {/* 1) Account — simplified */}
                     <section className="stg-card">
                         <div className="stg-cardHead">
                             <div className="stg-cardHeadLeft">
-                                <div className="kc-title">Account</div>
-                                <div className="kc-body">Your login method determines what details can be edited.</div>
+                                <h2 className="stg-cardTitle">Account</h2>
+                                <p className="stg-cardText">Your login method determines what details can be edited.</p>
                             </div>
 
-                            <span className="kc-pill">
+                            <span className="stg-pill">
                                 Login: <strong>{isBusy ? "…" : isGoogle ? "GOOGLE" : "EMAIL"}</strong>
                             </span>
                         </div>
@@ -236,12 +232,11 @@ export default function Settings() {
                         </div>
                     </section>
 
-                    {/* 2) Invoices */}
                     <section className="stg-card">
                         <div className="stg-cardHead">
                             <div className="stg-cardHeadLeft">
-                                <div className="kc-title">Invoices</div>
-                                <div className="kc-body">Subscription invoices and receipts.</div>
+                                <h2 className="stg-cardTitle">Invoices</h2>
+                                <p className="stg-cardText">Subscription invoices and receipts.</p>
                             </div>
                         </div>
 
@@ -291,23 +286,22 @@ export default function Settings() {
                                     })
                                 ) : (
                                     <div className="stg-emptyRow">
-                                        <div className="kc-title">No invoices yet.</div>
-                                        <div className="kc-body">Invoices appear here once Stripe generates them.</div>
+                                        <div className="stg-sectionTitle">No invoices yet.</div>
+                                        <div className="stg-sectionText">Invoices appear here once Stripe generates them.</div>
                                     </div>
                                 )}
                             </div>
                         </div>
                     </section>
 
-                    {/* 3) Billing */}
                     <section className="stg-card">
                         <div className="stg-cardHead">
                             <div className="stg-cardHeadLeft">
-                                <div className="kc-title">Billing</div>
-                                <div className="kc-body">Plan status and renewal information.</div>
+                                <h2 className="stg-cardTitle">Billing</h2>
+                                <p className="stg-cardText">Plan status and renewal information.</p>
                             </div>
 
-                            <span className="kc-pill">
+                            <span className="stg-pill">
                                 Plan: <strong>{String(plan || "free").toUpperCase()}</strong>
                             </span>
                         </div>
@@ -335,10 +329,21 @@ export default function Settings() {
                             </div>
 
                             <div className="stg-actions">
-                                <button type="button" className="kx-btn kx-btn--black" onClick={openBillingPortal} disabled={isBusy || hasError}>
+                                <button
+                                    type="button"
+                                    className="kx-btn kx-btn--black"
+                                    onClick={openBillingPortal}
+                                    disabled={isBusy || hasError}
+                                >
                                     Manage Billing
                                 </button>
-                                <button type="button" className="kx-btn kx-btn--white" onClick={() => (window.location.href = "/pricing")} disabled={isBusy}>
+
+                                <button
+                                    type="button"
+                                    className="kx-btn kx-btn--white"
+                                    onClick={() => (window.location.href = "/pricing")}
+                                    disabled={isBusy}
+                                >
                                     View Plans
                                 </button>
                             </div>
@@ -349,12 +354,11 @@ export default function Settings() {
                         </div>
                     </section>
 
-                    {/* 4) Payments */}
                     <section className="stg-card">
                         <div className="stg-cardHead">
                             <div className="stg-cardHeadLeft">
-                                <div className="kc-title">Payments</div>
-                                <div className="kc-body">Your recent payment activity.</div>
+                                <h2 className="stg-cardTitle">Payments</h2>
+                                <p className="stg-cardText">Your recent payment activity.</p>
                             </div>
                         </div>
 
@@ -400,8 +404,8 @@ export default function Settings() {
                                     })
                                 ) : (
                                     <div className="stg-emptyRow">
-                                        <div className="kc-title">No payments yet.</div>
-                                        <div className="kc-body">Payments appear here after successful charges.</div>
+                                        <div className="stg-sectionTitle">No payments yet.</div>
+                                        <div className="stg-sectionText">Payments appear here after successful charges.</div>
                                     </div>
                                 )}
                             </div>

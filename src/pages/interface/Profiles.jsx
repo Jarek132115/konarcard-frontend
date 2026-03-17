@@ -170,6 +170,7 @@ export default function Profiles() {
     const [selectedSlug, setSelectedSlug] = useState(null);
     const [lockedOverlayOpen, setLockedOverlayOpen] = useState(false);
     const [lockedClickedSlug, setLockedClickedSlug] = useState("");
+    const [creatingFirstProfile, setCreatingFirstProfile] = useState(false);
 
     const claimRef = useRef(null);
 
@@ -299,6 +300,39 @@ export default function Profiles() {
     const handleVisitProfile = (slug) => {
         const link = buildPublicUrl(slug);
         window.open(link, "_blank", "noopener,noreferrer");
+    };
+
+    const handleCreateFirstProfile = async () => {
+        if (creatingFirstProfile) return;
+
+        setCreatingFirstProfile(true);
+
+        try {
+            const createdResp = await createProfile.mutateAsync({
+                profile_slug: "main",
+                template_id: "template-1",
+                business_card_name: "",
+                business_name: "",
+                trade_title: "",
+            });
+
+            await refetchAuthUser?.();
+            await refetchProfiles?.();
+
+            const createdSlug =
+                createdResp?.profile_slug ||
+                createdResp?.data?.profile_slug ||
+                createdResp?.raw?.profile_slug ||
+                "main";
+
+            setSelectedSlug(createdSlug);
+            navigate(`/profiles/edit?slug=${encodeURIComponent(createdSlug)}`);
+        } catch (e) {
+            const msg = e?.response?.data?.error || e?.message || "Could not create profile.";
+            alert(msg);
+        } finally {
+            setCreatingFirstProfile(false);
+        }
     };
 
     const copyLink = async (link) => {
@@ -732,21 +766,59 @@ export default function Profiles() {
                 />
 
                 {sortedProfiles.length === 0 ? (
-                    <section className="profiles-card profiles-empty">
-                        <h2 className="profiles-card-title">Create your first profile</h2>
-                        <p className="profiles-muted">
-                            Your profile is what customers see when they scan your KonarCard. Create it once — update it any time.
-                        </p>
+                    <div className="profiles-grid">
+                        <section className="profiles-card profiles-emptyCard">
+                            <h2 className="profiles-card-title">Create your first profile</h2>
+                            <p className="profiles-muted">
+                                Your profile is what customers see when they scan your KonarCard. Create it once — update it any time.
+                            </p>
 
-                        <div className="profiles-actions-row">
-                            <button type="button" className="kx-btn kx-btn--orange" onClick={openClaimPanel}>
-                                + Add profile
-                            </button>
-                            <button type="button" className="kx-btn kx-btn--white" onClick={() => handleEdit("")}>
-                                Open editor
-                            </button>
-                        </div>
-                    </section>
+                            <div className="profiles-actions-row">
+                                <button
+                                    type="button"
+                                    className="kx-btn kx-btn--orange"
+                                    onClick={handleCreateFirstProfile}
+                                    disabled={creatingFirstProfile}
+                                >
+                                    {creatingFirstProfile ? "Creating..." : "+ Add profile"}
+                                </button>
+
+                                <button
+                                    type="button"
+                                    className="kx-btn kx-btn--white"
+                                    onClick={() => navigate("/profiles/edit")}
+                                >
+                                    Open editor
+                                </button>
+                            </div>
+                        </section>
+
+                        <section className="profiles-card profiles-emptyInfoCard">
+                            <div className="profiles-emptyInfoHead">
+                                <h2 className="profiles-card-title">Profile details</h2>
+                                <p className="profiles-muted">
+                                    Once you create a profile, your public link, QR code, sharing tools and actions will show here.
+                                </p>
+                            </div>
+
+                            <div className="profiles-emptyInfoPanel">
+                                <div className="profiles-emptyInfoBlock">
+                                    <div className="profiles-emptyInfoLabel">Public link</div>
+                                    <div className="profiles-emptyInfoValue">Create a profile to generate your link.</div>
+                                </div>
+
+                                <div className="profiles-emptyInfoBlock">
+                                    <div className="profiles-emptyInfoLabel">QR code</div>
+                                    <div className="profiles-emptyInfoValue">Your QR code will appear here once your first profile is created.</div>
+                                </div>
+
+                                <div className="profiles-emptyInfoBlock">
+                                    <div className="profiles-emptyInfoLabel">Share tools</div>
+                                    <div className="profiles-emptyInfoValue">Copy link, social share, wallet tools and profile actions will appear here.</div>
+                                </div>
+                            </div>
+                        </section>
+                    </div>
                 ) : (
                     <div className="profiles-grid">
                         <ProfilesList
