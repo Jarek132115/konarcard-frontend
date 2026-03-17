@@ -7,6 +7,7 @@ import { AuthContext } from "../../components/AuthContext";
 import { useFetchBusinessCard } from "../../hooks/useFetchBusinessCard";
 
 import UpgradeToPlusImage from "../../assets/images/UpgradeToPlus.png";
+import LiveChatIcon from "../../assets/icons/LiveChatIcon.svg";
 
 export default function HelpCentreInterface() {
   const { user: authUser } = useContext(AuthContext);
@@ -89,16 +90,12 @@ export default function HelpCentreInterface() {
         <section className="hc4-supportBanner">
           <div className="hc4-supportLeft">
             <div className="hc4-supportIcon" aria-hidden="true">
-              <svg viewBox="0 0 24 24" className="hc4-supportIconSvg">
-                <path
-                  d="M7 17l-4 4V6a3 3 0 0 1 3-3h8a3 3 0 0 1 3 3v8a3 3 0 0 1-3 3H7Zm10-3h1a3 3 0 0 0 3-3V7a3 3 0 0 0-3-3h-1"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="1.8"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                />
-              </svg>
+              <img
+                src={LiveChatIcon}
+                alt=""
+                aria-hidden="true"
+                className="hc4-supportIconImg"
+              />
             </div>
 
             <div className="hc4-supportCopy">
@@ -114,7 +111,13 @@ export default function HelpCentreInterface() {
             className="hc4-liveBtn"
             onClick={openChat}
           >
-            Start Live Chat
+            <img
+              src={LiveChatIcon}
+              alt=""
+              aria-hidden="true"
+              className="hc4-liveBtnIcon"
+            />
+            <span>Start Live Chat</span>
           </button>
         </section>
 
