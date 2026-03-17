@@ -21,7 +21,7 @@
   padding: 0;
   display: flex;
   flex-direction: column;
-  gap: 14px;
+  gap: 0;
 }
 
 .hc4-shell .ph2-wrap {
@@ -130,6 +130,7 @@
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 16px;
   align-items: stretch;
+  margin-top: 16px;
 }
 
 /* -------------------------------------------------------
@@ -170,13 +171,19 @@
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  gap: 16px;
 }
 
-.hc4-cardText {
+.hc4-cardTop {
   display: grid;
   gap: 8px;
   align-content: start;
+}
+
+.hc4-cardActions {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  margin-top: 16px;
 }
 
 .hc4-cardTitle {
@@ -199,6 +206,7 @@
 }
 
 .hc4-cardLength {
+  margin: 0 0 4px;
   font-family: "Inter", sans-serif;
   font-size: 13px;
   line-height: 1.45;
@@ -256,6 +264,7 @@
   .hc4-grid {
     grid-template-columns: 1fr;
     gap: 14px;
+    margin-top: 14px;
   }
 }
 
@@ -279,7 +288,11 @@
   }
 
   .hc4-cardBody {
-    gap: 14px;
+    justify-content: flex-start;
+  }
+
+  .hc4-cardActions {
+    margin-top: 14px;
   }
 }
 
@@ -294,10 +307,6 @@
 }
 
 @media (max-width: 560px) {
-  .hc4-shell {
-    gap: 12px;
-  }
-
   .hc4-supportBanner {
     padding: 16px;
     border-radius: 20px;
@@ -319,6 +328,11 @@
     height: 34px;
   }
 
+  .hc4-grid {
+    gap: 12px;
+    margin-top: 12px;
+  }
+
   .hc4-card {
     padding: 16px;
     border-radius: 20px;
@@ -336,6 +350,10 @@
   .hc4-cardDesc,
   .hc4-cardLength {
     font-size: 14px;
+  }
+
+  .hc4-cardActions {
+    margin-top: 12px;
   }
 
   .hc4-watchBtn {

@@ -131,28 +131,31 @@ export default function HelpCentreInterface() {
               </div>
 
               <div className="hc4-cardBody">
-                <div className="hc4-cardText">
+                <div className="hc4-cardTop">
                   <h3 className="hc4-cardTitle">{video.title}</h3>
                   <p className="hc4-cardDesc">{video.desc}</p>
-                  <div className="hc4-cardLength">{video.length}</div>
                 </div>
 
-                <button
-                  type="button"
-                  className="hc4-watchBtn"
-                  onClick={() => { }}
-                >
-                  <svg viewBox="0 0 24 24" className="hc4-watchBtnIcon" aria-hidden="true">
-                    <path
-                      d="M8 6.5v11l9-5.5-9-5.5Z"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="1.8"
-                      strokeLinejoin="round"
-                    />
-                  </svg>
-                  <span>Watch Video</span>
-                </button>
+                <div className="hc4-cardActions">
+                  <div className="hc4-cardLength">{video.length}</div>
+
+                  <button
+                    type="button"
+                    className="hc4-watchBtn"
+                    onClick={() => { }}
+                  >
+                    <svg viewBox="0 0 24 24" className="hc4-watchBtnIcon" aria-hidden="true">
+                      <path
+                        d="M8 6.5v11l9-5.5-9-5.5Z"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="1.8"
+                        strokeLinejoin="round"
+                      />
+                    </svg>
+                    <span>Watch Video</span>
+                  </button>
+                </div>
               </div>
             </article>
           ))}
