@@ -11,7 +11,6 @@
 
     --sb3-soft: #fafafa;
     --sb3-active-bg: #f5f5f5;
-
     --sb3-active-shadow: 0 0 1px rgba(0, 0, 0, 0.25);
 
     --sb3-divider: rgba(15, 23, 42, 0.10);
@@ -40,8 +39,9 @@
 .sb3 {
     position: sticky;
     top: var(--dash-gutter, 24px);
-    height: calc(100vh - (var(--dash-gutter, 24px) * 2));
     width: var(--sb3-w);
+    height: calc(100vh - (var(--dash-gutter, 24px) * 2));
+    max-height: calc(100vh - (var(--dash-gutter, 24px) * 2));
 
     background: var(--sb3-bg);
     border: 1px solid var(--sb3-border);
@@ -50,10 +50,17 @@
 
     display: flex;
     flex-direction: column;
+    justify-content: flex-start;
+
     overflow-x: hidden;
     overflow-y: auto;
+    overscroll-behavior: contain;
     -webkit-overflow-scrolling: touch;
-    scrollbar-gutter: stable;
+}
+
+/* Prevent internal sections from shrinking */
+.sb3>* {
+    flex-shrink: 0;
 }
 
 /* Top brand row */
@@ -63,7 +70,6 @@
     align-items: center;
     justify-content: space-between;
     gap: 12px;
-    flex: 0 0 auto;
 }
 
 .sb3-brand {
@@ -100,7 +106,6 @@
     padding: 0 !important;
 }
 
-/* KonarCard: Inter 20px semibold */
 .sb3-brandName {
     font-family: "Inter", sans-serif;
     font-size: 20px;
@@ -132,18 +137,16 @@
     transform: translateY(1px);
 }
 
-/* Divider is inset */
+/* Divider */
 .sb3-divider {
     height: 1px;
     background: var(--sb3-divider);
     margin: 0 24px;
-    flex: 0 0 auto;
 }
 
 /* Gap blocks */
 .sb3-gap36 {
     height: 24px;
-    flex: 0 0 auto;
 }
 
 /* Nav */
@@ -151,14 +154,14 @@
     display: grid;
     gap: 16px;
     padding: 0 24px;
-    flex: 0 0 auto;
 }
 
-/* Link base */
+/* Links */
 .sb3-link {
     display: flex;
     align-items: center;
     gap: 8px;
+    min-height: 40px;
 
     text-decoration: none;
     padding: 6px;
@@ -173,8 +176,9 @@
 
     border: none;
     box-shadow: none;
-
     cursor: pointer;
+
+    flex-shrink: 0;
 
     transition: background 0.15s ease, box-shadow 0.15s ease, color 0.15s ease,
         transform 0.08s ease;
@@ -193,7 +197,6 @@
     box-shadow: 0 0 0 3px var(--kc-focus-ring);
 }
 
-/* Icon wrapper */
 .sb3-icoWrap {
     width: 28px;
     height: 28px;
@@ -232,16 +235,13 @@
 /* Bottom area */
 .sb3-bottom {
     margin-top: auto;
-    padding: 0 0 18px;
-    flex: 0 0 auto;
+    padding: 24px 0 18px;
 }
 
-/* Bottom nav */
 .sb3-nav--bottom {
     padding: 0 24px;
 }
 
-/* Footnote */
 .sb3-footnote {
     margin-top: 18px;
     font-family: "Inter", sans-serif;
@@ -251,7 +251,7 @@
     text-align: center;
 }
 
-/* Logout always red */
+/* Logout */
 .sb3-link--logout {
     background: transparent;
     color: var(--sb3-danger);
@@ -273,25 +273,58 @@
     background: var(--sb3-danger-soft);
 }
 
+/* Short-height screens:
+   stop forcing bottom items to stay pinned,
+   let everything flow naturally and scroll */
+@media (max-height: 860px) {
+    .sb3-bottom {
+        margin-top: 24px;
+        padding-top: 0;
+    }
+}
+
 /* Mobile drawer */
 @media (max-width: 1000px) {
     .sb3 {
         position: fixed;
         top: 0;
         left: 0;
-        height: 100vh;
         width: 100vw;
+        height: 100vh;
+        max-height: 100vh;
         border-radius: 0;
         transform: translateX(-100%);
         transition: transform 0.35s ease;
         z-index: 1002;
         background: #ffffff;
+
         overflow-x: hidden;
         overflow-y: auto;
+        overscroll-behavior: contain;
         -webkit-overflow-scrolling: touch;
     }
 
     .sb3.open {
         transform: translateX(0);
+    }
+}
+
+/* Smaller phones / short landscape */
+@media (max-width: 1000px) and (max-height: 860px) {
+    .sb3-top {
+        padding: 20px 24px;
+    }
+
+    .sb3-gap36 {
+        height: 20px;
+    }
+
+    .sb3-nav {
+        gap: 14px;
+    }
+
+    .sb3-bottom {
+        margin-top: 20px;
+        padding-bottom: 16px;
     }
 }
