@@ -170,7 +170,6 @@ export default function Profiles() {
     const [selectedSlug, setSelectedSlug] = useState(null);
     const [lockedOverlayOpen, setLockedOverlayOpen] = useState(false);
     const [lockedClickedSlug, setLockedClickedSlug] = useState("");
-    const [creatingFirstProfile, setCreatingFirstProfile] = useState(false);
 
     const claimRef = useRef(null);
 
@@ -300,39 +299,6 @@ export default function Profiles() {
     const handleVisitProfile = (slug) => {
         const link = buildPublicUrl(slug);
         window.open(link, "_blank", "noopener,noreferrer");
-    };
-
-    const handleCreateFirstProfile = async () => {
-        if (creatingFirstProfile) return;
-
-        setCreatingFirstProfile(true);
-
-        try {
-            const createdResp = await createProfile.mutateAsync({
-                profile_slug: "main",
-                template_id: "template-1",
-                business_card_name: "",
-                business_name: "",
-                trade_title: "",
-            });
-
-            await refetchAuthUser?.();
-            await refetchProfiles?.();
-
-            const createdSlug =
-                createdResp?.profile_slug ||
-                createdResp?.data?.profile_slug ||
-                createdResp?.raw?.profile_slug ||
-                "main";
-
-            setSelectedSlug(createdSlug);
-            navigate(`/profiles/edit?slug=${encodeURIComponent(createdSlug)}`);
-        } catch (e) {
-            const msg = e?.response?.data?.error || e?.message || "Could not create profile.";
-            alert(msg);
-        } finally {
-            setCreatingFirstProfile(false);
-        }
     };
 
     const copyLink = async (link) => {
@@ -495,7 +461,61 @@ export default function Profiles() {
         }
     };
 
+    const createClaimedProfileNow = async () => {
+        const v = validateClaimSlug(claimSlugInput);
+        setClaimSlugNormalized(v.slug);
+
+        if (!v.ok) {
+            setClaimStatus("invalid");
+            setClaimMessage(v.msg);
+            return;
+        }
+
+        if (claimStatus !== "available") return;
+
+        setClaimStatus("creating");
+        setClaimMessage("");
+
+        try {
+            const createdResp = await createProfile.mutateAsync({
+                profile_slug: v.slug,
+                template_id: "template-1",
+                business_card_name: "",
+                business_name: "",
+                trade_title: "",
+            });
+
+            await refetchAuthUser?.();
+            await refetchProfiles?.();
+
+            const createdSlug =
+                createdResp?.profile_slug ||
+                createdResp?.data?.profile_slug ||
+                createdResp?.raw?.profile_slug ||
+                v.slug;
+
+            setClaimStatus("created");
+            setClaimMessage("Profile created ✅");
+            setSelectedSlug(createdSlug);
+
+            setTimeout(() => {
+                closeClaimPanel();
+                navigate(`/profiles/edit?slug=${encodeURIComponent(createdSlug)}`);
+            }, 250);
+        } catch (e) {
+            const msg = e?.response?.data?.error || e?.message || "Could not create profile.";
+            setClaimStatus("error");
+            setClaimMessage(msg);
+        }
+    };
+
     const createTeamsProfileNow = async () => {
+        const isFirstProfile = sortedProfiles.length === 0;
+
+        if (isFirstProfile) {
+            return createClaimedProfileNow();
+        }
+
         const v = validateClaimSlug(claimSlugInput);
         setClaimSlugNormalized(v.slug);
 
@@ -546,6 +566,12 @@ export default function Profiles() {
     };
 
     const startTeamsCheckout = async () => {
+        const isFirstProfile = sortedProfiles.length === 0;
+
+        if (isFirstProfile) {
+            return createClaimedProfileNow();
+        }
+
         const v = validateClaimSlug(claimSlugInput);
         setClaimSlugNormalized(v.slug);
 
@@ -765,34 +791,61 @@ export default function Profiles() {
                     subtitle="Profiles are your public digital business cards."
                 />
 
-                {sortedProfiles.length === 0 ? (
-                    <div className="profiles-grid">
-                        <section className="profiles-card profiles-emptyCard">
-                            <h2 className="profiles-card-title">Create your first profile</h2>
-                            <p className="profiles-muted">
-                                Your profile is what customers see when they scan your KonarCard. Create it once — update it any time.
-                            </p>
+                <div className="profiles-grid">
+                    <ProfilesList
+                        railRef={railRef}
+                        claimRef={claimRef}
+                        suppressClickRef={suppressClickRef}
+                        sortedProfiles={sortedProfiles}
+                        cappedProfiles={cappedProfiles}
+                        selectedProfile={selectedProfile}
+                        maxProfiles={maxProfiles}
+                        claimOpen={claimOpen}
+                        claimSlugInput={claimSlugInput}
+                        claimSlugNormalized={claimSlugNormalized}
+                        claimStatus={claimStatus}
+                        claimMessage={claimMessage}
+                        isTeams={isTeams}
+                        isPlus={isPlus}
+                        isFree={isFree}
+                        ProfileMiniMainPreview={ProfileMiniMainPreview}
+                        onRailPointerDown={handleRailPointerDown}
+                        onRailPointerMove={handleRailPointerMove}
+                        onRailPointerUp={handleRailPointerUp}
+                        onRailPointerLeave={handleRailPointerLeave}
+                        onCardSelect={handleCardSelect}
+                        onOpenLockedOverlay={openLockedOverlay}
+                        onEdit={handleEdit}
+                        onVisitProfile={handleVisitProfile}
+                        onOpenClaim={openClaimPanel}
+                        onCloseClaim={closeClaimPanel}
+                        onCheckAvailability={checkSlugAvailability}
+                        onCreateTeamsProfile={createTeamsProfileNow}
+                        onStartTeamsCheckout={startTeamsCheckout}
+                        onClaimInputChange={(value) => {
+                            setClaimSlugInput(value);
+                            setClaimStatus("idle");
+                            setClaimMessage("");
+                        }}
+                    />
 
-                            <div className="profiles-actions-row">
-                                <button
-                                    type="button"
-                                    className="kx-btn kx-btn--orange"
-                                    onClick={handleCreateFirstProfile}
-                                    disabled={creatingFirstProfile}
-                                >
-                                    {creatingFirstProfile ? "Creating..." : "+ Add profile"}
-                                </button>
-
-                                <button
-                                    type="button"
-                                    className="kx-btn kx-btn--white"
-                                    onClick={() => navigate("/profiles/edit")}
-                                >
-                                    Open editor
-                                </button>
-                            </div>
-                        </section>
-
+                    {selectedProfile ? (
+                        <ProfilesInfo
+                            selectedProfile={selectedProfile}
+                            selectedPublicUrl={selectedPublicUrl}
+                            onCopyLink={copyLink}
+                            onDownloadQr={handleDownloadQr}
+                            onFacebook={shareToFacebook}
+                            onInstagram={shareToInstagram}
+                            onMessenger={shareToMessenger}
+                            onWhatsApp={shareToWhatsApp}
+                            onText={shareByText}
+                            onAppleWallet={handleAppleWallet}
+                            onGoogleWallet={handleGoogleWallet}
+                            onEdit={handleEdit}
+                            onDelete={handleDelete}
+                        />
+                    ) : (
                         <section className="profiles-card profiles-emptyInfoCard">
                             <div className="profiles-emptyInfoHead">
                                 <h2 className="profiles-card-title">Profile details</h2>
@@ -818,63 +871,8 @@ export default function Profiles() {
                                 </div>
                             </div>
                         </section>
-                    </div>
-                ) : (
-                    <div className="profiles-grid">
-                        <ProfilesList
-                            railRef={railRef}
-                            claimRef={claimRef}
-                            suppressClickRef={suppressClickRef}
-                            sortedProfiles={sortedProfiles}
-                            cappedProfiles={cappedProfiles}
-                            selectedProfile={selectedProfile}
-                            maxProfiles={maxProfiles}
-                            claimOpen={claimOpen}
-                            claimSlugInput={claimSlugInput}
-                            claimSlugNormalized={claimSlugNormalized}
-                            claimStatus={claimStatus}
-                            claimMessage={claimMessage}
-                            isTeams={isTeams}
-                            isPlus={isPlus}
-                            isFree={isFree}
-                            ProfileMiniMainPreview={ProfileMiniMainPreview}
-                            onRailPointerDown={handleRailPointerDown}
-                            onRailPointerMove={handleRailPointerMove}
-                            onRailPointerUp={handleRailPointerUp}
-                            onRailPointerLeave={handleRailPointerLeave}
-                            onCardSelect={handleCardSelect}
-                            onOpenLockedOverlay={openLockedOverlay}
-                            onEdit={handleEdit}
-                            onVisitProfile={handleVisitProfile}
-                            onOpenClaim={openClaimPanel}
-                            onCloseClaim={closeClaimPanel}
-                            onCheckAvailability={checkSlugAvailability}
-                            onCreateTeamsProfile={createTeamsProfileNow}
-                            onStartTeamsCheckout={startTeamsCheckout}
-                            onClaimInputChange={(value) => {
-                                setClaimSlugInput(value);
-                                setClaimStatus("idle");
-                                setClaimMessage("");
-                            }}
-                        />
-
-                        <ProfilesInfo
-                            selectedProfile={selectedProfile}
-                            selectedPublicUrl={selectedPublicUrl}
-                            onCopyLink={copyLink}
-                            onDownloadQr={handleDownloadQr}
-                            onFacebook={shareToFacebook}
-                            onInstagram={shareToInstagram}
-                            onMessenger={shareToMessenger}
-                            onWhatsApp={shareToWhatsApp}
-                            onText={shareByText}
-                            onAppleWallet={handleAppleWallet}
-                            onGoogleWallet={handleGoogleWallet}
-                            onEdit={handleEdit}
-                            onDelete={handleDelete}
-                        />
-                    </div>
-                )}
+                    )}
+                </div>
 
                 {lockedOverlayOpen ? (
                     <div
