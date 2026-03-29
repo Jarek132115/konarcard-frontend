@@ -3,6 +3,7 @@ import ShareOnEditProfileIcon from "../../assets/icons/ShareOnEditProfile.svg";
 import ShareOnVisitProfileIcon from "../../assets/icons/ShareOnVisitProfile.svg";
 import AddYourProfilePlusIcon from "../../assets/icons/AddYourProfilePlus.svg";
 import CheckAvailabilityIcon from "../../assets/icons/CheckAvailability.svg";
+import { resolveMediaUrl } from "../../utils/profileHelpers";
 
 function firstNonEmpty(...values) {
     for (const value of values) {
@@ -34,7 +35,7 @@ function getPreviewTheme(profile) {
 
 function getPreviewCover(profile) {
     const raw = profile?.raw || {};
-    return (
+    return resolveMediaUrl(
         raw?.coverPhoto ||
         raw?.cover_photo ||
         raw?.coverImage ||
@@ -45,6 +46,19 @@ function getPreviewCover(profile) {
         raw?.banner_image ||
         raw?.mainImage ||
         raw?.main_image ||
+        ""
+    );
+}
+
+function getPreviewLogo(profile) {
+    const raw = profile?.raw || {};
+    return resolveMediaUrl(
+        raw?.logo ||
+        raw?.avatar ||
+        raw?.logoImage ||
+        raw?.logo_image ||
+        raw?.avatarImage ||
+        raw?.avatar_image ||
         ""
     );
 }
@@ -127,6 +141,7 @@ function getPreviewAccent(profile) {
 function ProfileMainPreview({ profile }) {
     const theme = getPreviewTheme(profile);
     const cover = getPreviewCover(profile);
+    const logo = getPreviewLogo(profile);
     const name = getPreviewName(profile);
     const trade = getPreviewTrade(profile);
     const location = getPreviewLocation(profile);
@@ -158,6 +173,21 @@ function ProfileMainPreview({ profile }) {
 
                 <div className="profiles-mainPreviewBody">
                     <div className="profiles-mainPreviewCopy">
+                        <div className="profiles-mainPreviewAvatarRow">
+                            {logo ? (
+                                <img
+                                    src={logo}
+                                    alt=""
+                                    aria-hidden="true"
+                                    className="profiles-mainPreviewAvatar"
+                                />
+                            ) : (
+                                <div className="profiles-mainPreviewAvatar profiles-mainPreviewAvatar--placeholder">
+                                    {name ? name.charAt(0).toUpperCase() : "K"}
+                                </div>
+                            )}
+                        </div>
+
                         <div className="profiles-mainPreviewName">{name}</div>
                         <div className="profiles-mainPreviewTrade">{trade}</div>
                         <div className="profiles-mainPreviewLocation">{location}</div>

@@ -11,6 +11,7 @@ import ShareOnQRCodeIcon from "../../assets/icons/ShareOnQRCode.svg";
 import ShareOnAppleWalletIcon from "../../assets/icons/ShareOnAppleWallet.svg";
 import ShareOnGoogleWalletIcon from "../../assets/icons/ShareOnGoogleWallet.svg";
 import ShareOnEditProfileIcon from "../../assets/icons/ShareOnEditProfile.svg";
+import { resolveMediaUrl } from "../../utils/profileHelpers";
 
 function ActionIcon({ src, alt = "" }) {
     return (
@@ -55,6 +56,8 @@ export default function ProfilesInfo({
     onEdit,
     onDelete,
 }) {
+    const resolvedQrCodeUrl = resolveMediaUrl(selectedProfile?.qrCodeUrl);
+
     return (
         <aside className="profiles-right">
             <section className="profiles-card profiles-actionsCard">
@@ -68,7 +71,9 @@ export default function ProfilesInfo({
                                     </span>
 
                                     <span className={`profiles-pill completion ${selectedProfile.tone}`}>
-                                        {selectedProfile.pct >= 95 ? "Profile Complete" : `${selectedProfile.pct}% Complete`}
+                                        {selectedProfile.pct >= 95
+                                            ? "Profile Complete"
+                                            : `${selectedProfile.pct}% Complete`}
                                     </span>
                                 </div>
 
@@ -111,9 +116,9 @@ export default function ProfilesInfo({
 
                                 <div className="profiles-qrBlock">
                                     <div className="profiles-qrWrap profiles-qrWrap--wide">
-                                        {selectedProfile.qrCodeUrl ? (
+                                        {resolvedQrCodeUrl ? (
                                             <img
-                                                src={selectedProfile.qrCodeUrl}
+                                                src={resolvedQrCodeUrl}
                                                 alt={`${selectedProfile.slug} QR code`}
                                                 className="profiles-qrImage"
                                             />
@@ -143,27 +148,47 @@ export default function ProfilesInfo({
                                 <h3 className="profiles-groupTitle">Share your profile</h3>
 
                                 <div className="profiles-actionGrid">
-                                    <button type="button" className="kx-btn kx-btn--white profiles-actionBtn" onClick={onFacebook}>
+                                    <button
+                                        type="button"
+                                        className="kx-btn kx-btn--white profiles-actionBtn"
+                                        onClick={onFacebook}
+                                    >
                                         <ActionIcon src={ShareOnFacebookIcon} />
                                         <span>Facebook</span>
                                     </button>
 
-                                    <button type="button" className="kx-btn kx-btn--white profiles-actionBtn" onClick={onInstagram}>
+                                    <button
+                                        type="button"
+                                        className="kx-btn kx-btn--white profiles-actionBtn"
+                                        onClick={onInstagram}
+                                    >
                                         <ActionIcon src={ShareOnInstagramIcon} />
                                         <span>Instagram</span>
                                     </button>
 
-                                    <button type="button" className="kx-btn kx-btn--white profiles-actionBtn" onClick={onMessenger}>
+                                    <button
+                                        type="button"
+                                        className="kx-btn kx-btn--white profiles-actionBtn"
+                                        onClick={onMessenger}
+                                    >
                                         <ActionIcon src={ShareOnMessengerIcon} />
                                         <span>Messenger</span>
                                     </button>
 
-                                    <button type="button" className="kx-btn kx-btn--white profiles-actionBtn" onClick={onWhatsApp}>
+                                    <button
+                                        type="button"
+                                        className="kx-btn kx-btn--white profiles-actionBtn"
+                                        onClick={onWhatsApp}
+                                    >
                                         <ActionIcon src={ShareOnWhatsappIcon} />
                                         <span>WhatsApp</span>
                                     </button>
 
-                                    <button type="button" className="kx-btn kx-btn--white profiles-actionBtn" onClick={onText}>
+                                    <button
+                                        type="button"
+                                        className="kx-btn kx-btn--white profiles-actionBtn"
+                                        onClick={onText}
+                                    >
                                         <ActionIcon src={ShareOnTextIcon} />
                                         <span>Text</span>
                                     </button>
@@ -187,12 +212,20 @@ export default function ProfilesInfo({
                                 <h3 className="profiles-groupTitle">Add to wallet</h3>
 
                                 <div className="profiles-actionGrid profiles-actionGrid--two">
-                                    <button type="button" className="kx-btn kx-btn--white profiles-actionBtn" onClick={onAppleWallet}>
+                                    <button
+                                        type="button"
+                                        className="kx-btn kx-btn--white profiles-actionBtn"
+                                        onClick={onAppleWallet}
+                                    >
                                         <ActionIcon src={ShareOnAppleWalletIcon} />
                                         <span>Apple Wallet</span>
                                     </button>
 
-                                    <button type="button" className="kx-btn kx-btn--white profiles-actionBtn" onClick={onGoogleWallet}>
+                                    <button
+                                        type="button"
+                                        className="kx-btn kx-btn--white profiles-actionBtn"
+                                        onClick={onGoogleWallet}
+                                    >
                                         <ActionIcon src={ShareOnGoogleWalletIcon} />
                                         <span>Google Wallet</span>
                                     </button>

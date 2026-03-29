@@ -15,6 +15,7 @@ import {
     hasValue,
     hasMeaningfulContent,
     getWorkPreview,
+    resolveMediaUrl,
 } from "../../utils/profileHelpers";
 
 const asString = (v) => (typeof v === "string" ? v : "");
@@ -215,9 +216,15 @@ export default function Preview({
             linkedin_url: s.linkedin_url,
             x_url: s.x_url,
             tiktok_url: s.tiktok_url,
-            cover_photo: s.coverPhotoPreview || s.coverPhoto || s.cover_photo,
-            logo: s.logoPreview || s.logo,
-            avatar: s.avatarPreview || s.avatar || s.avatar_url,
+            cover_photo:
+                s.coverPhotoPreview ||
+                resolveMediaUrl(s.coverPhoto || s.cover_photo),
+            logo:
+                s.logoPreview ||
+                resolveMediaUrl(s.logo),
+            avatar:
+                s.avatarPreview ||
+                resolveMediaUrl(s.avatar || s.avatar_url),
             works: asArray(s.workImages || s.works).map((item) => getWorkPreview(item)),
             services: s.services,
             reviews: s.reviews,
@@ -247,34 +254,33 @@ export default function Preview({
 
         const cover =
             s.coverPhotoPreview ||
-            s.coverPhoto ||
-            s.cover_photo ||
+            resolveMediaUrl(s.coverPhoto || s.cover_photo) ||
             "";
 
         const logo =
             s.logoPreview ||
-            s.logo ||
-            s.avatarPreview ||
-            s.avatar ||
+            resolveMediaUrl(s.logo || s.avatar) ||
             "";
 
         const avatar =
             s.avatarPreview ||
-            s.avatar ||
-            s.avatar_url ||
-            s.logoPreview ||
-            s.logo ||
+            resolveMediaUrl(s.avatar || s.avatar_url || s.logo) ||
             "";
 
         const works = asArray(s.workImages || s.works)
             .map((item) => {
-                if (typeof item === "string") return item;
+                if (typeof item === "string") {
+                    const preview = getWorkPreview(item);
+                    return preview || null;
+                }
+
                 if (item && typeof item === "object") {
                     return {
                         ...item,
-                        preview: item.preview || "",
+                        preview: getWorkPreview(item),
                     };
                 }
+
                 return null;
             })
             .filter((item) => {

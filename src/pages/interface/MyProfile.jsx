@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useState, useMemo } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { toast } from "react-hot-toast";
 
@@ -18,11 +18,11 @@ import Editor from "../../components/Dashboard/Editor";
 import { useSaveMyBusinessCard } from "../../hooks/useBusinessCard";
 import {
   norm,
-  normalizeSlug,
   calcCompletionPct,
   getCompletionTone,
   hasMeaningfulContent,
-  getProfileStatus,
+  normalizeSlug,
+  resolveMediaUrl,
 } from "../../utils/profileHelpers";
 
 import "../../styling/dashboard/myprofile.css";
@@ -409,9 +409,9 @@ export default function MyProfile() {
         full_name: businessCard.full_name || "",
         bio: businessCard.bio || "",
 
-        logo: businessCard.logo || businessCard.avatar || null,
-        avatar: businessCard.avatar || businessCard.logo || null,
-        coverPhoto: businessCard.cover_photo || null,
+        logo: resolveMediaUrl(businessCard.logo || businessCard.avatar),
+        avatar: resolveMediaUrl(businessCard.avatar || businessCard.logo),
+        coverPhoto: resolveMediaUrl(businessCard.cover_photo),
 
         logoPreview: "",
         avatarPreview: "",
@@ -423,7 +423,7 @@ export default function MyProfile() {
 
         workImages: (businessCard.works || []).map((url) => ({
           file: null,
-          preview: url,
+          preview: resolveMediaUrl(url),
         })),
 
         services: (businessCard.services || []).map((s) => ({
@@ -765,7 +765,9 @@ export default function MyProfile() {
       .map((w) => (w?.preview && !w.preview.startsWith("blob:") ? w.preview : null))
       .filter(Boolean);
 
-    const originalWorks = Array.isArray(original.works) ? original.works : [];
+    const originalWorks = Array.isArray(original.works)
+      ? original.works.map((w) => resolveMediaUrl(w)).filter(Boolean)
+      : [];
 
     const worksChanged = (() => {
       if (currentWorks.length !== originalWorks.length) return true;
@@ -799,10 +801,10 @@ export default function MyProfile() {
       original.sub_heading ||
       "";
 
-    const originalLogo = original.logo || original.avatar || "";
+    const originalLogo = resolveMediaUrl(original.logo || original.avatar || "");
     const currentLogo = state.logo || state.avatar || "";
 
-    const originalCover = original.cover_photo || "";
+    const originalCover = resolveMediaUrl(original.cover_photo || "");
     const currentCover = state.coverPhoto || "";
 
     return (
@@ -1048,11 +1050,11 @@ export default function MyProfile() {
   }, [businessCard]);
 
   const isLive = useMemo(() => {
-    return getProfileStatus({
-      card: businessCard,
-      completionPct,
-    }) === "live";
-  }, [businessCard, completionPct]);
+    if (businessCard?.is_live === true) return true;
+    if (businessCard?.published === true) return true;
+    if (String(businessCard?.status || "").toLowerCase() === "live") return true;
+    return hasSavedData && completionPct >= 60;
+  }, [businessCard, completionPct, hasSavedData]);
 
   return (
     <DashboardLayout title={null} subtitle={null} hideDesktopHeader>

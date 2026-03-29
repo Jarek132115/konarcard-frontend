@@ -19,12 +19,11 @@ import {
 } from "../../hooks/useBusinessCard";
 import api from "../../services/api";
 import {
-    norm,
     normalizeSlug,
     calcCompletionPct,
     getCompletionTone,
-    hasMeaningfulContent,
     getProfileStatus,
+    resolveMediaUrl,
 } from "../../utils/profileHelpers";
 
 const TEAMS_CHECKOUT_ENDPOINT = "/api/checkout/teams";
@@ -47,8 +46,8 @@ const getThemeMode = (c) => {
 const getMainPreviewData = (c) => {
     return {
         themeMode: getThemeMode(c),
-        coverPhoto: centerTrim(c?.cover_photo),
-        logo: centerTrim(c?.logo || c?.avatar),
+        coverPhoto: resolveMediaUrl(c?.cover_photo),
+        logo: resolveMediaUrl(c?.logo || c?.avatar),
         businessName:
             centerTrim(c?.main_heading) ||
             centerTrim(c?.business_name) ||

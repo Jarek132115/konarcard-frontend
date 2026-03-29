@@ -1,4 +1,5 @@
 // profileHelpers.js
+import { BASE_URL } from "../services/api";
 
 /* -------------------------- */
 /* Basic helpers              */
@@ -10,6 +11,26 @@ export const hasValue = (v) =>
     typeof v === "string" && v.trim().length > 0;
 
 export const asArray = (v) => (Array.isArray(v) ? v : []);
+
+/* -------------------------- */
+/* Media URL helper           */
+/* -------------------------- */
+
+export const resolveMediaUrl = (value) => {
+    const v = norm(value);
+    if (!v) return "";
+
+    if (
+        v.startsWith("blob:") ||
+        v.startsWith("data:") ||
+        v.startsWith("http://") ||
+        v.startsWith("https://")
+    ) {
+        return v;
+    }
+
+    return `${BASE_URL}/uploads/${v.replace(/^\/+/, "")}`;
+};
 
 /* -------------------------- */
 /* Slug helper                */
@@ -142,7 +163,7 @@ export const getProfileStatus = ({
 /* -------------------------- */
 
 export const getWorkPreview = (item) => {
-    if (typeof item === "string") return item;
-    if (item && typeof item === "object") return item.preview || "";
+    if (typeof item === "string") return resolveMediaUrl(item);
+    if (item && typeof item === "object") return resolveMediaUrl(item.preview || "");
     return "";
 };
