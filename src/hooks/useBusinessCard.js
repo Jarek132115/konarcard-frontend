@@ -25,13 +25,37 @@ export const qk = {
 
 /**
  * =========================================================
+ * NORMALIZER
+ * =========================================================
+ */
+const normalizeProfileResponse = (data) => {
+    if (!data || typeof data !== "object") return data;
+
+    const workImages =
+        data.workImages ||
+        data.work_images ||
+        data.works ||
+        data.work_images_urls ||
+        [];
+
+    return {
+        ...data,
+        workImages: Array.isArray(workImages) ? workImages : [],
+    };
+};
+
+/**
+ * =========================================================
  * LEGACY / DEFAULT PROFILE
  * =========================================================
  */
 export const useMyBusinessCard = () => {
     return useQuery({
         queryKey: qk.myDefault,
-        queryFn: getMyBusinessCard,
+        queryFn: async () => {
+            const data = await getMyBusinessCard();
+            return normalizeProfileResponse(data);
+        },
         retry: false,
         staleTime: 0,
         refetchOnMount: "always",
@@ -64,7 +88,10 @@ export const useMyProfileBySlug = (slug) => {
 
     return useQuery({
         queryKey: qk.profileBySlug(resolved),
-        queryFn: () => getMyProfileBySlug(resolved),
+        queryFn: async () => {
+            const data = await getMyProfileBySlug(resolved);
+            return normalizeProfileResponse(data);
+        },
         enabled: !!resolved,
         retry: false,
         staleTime: 30_000,
@@ -82,18 +109,27 @@ export const useSaveMyBusinessCard = () => {
     return useMutation({
         mutationFn: saveMyBusinessCard,
 
-        onSuccess: async (_data, formData) => {
-            await qc.invalidateQueries({ queryKey: qk.myDefault, exact: true });
-            await qc.invalidateQueries({ queryKey: qk.profiles, exact: true });
+        onSuccess: async (data, formData) => {
+            const normalized = normalizeProfileResponse(data);
+
+            let slug = "main";
 
             try {
                 if (formData instanceof FormData) {
-                    const slug = (formData.get("profile_slug") || "main").toString();
-                    await qc.invalidateQueries({ queryKey: qk.profileBySlug(slug), exact: true });
+                    slug = (formData.get("profile_slug") || "main").toString();
                 }
             } catch {
-                // ignore
+                slug = "main";
             }
+
+            qc.setQueryData(qk.profileBySlug(slug), normalized);
+            qc.setQueryData(qk.myDefault, normalized);
+
+            await Promise.all([
+                qc.invalidateQueries({ queryKey: qk.myDefault, exact: true }),
+                qc.invalidateQueries({ queryKey: qk.profiles, exact: true }),
+                qc.invalidateQueries({ queryKey: qk.profileBySlug(slug), exact: true }),
+            ]);
         },
     });
 };

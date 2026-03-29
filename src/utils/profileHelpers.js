@@ -29,7 +29,10 @@ export const resolveMediaUrl = (value) => {
         return v;
     }
 
-    return `${BASE_URL}/uploads/${v.replace(/^\/+/, "")}`;
+    const cleanBase = (BASE_URL || "").replace(/\/+$/, "");
+    const cleanPath = v.startsWith("/") ? v : `/${v}`;
+
+    return `${cleanBase}${cleanPath}`;
 };
 
 /* -------------------------- */
@@ -164,6 +167,10 @@ export const getProfileStatus = ({
 
 export const getWorkPreview = (item) => {
     if (typeof item === "string") return resolveMediaUrl(item);
-    if (item && typeof item === "object") return resolveMediaUrl(item.preview || "");
+
+    if (item && typeof item === "object") {
+        return resolveMediaUrl(item.preview || item.url || item.path || "");
+    }
+
     return "";
 };

@@ -219,14 +219,14 @@ export default function Editor({
 
     const coverSrc =
         state.coverPhotoPreview ||
-        (isBlobUrl(state.coverPhoto) ? "" : state.coverPhoto) ||
+        resolveMediaUrl(isBlobUrl(state.coverPhoto) ? "" : state.coverPhoto) ||
         previewPlaceholders.coverPhoto;
 
     const logoSrc =
         state.logoPreview ||
-        (isBlobUrl(state.logo) ? "" : state.logo) ||
+        resolveMediaUrl(isBlobUrl(state.logo) ? "" : state.logo) ||
         state.avatarPreview ||
-        (isBlobUrl(state.avatar) ? "" : state.avatar) ||
+        resolveMediaUrl(isBlobUrl(state.avatar) ? "" : state.avatar) ||
         "";
 
     const sectionToggle = (isShown, setter) => {
