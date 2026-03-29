@@ -1046,8 +1046,31 @@ export default function MyProfile() {
   const completionTone = useMemo(() => getCompletionTone(completionPct), [completionPct]);
 
   const hasSavedData = useMemo(() => {
-    return hasMeaningfulContent(businessCard);
-  }, [businessCard]);
+    return hasMeaningfulContent({
+      business_name: state.business_name,
+      business_card_name: state.businessName,
+      main_heading: state.mainHeading,
+      trade_title: state.trade_title,
+      sub_heading: state.subHeading,
+      location: state.location,
+      full_name: state.full_name,
+      job_title: state.job_title,
+      bio: state.bio,
+      contact_email: state.contact_email,
+      phone_number: state.phone_number,
+      facebook_url: state.facebook_url,
+      instagram_url: state.instagram_url,
+      linkedin_url: state.linkedin_url,
+      x_url: state.x_url,
+      tiktok_url: state.tiktok_url,
+      cover_photo: state.coverPhotoPreview || state.coverPhoto,
+      logo: state.logoPreview || state.logo,
+      avatar: state.avatarPreview || state.avatar,
+      works: (state.workImages || []).map((item) => item?.preview || ""),
+      services: state.services || [],
+      reviews: state.reviews || [],
+    });
+  }, [state]);
 
   const isLive = useMemo(() => {
     if (businessCard?.is_live === true) return true;
@@ -1216,7 +1239,7 @@ export default function MyProfile() {
         isOpen={showShareModal}
         onClose={() => setShowShareModal(false)}
         profileUrl={visitUrl}
-        qrCodeUrl={businessCard?.qr_code_url || ""}
+        qrCodeUrl={resolveMediaUrl(businessCard?.qr_code_url || "")}
         contactDetails={{
           full_name: businessCard?.full_name || "",
           job_title: businessCard?.job_title || "",
