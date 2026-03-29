@@ -32,6 +32,7 @@ import EditorTemplate3Dark from "../../assets/images/editor-templates/EditorTemp
 import EditorTemplate4Dark from "../../assets/images/editor-templates/EditorTemplate-4Dark.png";
 import EditorTemplate5Dark from "../../assets/images/editor-templates/EditorTemplate-5Dark.png";
 
+import { resolveMediaUrl } from "../../utils/profileHelpers";
 import "../../styling/dashboard/editor.css";
 
 const isBlobUrl = (v) => typeof v === "string" && v.startsWith("blob:");
@@ -710,7 +711,10 @@ export default function Editor({
                             <div className="kce-workGrid">
                                 {(state.workImages || []).slice(0, maxWorks).map((item, i) => (
                                     <div key={i} className="kce-workItem">
-                                        <img src={item?.preview || item} alt={`work-${i}`} />
+                                        <img
+                                            src={resolveMediaUrl(item?.preview || item)}
+                                            alt={`work-${i}`}
+                                        />
                                         <button
                                             type="button"
                                             className="kce-workX"
