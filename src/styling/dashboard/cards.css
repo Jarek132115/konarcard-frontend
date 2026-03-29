@@ -1,17 +1,10 @@
-/* frontend/src/styling/dashboard/cards.css
-=========================================================
-Cards — match screenshot
-- 24px spacing system feel (cards are consistent with other pages)
-- 2-up card grid, then details 2-col
-- Uses kx-btn for header order button
-========================================================= */
-
 :root {
     --cp-ink: var(--kc-text-primary, #0f172a);
     --cp-muted: var(--kc-text-secondary, #475569);
     --cp-border: rgba(15, 23, 42, 0.10);
     --cp-soft: rgba(15, 23, 42, 0.02);
     --cp-shadow: 0 10px 26px rgba(15, 23, 42, 0.06);
+    --cp-orange: #f97316;
 }
 
 .cp-shell {
@@ -20,7 +13,6 @@ Cards — match screenshot
     margin: 0;
 }
 
-/* Header right */
 .cp-headRight {
     display: inline-flex;
     align-items: center;
@@ -47,7 +39,6 @@ Cards — match screenshot
     transform: translateY(-1px);
 }
 
-/* Page sections */
 .cp-card {
     background: #fff;
     border: 1px solid var(--cp-border);
@@ -82,7 +73,6 @@ Cards — match screenshot
     color: var(--cp-muted);
 }
 
-/* Alerts */
 .cp-alert {
     margin-top: 12px;
     padding: 12px 14px;
@@ -98,9 +88,7 @@ Cards — match screenshot
     background: rgba(220, 38, 38, 0.06);
 }
 
-/* =========================================================
-   Your cards grid (2 per row)
-========================================================= */
+/* owned cards grid */
 .cp-grid {
     margin-top: 16px;
     display: grid;
@@ -141,7 +129,6 @@ Cards — match screenshot
     box-shadow: 0 12px 28px rgba(249, 115, 22, 0.10);
 }
 
-/* preview placeholder (matches screenshot blank card) */
 .cp-preview {
     width: 100%;
     border-radius: 16px;
@@ -150,7 +137,6 @@ Cards — match screenshot
     min-height: 128px;
 }
 
-/* right info */
 .cp-info {
     min-width: 0;
     display: flex;
@@ -187,7 +173,6 @@ Cards — match screenshot
     font-weight: 750;
 }
 
-/* actions row */
 .cp-actions {
     display: flex;
     align-items: center;
@@ -229,7 +214,6 @@ Cards — match screenshot
     cursor: default;
 }
 
-/* Buy tile */
 .cp-buyTile {
     width: 100%;
     min-height: 170px;
@@ -263,9 +247,101 @@ Cards — match screenshot
     color: rgba(15, 23, 42, 0.88);
 }
 
-/* =========================================================
-   Card details (2 columns)
-========================================================= */
+/* catalog */
+.cp-catalogGrid {
+    margin-top: 16px;
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 16px;
+}
+
+@media (max-width: 1100px) {
+    .cp-catalogGrid {
+        grid-template-columns: 1fr;
+    }
+}
+
+.cp-catalogCard {
+    background: #fff;
+    border: 1px solid rgba(15, 23, 42, 0.10);
+    border-radius: 20px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+}
+
+.cp-catalogMedia {
+    position: relative;
+    min-height: 280px;
+    background: #fff;
+    border-bottom: 1px solid rgba(15, 23, 42, 0.08);
+    padding: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.cp-catalogTag {
+    position: absolute;
+    top: 14px;
+    left: 14px;
+    font-family: "Inter", sans-serif;
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--cp-ink);
+    background: #fff;
+    border: 1px solid rgba(15, 23, 42, 0.12);
+    border-radius: 999px;
+    padding: 8px 12px;
+}
+
+.cp-catalogImg {
+    width: 100%;
+    max-width: 320px;
+    height: auto;
+    object-fit: contain;
+    display: block;
+}
+
+.cp-catalogBody {
+    padding: 18px 16px 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    flex: 1;
+}
+
+.cp-catalogTitle {
+    font-family: "Cal Sans", sans-serif;
+    font-size: 20px;
+    line-height: 1.15;
+    color: var(--cp-ink);
+}
+
+.cp-catalogDesc {
+    font-family: "Inter", sans-serif;
+    font-size: 14px;
+    line-height: 1.55;
+    font-weight: 500;
+    color: var(--cp-muted);
+}
+
+.cp-catalogPrice {
+    font-family: "Inter", sans-serif;
+    font-size: 18px;
+    font-weight: 800;
+    color: var(--cp-ink);
+}
+
+.cp-catalogBtn {
+    margin-top: auto;
+    width: 100%;
+    min-height: 44px;
+    justify-content: center;
+}
+
+/* details */
 .cp-detailsGrid {
     margin-top: 16px;
     display: grid;
@@ -279,7 +355,6 @@ Cards — match screenshot
     }
 }
 
-/* inner left card */
 .cp-innerCard {
     background: #fff;
     border: 1px solid rgba(15, 23, 42, 0.10);
@@ -324,7 +399,6 @@ Cards — match screenshot
     white-space: nowrap;
 }
 
-/* right big preview panel */
 .cp-previewCard {
     background: #fff;
     border: 1px solid rgba(15, 23, 42, 0.10);
@@ -348,7 +422,10 @@ Cards — match screenshot
 .cp-bigSkel {
     position: absolute;
     inset: 0;
-    background: linear-gradient(90deg, rgba(15, 23, 42, 0.06), rgba(15, 23, 42, 0.03), rgba(15, 23, 42, 0.06));
+    background: linear-gradient(90deg,
+            rgba(15, 23, 42, 0.06),
+            rgba(15, 23, 42, 0.03),
+            rgba(15, 23, 42, 0.06));
     background-size: 200% 100%;
     animation: cpShimmer 1.1s ease-in-out infinite;
 }
@@ -363,9 +440,6 @@ Cards — match screenshot
     }
 }
 
-/* =========================================================
-   Skeleton bits
-========================================================= */
 .cp-item.skel {
     cursor: default;
 }
@@ -377,7 +451,10 @@ Cards — match screenshot
 .sk-line {
     height: 12px;
     border-radius: 999px;
-    background: linear-gradient(90deg, rgba(15, 23, 42, 0.06), rgba(15, 23, 42, 0.03), rgba(15, 23, 42, 0.06));
+    background: linear-gradient(90deg,
+            rgba(15, 23, 42, 0.06),
+            rgba(15, 23, 42, 0.03),
+            rgba(15, 23, 42, 0.06));
     background-size: 200% 100%;
     animation: cpShimmer 1.1s ease-in-out infinite;
 }
