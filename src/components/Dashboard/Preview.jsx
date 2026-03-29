@@ -10,10 +10,14 @@ import Template3 from "./Template3";
 import Template4 from "./Template4";
 import Template5 from "./Template5";
 
-const asArray = (v) => (Array.isArray(v) ? v : []);
+import {
+    asArray,
+    hasValue,
+    hasMeaningfulContent,
+    getWorkPreview,
+} from "../../utils/profileHelpers";
+
 const asString = (v) => (typeof v === "string" ? v : "");
-const hasValue = (v) => typeof v === "string" && v.trim().length > 0;
-const hasAsset = (v) => typeof v === "string" && v.trim().length > 0;
 
 const getTemplateId = (raw) => {
     const t = (raw || "template-1").toString();
@@ -29,62 +33,6 @@ const getTemplateId = (raw) => {
 
 const SECTION_ORDER = ["main", "about", "work", "services", "reviews", "contact"];
 
-const getWorkPreview = (item) => {
-    if (typeof item === "string") return item;
-    if (item && typeof item === "object") return item.preview || "";
-    return "";
-};
-
-const hasMeaningfulPreviewContent = (s = {}) => {
-    const textFields = [
-        s.business_name,
-        s.businessName,
-        s.mainHeading,
-        s.main_heading,
-        s.trade_title,
-        s.subHeading,
-        s.sub_heading,
-        s.location,
-        s.full_name,
-        s.job_title,
-        s.bio,
-        s.contact_email,
-        s.phone_number,
-        s.facebook_url,
-        s.instagram_url,
-        s.linkedin_url,
-        s.x_url,
-        s.tiktok_url,
-    ];
-
-    const hasText = textFields.some(hasValue);
-
-    const hasImages = [
-        s.coverPhotoPreview,
-        s.coverPhoto,
-        s.cover_photo,
-        s.logoPreview,
-        s.logo,
-        s.avatarPreview,
-        s.avatar,
-        s.avatar_url,
-    ].some(hasAsset);
-
-    const hasWorks = asArray(s.workImages || s.works).some((item) =>
-        hasValue(getWorkPreview(item))
-    );
-
-    const hasServices = asArray(s.services).some(
-        (item) => hasValue(item?.name) || hasValue(item?.description) || hasValue(item?.price)
-    );
-
-    const hasReviews = asArray(s.reviews).some(
-        (item) => hasValue(item?.name) || hasValue(item?.text) || Number(item?.rating) > 0
-    );
-
-    return hasText || hasImages || hasWorks || hasServices || hasReviews;
-};
-
 function IframePreview({ className, children, title = "Preview" }) {
     const iframeRef = useRef(null);
     const [mountNode, setMountNode] = useState(null);
@@ -93,7 +41,11 @@ function IframePreview({ className, children, title = "Preview" }) {
         const iframe = iframeRef.current;
         if (!iframe) return;
 
+        let disposed = false;
+
         const build = () => {
+            if (disposed) return;
+
             const doc = iframe.contentDocument;
             if (!doc) return;
 
@@ -128,7 +80,11 @@ function IframePreview({ className, children, title = "Preview" }) {
         if (iframe.contentDocument?.readyState === "complete") build();
         iframe.addEventListener("load", build);
 
-        return () => iframe.removeEventListener("load", build);
+        return () => {
+            disposed = true;
+            iframe.removeEventListener("load", build);
+            setMountNode(null);
+        };
     }, []);
 
     return (
@@ -163,10 +119,13 @@ function PreviewHeader({
     hasSavedData,
     visitUrl,
 }) {
+    const canVisit = !!visitUrl && visitUrl !== "#";
+    const safePct = Number.isFinite(Number(completionPct)) ? Number(completionPct) : 0;
+
     const completionLabel =
-        hasSavedData && completionPct >= 100
+        hasSavedData && safePct >= 100
             ? "Profile Complete"
-            : `${completionPct}% Complete`;
+            : `${safePct}% Complete`;
 
     return (
         <div className="preview-panel-top">
@@ -188,13 +147,13 @@ function PreviewHeader({
                     </div>
 
                     <a
-                        href={visitUrl || "#"}
+                        href={canVisit ? visitUrl : "#"}
                         className="preview-panel-visitBtn"
                         target="_blank"
                         rel="noreferrer"
-                        aria-disabled={!visitUrl || visitUrl === "#"}
+                        aria-disabled={!canVisit}
                         onClick={(e) => {
-                            if (!visitUrl || visitUrl === "#") e.preventDefault();
+                            if (!canVisit) e.preventDefault();
                         }}
                     >
                         <img
@@ -239,7 +198,30 @@ export default function Preview({
     const themeMode = asString(s.themeMode || s.pageTheme || "light") || "light";
 
     const hasAnyEnteredContent = useMemo(() => {
-        return hasMeaningfulPreviewContent(s);
+        return hasMeaningfulContent({
+            business_name: s.business_name,
+            business_card_name: s.businessName,
+            main_heading: s.mainHeading || s.main_heading,
+            trade_title: s.trade_title,
+            sub_heading: s.subHeading || s.sub_heading,
+            location: s.location,
+            full_name: s.full_name,
+            job_title: s.job_title,
+            bio: s.bio,
+            contact_email: s.contact_email,
+            phone_number: s.phone_number,
+            facebook_url: s.facebook_url,
+            instagram_url: s.instagram_url,
+            linkedin_url: s.linkedin_url,
+            x_url: s.x_url,
+            tiktok_url: s.tiktok_url,
+            cover_photo: s.coverPhotoPreview || s.coverPhoto || s.cover_photo,
+            logo: s.logoPreview || s.logo,
+            avatar: s.avatarPreview || s.avatar || s.avatar_url,
+            works: asArray(s.workImages || s.works).map((item) => getWorkPreview(item)),
+            services: s.services,
+            reviews: s.reviews,
+        });
     }, [s]);
 
     const showEmptyPreview = !hasAnyEnteredContent;
@@ -485,7 +467,10 @@ export default function Preview({
                         <PreviewEmptyState themeMode={themeMode} />
                     </div>
                 ) : (
-                    <IframePreview className="preview-iframe-mode" title={`Template Preview (${templateId})`}>
+                    <IframePreview
+                        className="preview-iframe-mode"
+                        title={`Template Preview (${templateId})`}
+                    >
                         <div className="preview-iframe-padding">
                             <div className="preview-page-gutter">
                                 <TemplateComponent {...templateProps} />

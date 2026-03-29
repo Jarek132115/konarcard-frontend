@@ -41,6 +41,7 @@ export default function Editor({
     updateState,
 
     isSubscribed,
+    isSaving = false,
 
     onStartSubscription,
     onResetPage,
@@ -86,6 +87,8 @@ export default function Editor({
     const worksCount = Array.isArray(state.workImages) ? state.workImages.length : 0;
     const servicesCount = Array.isArray(state.services) ? state.services.length : 0;
     const reviewsCount = Array.isArray(state.reviews) ? state.reviews.length : 0;
+
+    const saveLabel = isSaving ? "Saving..." : "Save Profile";
 
     const openUpgrade = (ctx = "feature") => {
         setUpgradeContext(ctx);
@@ -137,6 +140,7 @@ export default function Editor({
     const isTemplateLocked = (templateId) => !isSubscribed && templateId !== "template-1";
 
     const handleTemplateSelect = (id) => {
+        if (isSaving) return;
         if (isTemplateLocked(id)) {
             openUpgrade("templates");
             return;
@@ -145,6 +149,7 @@ export default function Editor({
     };
 
     const handleThemeModeChange = (mode) => {
+        if (isSaving) return;
         updateState({
             themeMode: mode,
             pageTheme: mode,
@@ -168,6 +173,7 @@ export default function Editor({
     };
 
     const handleAddService = () => {
+        if (isSaving) return;
         if (!isSubscribed && servicesCount >= FREE_MAX) return openUpgrade("services");
 
         updateState({
@@ -175,8 +181,10 @@ export default function Editor({
         });
     };
 
-    const handleRemoveService = (i) =>
+    const handleRemoveService = (i) => {
+        if (isSaving) return;
         updateState({ services: (state.services || []).filter((_, idx) => idx !== i) });
+    };
 
     const handleReviewChange = (i, field, value) => {
         const next = [...(state.reviews || [])];
@@ -195,6 +203,7 @@ export default function Editor({
     };
 
     const handleAddReview = () => {
+        if (isSaving) return;
         if (!isSubscribed && reviewsCount >= FREE_MAX) return openUpgrade("reviews");
 
         updateState({
@@ -202,8 +211,10 @@ export default function Editor({
         });
     };
 
-    const handleRemoveReview = (i) =>
+    const handleRemoveReview = (i) => {
+        if (isSaving) return;
         updateState({ reviews: (state.reviews || []).filter((_, idx) => idx !== i) });
+    };
 
     const coverSrc =
         state.coverPhotoPreview ||
@@ -217,9 +228,13 @@ export default function Editor({
         (isBlobUrl(state.avatar) ? "" : state.avatar) ||
         "";
 
-    const sectionToggle = (isShown, setter) => setter?.(!isShown);
+    const sectionToggle = (isShown, setter) => {
+        if (isSaving) return;
+        setter?.(!isShown);
+    };
 
     const handleWorkAddClick = () => {
+        if (isSaving) return;
         if (!isSubscribed && worksCount >= FREE_MAX) return openUpgrade("work");
         workImageInputRef.current?.click();
     };
@@ -260,14 +275,25 @@ export default function Editor({
                 </div>
 
                 <div className="kce-topRight">
-                    <button type="button" className="kce-btn kce-btnGhost" onClick={onResetPage}>
+                    <button
+                        type="button"
+                        className="kce-btn kce-btnGhost"
+                        onClick={onResetPage}
+                        disabled={isSaving}
+                    >
                         <img src={ResetProfileIcon} alt="" className="kce-btnIcon kce-btnIconReset" />
                         <span>Reset</span>
                     </button>
 
-                    <button type="button" className="kce-btn kce-btnPrimary" onClick={onSubmit}>
+                    <button
+                        type="button"
+                        className="kce-btn kce-btnPrimary"
+                        onClick={onSubmit}
+                        disabled={isSaving}
+                        aria-busy={isSaving}
+                    >
                         <img src={SaveProfileIcon} alt="" className="kce-btnIcon kce-btnIconSave" />
-                        <span>Save Profile</span>
+                        <span>{saveLabel}</span>
                     </button>
                 </div>
             </div>
@@ -356,6 +382,7 @@ export default function Editor({
                                     aria-selected={currentThemeMode === "light"}
                                     className={`kce-themeModeBtn ${currentThemeMode === "light" ? "is-active" : ""}`}
                                     onClick={() => handleThemeModeChange("light")}
+                                    disabled={isSaving}
                                 >
                                     Light Mode
                                 </button>
@@ -366,6 +393,7 @@ export default function Editor({
                                     aria-selected={currentThemeMode === "dark"}
                                     className={`kce-themeModeBtn ${currentThemeMode === "dark" ? "is-active" : ""}`}
                                     onClick={() => handleThemeModeChange("dark")}
+                                    disabled={isSaving}
                                 >
                                     Dark Mode
                                 </button>
@@ -400,6 +428,7 @@ export default function Editor({
                                         aria-label={locked ? `${t} locked` : t}
                                         role="tab"
                                         aria-selected={active}
+                                        disabled={isSaving}
                                     >
                                         <img
                                             src={templateThumbs[t]}
@@ -441,6 +470,7 @@ export default function Editor({
                             type="button"
                             className="kce-hideBtn"
                             onClick={() => sectionToggle(!!showMainSection, setShowMainSection)}
+                            disabled={isSaving}
                         >
                             {showMainSection ? "Hide section" : "Show section"}
                         </button>
@@ -458,7 +488,7 @@ export default function Editor({
                                         accept="image/*"
                                         onChange={(e) => {
                                             const file = e.target.files?.[0];
-                                            if (!file) return;
+                                            if (!file || isSaving) return;
                                             onCoverUpload?.(file);
                                             e.target.value = "";
                                         }}
@@ -468,7 +498,8 @@ export default function Editor({
                                     <button
                                         type="button"
                                         className="kce-upload"
-                                        onClick={() => coverInputRef.current?.click()}
+                                        onClick={() => !isSaving && coverInputRef.current?.click()}
+                                        disabled={isSaving}
                                     >
                                         {coverSrc ? (
                                             <img src={coverSrc} alt="Cover" className="kce-uploadImg" />
@@ -487,6 +518,7 @@ export default function Editor({
                                                 onClick={(ev) => {
                                                     ev.preventDefault();
                                                     ev.stopPropagation();
+                                                    if (isSaving) return;
                                                     onRemoveCover?.();
                                                 }}
                                             >
@@ -505,7 +537,7 @@ export default function Editor({
                                         accept="image/*"
                                         onChange={(e) => {
                                             const file = e.target.files?.[0];
-                                            if (!file) return;
+                                            if (!file || isSaving) return;
                                             onAvatarUpload?.(file);
                                             e.target.value = "";
                                         }}
@@ -515,7 +547,8 @@ export default function Editor({
                                     <button
                                         type="button"
                                         className="kce-upload"
-                                        onClick={() => logoInputRef.current?.click()}
+                                        onClick={() => !isSaving && logoInputRef.current?.click()}
+                                        disabled={isSaving}
                                     >
                                         {logoSrc ? (
                                             <img src={logoSrc} alt="Logo" className="kce-uploadImg kce-uploadImgContain" />
@@ -534,6 +567,7 @@ export default function Editor({
                                                 onClick={(ev) => {
                                                     ev.preventDefault();
                                                     ev.stopPropagation();
+                                                    if (isSaving) return;
                                                     onRemoveAvatar?.();
                                                 }}
                                             >
@@ -557,6 +591,7 @@ export default function Editor({
                                             })
                                         }
                                         placeholder="Carter Electrical Services"
+                                        disabled={isSaving}
                                     />
                                 </div>
 
@@ -572,6 +607,7 @@ export default function Editor({
                                             })
                                         }
                                         placeholder="Domestic & Commercial Electrician"
+                                        disabled={isSaving}
                                     />
                                 </div>
                             </div>
@@ -583,6 +619,7 @@ export default function Editor({
                                     value={state.location || ""}
                                     onChange={(e) => updateState({ location: e.target.value })}
                                     placeholder="Liverpool, England"
+                                    disabled={isSaving}
                                 />
                             </div>
                         </div>
@@ -602,6 +639,7 @@ export default function Editor({
                             type="button"
                             className="kce-hideBtn"
                             onClick={() => sectionToggle(!!showAboutMeSection, setShowAboutMeSection)}
+                            disabled={isSaving}
                         >
                             {showAboutMeSection ? "Hide section" : "Show section"}
                         </button>
@@ -617,6 +655,7 @@ export default function Editor({
                                         value={state.full_name || ""}
                                         onChange={(e) => updateState({ full_name: e.target.value })}
                                         placeholder={previewPlaceholders.full_name || "James Carter"}
+                                        disabled={isSaving}
                                     />
                                 </div>
 
@@ -627,6 +666,7 @@ export default function Editor({
                                         value={state.job_title || ""}
                                         onChange={(e) => updateState({ job_title: e.target.value })}
                                         placeholder={previewPlaceholders.job_title || "Electrician"}
+                                        disabled={isSaving}
                                     />
                                 </div>
                             </div>
@@ -639,6 +679,7 @@ export default function Editor({
                                     value={state.bio || ""}
                                     onChange={(e) => updateState({ bio: e.target.value })}
                                     placeholder={previewPlaceholders.bio}
+                                    disabled={isSaving}
                                 />
                             </div>
                         </div>
@@ -658,6 +699,7 @@ export default function Editor({
                             type="button"
                             className="kce-hideBtn"
                             onClick={() => sectionToggle(!!showWorkSection, setShowWorkSection)}
+                            disabled={isSaving}
                         >
                             {showWorkSection ? "Hide section" : "Show section"}
                         </button>
@@ -672,15 +714,21 @@ export default function Editor({
                                         <button
                                             type="button"
                                             className="kce-workX"
-                                            onClick={() => onRemoveWorkImage?.(i)}
+                                            onClick={() => !isSaving && onRemoveWorkImage?.(i)}
                                             aria-label="Remove image"
+                                            disabled={isSaving}
                                         >
                                             ✕
                                         </button>
                                     </div>
                                 ))}
 
-                                <button type="button" className="kce-upload kce-workAdd" onClick={handleWorkAddClick}>
+                                <button
+                                    type="button"
+                                    className="kce-upload kce-workAdd"
+                                    onClick={handleWorkAddClick}
+                                    disabled={isSaving}
+                                >
                                     <div className="kce-uploadInner">
                                         <div className="kce-plus">+</div>
                                         <div className="kce-uploadText">Upload Work Images</div>
@@ -719,6 +767,7 @@ export default function Editor({
                             type="button"
                             className="kce-hideBtn"
                             onClick={() => sectionToggle(!!showServicesSection, setShowServicesSection)}
+                            disabled={isSaving}
                         >
                             {showServicesSection ? "Hide section" : "Show section"}
                         </button>
@@ -736,6 +785,7 @@ export default function Editor({
                                                 placeholder="Fuse Board Upgrades"
                                                 value={s.name || ""}
                                                 onChange={(e) => handleServiceChange(i, "name", e.target.value)}
+                                                disabled={isSaving}
                                             />
                                         </div>
 
@@ -746,17 +796,28 @@ export default function Editor({
                                                 placeholder="Modern consumer unit installations for safer homes."
                                                 value={s.description || s.price || ""}
                                                 onChange={(e) => handleServiceChange(i, "description", e.target.value)}
+                                                disabled={isSaving}
                                             />
                                         </div>
 
-                                        <button type="button" className="kce-dangerPill" onClick={() => handleRemoveService(i)}>
+                                        <button
+                                            type="button"
+                                            className="kce-dangerPill"
+                                            onClick={() => handleRemoveService(i)}
+                                            disabled={isSaving}
+                                        >
                                             Remove Service
                                         </button>
                                     </div>
                                 ))}
                             </div>
 
-                            <button type="button" className="kce-addCard" onClick={handleAddService}>
+                            <button
+                                type="button"
+                                className="kce-addCard"
+                                onClick={handleAddService}
+                                disabled={isSaving}
+                            >
                                 <span className="kce-addCardPlus">+</span>
                                 <span className="kce-addCardText">Add Service</span>
 
@@ -783,6 +844,7 @@ export default function Editor({
                             type="button"
                             className="kce-hideBtn"
                             onClick={() => sectionToggle(!!showReviewsSection, setShowReviewsSection)}
+                            disabled={isSaving}
                         >
                             {showReviewsSection ? "Hide section" : "Show section"}
                         </button>
@@ -801,6 +863,7 @@ export default function Editor({
                                                     placeholder="Sarah Thompson"
                                                     value={r.name || ""}
                                                     onChange={(e) => handleReviewChange(i, "name", e.target.value)}
+                                                    disabled={isSaving}
                                                 />
                                             </div>
 
@@ -814,6 +877,7 @@ export default function Editor({
                                                     placeholder="5"
                                                     value={r.rating || ""}
                                                     onChange={(e) => handleReviewChange(i, "rating", e.target.value)}
+                                                    disabled={isSaving}
                                                 />
                                             </div>
                                         </div>
@@ -826,17 +890,28 @@ export default function Editor({
                                                 placeholder="Write the review..."
                                                 value={r.text || ""}
                                                 onChange={(e) => handleReviewChange(i, "text", e.target.value)}
+                                                disabled={isSaving}
                                             />
                                         </div>
 
-                                        <button type="button" className="kce-dangerPill" onClick={() => handleRemoveReview(i)}>
+                                        <button
+                                            type="button"
+                                            className="kce-dangerPill"
+                                            onClick={() => handleRemoveReview(i)}
+                                            disabled={isSaving}
+                                        >
                                             Remove Review
                                         </button>
                                     </div>
                                 ))}
                             </div>
 
-                            <button type="button" className="kce-addCard" onClick={handleAddReview}>
+                            <button
+                                type="button"
+                                className="kce-addCard"
+                                onClick={handleAddReview}
+                                disabled={isSaving}
+                            >
                                 <span className="kce-addCardPlus">+</span>
                                 <span className="kce-addCardText">Add Review</span>
 
@@ -863,6 +938,7 @@ export default function Editor({
                             type="button"
                             className="kce-hideBtn"
                             onClick={() => sectionToggle(!!showContactSection, setShowContactSection)}
+                            disabled={isSaving}
                         >
                             {showContactSection ? "Hide section" : "Show section"}
                         </button>
@@ -879,6 +955,7 @@ export default function Editor({
                                         value={state.contact_email || ""}
                                         onChange={(e) => updateState({ contact_email: e.target.value })}
                                         placeholder={previewPlaceholders.contact_email}
+                                        disabled={isSaving}
                                     />
                                 </div>
 
@@ -892,6 +969,7 @@ export default function Editor({
                                         value={state.phone_number || ""}
                                         onChange={(e) => updateState({ phone_number: e.target.value })}
                                         placeholder={previewPlaceholders.phone_number}
+                                        disabled={isSaving}
                                     />
                                 </div>
                             </div>
@@ -906,6 +984,7 @@ export default function Editor({
                                         placeholder="Facebook URL"
                                         value={state.facebook_url || ""}
                                         onChange={(e) => updateState({ facebook_url: e.target.value })}
+                                        disabled={isSaving}
                                     />
                                 </div>
 
@@ -916,6 +995,7 @@ export default function Editor({
                                         placeholder="Instagram URL"
                                         value={state.instagram_url || ""}
                                         onChange={(e) => updateState({ instagram_url: e.target.value })}
+                                        disabled={isSaving}
                                     />
                                 </div>
 
@@ -926,6 +1006,7 @@ export default function Editor({
                                         placeholder="LinkedIn URL"
                                         value={state.linkedin_url || ""}
                                         onChange={(e) => updateState({ linkedin_url: e.target.value })}
+                                        disabled={isSaving}
                                     />
                                 </div>
 
@@ -936,6 +1017,7 @@ export default function Editor({
                                         placeholder="X URL"
                                         value={state.x_url || ""}
                                         onChange={(e) => updateState({ x_url: e.target.value })}
+                                        disabled={isSaving}
                                     />
                                 </div>
 
@@ -946,6 +1028,7 @@ export default function Editor({
                                         placeholder="TikTok URL"
                                         value={state.tiktok_url || ""}
                                         onChange={(e) => updateState({ tiktok_url: e.target.value })}
+                                        disabled={isSaving}
                                     />
                                 </div>
                             </div>
@@ -954,9 +1037,15 @@ export default function Editor({
                 </div>
 
                 <div className="kce-bottomSaveWrap">
-                    <button type="button" className="kce-btn kce-btnPrimary kce-bottomSaveBtn" onClick={onSubmit}>
+                    <button
+                        type="button"
+                        className="kce-btn kce-btnPrimary kce-bottomSaveBtn"
+                        onClick={onSubmit}
+                        disabled={isSaving}
+                        aria-busy={isSaving}
+                    >
                         <img src={SaveProfileIcon} alt="" className="kce-btnIcon kce-btnIconSave" />
-                        <span>Save Profile</span>
+                        <span>{saveLabel}</span>
                     </button>
                 </div>
 

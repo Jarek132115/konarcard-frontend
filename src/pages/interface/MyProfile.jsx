@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useContext, useMemo } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { toast } from "react-hot-toast";
 
@@ -9,17 +9,24 @@ import ShareProfile from "../../components/ShareProfile";
 import useBusinessCardStore from "../../store/businessCardStore";
 import { useQueryClient, useQuery } from "@tanstack/react-query";
 
-import { AuthContext } from "../../components/AuthContext";
+import { useAuthUser } from "../../hooks/useAuthUser";
 import api from "../../services/api";
 
 import Preview from "../../components/Dashboard/Preview";
 import Editor from "../../components/Dashboard/Editor";
 
 import { useSaveMyBusinessCard } from "../../hooks/useBusinessCard";
+import {
+  norm,
+  normalizeSlug,
+  calcCompletionPct,
+  getCompletionTone,
+  hasMeaningfulContent,
+  getProfileStatus,
+} from "../../utils/profileHelpers";
 
 import "../../styling/dashboard/myprofile.css";
 
-const norm = (v) => (v ?? "").toString().trim();
 const isBlobUrl = (v) => typeof v === "string" && v.startsWith("blob:");
 
 const safeRevoke = (url) => {
@@ -175,78 +182,15 @@ function getSlugFromSearch(search) {
   }
 }
 
-const calcCompletionPctFromState = (st) => {
-  const checks = [
-    !!norm(st?.business_name || st?.businessName || st?.mainHeading),
-    !!norm(st?.trade_title || st?.subHeading),
-    !!norm(st?.location),
-    !!norm(st?.full_name),
-    !!norm(st?.job_title),
-    !!norm(st?.bio),
-    !!norm(st?.logo) || !!norm(st?.logoPreview) || !!norm(st?.avatar) || !!norm(st?.avatarPreview),
-    !!norm(st?.coverPhoto) || !!norm(st?.coverPhotoPreview),
-    Array.isArray(st?.workImages) && st.workImages.length > 0,
-    Array.isArray(st?.services) && st.services.length > 0,
-    Array.isArray(st?.reviews) && st.reviews.length > 0,
-    !!norm(st?.contact_email),
-    !!norm(st?.phone_number),
-  ];
-
-  const total = checks.length;
-  const done = checks.filter(Boolean).length;
-  return total ? Math.round((done / total) * 100) : 0;
+const isValidEmail = (value) => {
+  if (!norm(value)) return true;
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(value).trim());
 };
 
-const pctTone = (pct) => {
-  if (pct >= 80) return "good";
-  if (pct >= 40) return "mid";
-  return "bad";
-};
-
-const hasMeaningfulProfileContent = (card) => {
-  if (!card || typeof card !== "object") return false;
-
-  const textFields = [
-    card.business_name,
-    card.business_card_name,
-    card.main_heading,
-    card.trade_title,
-    card.sub_heading,
-    card.location,
-    card.full_name,
-    card.job_title,
-    card.bio,
-    card.contact_email,
-    card.phone_number,
-    card.facebook_url,
-    card.instagram_url,
-    card.linkedin_url,
-    card.x_url,
-    card.tiktok_url,
-  ];
-
-  const hasText = textFields.some((v) => norm(v).length > 0);
-
-  const hasImages = [card.cover_photo, card.logo, card.avatar].some(
-    (v) => norm(v).length > 0
-  );
-
-  const hasWorks =
-    Array.isArray(card.works) && card.works.some((v) => norm(v).length > 0);
-
-  const hasServices =
-    Array.isArray(card.services) &&
-    card.services.some(
-      (s) => norm(s?.name) || norm(s?.description) || norm(s?.price)
-    );
-
-  const hasReviews =
-    Array.isArray(card.reviews) &&
-    card.reviews.some(
-      (r) => norm(r?.name) || norm(r?.text) || Number(r?.rating) > 0
-    );
-
-  return hasText || hasImages || hasWorks || hasServices || hasReviews;
+const isReasonablePhone = (value) => {
+  if (!norm(value)) return true;
+  const cleaned = String(value).replace(/[^\d+]/g, "");
+  return cleaned.length >= 7;
 };
 
 export default function MyProfile() {
@@ -255,15 +199,17 @@ export default function MyProfile() {
   const location = useLocation();
   const navigate = useNavigate();
 
-  const { user: authUser, hydrating: authLoading, fetchUser: refetchAuthUser } =
-    useContext(AuthContext);
+  const {
+    data: authUser,
+    isLoading: authLoading,
+    refetch: refetchAuthUser,
+  } = useAuthUser();
 
   const userEmail = authUser?.email;
 
   const plan = String(authUser?.plan || "free").toLowerCase();
-  const isTeams = plan === "teams";
   const isPlus = plan === "plus";
-  const isFree = !isPlus && !isTeams;
+  const isFree = !isPlus && plan !== "teams";
 
   const isUserVerified = !!authUser?.isVerified;
   const userUsername = authUser?.username;
@@ -280,11 +226,20 @@ export default function MyProfile() {
       const res = await api.get(
         `/api/business-card/profiles/${encodeURIComponent(activeSlug)}`
       );
+
+      const status = Number(res?.status || 0);
+
+      if (status === 404) return null;
+
+      if (status >= 400) {
+        throw new Error(res?.data?.error || "Could not load profile.");
+      }
+
       return res?.data?.data ?? null;
     },
     enabled: !!authUser && !!activeSlug,
     staleTime: 30 * 1000,
-    retry: 1,
+    retry: false,
   });
 
   useEffect(() => {
@@ -295,6 +250,9 @@ export default function MyProfile() {
     (async () => {
       try {
         const res = await api.get("/api/business-card/profiles");
+        const status = Number(res?.status || 0);
+        if (status >= 400) return;
+
         const list = res?.data?.data || [];
         const first = Array.isArray(list) && list.length ? list[0] : null;
 
@@ -312,6 +270,7 @@ export default function MyProfile() {
   }, [authUser, isCardLoading, businessCard, activeSlug]);
 
   const saveBusinessCard = useSaveMyBusinessCard();
+  const isSaving = !!saveBusinessCard.isPending;
 
   const [showVerificationPrompt, setShowVerificationPrompt] = useState(false);
   const [verificationCodeInput, setVerificationCodeInput] = useState("");
@@ -648,13 +607,18 @@ export default function MyProfile() {
 
   const sendVerificationCode = async () => {
     if (!userEmail) return toast.error("Email not found. Please log in again.");
+
     try {
       const res = await api.post("/resend-code", { email: userEmail });
-      if (res.data?.error) toast.error(res.data.error);
-      else {
-        toast.success("Verification code sent!");
-        setResendCooldown(30);
+      const status = Number(res?.status || 0);
+
+      if (status >= 400 || res?.data?.error) {
+        toast.error(res?.data?.error || "Could not resend code.");
+        return;
       }
+
+      toast.success("Verification code sent!");
+      setResendCooldown(30);
     } catch (err) {
       toast.error(err?.response?.data?.error || "Could not resend code.");
     }
@@ -669,7 +633,12 @@ export default function MyProfile() {
         email: userEmail,
         code: verificationCodeInput,
       });
-      if (res.data?.error) return toast.error(res.data.error);
+
+      const status = Number(res?.status || 0);
+      if (status >= 400 || res?.data?.error) {
+        toast.error(res?.data?.error || "Verification failed.");
+        return;
+      }
 
       toast.success("Email verified successfully!");
       setShowVerificationPrompt(false);
@@ -873,9 +842,67 @@ export default function MyProfile() {
     );
   };
 
+  const validateBeforeSave = () => {
+    if (!isValidEmail(state.contact_email)) {
+      toast.error("Please enter a valid email address.");
+      return false;
+    }
+
+    if (!isReasonablePhone(state.phone_number)) {
+      toast.error("Please enter a valid phone number.");
+      return false;
+    }
+
+    const serviceHasInvalidRow = (state.services || []).some(
+      (s) => !norm(s?.name) && norm(s?.description || s?.price)
+    );
+
+    if (serviceHasInvalidRow) {
+      toast.error("Each service needs a service name.");
+      return false;
+    }
+
+    const reviewHasInvalidRow = (state.reviews || []).some(
+      (r) => !norm(r?.name) && norm(r?.text)
+    );
+
+    if (reviewHasInvalidRow) {
+      toast.error("Each review needs a name.");
+      return false;
+    }
+
+    return true;
+  };
+
+  useEffect(() => {
+    const onBeforeUnload = (e) => {
+      if (!hasProfileChanges()) return;
+      e.preventDefault();
+      e.returnValue = "";
+    };
+
+    window.addEventListener("beforeunload", onBeforeUnload);
+    return () => window.removeEventListener("beforeunload", onBeforeUnload);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [
+    state,
+    businessCard,
+    coverPhotoRemoved,
+    logoRemoved,
+    showMainSection,
+    showAboutMeSection,
+    showWorkSection,
+    showServicesSection,
+    showReviewsSection,
+    showContactSection,
+  ]);
+
   const handleSubmit = async (e) => {
     e?.preventDefault?.();
+
+    if (isSaving) return;
     if (!hasProfileChanges()) return toast.error("You haven't made any changes.");
+    if (!validateBeforeSave()) return;
 
     const existingWorkUrls = (state.workImages || [])
       .map((item) =>
@@ -991,6 +1018,7 @@ export default function MyProfile() {
       toast.error(
         err?.response?.data?.error ||
         err?.response?.data?.message ||
+        err?.message ||
         "Something went wrong while saving.",
         { id: savingToastId }
       );
@@ -1006,34 +1034,25 @@ export default function MyProfile() {
     setShowShareModal(true);
   };
 
-  const normalizeSlug = (raw) =>
-    (raw ?? "")
-      .toString()
-      .trim()
-      .toLowerCase()
-      .replace(/[^a-z0-9-]/g, "")
-      .replace(/-+/g, "-")
-      .replace(/^-|-$/g, "");
-
   const visitUrl = useMemo(() => {
     const slug = normalizeSlug(activeSlug);
     if (!slug) return `${window.location.origin}/u/`;
     return `${window.location.origin}/u/${encodeURIComponent(slug)}`;
   }, [activeSlug]);
 
-  const completionPct = useMemo(() => calcCompletionPctFromState(state), [state]);
-  const completionTone = useMemo(() => pctTone(completionPct), [completionPct]);
+  const completionPct = useMemo(() => calcCompletionPct(state), [state]);
+  const completionTone = useMemo(() => getCompletionTone(completionPct), [completionPct]);
 
   const hasSavedData = useMemo(() => {
-    return hasMeaningfulProfileContent(businessCard);
+    return hasMeaningfulContent(businessCard);
   }, [businessCard]);
 
   const isLive = useMemo(() => {
-    if (businessCard?.is_live === true) return true;
-    if (businessCard?.published === true) return true;
-    if (String(businessCard?.status || "").toLowerCase() === "live") return true;
-    return hasSavedData && completionPct >= 60;
-  }, [businessCard, completionPct, hasSavedData]);
+    return getProfileStatus({
+      card: businessCard,
+      completionPct,
+    }) === "live";
+  }, [businessCard, completionPct]);
 
   return (
     <DashboardLayout title={null} subtitle={null} hideDesktopHeader>
@@ -1137,6 +1156,7 @@ export default function MyProfile() {
                       state={state}
                       updateState={updateState}
                       isSubscribed={!isFree}
+                      isSaving={isSaving}
                       hasTrialEnded={false}
                       onStartSubscription={handleStartSubscription}
                       onResetPage={handleResetPage}

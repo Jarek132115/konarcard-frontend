@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
+import { toast } from "react-hot-toast";
 
 import DashboardLayout from "../../components/Dashboard/DashboardLayout";
 import PageHeader from "../../components/Dashboard/PageHeader";
@@ -11,48 +12,26 @@ import ProfilesList from "../../components/Dashboard-Profiles/ProfilesList";
 import ProfilesInfo from "../../components/Dashboard-Profiles/ProfilesInfo";
 
 import { useAuthUser } from "../../hooks/useAuthUser";
-import { useMyProfiles, useCreateProfile, useDeleteProfile } from "../../hooks/useBusinessCard";
+import {
+    useMyProfiles,
+    useCreateProfile,
+    useDeleteProfile,
+} from "../../hooks/useBusinessCard";
 import api from "../../services/api";
+import {
+    norm,
+    normalizeSlug,
+    calcCompletionPct,
+    getCompletionTone,
+    hasMeaningfulContent,
+    getProfileStatus,
+} from "../../utils/profileHelpers";
 
 const TEAMS_CHECKOUT_ENDPOINT = "/api/checkout/teams";
 const DRAG_THRESHOLD = 8;
 
 const centerTrim = (v) => (v ?? "").toString().trim();
 const safeLower = (v) => centerTrim(v).toLowerCase();
-
-const normalizeSlug = (raw) =>
-    safeLower(raw)
-        .replace(/[^a-z0-9-]/g, "")
-        .replace(/-+/g, "-")
-        .replace(/^-|-$/g, "");
-
-const calcCompletionPct = (c) => {
-    const checks = [
-        !!centerTrim(c?.business_card_name || c?.business_name),
-        !!centerTrim(c?.main_heading || c?.business_name),
-        !!centerTrim(c?.sub_heading || c?.trade_title),
-        !!centerTrim(c?.job_title),
-        !!centerTrim(c?.full_name),
-        !!centerTrim(c?.bio),
-        !!centerTrim(c?.avatar || c?.logo),
-        !!centerTrim(c?.cover_photo),
-        Array.isArray(c?.works) && c.works.length > 0,
-        Array.isArray(c?.services) && c.services.length > 0,
-        Array.isArray(c?.reviews) && c.reviews.length > 0,
-        !!centerTrim(c?.contact_email),
-        !!centerTrim(c?.phone_number),
-    ];
-
-    const total = checks.length;
-    const done = checks.filter(Boolean).length;
-    return total ? Math.round((done / total) * 100) : 0;
-};
-
-const pctTone = (pct) => {
-    if (pct >= 80) return "good";
-    if (pct >= 40) return "mid";
-    return "bad";
-};
 
 const toMs = (d) => {
     if (!d) return 0;
@@ -83,7 +62,8 @@ const getMainPreviewData = (c) => {
         fullName: centerTrim(c?.full_name),
         location: centerTrim(c?.location),
         accentColor: centerTrim(c?.button_bg_color) || "#F47629",
-        buttonTextColor: safeLower(c?.button_text_color) === "black" ? "#111827" : "#ffffff",
+        buttonTextColor:
+            safeLower(c?.button_text_color) === "black" ? "#111827" : "#ffffff",
         textAlignment: safeLower(c?.text_alignment || "left"),
     };
 };
@@ -93,7 +73,9 @@ function ProfileMiniMainPreview({ card }) {
     const isDark = p.themeMode === "dark";
 
     return (
-        <div className={`profiles-mini ${isDark ? "is-dark" : "is-light"} align-${p.textAlignment}`}>
+        <div
+            className={`profiles-mini ${isDark ? "is-dark" : "is-light"} align-${p.textAlignment}`}
+        >
             <div className="profiles-mini-cover">
                 {p.coverPhoto ? (
                     <img src={p.coverPhoto} alt="" className="profiles-mini-coverImg" />
@@ -142,6 +124,7 @@ export default function Profiles() {
     const location = useLocation();
 
     const { data: authUser, refetch: refetchAuthUser } = useAuthUser();
+
     const plan = safeLower(authUser?.plan || "free");
     const isTeams = plan === "teams";
     const isPlus = plan === "plus";
@@ -150,7 +133,13 @@ export default function Profiles() {
     const teamsCap = Math.max(1, Number(authUser?.teamsProfilesQty || 1));
     const maxProfiles = isTeams ? teamsCap : 1;
 
-    const { data: cards, isLoading, isError, refetch: refetchProfiles } = useMyProfiles();
+    const {
+        data: cards,
+        isLoading,
+        isError,
+        refetch: refetchProfiles,
+    } = useMyProfiles();
+
     const createProfile = useCreateProfile();
     const deleteProfile = useDeleteProfile();
 
@@ -181,6 +170,7 @@ export default function Profiles() {
 
     const profiles = useMemo(() => {
         const xs = Array.isArray(cards) ? cards : [];
+
         return xs.map((c) => {
             const displayName =
                 centerTrim(c.business_card_name) ||
@@ -195,12 +185,42 @@ export default function Profiles() {
                 ? `Updated ${new Date(updatedMs).toLocaleDateString()}`
                 : "Updated recently";
 
-            const pct = calcCompletionPct(c);
-            const tone = pctTone(pct);
-            const isLive = pct > 0;
+            const pct = calcCompletionPct({
+                business_name: c?.business_name,
+                businessName: c?.business_card_name,
+                mainHeading: c?.main_heading,
+                trade_title: c?.trade_title,
+                subHeading: c?.sub_heading,
+                location: c?.location,
+                full_name: c?.full_name,
+                job_title: c?.job_title,
+                bio: c?.bio,
+                logo: c?.logo,
+                avatar: c?.avatar,
+                coverPhoto: c?.cover_photo,
+                workImages: Array.isArray(c?.works) ? c.works : [],
+                services: Array.isArray(c?.services) ? c.services : [],
+                reviews: Array.isArray(c?.reviews) ? c.reviews : [],
+                contact_email: c?.contact_email,
+                phone_number: c?.phone_number,
+            });
 
-            const views = Number(c?.views ?? c?.profile_views ?? c?.total_views ?? c?.profileViews ?? 0) || 0;
-            const linkTaps = Number(c?.link_taps ?? c?.card_taps ?? c?.linkTaps ?? c?.cardTaps ?? 0) || 0;
+            const tone = getCompletionTone(pct);
+
+            const isLive =
+                getProfileStatus({
+                    card: c,
+                    completionPct: pct,
+                }) === "live";
+
+            const views =
+                Number(c?.views ?? c?.profile_views ?? c?.total_views ?? c?.profileViews ?? 0) || 0;
+
+            const linkTaps =
+                Number(c?.link_taps ?? c?.card_taps ?? c?.linkTaps ?? c?.cardTaps ?? 0) || 0;
+
+            const qrScans =
+                Number(c?.qr_scans ?? c?.qrScans ?? c?.total_qr_scans ?? 0) || 0;
 
             return {
                 id: c._id,
@@ -214,6 +234,7 @@ export default function Profiles() {
                 isLive,
                 views,
                 linkTaps,
+                qrScans,
                 qrCodeUrl: c?.qr_code_url || "",
             };
         });
@@ -290,7 +311,8 @@ export default function Profiles() {
     };
 
     const overlayPlanName = isFree ? "Free" : isPlus ? "Plus" : "your current";
-    const overlayLimitText = `This plan is limited to ${maxProfiles} profile${maxProfiles === 1 ? "" : "s"}.`;
+    const overlayLimitText = `This plan is limited to ${maxProfiles} profile${maxProfiles === 1 ? "" : "s"
+        }.`;
 
     const handleEdit = (slug) => {
         navigate(`/profiles/edit?slug=${encodeURIComponent(slug || "")}`);
@@ -302,19 +324,27 @@ export default function Profiles() {
     };
 
     const copyLink = async (link) => {
-        if (!link) return;
+        if (!link) {
+            toast.error("No profile link available yet.");
+            return;
+        }
+
         try {
             await navigator.clipboard.writeText(link);
-            alert("Link copied ✅");
+            toast.success("Link copied ✅");
         } catch {
-            alert("Copy failed — please copy manually: " + link);
+            toast.error("Copy failed. Please copy the link manually.");
         }
     };
 
     const handleDownloadQr = async () => {
-        if (!selectedProfile?.slug) return;
+        if (!selectedProfile?.slug) {
+            toast.error("No profile selected.");
+            return;
+        }
+
         if (!selectedProfile?.qrCodeUrl) {
-            alert("QR code not available yet for this profile.");
+            toast.error("QR code not available yet for this profile.");
             return;
         }
 
@@ -325,6 +355,7 @@ export default function Profiles() {
             document.body.appendChild(a);
             a.click();
             a.remove();
+            toast.success("QR code download started.");
         } catch {
             window.open(selectedProfile.qrCodeUrl, "_blank", "noopener,noreferrer");
         }
@@ -343,49 +374,70 @@ export default function Profiles() {
                 const remaining = sortedProfiles.filter((p) => p.slug !== slug);
                 return remaining[0]?.slug || null;
             });
+
+            toast.success("Profile deleted.");
         } catch (e) {
             const msg = e?.response?.data?.error || e?.message || "Delete failed.";
-            alert(msg);
+            toast.error(msg);
         }
     };
 
     const shareToFacebook = () => {
-        if (!selectedPublicUrl) return;
-        const url = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(selectedPublicUrl)}`;
+        if (!selectedPublicUrl) {
+            toast.error("No profile link available yet.");
+            return;
+        }
+
+        const url = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(
+            selectedPublicUrl
+        )}`;
         window.open(url, "_blank", "noopener,noreferrer,width=680,height=720");
     };
 
     const shareToInstagram = () => {
-        alert("Instagram does not support direct web share links. Usually users copy the link and paste it into Instagram bio, DM, or story tools.");
+        toast("Instagram does not support direct web sharing. Copy the link and paste it into your bio, DM, or story tools.");
     };
 
     const shareToMessenger = () => {
-        if (!selectedPublicUrl) return;
+        if (!selectedPublicUrl) {
+            toast.error("No profile link available yet.");
+            return;
+        }
+
         const url = `https://www.facebook.com/dialog/send?link=${encodeURIComponent(
             selectedPublicUrl
         )}&app_id=291494419107518&redirect_uri=${encodeURIComponent(selectedPublicUrl)}`;
+
         window.open(url, "_blank", "noopener,noreferrer,width=680,height=720");
     };
 
     const shareToWhatsApp = () => {
-        if (!selectedPublicUrl) return;
+        if (!selectedPublicUrl) {
+            toast.error("No profile link available yet.");
+            return;
+        }
+
         const text = `Check out my profile: ${selectedPublicUrl}`;
         const url = `https://wa.me/?text=${encodeURIComponent(text)}`;
         window.open(url, "_blank", "noopener,noreferrer");
     };
 
     const shareByText = () => {
-        if (!selectedPublicUrl) return;
+        if (!selectedPublicUrl) {
+            toast.error("No profile link available yet.");
+            return;
+        }
+
         const body = `Check out my profile: ${selectedPublicUrl}`;
         window.location.href = `sms:?&body=${encodeURIComponent(body)}`;
     };
 
     const handleAppleWallet = () => {
-        alert("Apple Wallet not wired yet. Send me the backend endpoint and I’ll connect it.");
+        toast("Apple Wallet is not wired yet.");
     };
 
     const handleGoogleWallet = () => {
-        alert("Google Wallet not wired yet. Send me the backend endpoint and I’ll connect it.");
+        toast("Google Wallet is not wired yet.");
     };
 
     const goUpgradeTeams = () => navigate("/pricing");
@@ -400,6 +452,7 @@ export default function Profiles() {
     const openClaimPanel = () => {
         setClaimOpen(true);
         resetClaim();
+
         setTimeout(() => {
             claimRef.current?.scrollIntoView({
                 behavior: "smooth",
@@ -416,10 +469,23 @@ export default function Profiles() {
 
     const validateClaimSlug = (raw) => {
         const s = normalizeSlug(raw);
+
         if (!s || s.length < 3) {
-            return { ok: false, slug: s, msg: "Slug must be at least 3 characters (a-z, 0-9, hyphen)." };
+            return {
+                ok: false,
+                slug: s,
+                msg: "Slug must be at least 3 characters (a-z, 0-9, hyphen).",
+            };
         }
-        if (s === "main") return { ok: false, slug: s, msg: "Please choose a real slug (not “main”)." };
+
+        if (s === "main") {
+            return {
+                ok: false,
+                slug: s,
+                msg: "Please choose a real slug (not “main”).",
+            };
+        }
+
         return { ok: true, slug: s, msg: "" };
     };
 
@@ -438,7 +504,10 @@ export default function Profiles() {
 
         try {
             const headers = { "x-no-auth": "1" };
-            const r = await api.get(`/api/business-card/slug-available/${encodeURIComponent(v.slug)}`, { headers });
+            const r = await api.get(
+                `/api/business-card/slug-available/${encodeURIComponent(v.slug)}`,
+                { headers }
+            );
 
             if ((r?.status || 0) >= 400) {
                 setClaimStatus("error");
@@ -457,7 +526,9 @@ export default function Profiles() {
             }
         } catch (err) {
             setClaimStatus("error");
-            setClaimMessage(err?.response?.data?.error || "Could not check availability. Try again.");
+            setClaimMessage(
+                err?.response?.data?.error || "Could not check availability. Try again."
+            );
         }
     };
 
@@ -498,6 +569,8 @@ export default function Profiles() {
             setClaimMessage("Profile created ✅");
             setSelectedSlug(createdSlug);
 
+            toast.success("Profile created.");
+
             setTimeout(() => {
                 closeClaimPanel();
                 navigate(`/profiles/edit?slug=${encodeURIComponent(createdSlug)}`);
@@ -506,6 +579,7 @@ export default function Profiles() {
             const msg = e?.response?.data?.error || e?.message || "Could not create profile.";
             setClaimStatus("error");
             setClaimMessage(msg);
+            toast.error(msg);
         }
     };
 
@@ -557,11 +631,15 @@ export default function Profiles() {
             setClaimStatus("created");
             setClaimMessage("Profile created ✅");
             setSelectedSlug(createdSlug);
+
+            toast.success("Profile created.");
+
             setTimeout(() => closeClaimPanel(), 450);
         } catch (e) {
             const msg = e?.response?.data?.error || e?.message || "Could not create profile.";
             setClaimStatus("error");
             setClaimMessage(msg);
+            toast.error(msg);
         }
     };
 
@@ -598,6 +676,7 @@ export default function Profiles() {
             if (status >= 400) {
                 setClaimStatus("error");
                 setClaimMessage(data?.error || "Could not start checkout.");
+                toast.error(data?.error || "Could not start checkout.");
                 return;
             }
 
@@ -620,15 +699,22 @@ export default function Profiles() {
                 setSelectedSlug(createdSlug);
                 setClaimStatus("created");
                 setClaimMessage("Profile created ✅");
+
+                toast.success("Profile created.");
+
                 setTimeout(() => closeClaimPanel(), 450);
                 return;
             }
 
             setClaimStatus("error");
             setClaimMessage(data?.error || "Checkout was created but no redirect URL was returned.");
+            toast.error(data?.error || "Checkout redirect URL missing.");
         } catch (e) {
+            const msg =
+                e?.response?.data?.error || e?.message || "Could not start checkout.";
             setClaimStatus("error");
-            setClaimMessage(e?.response?.data?.error || e?.message || "Could not start checkout.");
+            setClaimMessage(msg);
+            toast.error(msg);
         }
     };
 
@@ -665,6 +751,8 @@ export default function Profiles() {
                 await new Promise((r) => setTimeout(r, 900));
             }
 
+            toast.success("Plan updated.");
+
             try {
                 const clean = new URL(window.location.href);
                 clean.search = "";
@@ -682,7 +770,9 @@ export default function Profiles() {
 
     const isInteractiveTarget = (target) => {
         if (!(target instanceof Element)) return false;
-        return !!target.closest("button, a, input, textarea, select, label, [data-no-rail-drag='true']");
+        return !!target.closest(
+            "button, a, input, textarea, select, label, [data-no-rail-drag='true']"
+        );
     };
 
     const handleRailPointerDown = (e) => {
@@ -770,10 +860,16 @@ export default function Profiles() {
                 <div className="profiles-shell">
                     <section className="profiles-card profiles-empty">
                         <h2 className="profiles-card-title">We couldn’t load your profiles</h2>
-                        <p className="profiles-muted">Please try again. If this keeps happening, contact support.</p>
+                        <p className="profiles-muted">
+                            Please try again. If this keeps happening, contact support.
+                        </p>
 
                         <div className="profiles-actions-row">
-                            <button type="button" className="kx-btn kx-btn--black" onClick={() => refetchProfiles()}>
+                            <button
+                                type="button"
+                                className="kx-btn kx-btn--black"
+                                onClick={() => refetchProfiles()}
+                            >
                                 Retry
                             </button>
                         </div>
@@ -850,24 +946,32 @@ export default function Profiles() {
                             <div className="profiles-emptyInfoHead">
                                 <h2 className="profiles-card-title">Profile details</h2>
                                 <p className="profiles-muted">
-                                    Once you create a profile, your public link, QR code, sharing tools and actions will show here.
+                                    Once you create a profile, your public link, QR code, sharing tools
+                                    and actions will show here.
                                 </p>
                             </div>
 
                             <div className="profiles-emptyInfoPanel">
                                 <div className="profiles-emptyInfoBlock">
                                     <div className="profiles-emptyInfoLabel">Public link</div>
-                                    <div className="profiles-emptyInfoValue">Create a profile to generate your link.</div>
+                                    <div className="profiles-emptyInfoValue">
+                                        Create a profile to generate your link.
+                                    </div>
                                 </div>
 
                                 <div className="profiles-emptyInfoBlock">
                                     <div className="profiles-emptyInfoLabel">QR code</div>
-                                    <div className="profiles-emptyInfoValue">Your QR code will appear here once your first profile is created.</div>
+                                    <div className="profiles-emptyInfoValue">
+                                        Your QR code will appear here once your first profile is created.
+                                    </div>
                                 </div>
 
                                 <div className="profiles-emptyInfoBlock">
                                     <div className="profiles-emptyInfoLabel">Share tools</div>
-                                    <div className="profiles-emptyInfoValue">Copy link, social share, wallet tools and profile actions will appear here.</div>
+                                    <div className="profiles-emptyInfoValue">
+                                        Copy link, social share, wallet tools and profile actions will
+                                        appear here.
+                                    </div>
                                 </div>
                             </div>
                         </section>
@@ -903,10 +1007,25 @@ export default function Profiles() {
                                 color: "var(--kc-text-primary, #0f172a)",
                             }}
                         >
-                            <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: 12 }}>
+                            <div
+                                style={{
+                                    display: "flex",
+                                    alignItems: "flex-start",
+                                    justifyContent: "space-between",
+                                    gap: 12,
+                                }}
+                            >
                                 <div>
-                                    <div style={{ fontSize: 16, fontWeight: 800, marginBottom: 6 }}>This profile is locked</div>
-                                    <div style={{ fontSize: 13, fontWeight: 500, color: "rgba(15,23,42,0.75)" }}>
+                                    <div style={{ fontSize: 16, fontWeight: 800, marginBottom: 6 }}>
+                                        This profile is locked
+                                    </div>
+                                    <div
+                                        style={{
+                                            fontSize: 13,
+                                            fontWeight: 500,
+                                            color: "rgba(15,23,42,0.75)",
+                                        }}
+                                    >
                                         You downgraded to the <strong>{overlayPlanName}</strong> plan.
                                     </div>
                                 </div>
@@ -930,27 +1049,57 @@ export default function Profiles() {
                                 </button>
                             </div>
 
-                            <div style={{ marginTop: 12, fontSize: 13, color: "rgba(15,23,42,0.85)", lineHeight: 1.5 }}>
+                            <div
+                                style={{
+                                    marginTop: 12,
+                                    fontSize: 13,
+                                    color: "rgba(15,23,42,0.85)",
+                                    lineHeight: 1.5,
+                                }}
+                            >
                                 {overlayLimitText}{" "}
                                 {lockedCount > 0 ? (
                                     <>
-                                        You currently have <strong>{lockedCount}</strong> profile{lockedCount === 1 ? "" : "s"} locked.
+                                        You currently have <strong>{lockedCount}</strong> profile
+                                        {lockedCount === 1 ? "" : "s"} locked.
                                     </>
                                 ) : null}
                             </div>
 
-                            <div style={{ marginTop: 10, fontSize: 13, color: "rgba(15,23,42,0.85)", lineHeight: 1.5 }}>
-                                To unlock your old profiles, upgrade back to <strong>Teams</strong>. If you don’t upgrade, your locked profiles
-                                will be permanently removed in <strong>30 days</strong>.
+                            <div
+                                style={{
+                                    marginTop: 10,
+                                    fontSize: 13,
+                                    color: "rgba(15,23,42,0.85)",
+                                    lineHeight: 1.5,
+                                }}
+                            >
+                                To unlock your old profiles, upgrade back to <strong>Teams</strong>. If
+                                you don’t upgrade, your locked profiles will be permanently removed in{" "}
+                                <strong>30 days</strong>.
                             </div>
 
                             {lockedClickedSlug ? (
-                                <div style={{ marginTop: 10, fontSize: 12, color: "rgba(15,23,42,0.6)" }}>
+                                <div
+                                    style={{
+                                        marginTop: 10,
+                                        fontSize: 12,
+                                        color: "rgba(15,23,42,0.6)",
+                                    }}
+                                >
                                     Locked profile: <strong>{lockedClickedSlug}</strong>
                                 </div>
                             ) : null}
 
-                            <div style={{ display: "flex", gap: 10, marginTop: 16, justifyContent: "flex-end", flexWrap: "wrap" }}>
+                            <div
+                                style={{
+                                    display: "flex",
+                                    gap: 10,
+                                    marginTop: 16,
+                                    justifyContent: "flex-end",
+                                    flexWrap: "wrap",
+                                }}
+                            >
                                 <button
                                     type="button"
                                     className="kx-btn kx-btn--white"

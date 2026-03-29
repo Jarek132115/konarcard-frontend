@@ -1,10 +1,10 @@
-import React, { useMemo, useState, useEffect, useContext } from "react";
+import React, { useMemo, useState, useEffect } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import DashboardLayout from "../../components/Dashboard/DashboardLayout";
 import PageHeader from "../../components/Dashboard/PageHeader";
 import "../../styling/dashboard/contactbook.css";
 import api from "../../services/api";
-import { AuthContext } from "../../components/AuthContext";
+import { useAuthUser } from "../../hooks/useAuthUser";
 import { toast } from "react-hot-toast";
 
 import DeleteIcon from "../../assets/icons/ShareOnDelete.svg";
@@ -46,7 +46,7 @@ function SearchIcon() {
 }
 
 export default function ContactBook() {
-    const { user: authUser } = useContext(AuthContext);
+    const { data: authUser } = useAuthUser();
     const queryClient = useQueryClient();
 
     const [search, setSearch] = useState("");
@@ -55,6 +55,8 @@ export default function ContactBook() {
     const [isCompact, setIsCompact] = useState(() =>
         typeof window !== "undefined" ? window.innerWidth <= 1200 : false
     );
+    const [confirmDeleteId, setConfirmDeleteId] = useState(null);
+    const [isDeleting, setIsDeleting] = useState(false);
 
     useEffect(() => {
         const onResize = () => setIsCompact(window.innerWidth <= 1200);
@@ -67,11 +69,19 @@ export default function ContactBook() {
         isLoading,
         isError,
         error,
+        refetch,
     } = useQuery({
         queryKey: ["contact-exchanges"],
         queryFn: async () => {
             const res = await api.get("/contact-exchanges");
-            return Array.isArray(res.data) ? res.data : [];
+            const status = Number(res?.status || 0);
+
+            if (status >= 400) {
+                throw new Error(res?.data?.error || "Failed to load contacts.");
+            }
+
+            const payload = res?.data;
+            return Array.isArray(payload) ? payload : [];
         },
         enabled: !!authUser,
         staleTime: 60 * 1000,
@@ -104,6 +114,10 @@ export default function ContactBook() {
             const stillExists = contacts.some((c) => c.id === selectedId);
             if (!stillExists) setSelectedId(contacts[0].id);
         }
+
+        if (!contacts.length) {
+            setSelectedId(null);
+        }
     }, [contacts, selectedId]);
 
     useEffect(() => {
@@ -134,15 +148,26 @@ export default function ContactBook() {
     }, [filtered, isCompact, visibleCount]);
 
     const deleteContact = async (id) => {
-        const ok = window.confirm("Delete this contact? This cannot be undone.");
-        if (!ok) return;
+        if (!id || isDeleting) return;
 
         try {
-            await api.delete(`/contact-exchanges/${id}`);
+            setIsDeleting(true);
+
+            const res = await api.delete(`/contact-exchanges/${id}`);
+            const status = Number(res?.status || 0);
+
+            if (status >= 400) {
+                throw new Error(res?.data?.error || "Failed to delete contact");
+            }
+
             toast.success("Contact deleted");
-            queryClient.invalidateQueries({ queryKey: ["contact-exchanges"] });
+            setConfirmDeleteId(null);
+
+            await queryClient.invalidateQueries({ queryKey: ["contact-exchanges"] });
         } catch (err) {
-            toast.error(err?.response?.data?.error || "Failed to delete contact");
+            toast.error(err?.response?.data?.error || err?.message || "Failed to delete contact");
+        } finally {
+            setIsDeleting(false);
         }
     };
 
@@ -174,9 +199,12 @@ export default function ContactBook() {
         const a = document.createElement("a");
         a.href = url;
         a.download = "konarcard-contact-book.csv";
+        document.body.appendChild(a);
         a.click();
+        a.remove();
 
         URL.revokeObjectURL(url);
+        toast.success("CSV export started.");
     };
 
     const exportSelected = () => {
@@ -188,6 +216,7 @@ export default function ContactBook() {
     };
 
     const showEmpty = !isLoading && !isError && contacts.length === 0;
+    const showDeleteConfirm = !!selected && confirmDeleteId === selected.id;
 
     return (
         <DashboardLayout hideDesktopHeader>
@@ -221,7 +250,17 @@ export default function ContactBook() {
                             <div className="cb-inlineState cb-error">
                                 <div className="cb-inlineTitle">Couldn’t load contacts</div>
                                 <div className="cb-inlineText">
-                                    {error?.response?.data?.error || error?.message || "Something went wrong."}
+                                    {error?.message || "Something went wrong."}
+                                </div>
+
+                                <div className="profiles-actions-row" style={{ marginTop: 12 }}>
+                                    <button
+                                        type="button"
+                                        className="kx-btn kx-btn--black"
+                                        onClick={() => refetch()}
+                                    >
+                                        Retry
+                                    </button>
                                 </div>
                             </div>
                         ) : showEmpty ? (
@@ -249,7 +288,10 @@ export default function ContactBook() {
                                                         key={c.id}
                                                         type="button"
                                                         className={`cb-contactCard ${selected?.id === c.id ? "is-active" : ""}`}
-                                                        onClick={() => setSelectedId(c.id)}
+                                                        onClick={() => {
+                                                            setSelectedId(c.id);
+                                                            setConfirmDeleteId(null);
+                                                        }}
                                                     >
                                                         <div className="cb-contactCard-title">{c.name || "Unknown"}</div>
 
@@ -343,17 +385,23 @@ export default function ContactBook() {
                                     <div className="cb-detailRows">
                                         <div className="cb-detailRow">
                                             <div className="cb-detailLabel">Email</div>
-                                            <div className="cb-detailValue">{nonEmpty(selected.email) ? selected.email : "—"}</div>
+                                            <div className="cb-detailValue">
+                                                {nonEmpty(selected.email) ? selected.email : "—"}
+                                            </div>
                                         </div>
 
                                         <div className="cb-detailRow">
                                             <div className="cb-detailLabel">Phone</div>
-                                            <div className="cb-detailValue">{nonEmpty(selected.phone) ? selected.phone : "—"}</div>
+                                            <div className="cb-detailValue">
+                                                {nonEmpty(selected.phone) ? selected.phone : "—"}
+                                            </div>
                                         </div>
 
                                         <div className="cb-detailRow">
                                             <div className="cb-detailLabel">Profile</div>
-                                            <div className="cb-detailValue">{nonEmpty(selected.profile) ? selected.profile : "—"}</div>
+                                            <div className="cb-detailValue">
+                                                {nonEmpty(selected.profile) ? selected.profile : "—"}
+                                            </div>
                                         </div>
 
                                         <div className="cb-detailRow cb-detailRow--message">
@@ -365,13 +413,51 @@ export default function ContactBook() {
                                     </div>
                                 </div>
 
+                                {showDeleteConfirm ? (
+                                    <div
+                                        className="cb-inlineState cb-error"
+                                        style={{ marginTop: 14 }}
+                                    >
+                                        <div className="cb-inlineTitle">Delete this contact?</div>
+                                        <div className="cb-inlineText">
+                                            This cannot be undone.
+                                        </div>
+
+                                        <div className="profiles-actions-row" style={{ marginTop: 12 }}>
+                                            <button
+                                                type="button"
+                                                className="kx-btn kx-btn--white"
+                                                onClick={() => setConfirmDeleteId(null)}
+                                                disabled={isDeleting}
+                                            >
+                                                Cancel
+                                            </button>
+
+                                            <button
+                                                type="button"
+                                                className="kx-btn kx-btn--black"
+                                                onClick={() => deleteContact(selected.id)}
+                                                disabled={isDeleting}
+                                            >
+                                                {isDeleting ? "Deleting..." : "Confirm Delete"}
+                                            </button>
+                                        </div>
+                                    </div>
+                                ) : null}
+
                                 <div className="cb-detailActions">
                                     <button
                                         type="button"
                                         className="cb-actionBtn cb-actionBtn--delete"
-                                        onClick={() => deleteContact(selected.id)}
+                                        onClick={() => setConfirmDeleteId(selected.id)}
+                                        disabled={isDeleting}
                                     >
-                                        <img src={DeleteIcon} alt="" aria-hidden="true" className="cb-actionIcon cb-actionIcon--delete" />
+                                        <img
+                                            src={DeleteIcon}
+                                            alt=""
+                                            aria-hidden="true"
+                                            className="cb-actionIcon cb-actionIcon--delete"
+                                        />
                                         <span>Delete Contact</span>
                                     </button>
 
@@ -380,7 +466,12 @@ export default function ContactBook() {
                                         className="cb-actionBtn cb-actionBtn--save"
                                         onClick={exportSelected}
                                     >
-                                        <img src={SaveIcon} alt="" aria-hidden="true" className="cb-actionIcon cb-actionIcon--save" />
+                                        <img
+                                            src={SaveIcon}
+                                            alt=""
+                                            aria-hidden="true"
+                                            className="cb-actionIcon cb-actionIcon--save"
+                                        />
                                         <span>Save Contact</span>
                                     </button>
                                 </div>
