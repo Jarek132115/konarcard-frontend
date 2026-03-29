@@ -1,4 +1,6 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
+import { toast } from "react-hot-toast";
+
 import DashboardLayout from "../../components/Dashboard/DashboardLayout";
 import PageHeader from "../../components/Dashboard/PageHeader";
 import "../../styling/dashboard/settings.css";
@@ -13,7 +15,11 @@ const fmtDate = (d) => {
         if (!d) return "—";
         const x = new Date(d);
         if (Number.isNaN(x.getTime())) return "—";
-        return x.toLocaleDateString(undefined, { year: "numeric", month: "short", day: "2-digit" });
+        return x.toLocaleDateString(undefined, {
+            year: "numeric",
+            month: "short",
+            day: "2-digit",
+        });
     } catch {
         return "—";
     }
@@ -21,8 +27,13 @@ const fmtDate = (d) => {
 
 const fmtMoneyFromMinor = (minorAmount, currency) => {
     if (minorAmount == null || minorAmount === "") return "—";
+
     const cur = String(currency || "GBP").toUpperCase();
-    const major = typeof minorAmount === "number" ? minorAmount / 100 : Number(minorAmount) / 100;
+    const major =
+        typeof minorAmount === "number"
+            ? minorAmount / 100
+            : Number(minorAmount) / 100;
+
     if (!Number.isFinite(major)) return "—";
 
     try {
@@ -39,7 +50,11 @@ const fmtMoneyFromMinor = (minorAmount, currency) => {
 const pick = (v, fallback = "—") => (v == null || v === "" ? fallback : String(v));
 
 export default function Settings() {
-    const { data: authUser, isLoading: authLoading, isError: authError, refetch: refetchAuth } = useAuthUser();
+    const {
+        data: authUser,
+        isLoading: authLoading,
+        refetch: refetchAuth,
+    } = useAuthUser();
 
     const [summary, setSummary] = useState(null);
     const [invoices, setInvoices] = useState([]);
@@ -48,11 +63,58 @@ export default function Settings() {
     const [loading, setLoading] = useState(true);
     const [loadErr, setLoadErr] = useState("");
 
+    const loadBillingData = useCallback(async () => {
+        try {
+            setLoading(true);
+            setLoadErr("");
+
+            const ts = Date.now();
+
+            const [sRes, iRes, pRes] = await Promise.all([
+                api.get(`/api/billing/summary?ts=${ts}`),
+                api.get(`/api/billing/invoices?ts=${ts}`),
+                api.get(`/api/billing/payments?ts=${ts}`),
+            ]);
+
+            const sStatus = Number(sRes?.status || 0);
+            const iStatus = Number(iRes?.status || 0);
+            const pStatus = Number(pRes?.status || 0);
+
+            if (sStatus >= 400) {
+                throw new Error(sRes?.data?.error || "Could not load billing summary.");
+            }
+
+            if (iStatus >= 400) {
+                throw new Error(iRes?.data?.error || "Could not load invoices.");
+            }
+
+            if (pStatus >= 400) {
+                throw new Error(pRes?.data?.error || "Could not load payments.");
+            }
+
+            const summaryPayload = sRes?.data || null;
+            const invoicesPayload = iRes?.data || {};
+            const paymentsPayload = pRes?.data || {};
+
+            setSummary(summaryPayload && typeof summaryPayload === "object" ? summaryPayload : null);
+            setInvoices(Array.isArray(invoicesPayload?.invoices) ? invoicesPayload.invoices : []);
+            setPayments(Array.isArray(paymentsPayload?.payments) ? paymentsPayload.payments : []);
+        } catch (e) {
+            setLoadErr(e?.response?.data?.error || e?.message || "Could not load settings.");
+            setSummary(null);
+            setInvoices([]);
+            setPayments([]);
+        } finally {
+            setLoading(false);
+        }
+    }, []);
+
     useEffect(() => {
         if (authLoading) return;
 
         if (!authUser) {
             setLoading(false);
+            setLoadErr("");
             setSummary(null);
             setInvoices([]);
             setPayments([]);
@@ -67,6 +129,7 @@ export default function Settings() {
                 setLoadErr("");
 
                 const ts = Date.now();
+
                 const [sRes, iRes, pRes] = await Promise.all([
                     api.get(`/api/billing/summary?ts=${ts}`),
                     api.get(`/api/billing/invoices?ts=${ts}`),
@@ -75,13 +138,29 @@ export default function Settings() {
 
                 if (cancelled) return;
 
-                const s = sRes?.data || null;
-                const invPayload = iRes?.data || {};
-                const payPayload = pRes?.data || {};
+                const sStatus = Number(sRes?.status || 0);
+                const iStatus = Number(iRes?.status || 0);
+                const pStatus = Number(pRes?.status || 0);
 
-                setSummary(s && typeof s === "object" ? s : null);
-                setInvoices(Array.isArray(invPayload.invoices) ? invPayload.invoices : []);
-                setPayments(Array.isArray(payPayload.payments) ? payPayload.payments : []);
+                if (sStatus >= 400) {
+                    throw new Error(sRes?.data?.error || "Could not load billing summary.");
+                }
+
+                if (iStatus >= 400) {
+                    throw new Error(iRes?.data?.error || "Could not load invoices.");
+                }
+
+                if (pStatus >= 400) {
+                    throw new Error(pRes?.data?.error || "Could not load payments.");
+                }
+
+                const summaryPayload = sRes?.data || null;
+                const invoicesPayload = iRes?.data || {};
+                const paymentsPayload = pRes?.data || {};
+
+                setSummary(summaryPayload && typeof summaryPayload === "object" ? summaryPayload : null);
+                setInvoices(Array.isArray(invoicesPayload?.invoices) ? invoicesPayload.invoices : []);
+                setPayments(Array.isArray(paymentsPayload?.payments) ? paymentsPayload.payments : []);
             } catch (e) {
                 if (cancelled) return;
                 setLoadErr(e?.response?.data?.error || e?.message || "Could not load settings.");
@@ -100,16 +179,33 @@ export default function Settings() {
 
     const provider = useMemo(() => {
         const p = safeLower(
-            summary?.account?.authProvider || authUser?.authProvider || authUser?.provider || authUser?.loginProvider
+            summary?.account?.authProvider ||
+            authUser?.authProvider ||
+            authUser?.provider ||
+            authUser?.loginProvider
         );
         return p === "google" ? "google" : "local";
     }, [summary, authUser]);
 
     const isGoogle = provider === "google";
 
-    const accountName = summary?.account?.name || authUser?.name || authUser?.full_name || "—";
-    const accountEmail = summary?.account?.email || authUser?.email || "—";
-    const accountAvatar = summary?.account?.avatar || authUser?.avatar || authUser?.picture || authUser?.photoURL || "";
+    const accountName =
+        summary?.account?.name ||
+        authUser?.name ||
+        authUser?.full_name ||
+        "—";
+
+    const accountEmail =
+        summary?.account?.email ||
+        authUser?.email ||
+        "—";
+
+    const accountAvatar =
+        summary?.account?.avatar ||
+        authUser?.avatar ||
+        authUser?.picture ||
+        authUser?.photoURL ||
+        "";
 
     const plan = summary?.plan || authUser?.plan || "free";
     const planInterval = summary?.planInterval || null;
@@ -117,23 +213,42 @@ export default function Settings() {
     const currentPeriodEnd = summary?.currentPeriodEnd || null;
 
     const isBusy = authLoading || loading;
-    const hasError = Boolean(authError || loadErr);
+    const hasError = Boolean(loadErr);
 
     const openBillingPortal = async () => {
         try {
             const res = await api.post("/api/billing-portal", {});
+            const status = Number(res?.status || 0);
+
+            if (status >= 400) {
+                throw new Error(res?.data?.error || "Could not open billing portal.");
+            }
+
             const url = res?.data?.url;
             if (!url) throw new Error("Billing portal URL missing.");
+
             window.location.href = url;
         } catch (e) {
-            alert(e?.response?.data?.error || e?.message || "Could not open billing portal.");
+            toast.error(
+                e?.response?.data?.error ||
+                e?.message ||
+                "Could not open billing portal."
+            );
         }
     };
 
     const retryAll = async () => {
         setLoadErr("");
-        setLoading(true);
-        await refetchAuth?.();
+
+        try {
+            await refetchAuth?.();
+        } catch {
+            // ignore auth refetch errors here
+        }
+
+        if (authUser) {
+            await loadBillingData();
+        }
     };
 
     const headerRight = (
@@ -143,11 +258,21 @@ export default function Settings() {
             </span>
 
             {hasError ? (
-                <button type="button" className="kx-btn kx-btn--black" onClick={retryAll}>
+                <button
+                    type="button"
+                    className="kx-btn kx-btn--black"
+                    onClick={retryAll}
+                    disabled={isBusy}
+                >
                     Retry
                 </button>
             ) : (
-                <button type="button" className="kx-btn kx-btn--black" onClick={openBillingPortal} disabled={isBusy}>
+                <button
+                    type="button"
+                    className="kx-btn kx-btn--black"
+                    onClick={openBillingPortal}
+                    disabled={isBusy}
+                >
                     Manage Billing
                 </button>
             )}
@@ -166,7 +291,9 @@ export default function Settings() {
                 {hasError ? (
                     <div className="stg-banner stg-banner--danger">
                         <div className="stg-sectionTitle">Couldn’t load your settings</div>
-                        <div className="stg-sectionText">{pick(loadErr, "Please try again.")}</div>
+                        <div className="stg-sectionText">
+                            {pick(loadErr, "Please try again.")}
+                        </div>
                     </div>
                 ) : null}
 
@@ -175,7 +302,9 @@ export default function Settings() {
                         <div className="stg-cardHead">
                             <div className="stg-cardHeadLeft">
                                 <h2 className="stg-cardTitle">Account</h2>
-                                <p className="stg-cardText">Your login method determines what details can be edited.</p>
+                                <p className="stg-cardText">
+                                    Your login method determines what details can be edited.
+                                </p>
                             </div>
 
                             <span className="stg-pill">
@@ -208,12 +337,16 @@ export default function Settings() {
                             <div className="stg-fields2">
                                 <div className="stg-field">
                                     <div className="stg-k">Name</div>
-                                    <div className={`stg-vBox ${isBusy ? "stg-skelLine" : ""}`}>{isBusy ? "" : accountName}</div>
+                                    <div className={`stg-vBox ${isBusy ? "stg-skelLine" : ""}`}>
+                                        {isBusy ? "" : accountName}
+                                    </div>
                                 </div>
 
                                 <div className="stg-field">
                                     <div className="stg-k">Email</div>
-                                    <div className={`stg-vBox ${isBusy ? "stg-skelLine" : ""}`}>{isBusy ? "" : accountEmail}</div>
+                                    <div className={`stg-vBox ${isBusy ? "stg-skelLine" : ""}`}>
+                                        {isBusy ? "" : accountEmail}
+                                    </div>
                                 </div>
                             </div>
 
@@ -277,10 +410,19 @@ export default function Settings() {
                                             <div className="stg-row stg-row4" key={id}>
                                                 <div>{fmtDate(date)}</div>
                                                 <div>{fmtMoneyFromMinor(amountMinor, currency)}</div>
-                                                <div><span className={`stg-badge ${safeLower(status)}`}>{String(status)}</span></div>
+                                                <div>
+                                                    <span className={`stg-badge ${safeLower(status)}`}>
+                                                        {String(status)}
+                                                    </span>
+                                                </div>
                                                 <div>
                                                     {pdf ? (
-                                                        <a className="stg-link" href={pdf} target="_blank" rel="noreferrer">
+                                                        <a
+                                                            className="stg-link"
+                                                            href={pdf}
+                                                            target="_blank"
+                                                            rel="noreferrer"
+                                                        >
                                                             Download
                                                         </a>
                                                     ) : "—"}
@@ -291,7 +433,9 @@ export default function Settings() {
                                 ) : (
                                     <div className="stg-emptyRow">
                                         <div className="stg-sectionTitle">No invoices yet.</div>
-                                        <div className="stg-sectionText">Invoices appear here once Stripe generates them.</div>
+                                        <div className="stg-sectionText">
+                                            Invoices appear here once Stripe generates them.
+                                        </div>
                                     </div>
                                 )}
                             </div>
@@ -314,20 +458,33 @@ export default function Settings() {
                             <div className="stg-stats3">
                                 <div className="stg-stat">
                                     <div className="stg-statK">Status</div>
-                                    <div className={`stg-statV ${safeLower(subscriptionStatus) === "active" && !isBusy ? "is-active" : ""}`}>
+                                    <div
+                                        className={`stg-statV ${safeLower(subscriptionStatus) === "active" && !isBusy
+                                                ? "is-active"
+                                                : ""
+                                            }`}
+                                    >
                                         {isBusy ? <span className="stg-skelText w70" /> : pick(subscriptionStatus)}
                                     </div>
                                 </div>
 
                                 <div className="stg-stat">
                                     <div className="stg-statK">Interval</div>
-                                    <div className="stg-statV">{isBusy ? <span className="stg-skelText w60" /> : pick(planInterval)}</div>
+                                    <div className="stg-statV">
+                                        {isBusy ? <span className="stg-skelText w60" /> : pick(planInterval)}
+                                    </div>
                                 </div>
 
                                 <div className="stg-stat">
                                     <div className="stg-statK">Renews</div>
                                     <div className="stg-statV">
-                                        {isBusy ? <span className="stg-skelText w64" /> : currentPeriodEnd ? fmtDate(currentPeriodEnd) : "—"}
+                                        {isBusy ? (
+                                            <span className="stg-skelText w64" />
+                                        ) : currentPeriodEnd ? (
+                                            fmtDate(currentPeriodEnd)
+                                        ) : (
+                                            "—"
+                                        )}
                                     </div>
                                 </div>
                             </div>
@@ -399,7 +556,11 @@ export default function Settings() {
                                             <div className="stg-row stg-row4p" key={id}>
                                                 <div>{fmtDate(date)}</div>
                                                 <div>{fmtMoneyFromMinor(amountMinor, currency)}</div>
-                                                <div><span className={`stg-badge ${safeLower(status)}`}>{String(status)}</span></div>
+                                                <div>
+                                                    <span className={`stg-badge ${safeLower(status)}`}>
+                                                        {String(status)}
+                                                    </span>
+                                                </div>
                                                 <div className="stg-ellipsis" title={String(desc)}>
                                                     {String(desc)}
                                                 </div>
@@ -409,7 +570,9 @@ export default function Settings() {
                                 ) : (
                                     <div className="stg-emptyRow">
                                         <div className="stg-sectionTitle">No payments yet.</div>
-                                        <div className="stg-sectionText">Payments appear here after successful charges.</div>
+                                        <div className="stg-sectionText">
+                                            Payments appear here after successful charges.
+                                        </div>
                                     </div>
                                 )}
                             </div>
