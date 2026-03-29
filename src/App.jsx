@@ -4,6 +4,7 @@ import { Toaster } from "react-hot-toast";
 
 import { AuthContext } from "./components/AuthContext";
 import ProtectedRoute from "./components/ProtectedRoute";
+import PublicOnlyRoute from "./components/PublicOnlyRoute";
 import ScrollToTop from "./components/ScrollToTop";
 import TidioDelayedLoader from "./components/TidioDelayedLoader";
 import RouteErrorBoundary from "./components/RouteErrorBoundary";
@@ -66,7 +67,7 @@ import Analytics from "./pages/interface/Analytics.jsx";
 import ContactBook from "./pages/interface/ContactBook.jsx";
 import Settings from "./pages/interface/Settings.jsx";
 
-// ✅ NEW: Dashboard pricing page
+// Dashboard pricing
 import UpgradePlan from "./pages/interface/UpgradePlan.jsx";
 
 // Admin
@@ -119,40 +120,215 @@ export default function App() {
       <RouteErrorBoundary>
         <Routes>
           {/* ---------------- PUBLIC ---------------- */}
-          <Route path="/" element={<Home />} />
-          <Route path="/register" element={<Register />} />
-          <Route path="/login" element={<Login />} />
+
+          <Route
+            path="/"
+            element={
+              <PublicOnlyRoute redirectAuthenticatedTo="/dashboard">
+                <Home />
+              </PublicOnlyRoute>
+            }
+          />
+
+          <Route
+            path="/register"
+            element={
+              <PublicOnlyRoute
+                redirectAuthenticatedTo="/dashboard"
+                allowProductIntentRedirect
+              >
+                <Register />
+              </PublicOnlyRoute>
+            }
+          />
+
+          <Route
+            path="/login"
+            element={
+              <PublicOnlyRoute
+                redirectAuthenticatedTo="/dashboard"
+                allowProductIntentRedirect
+              >
+                <Login />
+              </PublicOnlyRoute>
+            }
+          />
+
           <Route path="/oauth" element={<OAuthSuccess />} />
           <Route path="/reset-password/:token" element={<ResetPassword />} />
 
           {/* Legacy product routes */}
-          <Route path="/productandplan/konarcard" element={<KonarCard />} />
-          <Route path="/productandplan/konarsubscription" element={<KonarSubscription />} />
-          <Route path="/whatisnfc" element={<KonarCard />} />
-          <Route path="/subscription" element={<KonarSubscription />} />
+          <Route
+            path="/productandplan/konarcard"
+            element={
+              <PublicOnlyRoute
+                redirectAuthenticatedTo="/dashboard"
+                allowProductIntentRedirect
+              >
+                <KonarCard />
+              </PublicOnlyRoute>
+            }
+          />
+          <Route
+            path="/productandplan/konarsubscription"
+            element={
+              <PublicOnlyRoute redirectAuthenticatedTo="/dashboard">
+                <KonarSubscription />
+              </PublicOnlyRoute>
+            }
+          />
+          <Route
+            path="/whatisnfc"
+            element={
+              <PublicOnlyRoute
+                redirectAuthenticatedTo="/dashboard"
+                allowProductIntentRedirect
+              >
+                <KonarCard />
+              </PublicOnlyRoute>
+            }
+          />
+          <Route
+            path="/subscription"
+            element={
+              <PublicOnlyRoute redirectAuthenticatedTo="/dashboard">
+                <KonarSubscription />
+              </PublicOnlyRoute>
+            }
+          />
 
           {/* Public website pages */}
-          <Route path="/products" element={<Products />} />
+          <Route
+            path="/products"
+            element={
+              <PublicOnlyRoute
+                redirectAuthenticatedTo="/dashboard"
+                allowProductIntentRedirect
+              >
+                <Products />
+              </PublicOnlyRoute>
+            }
+          />
 
-          {/* ✅ CANONICAL ROUTES */}
-          <Route path="/products/plastic-card" element={<PlasticCard />} />
-          <Route path="/products/metal-card" element={<MetalCard />} />
-          <Route path="/products/konartag" element={<KonarTag />} />
-          <Route path="/products/plastic-bundle" element={<PlasticBundle />} />
-          <Route path="/products/metal-bundle" element={<MetalBundle />} />
+          {/* Product pages */}
+          <Route
+            path="/products/plastic-card"
+            element={
+              <PublicOnlyRoute
+                redirectAuthenticatedTo="/dashboard"
+                allowProductIntentRedirect
+              >
+                <PlasticCard />
+              </PublicOnlyRoute>
+            }
+          />
+          <Route
+            path="/products/metal-card"
+            element={
+              <PublicOnlyRoute
+                redirectAuthenticatedTo="/dashboard"
+                allowProductIntentRedirect
+              >
+                <MetalCard />
+              </PublicOnlyRoute>
+            }
+          />
+          <Route
+            path="/products/konartag"
+            element={
+              <PublicOnlyRoute
+                redirectAuthenticatedTo="/dashboard"
+                allowProductIntentRedirect
+              >
+                <KonarTag />
+              </PublicOnlyRoute>
+            }
+          />
+          <Route
+            path="/products/plastic-bundle"
+            element={
+              <PublicOnlyRoute redirectAuthenticatedTo="/dashboard">
+                <PlasticBundle />
+              </PublicOnlyRoute>
+            }
+          />
+          <Route
+            path="/products/metal-bundle"
+            element={
+              <PublicOnlyRoute redirectAuthenticatedTo="/dashboard">
+                <MetalBundle />
+              </PublicOnlyRoute>
+            }
+          />
 
-          {/* ✅ OLD ROUTES REDIRECT */}
+          {/* Old route redirect */}
           <Route path="/products/plastic" element={<Navigate to="/products/plastic-card" replace />} />
           <Route path="/products/metal" element={<Navigate to="/products/metal-card" replace />} />
 
-          <Route path="/examples" element={<Example />} />
-          <Route path="/pricing" element={<Pricing />} />
-          <Route path="/faq" element={<FAQ />} />
-          <Route path="/blog" element={<Blog />} />
-          <Route path="/reviews" element={<Reviews />} />
-          <Route path="/helpcentre" element={<HelpCentre />} />
-          <Route path="/contactus" element={<ContactUs />} />
-          <Route path="/policies" element={<Policies />} />
+          <Route
+            path="/examples"
+            element={
+              <PublicOnlyRoute redirectAuthenticatedTo="/dashboard">
+                <Example />
+              </PublicOnlyRoute>
+            }
+          />
+          <Route
+            path="/pricing"
+            element={
+              <PublicOnlyRoute redirectAuthenticatedTo="/dashboard">
+                <Pricing />
+              </PublicOnlyRoute>
+            }
+          />
+          <Route
+            path="/faq"
+            element={
+              <PublicOnlyRoute redirectAuthenticatedTo="/dashboard">
+                <FAQ />
+              </PublicOnlyRoute>
+            }
+          />
+          <Route
+            path="/blog"
+            element={
+              <PublicOnlyRoute redirectAuthenticatedTo="/dashboard">
+                <Blog />
+              </PublicOnlyRoute>
+            }
+          />
+          <Route
+            path="/reviews"
+            element={
+              <PublicOnlyRoute redirectAuthenticatedTo="/dashboard">
+                <Reviews />
+              </PublicOnlyRoute>
+            }
+          />
+          <Route
+            path="/helpcentre"
+            element={
+              <PublicOnlyRoute redirectAuthenticatedTo="/dashboard">
+                <HelpCentre />
+              </PublicOnlyRoute>
+            }
+          />
+          <Route
+            path="/contactus"
+            element={
+              <PublicOnlyRoute redirectAuthenticatedTo="/dashboard">
+                <ContactUs />
+              </PublicOnlyRoute>
+            }
+          />
+          <Route
+            path="/policies"
+            element={
+              <PublicOnlyRoute redirectAuthenticatedTo="/dashboard">
+                <Policies />
+              </PublicOnlyRoute>
+            }
+          />
 
           {/* Success */}
           <Route

@@ -8,8 +8,6 @@ import PlasticCard3D from "../../../components/PlasticCard3D";
 
 import "../../../styling/fonts.css";
 import "../../../styling/products/konarcard.css";
-
-/* ✅ reuse the exact homepage “Worth it” grid + spacing */
 import "../../../styling/home/value.css";
 
 import LogoIcon from "../../../assets/icons/Logo-Icon.svg";
@@ -19,7 +17,6 @@ import CardQrCode from "../../../assets/images/CardQrCode.png";
 import api from "../../../services/api";
 import { useMyProfiles } from "../../../hooks/useBusinessCard";
 
-/* ✅ your saved SVG icons */
 import OneJobIcon from "../../../assets/icons/OneJob.svg";
 import NoReprintsIcon from "../../../assets/icons/NoReprints.svg";
 import UpToDateIcon from "../../../assets/icons/UpToDate.svg";
@@ -31,7 +28,19 @@ const INTENT_KEY = "konar_nfc_intent_v1";
 
 function readIntent() {
     try {
-        return JSON.parse(localStorage.getItem(INTENT_KEY) || "null");
+        const raw = localStorage.getItem(INTENT_KEY);
+        if (!raw) return null;
+
+        const intent = JSON.parse(raw);
+        if (!intent?.productKey) return null;
+
+        const age = Date.now() - Number(intent.createdAt || intent.updatedAt || 0);
+        if (Number.isFinite(age) && age > 30 * 60 * 1000) {
+            localStorage.removeItem(INTENT_KEY);
+            return null;
+        }
+
+        return intent;
     } catch {
         return null;
     }
@@ -41,7 +50,9 @@ function writeIntent(v) {
     try {
         if (!v) localStorage.removeItem(INTENT_KEY);
         else localStorage.setItem(INTENT_KEY, JSON.stringify(v));
-    } catch { }
+    } catch {
+        // ignore
+    }
 }
 
 function fileToDataUrl(file) {
@@ -66,12 +77,12 @@ export default function PlasticCard() {
     const PRODUCT_KEY = "plastic-card";
 
     const [qty, setQty] = useState(1);
-    const [cardVariant, setCardVariant] = useState("white"); // "white" | "black"
+    const [cardVariant, setCardVariant] = useState("white");
 
     const [logoUrl, setLogoUrl] = useState("");
     const [logoFile, setLogoFile] = useState(null);
 
-    const [logoPreset, setLogoPreset] = useState("medium"); // small | medium | large
+    const [logoPreset, setLogoPreset] = useState("medium");
     const logoPercent = PRESET_TO_PERCENT[logoPreset] || 70;
 
     const [profileId, setProfileId] = useState("");
@@ -118,7 +129,6 @@ export default function PlasticCard() {
         if (checkout === "cancel") {
             setErrorMsg("Checkout cancelled. You can try again anytime.");
             setInfoMsg("");
-            return;
         }
     }, [location.search]);
 
@@ -127,16 +137,33 @@ export default function PlasticCard() {
         if (!intent) return;
         if (intent.productKey !== PRODUCT_KEY) return;
 
-        if (typeof intent.quantity === "number") setQty(Math.max(1, Math.min(20, intent.quantity)));
-        if (typeof intent.profileId === "string") setProfileId(intent.profileId);
+        if (typeof intent.quantity === "number") {
+            setQty(Math.max(1, Math.min(20, intent.quantity)));
+        }
 
-        if (intent.cardVariant === "black" || intent.cardVariant === "white") setCardVariant(intent.cardVariant);
+        if (typeof intent.profileId === "string") {
+            setProfileId(intent.profileId);
+        }
 
-        if (intent.logoPreset === "small" || intent.logoPreset === "medium" || intent.logoPreset === "large") {
+        if (intent.variant === "black" || intent.variant === "white") {
+            setCardVariant(intent.variant);
+        }
+
+        if (intent.cardVariant === "black" || intent.cardVariant === "white") {
+            setCardVariant(intent.cardVariant);
+        }
+
+        if (
+            intent.logoPreset === "small" ||
+            intent.logoPreset === "medium" ||
+            intent.logoPreset === "large"
+        ) {
             setLogoPreset(intent.logoPreset);
         }
 
-        if (intent.hadLogo) setInfoMsg("Please re-upload your logo to continue checkout.");
+        if (intent.hadLogo) {
+            setInfoMsg("Please re-upload your logo to continue checkout.");
+        }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
@@ -155,7 +182,10 @@ export default function PlasticCard() {
         if (checkout === "success") return;
 
         const existing = readIntent();
-        const base = existing && typeof existing === "object" && existing.productKey === PRODUCT_KEY ? existing : null;
+        const base =
+            existing && typeof existing === "object" && existing.productKey === PRODUCT_KEY
+                ? existing
+                : null;
 
         writeIntent({
             ...(base || {}),
@@ -163,14 +193,15 @@ export default function PlasticCard() {
             quantity: qty,
             profileId,
             hadLogo: !!logoFile,
+            variant: cardVariant,
             cardVariant,
             logoPreset,
-            returnTo: location.pathname,
+            returnTo: "/cards",
             createdAt: base?.createdAt || Date.now(),
             updatedAt: Date.now(),
         });
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [qty, profileId, logoFile, cardVariant, logoPreset, location.pathname, location.search]);
+    }, [qty, profileId, logoFile, cardVariant, logoPreset, location.search]);
 
     const onPickLogo = (e) => {
         const file = e.target.files?.[0];
@@ -219,7 +250,27 @@ export default function PlasticCard() {
     const displayedLogo = logoUrl || defaultLogo;
 
     const goLogin = () => {
-        navigate("/login", { state: { from: location.pathname } });
+        const existing = readIntent();
+        writeIntent({
+            ...(existing && typeof existing === "object" ? existing : {}),
+            productKey: PRODUCT_KEY,
+            quantity: qty,
+            profileId,
+            hadLogo: !!logoFile,
+            variant: cardVariant,
+            cardVariant,
+            logoPreset,
+            returnTo: "/cards",
+            createdAt: existing?.createdAt || Date.now(),
+            updatedAt: Date.now(),
+        });
+
+        navigate("/login", {
+            state: {
+                from: "/cards",
+                openProductFromIntent: true,
+            },
+        });
     };
 
     const handleBuy = async () => {
@@ -234,9 +285,10 @@ export default function PlasticCard() {
                 quantity: qty,
                 profileId,
                 hadLogo: !!logoFile,
+                variant: cardVariant,
                 cardVariant,
                 logoPreset,
-                returnTo: location.pathname,
+                returnTo: "/cards",
                 createdAt: existing?.createdAt || Date.now(),
                 updatedAt: Date.now(),
             });
@@ -275,14 +327,18 @@ export default function PlasticCard() {
 
             const resp = await api.post("/api/checkout/nfc/session", {
                 productKey: PRODUCT_KEY,
+                variant: cardVariant,
                 quantity: qty,
                 profileId,
                 logoUrl: savedLogoUrl || "",
+                returnUrl: `${window.location.origin}/cards`,
                 preview: {
                     logoPercent,
                     logoPreset,
                     usedCustomLogo: !!savedLogoUrl,
+                    variant: cardVariant,
                     cardVariant,
+                    edition: "plastic",
                 },
             });
 
@@ -307,9 +363,6 @@ export default function PlasticCard() {
             <Navbar />
 
             <main className="kc-konarcard kc-konarcard--premium kc-page">
-                {/* =====================
-                    HERO (keep as-is)
-                ====================== */}
                 <section className="kc-topHero" aria-label="Plastic KonarCard hero">
                     <div className="kc-konarcard__wrap">
                         <div className="kc-heroHeadWrap kc-heroHeadWrap--lg">
@@ -322,10 +375,11 @@ export default function PlasticCard() {
                                     <span className="kc-crumbPill__here">KonarCard – Plastic</span>
                                 </div>
 
-                                {/* ✅ user requested: main heading uses h2 class from fonts.css */}
                                 <h1 className="h2 kc-premHero__title">Plastic NFC Business Card (UK)</h1>
 
-                                <p className="kc-premHero__sub">Tap to share your profile in seconds — with a QR backup so it works on every phone.</p>
+                                <p className="kc-premHero__sub">
+                                    Tap to share your profile in seconds — with a QR backup so it works on every phone.
+                                </p>
 
                                 <div className="kc-topHero__badges">
                                     <span className="kc-badge kc-badge--orange">Best Value</span>
@@ -340,13 +394,16 @@ export default function PlasticCard() {
 
                         <div className="kc-premStage">
                             <div className="kc-premStage__canvasPad">
-                                <PlasticCard3D logoSrc={displayedLogo} qrSrc={CardQrCode} logoSize={logoPercent} variant={cardVariant} />
+                                <PlasticCard3D
+                                    logoSrc={displayedLogo}
+                                    qrSrc={CardQrCode}
+                                    logoSize={logoPercent}
+                                    variant={cardVariant}
+                                />
                             </div>
 
-                            {/* ✅ keep configurator + buy */}
                             <div className="kc-controls" aria-label="Configure your card">
                                 <div className="kc-configGrid">
-                                    {/* Logo */}
                                     <div className="kc-controlCell kc-cell--logo">
                                         <div className="kc-controlK">Logo</div>
 
@@ -368,7 +425,6 @@ export default function PlasticCard() {
                                         </div>
                                     </div>
 
-                                    {/* Logo size */}
                                     <div className="kc-controlCell kc-cell--size">
                                         <div className="kc-controlK">Logo size</div>
 
@@ -387,7 +443,6 @@ export default function PlasticCard() {
                                         </div>
                                     </div>
 
-                                    {/* Colour */}
                                     <div className="kc-controlCell kc-cell--colour">
                                         <div className="kc-controlK">Colour</div>
 
@@ -411,7 +466,6 @@ export default function PlasticCard() {
                                         </div>
                                     </div>
 
-                                    {/* Profile */}
                                     <div className="kc-controlCell kc-cell--profile">
                                         <div className="kc-controlK">Link to profile</div>
 
@@ -432,7 +486,11 @@ export default function PlasticCard() {
                                                     aria-label="Choose profile"
                                                 >
                                                     <option value="">
-                                                        {isProfilesLoading ? "Loading..." : myProfiles.length ? "Choose profile" : "No profiles"}
+                                                        {isProfilesLoading
+                                                            ? "Loading..."
+                                                            : myProfiles.length
+                                                                ? "Choose profile"
+                                                                : "No profiles"}
                                                     </option>
 
                                                     {myProfiles.map((p) => {
@@ -457,7 +515,6 @@ export default function PlasticCard() {
                                         </div>
                                     </div>
 
-                                    {/* Buy */}
                                     <div className="kc-buyArea kc-cell--buy" aria-label="Buy">
                                         <div className="kc-buyMeta">
                                             <div className="kc-buyPrice">£29.99</div>
@@ -486,7 +543,12 @@ export default function PlasticCard() {
                                                 </button>
                                             </div>
 
-                                            <button type="button" onClick={handleBuy} className="kx-btn kx-btn--black kc-buyBtnFit" disabled={busy}>
+                                            <button
+                                                type="button"
+                                                onClick={handleBuy}
+                                                className="kx-btn kx-btn--black kc-buyBtnFit"
+                                                disabled={busy}
+                                            >
                                                 {busy ? "Starting checkout..." : "Buy KonarCard"}
                                             </button>
                                         </div>
@@ -497,11 +559,6 @@ export default function PlasticCard() {
                     </div>
                 </section>
 
-                {/* =====================
-                    PRODUCT DETAILS
-                    ✅ MUST MATCH homepage Value section (khv)
-                    ✅ background: #fafafa (default khv)
-                ====================== */}
                 <section className="khv kc-plastic-khv" aria-label="Product details">
                     <div className="khv__inner">
                         <header className="khv__head">
@@ -517,7 +574,6 @@ export default function PlasticCard() {
                             </p>
                         </header>
 
-                        {/* ✅ same grid + line system as homepage */}
                         <div className="khv__grid" aria-label="Plastic card specifications">
                             {specs.map((s, i) => (
                                 <article className="khv__cell kc-specCell" key={i}>
@@ -529,11 +585,6 @@ export default function PlasticCard() {
                     </div>
                 </section>
 
-                {/* =====================
-                    WHAT YOU GET
-                    ✅ MUST MATCH homepage Value section (khv)
-                    ✅ background: #ffffff (override)
-                ====================== */}
                 <section className="khv khv--white kc-plastic-khv" aria-label="What you get">
                     <div className="khv__inner">
                         <header className="khv__head">
@@ -553,7 +604,13 @@ export default function PlasticCard() {
                             {features.map((it, i) => (
                                 <article className="khv__cell" key={i}>
                                     <div className="khv__icon" aria-hidden="true">
-                                        <img className="khv__iconImg" src={it.icon} alt="" loading="lazy" decoding="async" />
+                                        <img
+                                            className="khv__iconImg"
+                                            src={it.icon}
+                                            alt=""
+                                            loading="lazy"
+                                            decoding="async"
+                                        />
                                     </div>
 
                                     <h3 className="kc-title khv__cellTitle">{it.t}</h3>
@@ -564,10 +621,6 @@ export default function PlasticCard() {
                     </div>
                 </section>
 
-                {/* =====================
-                    GALLERY
-                    ✅ background: #fafafa
-                ====================== */}
                 <section className="kc-section kc-section--soft" aria-label="Plastic NFC Business Card gallery">
                     <div className="kc-section__inner">
                         <div className="kc-section__head">

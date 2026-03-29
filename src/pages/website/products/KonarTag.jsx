@@ -6,25 +6,16 @@ import Navbar from "../../../components/Navbar";
 import Footer from "../../../components/Home/Footer";
 import KonarTag3D from "../../../components/KonarTag3D";
 
-/* ✅ typography tokens */
 import "../../../styling/fonts.css";
-
-/* ✅ same CSS system as Plastic/Metal (hero + configurator + gallery) */
 import "../../../styling/products/konarcard.css";
-
-/* ✅ reuse the homepage “Worth it” grid system for Product details + What you get */
 import "../../../styling/home/value.css";
 
-/* Logos */
 import LogoIconWhite from "../../../assets/icons/Logo-Icon-White.svg";
-
-/* QR image (static) */
 import CardQrCode from "../../../assets/images/CardQrCode.png";
 
 import api from "../../../services/api";
 import { useMyProfiles } from "../../../hooks/useBusinessCard";
 
-/* ✅ reuse feature icons for consistency */
 import OneJobIcon from "../../../assets/icons/OneJob.svg";
 import NoReprintsIcon from "../../../assets/icons/NoReprints.svg";
 import UpToDateIcon from "../../../assets/icons/UpToDate.svg";
@@ -36,7 +27,19 @@ const INTENT_KEY = "konar_nfc_intent_v1";
 
 function readIntent() {
     try {
-        return JSON.parse(localStorage.getItem(INTENT_KEY) || "null");
+        const raw = localStorage.getItem(INTENT_KEY);
+        if (!raw) return null;
+
+        const intent = JSON.parse(raw);
+        if (!intent?.productKey) return null;
+
+        const age = Date.now() - Number(intent.createdAt || intent.updatedAt || 0);
+        if (Number.isFinite(age) && age > 30 * 60 * 1000) {
+            localStorage.removeItem(INTENT_KEY);
+            return null;
+        }
+
+        return intent;
     } catch {
         return null;
     }
@@ -46,7 +49,9 @@ function writeIntent(v) {
     try {
         if (!v) localStorage.removeItem(INTENT_KEY);
         else localStorage.setItem(INTENT_KEY, JSON.stringify(v));
-    } catch { }
+    } catch {
+        // ignore
+    }
 }
 
 function fileToDataUrl(file) {
@@ -71,14 +76,12 @@ export default function KonarTag() {
     const PRODUCT_KEY = "konartag";
 
     const [qty, setQty] = useState(1);
-
-    // black | gold (tag finish)
     const [finish, setFinish] = useState("black");
 
     const [logoUrl, setLogoUrl] = useState("");
     const [logoFile, setLogoFile] = useState(null);
 
-    const [logoPreset, setLogoPreset] = useState("medium"); // small | medium | large
+    const [logoPreset, setLogoPreset] = useState("medium");
     const logoPercent = PRESET_TO_PERCENT[logoPreset] || 70;
 
     const [profileId, setProfileId] = useState("");
@@ -105,9 +108,6 @@ export default function KonarTag() {
         return [];
     })();
 
-    /* =========================================================
-       SEO — Meta upsert + JSON-LD (SPA-safe)
-    ========================================================= */
     useEffect(() => {
         const CANONICAL = "https://www.konarcard.com/products/konartag";
         const title = "KonarTag — NFC Key Tag for Digital Business Cards (UK) | KonarCard";
@@ -157,7 +157,6 @@ export default function KonarTag() {
         upsertMeta("description", description);
         upsertMeta("robots", "index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1");
 
-        // Open Graph
         upsertMeta("og:type", "product", true);
         upsertMeta("og:site_name", "KonarCard", true);
         upsertMeta("og:title", title, true);
@@ -165,13 +164,11 @@ export default function KonarTag() {
         upsertMeta("og:url", CANONICAL, true);
         upsertMeta("og:image", ogImage, true);
 
-        // Twitter
         upsertMeta("twitter:card", "summary_large_image");
         upsertMeta("twitter:title", title);
         upsertMeta("twitter:description", description);
         upsertMeta("twitter:image", ogImage);
 
-        // Product JSON-LD
         upsertJsonLd("konartag-product", {
             "@context": "https://schema.org",
             "@type": "Product",
@@ -190,7 +187,6 @@ export default function KonarTag() {
             },
         });
 
-        // FAQ JSON-LD
         upsertJsonLd("konartag-faq", {
             "@context": "https://schema.org",
             "@type": "FAQPage",
@@ -229,7 +225,6 @@ export default function KonarTag() {
         };
     }, [logoUrl]);
 
-    // checkout return messages
     useEffect(() => {
         const sp = new URLSearchParams(location.search);
         const checkout = sp.get("checkout");
@@ -244,30 +239,44 @@ export default function KonarTag() {
         if (checkout === "cancel") {
             setErrorMsg("Checkout cancelled. You can try again anytime.");
             setInfoMsg("");
-            return;
         }
     }, [location.search]);
 
-    // restore intent for this product
     useEffect(() => {
         const intent = readIntent();
         if (!intent) return;
         if (intent.productKey !== PRODUCT_KEY) return;
 
-        if (typeof intent.quantity === "number") setQty(Math.max(1, Math.min(50, intent.quantity)));
-        if (typeof intent.profileId === "string") setProfileId(intent.profileId);
+        if (typeof intent.quantity === "number") {
+            setQty(Math.max(1, Math.min(50, intent.quantity)));
+        }
 
-        if (intent.finish === "black" || intent.finish === "gold") setFinish(intent.finish);
+        if (typeof intent.profileId === "string") {
+            setProfileId(intent.profileId);
+        }
 
-        if (intent.logoPreset === "small" || intent.logoPreset === "medium" || intent.logoPreset === "large") {
+        if (intent.variant === "black" || intent.variant === "gold") {
+            setFinish(intent.variant);
+        }
+
+        if (intent.finish === "black" || intent.finish === "gold") {
+            setFinish(intent.finish);
+        }
+
+        if (
+            intent.logoPreset === "small" ||
+            intent.logoPreset === "medium" ||
+            intent.logoPreset === "large"
+        ) {
             setLogoPreset(intent.logoPreset);
         }
 
-        if (intent.hadLogo) setInfoMsg("Please re-upload your logo to continue checkout.");
+        if (intent.hadLogo) {
+            setInfoMsg("Please re-upload your logo to continue checkout.");
+        }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
-    // default profile
     useEffect(() => {
         if (!isLoggedIn) return;
         if (profileId) return;
@@ -277,14 +286,16 @@ export default function KonarTag() {
         if (firstId) setProfileId(firstId);
     }, [isLoggedIn, myProfiles, profileId]);
 
-    // persist intent while configuring
     useEffect(() => {
         const sp = new URLSearchParams(location.search);
         const checkout = sp.get("checkout");
         if (checkout === "success") return;
 
         const existing = readIntent();
-        const base = existing && typeof existing === "object" && existing.productKey === PRODUCT_KEY ? existing : null;
+        const base =
+            existing && typeof existing === "object" && existing.productKey === PRODUCT_KEY
+                ? existing
+                : null;
 
         writeIntent({
             ...(base || {}),
@@ -292,14 +303,15 @@ export default function KonarTag() {
             quantity: qty,
             profileId,
             hadLogo: !!logoFile,
+            variant: finish,
             finish,
             logoPreset,
-            returnTo: location.pathname,
+            returnTo: "/cards",
             createdAt: base?.createdAt || Date.now(),
             updatedAt: Date.now(),
         });
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [qty, profileId, logoFile, finish, logoPreset, location.pathname, location.search]);
+    }, [qty, profileId, logoFile, finish, logoPreset, location.search]);
 
     const onPickLogo = (e) => {
         const file = e.target.files?.[0];
@@ -321,10 +333,29 @@ export default function KonarTag() {
     };
 
     const goLogin = () => {
-        navigate("/login", { state: { from: location.pathname } });
+        const existing = readIntent();
+        writeIntent({
+            ...(existing && typeof existing === "object" ? existing : {}),
+            productKey: PRODUCT_KEY,
+            quantity: qty,
+            profileId,
+            hadLogo: !!logoFile,
+            variant: finish,
+            finish,
+            logoPreset,
+            returnTo: "/cards",
+            createdAt: existing?.createdAt || Date.now(),
+            updatedAt: Date.now(),
+        });
+
+        navigate("/login", {
+            state: {
+                from: "/cards",
+                openProductFromIntent: true,
+            },
+        });
     };
 
-    /* ✅ Product details (rendered in khv grid style) */
     const specs = useMemo(
         () => [
             { k: "Tag size", v: "Compact key-tag size — easy everyday carry" },
@@ -337,7 +368,6 @@ export default function KonarTag() {
         []
     );
 
-    /* ✅ What you get (rendered in khv grid style) */
     const features = useMemo(
         () => [
             { icon: WorksEverywhereIcon, t: "Pocket-friendly", s: "A compact NFC tag — ideal for keys, vans, and everyday carry." },
@@ -353,7 +383,6 @@ export default function KonarTag() {
     const logoLabel = logoFile?.name || "Upload logo";
     const sizeLabel = (k) => (k === "small" ? "S" : k === "medium" ? "M" : "L");
 
-    // ✅ KonarTag: BOTH finishes default to white logo (as requested)
     const displayedLogo = logoUrl || LogoIconWhite;
 
     const handleBuy = async () => {
@@ -368,9 +397,10 @@ export default function KonarTag() {
                 quantity: qty,
                 profileId,
                 hadLogo: !!logoFile,
+                variant: finish,
                 finish,
                 logoPreset,
-                returnTo: location.pathname,
+                returnTo: "/cards",
                 createdAt: existing?.createdAt || Date.now(),
                 updatedAt: Date.now(),
             });
@@ -409,13 +439,16 @@ export default function KonarTag() {
 
             const resp = await api.post("/api/checkout/nfc/session", {
                 productKey: PRODUCT_KEY,
+                variant: finish,
                 quantity: qty,
                 profileId,
                 logoUrl: savedLogoUrl || "",
+                returnUrl: `${window.location.origin}/cards`,
                 preview: {
                     logoPercent,
                     logoPreset,
                     usedCustomLogo: !!savedLogoUrl,
+                    variant: finish,
                     finish,
                     edition: "tag",
                 },
@@ -439,9 +472,6 @@ export default function KonarTag() {
             <Navbar />
 
             <main className="kc-konarcard kc-konarcard--premium kc-page">
-                {/* =====================
-                    HERO (same system as Plastic/Metal)
-                ====================== */}
                 <section className="kc-topHero" aria-label="KonarTag hero">
                     <div className="kc-konarcard__wrap">
                         <div className="kc-heroHeadWrap kc-heroHeadWrap--lg">
@@ -454,7 +484,6 @@ export default function KonarTag() {
                                     <span className="kc-crumbPill__here">KonarTag</span>
                                 </div>
 
-                                {/* ✅ match Plastic/Metal: main heading uses h2 class */}
                                 <h1 className="h2 kc-premHero__title">KonarTag NFC Key Tag (UK)</h1>
 
                                 <p className="kc-premHero__sub">
@@ -482,10 +511,8 @@ export default function KonarTag() {
                                 />
                             </div>
 
-                            {/* ✅ keep configurator + buy (same grid system) */}
                             <div className="kc-controls" aria-label="Configure your KonarTag">
                                 <div className="kc-configGrid">
-                                    {/* Logo */}
                                     <div className="kc-controlCell kc-cell--logo">
                                         <div className="kc-controlK">Logo</div>
 
@@ -507,7 +534,6 @@ export default function KonarTag() {
                                         </div>
                                     </div>
 
-                                    {/* Logo size */}
                                     <div className="kc-controlCell kc-cell--size">
                                         <div className="kc-controlK">Logo size</div>
 
@@ -526,7 +552,6 @@ export default function KonarTag() {
                                         </div>
                                     </div>
 
-                                    {/* Finish */}
                                     <div className="kc-controlCell kc-cell--colour">
                                         <div className="kc-controlK">Finish</div>
 
@@ -550,7 +575,6 @@ export default function KonarTag() {
                                         </div>
                                     </div>
 
-                                    {/* Profile */}
                                     <div className="kc-controlCell kc-cell--profile">
                                         <div className="kc-controlK">Link to profile</div>
 
@@ -571,7 +595,11 @@ export default function KonarTag() {
                                                     aria-label="Choose profile"
                                                 >
                                                     <option value="">
-                                                        {isProfilesLoading ? "Loading..." : myProfiles.length ? "Choose profile" : "No profiles"}
+                                                        {isProfilesLoading
+                                                            ? "Loading..."
+                                                            : myProfiles.length
+                                                                ? "Choose profile"
+                                                                : "No profiles"}
                                                     </option>
 
                                                     {myProfiles.map((p) => {
@@ -596,7 +624,6 @@ export default function KonarTag() {
                                         </div>
                                     </div>
 
-                                    {/* BUY */}
                                     <div className="kc-buyArea kc-cell--buy" aria-label="Buy">
                                         <div className="kc-buyMeta">
                                             <div className="kc-buyPrice">£9.99</div>
@@ -641,10 +668,6 @@ export default function KonarTag() {
                     </div>
                 </section>
 
-                {/* =====================
-                    PRODUCT DETAILS (khv style)
-                    bg: #fafafa (default)
-                ====================== */}
                 <section className="khv kc-plastic-khv" aria-label="Product details">
                     <div className="khv__inner">
                         <header className="khv__head">
@@ -671,10 +694,6 @@ export default function KonarTag() {
                     </div>
                 </section>
 
-                {/* =====================
-                    WHAT YOU GET (khv style)
-                    bg: #ffffff
-                ====================== */}
                 <section className="khv khv--white kc-plastic-khv" aria-label="What you get">
                     <div className="khv__inner">
                         <header className="khv__head">
@@ -694,7 +713,13 @@ export default function KonarTag() {
                             {features.map((it, i) => (
                                 <article className="khv__cell" key={i}>
                                     <div className="khv__icon" aria-hidden="true">
-                                        <img className="khv__iconImg" src={it.icon} alt="" loading="lazy" decoding="async" />
+                                        <img
+                                            className="khv__iconImg"
+                                            src={it.icon}
+                                            alt=""
+                                            loading="lazy"
+                                            decoding="async"
+                                        />
                                     </div>
 
                                     <h3 className="kc-title khv__cellTitle">{it.t}</h3>
@@ -705,10 +730,6 @@ export default function KonarTag() {
                     </div>
                 </section>
 
-                {/* =====================
-                    GALLERY (same system as Plastic/Metal)
-                    bg: #fafafa
-                ====================== */}
                 <section className="kc-section kc-section--soft" aria-label="KonarTag gallery">
                     <div className="kc-section__inner">
                         <div className="kc-section__head">

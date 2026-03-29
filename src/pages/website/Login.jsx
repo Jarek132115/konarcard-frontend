@@ -51,6 +51,7 @@ export default function Login() {
         try {
             const raw = localStorage.getItem(CHECKOUT_INTENT_KEY);
             if (!raw) return null;
+
             const intent = JSON.parse(raw);
             if (!intent?.planKey) return null;
 
@@ -59,6 +60,7 @@ export default function Login() {
                 localStorage.removeItem(CHECKOUT_INTENT_KEY);
                 return null;
             }
+
             return intent;
         } catch {
             return null;
@@ -68,13 +70,16 @@ export default function Login() {
     const clearCheckoutIntent = () => {
         try {
             localStorage.removeItem(CHECKOUT_INTENT_KEY);
-        } catch { }
+        } catch {
+            // ignore
+        }
     };
 
     const readNfcIntent = () => {
         try {
             const raw = localStorage.getItem(NFC_INTENT_KEY);
             if (!raw) return null;
+
             const intent = JSON.parse(raw);
             if (!intent?.productKey) return null;
 
@@ -83,16 +88,11 @@ export default function Login() {
                 localStorage.removeItem(NFC_INTENT_KEY);
                 return null;
             }
+
             return intent;
         } catch {
             return null;
         }
-    };
-
-    const clearNfcIntent = () => {
-        try {
-            localStorage.removeItem(NFC_INTENT_KEY);
-        } catch { }
     };
 
     const startOAuth = (provider) => {
@@ -111,7 +111,9 @@ export default function Login() {
                 setRememberMe(true);
                 setData((d) => ({ ...d, email }));
             }
-        } catch { }
+        } catch {
+            // ignore
+        }
     }, []);
 
     useEffect(() => {
@@ -122,40 +124,55 @@ export default function Login() {
 
     const runPendingActionOrDefault = async () => {
         let action = null;
+
         try {
             const saved = localStorage.getItem(POST_AUTH_KEY);
             if (saved) action = JSON.parse(saved);
-        } catch { }
+        } catch {
+            action = null;
+        }
+
         try {
             localStorage.removeItem(POST_AUTH_KEY);
-        } catch { }
+        } catch {
+            // ignore
+        }
 
         if (action?.type === "buy_nfc") {
-            const returnTo =
-                (typeof action?.payload?.returnTo === "string" && action.payload.returnTo.trim()) ||
-                readNfcIntent()?.returnTo ||
-                (typeof location.state?.from === "string" && location.state.from.trim()) ||
-                "/products";
-
-            navigate(returnTo, { replace: true });
+            navigate("/cards", {
+                replace: true,
+                state: {
+                    openProductFromIntent: true,
+                    source: "login_post_auth_action",
+                },
+            });
             return;
         }
 
         if (action?.type === "buy_card") {
-            navigate("/productandplan/konarcard", {
-                state: { triggerCheckout: true, quantity: Number(action?.payload?.quantity) || 1 },
+            navigate("/cards", {
                 replace: true,
+                state: {
+                    openProductFromIntent: true,
+                    source: "login_buy_card",
+                },
             });
             return;
         }
 
         const nfc = readNfcIntent();
-        if (nfc?.returnTo) {
-            navigate(nfc.returnTo, { replace: true });
+        if (nfc?.productKey) {
+            navigate("/cards", {
+                replace: true,
+                state: {
+                    openProductFromIntent: true,
+                    source: "login_nfc_intent",
+                },
+            });
             return;
         }
 
-        navigate("/myprofile");
+        navigate("/dashboard", { replace: true });
     };
 
     const resumeCheckoutIfNeeded = async () => {
@@ -165,12 +182,17 @@ export default function Login() {
         const returnUrl = intent.returnUrl || `${window.location.origin}/myprofile?subscribed=1`;
 
         try {
-            const res = await api.post("/subscribe", { planKey: intent.planKey, returnUrl });
+            const res = await api.post("/subscribe", {
+                planKey: intent.planKey,
+                returnUrl,
+            });
+
             const url = res?.data?.url;
             if (!url) {
                 toast.error("Stripe checkout URL missing. Please try again.");
                 return false;
             }
+
             clearCheckoutIntent();
             window.location.href = url;
             return true;
@@ -201,15 +223,24 @@ export default function Login() {
                 localStorage.removeItem(REMEMBER_KEY);
                 localStorage.removeItem(REMEMBERED_EMAIL_KEY);
             }
-        } catch { }
+        } catch {
+            // ignore
+        }
 
         setIsSubmitting(true);
+
         try {
-            const res = await api.post("/login", { email: cleanEmail, password: data.password });
+            const res = await api.post("/login", {
+                email: cleanEmail,
+                password: data.password,
+            });
 
             if (res.data?.error) {
-                if (res.data?.resend) goToVerificationStep(res.data?.error || "Email not verified. Code sent.");
-                else toast.error(res.data.error);
+                if (res.data?.resend) {
+                    goToVerificationStep(res.data?.error || "Email not verified. Code sent.");
+                } else {
+                    toast.error(res.data.error);
+                }
                 return;
             }
 
@@ -218,7 +249,6 @@ export default function Login() {
 
             const email = res.data.user?.email || cleanEmail;
             if (isAdminEmail(email)) {
-                clearNfcIntent();
                 navigate("/admin", { replace: true });
                 return;
             }
@@ -245,14 +275,19 @@ export default function Login() {
             setVerificationStep(false);
             return;
         }
+
         if (cleanOtp.length !== 6) {
             toast.error("Please enter the 6-digit code.");
             return;
         }
 
         setIsVerifying(true);
+
         try {
-            const res = await api.post("/verify-email", { email: cleanEmail, code: cleanOtp });
+            const res = await api.post("/verify-email", {
+                email: cleanEmail,
+                code: cleanOtp,
+            });
 
             if (res?.data?.error) {
                 toast.error(res.data.error || "Verification failed.");
@@ -261,7 +296,10 @@ export default function Login() {
 
             toast.success("Email verified!");
 
-            const loginRes = await api.post("/login", { email: cleanEmail, password: data.password });
+            const loginRes = await api.post("/login", {
+                email: cleanEmail,
+                password: data.password,
+            });
 
             if (loginRes.data?.error) {
                 toast.error(loginRes.data.error);
@@ -283,19 +321,23 @@ export default function Login() {
 
     const resendCode = async () => {
         const cleanEmail = (data.email || "").trim().toLowerCase();
+
         if (!cleanEmail) {
             toast.error("Enter your email first.");
             setVerificationStep(false);
             return;
         }
+
         if (cooldown > 0) return;
 
         try {
             const res = await api.post("/resend-code", { email: cleanEmail });
+
             if (res.data?.error) {
                 toast.error(res.data.error);
                 return;
             }
+
             toast.success("New code sent!");
             setCode("");
             setCooldown(30);
@@ -309,10 +351,17 @@ export default function Login() {
     const sendResetLink = async (e) => {
         e.preventDefault();
         setIsSendingReset(true);
+
         try {
-            const res = await api.post("/forgot-password", { email: emailForReset.trim().toLowerCase() });
-            if (res.data?.error) toast.error(res.data.error);
-            else toast.success("Reset link sent!");
+            const res = await api.post("/forgot-password", {
+                email: emailForReset.trim().toLowerCase(),
+            });
+
+            if (res.data?.error) {
+                toast.error(res.data.error);
+            } else {
+                toast.success("Reset link sent!");
+            }
         } catch {
             toast.error("Failed to send reset link.");
         } finally {
@@ -326,7 +375,12 @@ export default function Login() {
 
             <div className="kc-auth-page">
                 <div className="kc-auth-topActions">
-                    <button type="button" className="kc-auth-closeBtn" onClick={closeAuth} aria-label="Close">
+                    <button
+                        type="button"
+                        className="kc-auth-closeBtn"
+                        onClick={closeAuth}
+                        aria-label="Close"
+                    >
                         <span className="kc-auth-closeIcon" aria-hidden="true">
                             ×
                         </span>
@@ -361,13 +415,21 @@ export default function Login() {
                                             </div>
 
                                             <div className="kc-actionsCenter">
-                                                <button className="kx-btn kx-btn--black kc-authBtn" disabled={isSendingReset} aria-busy={isSendingReset}>
+                                                <button
+                                                    className="kx-btn kx-btn--black kc-authBtn"
+                                                    disabled={isSendingReset}
+                                                    aria-busy={isSendingReset}
+                                                >
                                                     {isSendingReset ? "Sending…" : "Send reset link"}
                                                 </button>
                                             </div>
 
                                             <div className="kc-actionsCenter">
-                                                <button type="button" className="kx-btn kx-btn--white kc-authBtn" onClick={() => setForgotPasswordStep(false)}>
+                                                <button
+                                                    type="button"
+                                                    className="kx-btn kx-btn--white kc-authBtn"
+                                                    onClick={() => setForgotPasswordStep(false)}
+                                                >
                                                     Back
                                                 </button>
                                             </div>
@@ -391,7 +453,13 @@ export default function Login() {
                                                     type="text"
                                                     placeholder="123456"
                                                     value={code}
-                                                    onChange={(e) => setCode((e.target.value || "").replace(/\D/g, "").slice(0, 6))}
+                                                    onChange={(e) =>
+                                                        setCode(
+                                                            (e.target.value || "")
+                                                                .replace(/\D/g, "")
+                                                                .slice(0, 6)
+                                                        )
+                                                    }
                                                     maxLength={6}
                                                     inputMode="numeric"
                                                     autoComplete="one-time-code"
@@ -400,13 +468,22 @@ export default function Login() {
                                             </div>
 
                                             <div className="kc-actionsCenter">
-                                                <button className="kx-btn kx-btn--black kc-authBtn" disabled={isVerifying} aria-busy={isVerifying}>
+                                                <button
+                                                    className="kx-btn kx-btn--black kc-authBtn"
+                                                    disabled={isVerifying}
+                                                    aria-busy={isVerifying}
+                                                >
                                                     {isVerifying ? "Verifying…" : "Verify"}
                                                 </button>
                                             </div>
 
                                             <div className="kc-actionsCenter">
-                                                <button type="button" className="kx-btn kx-btn--white kc-authBtn" onClick={resendCode} disabled={cooldown > 0}>
+                                                <button
+                                                    type="button"
+                                                    className="kx-btn kx-btn--white kc-authBtn"
+                                                    onClick={resendCode}
+                                                    disabled={cooldown > 0}
+                                                >
                                                     {cooldown > 0 ? `Resend in ${cooldown}s` : "Resend code"}
                                                 </button>
                                             </div>
@@ -431,7 +508,11 @@ export default function Login() {
 
                                         <p className="kc-subtitle">
                                             New to KonarCard?{" "}
-                                            <Link className="kc-link" to="/register" state={{ from: location.state?.from || "/" }}>
+                                            <Link
+                                                className="kc-link"
+                                                to="/register"
+                                                state={{ from: location.state?.from || "/" }}
+                                            >
                                                 Create an account
                                             </Link>
                                         </p>
@@ -447,7 +528,9 @@ export default function Login() {
                                                     type="email"
                                                     placeholder="Enter your email"
                                                     value={data.email}
-                                                    onChange={(e) => setData({ ...data, email: e.target.value })}
+                                                    onChange={(e) =>
+                                                        setData({ ...data, email: e.target.value })
+                                                    }
                                                     required
                                                 />
                                             </div>
@@ -462,24 +545,38 @@ export default function Login() {
                                                     type="password"
                                                     placeholder="Enter your password"
                                                     value={data.password}
-                                                    onChange={(e) => setData({ ...data, password: e.target.value })}
+                                                    onChange={(e) =>
+                                                        setData({ ...data, password: e.target.value })
+                                                    }
                                                     required
                                                 />
                                             </div>
 
                                             <div className="kc-row">
                                                 <label className="kc-remember">
-                                                    <input type="checkbox" checked={rememberMe} onChange={(e) => setRememberMe(e.target.checked)} />
+                                                    <input
+                                                        type="checkbox"
+                                                        checked={rememberMe}
+                                                        onChange={(e) => setRememberMe(e.target.checked)}
+                                                    />
                                                     Remember me
                                                 </label>
 
-                                                <button type="button" className="kc-text-link" onClick={() => setForgotPasswordStep(true)}>
+                                                <button
+                                                    type="button"
+                                                    className="kc-text-link"
+                                                    onClick={() => setForgotPasswordStep(true)}
+                                                >
                                                     Forgot password?
                                                 </button>
                                             </div>
 
                                             <div className="kc-actionsCenter">
-                                                <button className="kx-btn kx-btn--black kc-authBtn" disabled={isSubmitting} aria-busy={isSubmitting}>
+                                                <button
+                                                    className="kx-btn kx-btn--black kc-authBtn"
+                                                    disabled={isSubmitting}
+                                                    aria-busy={isSubmitting}
+                                                >
                                                     {isSubmitting ? "Signing in…" : "Sign in"}
                                                 </button>
                                             </div>
@@ -490,18 +587,45 @@ export default function Login() {
                                         </div>
 
                                         <div className="kc-social">
-                                            <button type="button" className="kx-btn kx-btn--white kc-authBtn kc-socialBtn" onClick={() => startOAuth("google")}>
-                                                <img className="kc-social-icon" src={GoogleIcon} alt="" aria-hidden="true" />
+                                            <button
+                                                type="button"
+                                                className="kx-btn kx-btn--white kc-authBtn kc-socialBtn"
+                                                onClick={() => startOAuth("google")}
+                                            >
+                                                <img
+                                                    className="kc-social-icon"
+                                                    src={GoogleIcon}
+                                                    alt=""
+                                                    aria-hidden="true"
+                                                />
                                                 <span>Sign in with Google</span>
                                             </button>
 
-                                            <button type="button" className="kx-btn kx-btn--white kc-authBtn kc-socialBtn" onClick={() => startOAuth("facebook")}>
-                                                <img className="kc-social-icon" src={FacebookIcon} alt="" aria-hidden="true" />
+                                            <button
+                                                type="button"
+                                                className="kx-btn kx-btn--white kc-authBtn kc-socialBtn"
+                                                onClick={() => startOAuth("facebook")}
+                                            >
+                                                <img
+                                                    className="kc-social-icon"
+                                                    src={FacebookIcon}
+                                                    alt=""
+                                                    aria-hidden="true"
+                                                />
                                                 <span>Sign in with Facebook</span>
                                             </button>
 
-                                            <button type="button" className="kx-btn kx-btn--white kc-authBtn kc-socialBtn" onClick={() => startOAuth("apple")}>
-                                                <img className="kc-social-icon" src={AppleIcon} alt="" aria-hidden="true" />
+                                            <button
+                                                type="button"
+                                                className="kx-btn kx-btn--white kc-authBtn kc-socialBtn"
+                                                onClick={() => startOAuth("apple")}
+                                            >
+                                                <img
+                                                    className="kc-social-icon"
+                                                    src={AppleIcon}
+                                                    alt=""
+                                                    aria-hidden="true"
+                                                />
                                                 <span>Sign in with Apple</span>
                                             </button>
                                         </div>

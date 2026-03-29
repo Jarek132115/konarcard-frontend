@@ -1,15 +1,27 @@
+/* frontend/src/styling/dashboard/cards.css
+=========================================================
+Cards Page
+- product picker
+- dashboard product configurator
+- purchased cards area
+- order/details blocks
+========================================================= */
+
 :root {
     --cp-ink: var(--kc-text-primary, #0f172a);
     --cp-muted: var(--kc-text-secondary, #475569);
     --cp-border: rgba(15, 23, 42, 0.10);
-    --cp-soft: rgba(15, 23, 42, 0.02);
-    --cp-soft-2: rgba(15, 23, 42, 0.04);
+    --cp-soft: rgba(15, 23, 42, 0.03);
+    --cp-soft-2: rgba(15, 23, 42, 0.05);
     --cp-shadow: 0 10px 26px rgba(15, 23, 42, 0.06);
-    --cp-orange: #f97316;
-    --cp-orange-soft: rgba(249, 115, 22, 0.10);
+    --cp-shadow-hover: 0 14px 34px rgba(15, 23, 42, 0.09);
     --cp-radius-xl: 22px;
     --cp-radius-lg: 18px;
     --cp-radius-md: 14px;
+    --cp-accent: #f97316;
+    --cp-accent-soft: rgba(249, 115, 22, 0.10);
+    --cp-accent-border: rgba(249, 115, 22, 0.28);
+    --cp-bg: #ffffff;
 }
 
 .cp-shell {
@@ -18,9 +30,6 @@
     margin: 0;
 }
 
-/* =========================================================
-   Header right
-========================================================= */
 .cp-headRight {
     display: inline-flex;
     align-items: center;
@@ -30,14 +39,19 @@
 }
 
 .cp-pill {
-    font-family: "Inter", sans-serif;
-    font-size: 12px;
-    font-weight: 700;
-    padding: 10px 12px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 40px;
+    padding: 8px 12px;
     border-radius: 999px;
     border: 1px solid rgba(15, 23, 42, 0.12);
     background: #fff;
     color: var(--cp-ink);
+    font-family: "Inter", sans-serif;
+    font-size: 12px;
+    font-weight: 700;
+    line-height: 1;
     white-space: nowrap;
 }
 
@@ -47,15 +61,12 @@
     transform: translateY(-1px);
 }
 
-/* =========================================================
-   Shared card surface
-========================================================= */
 .cp-card {
-    background: #fff;
+    background: var(--cp-bg);
     border: 1px solid var(--cp-border);
     border-radius: var(--cp-radius-xl);
     box-shadow: var(--cp-shadow);
-    padding: 16px;
+    padding: 18px;
     margin-top: 16px;
 }
 
@@ -63,129 +74,22 @@
     display: flex;
     align-items: flex-start;
     justify-content: space-between;
-    gap: 16px;
+    gap: 14px;
+    flex-wrap: wrap;
 }
 
 .cp-cardTitle {
     margin: 0;
     font-family: "Cal Sans", sans-serif;
     font-weight: 500;
-    font-size: 18px;
+    font-size: 22px;
     line-height: 1.15;
-    letter-spacing: -0.01em;
+    letter-spacing: -0.02em;
     color: var(--cp-ink);
 }
 
 .cp-muted {
     margin: 8px 0 0;
-    font-family: "Inter", sans-serif;
-    font-weight: 600;
-    font-size: 14px;
-    line-height: 1.55;
-    color: var(--cp-muted);
-}
-
-/* =========================================================
-   Alerts
-========================================================= */
-.cp-alert {
-    margin-top: 14px;
-    padding: 12px 14px;
-    border-radius: 16px;
-    border: 1px solid rgba(15, 23, 42, 0.10);
-    background: rgba(15, 23, 42, 0.02);
-    font-family: "Inter", sans-serif;
-    font-weight: 650;
-    font-size: 14px;
-    color: var(--cp-ink);
-}
-
-.cp-alert.danger {
-    border-color: rgba(220, 38, 38, 0.18);
-    background: rgba(220, 38, 38, 0.06);
-}
-
-/* =========================================================
-   Catalog
-========================================================= */
-.cp-catalogGrid {
-    margin-top: 16px;
-    display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: 16px;
-}
-
-@media (max-width: 1100px) {
-    .cp-catalogGrid {
-        grid-template-columns: 1fr;
-    }
-}
-
-.cp-catalogCard {
-    background: #fff;
-    border: 1px solid rgba(15, 23, 42, 0.10);
-    border-radius: 20px;
-    overflow: hidden;
-    display: flex;
-    flex-direction: column;
-    min-width: 0;
-    transition: box-shadow 0.18s ease, transform 0.12s ease, border-color 0.18s ease;
-}
-
-.cp-catalogCard:hover {
-    box-shadow: 0 14px 30px rgba(15, 23, 42, 0.08);
-    border-color: rgba(15, 23, 42, 0.14);
-}
-
-.cp-catalogMedia {
-    position: relative;
-    min-height: 280px;
-    background: #fff;
-    border-bottom: 1px solid rgba(15, 23, 42, 0.08);
-    padding: 18px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.cp-catalogTag {
-    position: absolute;
-    top: 14px;
-    left: 14px;
-    font-family: "Inter", sans-serif;
-    font-size: 12px;
-    font-weight: 700;
-    color: var(--cp-ink);
-    background: #fff;
-    border: 1px solid rgba(15, 23, 42, 0.12);
-    border-radius: 999px;
-    padding: 8px 12px;
-}
-
-.cp-catalogImg {
-    width: 100%;
-    max-width: 320px;
-    height: auto;
-    object-fit: contain;
-    display: block;
-}
-
-.cp-catalogBody {
-    padding: 18px 16px 16px;
-    display: flex;
-    flex-direction: column;
-    gap: 14px;
-    flex: 1;
-}
-
-.cp-catalogTitle {
-    font-family: "Cal Sans", sans-serif;
-    font-size: 20px;
-    line-height: 1.15;
-    color: var(--cp-ink);
-}
-
-.cp-catalogDesc {
     font-family: "Inter", sans-serif;
     font-size: 14px;
     line-height: 1.55;
@@ -193,23 +97,134 @@
     color: var(--cp-muted);
 }
 
-.cp-catalogPrice {
-    font-family: "Inter", sans-serif;
-    font-size: 18px;
-    font-weight: 800;
+.cp-alert {
+    margin-top: 14px;
+    padding: 12px 14px;
+    border-radius: 16px;
+    border: 1px solid rgba(15, 23, 42, 0.10);
+    background: rgba(15, 23, 42, 0.02);
     color: var(--cp-ink);
+    font-family: "Inter", sans-serif;
+    font-size: 14px;
+    font-weight: 650;
 }
 
-.cp-catalogBtn {
-    margin-top: auto;
+.cp-alert.danger {
+    border-color: rgba(220, 38, 38, 0.18);
+    background: rgba(220, 38, 38, 0.06);
+    color: #991b1b;
+}
+
+.cp-divider {
     width: 100%;
-    min-height: 44px;
-    justify-content: center;
+    height: 1px;
+    background: rgba(15, 23, 42, 0.08);
+    margin: 20px 0;
 }
 
 /* =========================================================
-   Owned cards grid
+   Product picker
 ========================================================= */
+
+.cp-productGrid {
+    margin-top: 18px;
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 14px;
+}
+
+@media (max-width: 1080px) {
+    .cp-productGrid {
+        grid-template-columns: 1fr;
+    }
+}
+
+.cp-productTile {
+    width: 100%;
+    text-align: left;
+    background: #fff;
+    border: 1px solid var(--cp-border);
+    border-radius: 20px;
+    padding: 18px;
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+    cursor: pointer;
+    transition:
+        transform 0.12s ease,
+        box-shadow 0.18s ease,
+        border-color 0.18s ease;
+}
+
+.cp-productTile:hover {
+    transform: translateY(-1px);
+    box-shadow: var(--cp-shadow-hover);
+}
+
+.cp-productTile.is-active {
+    border-color: var(--cp-accent-border);
+    box-shadow: 0 14px 30px rgba(249, 115, 22, 0.12);
+}
+
+.cp-productTileTop {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+}
+
+.cp-productTileBody {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    min-height: 120px;
+}
+
+.cp-productTileTitle {
+    margin: 0;
+    font-family: "Cal Sans", sans-serif;
+    font-size: 20px;
+    font-weight: 500;
+    line-height: 1.15;
+    letter-spacing: -0.02em;
+    color: var(--cp-ink);
+}
+
+.cp-productTileFoot {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-top: auto;
+}
+
+.cp-productTilePrice {
+    font-family: "Inter", sans-serif;
+    font-size: 18px;
+    font-weight: 800;
+    line-height: 1;
+    color: var(--cp-ink);
+}
+
+.cp-productTileCta {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 42px;
+    padding: 0 14px;
+    border-radius: 999px;
+    background: #0b1220;
+    color: #fff;
+    font-family: "Inter", sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    line-height: 1;
+    white-space: nowrap;
+}
+
+/* =========================================================
+   Purchased cards list
+========================================================= */
+
 .cp-grid {
     margin-top: 16px;
     display: grid;
@@ -234,7 +249,10 @@
     grid-template-columns: 1fr 1fr;
     gap: 16px;
     cursor: pointer;
-    transition: box-shadow .15s ease, border-color .15s ease, transform .08s ease;
+    transition:
+        box-shadow 0.15s ease,
+        border-color 0.15s ease,
+        transform 0.08s ease;
 }
 
 .cp-item:hover {
@@ -252,10 +270,10 @@
 
 .cp-preview {
     width: 100%;
+    min-height: 132px;
     border-radius: 16px;
     border: 1px solid rgba(15, 23, 42, 0.10);
-    background: linear-gradient(180deg, #fff, #fafafa);
-    min-height: 128px;
+    background: linear-gradient(180deg, #ffffff, #fafafa);
 }
 
 .cp-info {
@@ -268,120 +286,154 @@
 
 .cp-name {
     font-family: "Inter", sans-serif;
-    font-weight: 800;
-    color: var(--cp-ink);
     font-size: 16px;
+    font-weight: 800;
     line-height: 1.2;
+    color: var(--cp-ink);
 }
 
 .cp-sub {
-    font-family: "Inter", sans-serif;
-    font-weight: 650;
-    color: rgba(71, 85, 105, 0.95);
-    font-size: 13px;
     display: flex;
     flex-direction: column;
-    gap: 2px;
+    gap: 3px;
+    font-family: "Inter", sans-serif;
+    font-size: 13px;
+    line-height: 1.35;
 }
 
 .cp-subLabel {
-    color: rgba(71, 85, 105, 0.85);
+    color: rgba(71, 85, 105, 0.90);
     font-weight: 650;
 }
 
 .cp-subValue {
-    color: rgba(15, 23, 42, 0.88);
+    color: rgba(15, 23, 42, 0.90);
     font-weight: 750;
 }
+
+/* =========================================================
+   Generic actions / buttons
+========================================================= */
 
 .cp-actions {
     display: flex;
     align-items: center;
     gap: 10px;
+    flex-wrap: wrap;
 }
 
 .cp-miniBtn {
     width: 44px;
     height: 44px;
-    border-radius: 14px;
     border: 1px solid rgba(15, 23, 42, 0.12);
+    border-radius: 14px;
     background: #0b1220;
     color: #fff;
-    display: grid;
-    place-items: center;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-family: "Inter", sans-serif;
+    font-size: 18px;
+    font-weight: 800;
     cursor: pointer;
+    transition: transform 0.08s ease, box-shadow 0.15s ease, opacity 0.15s ease;
+}
+
+.cp-miniBtn:hover {
+    box-shadow: 0 10px 20px rgba(15, 23, 42, 0.12);
 }
 
 .cp-miniBtn:active {
     transform: translateY(1px);
 }
 
+.cp-miniBtn:disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+    box-shadow: none;
+}
+
 .cp-selectBtn {
-    height: 44px;
+    min-height: 44px;
     padding: 0 16px;
     border-radius: 14px;
     border: 1px solid rgba(15, 23, 42, 0.14);
     background: #fff;
+    color: var(--cp-ink);
     font-family: "Inter", sans-serif;
+    font-size: 14px;
     font-weight: 750;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
     cursor: pointer;
-    flex: 1;
+    transition:
+        border-color 0.15s ease,
+        background 0.15s ease,
+        color 0.15s ease,
+        box-shadow 0.15s ease,
+        transform 0.08s ease;
 }
 
-.cp-selectBtn.selected {
-    background: rgba(249, 115, 22, 1);
-    border-color: rgba(249, 115, 22, 1);
-    color: #fff;
-    cursor: default;
+.cp-selectBtn:hover {
+    box-shadow: 0 8px 18px rgba(15, 23, 42, 0.06);
 }
 
-.cp-buyTile {
-    width: 100%;
-    min-height: 170px;
-    border-radius: 18px;
-    border: 1px solid rgba(15, 23, 42, 0.10);
-    background: #fff;
-    display: grid;
-    place-items: center;
-    gap: 10px;
-    cursor: pointer;
-    transition: box-shadow .15s ease, transform .08s ease;
-}
-
-.cp-buyTile:hover {
-    box-shadow: 0 12px 28px rgba(15, 23, 42, 0.08);
-}
-
-.cp-buyTile:active {
+.cp-selectBtn:active {
     transform: translateY(1px);
 }
 
-.cp-buyPlus {
-    font-size: 20px;
-    font-weight: 900;
-    color: rgba(15, 23, 42, 0.80);
+.cp-selectBtn.selected,
+.cp-selectBtn.is-active {
+    background: var(--cp-accent);
+    border-color: var(--cp-accent);
+    color: #fff;
 }
 
-.cp-buyText {
-    font-family: "Inter", sans-serif;
-    font-weight: 750;
-    color: rgba(15, 23, 42, 0.88);
+.cp-selectBtn:disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+    box-shadow: none;
 }
 
 /* =========================================================
-   Details panel
+   Configurator / details layout
 ========================================================= */
+
 .cp-detailsGrid {
-    margin-top: 16px;
+    margin-top: 18px;
     display: grid;
-    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    grid-template-columns: minmax(0, 1.08fr) minmax(0, 0.92fr);
     gap: 16px;
+    align-items: stretch;
 }
 
 @media (max-width: 980px) {
     .cp-detailsGrid {
         grid-template-columns: 1fr;
     }
+}
+
+.cp-previewCard {
+    background: #fff;
+    border: 1px solid rgba(15, 23, 42, 0.10);
+    border-radius: 18px;
+    min-height: 420px;
+    overflow: hidden;
+    display: grid;
+    place-items: center;
+    position: relative;
+    padding: 16px;
+}
+
+.cp-previewFallback {
+    font-family: "Cal Sans", sans-serif;
+    font-size: 36px;
+    font-weight: 500;
+    line-height: 1.1;
+    text-align: center;
+    color: rgba(15, 23, 42, 0.88);
+    padding: 24px;
 }
 
 .cp-innerCard {
@@ -393,10 +445,52 @@
 }
 
 .cp-innerTitle {
+    margin: 0 0 14px;
     font-family: "Inter", sans-serif;
+    font-size: 16px;
     font-weight: 800;
+    line-height: 1.2;
     color: var(--cp-ink);
-    margin-bottom: 12px;
+}
+
+.cp-formBlock {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 0 0 14px;
+}
+
+.cp-fieldLabel {
+    font-family: "Inter", sans-serif;
+    font-size: 13px;
+    font-weight: 750;
+    line-height: 1.2;
+    color: rgba(15, 23, 42, 0.86);
+}
+
+.cp-profileSelect {
+    width: 100%;
+    min-height: 48px;
+    border-radius: 14px;
+    border: 1px solid rgba(15, 23, 42, 0.14);
+    background: #fff;
+    color: var(--cp-ink);
+    padding: 0 14px;
+    font-family: "Inter", sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    outline: none;
+    transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.cp-profileSelect:focus {
+    border-color: rgba(249, 115, 22, 0.42);
+    box-shadow: 0 0 0 4px rgba(249, 115, 22, 0.10);
+}
+
+.cp-profileSelect:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
 }
 
 .cp-row {
@@ -415,362 +509,29 @@
 
 .cp-rowKey {
     color: rgba(71, 85, 105, 0.90);
+    font-family: "Inter", sans-serif;
+    font-size: 14px;
     font-weight: 650;
+    line-height: 1.3;
 }
 
 .cp-rowVal {
-    color: rgba(15, 23, 42, 0.90);
-    font-weight: 800;
-    text-align: right;
     max-width: 62%;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
-}
-
-.cp-previewCard {
-    background: #fff;
-    border: 1px solid rgba(15, 23, 42, 0.10);
-    border-radius: 18px;
-    min-height: 360px;
-    overflow: hidden;
-    display: grid;
-    place-items: center;
-    position: relative;
-}
-
-.cp-previewFallback {
-    font-family: "Cal Sans", sans-serif;
-    font-weight: 500;
-    font-size: 44px;
-    color: rgba(15, 23, 42, 0.88);
-    text-align: center;
-    padding: 24px;
-}
-
-/* =========================================================
-   Builder unified surface
-========================================================= */
-.cp-card--builder {
-    position: relative;
-    overflow: hidden;
-    padding: 16px;
-    border-bottom-left-radius: 0;
-    border-bottom-right-radius: 0;
-    margin-bottom: 0;
-    box-shadow: var(--cp-shadow);
-}
-
-.cp-card--builderInfo {
-    margin-top: 0;
-    border-top: none;
-    border-radius: 0;
-    box-shadow: none;
-    position: relative;
-}
-
-.cp-card--builderInfo:last-of-type {
-    border-bottom-left-radius: var(--cp-radius-xl);
-    border-bottom-right-radius: var(--cp-radius-xl);
-    box-shadow: var(--cp-shadow);
-}
-
-.cp-cardHead--builder {
-    align-items: center;
-}
-
-.cp-builderStage {
-    margin-top: 18px;
-    display: grid;
-    grid-template-columns: minmax(0, 1.18fr) minmax(320px, 0.82fr);
-    gap: 18px;
-    align-items: stretch;
-}
-
-@media (max-width: 1100px) {
-    .cp-builderStage {
-        grid-template-columns: 1fr;
-    }
-}
-
-.cp-builderPreviewCard,
-.cp-builderControlsCard {
-    border: 1px solid rgba(15, 23, 42, 0.08);
-    border-radius: 20px;
-    background: linear-gradient(180deg, #fff 0%, #fcfcfc 100%);
-}
-
-.cp-builderPreviewCard {
-    padding: 18px;
-    min-height: 520px;
-    display: flex;
-    flex-direction: column;
-}
-
-.cp-builderBadgeRow {
-    display: flex;
-    justify-content: flex-start;
-    margin-bottom: 10px;
-}
-
-.cp-builderBadge {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    min-height: 34px;
-    padding: 0 14px;
-    border-radius: 999px;
-    border: 1px solid rgba(15, 23, 42, 0.12);
-    background: #fff;
-    color: var(--cp-ink);
-    font-family: "Inter", sans-serif;
-    font-size: 12px;
-    font-weight: 800;
-}
-
-.cp-builderCanvas {
-    flex: 1;
-    min-height: 420px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 18px;
-    background:
-        radial-gradient(circle at 50% 38%, rgba(249, 115, 22, 0.05), transparent 42%),
-        linear-gradient(180deg, #fff 0%, #fafafa 100%);
-    overflow: hidden;
-}
-
-.cp-builderControlsCard {
-    padding: 18px;
-    display: flex;
-    align-items: stretch;
-}
-
-.cp-builderControlsGrid {
-    width: 100%;
-    display: grid;
-    gap: 16px;
-    align-content: start;
-}
-
-.cp-builderField {
-    display: grid;
-    gap: 10px;
-}
-
-.cp-builderLabel {
-    font-family: "Inter", sans-serif;
-    font-size: 13px;
-    font-weight: 800;
-    color: var(--cp-ink);
-}
-
-.cp-builderInline {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    flex-wrap: wrap;
-}
-
-.cp-builderTextAction {
-    position: relative;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    min-height: 42px;
-    padding: 0 14px;
-    border-radius: 12px;
-    border: 1px solid rgba(15, 23, 42, 0.12);
-    background: #fff;
-    color: var(--cp-ink);
-    font-family: "Inter", sans-serif;
-    font-size: 13px;
-    font-weight: 700;
-    cursor: pointer;
-    transition: border-color 0.16s ease, box-shadow 0.16s ease, transform 0.08s ease;
-}
-
-.cp-builderTextAction:hover {
-    border-color: rgba(15, 23, 42, 0.18);
-    box-shadow: 0 8px 20px rgba(15, 23, 42, 0.06);
-}
-
-.cp-builderTextAction:active {
-    transform: translateY(1px);
-}
-
-.cp-builderTextAction--muted {
-    color: var(--cp-muted);
-}
-
-.cp-builderTextAction input[type="file"] {
-    position: absolute;
-    inset: 0;
-    opacity: 0;
-    cursor: pointer;
-}
-
-.cp-builderToggle {
-    min-width: 44px;
-    height: 42px;
-    padding: 0 14px;
-    border-radius: 12px;
-    border: 1px solid rgba(15, 23, 42, 0.12);
-    background: #fff;
-    color: var(--cp-ink);
-    font-family: "Inter", sans-serif;
-    font-size: 13px;
-    font-weight: 800;
-    cursor: pointer;
-    transition: border-color 0.16s ease, background 0.16s ease, color 0.16s ease, box-shadow 0.16s ease;
-}
-
-.cp-builderToggle:hover {
-    border-color: rgba(15, 23, 42, 0.18);
-}
-
-.cp-builderToggle.is-active {
-    background: var(--cp-orange);
-    border-color: var(--cp-orange);
-    color: #fff;
-    box-shadow: 0 10px 22px rgba(249, 115, 22, 0.18);
-}
-
-.cp-builderSelectWrap {
-    width: 100%;
-}
-
-.cp-builderSelect {
-    width: 100%;
-    min-height: 46px;
-    padding: 0 14px;
-    border-radius: 12px;
-    border: 1px solid rgba(15, 23, 42, 0.12);
-    background: #fff;
-    color: var(--cp-ink);
-    font-family: "Inter", sans-serif;
-    font-size: 14px;
-    font-weight: 650;
-    outline: none;
-}
-
-.cp-builderSelect:focus {
-    border-color: rgba(249, 115, 22, 0.55);
-    box-shadow: 0 0 0 4px rgba(249, 115, 22, 0.10);
-}
-
-.cp-builderBuyCard {
-    margin-top: 2px;
-    padding-top: 14px;
-    border-top: 1px solid rgba(15, 23, 42, 0.08);
-    display: grid;
-    gap: 14px;
-}
-
-.cp-builderPrice {
-    font-family: "Cal Sans", sans-serif;
-    font-size: 34px;
-    line-height: 1;
-    color: var(--cp-ink);
-    letter-spacing: -0.02em;
-}
-
-.cp-builderBuyControls {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    flex-wrap: wrap;
-}
-
-.cp-builderQty {
-    display: inline-flex;
-    align-items: center;
-    border: 1px solid rgba(15, 23, 42, 0.12);
-    border-radius: 14px;
-    overflow: hidden;
-    background: #fff;
-}
-
-.cp-builderQtyBtn {
-    width: 42px;
-    height: 42px;
-    border: none;
-    background: transparent;
-    color: var(--cp-ink);
-    font-family: "Inter", sans-serif;
-    font-size: 18px;
-    font-weight: 800;
-    cursor: pointer;
-}
-
-.cp-builderQtyBtn:hover {
-    background: rgba(15, 23, 42, 0.04);
-}
-
-.cp-builderQtyVal {
-    min-width: 42px;
-    height: 42px;
-    display: grid;
-    place-items: center;
-    border-left: 1px solid rgba(15, 23, 42, 0.08);
-    border-right: 1px solid rgba(15, 23, 42, 0.08);
+    text-align: right;
+    color: rgba(15, 23, 42, 0.92);
     font-family: "Inter", sans-serif;
     font-size: 14px;
     font-weight: 800;
-    color: var(--cp-ink);
-}
-
-.cp-builderBuyBtn {
-    min-height: 44px;
-    padding-inline: 18px;
+    line-height: 1.3;
 }
 
 /* =========================================================
-   Builder lower sections
+   Skeletons
 ========================================================= */
-.cp-khvEmbed {
-    margin-top: 16px;
-}
 
-.cp-card--builderInfo .khv {
-    background: transparent !important;
-    padding: 0 !important;
-}
-
-.cp-card--builderInfo .khv__inner {
-    width: 100%;
-    max-width: none;
-    padding: 0;
-}
-
-.cp-card--builderInfo .khv__head {
-    display: none;
-}
-
-.cp-card--builderInfo .khv__grid {
-    border: 1px solid rgba(15, 23, 42, 0.08);
-    border-radius: 18px;
-    overflow: hidden;
-    background: linear-gradient(180deg, #fff 0%, #fcfcfc 100%);
-}
-
-.cp-card--builderInfo .khv__cell {
-    padding: 28px 20px;
-}
-
-.cp-card--builderInfo .kc-specPill,
-.cp-card--builderInfo .kc-pill {
-    border-radius: 999px;
-}
-
-.cp-card--builderInfo .khv__cellTitle {
-    margin-top: 12px;
-}
-
-/* =========================================================
-   Skeleton
-========================================================= */
 .cp-bigSkel {
     position: absolute;
     inset: 0;
@@ -834,65 +595,37 @@
 }
 
 /* =========================================================
-   Responsive
+   Responsive tightening
 ========================================================= */
-@media (max-width: 1100px) {
-    .cp-cardHead--builder {
-        align-items: flex-start;
-        flex-direction: column;
-    }
 
-    .cp-builderPreviewCard {
-        min-height: 420px;
-    }
-
-    .cp-builderCanvas {
-        min-height: 320px;
-    }
-}
-
-@media (max-width: 720px) {
+@media (max-width: 640px) {
     .cp-card {
         padding: 14px;
         border-radius: 18px;
     }
 
-    .cp-card--builder {
-        border-bottom-left-radius: 0;
-        border-bottom-right-radius: 0;
+    .cp-cardTitle {
+        font-size: 20px;
     }
 
-    .cp-card--builderInfo:last-of-type {
-        border-bottom-left-radius: 18px;
-        border-bottom-right-radius: 18px;
-    }
-
-    .cp-catalogMedia {
-        min-height: 230px;
-    }
-
-    .cp-builderPreviewCard,
-    .cp-builderControlsCard,
-    .cp-innerCard,
     .cp-previewCard {
-        border-radius: 16px;
+        min-height: 340px;
+        padding: 10px;
     }
 
-    .cp-builderPrice {
-        font-size: 28px;
+    .cp-item {
+        grid-template-columns: 1fr;
     }
 
-    .cp-builderBuyControls {
-        align-items: stretch;
-        flex-direction: column;
+    .cp-rowVal {
+        max-width: 56%;
     }
 
-    .cp-builderBuyBtn {
-        width: 100%;
-        justify-content: center;
+    .cp-productTile {
+        padding: 16px;
     }
 
-    .cp-previewFallback {
-        font-size: 30px;
+    .cp-productTileBody {
+        min-height: auto;
     }
 }

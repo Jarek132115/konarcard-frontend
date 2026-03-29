@@ -1,4 +1,3 @@
-// src/pages/auth/Register.jsx
 import React, { useState, useEffect, useRef, useContext, useMemo } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { toast } from "react-hot-toast";
@@ -14,11 +13,7 @@ import AppleIcon from "../../assets/icons/Apple-Icon.svg";
 
 const PENDING_CLAIM_KEY = "pendingClaimUsername";
 const OAUTH_SOURCE_KEY = "oauthSource";
-
-// pricing -> register -> stripe resume
 const CHECKOUT_INTENT_KEY = "konar_checkout_intent_v1";
-
-// ✅ NFC product buy intent
 const NFC_INTENT_KEY = "konar_nfc_intent_v1";
 
 export default function Register() {
@@ -45,9 +40,6 @@ export default function Register() {
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [isVerifying, setIsVerifying] = useState(false);
 
-    // ---------------------------------
-    // Helpers
-    // ---------------------------------
     const sanitizeSlug = (v) =>
         (v || "")
             .trim()
@@ -70,9 +62,6 @@ export default function Register() {
         setCooldown(30);
     };
 
-    // ----------------------------
-    // checkout intent helpers
-    // ----------------------------
     const readCheckoutIntent = () => {
         try {
             const raw = localStorage.getItem(CHECKOUT_INTENT_KEY);
@@ -96,10 +85,11 @@ export default function Register() {
     const clearCheckoutIntent = () => {
         try {
             localStorage.removeItem(CHECKOUT_INTENT_KEY);
-        } catch { }
+        } catch {
+            // ignore
+        }
     };
 
-    // ✅ NFC intent read (for returning to product page after register)
     const readNfcIntent = () => {
         try {
             const raw = localStorage.getItem(NFC_INTENT_KEY);
@@ -126,9 +116,6 @@ export default function Register() {
     const nfcIntent = useMemo(() => readNfcIntent(), []);
     const hasNfcIntent = !!nfcIntent;
 
-    // ---------------------------------
-    // On mount: preload pending claim
-    // ---------------------------------
     useEffect(() => {
         try {
             const saved = (localStorage.getItem(PENDING_CLAIM_KEY) || "").trim().toLowerCase();
@@ -163,9 +150,6 @@ export default function Register() {
     const shouldShowClaimStep =
         !verificationStep && (mustClaimBeforeContinuing || forceClaimStep || !hasConfirmedUsername);
 
-    // ---------------------------------
-    // Stripe resume (ONLY after verified login)
-    // ---------------------------------
     const resumeCheckoutIfNeeded = async () => {
         const intent = readCheckoutIntent();
         if (!intent) return false;
@@ -180,7 +164,11 @@ export default function Register() {
         const returnUrl = intent.returnUrl || `${window.location.origin}/myprofile?subscribed=1`;
 
         try {
-            const res = await api.post("/subscribe", { planKey: intent.planKey, returnUrl });
+            const res = await api.post("/subscribe", {
+                planKey: intent.planKey,
+                returnUrl,
+            });
+
             const url = res?.data?.url;
             if (!url) {
                 toast.error("Stripe checkout URL missing. Please try again.");
@@ -198,20 +186,18 @@ export default function Register() {
 
     const resumeNfcIfNeeded = () => {
         const intent = readNfcIntent();
-        if (!intent) return false;
+        if (!intent?.productKey) return false;
 
-        const returnTo =
-            (typeof intent.returnTo === "string" && intent.returnTo.trim()) ||
-            (typeof location.state?.from === "string" && location.state.from.trim()) ||
-            "/products";
-
-        navigate(returnTo, { replace: true });
+        navigate("/cards", {
+            replace: true,
+            state: {
+                openProductFromIntent: true,
+                source: "register_nfc_intent",
+            },
+        });
         return true;
     };
 
-    // ---------------------------------
-    // Claim link (step 1 if needed)
-    // ---------------------------------
     const claimLinkContinue = async (e) => {
         e.preventDefault();
 
@@ -233,7 +219,9 @@ export default function Register() {
 
             try {
                 localStorage.setItem(PENDING_CLAIM_KEY, cleaned);
-            } catch { }
+            } catch {
+                // ignore
+            }
 
             setTimeout(() => {
                 nameInputRef.current?.focus?.();
@@ -243,9 +231,6 @@ export default function Register() {
         }
     };
 
-    // ---------------------------------
-    // Register (step 2) -> always go to verify
-    // ---------------------------------
     const registerUser = async (e) => {
         e.preventDefault();
 
@@ -306,9 +291,6 @@ export default function Register() {
         }
     };
 
-    // ---------------------------------
-    // Verify email (step 3) + login + (optional) Stripe
-    // ---------------------------------
     const verifyUserCode = async (e) => {
         e.preventDefault();
         setIsVerifying(true);
@@ -333,7 +315,10 @@ export default function Register() {
         setCode(finalCode);
 
         try {
-            const res = await api.post("/verify-email", { email, code: finalCode });
+            const res = await api.post("/verify-email", {
+                email,
+                code: finalCode,
+            });
 
             if (res?.data?.error) {
                 toast.error(res.data.error);
@@ -342,7 +327,10 @@ export default function Register() {
 
             toast.success("Email verified!");
 
-            const loginRes = await api.post("/login", { email, password: data.password });
+            const loginRes = await api.post("/login", {
+                email,
+                password: data.password,
+            });
 
             if (loginRes?.data?.error) {
                 if (loginRes.data?.resend) {
@@ -363,7 +351,9 @@ export default function Register() {
 
             try {
                 localStorage.removeItem(OAUTH_SOURCE_KEY);
-            } catch { }
+            } catch {
+                // ignore
+            }
 
             const resumed = await resumeCheckoutIfNeeded();
             if (resumed) return;
@@ -372,9 +362,11 @@ export default function Register() {
 
             try {
                 localStorage.removeItem(PENDING_CLAIM_KEY);
-            } catch { }
+            } catch {
+                // ignore
+            }
 
-            navigate("/myprofile", { replace: true });
+            navigate("/dashboard", { replace: true });
         } catch (err) {
             toast.error(err?.response?.data?.error || "Verification failed");
         } finally {
@@ -384,6 +376,7 @@ export default function Register() {
 
     const resendCode = async () => {
         const email = cleanEmail(data.email);
+
         if (!email) {
             toast.error("Enter your email first.");
             setVerificationStep(false);
@@ -409,9 +402,6 @@ export default function Register() {
         }
     };
 
-    // ---------------------------------
-    // OAuth
-    // ---------------------------------
     const startOAuth = (provider) => {
         if (provider === "apple") {
             toast("Apple login coming soon");
@@ -429,7 +419,9 @@ export default function Register() {
             localStorage.setItem(OAUTH_SOURCE_KEY, "register");
             const pending = sanitizeSlug(data.username || claimInput);
             if (pending) localStorage.setItem(PENDING_CLAIM_KEY, pending);
-        } catch { }
+        } catch {
+            // ignore
+        }
 
         window.location.href = `${BASE_URL}/auth/${provider}`;
     };
@@ -451,7 +443,12 @@ export default function Register() {
 
             <div className="kc-auth-page">
                 <div className="kc-auth-topActions">
-                    <button type="button" className="kc-auth-closeBtn" onClick={closeAuth} aria-label="Close">
+                    <button
+                        type="button"
+                        className="kc-auth-closeBtn"
+                        onClick={closeAuth}
+                        aria-label="Close"
+                    >
                         <span className="kc-auth-closeIcon" aria-hidden="true">
                             ×
                         </span>
@@ -488,7 +485,11 @@ export default function Register() {
                                             </div>
 
                                             <div className="kc-actionsCenter">
-                                                <button className="kx-btn kx-btn--black kc-authBtn" disabled={isVerifying} aria-busy={isVerifying}>
+                                                <button
+                                                    className="kx-btn kx-btn--black kc-authBtn"
+                                                    disabled={isVerifying}
+                                                    aria-busy={isVerifying}
+                                                >
                                                     {isVerifying ? "Verifying…" : "Verify"}
                                                 </button>
                                             </div>
@@ -504,7 +505,11 @@ export default function Register() {
                                                 </button>
                                             </div>
 
-                                            <button type="button" className="kc-text-link kc-text-link--center" onClick={backFromVerify}>
+                                            <button
+                                                type="button"
+                                                className="kc-text-link kc-text-link--center"
+                                                onClick={backFromVerify}
+                                            >
                                                 Back
                                             </button>
                                         </form>
@@ -540,12 +545,18 @@ export default function Register() {
                                             </div>
 
                                             <div className="kc-actionsCenter">
-                                                <button className="kx-btn kx-btn--black kc-authBtn">Claim Your Link</button>
+                                                <button className="kx-btn kx-btn--black kc-authBtn">
+                                                    Claim Your Link
+                                                </button>
                                             </div>
 
                                             <p className="kc-bottom-line">
                                                 Already have an account?{" "}
-                                                <Link className="kc-link" to="/login" state={{ from: location.state?.from || "/" }}>
+                                                <Link
+                                                    className="kc-link"
+                                                    to="/login"
+                                                    state={{ from: location.state?.from || "/" }}
+                                                >
                                                     Sign In
                                                 </Link>
                                             </p>
@@ -573,7 +584,9 @@ export default function Register() {
                                                     className="kc-input"
                                                     placeholder="Enter your name"
                                                     value={data.name}
-                                                    onChange={(e) => setData((d) => ({ ...d, name: e.target.value }))}
+                                                    onChange={(e) =>
+                                                        setData((d) => ({ ...d, name: e.target.value }))
+                                                    }
                                                     autoComplete="name"
                                                     required
                                                 />
@@ -589,7 +602,9 @@ export default function Register() {
                                                     type="email"
                                                     placeholder="Enter your email"
                                                     value={data.email}
-                                                    onChange={(e) => setData((d) => ({ ...d, email: e.target.value }))}
+                                                    onChange={(e) =>
+                                                        setData((d) => ({ ...d, email: e.target.value }))
+                                                    }
                                                     autoComplete="email"
                                                     required
                                                 />
@@ -605,27 +620,36 @@ export default function Register() {
                                                     type="password"
                                                     placeholder="Create a password"
                                                     value={data.password}
-                                                    onChange={(e) => setData((d) => ({ ...d, password: e.target.value }))}
+                                                    onChange={(e) =>
+                                                        setData((d) => ({ ...d, password: e.target.value }))
+                                                    }
                                                     autoComplete="new-password"
                                                     required
                                                 />
                                             </div>
 
                                             <div className="kc-actionsCenter">
-                                                <button className="kx-btn kx-btn--black kc-authBtn" disabled={isSubmitting} aria-busy={isSubmitting}>
+                                                <button
+                                                    className="kx-btn kx-btn--black kc-authBtn"
+                                                    disabled={isSubmitting}
+                                                    aria-busy={isSubmitting}
+                                                >
                                                     {isSubmitting ? "Creating…" : "Save My Digital Card"}
                                                 </button>
                                             </div>
 
                                             <p className="kc-bottom-line">
                                                 Already have an account?{" "}
-                                                <Link className="kc-link" to="/login" state={{ from: location.state?.from || "/" }}>
+                                                <Link
+                                                    className="kc-link"
+                                                    to="/login"
+                                                    state={{ from: location.state?.from || "/" }}
+                                                >
                                                     Sign In
                                                 </Link>
                                             </p>
                                         </form>
 
-                                        {/* ✅ Center the divider + social buttons (don’t inherit kc-form left alignment) */}
                                         <div style={{ textAlign: "center" }}>
                                             <div className="kc-divider kc-divider--matchWidth">
                                                 <span>or</span>

@@ -6,26 +6,17 @@ import Navbar from "../../../components/Navbar";
 import Footer from "../../../components/Home/Footer";
 import MetalCard3D from "../../../components/MetalCard3D";
 
-/* ✅ typography tokens */
 import "../../../styling/fonts.css";
-
-/* ✅ same page CSS system as Plastic */
 import "../../../styling/products/konarcard.css";
-
-/* ✅ reuse the exact homepage “Worth it” section system */
 import "../../../styling/home/value.css";
 
-/* Logos */
 import LogoIcon from "../../../assets/icons/Logo-Icon.svg";
 import LogoIconWhite from "../../../assets/icons/Logo-Icon-White.svg";
-
-/* QR image (static) */
 import CardQrCode from "../../../assets/images/CardQrCode.png";
 
 import api from "../../../services/api";
 import { useMyProfiles } from "../../../hooks/useBusinessCard";
 
-/* ✅ same icons (consistency) */
 import OneJobIcon from "../../../assets/icons/OneJob.svg";
 import NoReprintsIcon from "../../../assets/icons/NoReprints.svg";
 import UpToDateIcon from "../../../assets/icons/UpToDate.svg";
@@ -37,7 +28,19 @@ const INTENT_KEY = "konar_nfc_intent_v1";
 
 function readIntent() {
     try {
-        return JSON.parse(localStorage.getItem(INTENT_KEY) || "null");
+        const raw = localStorage.getItem(INTENT_KEY);
+        if (!raw) return null;
+
+        const intent = JSON.parse(raw);
+        if (!intent?.productKey) return null;
+
+        const age = Date.now() - Number(intent.createdAt || intent.updatedAt || 0);
+        if (Number.isFinite(age) && age > 30 * 60 * 1000) {
+            localStorage.removeItem(INTENT_KEY);
+            return null;
+        }
+
+        return intent;
     } catch {
         return null;
     }
@@ -47,7 +50,9 @@ function writeIntent(v) {
     try {
         if (!v) localStorage.removeItem(INTENT_KEY);
         else localStorage.setItem(INTENT_KEY, JSON.stringify(v));
-    } catch { }
+    } catch {
+        // ignore
+    }
 }
 
 function fileToDataUrl(file) {
@@ -72,8 +77,6 @@ export default function MetalCard() {
     const PRODUCT_KEY = "metal-card";
 
     const [qty, setQty] = useState(1);
-
-    // Metal finish: black | gold
     const [finish, setFinish] = useState("black");
 
     const [logoUrl, setLogoUrl] = useState("");
@@ -112,7 +115,6 @@ export default function MetalCard() {
         };
     }, [logoUrl]);
 
-    // checkout return messages
     useEffect(() => {
         const sp = new URLSearchParams(location.search);
         const checkout = sp.get("checkout");
@@ -127,30 +129,44 @@ export default function MetalCard() {
         if (checkout === "cancel") {
             setErrorMsg("Checkout cancelled. You can try again anytime.");
             setInfoMsg("");
-            return;
         }
     }, [location.search]);
 
-    // restore intent for this product
     useEffect(() => {
         const intent = readIntent();
         if (!intent) return;
         if (intent.productKey !== PRODUCT_KEY) return;
 
-        if (typeof intent.quantity === "number") setQty(Math.max(1, Math.min(20, intent.quantity)));
-        if (typeof intent.profileId === "string") setProfileId(intent.profileId);
+        if (typeof intent.quantity === "number") {
+            setQty(Math.max(1, Math.min(20, intent.quantity)));
+        }
 
-        if (intent.finish === "black" || intent.finish === "gold") setFinish(intent.finish);
+        if (typeof intent.profileId === "string") {
+            setProfileId(intent.profileId);
+        }
 
-        if (intent.logoPreset === "small" || intent.logoPreset === "medium" || intent.logoPreset === "large") {
+        if (intent.variant === "black" || intent.variant === "gold") {
+            setFinish(intent.variant);
+        }
+
+        if (intent.finish === "black" || intent.finish === "gold") {
+            setFinish(intent.finish);
+        }
+
+        if (
+            intent.logoPreset === "small" ||
+            intent.logoPreset === "medium" ||
+            intent.logoPreset === "large"
+        ) {
             setLogoPreset(intent.logoPreset);
         }
 
-        if (intent.hadLogo) setInfoMsg("Please re-upload your logo to continue checkout.");
+        if (intent.hadLogo) {
+            setInfoMsg("Please re-upload your logo to continue checkout.");
+        }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
-    // default profile
     useEffect(() => {
         if (!isLoggedIn) return;
         if (profileId) return;
@@ -160,14 +176,16 @@ export default function MetalCard() {
         if (firstId) setProfileId(firstId);
     }, [isLoggedIn, myProfiles, profileId]);
 
-    // persist intent while configuring
     useEffect(() => {
         const sp = new URLSearchParams(location.search);
         const checkout = sp.get("checkout");
         if (checkout === "success") return;
 
         const existing = readIntent();
-        const base = existing && typeof existing === "object" && existing.productKey === PRODUCT_KEY ? existing : null;
+        const base =
+            existing && typeof existing === "object" && existing.productKey === PRODUCT_KEY
+                ? existing
+                : null;
 
         writeIntent({
             ...(base || {}),
@@ -175,14 +193,15 @@ export default function MetalCard() {
             quantity: qty,
             profileId,
             hadLogo: !!logoFile,
+            variant: finish,
             finish,
             logoPreset,
-            returnTo: location.pathname,
+            returnTo: "/cards",
             createdAt: base?.createdAt || Date.now(),
             updatedAt: Date.now(),
         });
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [qty, profileId, logoFile, finish, logoPreset, location.pathname, location.search]);
+    }, [qty, profileId, logoFile, finish, logoPreset, location.search]);
 
     const onPickLogo = (e) => {
         const file = e.target.files?.[0];
@@ -204,10 +223,29 @@ export default function MetalCard() {
     };
 
     const goLogin = () => {
-        navigate("/login", { state: { from: location.pathname } });
+        const existing = readIntent();
+        writeIntent({
+            ...(existing && typeof existing === "object" ? existing : {}),
+            productKey: PRODUCT_KEY,
+            quantity: qty,
+            profileId,
+            hadLogo: !!logoFile,
+            variant: finish,
+            finish,
+            logoPreset,
+            returnTo: "/cards",
+            createdAt: existing?.createdAt || Date.now(),
+            updatedAt: Date.now(),
+        });
+
+        navigate("/login", {
+            state: {
+                from: "/cards",
+                openProductFromIntent: true,
+            },
+        });
     };
 
-    /* ✅ “What you get” benefits (same structure + tone as Plastic, but premium/metal angle) */
     const features = useMemo(
         () => [
             { icon: OneJobIcon, t: "Premium metal that stands out", s: "Heavier feel designed to leave a strong first impression." },
@@ -220,7 +258,6 @@ export default function MetalCard() {
         []
     );
 
-    /* ✅ “Product details” specs (match grid style used on homepage value.css) */
     const specs = useMemo(
         () => [
             { k: "Card size", v: "85.6 × 54 mm — standard wallet size" },
@@ -233,7 +270,6 @@ export default function MetalCard() {
         []
     );
 
-    // preview: black finish uses white icon by default
     const defaultLogo = finish === "black" ? LogoIconWhite : LogoIcon;
     const displayedLogo = logoUrl || defaultLogo;
 
@@ -252,9 +288,10 @@ export default function MetalCard() {
                 quantity: qty,
                 profileId,
                 hadLogo: !!logoFile,
+                variant: finish,
                 finish,
                 logoPreset,
-                returnTo: location.pathname,
+                returnTo: "/cards",
                 createdAt: existing?.createdAt || Date.now(),
                 updatedAt: Date.now(),
             });
@@ -293,13 +330,16 @@ export default function MetalCard() {
 
             const resp = await api.post("/api/checkout/nfc/session", {
                 productKey: PRODUCT_KEY,
+                variant: finish,
                 quantity: qty,
                 profileId,
                 logoUrl: savedLogoUrl || "",
+                returnUrl: `${window.location.origin}/cards`,
                 preview: {
                     logoPercent,
                     logoPreset,
                     usedCustomLogo: !!savedLogoUrl,
+                    variant: finish,
                     finish,
                     edition: "metal",
                 },
@@ -323,9 +363,6 @@ export default function MetalCard() {
             <Navbar />
 
             <main className="kc-konarcard kc-konarcard--premium kc-page">
-                {/* =====================
-                    HERO (same as Plastic style)
-                ====================== */}
                 <section className="kc-topHero" aria-label="Metal KonarCard hero">
                     <div className="kc-konarcard__wrap">
                         <div className="kc-heroHeadWrap kc-heroHeadWrap--lg">
@@ -338,7 +375,6 @@ export default function MetalCard() {
                                     <span className="kc-crumbPill__here">KonarCard – Metal</span>
                                 </div>
 
-                                {/* ✅ match Plastic: heading uses h2 class */}
                                 <h1 className="h2 kc-premHero__title">Metal NFC Business Card (UK)</h1>
 
                                 <p className="kc-premHero__sub">
@@ -358,13 +394,16 @@ export default function MetalCard() {
 
                         <div className="kc-premStage">
                             <div className="kc-premStage__canvasPad">
-                                <MetalCard3D logoSrc={displayedLogo} qrSrc={CardQrCode} logoSize={logoPercent} finish={finish} />
+                                <MetalCard3D
+                                    logoSrc={displayedLogo}
+                                    qrSrc={CardQrCode}
+                                    logoSize={logoPercent}
+                                    finish={finish}
+                                />
                             </div>
 
-                            {/* ✅ keep configurator + buy (same grid) */}
                             <div className="kc-controls" aria-label="Configure your card">
                                 <div className="kc-configGrid">
-                                    {/* Logo */}
                                     <div className="kc-controlCell kc-cell--logo">
                                         <div className="kc-controlK">Logo</div>
 
@@ -386,7 +425,6 @@ export default function MetalCard() {
                                         </div>
                                     </div>
 
-                                    {/* Logo size */}
                                     <div className="kc-controlCell kc-cell--size">
                                         <div className="kc-controlK">Logo size</div>
 
@@ -405,7 +443,6 @@ export default function MetalCard() {
                                         </div>
                                     </div>
 
-                                    {/* Finish */}
                                     <div className="kc-controlCell kc-cell--colour">
                                         <div className="kc-controlK">Finish</div>
 
@@ -429,7 +466,6 @@ export default function MetalCard() {
                                         </div>
                                     </div>
 
-                                    {/* Profile */}
                                     <div className="kc-controlCell kc-cell--profile">
                                         <div className="kc-controlK">Link to profile</div>
 
@@ -450,7 +486,11 @@ export default function MetalCard() {
                                                     aria-label="Choose profile"
                                                 >
                                                     <option value="">
-                                                        {isProfilesLoading ? "Loading..." : myProfiles.length ? "Choose profile" : "No profiles"}
+                                                        {isProfilesLoading
+                                                            ? "Loading..."
+                                                            : myProfiles.length
+                                                                ? "Choose profile"
+                                                                : "No profiles"}
                                                     </option>
 
                                                     {myProfiles.map((p) => {
@@ -475,10 +515,8 @@ export default function MetalCard() {
                                         </div>
                                     </div>
 
-                                    {/* BUY */}
                                     <div className="kc-buyArea kc-cell--buy" aria-label="Buy">
                                         <div className="kc-buyMeta">
-                                            {/* update if your backend price differs */}
                                             <div className="kc-buyPrice">£44.99</div>
                                         </div>
 
@@ -505,7 +543,12 @@ export default function MetalCard() {
                                                 </button>
                                             </div>
 
-                                            <button type="button" onClick={handleBuy} className="kx-btn kx-btn--black kc-buyBtnFit" disabled={busy}>
+                                            <button
+                                                type="button"
+                                                onClick={handleBuy}
+                                                className="kx-btn kx-btn--black kc-buyBtnFit"
+                                                disabled={busy}
+                                            >
                                                 {busy ? "Starting checkout..." : "Buy KonarCard"}
                                             </button>
                                         </div>
@@ -516,10 +559,6 @@ export default function MetalCard() {
                     </div>
                 </section>
 
-                {/* =====================
-                    PRODUCT DETAILS (khv style)
-                    bg: #fafafa (default)
-                ====================== */}
                 <section className="khv kc-plastic-khv" aria-label="Product details">
                     <div className="khv__inner">
                         <header className="khv__head">
@@ -546,10 +585,6 @@ export default function MetalCard() {
                     </div>
                 </section>
 
-                {/* =====================
-                    WHAT YOU GET (khv style)
-                    bg: #ffffff
-                ====================== */}
                 <section className="khv khv--white kc-plastic-khv" aria-label="What you get">
                     <div className="khv__inner">
                         <header className="khv__head">
@@ -569,7 +604,13 @@ export default function MetalCard() {
                             {features.map((it, i) => (
                                 <article className="khv__cell" key={i}>
                                     <div className="khv__icon" aria-hidden="true">
-                                        <img className="khv__iconImg" src={it.icon} alt="" loading="lazy" decoding="async" />
+                                        <img
+                                            className="khv__iconImg"
+                                            src={it.icon}
+                                            alt=""
+                                            loading="lazy"
+                                            decoding="async"
+                                        />
                                     </div>
 
                                     <h3 className="kc-title khv__cellTitle">{it.t}</h3>
@@ -580,10 +621,6 @@ export default function MetalCard() {
                     </div>
                 </section>
 
-                {/* =====================
-                    GALLERY (same as Plastic)
-                    bg: #fafafa
-                ====================== */}
                 <section className="kc-section kc-section--soft" aria-label="Metal NFC Business Card gallery">
                     <div className="kc-section__inner">
                         <div className="kc-section__head">

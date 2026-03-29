@@ -21,6 +21,8 @@ import WorksEverywhereIcon from "../../assets/icons/WorksEverywhere.svg";
 import HammerIcon from "../../assets/icons/Hammer.svg";
 import ProfessionalFastIcon from "../../assets/icons/ProfessionalFast.svg";
 
+const NFC_INTENT_KEY = "konar_nfc_intent_v1";
+
 const PRESET_TO_PERCENT = {
     small: 60,
     medium: 70,
@@ -34,6 +36,38 @@ function fileToDataUrl(file) {
         r.onerror = reject;
         r.readAsDataURL(file);
     });
+}
+
+function readNfcIntent() {
+    try {
+        const raw = localStorage.getItem(NFC_INTENT_KEY);
+        if (!raw) return null;
+
+        const intent = JSON.parse(raw);
+        if (!intent?.productKey) return null;
+
+        const age = Date.now() - Number(intent.createdAt || intent.updatedAt || 0);
+        if (Number.isFinite(age) && age > 30 * 60 * 1000) {
+            localStorage.removeItem(NFC_INTENT_KEY);
+            return null;
+        }
+
+        return intent;
+    } catch {
+        return null;
+    }
+}
+
+function writeNfcIntent(value) {
+    try {
+        if (!value) {
+            localStorage.removeItem(NFC_INTENT_KEY);
+            return;
+        }
+        localStorage.setItem(NFC_INTENT_KEY, JSON.stringify(value));
+    } catch {
+        // ignore
+    }
 }
 
 const PRODUCT_CONFIG = {
@@ -158,7 +192,12 @@ const PRODUCT_CONFIG = {
     },
 };
 
-export default function CardCustomizer({ productKey, onBack, onCheckoutSuccess }) {
+export default function CardCustomizer({
+    productKey,
+    initialIntent,
+    onBack,
+    onCheckoutSuccess,
+}) {
     const config = PRODUCT_CONFIG[productKey] || PRODUCT_CONFIG["plastic-card"];
 
     const [qty, setQty] = useState(1);
@@ -187,15 +226,32 @@ export default function CardCustomizer({ productKey, onBack, onCheckoutSuccess }
     })();
 
     useEffect(() => {
-        setVariant(config.options?.[0]?.value || "white");
-        setQty(1);
+        const fallbackVariant = config.options?.[0]?.value || "white";
+        const liveIntent = readNfcIntent();
+        const sourceIntent =
+            initialIntent?.productKey === productKey
+                ? initialIntent
+                : liveIntent?.productKey === productKey
+                    ? liveIntent
+                    : null;
+
+        setQty(Math.max(1, Math.min(20, Number(sourceIntent?.quantity || 1))));
+        setVariant(
+            config.options.some((opt) => opt.value === sourceIntent?.variant)
+                ? sourceIntent.variant
+                : fallbackVariant
+        );
+        setLogoPreset(
+            ["small", "medium", "large"].includes(sourceIntent?.logoPreset)
+                ? sourceIntent.logoPreset
+                : "medium"
+        );
+        setProfileId(String(sourceIntent?.profileId || ""));
         setLogoUrl("");
         setLogoFile(null);
-        setLogoPreset("medium");
-        setProfileId("");
         setErrorMsg("");
-        setInfoMsg("");
-    }, [productKey, config.options]);
+        setInfoMsg(sourceIntent?.hadLogo ? "Please re-upload your logo to continue checkout." : "");
+    }, [productKey, config.options, initialIntent]);
 
     useEffect(() => {
         return () => {
@@ -210,6 +266,27 @@ export default function CardCustomizer({ productKey, onBack, onCheckoutSuccess }
         const firstId = String(myProfiles?.[0]?._id || "");
         if (firstId) setProfileId(firstId);
     }, [myProfiles, profileId]);
+
+    useEffect(() => {
+        const existing = readNfcIntent();
+        const createdAt =
+            existing?.productKey === productKey
+                ? existing?.createdAt || Date.now()
+                : Date.now();
+
+        writeNfcIntent({
+            ...(existing && existing.productKey === productKey ? existing : {}),
+            productKey,
+            quantity: qty,
+            profileId,
+            hadLogo: !!logoFile,
+            variant,
+            logoPreset,
+            returnTo: "/cards",
+            createdAt,
+            updatedAt: Date.now(),
+        });
+    }, [productKey, qty, profileId, logoFile, variant, logoPreset]);
 
     const displayedLogo = logoUrl || config.getDefaultLogo(variant);
     const logoLabel = logoFile?.name || "Upload logo";
