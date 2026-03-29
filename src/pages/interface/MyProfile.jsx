@@ -62,6 +62,15 @@ const normaliseReviewsForSave = (reviews = []) =>
     }))
     .filter((r) => r.name || r.text);
 
+const getSavedWorks = (card) =>
+  Array.isArray(card?.workImages)
+    ? card.workImages
+    : Array.isArray(card?.work_images)
+      ? card.work_images
+      : Array.isArray(card?.works)
+        ? card.works
+        : [];
+
 const buildBusinessCardFormData = ({
   profile_slug,
   template_id,
@@ -421,7 +430,7 @@ export default function MyProfile() {
         avatarFile: null,
         coverPhotoFile: null,
 
-        workImages: (businessCard.workImages || businessCard.work_images || businessCard.works || []).map((url) => ({
+        workImages: getSavedWorks(businessCard).map((url) => ({
           file: null,
           preview: resolveMediaUrl(url),
         })),
@@ -765,9 +774,9 @@ export default function MyProfile() {
       .map((w) => (w?.preview && !w.preview.startsWith("blob:") ? w.preview : null))
       .filter(Boolean);
 
-    const originalWorks = Array.isArray(original.works)
-      ? original.works.map((w) => resolveMediaUrl(w)).filter(Boolean)
-      : [];
+    const originalWorks = getSavedWorks(original)
+      .map((w) => resolveMediaUrl(w))
+      .filter(Boolean);
 
     const worksChanged = (() => {
       if (currentWorks.length !== originalWorks.length) return true;
@@ -991,8 +1000,18 @@ export default function MyProfile() {
 
       updateState({
         templateId: savedCard.template_id || state.templateId || "template-1",
-        themeMode: savedCard.theme_mode || savedCard.page_theme || state.themeMode || state.pageTheme || "light",
-        pageTheme: savedCard.theme_mode || savedCard.page_theme || state.themeMode || state.pageTheme || "light",
+        themeMode:
+          savedCard.theme_mode ||
+          savedCard.page_theme ||
+          state.themeMode ||
+          state.pageTheme ||
+          "light",
+        pageTheme:
+          savedCard.theme_mode ||
+          savedCard.page_theme ||
+          state.themeMode ||
+          state.pageTheme ||
+          "light",
 
         business_name:
           savedCard.business_name ||
@@ -1006,7 +1025,12 @@ export default function MyProfile() {
           savedCard.main_heading ||
           state.businessName ||
           "",
-        trade_title: savedCard.trade_title || savedCard.sub_heading || state.trade_title || "",
+
+        trade_title:
+          savedCard.trade_title ||
+          savedCard.sub_heading ||
+          state.trade_title ||
+          "",
         location: savedCard.location || state.location || "",
 
         mainHeading:
@@ -1037,7 +1061,7 @@ export default function MyProfile() {
         logoFile: null,
         avatarFile: null,
 
-        workImages: (savedCard.workImages || savedCard.work_images || savedCard.works || []).map((url) => ({
+        workImages: getSavedWorks(savedCard).map((url) => ({
           file: null,
           preview: resolveMediaUrl(url),
         })),
@@ -1064,14 +1088,12 @@ export default function MyProfile() {
         tiktok_url: savedCard.tiktok_url || state.tiktok_url || "",
       });
 
-      if (savedCard) {
-        setShowMainSection(savedCard.show_main_section !== false);
-        setShowAboutMeSection(savedCard.show_about_me_section !== false);
-        setShowWorkSection(savedCard.show_work_section !== false);
-        setShowServicesSection(savedCard.show_services_section !== false);
-        setShowReviewsSection(savedCard.show_reviews_section !== false);
-        setShowContactSection(savedCard.show_contact_section !== false);
-      }
+      setShowMainSection(savedCard.show_main_section !== false);
+      setShowAboutMeSection(savedCard.show_about_me_section !== false);
+      setShowWorkSection(savedCard.show_work_section !== false);
+      setShowServicesSection(savedCard.show_services_section !== false);
+      setShowReviewsSection(savedCard.show_reviews_section !== false);
+      setShowContactSection(savedCard.show_contact_section !== false);
 
       setCoverPhotoRemoved(false);
       setLogoRemoved(false);
