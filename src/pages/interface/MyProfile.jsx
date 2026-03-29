@@ -421,7 +421,7 @@ export default function MyProfile() {
         avatarFile: null,
         coverPhotoFile: null,
 
-        workImages: (businessCard.works || []).map((url) => ({
+        workImages: (businessCard.workImages || businessCard.work_images || businessCard.works || []).map((url) => ({
           file: null,
           preview: resolveMediaUrl(url),
         })),
@@ -984,36 +984,103 @@ export default function MyProfile() {
     try {
       toast.loading("Saving...", { id: savingToastId });
 
-      await saveBusinessCard.mutateAsync(formData);
+      const saved = await saveBusinessCard.mutateAsync(formData);
+      const savedCard = saved?.data || saved || {};
+
+      revokeAllLocalPreviews(state);
+
+      updateState({
+        templateId: savedCard.template_id || state.templateId || "template-1",
+        themeMode: savedCard.theme_mode || savedCard.page_theme || state.themeMode || state.pageTheme || "light",
+        pageTheme: savedCard.theme_mode || savedCard.page_theme || state.themeMode || state.pageTheme || "light",
+
+        business_name:
+          savedCard.business_name ||
+          savedCard.business_card_name ||
+          savedCard.main_heading ||
+          state.business_name ||
+          "",
+        businessName:
+          savedCard.business_card_name ||
+          savedCard.business_name ||
+          savedCard.main_heading ||
+          state.businessName ||
+          "",
+        trade_title: savedCard.trade_title || savedCard.sub_heading || state.trade_title || "",
+        location: savedCard.location || state.location || "",
+
+        mainHeading:
+          savedCard.main_heading ||
+          savedCard.business_name ||
+          savedCard.business_card_name ||
+          state.mainHeading ||
+          "",
+        subHeading:
+          savedCard.sub_heading ||
+          savedCard.trade_title ||
+          state.subHeading ||
+          "",
+
+        job_title: savedCard.job_title || state.job_title || "",
+        full_name: savedCard.full_name || state.full_name || "",
+        bio: savedCard.bio || state.bio || "",
+
+        coverPhoto: resolveMediaUrl(savedCard.cover_photo || ""),
+        logo: resolveMediaUrl(savedCard.logo || savedCard.avatar || ""),
+        avatar: resolveMediaUrl(savedCard.avatar || savedCard.logo || ""),
+
+        coverPhotoPreview: "",
+        logoPreview: "",
+        avatarPreview: "",
+
+        coverPhotoFile: null,
+        logoFile: null,
+        avatarFile: null,
+
+        workImages: (savedCard.workImages || savedCard.work_images || savedCard.works || []).map((url) => ({
+          file: null,
+          preview: resolveMediaUrl(url),
+        })),
+
+        services: (savedCard.services || servicesPayload).map((s) => ({
+          name: s?.name || "",
+          description: s?.description || s?.price || "",
+          price: s?.price || s?.description || "",
+        })),
+
+        reviews: (savedCard.reviews || reviewsPayload).map((r) => ({
+          name: r?.name || "",
+          text: r?.text || "",
+          rating: Number(r?.rating) || 5,
+        })),
+
+        contact_email: savedCard.contact_email || state.contact_email || "",
+        phone_number: savedCard.phone_number || state.phone_number || "",
+
+        facebook_url: savedCard.facebook_url || state.facebook_url || "",
+        instagram_url: savedCard.instagram_url || state.instagram_url || "",
+        linkedin_url: savedCard.linkedin_url || state.linkedin_url || "",
+        x_url: savedCard.x_url || state.x_url || "",
+        tiktok_url: savedCard.tiktok_url || state.tiktok_url || "",
+      });
+
+      if (savedCard) {
+        setShowMainSection(savedCard.show_main_section !== false);
+        setShowAboutMeSection(savedCard.show_about_me_section !== false);
+        setShowWorkSection(savedCard.show_work_section !== false);
+        setShowServicesSection(savedCard.show_services_section !== false);
+        setShowReviewsSection(savedCard.show_reviews_section !== false);
+        setShowContactSection(savedCard.show_contact_section !== false);
+      }
+
+      setCoverPhotoRemoved(false);
+      setLogoRemoved(false);
 
       await queryClient.invalidateQueries({ queryKey: ["businessCard", "me"] });
       await queryClient.invalidateQueries({ queryKey: ["businessCard", "profiles"] });
       await queryClient.invalidateQueries({
         queryKey: ["businessCard", "profile", activeSlug],
       });
-
-      await queryClient.refetchQueries({
-        queryKey: ["businessCard", "profile", activeSlug],
-        exact: true,
-      });
-
-      revokeAllLocalPreviews(state);
-
-      updateState({
-        coverPhotoPreview: "",
-        logoPreview: "",
-        avatarPreview: "",
-        coverPhotoFile: null,
-        logoFile: null,
-        avatarFile: null,
-        workImages: (state.workImages || []).map((item) => ({
-          file: null,
-          preview: item?.preview || "",
-        })),
-      });
-
-      setCoverPhotoRemoved(false);
-      setLogoRemoved(false);
 
       toast.success("Saved ✅", { id: savingToastId });
     } catch (err) {
