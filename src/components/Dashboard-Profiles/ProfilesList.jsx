@@ -50,19 +50,6 @@ function getPreviewCover(profile) {
     );
 }
 
-function getPreviewLogo(profile) {
-    const raw = profile?.raw || {};
-    return resolveMediaUrl(
-        raw?.logo ||
-        raw?.avatar ||
-        raw?.logoImage ||
-        raw?.logo_image ||
-        raw?.avatarImage ||
-        raw?.avatar_image ||
-        ""
-    );
-}
-
 function getPreviewName(profile) {
     const raw = profile?.raw || {};
     const found = firstNonEmpty(
@@ -141,7 +128,6 @@ function getPreviewAccent(profile) {
 function ProfileMainPreview({ profile }) {
     const theme = getPreviewTheme(profile);
     const cover = getPreviewCover(profile);
-    const logo = getPreviewLogo(profile);
     const name = getPreviewName(profile);
     const trade = getPreviewTrade(profile);
     const location = getPreviewLocation(profile);
@@ -173,35 +159,9 @@ function ProfileMainPreview({ profile }) {
 
                 <div className="profiles-mainPreviewBody">
                     <div className="profiles-mainPreviewCopy">
-                        <div className="profiles-mainPreviewAvatarRow">
-                            {logo ? (
-                                <img
-                                    src={logo}
-                                    alt=""
-                                    aria-hidden="true"
-                                    className="profiles-mainPreviewAvatar"
-                                />
-                            ) : (
-                                <div className="profiles-mainPreviewAvatar profiles-mainPreviewAvatar--placeholder">
-                                    {name ? name.charAt(0).toUpperCase() : "K"}
-                                </div>
-                            )}
-                        </div>
-
                         <div className="profiles-mainPreviewName">{name}</div>
                         <div className="profiles-mainPreviewTrade">{trade}</div>
                         <div className="profiles-mainPreviewLocation">{location}</div>
-                    </div>
-
-                    <div className="profiles-mainPreviewCtaRow">
-                        <button
-                            type="button"
-                            className="profiles-mainPreviewBtn"
-                            tabIndex={-1}
-                            aria-hidden="true"
-                        >
-                            Save My Number
-                        </button>
                     </div>
                 </div>
             </div>
