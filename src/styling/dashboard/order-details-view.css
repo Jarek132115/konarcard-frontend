@@ -1,0 +1,132 @@
+.odv-previewCard {
+    padding: 24px;
+}
+
+.odv-flatPreviewWrap {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.odv-flatCard {
+    width: 100%;
+    max-width: 360px;
+    border-radius: 18px;
+    border: 1px solid rgba(15, 23, 42, 0.1);
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 10px 30px rgba(15, 23, 42, 0.1);
+}
+
+.odv-flatCard.is-card {
+    aspect-ratio: 1.586 / 1;
+}
+
+.odv-flatCard.is-tag {
+    max-width: 250px;
+    aspect-ratio: 1 / 1;
+    border-radius: 26px;
+}
+
+.odv-flatCardInner {
+    position: absolute;
+    inset: 0;
+    padding: 18px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.odv-flatCard.is-tag .odv-flatCardInner {
+    padding: 22px;
+}
+
+.odv-flatLogoWrap {
+    width: 74px;
+    height: 74px;
+    border-radius: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+}
+
+.odv-flatCard.is-tag .odv-flatLogoWrap {
+    width: 68px;
+    height: 68px;
+}
+
+.odv-flatLogoWrap.is-dark {
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.odv-flatLogoWrap.is-light {
+    background: rgba(15, 23, 42, 0.04);
+    border: 1px solid rgba(15, 23, 42, 0.08);
+}
+
+.odv-flatLogo {
+    width: 80%;
+    height: 80%;
+    object-fit: contain;
+    display: block;
+}
+
+.odv-flatFooter {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    gap: 12px;
+}
+
+.odv-flatName {
+    font-weight: 700;
+    font-size: 16px;
+    line-height: 1.1;
+}
+
+.odv-flatCard.is-tag .odv-flatName {
+    font-size: 15px;
+}
+
+.odv-flatName.is-dark {
+    color: #ffffff;
+}
+
+.odv-flatName.is-light {
+    color: #0f172a;
+}
+
+.odv-flatQr {
+    width: 60px;
+    height: 60px;
+    border-radius: 8px;
+    flex: 0 0 auto;
+    opacity: 0.92;
+    box-shadow: inset 0 0 0 1px rgba(15, 23, 42, 0.14);
+    background:
+        linear-gradient(90deg, #111 0 8%, #fff 8% 16%, #111 16% 24%, #fff 24% 32%, #111 32% 40%, #fff 40% 48%, #111 48% 56%, #fff 56% 64%, #111 64% 72%, #fff 72% 80%, #111 80% 88%, #fff 88% 100%),
+        linear-gradient(#111 0 8%, #fff 8% 16%, #111 16% 24%, #fff 24% 32%, #111 32% 40%, #fff 40% 48%, #111 48% 56%, #fff 56% 64%, #111 64% 72%, #fff 72% 80%, #111 80% 88%, #fff 88% 100%);
+    background-blend-mode: multiply;
+}
+
+.odv-flatCard.is-tag .odv-flatQr {
+    width: 52px;
+    height: 52px;
+}
+
+@media (max-width: 720px) {
+    .odv-previewCard {
+        padding: 18px;
+    }
+
+    .odv-flatCard {
+        max-width: 100%;
+    }
+
+    .odv-flatCard.is-tag {
+        max-width: 220px;
+    }
+}

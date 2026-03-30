@@ -4,6 +4,7 @@ import { toast } from "react-hot-toast";
 
 import DashboardLayout from "../../components/Dashboard/DashboardLayout";
 import PageHeader from "../../components/Dashboard/PageHeader";
+import OrderDetailsView from "../../components/Cards/OrderDetailsView";
 import "../../styling/dashboard/cards.css";
 
 import api from "../../services/api";
@@ -249,6 +250,72 @@ function ProductPickerCard({ productKey, active, onSelect }) {
   );
 }
 
+function OrderFlatPreview({ order }) {
+  const productKey = String(order?.productKey || "");
+  const meta = PRODUCT_META[productKey] || null;
+  const variant = String(order?.variantRaw || order?.preview?.variant || meta?.defaultVariant || "white").toLowerCase();
+  const logoSrc = trim(order?.logoUrl) || DEFAULT_LOGO_DATAURL;
+  const isTag = productKey === "konartag";
+  const isDark =
+    variant === "black" ||
+    (productKey === "metal-card" && variant === "black") ||
+    (productKey === "konartag" && variant === "black");
+
+  const bg =
+    productKey === "metal-card"
+      ? variant === "gold"
+        ? "linear-gradient(135deg, #f7e3a2 0%, #ddb85a 100%)"
+        : "linear-gradient(135deg, #20242d 0%, #11151c 100%)"
+      : productKey === "konartag"
+        ? variant === "gold"
+          ? "linear-gradient(135deg, #f7e3a2 0%, #ddb85a 100%)"
+          : "linear-gradient(135deg, #20242d 0%, #11151c 100%)"
+        : variant === "black"
+          ? "linear-gradient(135deg, #1f2430 0%, #0f141c 100%)"
+          : "linear-gradient(135deg, #ffffff 0%, #f3f4f6 100%)";
+
+  return (
+    <div
+      className={`cp-flatCard ${isTag ? "is-tag" : "is-card"}`}
+      style={{ background: bg }}
+    >
+      <div className="cp-flatCardInner">
+        <div className={`cp-flatLogoWrap ${isDark ? "is-dark" : "is-light"}`}>
+          <img src={logoSrc} alt="" className="cp-flatLogo" />
+        </div>
+
+        <div className="cp-flatFooter">
+          <div className={`cp-flatName ${isDark ? "is-dark" : "is-light"}`}>
+            {meta?.name || "KonarCard"}
+          </div>
+
+          <div className="cp-flatQr" />
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function mapOrder(o) {
+  return {
+    id: String(o?._id || o?.id || ""),
+    productKey: String(o?.productKey || ""),
+    title: prettyProduct(o?.productKey),
+    profileSlug: profileSlugFromOrder(o),
+    link: profileLinkFromOrder(o),
+    variantRaw: String(o?.variant || o?.preview?.variant || ""),
+    status: String(o?.status || o?.normalizedStatus || ""),
+    normalizedStatus: String(o?.normalizedStatus || o?.status || ""),
+    quantity: Number(o?.quantity || 1),
+    amountTotal: Number(o?.amountTotal || 0),
+    currency: String(o?.currency || ""),
+    createdAt: o?.createdAt ? new Date(o.createdAt).toLocaleString() : "",
+    logoUrl: String(o?.logoUrl || ""),
+    preview: o?.preview || {},
+    _raw: o,
+  };
+}
+
 export default function Cards() {
   const navigate = useNavigate();
   const location = useLocation();
@@ -257,7 +324,11 @@ export default function Cards() {
   const [error, setError] = useState("");
   const [infoMsg, setInfoMsg] = useState("");
   const [orders, setOrders] = useState([]);
+  const [purchasedOrders, setPurchasedOrders] = useState([]);
+  const [pendingOrders, setPendingOrders] = useState([]);
+  const [cancelledOrders, setCancelledOrders] = useState([]);
   const [selectedId, setSelectedId] = useState(null);
+  const [selectedOrderView, setSelectedOrderView] = useState(false);
 
   const [selectedProductKey, setSelectedProductKey] = useState("");
   const [qty, setQty] = useState(1);
@@ -288,14 +359,53 @@ export default function Cards() {
         setError("");
 
         const data = await getMyOrders();
-        const list = Array.isArray(data) ? data : data?.orders || data?.data || [];
+
+        const all = Array.isArray(data)
+          ? data
+          : Array.isArray(data?.orders)
+            ? data.orders
+            : Array.isArray(data?.data)
+              ? data.data
+              : [];
+
+        const purchased = Array.isArray(data?.purchasedOrders) ? data.purchasedOrders : [];
+        const pending = Array.isArray(data?.pendingOrders) ? data.pendingOrders : [];
+        const cancelled = Array.isArray(data?.cancelledOrders) ? data.cancelledOrders : [];
 
         if (!alive) return;
-        setOrders(Array.isArray(list) ? list : []);
+
+        setOrders(all);
+        setPurchasedOrders(
+          purchased.length
+            ? purchased
+            : all.filter((o) => {
+              const s = String(o?.normalizedStatus || o?.status || "").toLowerCase();
+              return ["paid", "processing", "fulfilled", "shipped", "complete", "completed"].includes(s);
+            })
+        );
+        setPendingOrders(
+          pending.length
+            ? pending
+            : all.filter((o) => {
+              const s = String(o?.normalizedStatus || o?.status || "").toLowerCase();
+              return ["pending", "open", "unpaid"].includes(s);
+            })
+        );
+        setCancelledOrders(
+          cancelled.length
+            ? cancelled
+            : all.filter((o) => {
+              const s = String(o?.normalizedStatus || o?.status || "").toLowerCase();
+              return ["cancelled", "canceled", "expired", "failed", "payment_failed"].includes(s);
+            })
+        );
       } catch (e) {
         if (!alive) return;
         setError(e?.response?.data?.message || e?.response?.data?.error || e?.message || "Failed to load orders.");
         setOrders([]);
+        setPurchasedOrders([]);
+        setPendingOrders([]);
+        setCancelledOrders([]);
       } finally {
         if (!alive) return;
         setLoading(false);
@@ -315,34 +425,20 @@ export default function Cards() {
     };
   }, [logoUrl]);
 
-  const cards = useMemo(() => {
-    return (orders || []).map((o) => ({
-      id: String(o?._id || o?.id || ""),
-      productKey: String(o?.productKey || ""),
-      title: prettyProduct(o?.productKey),
-      profileSlug: profileSlugFromOrder(o),
-      link: profileLinkFromOrder(o),
-      variantRaw: String(o?.variant || o?.preview?.variant || ""),
-      status: String(o?.status || ""),
-      quantity: Number(o?.quantity || 1),
-      amountTotal: Number(o?.amountTotal || 0),
-      currency: String(o?.currency || ""),
-      createdAt: o?.createdAt ? new Date(o.createdAt).toLocaleString() : "",
-      logoUrl: String(o?.logoUrl || ""),
-      preview: o?.preview || {},
-      _raw: o,
-    }));
-  }, [orders]);
+  const cards = useMemo(() => (orders || []).map(mapOrder), [orders]);
+  const purchasedCards = useMemo(() => (purchasedOrders || []).map(mapOrder), [purchasedOrders]);
+  const pendingCards = useMemo(() => (pendingOrders || []).map(mapOrder), [pendingOrders]);
+  const cancelledCards = useMemo(() => (cancelledOrders || []).map(mapOrder), [cancelledOrders]);
 
   useEffect(() => {
-    if (!cards.length) return;
-    if (selectedId && cards.some((c) => c.id === selectedId)) return;
-    setSelectedId(cards[0].id);
-  }, [cards, selectedId]);
+    if (!purchasedCards.length) return;
+    if (selectedId && purchasedCards.some((c) => c.id === selectedId)) return;
+    setSelectedId(purchasedCards[0].id);
+  }, [purchasedCards, selectedId]);
 
   const selectedOrder = useMemo(
-    () => cards.find((c) => c.id === selectedId) || null,
-    [cards, selectedId]
+    () => purchasedCards.find((c) => c.id === selectedId) || null,
+    [purchasedCards, selectedId]
   );
 
   useEffect(() => {
@@ -377,11 +473,13 @@ export default function Cards() {
     }
 
     if (product && PRODUCT_META[product]) {
+      setSelectedOrderView(false);
       setSelectedProductKey(product);
       return;
     }
 
     if (intent?.productKey && PRODUCT_META[intent.productKey]) {
+      setSelectedOrderView(false);
       setSelectedProductKey(intent.productKey);
     }
   }, [location.search, navigate]);
@@ -485,6 +583,7 @@ export default function Cards() {
       URL.revokeObjectURL(logoUrl);
     }
 
+    setSelectedOrderView(false);
     setSelectedProductKey(productKey);
     setQty(1);
     setVariant(meta.defaultVariant);
@@ -493,6 +592,14 @@ export default function Cards() {
     setLogoFile(null);
     setInfoMsg("");
     navigate(buildCardsProductUrl(productKey), { replace: true });
+  };
+
+  const openOrderDetails = (orderId) => {
+    setSelectedProductKey("");
+    setSelectedId(orderId);
+    setSelectedOrderView(true);
+    setInfoMsg("");
+    navigate("/cards", { replace: true });
   };
 
   const handleStartCheckout = async () => {
@@ -571,13 +678,14 @@ export default function Cards() {
   const headerRight = (
     <div className="cp-headRight">
       <span className="cp-pill">
-        Cards: <strong>{cards.length}</strong>
+        Cards: <strong>{purchasedCards.length}</strong>
       </span>
 
       <button
         type="button"
         className="kx-btn kx-btn--black"
         onClick={() => {
+          setSelectedOrderView(false);
           setSelectedProductKey("");
           setInfoMsg("");
           navigate("/cards", { replace: true });
@@ -600,7 +708,7 @@ export default function Cards() {
         />
 
         <section className="cp-card">
-          {!selectedProduct ? (
+          {!selectedProduct && !selectedOrderView ? (
             <>
               <div className="cp-cardHead">
                 <div>
@@ -624,7 +732,7 @@ export default function Cards() {
                 ))}
               </div>
 
-              {!!cards.length && (
+              {!!purchasedCards.length && (
                 <>
                   <div className="cp-divider" />
 
@@ -636,39 +744,142 @@ export default function Cards() {
                   </div>
 
                   <div className="cp-grid">
-                    {cards.map((c) => {
-                      const isSelected = c.id === selectedId;
+                    {purchasedCards.map((c) => (
+                      <div
+                        key={c.id}
+                        className={`cp-item ${c.id === selectedId ? "active" : ""}`}
+                      >
+                        <div className="cp-preview" aria-hidden="true">
+                          <OrderFlatPreview order={c} />
+                        </div>
 
-                      return (
-                        <button
-                          key={c.id}
-                          type="button"
-                          className={`cp-item ${isSelected ? "active" : ""}`}
-                          onClick={() => setSelectedId(c.id)}
-                        >
-                          <div className="cp-preview" aria-hidden="true" />
+                        <div className="cp-info">
+                          <div className="cp-name">{c.title}</div>
 
-                          <div className="cp-info">
-                            <div className="cp-name">{c.title}</div>
-
-                            <div className="cp-sub">
-                              <span className="cp-subLabel">Assigned Profile:</span>
-                              <span className="cp-subValue">{c.profileSlug || "—"}</span>
-                            </div>
-
-                            <div className="cp-sub">
-                              <span className="cp-subLabel">Status:</span>
-                              <span className="cp-subValue">{c.status || "—"}</span>
-                            </div>
+                          <div className="cp-sub">
+                            <span className="cp-subLabel">Assigned Profile:</span>
+                            <span className="cp-subValue">{c.profileSlug || "—"}</span>
                           </div>
-                        </button>
-                      );
-                    })}
+
+                          <div className="cp-sub">
+                            <span className="cp-subLabel">Status:</span>
+                            <span className="cp-subValue">{c.status || "—"}</span>
+                          </div>
+
+                          <div className="cp-sub">
+                            <span className="cp-subLabel">Total:</span>
+                            <span className="cp-subValue">
+                              {formatMoneyMinor(c.amountTotal, c.currency)}
+                            </span>
+                          </div>
+
+                          <div className="cp-itemActions">
+                            <button
+                              type="button"
+                              className="kx-btn kx-btn--black"
+                              onClick={() => openOrderDetails(c.id)}
+                            >
+                              View details
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </>
+              )}
+
+              {!!pendingCards.length && (
+                <>
+                  <div className="cp-divider" />
+
+                  <div className="cp-cardHead">
+                    <div>
+                      <h2 className="cp-cardTitle">Pending checkouts</h2>
+                      <p className="cp-muted">
+                        These have not been paid for yet, so they are not treated as purchased cards.
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="cp-grid">
+                    {pendingCards.map((o) => (
+                      <div key={o.id} className="cp-item cp-item--muted">
+                        <div className="cp-preview" aria-hidden="true">
+                          <OrderFlatPreview order={o} />
+                        </div>
+
+                        <div className="cp-info">
+                          <div className="cp-name">{o.title}</div>
+
+                          <div className="cp-sub">
+                            <span className="cp-subLabel">Assigned Profile:</span>
+                            <span className="cp-subValue">{o.profileSlug || "—"}</span>
+                          </div>
+
+                          <div className="cp-sub">
+                            <span className="cp-subLabel">Status:</span>
+                            <span className="cp-subValue">{o.status || "pending"}</span>
+                          </div>
+
+                          <div className="cp-sub">
+                            <span className="cp-subLabel">Total:</span>
+                            <span className="cp-subValue">
+                              {formatMoneyMinor(o.amountTotal, o.currency)}
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </>
+              )}
+
+              {!!cancelledCards.length && (
+                <>
+                  <div className="cp-divider" />
+
+                  <div className="cp-cardHead">
+                    <div>
+                      <h2 className="cp-cardTitle">Cancelled or failed</h2>
+                      <p className="cp-muted">These were not completed successfully.</p>
+                    </div>
+                  </div>
+
+                  <div className="cp-grid">
+                    {cancelledCards.map((o) => (
+                      <div key={o.id} className="cp-item cp-item--muted">
+                        <div className="cp-preview" aria-hidden="true">
+                          <OrderFlatPreview order={o} />
+                        </div>
+
+                        <div className="cp-info">
+                          <div className="cp-name">{o.title}</div>
+
+                          <div className="cp-sub">
+                            <span className="cp-subLabel">Assigned Profile:</span>
+                            <span className="cp-subValue">{o.profileSlug || "—"}</span>
+                          </div>
+
+                          <div className="cp-sub">
+                            <span className="cp-subLabel">Status:</span>
+                            <span className="cp-subValue">{o.status || "—"}</span>
+                          </div>
+
+                          <div className="cp-sub">
+                            <span className="cp-subLabel">Total:</span>
+                            <span className="cp-subValue">
+                              {formatMoneyMinor(o.amountTotal, o.currency)}
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
                   </div>
                 </>
               )}
             </>
-          ) : (
+          ) : selectedProduct ? (
             <>
               <div className="cp-cardHead">
                 <div>
@@ -715,14 +926,7 @@ export default function Cards() {
                     <div className="cp-fieldLabel">Logo</div>
 
                     <div className="cp-actions">
-                      <label
-                        className="cp-selectBtn"
-                        style={{
-                          justifyContent: "center",
-                          display: "inline-flex",
-                          alignItems: "center",
-                        }}
-                      >
+                      <label className="cp-selectBtn cp-fileBtn">
                         <input
                           type="file"
                           accept="image/*"
@@ -853,7 +1057,7 @@ export default function Cards() {
                     <span className="cp-rowVal">{selectedProduct.price}</span>
                   </div>
 
-                  <div style={{ marginTop: 16 }}>
+                  <div className="cp-buyWrap">
                     <button
                       type="button"
                       className="kx-btn kx-btn--black"
@@ -919,10 +1123,10 @@ export default function Cards() {
 
                   {loading ? (
                     <div className="cp-muted">Loading orders...</div>
-                  ) : !cards.length ? (
+                  ) : !purchasedCards.length ? (
                     <div className="cp-muted">No purchases yet.</div>
                   ) : (
-                    cards.map((card) => (
+                    purchasedCards.map((card) => (
                       <div key={card.id} className="cp-row">
                         <span className="cp-rowKey">{card.title}</span>
                         <span className="cp-rowVal">
@@ -934,6 +1138,20 @@ export default function Cards() {
                 </div>
               </div>
             </>
+          ) : (
+            <OrderDetailsView
+              selectedOrder={selectedOrder}
+              productMeta={PRODUCT_META}
+              defaultLogoDataUrl={DEFAULT_LOGO_DATAURL}
+              qrSrcFromLink={qrSrcFromLink}
+              Card3DDetails={Card3DDetails}
+              CardPreviewErrorBoundary={CardPreviewErrorBoundary}
+              formatMoneyMinor={formatMoneyMinor}
+              onBack={() => {
+                setSelectedOrderView(false);
+                navigate("/cards", { replace: true });
+              }}
+            />
           )}
         </section>
       </div>
