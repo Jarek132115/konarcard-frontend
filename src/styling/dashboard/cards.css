@@ -767,3 +767,37 @@ Cards Page
         max-width: 220px;
     }
 }
+
+.cp-emptyState {
+    margin-top: 16px;
+}
+
+.cp-emptyStateCard {
+    border: 1px dashed rgba(15, 23, 42, 0.16);
+    border-radius: 18px;
+    background: linear-gradient(180deg, #fff, #fafafa);
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    align-items: flex-start;
+}
+
+.cp-emptyStateTitle {
+    font-family: "Cal Sans", sans-serif;
+    font-size: 22px;
+    font-weight: 500;
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+    color: var(--cp-ink);
+}
+
+.cp-emptyStateText {
+    margin: 0;
+    max-width: 560px;
+    font-family: "Inter", sans-serif;
+    font-size: 14px;
+    line-height: 1.6;
+    font-weight: 500;
+    color: var(--cp-muted);
+}

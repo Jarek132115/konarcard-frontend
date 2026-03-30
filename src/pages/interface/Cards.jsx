@@ -325,8 +325,6 @@ export default function Cards() {
   const [infoMsg, setInfoMsg] = useState("");
   const [orders, setOrders] = useState([]);
   const [purchasedOrders, setPurchasedOrders] = useState([]);
-  const [pendingOrders, setPendingOrders] = useState([]);
-  const [cancelledOrders, setCancelledOrders] = useState([]);
   const [selectedId, setSelectedId] = useState(null);
   const [selectedOrderView, setSelectedOrderView] = useState(false);
 
@@ -369,8 +367,6 @@ export default function Cards() {
               : [];
 
         const purchased = Array.isArray(data?.purchasedOrders) ? data.purchasedOrders : [];
-        const pending = Array.isArray(data?.pendingOrders) ? data.pendingOrders : [];
-        const cancelled = Array.isArray(data?.cancelledOrders) ? data.cancelledOrders : [];
 
         if (!alive) return;
 
@@ -383,29 +379,11 @@ export default function Cards() {
               return ["paid", "processing", "fulfilled", "shipped", "complete", "completed"].includes(s);
             })
         );
-        setPendingOrders(
-          pending.length
-            ? pending
-            : all.filter((o) => {
-              const s = String(o?.normalizedStatus || o?.status || "").toLowerCase();
-              return ["pending", "open", "unpaid"].includes(s);
-            })
-        );
-        setCancelledOrders(
-          cancelled.length
-            ? cancelled
-            : all.filter((o) => {
-              const s = String(o?.normalizedStatus || o?.status || "").toLowerCase();
-              return ["cancelled", "canceled", "expired", "failed", "payment_failed"].includes(s);
-            })
-        );
       } catch (e) {
         if (!alive) return;
         setError(e?.response?.data?.message || e?.response?.data?.error || e?.message || "Failed to load orders.");
         setOrders([]);
         setPurchasedOrders([]);
-        setPendingOrders([]);
-        setCancelledOrders([]);
       } finally {
         if (!alive) return;
         setLoading(false);
@@ -425,10 +403,7 @@ export default function Cards() {
     };
   }, [logoUrl]);
 
-  const cards = useMemo(() => (orders || []).map(mapOrder), [orders]);
   const purchasedCards = useMemo(() => (purchasedOrders || []).map(mapOrder), [purchasedOrders]);
-  const pendingCards = useMemo(() => (pendingOrders || []).map(mapOrder), [pendingOrders]);
-  const cancelledCards = useMemo(() => (cancelledOrders || []).map(mapOrder), [cancelledOrders]);
 
   useEffect(() => {
     if (!purchasedCards.length) return;
@@ -462,13 +437,7 @@ export default function Cards() {
 
     if (checkout === "cancel") {
       toast.error("Checkout cancelled.");
-
-      const resumeProduct =
-        (product && PRODUCT_META[product] && product) ||
-        (intent?.productKey && PRODUCT_META[intent.productKey] && intent.productKey) ||
-        "";
-
-      navigate(resumeProduct ? buildCardsProductUrl(resumeProduct) : "/cards", { replace: true });
+      navigate("/cards", { replace: true });
       return;
     }
 
@@ -732,151 +701,81 @@ export default function Cards() {
                 ))}
               </div>
 
+              <div className="cp-divider" />
+
+              <div className="cp-cardHead">
+                <div>
+                  <h2 className="cp-cardTitle">Your purchased products</h2>
+                  <p className="cp-muted">
+                    {purchasedCards.length
+                      ? "Cards you already bought will show here."
+                      : "Get your first card to see your saved orders here."}
+                  </p>
+                </div>
+              </div>
+
+              {!loading && !purchasedCards.length ? (
+                <div className="cp-emptyState">
+                  <div className="cp-emptyStateCard">
+                    <div className="cp-emptyStateTitle">Get your first card</div>
+                    <p className="cp-emptyStateText">
+                      Once you complete your first order, your purchased card will show here with its details and preview.
+                    </p>
+                    <button
+                      type="button"
+                      className="kx-btn kx-btn--black"
+                      onClick={() => openConfigurator("plastic-card")}
+                    >
+                      Start with Plastic Card
+                    </button>
+                  </div>
+                </div>
+              ) : null}
+
               {!!purchasedCards.length && (
-                <>
-                  <div className="cp-divider" />
+                <div className="cp-grid">
+                  {purchasedCards.map((c) => (
+                    <div
+                      key={c.id}
+                      className={`cp-item ${c.id === selectedId ? "active" : ""}`}
+                    >
+                      <div className="cp-preview" aria-hidden="true">
+                        <OrderFlatPreview order={c} />
+                      </div>
 
-                  <div className="cp-cardHead">
-                    <div>
-                      <h2 className="cp-cardTitle">Your purchased products</h2>
-                      <p className="cp-muted">Cards you already bought will show here.</p>
-                    </div>
-                  </div>
+                      <div className="cp-info">
+                        <div className="cp-name">{c.title}</div>
 
-                  <div className="cp-grid">
-                    {purchasedCards.map((c) => (
-                      <div
-                        key={c.id}
-                        className={`cp-item ${c.id === selectedId ? "active" : ""}`}
-                      >
-                        <div className="cp-preview" aria-hidden="true">
-                          <OrderFlatPreview order={c} />
+                        <div className="cp-sub">
+                          <span className="cp-subLabel">Assigned Profile:</span>
+                          <span className="cp-subValue">{c.profileSlug || "—"}</span>
                         </div>
 
-                        <div className="cp-info">
-                          <div className="cp-name">{c.title}</div>
+                        <div className="cp-sub">
+                          <span className="cp-subLabel">Status:</span>
+                          <span className="cp-subValue">{c.status || "—"}</span>
+                        </div>
 
-                          <div className="cp-sub">
-                            <span className="cp-subLabel">Assigned Profile:</span>
-                            <span className="cp-subValue">{c.profileSlug || "—"}</span>
-                          </div>
+                        <div className="cp-sub">
+                          <span className="cp-subLabel">Total:</span>
+                          <span className="cp-subValue">
+                            {formatMoneyMinor(c.amountTotal, c.currency)}
+                          </span>
+                        </div>
 
-                          <div className="cp-sub">
-                            <span className="cp-subLabel">Status:</span>
-                            <span className="cp-subValue">{c.status || "—"}</span>
-                          </div>
-
-                          <div className="cp-sub">
-                            <span className="cp-subLabel">Total:</span>
-                            <span className="cp-subValue">
-                              {formatMoneyMinor(c.amountTotal, c.currency)}
-                            </span>
-                          </div>
-
-                          <div className="cp-itemActions">
-                            <button
-                              type="button"
-                              className="kx-btn kx-btn--black"
-                              onClick={() => openOrderDetails(c.id)}
-                            >
-                              View details
-                            </button>
-                          </div>
+                        <div className="cp-itemActions">
+                          <button
+                            type="button"
+                            className="kx-btn kx-btn--black"
+                            onClick={() => openOrderDetails(c.id)}
+                          >
+                            View details
+                          </button>
                         </div>
                       </div>
-                    ))}
-                  </div>
-                </>
-              )}
-
-              {!!pendingCards.length && (
-                <>
-                  <div className="cp-divider" />
-
-                  <div className="cp-cardHead">
-                    <div>
-                      <h2 className="cp-cardTitle">Pending checkouts</h2>
-                      <p className="cp-muted">
-                        These have not been paid for yet, so they are not treated as purchased cards.
-                      </p>
                     </div>
-                  </div>
-
-                  <div className="cp-grid">
-                    {pendingCards.map((o) => (
-                      <div key={o.id} className="cp-item cp-item--muted">
-                        <div className="cp-preview" aria-hidden="true">
-                          <OrderFlatPreview order={o} />
-                        </div>
-
-                        <div className="cp-info">
-                          <div className="cp-name">{o.title}</div>
-
-                          <div className="cp-sub">
-                            <span className="cp-subLabel">Assigned Profile:</span>
-                            <span className="cp-subValue">{o.profileSlug || "—"}</span>
-                          </div>
-
-                          <div className="cp-sub">
-                            <span className="cp-subLabel">Status:</span>
-                            <span className="cp-subValue">{o.status || "pending"}</span>
-                          </div>
-
-                          <div className="cp-sub">
-                            <span className="cp-subLabel">Total:</span>
-                            <span className="cp-subValue">
-                              {formatMoneyMinor(o.amountTotal, o.currency)}
-                            </span>
-                          </div>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </>
-              )}
-
-              {!!cancelledCards.length && (
-                <>
-                  <div className="cp-divider" />
-
-                  <div className="cp-cardHead">
-                    <div>
-                      <h2 className="cp-cardTitle">Cancelled or failed</h2>
-                      <p className="cp-muted">These were not completed successfully.</p>
-                    </div>
-                  </div>
-
-                  <div className="cp-grid">
-                    {cancelledCards.map((o) => (
-                      <div key={o.id} className="cp-item cp-item--muted">
-                        <div className="cp-preview" aria-hidden="true">
-                          <OrderFlatPreview order={o} />
-                        </div>
-
-                        <div className="cp-info">
-                          <div className="cp-name">{o.title}</div>
-
-                          <div className="cp-sub">
-                            <span className="cp-subLabel">Assigned Profile:</span>
-                            <span className="cp-subValue">{o.profileSlug || "—"}</span>
-                          </div>
-
-                          <div className="cp-sub">
-                            <span className="cp-subLabel">Status:</span>
-                            <span className="cp-subValue">{o.status || "—"}</span>
-                          </div>
-
-                          <div className="cp-sub">
-                            <span className="cp-subLabel">Total:</span>
-                            <span className="cp-subValue">
-                              {formatMoneyMinor(o.amountTotal, o.currency)}
-                            </span>
-                          </div>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </>
+                  ))}
+                </div>
               )}
             </>
           ) : selectedProduct ? (
