@@ -80,6 +80,34 @@ const KONAR_LOGO_SVG = encodeURIComponent(`
 `);
 const DEFAULT_LOGO_DATAURL = `data:image/svg+xml;charset=utf-8,${KONAR_LOGO_SVG}`;
 
+class CardPreviewErrorBoundary extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = { hasError: false };
+  }
+
+  static getDerivedStateFromError() {
+    return { hasError: true };
+  }
+
+  componentDidCatch(err) {
+    console.error("3D preview crashed:", err);
+  }
+
+  componentDidUpdate(prevProps) {
+    if (prevProps.resetKey !== this.props.resetKey && this.state.hasError) {
+      this.setState({ hasError: false });
+    }
+  }
+
+  render() {
+    if (this.state.hasError) {
+      return this.props.fallback || null;
+    }
+    return this.props.children;
+  }
+}
+
 function prettyProduct(productKey) {
   return PRODUCT_META[productKey]?.name || "KonarCard";
 }
@@ -145,7 +173,9 @@ function fileToDataUrl(file) {
 
 async function getMyOrders() {
   const r = await api.get("/api/nfc-orders/mine");
-  if (r.status !== 200) throw new Error(r.data?.message || r.data?.error || "Failed to load orders");
+  if (r.status !== 200) {
+    throw new Error(r.data?.message || r.data?.error || "Failed to load orders");
+  }
   return r.data;
 }
 
@@ -161,6 +191,7 @@ function Card3DDetails({ productKey, logoSrc, qrSrc, logoPercent, variant }) {
 
 function ProductPickerCard({ productKey, active, onSelect }) {
   const meta = PRODUCT_META[productKey];
+
   return (
     <button
       type="button"
@@ -170,10 +201,12 @@ function ProductPickerCard({ productKey, active, onSelect }) {
       <div className="cp-productTileTop">
         <span className="cp-pill">{meta.name}</span>
       </div>
+
       <div className="cp-productTileBody">
         <h3 className="cp-productTileTitle">{meta.title}</h3>
         <p className="cp-muted">{meta.subtitle}</p>
       </div>
+
       <div className="cp-productTileFoot">
         <span className="cp-productTilePrice">{meta.price}</span>
         <span className="cp-productTileCta">Configure</span>
@@ -218,8 +251,10 @@ export default function Cards() {
       try {
         setLoading(true);
         setError("");
+
         const data = await getMyOrders();
         const list = Array.isArray(data) ? data : data?.orders || data?.data || [];
+
         if (!alive) return;
         setOrders(Array.isArray(list) ? list : []);
       } catch (e) {
@@ -239,7 +274,9 @@ export default function Cards() {
 
   useEffect(() => {
     return () => {
-      if (logoUrl) URL.revokeObjectURL(logoUrl);
+      if (logoUrl && logoUrl.startsWith("blob:")) {
+        URL.revokeObjectURL(logoUrl);
+      }
     };
   }, [logoUrl]);
 
@@ -293,11 +330,13 @@ export default function Cards() {
 
     if (checkout === "cancel") {
       toast.error("Checkout cancelled.");
+
       if (product && PRODUCT_META[product]) {
         setSelectedProductKey(product);
       } else if (intent?.productKey && PRODUCT_META[intent.productKey]) {
         setSelectedProductKey(intent.productKey);
       }
+
       navigate("/cards", { replace: true });
       return;
     }
@@ -316,17 +355,28 @@ export default function Cards() {
     const intent = readIntent();
     if (!intent?.productKey || intent.productKey !== selectedProductKey) return;
 
-    if (typeof intent.quantity === "number") setQty(Math.max(1, intent.quantity));
-    if (typeof intent.profileId === "string") setProfileId(intent.profileId);
-    if (typeof intent.logoPreset === "string") setLogoPreset(intent.logoPreset);
-    if (typeof intent.variant === "string") setVariant(intent.variant);
-    else if (typeof intent.finish === "string") setVariant(intent.finish);
+    if (typeof intent.quantity === "number") {
+      setQty(Math.max(1, intent.quantity));
+    }
 
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    if (typeof intent.profileId === "string") {
+      setProfileId(intent.profileId);
+    }
+
+    if (typeof intent.logoPreset === "string") {
+      setLogoPreset(intent.logoPreset);
+    }
+
+    if (typeof intent.variant === "string") {
+      setVariant(intent.variant);
+    } else if (typeof intent.finish === "string") {
+      setVariant(intent.finish);
+    }
   }, [selectedProductKey]);
 
   useEffect(() => {
     if (!selectedProductKey) return;
+
     const meta = PRODUCT_META[selectedProductKey];
     if (!meta) return;
 
@@ -363,7 +413,8 @@ export default function Cards() {
   const selectedProduct = selectedProductKey ? PRODUCT_META[selectedProductKey] : null;
   const logoPercent = PRESET_TO_PERCENT[logoPreset] || 70;
 
-  const displayedLogo = logoUrl || selectedOrder?.logoUrl || DEFAULT_LOGO_DATAURL;
+  const safeSelectedOrderLogo = "";
+  const displayedLogo = logoUrl || safeSelectedOrderLogo || DEFAULT_LOGO_DATAURL;
   const displayedQr = selectedOrder?.link ? qrSrcFromLink(selectedOrder.link) : "";
   const selectedVariant = variant || selectedProduct?.defaultVariant || "white";
 
@@ -371,19 +422,29 @@ export default function Cards() {
     const file = e.target.files?.[0];
     if (!file || !file.type.startsWith("image/")) return;
 
-    if (logoUrl) URL.revokeObjectURL(logoUrl);
+    if (logoUrl && logoUrl.startsWith("blob:")) {
+      URL.revokeObjectURL(logoUrl);
+    }
+
     setLogoFile(file);
     setLogoUrl(URL.createObjectURL(file));
   };
 
   const clearLogo = () => {
-    if (logoUrl) URL.revokeObjectURL(logoUrl);
+    if (logoUrl && logoUrl.startsWith("blob:")) {
+      URL.revokeObjectURL(logoUrl);
+    }
     setLogoUrl("");
     setLogoFile(null);
   };
 
   const openConfigurator = (productKey) => {
     const meta = PRODUCT_META[productKey];
+
+    if (logoUrl && logoUrl.startsWith("blob:")) {
+      URL.revokeObjectURL(logoUrl);
+    }
+
     setSelectedProductKey(productKey);
     setQty(1);
     setVariant(meta.defaultVariant);
@@ -407,11 +468,13 @@ export default function Cards() {
     }
 
     setBusy(true);
+
     try {
       let savedLogoUrl = "";
 
       if (logoFile) {
         const dataUrl = await fileToDataUrl(logoFile);
+
         const uploadRes = await api.post("/api/checkout/nfc/logo", {
           dataUrl,
           filename: logoFile?.name || "logo.png",
@@ -469,6 +532,8 @@ export default function Cards() {
     </div>
   );
 
+  const previewResetKey = `${selectedProduct?.key || "none"}-${selectedVariant}-${logoPreset}-${logoUrl ? "custom" : "default"}`;
+
   return (
     <DashboardLayout title="Cards" subtitle="Manage your KonarCards." hideDesktopHeader>
       <div className="cp-shell">
@@ -506,6 +571,7 @@ export default function Cards() {
               {!!cards.length && (
                 <>
                   <div className="cp-divider" />
+
                   <div className="cp-cardHead">
                     <div>
                       <h2 className="cp-cardTitle">Your purchased products</h2>
@@ -516,6 +582,7 @@ export default function Cards() {
                   <div className="cp-grid">
                     {cards.map((c) => {
                       const isSelected = c.id === selectedId;
+
                       return (
                         <button
                           key={c.id}
@@ -524,12 +591,15 @@ export default function Cards() {
                           onClick={() => setSelectedId(c.id)}
                         >
                           <div className="cp-preview" aria-hidden="true" />
+
                           <div className="cp-info">
                             <div className="cp-name">{c.title}</div>
+
                             <div className="cp-sub">
                               <span className="cp-subLabel">Assigned Profile:</span>
                               <span className="cp-subValue">{c.profileSlug || "—"}</span>
                             </div>
+
                             <div className="cp-sub">
                               <span className="cp-subLabel">Status:</span>
                               <span className="cp-subValue">{c.status || "—"}</span>
@@ -561,13 +631,18 @@ export default function Cards() {
 
               <div className="cp-detailsGrid">
                 <div className="cp-previewCard">
-                  <Card3DDetails
-                    productKey={selectedProduct.key}
-                    logoSrc={displayedLogo}
-                    qrSrc={displayedQr}
-                    logoPercent={logoPercent}
-                    variant={selectedVariant}
-                  />
+                  <CardPreviewErrorBoundary
+                    resetKey={previewResetKey}
+                    fallback={<div className="cp-previewFallback">3D preview unavailable</div>}
+                  >
+                    <Card3DDetails
+                      productKey={selectedProduct.key}
+                      logoSrc={displayedLogo}
+                      qrSrc={displayedQr}
+                      logoPercent={logoPercent}
+                      variant={selectedVariant}
+                    />
+                  </CardPreviewErrorBoundary>
                 </div>
 
                 <div className="cp-innerCard">
@@ -575,12 +650,31 @@ export default function Cards() {
 
                   <div className="cp-formBlock">
                     <div className="cp-fieldLabel">Logo</div>
+
                     <div className="cp-actions">
-                      <label className="cp-selectBtn" style={{ justifyContent: "center", display: "inline-flex", alignItems: "center" }}>
-                        <input type="file" accept="image/*" onChange={onPickLogo} style={{ display: "none" }} />
+                      <label
+                        className="cp-selectBtn"
+                        style={{
+                          justifyContent: "center",
+                          display: "inline-flex",
+                          alignItems: "center",
+                        }}
+                      >
+                        <input
+                          type="file"
+                          accept="image/*"
+                          onChange={onPickLogo}
+                          style={{ display: "none" }}
+                        />
                         {logoFile?.name || "Upload logo"}
                       </label>
-                      <button type="button" className="cp-selectBtn" onClick={clearLogo} disabled={!logoUrl}>
+
+                      <button
+                        type="button"
+                        className="cp-selectBtn"
+                        onClick={clearLogo}
+                        disabled={!logoUrl}
+                      >
                         Remove
                       </button>
                     </div>
@@ -588,6 +682,7 @@ export default function Cards() {
 
                   <div className="cp-formBlock">
                     <div className="cp-fieldLabel">{selectedProduct.sizeLabel}</div>
+
                     <div className="cp-actions">
                       {["small", "medium", "large"].map((k) => (
                         <button
@@ -604,6 +699,7 @@ export default function Cards() {
 
                   <div className="cp-formBlock">
                     <div className="cp-fieldLabel">{selectedProduct.variantLabel}</div>
+
                     <div className="cp-actions">
                       {selectedProduct.variants.map((v) => (
                         <button
@@ -620,6 +716,7 @@ export default function Cards() {
 
                   <div className="cp-formBlock">
                     <div className="cp-fieldLabel">Link to profile</div>
+
                     <select
                       className="cp-profileSelect"
                       value={profileId}
@@ -629,15 +726,18 @@ export default function Cards() {
                       <option value="">
                         {isProfilesLoading ? "Loading..." : myProfiles.length ? "Choose profile" : "No profiles"}
                       </option>
+
                       {myProfiles.map((p) => {
                         const id = String(p?._id || "");
                         if (!id) return null;
+
                         const label =
                           p?.business_card_name ||
                           p?.full_name ||
                           p?.main_heading ||
                           p?.profile_slug ||
                           "Profile";
+
                         return (
                           <option key={id} value={id}>
                             {label}
@@ -649,6 +749,7 @@ export default function Cards() {
 
                   <div className="cp-formBlock">
                     <div className="cp-fieldLabel">Quantity</div>
+
                     <div className="cp-actions">
                       <button
                         type="button"
@@ -658,7 +759,9 @@ export default function Cards() {
                       >
                         −
                       </button>
+
                       <div className="cp-pill">{qty}</div>
+
                       <button
                         type="button"
                         className="cp-miniBtn"
@@ -676,10 +779,12 @@ export default function Cards() {
                     <span className="cp-rowKey">Product</span>
                     <span className="cp-rowVal">{selectedProduct.name}</span>
                   </div>
+
                   <div className="cp-row">
                     <span className="cp-rowKey">Variant</span>
                     <span className="cp-rowVal">{selectedVariant}</span>
                   </div>
+
                   <div className="cp-row">
                     <span className="cp-rowKey">Price</span>
                     <span className="cp-rowVal">{selectedProduct.price}</span>
@@ -712,28 +817,34 @@ export default function Cards() {
               <div className="cp-detailsGrid">
                 <div className="cp-innerCard">
                   <div className="cp-innerTitle">Configuration summary</div>
+
                   <div className="cp-row">
                     <span className="cp-rowKey">Product</span>
                     <span className="cp-rowVal">{selectedProduct.name}</span>
                   </div>
+
                   <div className="cp-row">
                     <span className="cp-rowKey">Variant</span>
                     <span className="cp-rowVal">{selectedVariant}</span>
                   </div>
+
                   <div className="cp-row">
                     <span className="cp-rowKey">Logo size</span>
                     <span className="cp-rowVal">{logoPreset}</span>
                   </div>
+
                   <div className="cp-row">
                     <span className="cp-rowKey">Profile</span>
                     <span className="cp-rowVal">
                       {myProfiles.find((p) => String(p?._id || "") === profileId)?.profile_slug || "—"}
                     </span>
                   </div>
+
                   <div className="cp-row">
                     <span className="cp-rowKey">Quantity</span>
                     <span className="cp-rowVal">{qty}</span>
                   </div>
+
                   <div className="cp-row">
                     <span className="cp-rowKey">Custom logo</span>
                     <span className="cp-rowVal">{logoFile ? "yes" : "no"}</span>
@@ -742,6 +853,7 @@ export default function Cards() {
 
                 <div className="cp-innerCard">
                   <div className="cp-innerTitle">Your orders</div>
+
                   {loading ? (
                     <div className="cp-muted">Loading orders...</div>
                   ) : !cards.length ? (
