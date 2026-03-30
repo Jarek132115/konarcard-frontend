@@ -7,6 +7,7 @@ import api from "../services/api";
 const PENDING_CLAIM_KEY = "pendingClaimUsername";
 const OAUTH_SOURCE_KEY = "oauthSource"; // 'register' | 'login'
 const CHECKOUT_INTENT_KEY = "konar_checkout_intent_v1";
+const NFC_INTENT_KEY = "konar_nfc_intent_v1";
 
 function safeJsonParse(raw) {
     try {
@@ -61,6 +62,31 @@ function clearCheckoutIntent() {
     }
 }
 
+function readNfcIntent() {
+    try {
+        const raw = localStorage.getItem(NFC_INTENT_KEY);
+        if (!raw) return null;
+
+        const intent = safeJsonParse(raw);
+        if (!intent?.productKey) return null;
+
+        const age = Date.now() - Number(intent.createdAt || intent.updatedAt || 0);
+        if (Number.isFinite(age) && age > 30 * 60 * 1000) {
+            localStorage.removeItem(NFC_INTENT_KEY);
+            return null;
+        }
+
+        return intent;
+    } catch {
+        return null;
+    }
+}
+
+function buildCardsProductUrl(productKey) {
+    const safe = String(productKey || "").trim();
+    return safe ? `/cards?product=${encodeURIComponent(safe)}` : "/cards";
+}
+
 function getPendingClaim() {
     try {
         return (localStorage.getItem(PENDING_CLAIM_KEY) || "").trim().toLowerCase();
@@ -96,7 +122,6 @@ export default function OAuthSuccess() {
     const { login, fetchUser } = useContext(AuthContext);
     const ranRef = useRef(false);
 
-    // Start Stripe checkout (ONLY called when claim exists)
     const resumeCheckout = async (intent) => {
         if (!intent?.planKey) return false;
 
@@ -114,13 +139,11 @@ export default function OAuthSuccess() {
             clearCheckoutIntent();
             window.location.href = url;
             return true;
-        } catch (e) {
-            // keep intent so user can retry
+        } catch {
             return false;
         }
     };
 
-    // Attempt auto-claim using pendingClaimUsername
     const autoClaimIfPossible = async () => {
         const pending = getPendingClaim();
         if (!pending) return false;
@@ -128,10 +151,8 @@ export default function OAuthSuccess() {
         try {
             const res = await api.post("/claim-link", { username: pending });
 
-            // backend patterns vary; treat any explicit error as failure
             if (res?.data?.error) return false;
 
-            // refresh user after claim
             await fetchUser();
             clearClaimKeys();
             return true;
@@ -152,63 +173,67 @@ export default function OAuthSuccess() {
             return;
         }
 
-        // Save token immediately (AuthContext should write localStorage token)
         login(token, null);
 
         (async () => {
             try {
-                // Hydrate user from backend into AuthContext + localStorage
                 await fetchUser();
 
-                // IMPORTANT: read from localStorage AFTER fetchUser
                 let user = readUserFromCache();
 
-                // If backend couldn’t hydrate user (deleted user / invalid token)
                 if (!user) {
                     clearLocalAuth();
                     navigate("/login?oauth=invalid_user", { replace: true });
                     return;
                 }
 
-                const intent = readCheckoutIntent();
-                const needsCheckout = !!intent;
+                const checkoutIntent = readCheckoutIntent();
+                const nfcIntent = readNfcIntent();
 
-                // ===============================
-                // A) If pricing intent exists
-                // MUST have claim BEFORE Stripe
-                // ===============================
-                if (needsCheckout) {
+                // 1) Subscription intent still takes priority, and still needs a claim first.
+                if (checkoutIntent) {
                     if (!userHasClaim(user)) {
-                        // First try auto-claim if we have a pending username
                         const claimed = await autoClaimIfPossible();
                         if (claimed) user = readUserFromCache();
 
-                        // Still no claim -> must go manual claim (keep intent)
                         if (!userHasClaim(user)) {
                             navigate("/claim", { replace: true });
                             return;
                         }
                     }
 
-                    // Claim exists -> Stripe
-                    const ok = await resumeCheckout(intent);
-                    if (ok) return;
+                    const resumed = await resumeCheckout(checkoutIntent);
+                    if (resumed) return;
 
-                    // Stripe failed -> go profile (intent remains so they can retry)
                     navigate("/myprofile", { replace: true });
                     return;
                 }
 
-                // ==================================
-                // B) No pricing intent -> normal flow
-                // ==================================
+                // 2) NFC intent should resume straight into dashboard cards.
+                // Do not force claim here — NFC only needs a logged-in user,
+                // and profile selection happens inside /cards.
+                if (nfcIntent?.productKey) {
+                    clearClaimKeys();
+                    navigate(
+                        nfcIntent.returnTo || buildCardsProductUrl(nfcIntent.productKey),
+                        {
+                            replace: true,
+                            state: {
+                                openProductFromIntent: true,
+                                source: "oauth_nfc_intent",
+                            },
+                        }
+                    );
+                    return;
+                }
+
+                // 3) Normal non-checkout OAuth flow.
                 if (userHasClaim(user)) {
                     clearClaimKeys();
                     navigate("/myprofile", { replace: true });
                     return;
                 }
 
-                // If they came from register, we can auto-claim using pending claim
                 const source = getOauthSource();
                 if (source === "register") {
                     const claimed = await autoClaimIfPossible();
@@ -218,7 +243,6 @@ export default function OAuthSuccess() {
                     }
                 }
 
-                // Otherwise manual claim
                 navigate("/claim", { replace: true });
             } catch {
                 clearLocalAuth();

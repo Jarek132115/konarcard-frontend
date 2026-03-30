@@ -20,6 +20,11 @@ const NFC_INTENT_KEY = "konar_nfc_intent_v1";
 
 const ADMIN_EMAILS_UI = ["supportteam@konarcard.com"];
 
+function buildCardsProductUrl(productKey) {
+    const safe = String(productKey || "").trim();
+    return safe ? `/cards?product=${encodeURIComponent(safe)}` : "/cards";
+}
+
 export default function Login() {
     const navigate = useNavigate();
     const location = useLocation();
@@ -95,6 +100,25 @@ export default function Login() {
         }
     };
 
+    const resolvePostAuthDestination = () => {
+        const nfc = readNfcIntent();
+
+        if (nfc?.returnTo && typeof nfc.returnTo === "string") {
+            return nfc.returnTo;
+        }
+
+        if (nfc?.productKey) {
+            return buildCardsProductUrl(nfc.productKey);
+        }
+
+        const from = location.state?.from;
+        if (typeof from === "string" && from.trim()) {
+            return from;
+        }
+
+        return "/dashboard";
+    };
+
     const startOAuth = (provider) => {
         if (provider === "apple") {
             toast("Apple login coming soon");
@@ -139,7 +163,8 @@ export default function Login() {
         }
 
         if (action?.type === "buy_nfc") {
-            navigate("/cards", {
+            const nfc = readNfcIntent();
+            navigate(nfc?.returnTo || buildCardsProductUrl(nfc?.productKey), {
                 replace: true,
                 state: {
                     openProductFromIntent: true,
@@ -150,7 +175,8 @@ export default function Login() {
         }
 
         if (action?.type === "buy_card") {
-            navigate("/cards", {
+            const nfc = readNfcIntent();
+            navigate(nfc?.returnTo || buildCardsProductUrl(nfc?.productKey), {
                 replace: true,
                 state: {
                     openProductFromIntent: true,
@@ -162,7 +188,7 @@ export default function Login() {
 
         const nfc = readNfcIntent();
         if (nfc?.productKey) {
-            navigate("/cards", {
+            navigate(nfc?.returnTo || buildCardsProductUrl(nfc.productKey), {
                 replace: true,
                 state: {
                     openProductFromIntent: true,
@@ -172,7 +198,7 @@ export default function Login() {
             return;
         }
 
-        navigate("/dashboard", { replace: true });
+        navigate(resolvePostAuthDestination(), { replace: true });
     };
 
     const resumeCheckoutIfNeeded = async () => {
@@ -511,7 +537,7 @@ export default function Login() {
                                             <Link
                                                 className="kc-link"
                                                 to="/register"
-                                                state={{ from: location.state?.from || "/" }}
+                                                state={{ from: resolvePostAuthDestination() }}
                                             >
                                                 Create an account
                                             </Link>

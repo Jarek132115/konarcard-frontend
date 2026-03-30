@@ -24,6 +24,11 @@ function readNfcIntent() {
     }
 }
 
+function buildCardsProductUrl(productKey) {
+    const safe = String(productKey || "").trim();
+    return safe ? `/cards?product=${encodeURIComponent(safe)}` : "/cards";
+}
+
 export default function PublicOnlyRoute({
     children,
     redirectAuthenticatedTo = "/dashboard",
@@ -50,7 +55,7 @@ export default function PublicOnlyRoute({
         if (nfcIntent?.productKey) {
             return (
                 <Navigate
-                    to="/cards"
+                    to={nfcIntent.returnTo || buildCardsProductUrl(nfcIntent.productKey)}
                     replace
                     state={{
                         openProductFromIntent: true,

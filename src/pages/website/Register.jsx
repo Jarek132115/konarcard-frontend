@@ -16,6 +16,11 @@ const OAUTH_SOURCE_KEY = "oauthSource";
 const CHECKOUT_INTENT_KEY = "konar_checkout_intent_v1";
 const NFC_INTENT_KEY = "konar_nfc_intent_v1";
 
+function buildCardsProductUrl(productKey) {
+    const safe = String(productKey || "").trim();
+    return safe ? `/cards?product=${encodeURIComponent(safe)}` : "/cards";
+}
+
 export default function Register() {
     const navigate = useNavigate();
     const location = useLocation();
@@ -110,6 +115,25 @@ export default function Register() {
         }
     };
 
+    const resolvePostAuthDestination = () => {
+        const nfc = readNfcIntent();
+
+        if (nfc?.returnTo && typeof nfc.returnTo === "string") {
+            return nfc.returnTo;
+        }
+
+        if (nfc?.productKey) {
+            return buildCardsProductUrl(nfc.productKey);
+        }
+
+        const from = location.state?.from;
+        if (typeof from === "string" && from.trim()) {
+            return from;
+        }
+
+        return "/dashboard";
+    };
+
     const checkoutIntent = useMemo(() => readCheckoutIntent(), []);
     const hasCheckoutIntent = !!checkoutIntent;
 
@@ -188,7 +212,7 @@ export default function Register() {
         const intent = readNfcIntent();
         if (!intent?.productKey) return false;
 
-        navigate("/cards", {
+        navigate(intent.returnTo || buildCardsProductUrl(intent.productKey), {
             replace: true,
             state: {
                 openProductFromIntent: true,
@@ -366,7 +390,7 @@ export default function Register() {
                 // ignore
             }
 
-            navigate("/dashboard", { replace: true });
+            navigate(resolvePostAuthDestination(), { replace: true });
         } catch (err) {
             toast.error(err?.response?.data?.error || "Verification failed");
         } finally {
@@ -555,7 +579,7 @@ export default function Register() {
                                                 <Link
                                                     className="kc-link"
                                                     to="/login"
-                                                    state={{ from: location.state?.from || "/" }}
+                                                    state={{ from: resolvePostAuthDestination() }}
                                                 >
                                                     Sign In
                                                 </Link>
@@ -643,7 +667,7 @@ export default function Register() {
                                                 <Link
                                                     className="kc-link"
                                                     to="/login"
-                                                    state={{ from: location.state?.from || "/" }}
+                                                    state={{ from: resolvePostAuthDestination() }}
                                                 >
                                                     Sign In
                                                 </Link>

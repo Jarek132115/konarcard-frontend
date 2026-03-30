@@ -47,11 +47,37 @@ function readIntent() {
 
 function writeIntent(v) {
     try {
-        if (!v) localStorage.removeItem(INTENT_KEY);
-        else localStorage.setItem(INTENT_KEY, JSON.stringify(v));
+        if (!v) {
+            localStorage.removeItem(INTENT_KEY);
+            return;
+        }
+
+        const existing = readIntent();
+        localStorage.setItem(
+            INTENT_KEY,
+            JSON.stringify({
+                ...(existing && typeof existing === "object" ? existing : {}),
+                ...v,
+                createdAt: v?.createdAt || existing?.createdAt || Date.now(),
+                updatedAt: Date.now(),
+            })
+        );
     } catch {
         // ignore
     }
+}
+
+function clearIntent() {
+    try {
+        localStorage.removeItem(INTENT_KEY);
+    } catch {
+        // ignore
+    }
+}
+
+function buildCardsProductUrl(productKey) {
+    const safe = String(productKey || "").trim();
+    return safe ? `/cards?product=${encodeURIComponent(safe)}` : "/cards";
 }
 
 function fileToDataUrl(file) {
@@ -74,6 +100,7 @@ export default function KonarTag() {
     const location = useLocation();
 
     const PRODUCT_KEY = "konartag";
+    const RETURN_TO = buildCardsProductUrl(PRODUCT_KEY);
 
     const [qty, setQty] = useState(1);
     const [finish, setFinish] = useState("black");
@@ -107,6 +134,23 @@ export default function KonarTag() {
         if (Array.isArray(d?.data?.data)) return d.data.data;
         return [];
     })();
+
+    const persistIntent = () => {
+        const existing = readIntent();
+
+        writeIntent({
+            ...(existing && typeof existing === "object" ? existing : {}),
+            productKey: PRODUCT_KEY,
+            quantity: qty,
+            profileId,
+            hadLogo: !!logoFile,
+            variant: finish,
+            finish,
+            logoPreset,
+            returnTo: RETURN_TO,
+            createdAt: existing?.createdAt || Date.now(),
+        });
+    };
 
     useEffect(() => {
         const CANONICAL = "https://www.konarcard.com/products/konartag";
@@ -232,7 +276,7 @@ export default function KonarTag() {
         if (checkout === "success") {
             setErrorMsg("");
             setInfoMsg("✅ Payment received! We’ll email you confirmation shortly.");
-            writeIntent(null);
+            clearIntent();
             return;
         }
 
@@ -291,25 +335,7 @@ export default function KonarTag() {
         const checkout = sp.get("checkout");
         if (checkout === "success") return;
 
-        const existing = readIntent();
-        const base =
-            existing && typeof existing === "object" && existing.productKey === PRODUCT_KEY
-                ? existing
-                : null;
-
-        writeIntent({
-            ...(base || {}),
-            productKey: PRODUCT_KEY,
-            quantity: qty,
-            profileId,
-            hadLogo: !!logoFile,
-            variant: finish,
-            finish,
-            logoPreset,
-            returnTo: "/cards",
-            createdAt: base?.createdAt || Date.now(),
-            updatedAt: Date.now(),
-        });
+        persistIntent();
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [qty, profileId, logoFile, finish, logoPreset, location.search]);
 
@@ -333,24 +359,11 @@ export default function KonarTag() {
     };
 
     const goLogin = () => {
-        const existing = readIntent();
-        writeIntent({
-            ...(existing && typeof existing === "object" ? existing : {}),
-            productKey: PRODUCT_KEY,
-            quantity: qty,
-            profileId,
-            hadLogo: !!logoFile,
-            variant: finish,
-            finish,
-            logoPreset,
-            returnTo: "/cards",
-            createdAt: existing?.createdAt || Date.now(),
-            updatedAt: Date.now(),
-        });
+        persistIntent();
 
         navigate("/login", {
             state: {
-                from: "/cards",
+                from: RETURN_TO,
                 openProductFromIntent: true,
             },
         });
@@ -390,21 +403,7 @@ export default function KonarTag() {
         setInfoMsg("");
 
         if (!isLoggedIn) {
-            const existing = readIntent();
-            writeIntent({
-                ...(existing && typeof existing === "object" ? existing : {}),
-                productKey: PRODUCT_KEY,
-                quantity: qty,
-                profileId,
-                hadLogo: !!logoFile,
-                variant: finish,
-                finish,
-                logoPreset,
-                returnTo: "/cards",
-                createdAt: existing?.createdAt || Date.now(),
-                updatedAt: Date.now(),
-            });
-
+            persistIntent();
             goLogin();
             return;
         }
@@ -437,13 +436,15 @@ export default function KonarTag() {
                 savedLogoUrl = up.data.logoUrl;
             }
 
+            persistIntent();
+
             const resp = await api.post("/api/checkout/nfc/session", {
                 productKey: PRODUCT_KEY,
                 variant: finish,
                 quantity: qty,
                 profileId,
                 logoUrl: savedLogoUrl || "",
-                returnUrl: `${window.location.origin}/cards`,
+                returnUrl: `${window.location.origin}${RETURN_TO}`,
                 preview: {
                     logoPercent,
                     logoPreset,
@@ -458,10 +459,9 @@ export default function KonarTag() {
                 throw new Error(resp?.data?.error || "Failed to start checkout");
             }
 
-            writeIntent(null);
             window.location.href = resp.data.url;
         } catch (e) {
-            setErrorMsg(e?.message || "Checkout failed. Please try again.");
+            setErrorMsg(e?.response?.data?.error || e?.message || "Checkout failed. Please try again.");
         } finally {
             setBusy(false);
         }

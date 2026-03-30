@@ -141,12 +141,25 @@ function qrSrcFromLink(link) {
   return `https://api.qrserver.com/v1/create-qr-code/?size=700x700&margin=10&data=${encodeURIComponent(url)}`;
 }
 
+function buildCardsProductUrl(productKey) {
+  const safe = String(productKey || "").trim();
+  return safe ? `/cards?product=${encodeURIComponent(safe)}` : "/cards";
+}
+
 function readIntent() {
   try {
     const raw = localStorage.getItem(NFC_INTENT_KEY);
     if (!raw) return null;
+
     const parsed = JSON.parse(raw);
     if (!parsed?.productKey) return null;
+
+    const age = Date.now() - Number(parsed.createdAt || parsed.updatedAt || 0);
+    if (Number.isFinite(age) && age > 30 * 60 * 1000) {
+      localStorage.removeItem(NFC_INTENT_KEY);
+      return null;
+    }
+
     return parsed;
   } catch {
     return null;
@@ -155,8 +168,29 @@ function readIntent() {
 
 function writeIntent(v) {
   try {
-    if (!v) localStorage.removeItem(NFC_INTENT_KEY);
-    else localStorage.setItem(NFC_INTENT_KEY, JSON.stringify(v));
+    if (!v) {
+      localStorage.removeItem(NFC_INTENT_KEY);
+      return;
+    }
+
+    const existing = readIntent();
+    localStorage.setItem(
+      NFC_INTENT_KEY,
+      JSON.stringify({
+        ...(existing && typeof existing === "object" ? existing : {}),
+        ...v,
+        createdAt: v?.createdAt || existing?.createdAt || Date.now(),
+        updatedAt: Date.now(),
+      })
+    );
+  } catch {
+    // ignore
+  }
+}
+
+function clearIntent() {
+  try {
+    localStorage.removeItem(NFC_INTENT_KEY);
   } catch {
     // ignore
   }
@@ -221,6 +255,7 @@ export default function Cards() {
 
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [infoMsg, setInfoMsg] = useState("");
   const [orders, setOrders] = useState([]);
   const [selectedId, setSelectedId] = useState(null);
 
@@ -318,26 +353,26 @@ export default function Cards() {
 
     if (checkout === "success") {
       toast.success("Payment received ✅");
-      writeIntent(null);
+      clearIntent();
 
-      if (product && PRODUCT_META[product]) {
-        setSelectedProductKey(product);
-      }
+      const resumeProduct =
+        (product && PRODUCT_META[product] && product) ||
+        (intent?.productKey && PRODUCT_META[intent.productKey] && intent.productKey) ||
+        "";
 
-      navigate("/cards", { replace: true });
+      navigate(resumeProduct ? buildCardsProductUrl(resumeProduct) : "/cards", { replace: true });
       return;
     }
 
     if (checkout === "cancel") {
       toast.error("Checkout cancelled.");
 
-      if (product && PRODUCT_META[product]) {
-        setSelectedProductKey(product);
-      } else if (intent?.productKey && PRODUCT_META[intent.productKey]) {
-        setSelectedProductKey(intent.productKey);
-      }
+      const resumeProduct =
+        (product && PRODUCT_META[product] && product) ||
+        (intent?.productKey && PRODUCT_META[intent.productKey] && intent.productKey) ||
+        "";
 
-      navigate("/cards", { replace: true });
+      navigate(resumeProduct ? buildCardsProductUrl(resumeProduct) : "/cards", { replace: true });
       return;
     }
 
@@ -372,6 +407,12 @@ export default function Cards() {
     } else if (typeof intent.finish === "string") {
       setVariant(intent.finish);
     }
+
+    if (intent.hadLogo) {
+      setInfoMsg("Please re-upload your logo to continue checkout.");
+    } else {
+      setInfoMsg("");
+    }
   }, [selectedProductKey]);
 
   useEffect(() => {
@@ -404,17 +445,15 @@ export default function Cards() {
       hadLogo: !!logoFile,
       variant,
       logoPreset,
-      returnTo: "/cards",
+      returnTo: buildCardsProductUrl(selectedProductKey),
       createdAt: readIntent()?.createdAt || Date.now(),
-      updatedAt: Date.now(),
     });
   }, [selectedProductKey, qty, profileId, logoFile, variant, logoPreset]);
 
   const selectedProduct = selectedProductKey ? PRODUCT_META[selectedProductKey] : null;
   const logoPercent = PRESET_TO_PERCENT[logoPreset] || 70;
 
-  const safeSelectedOrderLogo = "";
-  const displayedLogo = logoUrl || safeSelectedOrderLogo || DEFAULT_LOGO_DATAURL;
+  const displayedLogo = logoUrl || DEFAULT_LOGO_DATAURL;
   const displayedQr = selectedOrder?.link ? qrSrcFromLink(selectedOrder.link) : "";
   const selectedVariant = variant || selectedProduct?.defaultVariant || "white";
 
@@ -428,6 +467,7 @@ export default function Cards() {
 
     setLogoFile(file);
     setLogoUrl(URL.createObjectURL(file));
+    setInfoMsg("");
   };
 
   const clearLogo = () => {
@@ -451,6 +491,8 @@ export default function Cards() {
     setLogoPreset("medium");
     setLogoUrl("");
     setLogoFile(null);
+    setInfoMsg("");
+    navigate(buildCardsProductUrl(productKey), { replace: true });
   };
 
   const handleStartCheckout = async () => {
@@ -487,13 +529,24 @@ export default function Cards() {
         savedLogoUrl = uploadRes.data.logoUrl;
       }
 
+      writeIntent({
+        productKey: selectedProduct.key,
+        quantity: qty,
+        profileId,
+        hadLogo: !!logoFile,
+        variant: selectedVariant,
+        logoPreset,
+        returnTo: buildCardsProductUrl(selectedProduct.key),
+        createdAt: readIntent()?.createdAt || Date.now(),
+      });
+
       const resp = await api.post("/api/checkout/nfc/session", {
         productKey: selectedProduct.key,
         variant: selectedVariant,
         quantity: qty,
         profileId,
         logoUrl: savedLogoUrl || "",
-        returnUrl: `${window.location.origin}/cards?product=${encodeURIComponent(selectedProduct.key)}`,
+        returnUrl: `${window.location.origin}${buildCardsProductUrl(selectedProduct.key)}`,
         preview: {
           logoPercent,
           logoPreset,
@@ -507,10 +560,9 @@ export default function Cards() {
         throw new Error(resp?.data?.error || "Failed to start checkout");
       }
 
-      writeIntent(null);
       window.location.href = resp.data.url;
     } catch (e) {
-      toast.error(e?.message || "Checkout failed. Please try again.");
+      toast.error(e?.response?.data?.error || e?.message || "Checkout failed. Please try again.");
     } finally {
       setBusy(false);
     }
@@ -525,7 +577,11 @@ export default function Cards() {
       <button
         type="button"
         className="kx-btn kx-btn--black"
-        onClick={() => setSelectedProductKey("")}
+        onClick={() => {
+          setSelectedProductKey("");
+          setInfoMsg("");
+          navigate("/cards", { replace: true });
+        }}
       >
         View Products
       </button>
@@ -623,11 +679,18 @@ export default function Cards() {
                 <button
                   type="button"
                   className="cp-selectBtn"
-                  onClick={() => setSelectedProductKey("")}
+                  onClick={() => {
+                    setSelectedProductKey("");
+                    setInfoMsg("");
+                    navigate("/cards", { replace: true });
+                  }}
                 >
                   Back to products
                 </button>
               </div>
+
+              {infoMsg ? <div className="cp-alert">{infoMsg}</div> : null}
+              {error ? <div className="cp-alert danger">{error}</div> : null}
 
               <div className="cp-detailsGrid">
                 <div className="cp-previewCard">
