@@ -394,7 +394,9 @@ export default function Profiles() {
     };
 
     const shareToInstagram = () => {
-        toast("Instagram does not support direct web sharing. Copy the link and paste it into your bio, DM, or story tools.");
+        toast(
+            "Instagram does not support direct web sharing. Copy the link and paste it into your bio, DM, or story tools."
+        );
     };
 
     const shareToMessenger = () => {

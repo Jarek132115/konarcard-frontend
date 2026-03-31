@@ -198,18 +198,32 @@ function inferAnalyticsSource() {
     try {
         const params = new URLSearchParams(window.location.search);
 
-        const explicitSource = String(params.get("source") || "").trim().toLowerCase();
+        const explicitSource = String(
+            params.get("source") || params.get("src") || ""
+        )
+            .trim()
+            .toLowerCase();
+
         if (["qr", "nfc", "direct", "link"].includes(explicitSource)) {
             return explicitSource;
         }
 
-        const utmSource = String(params.get("utm_source") || "").trim().toLowerCase();
-        if (utmSource === "qr") return "qr";
-        if (utmSource === "nfc") return "nfc";
+        const via = String(params.get("via") || "")
+            .trim()
+            .toLowerCase();
 
-        const via = String(params.get("via") || "").trim().toLowerCase();
         if (via === "qr") return "qr";
         if (via === "nfc") return "nfc";
+        if (via === "link") return "link";
+        if (via === "direct") return "direct";
+
+        const utmSource = String(params.get("utm_source") || "")
+            .trim()
+            .toLowerCase();
+
+        if (utmSource === "qr") return "qr";
+        if (utmSource === "nfc") return "nfc";
+        if (utmSource === "link") return "link";
 
         if (document.referrer && document.referrer.trim()) {
             return "link";
@@ -450,7 +464,15 @@ export default function UserPage() {
 
         profileViewTrackedRef.current = true;
 
+        const params = new URLSearchParams(window.location.search);
         const source = inferAnalyticsSource();
+        const querySource =
+            params.get("utm_source") ||
+            params.get("source") ||
+            params.get("src") ||
+            params.get("via") ||
+            "";
+
         const viewEvent =
             source === "qr"
                 ? "qr_scan"
@@ -467,7 +489,7 @@ export default function UserPage() {
             meta: {
                 pageUrl: window.location.href,
                 referrer: document.referrer || "",
-                querySource: new URLSearchParams(window.location.search).get("utm_source") || "",
+                querySource,
             },
         });
 
@@ -479,7 +501,7 @@ export default function UserPage() {
                 meta: {
                     pageUrl: window.location.href,
                     referrer: document.referrer || "",
-                    querySource: new URLSearchParams(window.location.search).get("utm_source") || "",
+                    querySource,
                 },
             });
         }
