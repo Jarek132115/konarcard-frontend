@@ -198,32 +198,18 @@ function inferAnalyticsSource() {
     try {
         const params = new URLSearchParams(window.location.search);
 
-        const explicitSource = String(
-            params.get("source") || params.get("src") || ""
-        )
-            .trim()
-            .toLowerCase();
-
+        const explicitSource = String(params.get("source") || "").trim().toLowerCase();
         if (["qr", "nfc", "direct", "link"].includes(explicitSource)) {
             return explicitSource;
         }
 
-        const via = String(params.get("via") || "")
-            .trim()
-            .toLowerCase();
-
-        if (via === "qr") return "qr";
-        if (via === "nfc") return "nfc";
-        if (via === "link") return "link";
-        if (via === "direct") return "direct";
-
-        const utmSource = String(params.get("utm_source") || "")
-            .trim()
-            .toLowerCase();
-
+        const utmSource = String(params.get("utm_source") || "").trim().toLowerCase();
         if (utmSource === "qr") return "qr";
         if (utmSource === "nfc") return "nfc";
-        if (utmSource === "link") return "link";
+
+        const via = String(params.get("via") || "").trim().toLowerCase();
+        if (via === "qr") return "qr";
+        if (via === "nfc") return "nfc";
 
         if (document.referrer && document.referrer.trim()) {
             return "link";
@@ -232,6 +218,47 @@ function inferAnalyticsSource() {
         return "direct";
     } catch {
         return "unknown";
+    }
+}
+
+function makeRandomId(prefix = "") {
+    try {
+        const bytes = new Uint8Array(16);
+        window.crypto.getRandomValues(bytes);
+        const raw = Array.from(bytes, (b) => b.toString(16).padStart(2, "0")).join("");
+        return `${prefix}${raw}`;
+    } catch {
+        return `${prefix}${Math.random().toString(36).slice(2)}${Date.now().toString(36)}`;
+    }
+}
+
+function getVisitorId() {
+    const key = "konarcard_visitor_id";
+
+    try {
+        const existing = localStorage.getItem(key);
+        if (existing) return existing;
+
+        const created = makeRandomId("v_");
+        localStorage.setItem(key, created);
+        return created;
+    } catch {
+        return makeRandomId("v_");
+    }
+}
+
+function getSessionId() {
+    const key = "konarcard_session_id";
+
+    try {
+        const existing = sessionStorage.getItem(key);
+        if (existing) return existing;
+
+        const created = makeRandomId("s_");
+        sessionStorage.setItem(key, created);
+        return created;
+    } catch {
+        return makeRandomId("s_");
     }
 }
 
@@ -252,7 +279,11 @@ async function trackProfileEvent({
                 eventType,
                 source,
                 platform,
-                meta,
+                meta: {
+                    ...meta,
+                    visitorId: getVisitorId(),
+                    sessionId: getSessionId(),
+                },
             },
             {
                 headers: { "x-no-auth": "1" },
@@ -464,15 +495,7 @@ export default function UserPage() {
 
         profileViewTrackedRef.current = true;
 
-        const params = new URLSearchParams(window.location.search);
         const source = inferAnalyticsSource();
-        const querySource =
-            params.get("utm_source") ||
-            params.get("source") ||
-            params.get("src") ||
-            params.get("via") ||
-            "";
-
         const viewEvent =
             source === "qr"
                 ? "qr_scan"
@@ -489,7 +512,7 @@ export default function UserPage() {
             meta: {
                 pageUrl: window.location.href,
                 referrer: document.referrer || "",
-                querySource,
+                querySource: new URLSearchParams(window.location.search).get("utm_source") || "",
             },
         });
 
@@ -501,7 +524,7 @@ export default function UserPage() {
                 meta: {
                     pageUrl: window.location.href,
                     referrer: document.referrer || "",
-                    querySource,
+                    querySource: new URLSearchParams(window.location.search).get("utm_source") || "",
                 },
             });
         }
