@@ -1,4 +1,4 @@
-import React, { useContext, useMemo, useState } from "react";
+import React, { useContext, useEffect, useMemo, useRef, useState } from "react";
 import { useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { toast } from "react-hot-toast";
@@ -194,6 +194,61 @@ const hasMeaningfulProfileContent = (card) => {
     return hasText || hasImages || works.length > 0 || services.length > 0 || reviews.length > 0;
 };
 
+function inferAnalyticsSource() {
+    try {
+        const params = new URLSearchParams(window.location.search);
+
+        const explicitSource = String(params.get("source") || "").trim().toLowerCase();
+        if (["qr", "nfc", "direct", "link"].includes(explicitSource)) {
+            return explicitSource;
+        }
+
+        const utmSource = String(params.get("utm_source") || "").trim().toLowerCase();
+        if (utmSource === "qr") return "qr";
+        if (utmSource === "nfc") return "nfc";
+
+        const via = String(params.get("via") || "").trim().toLowerCase();
+        if (via === "qr") return "qr";
+        if (via === "nfc") return "nfc";
+
+        if (document.referrer && document.referrer.trim()) {
+            return "link";
+        }
+
+        return "direct";
+    } catch {
+        return "unknown";
+    }
+}
+
+async function trackProfileEvent({
+    profileSlug,
+    eventType,
+    source = "unknown",
+    platform = "",
+    meta = {},
+}) {
+    try {
+        if (!profileSlug || !eventType) return;
+
+        await api.post(
+            "/api/analytics/track",
+            {
+                profileSlug,
+                eventType,
+                source,
+                platform,
+                meta,
+            },
+            {
+                headers: { "x-no-auth": "1" },
+            }
+        );
+    } catch {
+        // silent on purpose
+    }
+}
+
 function ExchangeContactModal({
     open,
     onClose,
@@ -239,6 +294,16 @@ function ExchangeContactModal({
                 toast.error(res.data.error);
                 return;
             }
+
+            await trackProfileEvent({
+                profileSlug: payload.profileSlug,
+                eventType: "contact_exchange",
+                source: inferAnalyticsSource(),
+                meta: {
+                    pageUrl: window.location.href,
+                    referrer: document.referrer || "",
+                },
+            });
 
             toast.success("Sent! Your details were shared.");
             onClose?.();
@@ -355,6 +420,7 @@ export default function UserPage() {
     const { user: authUser } = useContext(AuthContext);
 
     const [exchangeOpen, setExchangeOpen] = useState(false);
+    const profileViewTrackedRef = useRef(false);
 
     const publicSlug = useMemo(() => normalizeSlug(slug), [slug]);
     const isValidSlug = publicSlug && publicSlug.length >= 3;
@@ -376,6 +442,48 @@ export default function UserPage() {
         gcTime: 10 * 60 * 1000,
         retry: 1,
     });
+
+    useEffect(() => {
+        if (!isValidSlug) return;
+        if (!businessCard) return;
+        if (profileViewTrackedRef.current) return;
+
+        profileViewTrackedRef.current = true;
+
+        const source = inferAnalyticsSource();
+        const viewEvent =
+            source === "qr"
+                ? "qr_scan"
+                : source === "nfc"
+                    ? "nfc_tap"
+                    : source === "link"
+                        ? "link_open"
+                        : "profile_view";
+
+        void trackProfileEvent({
+            profileSlug: publicSlug,
+            eventType: viewEvent,
+            source,
+            meta: {
+                pageUrl: window.location.href,
+                referrer: document.referrer || "",
+                querySource: new URLSearchParams(window.location.search).get("utm_source") || "",
+            },
+        });
+
+        if (viewEvent !== "profile_view") {
+            void trackProfileEvent({
+                profileSlug: publicSlug,
+                eventType: "profile_view",
+                source,
+                meta: {
+                    pageUrl: window.location.href,
+                    referrer: document.referrer || "",
+                    querySource: new URLSearchParams(window.location.search).get("utm_source") || "",
+                },
+            });
+        }
+    }, [businessCard, isValidSlug, publicSlug]);
 
     const goEditProfile = () => {
         try {
@@ -600,7 +708,7 @@ export default function UserPage() {
                 ? "flex-end"
                 : "flex-start";
 
-    const handleSaveMyNumber = () => {
+    const handleSaveMyNumber = async () => {
         if (!hasContact && !nonEmpty(fullName)) return;
 
         const derivedPublicUrl = `${window.location.origin}/u/${encodeURIComponent(publicSlug)}`;
@@ -632,9 +740,81 @@ export default function UserPage() {
         a.click();
         document.body.removeChild(a);
         URL.revokeObjectURL(url);
+
+        await trackProfileEvent({
+            profileSlug: publicSlug,
+            eventType: "contact_save",
+            source: inferAnalyticsSource(),
+            meta: {
+                pageUrl: window.location.href,
+                referrer: document.referrer || "",
+            },
+        });
     };
 
-    const openExchangeModal = () => setExchangeOpen(true);
+    const openExchangeModal = async () => {
+        setExchangeOpen(true);
+
+        await trackProfileEvent({
+            profileSlug: publicSlug,
+            eventType: "contact_exchange_opened",
+            source: inferAnalyticsSource(),
+            meta: {
+                pageUrl: window.location.href,
+                referrer: document.referrer || "",
+            },
+        });
+    };
+
+    const handleEmailClick = async () => {
+        await trackProfileEvent({
+            profileSlug: publicSlug,
+            eventType: "email_clicked",
+            source: inferAnalyticsSource(),
+            meta: {
+                pageUrl: window.location.href,
+                referrer: document.referrer || "",
+                actionTarget: email,
+            },
+        });
+    };
+
+    const handlePhoneClick = async () => {
+        await trackProfileEvent({
+            profileSlug: publicSlug,
+            eventType: "phone_clicked",
+            source: inferAnalyticsSource(),
+            meta: {
+                pageUrl: window.location.href,
+                referrer: document.referrer || "",
+                actionTarget: phone,
+            },
+        });
+    };
+
+    const handleSocialClick = async (platformKey, url) => {
+        const platformMap = {
+            facebook_url: "facebook",
+            instagram_url: "instagram",
+            linkedin_url: "linkedin",
+            x_url: "x",
+            twitter_url: "x",
+            tiktok_url: "tiktok",
+        };
+
+        await trackProfileEvent({
+            profileSlug: publicSlug,
+            eventType: "social_clicked",
+            source: inferAnalyticsSource(),
+            platform: platformMap[platformKey] || "other",
+            meta: {
+                pageUrl: window.location.href,
+                referrer: document.referrer || "",
+                targetUrl: url || "",
+                actionTarget: platformKey,
+            },
+        });
+    };
 
     if (!profileHasMeaningfulContent) {
         return (
@@ -788,6 +968,9 @@ export default function UserPage() {
 
         onSaveMyNumber: handleSaveMyNumber,
         onOpenExchangeContact: openExchangeModal,
+        onEmailClick: handleEmailClick,
+        onPhoneClick: handlePhoneClick,
+        onSocialClick: handleSocialClick,
 
         onExchangeContact: handleSaveMyNumber,
     };

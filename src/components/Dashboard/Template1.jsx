@@ -49,31 +49,41 @@ function getSocialMeta(key) {
     const map = {
         facebook_url: {
             label: "Facebook",
+            analyticsKey: "facebook",
             icon: <TemplateIcon src={FacebookIconSrc} alt="" className="t1-assetIcon t1-assetIcon--social" />,
         },
         instagram_url: {
             label: "Instagram",
+            analyticsKey: "instagram",
             icon: <TemplateIcon src={InstagramIconSrc} alt="" className="t1-assetIcon t1-assetIcon--social" />,
         },
         linkedin_url: {
             label: "LinkedIn",
+            analyticsKey: "linkedin",
             icon: <TemplateIcon src={LinkedInIconSrc} alt="" className="t1-assetIcon t1-assetIcon--social" />,
         },
         x_url: {
             label: "X",
+            analyticsKey: "x",
             icon: <TemplateIcon src={XIconSrc} alt="" className="t1-assetIcon t1-assetIcon--social t1-assetIcon--social-x" />,
         },
         twitter_url: {
             label: "X",
+            analyticsKey: "x",
             icon: <TemplateIcon src={XIconSrc} alt="" className="t1-assetIcon t1-assetIcon--social t1-assetIcon--social-x" />,
         },
         tiktok_url: {
             label: "TikTok",
+            analyticsKey: "tiktok",
             icon: <TemplateIcon src={TikTokIconSrc} alt="" className="t1-assetIcon t1-assetIcon--social" />,
         },
     };
 
-    return map[key] || { label: key.replace("_url", ""), icon: null };
+    return map[key] || {
+        label: key.replace("_url", ""),
+        analyticsKey: key.replace("_url", ""),
+        icon: null,
+    };
 }
 
 export default function Template1(props) {
@@ -114,6 +124,50 @@ export default function Template1(props) {
 
     const hasAbout = nonEmpty(aboutName) || nonEmpty(aboutTrade) || nonEmpty(aboutBio) || nonEmpty(logo);
     const hasContact = nonEmpty(v.email) || nonEmpty(v.phone) || v.hasExchangeContact || socialEntries.length > 0;
+
+    const handleEmailClick = (e) => {
+        if (typeof v.onTrackContactClick === "function") {
+            v.onTrackContactClick({
+                eventType: "email_clicked",
+                actionTarget: "email",
+                targetUrl: `mailto:${v.email}`,
+            });
+        }
+    };
+
+    const handlePhoneClick = (e) => {
+        if (typeof v.onTrackContactClick === "function") {
+            v.onTrackContactClick({
+                eventType: "phone_clicked",
+                actionTarget: "phone",
+                targetUrl: `tel:${v.phone}`,
+            });
+        }
+    };
+
+    const handleExchangeClick = () => {
+        if (typeof v.onTrackContactClick === "function") {
+            v.onTrackContactClick({
+                eventType: "contact_exchange_submitted",
+                actionTarget: "exchange_contact_opened",
+                targetUrl: "",
+            });
+        }
+
+        if (typeof v.onOpenExchangeContact === "function") {
+            v.onOpenExchangeContact();
+        }
+    };
+
+    const handleSocialClick = (platformKey, url) => {
+        if (typeof v.onTrackContactClick === "function") {
+            v.onTrackContactClick({
+                eventType: "social_clicked",
+                actionTarget: platformKey,
+                targetUrl: url,
+            });
+        }
+    };
 
     return (
         <div className={`kc-tpl kc-tpl-1 ${themeMode === "dark" ? "t1-theme-dark" : "t1-theme-light"}`}>
@@ -161,7 +215,7 @@ export default function Template1(props) {
                                         <button
                                             type="button"
                                             className="t1-btn t1-btn-secondary"
-                                            onClick={v.onOpenExchangeContact}
+                                            onClick={handleExchangeClick}
                                         >
                                             <span className="t1-btnIcon">
                                                 <img
@@ -268,7 +322,11 @@ export default function Template1(props) {
 
                         <div className="t1-contact">
                             {nonEmpty(v.email) ? (
-                                <a className="t1-contact-row" href={`mailto:${v.email}`}>
+                                <a
+                                    className="t1-contact-row"
+                                    href={`mailto:${v.email}`}
+                                    onClick={handleEmailClick}
+                                >
                                     <span className="t1-contactIcon">
                                         <TemplateIcon src={EmailIconSrc} alt="" className="t1-assetIcon t1-assetIcon--contact" />
                                     </span>
@@ -280,7 +338,11 @@ export default function Template1(props) {
                             ) : null}
 
                             {nonEmpty(v.phone) ? (
-                                <a className="t1-contact-row" href={`tel:${v.phone}`}>
+                                <a
+                                    className="t1-contact-row"
+                                    href={`tel:${v.phone}`}
+                                    onClick={handlePhoneClick}
+                                >
                                     <span className="t1-contactIcon">
                                         <TemplateIcon src={PhoneIconSrc} alt="" className="t1-assetIcon t1-assetIcon--contact" />
                                     </span>
@@ -295,7 +357,7 @@ export default function Template1(props) {
                                 <button
                                     className="t1-contact-row t1-contact-row--button"
                                     type="button"
-                                    onClick={v.onOpenExchangeContact}
+                                    onClick={handleExchangeClick}
                                 >
                                     <span className="t1-contactIcon">
                                         <TemplateIcon
@@ -324,6 +386,7 @@ export default function Template1(props) {
                                                 rel="noreferrer"
                                                 aria-label={meta.label}
                                                 title={meta.label}
+                                                onClick={() => handleSocialClick(meta.analyticsKey, url)}
                                             >
                                                 {meta.icon}
                                             </a>

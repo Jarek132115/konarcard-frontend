@@ -111,15 +111,19 @@ function SectionHead({ kicker, title }) {
 
 function getSocialMeta(key) {
     const map = {
-        facebook_url: { label: "Facebook", icon: <FacebookIcon /> },
-        instagram_url: { label: "Instagram", icon: <InstagramIcon /> },
-        linkedin_url: { label: "LinkedIn", icon: <LinkedInIcon /> },
-        x_url: { label: "X", icon: <XIcon /> },
-        twitter_url: { label: "X", icon: <XIcon /> },
-        tiktok_url: { label: "TikTok", icon: <TikTokIcon /> },
+        facebook_url: { label: "Facebook", analyticsKey: "facebook", icon: <FacebookIcon /> },
+        instagram_url: { label: "Instagram", analyticsKey: "instagram", icon: <InstagramIcon /> },
+        linkedin_url: { label: "LinkedIn", analyticsKey: "linkedin", icon: <LinkedInIcon /> },
+        x_url: { label: "X", analyticsKey: "x", icon: <XIcon /> },
+        twitter_url: { label: "X", analyticsKey: "x", icon: <XIcon /> },
+        tiktok_url: { label: "TikTok", analyticsKey: "tiktok", icon: <TikTokIcon /> },
     };
 
-    return map[key] || { label: key.replace("_url", ""), icon: null };
+    return map[key] || {
+        label: key.replace("_url", ""),
+        analyticsKey: key.replace("_url", ""),
+        icon: null,
+    };
 }
 
 export default function Template4({ vm }) {
@@ -160,6 +164,54 @@ export default function Template4({ vm }) {
     const hasAbout = nonEmpty(bio) || nonEmpty(fullName) || nonEmpty(jobTitle) || nonEmpty(avatar);
     const hasContact = nonEmpty(v.email) || nonEmpty(v.phone) || v.hasExchangeContact || socials.length > 0;
 
+    const trackContact = ({ eventType, actionTarget, targetUrl }) => {
+        if (typeof v.onTrackContactClick === "function") {
+            v.onTrackContactClick({ eventType, actionTarget, targetUrl });
+        }
+    };
+
+    const handleSaveMyNumber = () => {
+        if (typeof v.onSaveMyNumber === "function") {
+            v.onSaveMyNumber();
+        }
+    };
+
+    const handleExchangeClick = () => {
+        trackContact({
+            eventType: "contact_exchange_opened",
+            actionTarget: "exchange_contact_opened",
+            targetUrl: "",
+        });
+
+        if (typeof v.onOpenExchangeContact === "function") {
+            v.onOpenExchangeContact();
+        }
+    };
+
+    const handleEmailClick = () => {
+        trackContact({
+            eventType: "email_clicked",
+            actionTarget: "email",
+            targetUrl: `mailto:${v.email}`,
+        });
+    };
+
+    const handlePhoneClick = () => {
+        trackContact({
+            eventType: "phone_clicked",
+            actionTarget: "phone",
+            targetUrl: `tel:${v.phone}`,
+        });
+    };
+
+    const handleSocialClick = (platformKey, url) => {
+        trackContact({
+            eventType: "social_clicked",
+            actionTarget: platformKey,
+            targetUrl: url,
+        });
+    };
+
     return (
         <div className={`kc-tpl kc-tpl-4 ${themeMode === "dark" ? "t4-theme-dark" : "t4-theme-light"}`}>
             <div className="t4-shell">
@@ -189,7 +241,7 @@ export default function Template4({ vm }) {
                                     {nonEmpty(location) ? <p className="t4-location">{location}</p> : null}
                                 </div>
 
-                                {(nonEmpty(fullName) || nonEmpty(jobTitle)) ? (
+                                {nonEmpty(fullName) || nonEmpty(jobTitle) ? (
                                     <div className="t4-meta">
                                         {nonEmpty(fullName) ? <span className="t4-pill">{fullName}</span> : null}
                                         {nonEmpty(jobTitle) ? <span className="t4-pill t4-pill--soft">{jobTitle}</span> : null}
@@ -197,10 +249,10 @@ export default function Template4({ vm }) {
                                 ) : null}
                             </div>
 
-                            {(showSaveButton || showExchangeButton) ? (
+                            {showSaveButton || showExchangeButton ? (
                                 <div className={`t4-cta ${showSaveButton && showExchangeButton ? "is-two" : "is-one"}`}>
                                     {showSaveButton ? (
-                                        <button type="button" className="t4-btn t4-btn-primary" onClick={v.onSaveMyNumber}>
+                                        <button type="button" className="t4-btn t4-btn-primary" onClick={handleSaveMyNumber}>
                                             <span className="t4-btnIcon">
                                                 <img src={SaveMyNumberIcon} alt="" className="t4-btnIconAsset t4-btnIconAsset--primary" />
                                             </span>
@@ -209,7 +261,7 @@ export default function Template4({ vm }) {
                                     ) : null}
 
                                     {showExchangeButton ? (
-                                        <button type="button" className="t4-btn t4-btn-secondary" onClick={v.onOpenExchangeContact}>
+                                        <button type="button" className="t4-btn t4-btn-secondary" onClick={handleExchangeClick}>
                                             <span className="t4-btnIcon">
                                                 <img src={ExchangeContactIcon} alt="" className="t4-btnIconAsset t4-btnIconAsset--secondary" />
                                             </span>
@@ -305,10 +357,14 @@ export default function Template4({ vm }) {
                         <SectionHead kicker="Contact" title="Get In Touch" />
 
                         <div className="t4-contactWrap">
-                            {(nonEmpty(v.email) || nonEmpty(v.phone) || v.hasExchangeContact) ? (
+                            {nonEmpty(v.email) || nonEmpty(v.phone) || v.hasExchangeContact ? (
                                 <div className="t4-contactGrid">
                                     {nonEmpty(v.email) ? (
-                                        <a className="t4-contactCard" href={`mailto:${v.email}`}>
+                                        <a
+                                            className="t4-contactCard"
+                                            href={`mailto:${v.email}`}
+                                            onClick={handleEmailClick}
+                                        >
                                             <span className="t4-contactIcon"><EmailIcon /></span>
                                             <span className="t4-contactText">
                                                 <span className="t4-contactLabel">Email</span>
@@ -318,7 +374,11 @@ export default function Template4({ vm }) {
                                     ) : null}
 
                                     {nonEmpty(v.phone) ? (
-                                        <a className="t4-contactCard" href={`tel:${v.phone}`}>
+                                        <a
+                                            className="t4-contactCard"
+                                            href={`tel:${v.phone}`}
+                                            onClick={handlePhoneClick}
+                                        >
                                             <span className="t4-contactIcon"><PhoneIcon /></span>
                                             <span className="t4-contactText">
                                                 <span className="t4-contactLabel">Phone</span>
@@ -328,7 +388,11 @@ export default function Template4({ vm }) {
                                     ) : null}
 
                                     {v.hasExchangeContact ? (
-                                        <button type="button" className="t4-contactCard t4-contactCard--button" onClick={v.onOpenExchangeContact}>
+                                        <button
+                                            type="button"
+                                            className="t4-contactCard t4-contactCard--button"
+                                            onClick={handleExchangeClick}
+                                        >
                                             <span className="t4-contactIcon">
                                                 <img src={ExchangeContactIcon} alt="" className="t4-contactIconAsset" />
                                             </span>
@@ -354,6 +418,7 @@ export default function Template4({ vm }) {
                                                 rel="noreferrer"
                                                 aria-label={meta.label}
                                                 title={meta.label}
+                                                onClick={() => handleSocialClick(meta.analyticsKey, url)}
                                             >
                                                 {meta.icon}
                                             </a>

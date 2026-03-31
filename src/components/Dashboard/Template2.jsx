@@ -41,16 +41,45 @@ function SectionHead({ title }) {
     );
 }
 
-function getSocialIcon(key) {
+function getSocialMeta(key) {
     const map = {
-        facebook_url: Template2IconFacebook,
-        instagram_url: Template2IconInstagram,
-        linkedin_url: Template2IconLinkedin,
-        x_url: Template2IconX,
-        twitter_url: Template2IconX,
-        tiktok_url: Template2IconTikTok,
+        facebook_url: {
+            label: "Facebook",
+            analyticsKey: "facebook",
+            icon: Template2IconFacebook,
+        },
+        instagram_url: {
+            label: "Instagram",
+            analyticsKey: "instagram",
+            icon: Template2IconInstagram,
+        },
+        linkedin_url: {
+            label: "LinkedIn",
+            analyticsKey: "linkedin",
+            icon: Template2IconLinkedin,
+        },
+        x_url: {
+            label: "X",
+            analyticsKey: "x",
+            icon: Template2IconX,
+        },
+        twitter_url: {
+            label: "X",
+            analyticsKey: "x",
+            icon: Template2IconX,
+        },
+        tiktok_url: {
+            label: "TikTok",
+            analyticsKey: "tiktok",
+            icon: Template2IconTikTok,
+        },
     };
-    return map[key] || Template2IconX;
+
+    return map[key] || {
+        label: key.replace("_url", "").replace(/_/g, " "),
+        analyticsKey: key.replace("_url", ""),
+        icon: Template2IconX,
+    };
 }
 
 function buildWorkRows(items) {
@@ -101,16 +130,70 @@ export default function Template2({ vm }) {
     const socials = useMemo(() => {
         return Object.entries(v.socials || {})
             .filter(([, url]) => nonEmpty(url))
-            .map(([key, url]) => ({
-                key,
-                url,
-                label: key.replace("_url", "").replace(/_/g, " "),
-                icon: getSocialIcon(key),
-            }));
+            .map(([key, url]) => {
+                const meta = getSocialMeta(key);
+                return {
+                    key,
+                    url,
+                    label: meta.label,
+                    analyticsKey: meta.analyticsKey,
+                    icon: meta.icon,
+                };
+            });
     }, [v.socials]);
 
-    const hasAbout = nonEmpty(v.bio) || nonEmpty(v.fullName) || nonEmpty(v.jobTitle) || nonEmpty(avatar);
-    const hasContact = nonEmpty(v.email) || nonEmpty(v.phone) || v.hasExchangeContact || socials.length > 0;
+    const hasAbout =
+        nonEmpty(v.bio) || nonEmpty(v.fullName) || nonEmpty(v.jobTitle) || nonEmpty(avatar);
+    const hasContact =
+        nonEmpty(v.email) || nonEmpty(v.phone) || v.hasExchangeContact || socials.length > 0;
+
+    const trackContact = ({ eventType, actionTarget, targetUrl }) => {
+        if (typeof v.onTrackContactClick === "function") {
+            v.onTrackContactClick({ eventType, actionTarget, targetUrl });
+        }
+    };
+
+    const handleSaveMyNumber = () => {
+        if (typeof v.onSaveMyNumber === "function") {
+            v.onSaveMyNumber();
+        }
+    };
+
+    const handleExchangeClick = () => {
+        trackContact({
+            eventType: "contact_exchange_opened",
+            actionTarget: "exchange_contact_opened",
+            targetUrl: "",
+        });
+
+        if (typeof v.onOpenExchangeContact === "function") {
+            v.onOpenExchangeContact();
+        }
+    };
+
+    const handleEmailClick = () => {
+        trackContact({
+            eventType: "email_clicked",
+            actionTarget: "email",
+            targetUrl: `mailto:${v.email}`,
+        });
+    };
+
+    const handlePhoneClick = () => {
+        trackContact({
+            eventType: "phone_clicked",
+            actionTarget: "phone",
+            targetUrl: `tel:${v.phone}`,
+        });
+    };
+
+    const handleSocialClick = (platformKey, url) => {
+        trackContact({
+            eventType: "social_clicked",
+            actionTarget: platformKey,
+            targetUrl: url,
+        });
+    };
 
     return (
         <div className={`kc-tpl kc-tpl-2 ${v.themeMode === "dark" ? "t2-theme-dark" : "t2-theme-light"}`}>
@@ -133,12 +216,20 @@ export default function Template2({ vm }) {
 
                             {hasHeroCtas ? (
                                 <div className="t2-ctaRow">
-                                    <button type="button" className="t2-btn t2-btn-primary" onClick={v.onSaveMyNumber}>
+                                    <button
+                                        type="button"
+                                        className="t2-btn t2-btn-primary"
+                                        onClick={handleSaveMyNumber}
+                                    >
                                         <img src={SaveMyNumberIcon} alt="" className="t2-btnIcon" />
                                         <span>Save My Number</span>
                                     </button>
 
-                                    <button type="button" className="t2-btn t2-btn-secondary" onClick={v.onOpenExchangeContact}>
+                                    <button
+                                        type="button"
+                                        className="t2-btn t2-btn-secondary"
+                                        onClick={handleExchangeClick}
+                                    >
                                         <img src={ExchangeContactIcon} alt="" className="t2-btnIcon" />
                                         <span>Exchange Contact</span>
                                     </button>
@@ -241,7 +332,11 @@ export default function Template2({ vm }) {
 
                         <div className="t2-contactStack">
                             {nonEmpty(v.email) ? (
-                                <a className="t2-contactCard" href={`mailto:${v.email}`}>
+                                <a
+                                    className="t2-contactCard"
+                                    href={`mailto:${v.email}`}
+                                    onClick={handleEmailClick}
+                                >
                                     <div className="t2-contactCardInner">
                                         <img src={Template2IconEmail} alt="" className="t2-contactIcon" />
                                         <div className="t2-contactText">
@@ -253,7 +348,11 @@ export default function Template2({ vm }) {
                             ) : null}
 
                             {nonEmpty(v.phone) ? (
-                                <a className="t2-contactCard" href={`tel:${v.phone}`}>
+                                <a
+                                    className="t2-contactCard"
+                                    href={`tel:${v.phone}`}
+                                    onClick={handlePhoneClick}
+                                >
                                     <div className="t2-contactCardInner">
                                         <img src={Template2IconPhone} alt="" className="t2-contactIcon" />
                                         <div className="t2-contactText">
@@ -265,7 +364,11 @@ export default function Template2({ vm }) {
                             ) : null}
 
                             {v.hasExchangeContact ? (
-                                <button type="button" className="t2-contactCard" onClick={v.onOpenExchangeContact}>
+                                <button
+                                    type="button"
+                                    className="t2-contactCard"
+                                    onClick={handleExchangeClick}
+                                >
                                     <div className="t2-contactCardInner">
                                         <img src={ExchangeContactIcon} alt="" className="t2-contactIcon" />
                                         <div className="t2-contactText">
@@ -280,7 +383,15 @@ export default function Template2({ vm }) {
                                 <div className="t2-socialsCard">
                                     <div className="t2-socials">
                                         {socials.map((s) => (
-                                            <a key={s.key} className="t2-social" href={s.url} target="_blank" rel="noreferrer" aria-label={s.label}>
+                                            <a
+                                                key={s.key}
+                                                className="t2-social"
+                                                href={s.url}
+                                                target="_blank"
+                                                rel="noreferrer"
+                                                aria-label={s.label}
+                                                onClick={() => handleSocialClick(s.analyticsKey, s.url)}
+                                            >
                                                 <img src={s.icon} alt="" className="t2-socialIcon" />
                                             </a>
                                         ))}

@@ -102,14 +102,19 @@ function XIcon() {
 
 function getSocialMeta(key) {
     const map = {
-        facebook_url: { label: "Facebook", icon: <FacebookIcon /> },
-        instagram_url: { label: "Instagram", icon: <InstagramIcon /> },
-        linkedin_url: { label: "LinkedIn", icon: <LinkedInIcon /> },
-        x_url: { label: "X", icon: <XIcon /> },
-        tiktok_url: { label: "TikTok", icon: <TikTokIcon /> },
+        facebook_url: { label: "Facebook", analyticsKey: "facebook", icon: <FacebookIcon /> },
+        instagram_url: { label: "Instagram", analyticsKey: "instagram", icon: <InstagramIcon /> },
+        linkedin_url: { label: "LinkedIn", analyticsKey: "linkedin", icon: <LinkedInIcon /> },
+        x_url: { label: "X", analyticsKey: "x", icon: <XIcon /> },
+        twitter_url: { label: "X", analyticsKey: "x", icon: <XIcon /> },
+        tiktok_url: { label: "TikTok", analyticsKey: "tiktok", icon: <TikTokIcon /> },
     };
 
-    return map[key] || { label: key.replace("_url", ""), icon: null };
+    return map[key] || {
+        label: key.replace("_url", ""),
+        analyticsKey: key.replace("_url", ""),
+        icon: null,
+    };
 }
 
 function buildWorkRows(items) {
@@ -169,6 +174,54 @@ export default function Template3({ vm }) {
     const hasAbout = nonEmpty(bio) || nonEmpty(personName) || nonEmpty(personRole) || nonEmpty(avatar);
     const hasContact = nonEmpty(v.email) || nonEmpty(v.phone) || v.hasExchangeContact || socials.length > 0;
 
+    const trackContact = ({ eventType, actionTarget, targetUrl }) => {
+        if (typeof v.onTrackContactClick === "function") {
+            v.onTrackContactClick({ eventType, actionTarget, targetUrl });
+        }
+    };
+
+    const handleSaveMyNumber = () => {
+        if (typeof v.onSaveMyNumber === "function") {
+            v.onSaveMyNumber();
+        }
+    };
+
+    const handleExchangeClick = () => {
+        trackContact({
+            eventType: "contact_exchange_opened",
+            actionTarget: "exchange_contact_opened",
+            targetUrl: "",
+        });
+
+        if (typeof v.onOpenExchangeContact === "function") {
+            v.onOpenExchangeContact();
+        }
+    };
+
+    const handleEmailClick = () => {
+        trackContact({
+            eventType: "email_clicked",
+            actionTarget: "email",
+            targetUrl: `mailto:${v.email}`,
+        });
+    };
+
+    const handlePhoneClick = () => {
+        trackContact({
+            eventType: "phone_clicked",
+            actionTarget: "phone",
+            targetUrl: `tel:${v.phone}`,
+        });
+    };
+
+    const handleSocialClick = (platformKey, url) => {
+        trackContact({
+            eventType: "social_clicked",
+            actionTarget: platformKey,
+            targetUrl: url,
+        });
+    };
+
     return (
         <div className={`kc-tpl kc-tpl-3 ${themeMode === "dark" ? "t3-theme-dark" : "t3-theme-light"}`}>
             <div className="t3-shell">
@@ -191,14 +244,22 @@ export default function Template3({ vm }) {
 
                                 {hasHeroCtas ? (
                                     <div className="t3-cta">
-                                        <button type="button" className="t3-btn t3-btn-primary" onClick={v.onSaveMyNumber}>
+                                        <button
+                                            type="button"
+                                            className="t3-btn t3-btn-primary"
+                                            onClick={handleSaveMyNumber}
+                                        >
                                             <span className="t3-btnIcon">
                                                 <img src={SaveMyNumberIcon} alt="" className="t3-btnIconAsset t3-btnIconAsset--primary" />
                                             </span>
                                             <span className="t3-btnLabel t3-btnLabel--primary">Save My Number</span>
                                         </button>
 
-                                        <button type="button" className="t3-btn t3-btn-secondary t3-btn-exchange" onClick={v.onOpenExchangeContact}>
+                                        <button
+                                            type="button"
+                                            className="t3-btn t3-btn-secondary t3-btn-exchange"
+                                            onClick={handleExchangeClick}
+                                        >
                                             <span className="t3-btnIcon">
                                                 <img src={ExchangeContactIcon} alt="" className="t3-btnIconAsset t3-btnIconAsset--exchange" />
                                             </span>
@@ -319,10 +380,14 @@ export default function Template3({ vm }) {
                         </div>
 
                         <div className="t3-contactWrap">
-                            {(nonEmpty(v.email) || nonEmpty(v.phone) || v.hasExchangeContact) ? (
+                            {nonEmpty(v.email) || nonEmpty(v.phone) || v.hasExchangeContact ? (
                                 <div className="t3-contactGrid">
                                     {nonEmpty(v.email) ? (
-                                        <a className="t3-contactCard" href={`mailto:${v.email}`}>
+                                        <a
+                                            className="t3-contactCard"
+                                            href={`mailto:${v.email}`}
+                                            onClick={handleEmailClick}
+                                        >
                                             <span className="t3-contactIcon"><EmailIcon /></span>
                                             <span className="t3-contactText">
                                                 <span className="t3-contactLabel">Email</span>
@@ -332,7 +397,11 @@ export default function Template3({ vm }) {
                                     ) : null}
 
                                     {nonEmpty(v.phone) ? (
-                                        <a className="t3-contactCard" href={`tel:${v.phone}`}>
+                                        <a
+                                            className="t3-contactCard"
+                                            href={`tel:${v.phone}`}
+                                            onClick={handlePhoneClick}
+                                        >
                                             <span className="t3-contactIcon"><PhoneIcon /></span>
                                             <span className="t3-contactText">
                                                 <span className="t3-contactLabel">Phone</span>
@@ -342,7 +411,11 @@ export default function Template3({ vm }) {
                                     ) : null}
 
                                     {v.hasExchangeContact ? (
-                                        <button type="button" className="t3-contactCard t3-contactCard--button" onClick={v.onOpenExchangeContact}>
+                                        <button
+                                            type="button"
+                                            className="t3-contactCard t3-contactCard--button"
+                                            onClick={handleExchangeClick}
+                                        >
                                             <span className="t3-contactIcon">
                                                 <img src={ExchangeContactIcon} alt="" className="t3-contactIconAsset" />
                                             </span>
@@ -368,6 +441,7 @@ export default function Template3({ vm }) {
                                                 rel="noreferrer"
                                                 aria-label={meta.label}
                                                 title={meta.label}
+                                                onClick={() => handleSocialClick(meta.analyticsKey, url)}
                                             >
                                                 {meta.icon}
                                             </a>

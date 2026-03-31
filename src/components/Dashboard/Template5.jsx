@@ -48,31 +48,41 @@ function getSocialMeta(key) {
     const map = {
         facebook_url: {
             label: "Facebook",
+            analyticsKey: "facebook",
             icon: <TemplateIcon src={FacebookIconSrc} alt="" className="t5-socialIconAsset" />,
         },
         instagram_url: {
             label: "Instagram",
+            analyticsKey: "instagram",
             icon: <TemplateIcon src={InstagramIconSrc} alt="" className="t5-socialIconAsset" />,
         },
         linkedin_url: {
             label: "LinkedIn",
+            analyticsKey: "linkedin",
             icon: <TemplateIcon src={LinkedInIconSrc} alt="" className="t5-socialIconAsset" />,
         },
         x_url: {
             label: "X",
+            analyticsKey: "x",
             icon: <TemplateIcon src={XIconSrc} alt="" className="t5-socialIconAsset" />,
         },
         twitter_url: {
             label: "X",
+            analyticsKey: "x",
             icon: <TemplateIcon src={XIconSrc} alt="" className="t5-socialIconAsset" />,
         },
         tiktok_url: {
             label: "TikTok",
+            analyticsKey: "tiktok",
             icon: <TemplateIcon src={TikTokIconSrc} alt="" className="t5-socialIconAsset" />,
         },
     };
 
-    return map[key] || { label: key.replace("_url", ""), icon: null };
+    return map[key] || {
+        label: key.replace("_url", ""),
+        analyticsKey: key.replace("_url", ""),
+        icon: null,
+    };
 }
 
 function buildWorkRows(items) {
@@ -119,6 +129,54 @@ export default function Template5({ vm }) {
     const hasAbout = nonEmpty(v.bio) || nonEmpty(v.fullName) || nonEmpty(v.jobTitle) || nonEmpty(avatar);
     const hasContact = nonEmpty(v.email) || nonEmpty(v.phone) || v.hasExchangeContact || socials.length > 0;
 
+    const trackContact = ({ eventType, actionTarget, targetUrl }) => {
+        if (typeof v.onTrackContactClick === "function") {
+            v.onTrackContactClick({ eventType, actionTarget, targetUrl });
+        }
+    };
+
+    const handleSaveMyNumber = () => {
+        if (typeof v.onSaveMyNumber === "function") {
+            v.onSaveMyNumber();
+        }
+    };
+
+    const handleExchangeClick = () => {
+        trackContact({
+            eventType: "contact_exchange_opened",
+            actionTarget: "exchange_contact_opened",
+            targetUrl: "",
+        });
+
+        if (typeof v.onOpenExchangeContact === "function") {
+            v.onOpenExchangeContact();
+        }
+    };
+
+    const handleEmailClick = () => {
+        trackContact({
+            eventType: "email_clicked",
+            actionTarget: "email",
+            targetUrl: `mailto:${v.email}`,
+        });
+    };
+
+    const handlePhoneClick = () => {
+        trackContact({
+            eventType: "phone_clicked",
+            actionTarget: "phone",
+            targetUrl: `tel:${v.phone}`,
+        });
+    };
+
+    const handleSocialClick = (platformKey, url) => {
+        trackContact({
+            eventType: "social_clicked",
+            actionTarget: platformKey,
+            targetUrl: url,
+        });
+    };
+
     return (
         <div className={`kc-tpl kc-tpl-5 ${themeMode === "dark" ? "t5-theme-dark" : "t5-theme-light"}`}>
             <div className="t5-shell">
@@ -144,7 +202,7 @@ export default function Template5({ vm }) {
                             {hasHeroCtas ? (
                                 <div className="t5-cta">
                                     {nonEmpty(v.email) || nonEmpty(v.phone) ? (
-                                        <button type="button" className="t5-btn t5-btn-primary" onClick={v.onSaveMyNumber}>
+                                        <button type="button" className="t5-btn t5-btn-primary" onClick={handleSaveMyNumber}>
                                             <span className="t5-btnIcon">
                                                 <img src={SaveMyNumberIcon} alt="" className="t5-btnIconAsset t5-btnIconAsset--primary" />
                                             </span>
@@ -153,7 +211,7 @@ export default function Template5({ vm }) {
                                     ) : null}
 
                                     {v.hasExchangeContact ? (
-                                        <button type="button" className="t5-btn t5-btn-secondary" onClick={v.onOpenExchangeContact}>
+                                        <button type="button" className="t5-btn t5-btn-secondary" onClick={handleExchangeClick}>
                                             <span className="t5-btnIcon">
                                                 <img src={ExchangeContactIcon} alt="" className="t5-btnIconAsset t5-btnIconAsset--secondary" />
                                             </span>
@@ -257,10 +315,14 @@ export default function Template5({ vm }) {
                         <SectionHead title="Get In Touch" />
 
                         <div className="t5-contactWrap">
-                            {(nonEmpty(v.email) || nonEmpty(v.phone) || v.hasExchangeContact) ? (
+                            {nonEmpty(v.email) || nonEmpty(v.phone) || v.hasExchangeContact ? (
                                 <div className="t5-contactGrid">
                                     {nonEmpty(v.email) ? (
-                                        <a className="t5-contactCard" href={`mailto:${v.email}`}>
+                                        <a
+                                            className="t5-contactCard"
+                                            href={`mailto:${v.email}`}
+                                            onClick={handleEmailClick}
+                                        >
                                             <span className="t5-contactIcon">
                                                 <TemplateIcon src={EmailIconSrc} alt="" className="t5-contactIconAssetRaw" />
                                             </span>
@@ -272,7 +334,11 @@ export default function Template5({ vm }) {
                                     ) : null}
 
                                     {nonEmpty(v.phone) ? (
-                                        <a className="t5-contactCard" href={`tel:${v.phone}`}>
+                                        <a
+                                            className="t5-contactCard"
+                                            href={`tel:${v.phone}`}
+                                            onClick={handlePhoneClick}
+                                        >
                                             <span className="t5-contactIcon">
                                                 <TemplateIcon src={PhoneIconSrc} alt="" className="t5-contactIconAssetRaw" />
                                             </span>
@@ -284,7 +350,11 @@ export default function Template5({ vm }) {
                                     ) : null}
 
                                     {v.hasExchangeContact ? (
-                                        <button type="button" className="t5-contactCard t5-contactCard--button" onClick={v.onOpenExchangeContact}>
+                                        <button
+                                            type="button"
+                                            className="t5-contactCard t5-contactCard--button"
+                                            onClick={handleExchangeClick}
+                                        >
                                             <span className="t5-contactIcon">
                                                 <TemplateIcon src={ExchangeContactIconSrc} alt="" className="t5-contactIconAssetRaw" />
                                             </span>
@@ -310,6 +380,7 @@ export default function Template5({ vm }) {
                                                 rel="noreferrer"
                                                 aria-label={meta.label}
                                                 title={meta.label}
+                                                onClick={() => handleSocialClick(meta.analyticsKey, url)}
                                             >
                                                 {meta.icon}
                                             </a>
