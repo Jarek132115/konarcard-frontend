@@ -1,18 +1,14 @@
-/* frontend/src/styling/dashboard/analytics.css
-=========================================================
-Analytics — matches new dashboard system
-- 24px spacing system
-- Uses PageHeader
-- Cards + controls match Settings/ContactBook look
-========================================================= */
-
 :root {
     --an-border: rgba(15, 23, 42, 0.10);
     --an-shadow: 0 1px 0 rgba(15, 23, 42, 0.04), 0 10px 22px rgba(15, 23, 42, 0.04);
     --an-card: var(--kc-bg-soft, #fafafa);
+    --an-orange: #f97316;
+    --an-orange-soft: linear-gradient(135deg, #f97316 0%, #fb923c 100%);
+    --an-ink: var(--kc-text-primary, #0f172a);
+    --an-muted: var(--kc-text-secondary, #475569);
+    --an-white: #ffffff;
 }
 
-/* ✅ stop PageHeader adding extra bottom space inside this page */
 .an-shell .ph2-wrap {
     margin-bottom: 0;
 }
@@ -22,10 +18,8 @@ Analytics — matches new dashboard system
     display: flex;
     flex-direction: column;
     gap: 24px;
-    /* ✅ single spacing source */
 }
 
-/* Header right */
 .an-headRight {
     display: inline-flex;
     align-items: center;
@@ -34,19 +28,6 @@ Analytics — matches new dashboard system
     flex-wrap: wrap;
 }
 
-@media (max-width: 520px) {
-    .an-headRight {
-        width: 100%;
-        justify-content: flex-start;
-    }
-
-    .an-headRight .kx-btn {
-        width: 100%;
-        justify-content: center;
-    }
-}
-
-/* Range selector */
 .an-range {
     display: inline-flex;
     gap: 8px;
@@ -59,15 +40,13 @@ Analytics — matches new dashboard system
 .an-range-btn {
     border: 1px solid transparent;
     background: transparent;
-    padding: 10px 12px;
+    padding: 10px 14px;
     border-radius: 999px;
     cursor: pointer;
-
     font-family: "Inter", sans-serif;
     font-weight: 700;
     font-size: 13px;
-    color: var(--kc-text-primary);
-
+    color: var(--an-ink);
     transition: background 0.15s ease, transform 0.10s ease, border-color 0.15s ease;
 }
 
@@ -80,13 +59,13 @@ Analytics — matches new dashboard system
 }
 
 .an-range-btn.active {
-    background: rgba(249, 115, 22, 1);
+    background: var(--an-orange);
     color: #fff;
-    border-color: rgba(249, 115, 22, 1);
+    border-color: var(--an-orange);
 }
 
-/* Cards */
-.an-card {
+.an-card,
+.an-chartCard {
     background: var(--an-card);
     border: 1px solid var(--an-border);
     border-radius: 22px;
@@ -95,32 +74,34 @@ Analytics — matches new dashboard system
     min-width: 0;
 }
 
-.an-card-head {
+.an-card-head,
+.an-chartHead {
     display: flex;
     align-items: flex-start;
     justify-content: space-between;
     gap: 16px;
 }
 
-.an-card-title {
+.an-card-title,
+.an-chartTitle {
     margin: 0;
     font-family: "Inter", sans-serif;
     font-weight: 800;
-    color: var(--kc-text-primary);
+    color: var(--an-ink);
     font-size: 18px;
     letter-spacing: -0.01em;
 }
 
-.an-muted {
+.an-muted,
+.an-chartMuted {
     margin: 8px 0 0;
-    color: var(--kc-text-secondary);
+    color: var(--an-muted);
     font-family: "Inter", sans-serif;
     font-weight: 600;
     font-size: 14px;
     line-height: 1.55;
 }
 
-/* Choose profile */
 .an-profilePick {
     flex: 0 0 auto;
 }
@@ -134,7 +115,7 @@ Analytics — matches new dashboard system
     font-family: "Inter", sans-serif;
     font-weight: 700;
     font-size: 14px;
-    color: var(--kc-text-primary);
+    color: var(--an-ink);
     outline: none;
     cursor: pointer;
     transition: box-shadow 0.15s ease, border-color 0.15s ease;
@@ -145,88 +126,256 @@ Analytics — matches new dashboard system
     box-shadow: 0 0 0 3px var(--kc-focus-ring);
 }
 
-/* Metrics: 4 cards */
-.an-metrics4 {
-    margin-top: 16px;
+.an-state {
+    margin-top: 18px;
+    min-height: 120px;
     display: grid;
-    grid-template-columns: repeat(4, minmax(0, 1fr));
+    place-items: center;
+    border-radius: 18px;
+    border: 1px dashed rgba(15, 23, 42, 0.12);
+    background: #fff;
+    color: var(--an-muted);
+    font-family: "Inter", sans-serif;
+    font-weight: 700;
+}
+
+.an-state--error {
+    color: #b91c1c;
+}
+
+.an-metrics5 {
+    margin-top: 18px;
+    display: grid;
+    grid-template-columns: 1.3fr 1fr 1fr 1fr 1fr;
     gap: 16px;
 }
 
 .an-metric {
     background: #fff;
     border: 1px solid rgba(15, 23, 42, 0.10);
-    border-radius: 18px;
-    padding: 18px;
+    border-radius: 22px;
+    padding: 22px;
     min-width: 0;
 }
 
-.an-metric-num {
-    font-family: "Inter", sans-serif;
-    font-weight: 900;
-    font-size: 44px;
-    line-height: 1;
-    color: var(--kc-text-primary);
-    letter-spacing: -0.02em;
+.an-metric--featured {
+    background: var(--an-orange-soft);
+    border-color: transparent;
+    color: #fff;
 }
 
 .an-metric-label {
-    margin-top: 14px;
     font-family: "Inter", sans-serif;
     font-weight: 700;
-    font-size: 14px;
-    color: rgba(71, 85, 105, 0.95);
+    font-size: 15px;
+    color: inherit;
+    opacity: 0.95;
 }
 
-/* Timeline graphs */
-.an-graphs {
+.an-metric-num {
+    margin-top: 18px;
+    font-family: "Inter", sans-serif;
+    font-weight: 900;
+    font-size: 50px;
+    line-height: 1;
+    color: inherit;
+    letter-spacing: -0.03em;
+}
+
+.an-miniGrid {
     margin-top: 16px;
+    display: grid;
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+    gap: 12px;
+}
+
+.an-miniStat {
+    background: #fff;
+    border: 1px solid rgba(15, 23, 42, 0.08);
+    border-radius: 16px;
+    padding: 14px 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.an-miniStat-k {
+    font-family: "Inter", sans-serif;
+    font-weight: 700;
+    font-size: 12px;
+    color: var(--an-muted);
+}
+
+.an-miniStat-v {
+    font-family: "Inter", sans-serif;
+    font-weight: 800;
+    font-size: 22px;
+    color: var(--an-ink);
+    letter-spacing: -0.02em;
+}
+
+.an-chartGrid {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 16px;
 }
 
-.an-graph {
-    background: #fff;
-    border: 1px solid rgba(15, 23, 42, 0.10);
-    border-radius: 22px;
-    padding: 22px;
-    min-height: 420px;
-    display: grid;
-    place-items: center;
-}
-
-.an-graph-inner {
-    text-align: center;
-}
-
-.an-graph-title {
+.an-chartBadge {
+    padding: 8px 12px;
+    border-radius: 999px;
+    background: rgba(249, 115, 22, 0.10);
+    color: #c2410c;
     font-family: "Inter", sans-serif;
-    font-weight: 900;
-    font-size: 44px;
-    color: var(--kc-text-primary);
-    letter-spacing: -0.02em;
-    line-height: 1.05;
+    font-weight: 800;
+    font-size: 12px;
+    white-space: nowrap;
 }
 
-.an-graph-sub {
-    margin-top: 10px;
+.an-lineChart {
+    margin-top: 20px;
+}
+
+.an-lineChartSvg {
+    width: 100%;
+    height: 280px;
+    display: block;
+    overflow: visible;
+}
+
+.an-lineChartGrid {
+    fill: none;
+    stroke: rgba(15, 23, 42, 0.10);
+    stroke-width: 0.6;
+}
+
+.an-lineChartPath {
+    fill: none;
+    stroke: #f97316;
+    stroke-width: 2.5;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+.an-lineLabels {
+    margin-top: 12px;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(24px, 1fr));
+    gap: 6px;
+}
+
+.an-lineLabel {
+    text-align: center;
+    font-family: "Inter", sans-serif;
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--an-muted);
+}
+
+.an-barList {
+    margin-top: 18px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+.an-barRow {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.an-barMeta {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+}
+
+.an-barLabel,
+.an-barValue {
     font-family: "Inter", sans-serif;
     font-weight: 700;
-    color: rgba(71, 85, 105, 0.9);
+    font-size: 14px;
+    color: var(--an-ink);
 }
 
-/* Responsive */
-@media (max-width: 1100px) {
-    .an-metrics4 {
+.an-barTrack {
+    width: 100%;
+    height: 12px;
+    border-radius: 999px;
+    background: rgba(15, 23, 42, 0.07);
+    overflow: hidden;
+}
+
+.an-barFill {
+    height: 100%;
+    border-radius: 999px;
+    background: var(--an-orange-soft);
+}
+
+.an-infoList {
+    margin-top: 18px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.an-infoRow {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 14px 16px;
+    border-radius: 16px;
+    background: #fff;
+    border: 1px solid rgba(15, 23, 42, 0.08);
+}
+
+.an-infoRow strong {
+    display: block;
+    font-family: "Inter", sans-serif;
+    font-size: 14px;
+    font-weight: 800;
+    color: var(--an-ink);
+}
+
+.an-infoRow p {
+    margin: 6px 0 0;
+    font-family: "Inter", sans-serif;
+    font-size: 13px;
+    line-height: 1.55;
+    color: var(--an-muted);
+}
+
+.an-infoDot {
+    width: 10px;
+    height: 10px;
+    margin-top: 5px;
+    border-radius: 999px;
+    background: var(--an-orange);
+    flex: 0 0 auto;
+}
+
+@media (max-width: 1260px) {
+    .an-metrics5 {
         grid-template-columns: repeat(2, minmax(0, 1fr));
     }
 
-    .an-graphs {
+    .an-metric--featured {
+        grid-column: 1 / -1;
+    }
+
+    .an-miniGrid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 1100px) {
+    .an-chartGrid {
         grid-template-columns: 1fr;
     }
 
-    .an-card-head {
+    .an-card-head,
+    .an-chartHead {
         flex-direction: column;
         align-items: flex-start;
     }
@@ -237,22 +386,37 @@ Analytics — matches new dashboard system
     }
 }
 
-@media (max-width: 520px) {
-    .an-range {
+@media (max-width: 640px) {
+    .an-headRight {
         width: 100%;
-        justify-content: space-between;
+        justify-content: flex-start;
     }
 
-    .an-range-btn {
-        width: 50%;
+    .an-headRight .kx-btn {
+        width: 100%;
         justify-content: center;
     }
 
-    .an-metrics4 {
+    .an-range {
+        width: 100%;
+        justify-content: space-between;
+        flex-wrap: wrap;
+    }
+
+    .an-range-btn {
+        flex: 1 1 calc(50% - 4px);
+    }
+
+    .an-metrics5,
+    .an-miniGrid {
         grid-template-columns: 1fr;
     }
 
-    .an-graph-title {
-        font-size: 34px;
+    .an-metric-num {
+        font-size: 42px;
+    }
+
+    .an-lineChartSvg {
+        height: 220px;
     }
 }
