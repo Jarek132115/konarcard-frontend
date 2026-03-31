@@ -41,10 +41,39 @@ function MetricInline({ value, label }) {
     );
 }
 
+function LinkRow({ label, value, onCopy, copyLabel }) {
+    if (!value) return null;
+
+    return (
+        <div className="profiles-linkBlock">
+            <div className="profiles-previewLinkLabel">{label}</div>
+
+            <div className="profiles-previewLinkRow">
+                <div className="profiles-previewLinkUrl" title={value}>
+                    {value}
+                </div>
+
+                <button
+                    type="button"
+                    className="profiles-copyIconBtn"
+                    onClick={onCopy}
+                    aria-label={copyLabel || `Copy ${label}`}
+                >
+                    <img src={CopyLinkIcon} alt="" className="profiles-copyIcon24" />
+                </button>
+            </div>
+        </div>
+    );
+}
+
 export default function ProfilesInfo({
     selectedProfile,
     selectedPublicUrl,
+    selectedQrTrackedUrl,
+    selectedNfcTrackedUrl,
     onCopyLink,
+    onCopyQrLink,
+    onCopyNfcLink,
     onDownloadQr,
     onFacebook,
     onInstagram,
@@ -57,6 +86,10 @@ export default function ProfilesInfo({
     onDelete,
 }) {
     const resolvedQrCodeUrl = resolveMediaUrl(selectedProfile?.qrCodeUrl);
+
+    const publicUrl = selectedPublicUrl || "";
+    const qrTrackedUrl = selectedQrTrackedUrl || publicUrl || "";
+    const nfcTrackedUrl = selectedNfcTrackedUrl || publicUrl || "";
 
     return (
         <aside className="profiles-right">
@@ -77,25 +110,15 @@ export default function ProfilesInfo({
                                     </span>
                                 </div>
 
-                                <div className="profiles-previewLinkLabel">Profile link</div>
-
-                                <div className="profiles-previewLinkRow">
-                                    <div className="profiles-previewLinkUrl" title={selectedPublicUrl}>
-                                        {selectedPublicUrl}
-                                    </div>
-
-                                    <button
-                                        type="button"
-                                        className="profiles-copyIconBtn"
-                                        onClick={() => onCopyLink(selectedPublicUrl)}
-                                        aria-label="Copy profile link"
-                                    >
-                                        <img src={CopyLinkIcon} alt="" className="profiles-copyIcon24" />
-                                    </button>
-                                </div>
+                                <LinkRow
+                                    label="Profile link"
+                                    value={publicUrl}
+                                    onCopy={onCopyLink}
+                                    copyLabel="Copy profile link"
+                                />
 
                                 <div className="profiles-previewHint">
-                                    This is your profile link — share it after every job, quote, or enquiry.
+                                    This is your standard public profile link — use this for normal sharing.
                                 </div>
 
                                 <div className="profiles-previewMetricsRow">
@@ -104,6 +127,33 @@ export default function ProfilesInfo({
                                         <MetricInline value={selectedProfile.linkTaps ?? 0} label="Link Taps" />
                                         <MetricInline value={selectedProfile.qrScans ?? 0} label="QR Scans" />
                                     </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div className="profiles-divider" />
+
+                        <div className="profiles-infoSection">
+                            <div className="profiles-actionGroup">
+                                <h3 className="profiles-groupTitle">Tracked links</h3>
+
+                                <LinkRow
+                                    label="QR tracked link"
+                                    value={qrTrackedUrl}
+                                    onCopy={onCopyQrLink}
+                                    copyLabel="Copy QR tracked link"
+                                />
+
+                                <LinkRow
+                                    label="NFC tracked link"
+                                    value={nfcTrackedUrl}
+                                    onCopy={onCopyNfcLink}
+                                    copyLabel="Copy NFC tracked link"
+                                />
+
+                                <div className="profiles-previewHint">
+                                    Use the QR tracked link for QR generation and the NFC tracked link when
+                                    programming an NFC card or tag, so analytics records scans and taps properly.
                                 </div>
                             </div>
                         </div>
@@ -196,7 +246,7 @@ export default function ProfilesInfo({
                                     <button
                                         type="button"
                                         className="kx-btn kx-btn--white profiles-actionBtn"
-                                        onClick={() => onCopyLink(selectedPublicUrl)}
+                                        onClick={onCopyLink}
                                     >
                                         <ActionIcon src={ShareOnCopyIcon} />
                                         <span>Copy link</span>

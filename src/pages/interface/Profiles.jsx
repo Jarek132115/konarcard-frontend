@@ -43,6 +43,23 @@ const getThemeMode = (c) => {
     return raw === "dark" ? "dark" : "light";
 };
 
+const buildAbsolutePublicUrl = (profileSlug) => {
+    const s = normalizeSlug(profileSlug);
+    if (!s) return `${window.location.origin}/u/`;
+    return `${window.location.origin}/u/${encodeURIComponent(s)}`;
+};
+
+const buildTrackedPublicUrl = (profileSlug, via = "") => {
+    const base = buildAbsolutePublicUrl(profileSlug);
+    const cleanVia = String(via || "").trim().toLowerCase();
+
+    if (!base) return "";
+    if (!cleanVia) return base;
+    if (!["qr", "nfc"].includes(cleanVia)) return base;
+
+    return `${base}?via=${encodeURIComponent(cleanVia)}`;
+};
+
 const getMainPreviewData = (c) => {
     return {
         themeMode: getThemeMode(c),
@@ -221,6 +238,23 @@ export default function Profiles() {
             const qrScans =
                 Number(c?.qr_scans ?? c?.qrScans ?? c?.total_qr_scans ?? 0) || 0;
 
+            const publicUrl =
+                centerTrim(c?.public_profile_url) ||
+                centerTrim(c?.publicProfileUrl) ||
+                centerTrim(c?.profile_url) ||
+                centerTrim(c?.profileUrl) ||
+                buildAbsolutePublicUrl(slug);
+
+            const qrTrackedUrl =
+                centerTrim(c?.qr_profile_url) ||
+                centerTrim(c?.qrProfileUrl) ||
+                buildTrackedPublicUrl(slug, "qr");
+
+            const nfcTrackedUrl =
+                centerTrim(c?.nfc_profile_url) ||
+                centerTrim(c?.nfcProfileUrl) ||
+                buildTrackedPublicUrl(slug, "nfc");
+
             return {
                 id: c._id,
                 raw: c,
@@ -235,6 +269,9 @@ export default function Profiles() {
                 linkTaps,
                 qrScans,
                 qrCodeUrl: c?.qr_code_url || "",
+                publicUrl,
+                qrTrackedUrl,
+                nfcTrackedUrl,
             };
         });
     }, [cards]);
@@ -289,15 +326,17 @@ export default function Profiles() {
         return found;
     }, [sortedProfiles, selectedSlug, maxProfiles]);
 
-    const buildPublicUrl = (profileSlug) => {
-        const s = normalizeSlug(profileSlug);
-        if (!s) return `${window.location.origin}/u/`;
-        return `${window.location.origin}/u/${encodeURIComponent(s)}`;
-    };
-
     const selectedPublicUrl = useMemo(() => {
-        return selectedProfile?.slug ? buildPublicUrl(selectedProfile.slug) : "";
-    }, [selectedProfile?.slug]);
+        return selectedProfile?.publicUrl || "";
+    }, [selectedProfile]);
+
+    const selectedQrTrackedUrl = useMemo(() => {
+        return selectedProfile?.qrTrackedUrl || "";
+    }, [selectedProfile]);
+
+    const selectedNfcTrackedUrl = useMemo(() => {
+        return selectedProfile?.nfcTrackedUrl || "";
+    }, [selectedProfile]);
 
     const openLockedOverlay = (slug) => {
         setLockedClickedSlug(slug || "");
@@ -310,19 +349,19 @@ export default function Profiles() {
     };
 
     const overlayPlanName = isFree ? "Free" : isPlus ? "Plus" : "your current";
-    const overlayLimitText = `This plan is limited to ${maxProfiles} profile${maxProfiles === 1 ? "" : "s"
-        }.`;
+    const overlayLimitText = `This plan is limited to ${maxProfiles} profile${maxProfiles === 1 ? "" : "s"}.`;
 
     const handleEdit = (slug) => {
         navigate(`/profiles/edit?slug=${encodeURIComponent(slug || "")}`);
     };
 
     const handleVisitProfile = (slug) => {
-        const link = buildPublicUrl(slug);
+        const profile = sortedProfiles.find((p) => p.slug === slug);
+        const link = profile?.publicUrl || buildAbsolutePublicUrl(slug);
         window.open(link, "_blank", "noopener,noreferrer");
     };
 
-    const copyLink = async (link) => {
+    const copyLink = async (link, successMessage = "Link copied ✅") => {
         if (!link) {
             toast.error("No profile link available yet.");
             return;
@@ -330,10 +369,22 @@ export default function Profiles() {
 
         try {
             await navigator.clipboard.writeText(link);
-            toast.success("Link copied ✅");
+            toast.success(successMessage);
         } catch {
             toast.error("Copy failed. Please copy the link manually.");
         }
+    };
+
+    const handleCopyPublicLink = async () => {
+        await copyLink(selectedPublicUrl, "Profile link copied ✅");
+    };
+
+    const handleCopyQrLink = async () => {
+        await copyLink(selectedQrTrackedUrl, "QR link copied ✅");
+    };
+
+    const handleCopyNfcLink = async () => {
+        await copyLink(selectedNfcTrackedUrl, "NFC link copied ✅");
     };
 
     const handleDownloadQr = async () => {
@@ -411,7 +462,6 @@ export default function Profiles() {
 
         window.open(url, "_blank", "noopener,noreferrer,width=680,height=720");
     };
-
     const shareToWhatsApp = () => {
         if (!selectedPublicUrl) {
             toast.error("No profile link available yet.");
@@ -930,7 +980,11 @@ export default function Profiles() {
                         <ProfilesInfo
                             selectedProfile={selectedProfile}
                             selectedPublicUrl={selectedPublicUrl}
-                            onCopyLink={copyLink}
+                            selectedQrTrackedUrl={selectedQrTrackedUrl}
+                            selectedNfcTrackedUrl={selectedNfcTrackedUrl}
+                            onCopyLink={handleCopyPublicLink}
+                            onCopyQrLink={handleCopyQrLink}
+                            onCopyNfcLink={handleCopyNfcLink}
                             onDownloadQr={handleDownloadQr}
                             onFacebook={shareToFacebook}
                             onInstagram={shareToInstagram}
