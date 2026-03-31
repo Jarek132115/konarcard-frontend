@@ -147,12 +147,6 @@ export default function Template2({ vm }) {
     const hasContact =
         nonEmpty(v.email) || nonEmpty(v.phone) || v.hasExchangeContact || socials.length > 0;
 
-    const trackContact = ({ eventType, actionTarget, targetUrl }) => {
-        if (typeof v.onTrackContactClick === "function") {
-            v.onTrackContactClick({ eventType, actionTarget, targetUrl });
-        }
-    };
-
     const handleSaveMyNumber = () => {
         if (typeof v.onSaveMyNumber === "function") {
             v.onSaveMyNumber();
@@ -160,39 +154,27 @@ export default function Template2({ vm }) {
     };
 
     const handleExchangeClick = () => {
-        trackContact({
-            eventType: "contact_exchange_opened",
-            actionTarget: "exchange_contact_opened",
-            targetUrl: "",
-        });
-
         if (typeof v.onOpenExchangeContact === "function") {
             v.onOpenExchangeContact();
         }
     };
 
     const handleEmailClick = () => {
-        trackContact({
-            eventType: "email_clicked",
-            actionTarget: "email",
-            targetUrl: `mailto:${v.email}`,
-        });
+        if (typeof v.onEmailClick === "function") {
+            v.onEmailClick();
+        }
     };
 
     const handlePhoneClick = () => {
-        trackContact({
-            eventType: "phone_clicked",
-            actionTarget: "phone",
-            targetUrl: `tel:${v.phone}`,
-        });
+        if (typeof v.onPhoneClick === "function") {
+            v.onPhoneClick();
+        }
     };
 
     const handleSocialClick = (platformKey, url) => {
-        trackContact({
-            eventType: "social_clicked",
-            actionTarget: platformKey,
-            targetUrl: url,
-        });
+        if (typeof v.onSocialClick === "function") {
+            v.onSocialClick(platformKey, url);
+        }
     };
 
     return (
@@ -216,23 +198,27 @@ export default function Template2({ vm }) {
 
                             {hasHeroCtas ? (
                                 <div className="t2-ctaRow">
-                                    <button
-                                        type="button"
-                                        className="t2-btn t2-btn-primary"
-                                        onClick={handleSaveMyNumber}
-                                    >
-                                        <img src={SaveMyNumberIcon} alt="" className="t2-btnIcon" />
-                                        <span>Save My Number</span>
-                                    </button>
+                                    {(nonEmpty(v.email) || nonEmpty(v.phone)) ? (
+                                        <button
+                                            type="button"
+                                            className="t2-btn t2-btn-primary"
+                                            onClick={handleSaveMyNumber}
+                                        >
+                                            <img src={SaveMyNumberIcon} alt="" className="t2-btnIcon" />
+                                            <span>Save My Number</span>
+                                        </button>
+                                    ) : null}
 
-                                    <button
-                                        type="button"
-                                        className="t2-btn t2-btn-secondary"
-                                        onClick={handleExchangeClick}
-                                    >
-                                        <img src={ExchangeContactIcon} alt="" className="t2-btnIcon" />
-                                        <span>Exchange Contact</span>
-                                    </button>
+                                    {v.hasExchangeContact ? (
+                                        <button
+                                            type="button"
+                                            className="t2-btn t2-btn-secondary"
+                                            onClick={handleExchangeClick}
+                                        >
+                                            <img src={ExchangeContactIcon} alt="" className="t2-btnIcon" />
+                                            <span>Exchange Contact</span>
+                                        </button>
+                                    ) : null}
                                 </div>
                             ) : null}
                         </div>

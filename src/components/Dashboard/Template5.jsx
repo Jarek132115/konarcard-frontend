@@ -129,12 +129,6 @@ export default function Template5({ vm }) {
     const hasAbout = nonEmpty(v.bio) || nonEmpty(v.fullName) || nonEmpty(v.jobTitle) || nonEmpty(avatar);
     const hasContact = nonEmpty(v.email) || nonEmpty(v.phone) || v.hasExchangeContact || socials.length > 0;
 
-    const trackContact = ({ eventType, actionTarget, targetUrl }) => {
-        if (typeof v.onTrackContactClick === "function") {
-            v.onTrackContactClick({ eventType, actionTarget, targetUrl });
-        }
-    };
-
     const handleSaveMyNumber = () => {
         if (typeof v.onSaveMyNumber === "function") {
             v.onSaveMyNumber();
@@ -142,39 +136,27 @@ export default function Template5({ vm }) {
     };
 
     const handleExchangeClick = () => {
-        trackContact({
-            eventType: "contact_exchange_opened",
-            actionTarget: "exchange_contact_opened",
-            targetUrl: "",
-        });
-
         if (typeof v.onOpenExchangeContact === "function") {
             v.onOpenExchangeContact();
         }
     };
 
     const handleEmailClick = () => {
-        trackContact({
-            eventType: "email_clicked",
-            actionTarget: "email",
-            targetUrl: `mailto:${v.email}`,
-        });
+        if (typeof v.onEmailClick === "function") {
+            v.onEmailClick();
+        }
     };
 
     const handlePhoneClick = () => {
-        trackContact({
-            eventType: "phone_clicked",
-            actionTarget: "phone",
-            targetUrl: `tel:${v.phone}`,
-        });
+        if (typeof v.onPhoneClick === "function") {
+            v.onPhoneClick();
+        }
     };
 
     const handleSocialClick = (platformKey, url) => {
-        trackContact({
-            eventType: "social_clicked",
-            actionTarget: platformKey,
-            targetUrl: url,
-        });
+        if (typeof v.onSocialClick === "function") {
+            v.onSocialClick(platformKey, url);
+        }
     };
 
     return (

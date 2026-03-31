@@ -49,9 +49,15 @@ function downloadCsv(filename, rows) {
 }
 
 function MiniLineChart({ data = [], seriesKey = "profileViews" }) {
+    const values = useMemo(
+        () => data.map((item) => Number(item?.[seriesKey]) || 0),
+        [data, seriesKey]
+    );
+
     const points = useMemo(() => {
-        const values = data.map((item) => Number(item?.[seriesKey]) || 0);
-        const max = Math.max(...values, 1);
+        if (!data.length) return "";
+
+        const max = values.length ? Math.max(...values, 1) : 1;
 
         return values
             .map((value, index) => {
@@ -60,16 +66,32 @@ function MiniLineChart({ data = [], seriesKey = "profileViews" }) {
                 return `${x},${y}`;
             })
             .join(" ");
-    }, [data, seriesKey]);
+    }, [data, values]);
 
-    const maxValue = Math.max(...data.map((item) => Number(item?.[seriesKey]) || 0), 0);
+    const maxValue = values.length ? Math.max(...values, 0) : 0;
+
+    if (!data.length) {
+        return (
+            <div className="an-chartCard">
+                <div className="an-chartHead">
+                    <div>
+                        <h3 className="an-chartTitle">Engagement Over Time</h3>
+                        <p className="an-chartMuted">Profile views over time.</p>
+                    </div>
+                    <div className="an-chartBadge">Peak: 0</div>
+                </div>
+
+                <div className="an-state an-state--chart">No data yet</div>
+            </div>
+        );
+    }
 
     return (
         <div className="an-chartCard">
             <div className="an-chartHead">
                 <div>
                     <h3 className="an-chartTitle">Engagement Over Time</h3>
-                    <p className="an-chartMuted">Profile views, QR scans, NFC taps and contacts saved.</p>
+                    <p className="an-chartMuted">Profile views over time.</p>
                 </div>
                 <div className="an-chartBadge">Peak: {numberFormat(maxValue)}</div>
             </div>
@@ -204,36 +226,36 @@ export default function Analytics() {
             ["Profile", selectedProfileLabel],
             [],
             ["Metric", "Value"],
-            ["Profile Views", metrics.profileViews],
-            ["Card Taps", metrics.cardTaps],
-            ["QR Scans", metrics.qrScans],
-            ["Link Opens", metrics.linkOpens],
-            ["Contacts Saved", metrics.contactsSaved],
-            ["Exchange Contact Opens", metrics.contactExchangeOpens],
-            ["Exchange Contact Submits", metrics.contactExchangeSubmits],
-            ["Email Clicks", metrics.emailClicks],
-            ["Phone Clicks", metrics.phoneClicks],
-            ["Social Clicks", metrics.socialClicks],
-            ["Total Conversions", metrics.totalConversions],
-            ["Conversion Rate", `${metrics.conversionRate}%`],
+            ["Profile Views", metrics.profileViews ?? 0],
+            ["Card Taps", metrics.cardTaps ?? 0],
+            ["QR Scans", metrics.qrScans ?? 0],
+            ["Link Opens", metrics.linkOpens ?? 0],
+            ["Contacts Saved", metrics.contactsSaved ?? 0],
+            ["Exchange Contact Opens", metrics.contactExchangeOpens ?? 0],
+            ["Exchange Contact Submits", metrics.contactExchangeSubmits ?? 0],
+            ["Email Clicks", metrics.emailClicks ?? 0],
+            ["Phone Clicks", metrics.phoneClicks ?? 0],
+            ["Social Clicks", metrics.socialClicks ?? 0],
+            ["Total Conversions", metrics.totalConversions ?? 0],
+            ["Conversion Rate", `${metrics.conversionRate ?? 0}%`],
             [],
             ["Timeline"],
             ["Date", "Profile Views", "QR Scans", "Card Taps", "Contacts Saved"],
             ...timeline.map((item) => [
-                item.date,
-                item.profileViews,
-                item.qrScans,
-                item.cardTaps,
-                item.contactsSaved,
+                item.date ?? "",
+                item.profileViews ?? 0,
+                item.qrScans ?? 0,
+                item.cardTaps ?? 0,
+                item.contactsSaved ?? 0,
             ]),
             [],
             ["Traffic Sources"],
             ["Source", "Count"],
-            ...trafficSources.map((item) => [item.label, item.value]),
+            ...trafficSources.map((item) => [item.label ?? "", item.value ?? 0]),
             [],
             ["Social Breakdown"],
             ["Platform", "Count"],
-            ...socialBreakdown.map((item) => [item.label, item.value]),
+            ...socialBreakdown.map((item) => [item.label ?? "", item.value ?? 0]),
         ];
 
         downloadCsv(`konarcard-analytics-${selectedProfileLabel}-${range}d.csv`, rows);
@@ -255,7 +277,12 @@ export default function Analytics() {
                 ))}
             </div>
 
-            <button type="button" className="kx-btn kx-btn--black" onClick={exportData}>
+            <button
+                type="button"
+                className="kx-btn kx-btn--black"
+                onClick={exportData}
+                disabled={summaryQuery.isLoading}
+            >
                 Export
             </button>
         </div>
@@ -286,7 +313,9 @@ export default function Analytics() {
                                 onChange={(e) => setProfile(e.target.value)}
                                 aria-label="Choose profile"
                             >
-                                <option value="all">All profiles</option>
+                                <option value="all">
+                                    {profilesQuery.isLoading ? "Loading profiles..." : "All profiles"}
+                                </option>
                                 {(profilesQuery.data || []).map((item) => (
                                     <option key={item.slug || item.id} value={item.slug}>
                                         {item.name}

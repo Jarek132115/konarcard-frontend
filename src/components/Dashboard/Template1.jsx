@@ -49,39 +49,39 @@ function getSocialMeta(key) {
     const map = {
         facebook_url: {
             label: "Facebook",
-            analyticsKey: "facebook",
+            analyticsKey: "facebook_url",
             icon: <TemplateIcon src={FacebookIconSrc} alt="" className="t1-assetIcon t1-assetIcon--social" />,
         },
         instagram_url: {
             label: "Instagram",
-            analyticsKey: "instagram",
+            analyticsKey: "instagram_url",
             icon: <TemplateIcon src={InstagramIconSrc} alt="" className="t1-assetIcon t1-assetIcon--social" />,
         },
         linkedin_url: {
             label: "LinkedIn",
-            analyticsKey: "linkedin",
+            analyticsKey: "linkedin_url",
             icon: <TemplateIcon src={LinkedInIconSrc} alt="" className="t1-assetIcon t1-assetIcon--social" />,
         },
         x_url: {
             label: "X",
-            analyticsKey: "x",
+            analyticsKey: "x_url",
             icon: <TemplateIcon src={XIconSrc} alt="" className="t1-assetIcon t1-assetIcon--social t1-assetIcon--social-x" />,
         },
         twitter_url: {
             label: "X",
-            analyticsKey: "x",
+            analyticsKey: "twitter_url",
             icon: <TemplateIcon src={XIconSrc} alt="" className="t1-assetIcon t1-assetIcon--social t1-assetIcon--social-x" />,
         },
         tiktok_url: {
             label: "TikTok",
-            analyticsKey: "tiktok",
+            analyticsKey: "tiktok_url",
             icon: <TemplateIcon src={TikTokIconSrc} alt="" className="t1-assetIcon t1-assetIcon--social" />,
         },
     };
 
     return map[key] || {
         label: key.replace("_url", ""),
-        analyticsKey: key.replace("_url", ""),
+        analyticsKey: key,
         icon: null,
     };
 }
@@ -125,47 +125,27 @@ export default function Template1(props) {
     const hasAbout = nonEmpty(aboutName) || nonEmpty(aboutTrade) || nonEmpty(aboutBio) || nonEmpty(logo);
     const hasContact = nonEmpty(v.email) || nonEmpty(v.phone) || v.hasExchangeContact || socialEntries.length > 0;
 
-    const handleEmailClick = (e) => {
-        if (typeof v.onTrackContactClick === "function") {
-            v.onTrackContactClick({
-                eventType: "email_clicked",
-                actionTarget: "email",
-                targetUrl: `mailto:${v.email}`,
-            });
+    const handleEmailClick = () => {
+        if (typeof v.onEmailClick === "function") {
+            v.onEmailClick();
         }
     };
 
-    const handlePhoneClick = (e) => {
-        if (typeof v.onTrackContactClick === "function") {
-            v.onTrackContactClick({
-                eventType: "phone_clicked",
-                actionTarget: "phone",
-                targetUrl: `tel:${v.phone}`,
-            });
+    const handlePhoneClick = () => {
+        if (typeof v.onPhoneClick === "function") {
+            v.onPhoneClick();
         }
     };
 
     const handleExchangeClick = () => {
-        if (typeof v.onTrackContactClick === "function") {
-            v.onTrackContactClick({
-                eventType: "contact_exchange_submitted",
-                actionTarget: "exchange_contact_opened",
-                targetUrl: "",
-            });
-        }
-
         if (typeof v.onOpenExchangeContact === "function") {
             v.onOpenExchangeContact();
         }
     };
 
     const handleSocialClick = (platformKey, url) => {
-        if (typeof v.onTrackContactClick === "function") {
-            v.onTrackContactClick({
-                eventType: "social_clicked",
-                actionTarget: platformKey,
-                targetUrl: url,
-            });
+        if (typeof v.onSocialClick === "function") {
+            v.onSocialClick(platformKey, url);
         }
     };
 

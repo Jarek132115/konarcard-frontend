@@ -137,10 +137,16 @@
     color: var(--an-muted);
     font-family: "Inter", sans-serif;
     font-weight: 700;
+    text-align: center;
+    padding: 20px;
 }
 
 .an-state--error {
     color: #b91c1c;
+}
+
+.an-state--chart {
+    min-height: 280px;
 }
 
 .an-metrics5 {

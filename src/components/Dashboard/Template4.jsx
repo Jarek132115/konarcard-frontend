@@ -164,12 +164,6 @@ export default function Template4({ vm }) {
     const hasAbout = nonEmpty(bio) || nonEmpty(fullName) || nonEmpty(jobTitle) || nonEmpty(avatar);
     const hasContact = nonEmpty(v.email) || nonEmpty(v.phone) || v.hasExchangeContact || socials.length > 0;
 
-    const trackContact = ({ eventType, actionTarget, targetUrl }) => {
-        if (typeof v.onTrackContactClick === "function") {
-            v.onTrackContactClick({ eventType, actionTarget, targetUrl });
-        }
-    };
-
     const handleSaveMyNumber = () => {
         if (typeof v.onSaveMyNumber === "function") {
             v.onSaveMyNumber();
@@ -177,39 +171,27 @@ export default function Template4({ vm }) {
     };
 
     const handleExchangeClick = () => {
-        trackContact({
-            eventType: "contact_exchange_opened",
-            actionTarget: "exchange_contact_opened",
-            targetUrl: "",
-        });
-
         if (typeof v.onOpenExchangeContact === "function") {
             v.onOpenExchangeContact();
         }
     };
 
     const handleEmailClick = () => {
-        trackContact({
-            eventType: "email_clicked",
-            actionTarget: "email",
-            targetUrl: `mailto:${v.email}`,
-        });
+        if (typeof v.onEmailClick === "function") {
+            v.onEmailClick();
+        }
     };
 
     const handlePhoneClick = () => {
-        trackContact({
-            eventType: "phone_clicked",
-            actionTarget: "phone",
-            targetUrl: `tel:${v.phone}`,
-        });
+        if (typeof v.onPhoneClick === "function") {
+            v.onPhoneClick();
+        }
     };
 
     const handleSocialClick = (platformKey, url) => {
-        trackContact({
-            eventType: "social_clicked",
-            actionTarget: platformKey,
-            targetUrl: url,
-        });
+        if (typeof v.onSocialClick === "function") {
+            v.onSocialClick(platformKey, url);
+        }
     };
 
     return (
@@ -254,7 +236,11 @@ export default function Template4({ vm }) {
                                     {showSaveButton ? (
                                         <button type="button" className="t4-btn t4-btn-primary" onClick={handleSaveMyNumber}>
                                             <span className="t4-btnIcon">
-                                                <img src={SaveMyNumberIcon} alt="" className="t4-btnIconAsset t4-btnIconAsset--primary" />
+                                                <img
+                                                    src={SaveMyNumberIcon}
+                                                    alt=""
+                                                    className="t4-btnIconAsset t4-btnIconAsset--primary"
+                                                />
                                             </span>
                                             <span>Save My Number</span>
                                         </button>
@@ -263,7 +249,11 @@ export default function Template4({ vm }) {
                                     {showExchangeButton ? (
                                         <button type="button" className="t4-btn t4-btn-secondary" onClick={handleExchangeClick}>
                                             <span className="t4-btnIcon">
-                                                <img src={ExchangeContactIcon} alt="" className="t4-btnIconAsset t4-btnIconAsset--secondary" />
+                                                <img
+                                                    src={ExchangeContactIcon}
+                                                    alt=""
+                                                    className="t4-btnIconAsset t4-btnIconAsset--secondary"
+                                                />
                                             </span>
                                             <span>Exchange Contact</span>
                                         </button>

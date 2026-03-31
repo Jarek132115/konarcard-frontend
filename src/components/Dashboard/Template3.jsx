@@ -125,11 +125,13 @@ function buildWorkRows(items) {
     while (i < items.length) {
         const take = useSingle ? 1 : 2;
         const rowItems = items.slice(i, i + take);
+
         rows.push({
             type: rowItems.length === 1 ? "single" : "double",
             items: rowItems,
         });
-        i += take;
+
+        i += rowItems.length;
         useSingle = !useSingle;
     }
 
@@ -174,12 +176,6 @@ export default function Template3({ vm }) {
     const hasAbout = nonEmpty(bio) || nonEmpty(personName) || nonEmpty(personRole) || nonEmpty(avatar);
     const hasContact = nonEmpty(v.email) || nonEmpty(v.phone) || v.hasExchangeContact || socials.length > 0;
 
-    const trackContact = ({ eventType, actionTarget, targetUrl }) => {
-        if (typeof v.onTrackContactClick === "function") {
-            v.onTrackContactClick({ eventType, actionTarget, targetUrl });
-        }
-    };
-
     const handleSaveMyNumber = () => {
         if (typeof v.onSaveMyNumber === "function") {
             v.onSaveMyNumber();
@@ -187,39 +183,27 @@ export default function Template3({ vm }) {
     };
 
     const handleExchangeClick = () => {
-        trackContact({
-            eventType: "contact_exchange_opened",
-            actionTarget: "exchange_contact_opened",
-            targetUrl: "",
-        });
-
         if (typeof v.onOpenExchangeContact === "function") {
             v.onOpenExchangeContact();
         }
     };
 
     const handleEmailClick = () => {
-        trackContact({
-            eventType: "email_clicked",
-            actionTarget: "email",
-            targetUrl: `mailto:${v.email}`,
-        });
+        if (typeof v.onEmailClick === "function") {
+            v.onEmailClick();
+        }
     };
 
     const handlePhoneClick = () => {
-        trackContact({
-            eventType: "phone_clicked",
-            actionTarget: "phone",
-            targetUrl: `tel:${v.phone}`,
-        });
+        if (typeof v.onPhoneClick === "function") {
+            v.onPhoneClick();
+        }
     };
 
     const handleSocialClick = (platformKey, url) => {
-        trackContact({
-            eventType: "social_clicked",
-            actionTarget: platformKey,
-            targetUrl: url,
-        });
+        if (typeof v.onSocialClick === "function") {
+            v.onSocialClick(platformKey, url);
+        }
     };
 
     return (
@@ -244,27 +228,43 @@ export default function Template3({ vm }) {
 
                                 {hasHeroCtas ? (
                                     <div className="t3-cta">
-                                        <button
-                                            type="button"
-                                            className="t3-btn t3-btn-primary"
-                                            onClick={handleSaveMyNumber}
-                                        >
-                                            <span className="t3-btnIcon">
-                                                <img src={SaveMyNumberIcon} alt="" className="t3-btnIconAsset t3-btnIconAsset--primary" />
-                                            </span>
-                                            <span className="t3-btnLabel t3-btnLabel--primary">Save My Number</span>
-                                        </button>
+                                        {(nonEmpty(v.email) || nonEmpty(v.phone)) ? (
+                                            <button
+                                                type="button"
+                                                className="t3-btn t3-btn-primary"
+                                                onClick={handleSaveMyNumber}
+                                            >
+                                                <span className="t3-btnIcon">
+                                                    <img
+                                                        src={SaveMyNumberIcon}
+                                                        alt=""
+                                                        className="t3-btnIconAsset t3-btnIconAsset--primary"
+                                                    />
+                                                </span>
+                                                <span className="t3-btnLabel t3-btnLabel--primary">
+                                                    Save My Number
+                                                </span>
+                                            </button>
+                                        ) : null}
 
-                                        <button
-                                            type="button"
-                                            className="t3-btn t3-btn-secondary t3-btn-exchange"
-                                            onClick={handleExchangeClick}
-                                        >
-                                            <span className="t3-btnIcon">
-                                                <img src={ExchangeContactIcon} alt="" className="t3-btnIconAsset t3-btnIconAsset--exchange" />
-                                            </span>
-                                            <span className="t3-btnLabel t3-btnLabel--exchange">Exchange Contact</span>
-                                        </button>
+                                        {v.hasExchangeContact ? (
+                                            <button
+                                                type="button"
+                                                className="t3-btn t3-btn-secondary t3-btn-exchange"
+                                                onClick={handleExchangeClick}
+                                            >
+                                                <span className="t3-btnIcon">
+                                                    <img
+                                                        src={ExchangeContactIcon}
+                                                        alt=""
+                                                        className="t3-btnIconAsset t3-btnIconAsset--exchange"
+                                                    />
+                                                </span>
+                                                <span className="t3-btnLabel t3-btnLabel--exchange">
+                                                    Exchange Contact
+                                                </span>
+                                            </button>
+                                        ) : null}
                                     </div>
                                 ) : null}
                             </div>
@@ -318,7 +318,11 @@ export default function Template3({ vm }) {
                                             key={`${rowIndex}-${itemIndex}`}
                                             className={`t3-workTile ${row.items.length === 1 ? "is-full" : ""}`}
                                         >
-                                            <img src={url} alt={`Work ${rowIndex + itemIndex + 1}`} className="t3-workImg" />
+                                            <img
+                                                src={url}
+                                                alt={`Work ${rowIndex + itemIndex + 1}`}
+                                                className="t3-workImg"
+                                            />
                                         </div>
                                     ))}
                                 </div>
@@ -417,11 +421,17 @@ export default function Template3({ vm }) {
                                             onClick={handleExchangeClick}
                                         >
                                             <span className="t3-contactIcon">
-                                                <img src={ExchangeContactIcon} alt="" className="t3-contactIconAsset" />
+                                                <img
+                                                    src={ExchangeContactIcon}
+                                                    alt=""
+                                                    className="t3-contactIconAsset"
+                                                />
                                             </span>
                                             <span className="t3-contactText">
                                                 <span className="t3-contactLabel">Exchange Contact</span>
-                                                <span className="t3-contactValue">Share contact details with each other</span>
+                                                <span className="t3-contactValue">
+                                                    Share contact details with each other
+                                                </span>
                                             </span>
                                         </button>
                                     ) : null}
