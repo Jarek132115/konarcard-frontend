@@ -566,18 +566,6 @@ export default function UserPage() {
             },
         });
 
-        if (viewEvent !== "profile_view") {
-            void trackProfileEvent({
-                profileSlug: publicSlug,
-                eventType: "profile_view",
-                source,
-                meta: {
-                    pageUrl: window.location.href,
-                    referrer: document.referrer || "",
-                    querySource: new URLSearchParams(window.location.search).get("utm_source") || "",
-                },
-            });
-        }
     }, [businessCard, isValidSlug, publicSlug]);
 
     const goEditProfile = () => {
