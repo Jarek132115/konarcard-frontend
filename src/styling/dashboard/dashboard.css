@@ -177,15 +177,22 @@
     justify-content: flex-end;
 }
 
+/* shared panel */
 .db-scrollPanel {
     margin-top: 18px;
     flex: 1 1 auto;
     min-height: 0;
-    max-height: 360px;
-    overflow-y: auto;
-    padding-right: 4px;
+    padding-right: 0;
 }
 
+/* recent activity should hug content height and not scroll */
+.db-card--equal:first-of-type .db-scrollPanel,
+.db-recentPanel {
+    max-height: none;
+    overflow: visible;
+}
+
+/* generic row */
 .db-activityRow {
     display: flex;
     align-items: center;
@@ -295,39 +302,6 @@
     color: rgba(15, 23, 42, 0.92);
 }
 
-.db-physicalCallout {
-    margin-top: 18px;
-    padding: 16px;
-    border-radius: 16px;
-    border: 1px solid rgba(249, 115, 22, 0.16);
-    background: rgba(249, 115, 22, 0.05);
-}
-
-.db-physicalCallout--owned {
-    border-color: rgba(15, 23, 42, 0.10);
-    background: rgba(15, 23, 42, 0.03);
-}
-
-.db-physicalTitle {
-    font-family: "Inter", sans-serif;
-    font-size: 14px;
-    font-weight: 800;
-    color: rgba(15, 23, 42, 0.94);
-}
-
-.db-physicalText {
-    margin-top: 6px;
-    font-family: "Inter", sans-serif;
-    font-size: 13px;
-    line-height: 1.5;
-    font-weight: 500;
-    color: rgba(71, 85, 105, 0.95);
-}
-
-.db-physicalActions {
-    margin-top: 14px;
-}
-
 .db-bottomCta {
     margin-top: 20px;
     padding-top: 0;
@@ -359,7 +333,8 @@
     }
 
     .db-scrollPanel {
-        max-height: 320px;
+        max-height: none;
+        overflow: visible;
     }
 }
 
