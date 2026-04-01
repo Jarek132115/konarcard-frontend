@@ -278,7 +278,6 @@
     flex-direction: column;
     justify-content: space-between;
     padding-top: 2px;
-    padding-bottom: 0;
 }
 
 .an-yAxisLabel {
@@ -319,13 +318,9 @@
 }
 
 .an-lineLabels {
+    position: relative;
+    height: 34px;
     margin-top: 12px;
-    display: grid;
-    gap: 6px;
-}
-
-.an-lineLabels--spaced {
-    grid-template-columns: repeat(auto-fit, minmax(24px, 1fr));
 }
 
 .an-lineLabel {
@@ -337,6 +332,20 @@
     color: var(--an-muted);
     line-height: 1.25;
     white-space: nowrap;
+}
+
+.an-lineLabel--absolute {
+    position: absolute;
+    top: 0;
+    transform: translateX(-50%);
+}
+
+.an-lineLabel--absolute:first-child {
+    transform: translateX(0);
+}
+
+.an-lineLabel--absolute:last-child {
+    transform: translateX(-100%);
 }
 
 .an-activityList {

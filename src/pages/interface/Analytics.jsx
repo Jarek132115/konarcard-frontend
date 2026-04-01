@@ -59,6 +59,7 @@ function formatDateLabel(value) {
     if (!value) return "";
     const date = new Date(value);
     if (Number.isNaN(date.getTime())) return String(value);
+
     return date.toLocaleDateString("en-GB", {
         day: "numeric",
         month: "short",
@@ -74,7 +75,24 @@ function getXAxisTickStep(days, pointCount) {
 
 function buildYAxisTicks(maxValue) {
     const safeMax = Math.max(Number(maxValue) || 0, 1);
-    return [safeMax, Math.round((safeMax * 2) / 3), Math.round(safeMax / 3), 0];
+
+    if (safeMax <= 3) return [safeMax, Math.max(1, safeMax - 1), 1, 0];
+    if (safeMax <= 10) return [safeMax, Math.round((safeMax * 2) / 3), Math.round(safeMax / 3), 0];
+
+    const roughStep = safeMax / 3;
+    const magnitude = Math.pow(10, Math.floor(Math.log10(roughStep)));
+    const normalized = roughStep / magnitude;
+
+    let niceStep = 1;
+    if (normalized <= 1) niceStep = 1;
+    else if (normalized <= 2) niceStep = 2;
+    else if (normalized <= 5) niceStep = 5;
+    else niceStep = 10;
+
+    const step = niceStep * magnitude;
+    const top = Math.ceil(safeMax / step) * step;
+
+    return [top, top - step, top - step * 2, 0].map((value) => Math.max(0, value));
 }
 
 function formatActivityTime(dateValue) {
@@ -92,6 +110,18 @@ function formatActivityTime(dateValue) {
     if (minutes < 60) return `${minutes} min ago`;
     if (hours < 24) return `${hours} hour${hours === 1 ? "" : "s"} ago`;
     return `${days} day${days === 1 ? "" : "s"} ago`;
+}
+
+function humanizeSocialTarget(target = "") {
+    const clean = String(target || "").trim().toLowerCase();
+
+    if (clean === "facebook_url" || clean === "facebook") return "Facebook";
+    if (clean === "instagram_url" || clean === "instagram") return "Instagram";
+    if (clean === "linkedin_url" || clean === "linkedin") return "LinkedIn";
+    if (clean === "x_url" || clean === "twitter_url" || clean === "x" || clean === "twitter") return "X";
+    if (clean === "tiktok_url" || clean === "tiktok") return "TikTok";
+
+    return "";
 }
 
 function getActivityMessage(item) {
@@ -117,8 +147,12 @@ function getActivityMessage(item) {
             return "Someone clicked your email";
         case "phone_clicked":
             return "Someone clicked your phone number";
-        case "social_clicked":
-            return target ? `Someone clicked your ${target} profile` : "Someone clicked one of your social links";
+        case "social_clicked": {
+            const socialName = humanizeSocialTarget(target);
+            return socialName
+                ? `Someone clicked your ${socialName} profile`
+                : "Someone clicked one of your social links";
+        }
         case "profile_view":
             return "Someone viewed your profile";
         default:
@@ -220,7 +254,7 @@ function MiniLineChart({
 
     const maxValue = values.length ? Math.max(...values, 0) : 0;
     const yTicks = buildYAxisTicks(maxValue);
-    const safeMax = Math.max(maxValue, 1);
+    const safeMax = Math.max(yTicks[0] || maxValue, 1);
 
     const points = useMemo(() => {
         if (!data.length) return "";
@@ -235,15 +269,20 @@ function MiniLineChart({
     }, [data, values, safeMax]);
 
     const tickStep = getXAxisTickStep(Number(rangeDays) || data.length, data.length);
-    const xAxisLabels = data.map((item, index) => {
-        const isLast = index === data.length - 1;
-        const shouldShow = index % tickStep === 0 || isLast;
+    const xAxisLabels = data
+        .map((item, index) => {
+            const isLast = index === data.length - 1;
+            const shouldShow = index % tickStep === 0 || isLast;
 
-        return {
-            key: item.date || `${index}`,
-            label: shouldShow ? (item.label || formatDateLabel(item.date)) : "",
-        };
-    });
+            if (!shouldShow) return null;
+
+            return {
+                key: item.date || `${index}`,
+                label: item.label || formatDateLabel(item.date),
+                left: data.length <= 1 ? 0 : (index / (data.length - 1)) * 100,
+            };
+        })
+        .filter(Boolean);
 
     if (!data.length) {
         return (
@@ -322,9 +361,13 @@ function MiniLineChart({
                         </svg>
                     </div>
 
-                    <div className="an-lineLabels an-lineLabels--spaced">
+                    <div className="an-lineLabels">
                         {xAxisLabels.map((item) => (
-                            <span key={item.key} className="an-lineLabel">
+                            <span
+                                key={item.key}
+                                className="an-lineLabel an-lineLabel--absolute"
+                                style={{ left: `${item.left}%` }}
+                            >
                                 {item.label}
                             </span>
                         ))}
@@ -426,6 +469,16 @@ function ActionDetailsCard({ metrics }) {
     );
 }
 
+function extractProfiles(data) {
+    if (Array.isArray(data)) return data;
+    if (Array.isArray(data?.profiles)) return data.profiles;
+    if (Array.isArray(data?.businessCards)) return data.businessCards;
+    if (Array.isArray(data?.cards)) return data.cards;
+    if (Array.isArray(data?.items)) return data.items;
+    if (data && typeof data === "object") return [data];
+    return [];
+}
+
 export default function Analytics() {
     const [range, setRange] = useState("7");
     const [profile, setProfile] = useState("all");
@@ -435,11 +488,7 @@ export default function Analytics() {
         queryKey: ["business-card-profiles-for-analytics"],
         queryFn: async () => {
             const res = await api.get("/api/business-card/profiles");
-            const raw = Array.isArray(res.data)
-                ? res.data
-                : Array.isArray(res.data?.profiles)
-                    ? res.data.profiles
-                    : [];
+            const raw = extractProfiles(res.data);
 
             return raw
                 .map((item, index) => {
@@ -452,6 +501,7 @@ export default function Analytics() {
                         "";
 
                     const id = item?._id || item?.id || `profile-${index}`;
+                    const value = slug || id;
 
                     const name =
                         item?.business_card_name ||
@@ -462,12 +512,12 @@ export default function Analytics() {
                         item?.businessName ||
                         item?.title ||
                         slug ||
-                        "Untitled profile";
+                        `Profile ${index + 1}`;
 
                     return {
                         id,
                         slug,
-                        value: slug || id,
+                        value,
                         name,
                     };
                 })
@@ -477,7 +527,7 @@ export default function Analytics() {
     });
 
     const summaryQuery = useQuery({
-        queryKey: ["analytics-summary", range, profile],
+        queryKey: ["analytics-summary", range, profile, profilesQuery.data?.length || 0],
         queryFn: async () => {
             const params = new URLSearchParams();
             params.set("days", range);
@@ -492,6 +542,7 @@ export default function Analytics() {
             const res = await api.get(`/api/analytics/summary?${params.toString()}`);
             return res.data;
         },
+        enabled: profile === "all" || profilesQuery.isSuccess,
         staleTime: 30 * 1000,
     });
 
@@ -514,23 +565,21 @@ export default function Analytics() {
 
     const timeline = summaryQuery.data?.timeline || [];
     const socialBreakdownRaw = summaryQuery.data?.socialBreakdown || [];
-    const recentActivityRaw = summaryQuery.data?.recentActivity || summaryQuery.data?.recentEvents || [];
+    const recentActivityRaw =
+        summaryQuery.data?.recentActivity || summaryQuery.data?.recentEvents || [];
 
     const socialBreakdown = ["facebook", "instagram", "tiktok", "linkedin", "x"].map((key) => {
         const found = socialBreakdownRaw.find((row) => row.key === key);
         return {
             key,
-            label:
-                key === "x"
-                    ? "X"
-                    : key.charAt(0).toUpperCase() + key.slice(1),
+            label: key === "x" ? "X" : key.charAt(0).toUpperCase() + key.slice(1),
             value: found?.value || 0,
         };
     });
 
     const recentActivity = recentActivityRaw.slice(0, 5).map((item, index) => ({
-        id: item?._id || item?.id || `activity-${index}`,
-        message: getActivityMessage(item),
+        id: item?.id || item?._id || `activity-${index}`,
+        message: item?.message || getActivityMessage(item),
         timeLabel: formatActivityTime(item?.createdAt || item?.timestamp || item?.date),
         ...item,
     }));
@@ -566,6 +615,10 @@ export default function Analytics() {
                 item.qrScans ?? 0,
                 item.cardTaps ?? 0,
             ]),
+            [],
+            ["Recent Activity"],
+            ["Message", "When"],
+            ...recentActivity.map((item) => [item.message ?? "", item.timeLabel ?? ""]),
             [],
             ["Social Breakdown"],
             ["Platform", "Count"],
