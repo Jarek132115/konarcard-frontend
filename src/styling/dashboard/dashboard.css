@@ -1,13 +1,3 @@
-/* src/styling/dashboard/dashboard.css
-=========================================================
-Dashboard — match screenshot
-- White page background
-- White cards with soft border
-- Quick actions = 1 row of 4 buttons
-- Profile completion = rows w right checkbox
-- Usage snapshot = 2x2 metrics
-========================================================= */
-
 .db-shell {
     width: 100%;
     padding: 0;
@@ -52,21 +42,17 @@ Dashboard — match screenshot
     grid-column: span 12;
 }
 
-.db-span-7 {
-    grid-column: span 7;
+.db-span-6 {
+    grid-column: span 6;
 }
 
-.db-span-5 {
-    grid-column: span 5;
-}
-
-/* cards */
+/* generic card */
 .db-card {
     background: #fff;
     border: 1px solid rgba(15, 23, 42, 0.10);
     border-radius: 22px;
     box-shadow: 0 1px 2px rgba(15, 23, 42, 0.05);
-    padding: 16px;
+    padding: 22px;
     min-width: 0;
 }
 
@@ -89,81 +75,202 @@ Dashboard — match screenshot
 .db-muted {
     margin: 8px 0 0;
     font-family: "Inter", sans-serif;
-    font-weight: 600;
+    font-weight: 500;
     font-size: 14px;
     line-height: 1.5;
     color: rgba(71, 85, 105, 0.95);
 }
 
-/* Quick actions row */
-.db-quickRow {
-    margin-top: 14px;
+/* stats */
+.db-statsRow {
+    grid-column: span 12;
     display: grid;
     grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 16px;
+}
+
+.db-statCard {
+    background: #fff;
+    border: 1px solid rgba(15, 23, 42, 0.10);
+    border-radius: 22px;
+    box-shadow: 0 1px 2px rgba(15, 23, 42, 0.05);
+    padding: 22px;
+    min-width: 0;
+}
+
+.db-statCard--featured {
+    background: linear-gradient(135deg, #f97316 0%, #fb923c 100%);
+    border-color: transparent;
+}
+
+.db-statLabel {
+    font-family: "Inter", sans-serif;
+    font-size: 15px;
+    font-weight: 600;
+    color: rgba(15, 23, 42, 0.9);
+}
+
+.db-statCard--featured .db-statLabel,
+.db-statCard--featured .db-statValue,
+.db-statCard--featured .db-statHelper {
+    color: #fff;
+}
+
+.db-statValue {
+    margin-top: 14px;
+    font-family: "Inter", sans-serif;
+    font-size: 48px;
+    line-height: 1;
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    color: rgba(15, 23, 42, 0.98);
+}
+
+.db-statHelper {
+    margin-top: 10px;
+    font-family: "Inter", sans-serif;
+    font-size: 13px;
+    line-height: 1.45;
+    font-weight: 500;
+    color: rgba(71, 85, 105, 0.95);
+}
+
+/* share strip */
+.db-card--share {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 18px;
+}
+
+.db-shareLeft {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    min-width: 0;
+}
+
+.db-shareIcon {
+    width: 46px;
+    height: 46px;
+    border-radius: 14px;
+    display: grid;
+    place-items: center;
+    background: rgba(249, 115, 22, 0.08);
+    color: #f97316;
+    flex: 0 0 auto;
+}
+
+.db-shareActions {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+}
+
+/* activity */
+.db-activityList {
+    margin-top: 18px;
+    display: flex;
+    flex-direction: column;
+}
+
+.db-activityRow {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 0;
+    border-bottom: 1px solid rgba(15, 23, 42, 0.08);
+}
+
+.db-activityRow:last-child {
+    border-bottom: 0;
+}
+
+.db-activityDot {
+    width: 8px;
+    height: 8px;
+    border-radius: 999px;
+    background: #f97316;
+    flex: 0 0 auto;
+}
+
+.db-activityMain {
+    min-width: 0;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
     gap: 12px;
 }
 
-.db-quickBtn {
-    height: 46px;
-    border-radius: 14px;
-    border: 1px solid rgba(15, 23, 42, 0.14);
-    background: #fff;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: 10px;
-    text-decoration: none;
-    cursor: pointer;
-
+.db-activityText {
     font-family: "Inter", sans-serif;
-    font-weight: 700;
+    font-size: 14px;
+    font-weight: 600;
+    line-height: 1.45;
+    color: rgba(15, 23, 42, 0.94);
+}
+
+.db-activityMeta {
+    font-family: "Inter", sans-serif;
     font-size: 13px;
-    color: rgba(15, 23, 42, 0.92);
-
-    transition: background .15s ease, box-shadow .15s ease, transform .08s ease;
+    font-weight: 500;
+    color: rgba(71, 85, 105, 0.9);
+    white-space: nowrap;
+    flex: 0 0 auto;
 }
 
-.db-quickBtn:hover {
-    background: rgba(15, 23, 42, 0.02);
-    box-shadow: 0 10px 24px rgba(15, 23, 42, 0.06);
+.db-emptyState {
+    margin-top: 18px;
+    border: 1px dashed rgba(15, 23, 42, 0.12);
+    border-radius: 16px;
+    padding: 18px;
+    font-family: "Inter", sans-serif;
+    font-size: 14px;
+    line-height: 1.5;
+    color: rgba(71, 85, 105, 0.92);
+    background: #fff;
 }
 
-.db-quickBtn:active {
-    transform: translateY(1px);
-}
-
-.db-quickBtn:disabled {
-    opacity: .55;
-    cursor: not-allowed;
-    box-shadow: none;
-    transform: none;
-}
-
-.db-quickIco {
-    width: 28px;
-    height: 28px;
-    border-radius: 10px;
-    border: 1px solid rgba(15, 23, 42, 0.12);
-    background: rgba(15, 23, 42, 0.02);
-    display: grid;
-    place-items: center;
-    color: rgba(15, 23, 42, 0.92);
-}
-
-/* Profile completion */
-.db-complete {
-    margin-top: 14px;
+/* completion */
+.db-progressMeta {
+    margin-top: 18px;
     display: flex;
-    flex-direction: column;
-    min-height: 420px;
-    /* pushes CTA to bottom like screenshot */
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    font-family: "Inter", sans-serif;
+    font-size: 13px;
+    font-style: italic;
+    font-weight: 500;
+    color: rgba(71, 85, 105, 0.95);
+}
+
+.db-progressBar {
+    margin-top: 10px;
+    width: 100%;
+    height: 12px;
+    border-radius: 999px;
+    background: rgba(15, 23, 42, 0.08);
+    overflow: hidden;
+}
+
+.db-progressFill {
+    display: block;
+    height: 100%;
+    border-radius: 999px;
+    background: #5fb464;
 }
 
 .db-completeLabel {
+    margin-top: 22px;
+    margin-bottom: 12px;
     font-family: "Inter", sans-serif;
     font-weight: 800;
+    font-size: 14px;
     color: rgba(15, 23, 42, 0.92);
-    margin-bottom: 10px;
 }
 
 .db-list {
@@ -179,85 +286,116 @@ Dashboard — match screenshot
     align-items: center;
     justify-content: space-between;
     gap: 14px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid rgba(15, 23, 42, 0.06);
 }
 
 .db-listText {
     font-family: "Inter", sans-serif;
-    font-weight: 650;
+    font-weight: 600;
     color: rgba(15, 23, 42, 0.88);
+    line-height: 1.45;
+}
+
+.db-listText.done {
+    color: rgba(71, 85, 105, 0.82);
+    text-decoration: line-through;
 }
 
 .db-box {
-    width: 20px;
-    height: 20px;
-    border-radius: 6px;
+    width: 22px;
+    height: 22px;
+    border-radius: 999px;
     border: 1px solid rgba(15, 23, 42, 0.14);
     background: #fff;
     flex: 0 0 auto;
 }
 
 .db-box.done {
-    background: rgba(15, 23, 42, 0.92);
-    border-color: rgba(15, 23, 42, 0.92);
+    background: #5fb464;
+    border-color: #5fb464;
 }
 
-.db-bottomCta {
-    margin-top: auto;
-    padding-top: 18px;
+/* physical product callout */
+.db-physicalCallout {
+    margin-top: 18px;
+    padding: 16px;
+    border-radius: 16px;
+    border: 1px solid rgba(249, 115, 22, 0.16);
+    background: rgba(249, 115, 22, 0.05);
 }
 
-/* Usage metrics 2x2 */
-.db-metrics2x2 {
-    margin-top: 14px;
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 12px;
+.db-physicalCallout--owned {
+    border-color: rgba(15, 23, 42, 0.10);
+    background: rgba(15, 23, 42, 0.03);
 }
 
-.db-metricBox {
-    background: #fff;
-    border: 1px solid rgba(15, 23, 42, 0.10);
-    border-radius: 18px;
-    padding: 18px;
+.db-physicalTitle {
+    font-family: "Inter", sans-serif;
+    font-size: 14px;
+    font-weight: 800;
+    color: rgba(15, 23, 42, 0.94);
 }
 
-.db-metricNum {
-    font-family: "Cal Sans", sans-serif;
-    font-weight: 500;
-    font-size: 44px;
-    letter-spacing: -0.02em;
-    color: rgba(249, 115, 22, 1);
-}
-
-.db-metricLabel {
+.db-physicalText {
     margin-top: 6px;
     font-family: "Inter", sans-serif;
-    font-weight: 700;
+    font-size: 13px;
+    line-height: 1.5;
+    font-weight: 500;
     color: rgba(71, 85, 105, 0.95);
 }
 
-/* responsive */
-@media (max-width: 1100px) {
+.db-physicalActions {
+    margin-top: 14px;
+}
 
-    .db-span-7,
-    .db-span-5 {
+/* bottom cta */
+.db-bottomCta {
+    margin-top: 20px;
+    padding-top: 0;
+}
+
+/* responsive */
+@media (max-width: 1200px) {
+    .db-statsRow {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 1100px) {
+    .db-span-6 {
         grid-column: span 12;
     }
 
-    .db-quickRow {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
+    .db-card--share {
+        flex-direction: column;
+        align-items: flex-start;
     }
 
-    .db-complete {
-        min-height: 0;
+    .db-shareActions {
+        width: 100%;
+        justify-content: flex-start;
+    }
+}
+
+@media (max-width: 700px) {
+    .db-statsRow {
+        grid-template-columns: 1fr;
+    }
+
+    .db-activityMain {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 4px;
+    }
+
+    .db-activityMeta {
+        white-space: normal;
     }
 }
 
 @media (max-width: 520px) {
-    .db-quickRow {
-        grid-template-columns: 1fr;
-    }
-
     .db-headRight {
         width: 100%;
         justify-content: flex-start;
@@ -266,5 +404,30 @@ Dashboard — match screenshot
     .db-headRight .kx-btn {
         width: 100%;
         justify-content: center;
+    }
+
+    .db-shareActions {
+        width: 100%;
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .db-shareActions .kx-btn {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .db-statValue {
+        font-size: 40px;
+    }
+
+    .db-card {
+        padding: 18px;
+        border-radius: 18px;
+    }
+
+    .db-statCard {
+        padding: 18px;
+        border-radius: 18px;
     }
 }
