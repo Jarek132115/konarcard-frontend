@@ -454,7 +454,7 @@ export default function Analytics() {
                             Couldn’t load analytics right now.
                         </div>
                     ) : (
-                        <div className="an-metrics6">
+                        <div className="an-metrics6 an-metrics7">
                             <div className="an-metric an-metric--featured">
                                 <div className="an-metric-label">Total Visits</div>
                                 <div className="an-metric-num">{numberFormat(metrics.profileViews)}</div>
@@ -478,6 +478,13 @@ export default function Analytics() {
                             <div className="an-metric">
                                 <div className="an-metric-label">Saved Contacts</div>
                                 <div className="an-metric-num">{numberFormat(metrics.contactsSaved)}</div>
+                            </div>
+
+                            <div className="an-metric">
+                                <div className="an-metric-label">Exchange Contacts</div>
+                                <div className="an-metric-num">
+                                    {numberFormat(metrics.contactExchangeSubmits)}
+                                </div>
                             </div>
 
                             <div className="an-metric">
