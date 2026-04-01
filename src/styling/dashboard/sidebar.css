@@ -50,7 +50,7 @@
     border-right: 1px solid var(--sb3-border);
     border-bottom: 1px solid var(--sb3-border);
     border-left: 0;
-    border-radius: 0 var(--sb3-radius-right) var(--sb3-radius-right) 0;
+    border-radius: 0;
     box-shadow: var(--sb3-shadow);
 
     display: flex;
