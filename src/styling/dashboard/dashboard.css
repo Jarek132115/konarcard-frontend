@@ -56,6 +56,12 @@
     min-width: 0;
 }
 
+.db-card--equal {
+    display: flex;
+    flex-direction: column;
+    min-height: 640px;
+}
+
 .db-cardHead {
     display: flex;
     align-items: flex-start;
@@ -159,6 +165,13 @@
     background: rgba(249, 115, 22, 0.08);
     color: #f97316;
     flex: 0 0 auto;
+    overflow: hidden;
+}
+
+.db-shareIcon img {
+    width: 24px;
+    height: 24px;
+    display: block;
 }
 
 .db-shareActions {
@@ -169,13 +182,17 @@
     justify-content: flex-end;
 }
 
-/* activity */
-.db-activityList {
+/* shared scroll panel */
+.db-scrollPanel {
     margin-top: 18px;
-    display: flex;
-    flex-direction: column;
+    flex: 1 1 auto;
+    min-height: 0;
+    max-height: 360px;
+    overflow-y: auto;
+    padding-right: 4px;
 }
 
+/* activity */
 .db-activityRow {
     display: flex;
     align-items: center;
@@ -223,7 +240,6 @@
 }
 
 .db-emptyState {
-    margin-top: 18px;
     border: 1px dashed rgba(15, 23, 42, 0.12);
     border-radius: 16px;
     padding: 18px;
@@ -266,7 +282,7 @@
 
 .db-completeLabel {
     margin-top: 22px;
-    margin-bottom: 12px;
+    margin-bottom: 0;
     font-family: "Inter", sans-serif;
     font-weight: 800;
     font-size: 14px;
@@ -278,7 +294,7 @@
     padding: 0;
     margin: 0;
     display: grid;
-    gap: 14px;
+    gap: 0;
 }
 
 .db-listRow {
@@ -286,8 +302,12 @@
     align-items: center;
     justify-content: space-between;
     gap: 14px;
-    padding-bottom: 10px;
+    padding: 14px 0;
     border-bottom: 1px solid rgba(15, 23, 42, 0.06);
+}
+
+.db-listRow:last-child {
+    border-bottom: 0;
 }
 
 .db-listText {
@@ -376,6 +396,14 @@
     .db-shareActions {
         width: 100%;
         justify-content: flex-start;
+    }
+
+    .db-card--equal {
+        min-height: 0;
+    }
+
+    .db-scrollPanel {
+        max-height: 320px;
     }
 }
 

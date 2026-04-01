@@ -12,6 +12,8 @@ import { useAuthUser } from "../../hooks/useAuthUser";
 import { useMyProfiles } from "../../hooks/useBusinessCard";
 import api from "../../services/api";
 
+import GrowYourReachIcon from "../../assets/icons/GrowYourReach.svg";
+
 const centerTrim = (v) => (v ?? "").toString().trim();
 const safeLower = (v) => centerTrim(v).toLowerCase();
 const asArray = (v) => (Array.isArray(v) ? v : []);
@@ -45,77 +47,6 @@ function ShareIcon() {
                 stroke="currentColor"
                 strokeWidth="2"
                 strokeLinejoin="round"
-            />
-        </svg>
-    );
-}
-
-function PencilIcon() {
-    return (
-        <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true">
-            <path
-                d="M14.1 4.9l5 5L8 21H3v-5L14.1 4.9z"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinejoin="round"
-            />
-            <path d="M13 6l5 5" fill="none" stroke="currentColor" strokeWidth="2" strokeLinejoin="round" />
-        </svg>
-    );
-}
-
-function CardIcon() {
-    return (
-        <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true">
-            <path
-                d="M4 7h16v10H4V7z"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinejoin="round"
-            />
-            <path d="M4 10h16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinejoin="round" />
-        </svg>
-    );
-}
-
-function ContactIcon() {
-    return (
-        <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true">
-            <path
-                d="M7 7a4 4 0 1 1 8 0 4 4 0 0 1-8 0z"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-            />
-            <path
-                d="M4 21a8 8 0 0 1 16 0"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-            />
-        </svg>
-    );
-}
-
-function RocketIcon() {
-    return (
-        <svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true">
-            <path
-                d="M14 4c3 0 5 2 5 5 0 5-5 9-10 10l-2 2-1-3-3-1 2-2c1-5 5-10 10-10Z"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinejoin="round"
-            />
-            <circle cx="14.5" cy="9.5" r="1.2" fill="currentColor" />
-            <path
-                d="M7 17l-2 2M9 19l-1 2"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
             />
         </svg>
     );
@@ -202,74 +133,107 @@ function getPrimaryProfile(cards) {
 }
 
 function computeProfileCompletion(card) {
-    if (!card) {
-        const items = [
-            { key: "profilePhoto", label: "Add a profile picture", done: false },
-            { key: "bio", label: "Write a short bio", done: false },
-            { key: "services", label: "Add your services", done: false },
-            { key: "gallery", label: "Add gallery photos", done: false },
-            { key: "reviews", label: "Add reviews", done: false },
-            { key: "contact", label: "Confirm contact details", done: false },
-            { key: "socials", label: "Add social links", done: false },
-            { key: "cta", label: "Add a call-to-action button", done: false },
-        ];
-
-        return { items, doneCount: 0, total: items.length, percent: 0 };
-    }
-
     const works = asArray(card?.works || card?.workImages);
     const services = asArray(card?.services);
     const reviews = asArray(card?.reviews);
 
-    const hasProfilePhoto =
-        hasText(card?.avatar) || hasText(card?.logo) || hasText(card?.cover_photo) || hasText(card?.coverPhoto);
-
-    const hasBio = hasText(card?.bio);
-    const hasServices = services.length > 0;
-    const hasGallery = works.length > 0;
-    const hasReviews = reviews.length > 0;
-    const hasContact =
-        hasText(card?.contact_email) ||
-        hasText(card?.contactEmail) ||
-        hasText(card?.email) ||
-        hasText(card?.phone_number) ||
-        hasText(card?.phoneNumber) ||
-        hasText(card?.phone);
-
-    const hasSocials =
-        hasText(card?.facebook_url) ||
-        hasText(card?.instagram_url) ||
-        hasText(card?.linkedin_url) ||
-        hasText(card?.x_url) ||
-        hasText(card?.twitter_url) ||
-        hasText(card?.tiktok_url);
-
-    const hasCta =
-        hasText(card?.button_text) ||
-        hasText(card?.buttonText) ||
-        hasText(card?.cta_text) ||
-        hasText(card?.ctaText) ||
-        hasText(card?.button_link) ||
-        hasText(card?.buttonLink) ||
-        hasText(card?.cta_link) ||
-        hasText(card?.ctaLink);
-
     const items = [
-        { key: "profilePhoto", label: "Add a profile picture", done: hasProfilePhoto },
-        { key: "bio", label: "Write a short bio", done: hasBio },
-        { key: "services", label: "Add your services", done: hasServices },
-        { key: "gallery", label: "Add gallery photos", done: hasGallery },
-        { key: "reviews", label: "Add reviews", done: hasReviews },
-        { key: "contact", label: "Confirm contact details", done: hasContact },
-        { key: "socials", label: "Add social links", done: hasSocials },
-        { key: "cta", label: "Add a call-to-action button", done: hasCta },
+        {
+            key: "coverPhoto",
+            label: "Add a cover photo",
+            done: hasText(card?.cover_photo) || hasText(card?.coverPhoto),
+        },
+        {
+            key: "logo",
+            label: "Add logo",
+            done: hasText(card?.logo) || hasText(card?.avatar),
+        },
+        {
+            key: "businessName",
+            label: "Add business name",
+            done:
+                hasText(card?.business_card_name) ||
+                hasText(card?.businessCardName) ||
+                hasText(card?.business_name) ||
+                hasText(card?.businessName) ||
+                hasText(card?.main_heading) ||
+                hasText(card?.mainHeading),
+        },
+        {
+            key: "tradeTitle",
+            label: "Add trade title",
+            done:
+                hasText(card?.trade_title) ||
+                hasText(card?.tradeTitle) ||
+                hasText(card?.sub_heading) ||
+                hasText(card?.subHeading) ||
+                hasText(card?.job_title) ||
+                hasText(card?.jobTitle),
+        },
+        {
+            key: "bio",
+            label: "Add a bio",
+            done: hasText(card?.bio),
+        },
+        {
+            key: "location",
+            label: "Add your location",
+            done: hasText(card?.location),
+        },
+        {
+            key: "workImages",
+            label: "Add your work images",
+            done: works.length > 0,
+        },
+        {
+            key: "services",
+            label: "Add your services",
+            done: services.length > 0,
+        },
+        {
+            key: "reviews",
+            label: "Add your reviews",
+            done: reviews.length > 0,
+        },
+        {
+            key: "email",
+            label: "Add your email",
+            done:
+                hasText(card?.contact_email) ||
+                hasText(card?.contactEmail) ||
+                hasText(card?.email),
+        },
+        {
+            key: "phone",
+            label: "Add your phone number",
+            done:
+                hasText(card?.phone_number) ||
+                hasText(card?.phoneNumber) ||
+                hasText(card?.phone),
+        },
+        {
+            key: "socials",
+            label: "Add your social medias",
+            done:
+                hasText(card?.facebook_url) ||
+                hasText(card?.instagram_url) ||
+                hasText(card?.linkedin_url) ||
+                hasText(card?.x_url) ||
+                hasText(card?.twitter_url) ||
+                hasText(card?.tiktok_url),
+        },
     ];
+
+    const sortedItems = [...items].sort((a, b) => {
+        if (a.done === b.done) return 0;
+        return a.done ? 1 : -1;
+    });
 
     const doneCount = items.filter((i) => i.done).length;
     const total = items.length;
     const percent = Math.round((doneCount / total) * 100);
 
-    return { items, doneCount, total, percent };
+    return { items: sortedItems, doneCount, total, percent };
 }
 
 function extractOrders(data) {
@@ -381,7 +345,7 @@ export default function Dashboard() {
     const recentActivityRaw =
         analyticsQuery.data?.recentActivity || analyticsQuery.data?.recentEvents || [];
 
-    const recentActivity = recentActivityRaw.slice(0, 6).map((item, index) => ({
+    const recentActivity = recentActivityRaw.map((item, index) => ({
         id: item?.id || item?._id || `activity-${index}`,
         message: item?.message || getActivityMessage(item),
         timeLabel: formatActivityTime(item?.createdAt || item?.timestamp || item?.date),
@@ -474,7 +438,7 @@ export default function Dashboard() {
                     <section className="db-card db-card--share db-span-12">
                         <div className="db-shareLeft">
                             <span className="db-shareIcon" aria-hidden="true">
-                                <RocketIcon />
+                                <img src={GrowYourReachIcon} alt="" />
                             </span>
 
                             <div>
@@ -501,7 +465,7 @@ export default function Dashboard() {
                         </div>
                     </section>
 
-                    <section className="db-card db-span-6">
+                    <section className="db-card db-card--equal db-span-6">
                         <div className="db-cardHead">
                             <div>
                                 <h2 className="db-cardTitle">Recent Activity</h2>
@@ -509,7 +473,7 @@ export default function Dashboard() {
                             </div>
                         </div>
 
-                        <div className="db-activityList">
+                        <div className="db-scrollPanel">
                             {recentActivity.length ? (
                                 recentActivity.map((item) => (
                                     <div key={item.id} className="db-activityRow">
@@ -534,7 +498,7 @@ export default function Dashboard() {
                         </div>
                     </section>
 
-                    <section className="db-card db-span-6">
+                    <section className="db-card db-card--equal db-span-6">
                         <div className="db-cardHead">
                             <div>
                                 <h2 className="db-cardTitle">Profile Completion</h2>
@@ -557,14 +521,16 @@ export default function Dashboard() {
 
                         <div className="db-completeLabel">Still to do:</div>
 
-                        <ul className="db-list">
-                            {completion.items.map((item) => (
-                                <li key={item.key} className="db-listRow">
-                                    <span className={`db-listText ${item.done ? "done" : ""}`}>{item.label}</span>
-                                    <span className={`db-box ${item.done ? "done" : ""}`} aria-hidden="true" />
-                                </li>
-                            ))}
-                        </ul>
+                        <div className="db-scrollPanel">
+                            <ul className="db-list">
+                                {completion.items.map((item) => (
+                                    <li key={item.key} className="db-listRow">
+                                        <span className={`db-listText ${item.done ? "done" : ""}`}>{item.label}</span>
+                                        <span className={`db-box ${item.done ? "done" : ""}`} aria-hidden="true" />
+                                    </li>
+                                ))}
+                            </ul>
+                        </div>
 
                         {!hasPhysicalCard ? (
                             <div className="db-physicalCallout">
