@@ -1,4 +1,3 @@
-// frontend/src/components/Dashboard/Sidebar.jsx
 import React, { useContext, useEffect, useMemo, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { AuthContext } from "../AuthContext.jsx";
@@ -64,7 +63,6 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen }) {
                 className={`sb3 ${isMobile ? "mobile" : ""} ${sidebarOpen ? "open" : ""}`}
                 aria-label="Sidebar"
             >
-                {/* Top */}
                 <div className="sb3-top">
                     <Link to="/dashboard" className="sb3-brand" onClick={closeSidebar}>
                         <span className="sb3-logo" aria-hidden="true">
@@ -85,13 +83,9 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen }) {
                     ) : null}
                 </div>
 
-                {/* Divider (inset) */}
                 <div className="sb3-divider" />
-
-                {/* 36px gap before first link */}
                 <div className="sb3-gap36" />
 
-                {/* Main links */}
                 <nav className="sb3-nav" aria-label="Main navigation">
                     {MAIN_ITEMS.map((item) => (
                         <Link
@@ -108,12 +102,10 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen }) {
                     ))}
                 </nav>
 
-                {/* Gap under Contact Book to divider */}
                 <div className="sb3-gap36" />
                 <div className="sb3-divider" />
                 <div className="sb3-gap36" />
 
-                {/* ✅ Upgrade Plan (fixed route) */}
                 <nav className="sb3-nav" aria-label="Upgrade">
                     <Link
                         to="/upgrade-plan"
@@ -127,12 +119,10 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen }) {
                     </Link>
                 </nav>
 
-                {/* 36px gap under Upgrade Plan */}
                 <div className="sb3-gap36" />
                 <div className="sb3-divider" />
                 <div className="sb3-gap36" />
 
-                {/* Help */}
                 <nav className="sb3-nav" aria-label="Help">
                     <Link
                         to="/helpcentreinterface"
@@ -146,7 +136,6 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen }) {
                     </Link>
                 </nav>
 
-                {/* Bottom */}
                 <div className="sb3-bottom">
                     <div className="sb3-divider" />
                     <div className="sb3-gap36" />
