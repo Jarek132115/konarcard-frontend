@@ -6,31 +6,35 @@
 
 .upg-summaryGrid {
     display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-template-columns: repeat(12, minmax(0, 1fr));
     gap: 16px;
     margin-top: 16px;
 }
 
 .upg-summaryCard {
+    grid-column: span 4;
     background: #ffffff;
     border: 1px solid rgba(15, 23, 42, 0.10);
     border-radius: 22px;
     box-shadow: 0 1px 2px rgba(15, 23, 42, 0.05);
-    padding: 20px;
+    padding: 18px 18px 16px;
     min-width: 0;
+    min-height: 170px;
+    display: flex;
+    flex-direction: column;
 }
 
 .upg-summaryCard--featured {
-    background: #f97316;
-    border-color: #f97316;
+    background: linear-gradient(135deg, #f97316 0%, #fb923c 100%);
+    border-color: transparent;
 }
 
 .upg-summaryLabel {
     font-family: "Inter", sans-serif;
     font-size: 14px;
+    line-height: 1.4;
     font-weight: 600;
-    line-height: 1.35;
-    color: rgba(15, 23, 42, 0.88);
+    color: rgba(15, 23, 42, 0.82);
 }
 
 .upg-summaryCard--featured .upg-summaryLabel {
@@ -39,9 +43,10 @@
 
 .upg-summaryHeading {
     margin-top: 8px;
-    font-family: "Cal Sans", sans-serif;
-    font-size: 20px;
-    line-height: 1.08;
+    font-family: "Inter", sans-serif;
+    font-size: 24px;
+    line-height: 1.1;
+    font-weight: 800;
     letter-spacing: -0.02em;
     color: #0f172a;
 }
@@ -53,22 +58,20 @@
 .upg-summaryText {
     margin: 10px 0 0;
     font-family: "Inter", sans-serif;
-    font-size: 14px;
-    line-height: 1.55;
+    font-size: 15px;
+    line-height: 1.5;
     font-weight: 500;
     color: #475569;
+    max-width: 520px;
 }
 
 .upg-summaryText--featured {
-    color: #ffffff;
+    color: rgba(255, 255, 255, 0.96);
 }
 
 .upg-summaryActions {
-    margin-top: 16px;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    flex-wrap: wrap;
+    margin-top: auto;
+    padding-top: 16px;
 }
 
 .upg-mainCard {
@@ -84,8 +87,7 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 16px;
-    flex-wrap: wrap;
+    gap: 18px;
 }
 
 .upg-mainHeadCopy {
@@ -98,16 +100,16 @@
 }
 
 .upg-mainSub {
-    margin: 10px 0 0;
+    margin: 8px 0 0;
 }
 
 .upg-mainHeadControls {
+    flex: 0 0 auto;
     display: flex;
     flex-direction: column;
-    align-items: flex-end;
     justify-content: center;
+    align-items: flex-end;
     gap: 10px;
-    min-width: 0;
 }
 
 .upg-billingTabs {
@@ -118,16 +120,17 @@
 }
 
 .upg-tab {
-    border: 1px solid rgba(15, 23, 42, 0.12);
+    appearance: none;
+    border: 1px solid rgba(15, 23, 42, 0.14);
     background: #ffffff;
-    color: #0f172a;
-    padding: 10px 14px;
+    color: rgba(15, 23, 42, 0.86);
     border-radius: 999px;
-    cursor: pointer;
+    padding: 10px 16px;
     font-family: "Inter", sans-serif;
     font-size: 13px;
-    line-height: 1;
     font-weight: 700;
+    line-height: 1;
+    cursor: pointer;
     transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease, transform 0.08s ease;
 }
 
@@ -141,13 +144,13 @@
 
 .upg-tab.is-active {
     background: #0b1220;
-    border-color: #0b1220;
     color: #ffffff;
+    border-color: #0b1220;
 }
 
 .upg-billingNote {
     font-family: "Inter", sans-serif;
-    font-size: 13px;
+    font-size: 14px;
     line-height: 1.45;
     font-weight: 500;
     color: #64748b;
@@ -155,27 +158,29 @@
 }
 
 .upg-plansGrid {
-    margin-top: 22px;
+    margin-top: 20px;
     display: grid;
     grid-template-columns: repeat(3, minmax(0, 1fr));
     gap: 16px;
+    align-items: stretch;
 }
 
 .upg-planCard {
     background: #ffffff;
     border: 1px solid rgba(15, 23, 42, 0.10);
     border-radius: 22px;
-    overflow: hidden;
     box-shadow: 0 1px 2px rgba(15, 23, 42, 0.05);
+    min-width: 0;
+    min-height: 100%;
     display: flex;
     flex-direction: column;
-    min-width: 0;
+    overflow: hidden;
 }
 
 .upg-planCard--featured {
-    background: #f97316;
-    border-color: #f97316;
-    box-shadow: 0 12px 28px rgba(249, 115, 22, 0.22);
+    background: linear-gradient(135deg, #f97316 0%, #fb923c 100%);
+    border-color: transparent;
+    box-shadow: 0 14px 28px rgba(249, 115, 22, 0.20);
 }
 
 .upg-planTop {
@@ -187,10 +192,10 @@
     align-items: center;
     justify-content: space-between;
     gap: 10px;
-    flex-wrap: wrap;
 }
 
-.upg-planTag {
+.upg-planTag,
+.upg-planCurrentBadge {
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -203,71 +208,47 @@
     font-size: 12px;
     line-height: 1;
     font-weight: 700;
-    color: #475569;
+    color: rgba(15, 23, 42, 0.82);
+    white-space: nowrap;
 }
 
-.upg-planTag--featured {
-    border-color: rgba(255, 255, 255, 0.35);
-    background: rgba(255, 255, 255, 0.18);
-    color: #ffffff;
-}
-
-.upg-planCurrentBadge {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    min-height: 28px;
-    padding: 0 10px;
-    border-radius: 999px;
-    background: rgba(15, 23, 42, 0.08);
-    color: #0f172a;
-    font-family: "Inter", sans-serif;
-    font-size: 11px;
-    font-weight: 800;
-    line-height: 1;
-}
-
+.upg-planTag--featured,
 .upg-planCurrentBadge--featured {
-    background: rgba(255, 255, 255, 0.18);
+    background: rgba(255, 255, 255, 0.14);
+    border-color: rgba(255, 255, 255, 0.28);
     color: #ffffff;
 }
 
 .upg-planNameRow {
-    margin-top: 16px;
+    margin-top: 18px;
     display: flex;
     align-items: center;
-    gap: 12px;
+    gap: 10px;
 }
 
 .upg-planIconWrap {
-    width: 28px;
-    height: 28px;
-    display: grid;
-    place-items: center;
+    width: 22px;
+    height: 22px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
     flex: 0 0 auto;
 }
 
-.upg-planIconWrap--featured {
-    filter: brightness(0) invert(1);
-}
-
 .upg-planIcon {
-    width: 24px;
-    height: 24px;
+    width: 20px;
+    height: 20px;
     display: block;
-}
-
-.upg-planNameBlock {
-    min-width: 0;
 }
 
 .upg-planName {
     margin: 0;
     font-family: "Inter", sans-serif;
-    font-size: 17px;
-    line-height: 1.2;
+    font-size: 20px;
+    line-height: 1.15;
     font-weight: 800;
     color: #0f172a;
+    letter-spacing: -0.02em;
 }
 
 .upg-planName--featured {
@@ -275,7 +256,7 @@
 }
 
 .upg-planPriceRow {
-    margin-top: 14px;
+    margin-top: 16px;
     display: flex;
     align-items: flex-end;
     gap: 8px;
@@ -284,10 +265,10 @@
 
 .upg-planPrice {
     font-family: "Inter", sans-serif;
-    font-size: 40px;
+    font-size: 58px;
     line-height: 0.95;
     font-weight: 800;
-    letter-spacing: -0.03em;
+    letter-spacing: -0.04em;
     color: #0f172a;
 }
 
@@ -296,24 +277,24 @@
 }
 
 .upg-planCadence {
+    padding-bottom: 7px;
     font-family: "Inter", sans-serif;
-    font-size: 14px;
-    line-height: 1.3;
+    font-size: 16px;
+    line-height: 1.2;
     font-weight: 600;
     color: #64748b;
-    padding-bottom: 4px;
 }
 
 .upg-planCadence--featured {
-    color: rgba(255, 255, 255, 0.92);
+    color: rgba(255, 255, 255, 0.94);
 }
 
 .upg-planMeta {
     margin-top: 12px;
     display: grid;
-    gap: 4px;
+    gap: 6px;
     font-family: "Inter", sans-serif;
-    font-size: 14px;
+    font-size: 15px;
     line-height: 1.45;
     font-weight: 500;
     color: #64748b;
@@ -325,47 +306,45 @@
 
 .upg-planDivider {
     height: 1px;
-    background: rgba(15, 23, 42, 0.08);
+    margin: 0 16px;
+    background: rgba(15, 23, 42, 0.10);
 }
 
 .upg-planDivider--featured {
-    background: rgba(255, 255, 255, 0.24);
+    background: rgba(255, 255, 255, 0.28);
 }
 
 .upg-planBody {
     padding: 16px;
     display: flex;
     flex-direction: column;
-    min-height: 100%;
     flex: 1 1 auto;
+    min-height: 0;
 }
 
 .upg-planIncluded {
-    padding-top: 14px;
-    border-top: 1px solid rgba(15, 23, 42, 0.10);
     font-family: "Inter", sans-serif;
-    font-size: 15px;
-    line-height: 1.35;
+    font-size: 16px;
+    line-height: 1.2;
     font-weight: 800;
     color: #0f172a;
 }
 
 .upg-planIncluded--featured {
-    border-top-color: rgba(255, 255, 255, 0.24);
     color: #ffffff;
 }
 
 .upg-planList {
-    margin: 14px 0 0;
+    margin: 16px 0 0;
     padding-left: 18px;
     display: grid;
-    gap: 10px;
+    gap: 12px;
 }
 
 .upg-planListItem {
     font-family: "Inter", sans-serif;
-    font-size: 14px;
-    line-height: 1.5;
+    font-size: 15px;
+    line-height: 1.45;
     font-weight: 500;
     color: #334155;
 }
@@ -376,7 +355,10 @@
 
 .upg-planActions {
     margin-top: auto;
-    padding-top: 18px;
+    padding-top: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
 }
 
 .upg-btn {
@@ -385,18 +367,17 @@
 }
 
 .upg-btn-featured {
-    background: rgba(255, 255, 255, 0.14);
+    background: rgba(255, 255, 255, 0.16);
     color: #ffffff;
-    border: 1px solid rgba(255, 255, 255, 0.28);
+    border: 1px solid rgba(255, 255, 255, 0.30);
     box-shadow: none;
 }
 
 .upg-btn-featured:hover {
-    background: rgba(255, 255, 255, 0.20);
+    background: rgba(255, 255, 255, 0.22);
 }
 
 .upg-planHelper {
-    margin-top: 10px;
     font-family: "Inter", sans-serif;
     font-size: 12px;
     line-height: 1.45;
@@ -408,9 +389,24 @@
     color: rgba(255, 255, 255, 0.92);
 }
 
-@media (max-width: 1200px) {
-    .upg-summaryGrid {
-        grid-template-columns: 1fr;
+@media (max-width: 1280px) {
+    .upg-summaryCard {
+        grid-column: span 12;
+        min-height: 0;
+    }
+
+    .upg-mainHead {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .upg-mainHeadControls {
+        width: 100%;
+        align-items: flex-start;
+    }
+
+    .upg-billingNote {
+        text-align: left;
     }
 
     .upg-plansGrid {
@@ -418,39 +414,42 @@
     }
 }
 
-@media (max-width: 980px) {
-    .upg-mainHead {
-        flex-direction: column;
-        align-items: flex-start;
-    }
+@media (max-width: 700px) {
 
-    .upg-mainHeadControls {
-        align-items: flex-start;
-        width: 100%;
-    }
-
-    .upg-billingNote {
-        text-align: left;
-    }
-}
-
-@media (max-width: 640px) {
-
-    .upg-summaryCard,
     .upg-mainCard,
+    .upg-summaryCard {
+        border-radius: 18px;
+        padding: 18px;
+    }
+
     .upg-planCard {
         border-radius: 18px;
     }
 
-    .upg-summaryCard,
-    .upg-mainCard {
-        padding: 18px;
+    .upg-planTop,
+    .upg-planBody {
+        padding: 14px;
+    }
+
+    .upg-planDivider {
+        margin: 0 14px;
+    }
+
+    .upg-planPrice {
+        font-size: 48px;
+    }
+
+    .upg-planCadence {
+        font-size: 15px;
+        padding-bottom: 5px;
     }
 
     .upg-summaryHeading {
-        font-size: 18px;
+        font-size: 22px;
     }
+}
 
+@media (max-width: 520px) {
     .upg-billingTabs {
         width: 100%;
     }
@@ -459,14 +458,21 @@
         flex: 1 1 calc(33.333% - 6px);
         justify-content: center;
         text-align: center;
+        padding: 10px 12px;
     }
 
-    .upg-summaryActions .kx-btn {
-        width: 100%;
-        justify-content: center;
+    .upg-planTopRow {
+        flex-direction: column;
+        align-items: flex-start;
     }
 
-    .upg-planPrice {
-        font-size: 34px;
+    .upg-planPriceRow {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 6px;
+    }
+
+    .upg-planCadence {
+        padding-bottom: 0;
     }
 }
