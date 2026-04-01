@@ -383,51 +383,16 @@ export default function Analytics() {
         },
     };
 
-    const headerRight = (
-        <div className="an-headRight">
-            <div className="an-range" role="tablist" aria-label="Analytics range">
-                {RANGE_OPTIONS.map((item) => (
-                    <button
-                        key={item.value}
-                        type="button"
-                        className={`an-range-btn ${range === item.value ? "active" : ""}`}
-                        onClick={() => setRange(item.value)}
-                        aria-pressed={range === item.value}
-                    >
-                        {item.label}
-                    </button>
-                ))}
-            </div>
-
-            <button
-                type="button"
-                className="kx-btn kx-btn--black"
-                onClick={exportData}
-                disabled={summaryQuery.isLoading}
-            >
-                Export
-            </button>
-        </div>
-    );
-
     return (
         <DashboardLayout title={null} subtitle={null} hideDesktopHeader>
             <div className="an-shell">
                 <PageHeader
                     title="Analytics"
                     subtitle="Track total visits, QR scans, NFC taps, link visits, saved contacts and exchange contact performance."
-                    rightSlot={headerRight}
                 />
 
-                <section className="an-card">
-                    <div className="an-card-head">
-                        <div>
-                            <h2 className="an-card-title">Overview</h2>
-                            <p className="an-muted">
-                                Live data from your tracked profile visits and contact actions.
-                            </p>
-                        </div>
-
+                <section className="an-toolbar">
+                    <div className="an-toolbarTop">
                         <div className="an-profilePick">
                             <select
                                 className="an-select"
@@ -445,8 +410,35 @@ export default function Analytics() {
                                 ))}
                             </select>
                         </div>
+
+                        <button
+                            type="button"
+                            className="kx-btn kx-btn--black an-exportBtn"
+                            onClick={exportData}
+                            disabled={summaryQuery.isLoading}
+                        >
+                            Export
+                        </button>
                     </div>
 
+                    <div className="an-toolbarBottom">
+                        <div className="an-range" role="tablist" aria-label="Analytics range">
+                            {RANGE_OPTIONS.map((item) => (
+                                <button
+                                    key={item.value}
+                                    type="button"
+                                    className={`an-range-btn ${range === item.value ? "active" : ""}`}
+                                    onClick={() => setRange(item.value)}
+                                    aria-pressed={range === item.value}
+                                >
+                                    {item.label}
+                                </button>
+                            ))}
+                        </div>
+                    </div>
+                </section>
+
+                <section className="an-overview">
                     {summaryQuery.isLoading ? (
                         <div className="an-state">Loading analytics…</div>
                     ) : summaryQuery.isError ? (
@@ -454,8 +446,8 @@ export default function Analytics() {
                             Couldn’t load analytics right now.
                         </div>
                     ) : (
-                        <div className="an-metrics6 an-metrics7">
-                            <div className="an-metric an-metric--featured">
+                        <div className="an-metrics7">
+                            <div className="an-metric">
                                 <div className="an-metric-label">Total Visits</div>
                                 <div className="an-metric-num">{numberFormat(metrics.profileViews)}</div>
                             </div>
