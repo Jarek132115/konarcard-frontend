@@ -199,25 +199,24 @@ function inferAnalyticsSource() {
         const params = new URLSearchParams(window.location.search);
 
         const explicitSource = String(params.get("source") || "").trim().toLowerCase();
-        if (["qr", "nfc", "direct", "link"].includes(explicitSource)) {
+        if (["qr", "nfc", "link"].includes(explicitSource)) {
             return explicitSource;
         }
 
         const utmSource = String(params.get("utm_source") || "").trim().toLowerCase();
         if (utmSource === "qr") return "qr";
         if (utmSource === "nfc") return "nfc";
+        if (utmSource === "link") return "link";
 
         const via = String(params.get("via") || "").trim().toLowerCase();
         if (via === "qr") return "qr";
         if (via === "nfc") return "nfc";
 
-        if (document.referrer && document.referrer.trim()) {
-            return "link";
-        }
-
-        return "direct";
+        // Product rule:
+        // Plain /u/slug should be treated as the normal shared profile link.
+        return "link";
     } catch {
-        return "unknown";
+        return "link";
     }
 }
 
@@ -551,9 +550,7 @@ export default function UserPage() {
                 ? "qr_scan"
                 : source === "nfc"
                     ? "nfc_tap"
-                    : source === "link"
-                        ? "link_open"
-                        : "profile_view";
+                    : "link_open";
 
         void trackProfileEvent({
             profileSlug: publicSlug,
@@ -565,7 +562,6 @@ export default function UserPage() {
                 querySource: new URLSearchParams(window.location.search).get("utm_source") || "",
             },
         });
-
     }, [businessCard, isValidSlug, publicSlug]);
 
     const goEditProfile = () => {

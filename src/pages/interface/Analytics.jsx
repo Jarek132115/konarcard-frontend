@@ -18,7 +18,6 @@ const CHART_OPTIONS = [
     { value: "linkOpens", label: "Link" },
     { value: "cardTaps", label: "NFC" },
     { value: "qrScans", label: "QR" },
-    { value: "contactConversions", label: "Conversions" },
 ];
 
 function numberFormat(value) {
@@ -61,7 +60,6 @@ function MiniLineChart({
     seriesKey = "profileViews",
     title = "Engagement Over Time",
     subtitle = "Tracked profile visits over time.",
-    activeLabel = "All Engagement",
     onChangeSeries,
 }) {
     const values = useMemo(
@@ -101,7 +99,7 @@ function MiniLineChart({
                         <button
                             key={item.value}
                             type="button"
-                            className={`an-miniFilterBtn ${activeLabel === item.label ? "active" : ""}`}
+                            className={`an-miniFilterBtn ${seriesKey === item.value ? "active" : ""}`}
                             onClick={() => onChangeSeries?.(item.value)}
                         >
                             {item.label}
@@ -138,7 +136,12 @@ function MiniLineChart({
             </div>
 
             <div className="an-lineChart">
-                <svg viewBox="0 0 100 100" className="an-lineChartSvg" preserveAspectRatio="none" aria-hidden="true">
+                <svg
+                    viewBox="0 0 100 100"
+                    className="an-lineChartSvg"
+                    preserveAspectRatio="none"
+                    aria-hidden="true"
+                >
                     <polyline className="an-lineChartGrid" points="0,100 100,100" />
                     <polyline className="an-lineChartGrid" points="0,66 100,66" />
                     <polyline className="an-lineChartGrid" points="0,33 100,33" />
@@ -192,51 +195,50 @@ function BarBreakdown({ title, subtitle, items = [] }) {
     );
 }
 
-function SourceConversionCard({ metrics, trafficSources }) {
-    const totalViews = Number(metrics?.profileViews) || 0;
-    const totalConversions = Number(metrics?.contactConversions) || 0;
-
-    const rows = trafficSources
-        .filter((item) => ["link", "qr", "nfc"].includes(item.key))
-        .map((item) => {
-            const sourceViews = Number(item.value) || 0;
-            const estimatedConversions =
-                totalViews > 0 ? Math.round((sourceViews / totalViews) * totalConversions) : 0;
-
-            const estimatedRate =
-                sourceViews > 0 ? Number(((estimatedConversions / sourceViews) * 100).toFixed(1)) : 0;
-
-            return {
-                ...item,
-                estimatedConversions,
-                estimatedRate,
-            };
-        });
-
+function ActionDetailsCard({ metrics }) {
     return (
         <div className="an-chartCard">
             <div className="an-chartHead">
                 <div>
-                    <h3 className="an-chartTitle">Source Conversion Snapshot</h3>
+                    <h3 className="an-chartTitle">Contact Action Details</h3>
                     <p className="an-chartMuted">
-                        Quick view of how your traffic sources are contributing to conversions.
+                        The actions people took after landing on your profile.
                     </p>
                 </div>
             </div>
 
-            <div className="an-barList">
-                {rows.map((row) => (
-                    <div key={row.key} className="an-infoRow">
-                        <span className="an-infoDot" />
-                        <div style={{ width: "100%" }}>
-                            <strong>{row.label}</strong>
-                            <p>
-                                {numberFormat(row.value)} visits • {numberFormat(row.estimatedConversions)} estimated
-                                conversions • {percentageFormat(row.estimatedRate)} estimated rate
-                            </p>
-                        </div>
+            <div className="an-infoList">
+                <div className="an-infoRow">
+                    <span className="an-infoDot" />
+                    <div>
+                        <strong>Exchange Opens</strong>
+                        <p>{numberFormat(metrics.contactExchangeOpens)} people opened the exchange contact form.</p>
                     </div>
-                ))}
+                </div>
+
+                <div className="an-infoRow">
+                    <span className="an-infoDot" />
+                    <div>
+                        <strong>Exchange Submits</strong>
+                        <p>{numberFormat(metrics.contactExchangeSubmits)} people submitted the exchange form.</p>
+                    </div>
+                </div>
+
+                <div className="an-infoRow">
+                    <span className="an-infoDot" />
+                    <div>
+                        <strong>Email Clicks</strong>
+                        <p>{numberFormat(metrics.emailClicks)} people clicked your email contact action.</p>
+                    </div>
+                </div>
+
+                <div className="an-infoRow">
+                    <span className="an-infoDot" />
+                    <div>
+                        <strong>Phone Clicks</strong>
+                        <p>{numberFormat(metrics.phoneClicks)} people clicked your phone number.</p>
+                    </div>
+                </div>
             </div>
         </div>
     );
@@ -306,7 +308,19 @@ export default function Analytics() {
 
     const timeline = summaryQuery.data?.timeline || [];
     const trafficSources = summaryQuery.data?.trafficSources || [];
-    const socialBreakdown = summaryQuery.data?.socialBreakdown || [];
+    const socialBreakdownRaw = summaryQuery.data?.socialBreakdown || [];
+
+    const socialBreakdown = ["facebook", "instagram", "tiktok", "linkedin", "x"].map((key) => {
+        const found = socialBreakdownRaw.find((row) => row.key === key);
+        return {
+            key,
+            label:
+                key === "x"
+                    ? "X"
+                    : key.charAt(0).toUpperCase() + key.slice(1),
+            value: found?.value || 0,
+        };
+    });
 
     const exportData = () => {
         const selectedProfileLabel =
@@ -320,36 +334,22 @@ export default function Analytics() {
             ["Profile", selectedProfileLabel],
             [],
             ["Metric", "Value"],
-            ["Profile Views", metrics.profileViews ?? 0],
-            ["Link Opens", metrics.linkOpens ?? 0],
+            ["Total Visits", metrics.profileViews ?? 0],
+            ["Link Visits", metrics.linkOpens ?? 0],
             ["NFC Taps", metrics.cardTaps ?? 0],
             ["QR Scans", metrics.qrScans ?? 0],
-            ["Contacts Saved", metrics.contactsSaved ?? 0],
-            ["Exchange Contact Opens", metrics.contactExchangeOpens ?? 0],
-            ["Exchange Contact Submits", metrics.contactExchangeSubmits ?? 0],
-            ["Email Clicks", metrics.emailClicks ?? 0],
-            ["Phone Clicks", metrics.phoneClicks ?? 0],
-            ["Social Clicks", metrics.socialClicks ?? 0],
-            ["Unique Visitors", metrics.uniqueVisitors ?? 0],
-            ["Contact Conversions", metrics.contactConversions ?? 0],
+            ["Saved Contacts", metrics.contactsSaved ?? 0],
+            ["Exchange Contacts", metrics.contactExchangeSubmits ?? 0],
             ["Conversion Rate", `${metrics.conversionRate ?? 0}%`],
             [],
             ["Timeline"],
-            [
-                "Date",
-                "Profile Views",
-                "Link Opens",
-                "QR Scans",
-                "NFC Taps",
-                "Contact Conversions",
-            ],
+            ["Date", "Total Visits", "Link Visits", "QR Scans", "NFC Taps"],
             ...timeline.map((item) => [
                 item.date ?? "",
                 item.profileViews ?? 0,
                 item.linkOpens ?? 0,
                 item.qrScans ?? 0,
                 item.cardTaps ?? 0,
-                item.contactConversions ?? 0,
             ]),
             [],
             ["Traffic Sources"],
@@ -367,11 +367,11 @@ export default function Analytics() {
     const chartMeta = {
         profileViews: {
             title: "Engagement Over Time",
-            subtitle: "All tracked profile visits over time.",
+            subtitle: "All tracked visits over time.",
         },
         linkOpens: {
             title: "Link Engagement Over Time",
-            subtitle: "Visits that came from your shared normal link.",
+            subtitle: "Visits from your normal profile link.",
         },
         cardTaps: {
             title: "NFC Engagement Over Time",
@@ -380,10 +380,6 @@ export default function Analytics() {
         qrScans: {
             title: "QR Engagement Over Time",
             subtitle: "Visits that came from QR scans.",
-        },
-        contactConversions: {
-            title: "Conversion Activity Over Time",
-            subtitle: "Visitors who took a contact-based conversion action.",
         },
     };
 
@@ -419,7 +415,7 @@ export default function Analytics() {
             <div className="an-shell">
                 <PageHeader
                     title="Analytics"
-                    subtitle="Track profile views, link visits, QR scans, NFC taps and contact conversions so you can see what’s working."
+                    subtitle="Track total visits, QR scans, NFC taps, link visits, saved contacts and exchange contact performance."
                     rightSlot={headerRight}
                 />
 
@@ -458,74 +454,39 @@ export default function Analytics() {
                             Couldn’t load analytics right now.
                         </div>
                     ) : (
-                        <>
-                            <div className="an-metrics5 an-metrics6">
-                                <div className="an-metric an-metric--featured">
-                                    <div className="an-metric-label">Profile Views</div>
-                                    <div className="an-metric-num">{numberFormat(metrics.profileViews)}</div>
-                                </div>
-
-                                <div className="an-metric">
-                                    <div className="an-metric-label">Link Opens</div>
-                                    <div className="an-metric-num">{numberFormat(metrics.linkOpens)}</div>
-                                </div>
-
-                                <div className="an-metric">
-                                    <div className="an-metric-label">NFC Taps</div>
-                                    <div className="an-metric-num">{numberFormat(metrics.cardTaps)}</div>
-                                </div>
-
-                                <div className="an-metric">
-                                    <div className="an-metric-label">QR Scans</div>
-                                    <div className="an-metric-num">{numberFormat(metrics.qrScans)}</div>
-                                </div>
-
-                                <div className="an-metric">
-                                    <div className="an-metric-label">Contact Conversions</div>
-                                    <div className="an-metric-num">
-                                        {numberFormat(metrics.contactConversions)}
-                                    </div>
-                                </div>
-
-                                <div className="an-metric">
-                                    <div className="an-metric-label">Conversion Rate</div>
-                                    <div className="an-metric-num">
-                                        {percentageFormat(metrics.conversionRate)}
-                                    </div>
-                                </div>
+                        <div className="an-metrics6">
+                            <div className="an-metric an-metric--featured">
+                                <div className="an-metric-label">Total Visits</div>
+                                <div className="an-metric-num">{numberFormat(metrics.profileViews)}</div>
                             </div>
 
-                            <div className="an-miniGrid">
-                                <div className="an-miniStat">
-                                    <span className="an-miniStat-k">Contacts Saved</span>
-                                    <span className="an-miniStat-v">{numberFormat(metrics.contactsSaved)}</span>
-                                </div>
-                                <div className="an-miniStat">
-                                    <span className="an-miniStat-k">Exchange Opens</span>
-                                    <span className="an-miniStat-v">
-                                        {numberFormat(metrics.contactExchangeOpens)}
-                                    </span>
-                                </div>
-                                <div className="an-miniStat">
-                                    <span className="an-miniStat-k">Exchange Submits</span>
-                                    <span className="an-miniStat-v">
-                                        {numberFormat(metrics.contactExchangeSubmits)}
-                                    </span>
-                                </div>
-                                <div className="an-miniStat">
-                                    <span className="an-miniStat-k">Email Clicks</span>
-                                    <span className="an-miniStat-v">{numberFormat(metrics.emailClicks)}</span>
-                                </div>
-                                <div className="an-miniStat">
-                                    <span className="an-miniStat-k">Phone Clicks</span>
-                                    <span className="an-miniStat-v">{numberFormat(metrics.phoneClicks)}</span>
-                                </div>
-                                <div className="an-miniStat">
-                                    <span className="an-miniStat-k">Social Clicks</span>
-                                    <span className="an-miniStat-v">{numberFormat(metrics.socialClicks)}</span>
+                            <div className="an-metric">
+                                <div className="an-metric-label">NFC Taps</div>
+                                <div className="an-metric-num">{numberFormat(metrics.cardTaps)}</div>
+                            </div>
+
+                            <div className="an-metric">
+                                <div className="an-metric-label">QR Scans</div>
+                                <div className="an-metric-num">{numberFormat(metrics.qrScans)}</div>
+                            </div>
+
+                            <div className="an-metric">
+                                <div className="an-metric-label">Link Visits</div>
+                                <div className="an-metric-num">{numberFormat(metrics.linkOpens)}</div>
+                            </div>
+
+                            <div className="an-metric">
+                                <div className="an-metric-label">Saved Contacts</div>
+                                <div className="an-metric-num">{numberFormat(metrics.contactsSaved)}</div>
+                            </div>
+
+                            <div className="an-metric">
+                                <div className="an-metric-label">Conversion Rate</div>
+                                <div className="an-metric-num">
+                                    {percentageFormat(metrics.conversionRate)}
                                 </div>
                             </div>
-                        </>
+                        </div>
                     )}
                 </section>
 
@@ -539,115 +500,24 @@ export default function Analytics() {
                     />
 
                     <BarBreakdown
-                        title="Traffic Source Breakdown"
-                        subtitle="Where your tracked profile visits came from in this selected period."
-                        items={trafficSources}
+                        title="Engagement Breakdown"
+                        subtitle="How your total visits are split across link, QR and NFC traffic."
+                        items={[
+                            { key: "link", label: "Link Visits", value: metrics.linkOpens || 0 },
+                            { key: "qr", label: "QR Scans", value: metrics.qrScans || 0 },
+                            { key: "nfc", label: "NFC Taps", value: metrics.cardTaps || 0 },
+                        ]}
                     />
                 </section>
 
                 <section className="an-chartGrid">
+                    <ActionDetailsCard metrics={metrics} />
+
                     <BarBreakdown
                         title="Social Click Breakdown"
-                        subtitle="Which social platforms got the most outbound clicks."
+                        subtitle="How many clicks each added social profile received."
                         items={socialBreakdown}
                     />
-
-                    <SourceConversionCard
-                        metrics={metrics}
-                        trafficSources={trafficSources}
-                    />
-                </section>
-
-                <section className="an-chartGrid">
-                    <div className="an-chartCard">
-                        <div className="an-chartHead">
-                            <div>
-                                <h3 className="an-chartTitle">What counts as a conversion?</h3>
-                                <p className="an-chartMuted">
-                                    Contact conversions are based on people who took at least one real
-                                    contact action. Social clicks do not count toward conversion rate.
-                                </p>
-                            </div>
-                        </div>
-
-                        <div className="an-infoList">
-                            <div className="an-infoRow">
-                                <span className="an-infoDot" />
-                                <div>
-                                    <strong>Counts as a conversion</strong>
-                                    <p>
-                                        Save My Number, Exchange Contact, Email Click, Phone Click.
-                                    </p>
-                                </div>
-                            </div>
-
-                            <div className="an-infoRow">
-                                <span className="an-infoDot" />
-                                <div>
-                                    <strong>Unique conversion logic</strong>
-                                    <p>
-                                        If one person saves your number and also exchanges contact, that still
-                                        counts as one converted visitor.
-                                    </p>
-                                </div>
-                            </div>
-
-                            <div className="an-infoRow">
-                                <span className="an-infoDot" />
-                                <div>
-                                    <strong>Does not count</strong>
-                                    <p>Social clicks do not count toward the conversion statistic.</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div className="an-chartCard">
-                        <div className="an-chartHead">
-                            <div>
-                                <h3 className="an-chartTitle">Quick Summary</h3>
-                                <p className="an-chartMuted">
-                                    A fast overview of how your traffic and contact intent are performing.
-                                </p>
-                            </div>
-                        </div>
-
-                        <div className="an-infoList">
-                            <div className="an-infoRow">
-                                <span className="an-infoDot" />
-                                <div>
-                                    <strong>Total tracked visitors</strong>
-                                    <p>{numberFormat(metrics.uniqueVisitors)} unique visitors in this period.</p>
-                                </div>
-                            </div>
-
-                            <div className="an-infoRow">
-                                <span className="an-infoDot" />
-                                <div>
-                                    <strong>Best traffic source</strong>
-                                    <p>
-                                        {trafficSources
-                                            .slice()
-                                            .sort((a, b) => (b.value || 0) - (a.value || 0))[0]?.label || "None"}{" "}
-                                        is currently bringing the most visits.
-                                    </p>
-                                </div>
-                            </div>
-
-                            <div className="an-infoRow">
-                                <span className="an-infoDot" />
-                                <div>
-                                    <strong>Contact intent</strong>
-                                    <p>
-                                        {numberFormat(metrics.contactsSaved)} saves,{" "}
-                                        {numberFormat(metrics.contactExchangeSubmits)} exchange submits,{" "}
-                                        {numberFormat(metrics.emailClicks)} email clicks and{" "}
-                                        {numberFormat(metrics.phoneClicks)} phone clicks.
-                                    </p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
                 </section>
             </div>
         </DashboardLayout>
