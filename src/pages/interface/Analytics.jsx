@@ -206,6 +206,20 @@ function buildFallbackActivity(metrics) {
     return items.slice(0, 5);
 }
 
+function formatTrendLabel(delta, range) {
+    const periodLabel = `vs previous ${range} days`;
+
+    if (delta > 0) return `↑ ${numberFormat(delta)} ${periodLabel}`;
+    if (delta < 0) return `↓ ${numberFormat(Math.abs(delta))} ${periodLabel}`;
+    return `No change ${periodLabel}`;
+}
+
+function getTrendClass(delta) {
+    if (delta > 0) return "up";
+    if (delta < 0) return "down";
+    return "neutral";
+}
+
 function RecentActivityCard({ items = [], metrics }) {
     const finalItems = items.length ? items : buildFallbackActivity(metrics);
 
@@ -479,6 +493,43 @@ function extractProfiles(data) {
     return [];
 }
 
+function createEmptyMetrics() {
+    return {
+        profileViews: 0,
+        linkOpens: 0,
+        cardTaps: 0,
+        qrScans: 0,
+        contactsSaved: 0,
+        contactExchangeOpens: 0,
+        contactExchangeSubmits: 0,
+        emailClicks: 0,
+        phoneClicks: 0,
+        socialClicks: 0,
+        uniqueVisitors: 0,
+        contactConversions: 0,
+        totalConversions: 0,
+        conversionRate: 0,
+    };
+}
+
+function getMetricDelta(current, previous, key) {
+    return (Number(current?.[key]) || 0) - (Number(previous?.[key]) || 0);
+}
+
+function MetricCard({ label, value, delta, range, isPercentage = false }) {
+    return (
+        <div className="an-metric">
+            <div className="an-metric-label">{label}</div>
+            <div className="an-metric-num">
+                {isPercentage ? percentageFormat(value) : numberFormat(value)}
+            </div>
+            <div className={`an-metric-change ${getTrendClass(delta)}`}>
+                {formatTrendLabel(delta, range)}
+            </div>
+        </div>
+    );
+}
+
 export default function Analytics() {
     const [range, setRange] = useState("7");
     const [profile, setProfile] = useState("all");
@@ -526,17 +577,19 @@ export default function Analytics() {
         staleTime: 5 * 60 * 1000,
     });
 
+    const selectedProfile = useMemo(
+        () => (profilesQuery.data || []).find((p) => p.value === profile),
+        [profilesQuery.data, profile]
+    );
+
     const summaryQuery = useQuery({
         queryKey: ["analytics-summary", range, profile, profilesQuery.data?.length || 0],
         queryFn: async () => {
             const params = new URLSearchParams();
             params.set("days", range);
 
-            if (profile !== "all") {
-                const selectedProfile = (profilesQuery.data || []).find((p) => p.value === profile);
-                if (selectedProfile?.slug) {
-                    params.set("profileSlug", selectedProfile.slug);
-                }
+            if (profile !== "all" && selectedProfile?.slug) {
+                params.set("profileSlug", selectedProfile.slug);
             }
 
             const res = await api.get(`/api/analytics/summary?${params.toString()}`);
@@ -546,27 +599,63 @@ export default function Analytics() {
         staleTime: 30 * 1000,
     });
 
-    const metrics = summaryQuery.data?.metrics || {
-        profileViews: 0,
-        linkOpens: 0,
-        cardTaps: 0,
-        qrScans: 0,
-        contactsSaved: 0,
-        contactExchangeOpens: 0,
-        contactExchangeSubmits: 0,
-        emailClicks: 0,
-        phoneClicks: 0,
-        socialClicks: 0,
-        uniqueVisitors: 0,
-        contactConversions: 0,
-        totalConversions: 0,
-        conversionRate: 0,
-    };
+    const previousSummaryQuery = useQuery({
+        queryKey: ["analytics-summary-previous", range, profile, selectedProfile?.slug || "all"],
+        queryFn: async () => {
+            const days = Number(range) || 7;
+            const params = new URLSearchParams();
+            params.set("days", String(days * 2));
 
+            if (profile !== "all" && selectedProfile?.slug) {
+                params.set("profileSlug", selectedProfile.slug);
+            }
+
+            const res = await api.get(`/api/analytics/summary?${params.toString()}`);
+            return res.data;
+        },
+        enabled: (profile === "all" || profilesQuery.isSuccess) && !summaryQuery.isLoading,
+        staleTime: 30 * 1000,
+    });
+
+    const metrics = summaryQuery.data?.metrics || createEmptyMetrics();
     const timeline = summaryQuery.data?.timeline || [];
     const socialBreakdownRaw = summaryQuery.data?.socialBreakdown || [];
     const recentActivityRaw =
         summaryQuery.data?.recentActivity || summaryQuery.data?.recentEvents || [];
+
+    const previousMetrics = useMemo(() => {
+        const fallback = createEmptyMetrics();
+        const fullTimeline = previousSummaryQuery.data?.timeline || [];
+        const currentDays = Number(range) || 7;
+
+        if (!fullTimeline.length || fullTimeline.length <= currentDays) {
+            return fallback;
+        }
+
+        const previousSlice = fullTimeline.slice(0, fullTimeline.length - currentDays);
+
+        if (!previousSlice.length) return fallback;
+
+        return previousSlice.reduce(
+            (acc, item) => {
+                acc.profileViews += Number(item?.profileViews) || 0;
+                acc.linkOpens += Number(item?.linkOpens) || 0;
+                acc.cardTaps += Number(item?.cardTaps) || 0;
+                acc.qrScans += Number(item?.qrScans) || 0;
+                acc.contactsSaved += Number(item?.contactsSaved) || 0;
+                acc.contactExchangeSubmits += Number(item?.contactExchangeSubmits) || 0;
+                acc.emailClicks += Number(item?.emailClicks) || 0;
+                acc.phoneClicks += Number(item?.phoneClicks) || 0;
+                acc.socialClicks += Number(item?.socialClicks) || 0;
+                acc.contactConversions += Number(item?.contactConversions) || 0;
+                return acc;
+            },
+            createEmptyMetrics()
+        );
+    }, [previousSummaryQuery.data, range]);
+
+    const conversionRateDelta =
+        (Number(metrics?.conversionRate) || 0) - (Number(previousMetrics?.conversionRate) || 0);
 
     const socialBreakdown = ["facebook", "instagram", "tiktok", "linkedin", "x"].map((key) => {
         const found = socialBreakdownRaw.find((row) => row.key === key);
@@ -585,8 +674,6 @@ export default function Analytics() {
     }));
 
     const exportData = () => {
-        const selectedProfile = (profilesQuery.data || []).find((p) => p.value === profile);
-
         const selectedProfileLabel =
             profile === "all"
                 ? "all-profiles"
@@ -656,37 +743,7 @@ export default function Analytics() {
                 />
 
                 <section className="an-toolbar">
-                    <div className="an-toolbarTop">
-                        <div className="an-profilePick">
-                            <select
-                                className="an-select"
-                                value={profile}
-                                onChange={(e) => setProfile(e.target.value)}
-                                aria-label="Choose profile"
-                            >
-                                <option value="all">
-                                    {profilesQuery.isLoading ? "Loading profiles..." : "All profiles"}
-                                </option>
-
-                                {(profilesQuery.data || []).map((item) => (
-                                    <option key={item.value} value={item.value}>
-                                        {item.name}
-                                    </option>
-                                ))}
-                            </select>
-                        </div>
-
-                        <button
-                            type="button"
-                            className="kx-btn kx-btn--black an-exportBtn"
-                            onClick={exportData}
-                            disabled={summaryQuery.isLoading}
-                        >
-                            Export
-                        </button>
-                    </div>
-
-                    <div className="an-toolbarBottom">
+                    <div className="an-toolbarTop an-toolbarTop--split">
                         <div className="an-range" role="tablist" aria-label="Analytics range">
                             {RANGE_OPTIONS.map((item) => (
                                 <button
@@ -700,6 +757,36 @@ export default function Analytics() {
                                 </button>
                             ))}
                         </div>
+
+                        <div className="an-toolbarActions">
+                            <div className="an-profilePick">
+                                <select
+                                    className="an-select"
+                                    value={profile}
+                                    onChange={(e) => setProfile(e.target.value)}
+                                    aria-label="Choose profile"
+                                >
+                                    <option value="all">
+                                        {profilesQuery.isLoading ? "Loading profiles..." : "All profiles"}
+                                    </option>
+
+                                    {(profilesQuery.data || []).map((item) => (
+                                        <option key={item.value} value={item.value}>
+                                            {item.name}
+                                        </option>
+                                    ))}
+                                </select>
+                            </div>
+
+                            <button
+                                type="button"
+                                className="kx-btn kx-btn--black an-exportBtn"
+                                onClick={exportData}
+                                disabled={summaryQuery.isLoading}
+                            >
+                                Export
+                            </button>
+                        </div>
                     </div>
                 </section>
 
@@ -712,44 +799,55 @@ export default function Analytics() {
                         </div>
                     ) : (
                         <div className="an-metrics7">
-                            <div className="an-metric">
-                                <div className="an-metric-label">Total Visits</div>
-                                <div className="an-metric-num">{numberFormat(metrics.profileViews)}</div>
-                            </div>
+                            <MetricCard
+                                label="Total Visits"
+                                value={metrics.profileViews}
+                                delta={getMetricDelta(metrics, previousMetrics, "profileViews")}
+                                range={range}
+                            />
 
-                            <div className="an-metric">
-                                <div className="an-metric-label">NFC Taps</div>
-                                <div className="an-metric-num">{numberFormat(metrics.cardTaps)}</div>
-                            </div>
+                            <MetricCard
+                                label="NFC Taps"
+                                value={metrics.cardTaps}
+                                delta={getMetricDelta(metrics, previousMetrics, "cardTaps")}
+                                range={range}
+                            />
 
-                            <div className="an-metric">
-                                <div className="an-metric-label">QR Scans</div>
-                                <div className="an-metric-num">{numberFormat(metrics.qrScans)}</div>
-                            </div>
+                            <MetricCard
+                                label="QR Scans"
+                                value={metrics.qrScans}
+                                delta={getMetricDelta(metrics, previousMetrics, "qrScans")}
+                                range={range}
+                            />
 
-                            <div className="an-metric">
-                                <div className="an-metric-label">Link Visits</div>
-                                <div className="an-metric-num">{numberFormat(metrics.linkOpens)}</div>
-                            </div>
+                            <MetricCard
+                                label="Link Visits"
+                                value={metrics.linkOpens}
+                                delta={getMetricDelta(metrics, previousMetrics, "linkOpens")}
+                                range={range}
+                            />
 
-                            <div className="an-metric">
-                                <div className="an-metric-label">Saved Contacts</div>
-                                <div className="an-metric-num">{numberFormat(metrics.contactsSaved)}</div>
-                            </div>
+                            <MetricCard
+                                label="Saved Contacts"
+                                value={metrics.contactsSaved}
+                                delta={getMetricDelta(metrics, previousMetrics, "contactsSaved")}
+                                range={range}
+                            />
 
-                            <div className="an-metric">
-                                <div className="an-metric-label">Exchange Contacts</div>
-                                <div className="an-metric-num">
-                                    {numberFormat(metrics.contactExchangeSubmits)}
-                                </div>
-                            </div>
+                            <MetricCard
+                                label="Exchange Contacts"
+                                value={metrics.contactExchangeSubmits}
+                                delta={getMetricDelta(metrics, previousMetrics, "contactExchangeSubmits")}
+                                range={range}
+                            />
 
-                            <div className="an-metric">
-                                <div className="an-metric-label">Conversion Rate</div>
-                                <div className="an-metric-num">
-                                    {percentageFormat(metrics.conversionRate)}
-                                </div>
-                            </div>
+                            <MetricCard
+                                label="Conversion Rate"
+                                value={metrics.conversionRate}
+                                delta={conversionRateDelta}
+                                range={range}
+                                isPercentage
+                            />
                         </div>
                     )}
                 </section>
