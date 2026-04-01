@@ -1,85 +1,171 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import NotificationIcon from "../../assets/icons/Notification.svg";
+import UserProfileIcon from "../../assets/icons/UserProfile.svg";
+import { useAuthUser } from "../../hooks/useAuthUser";
 import "../../styling/dashboard/pageheader.css";
 
-import NotificationsIcon from "../../assets/icons/PageHeaderNotifications.svg";
+function cleanString(v) {
+  return String(v || "").trim();
+}
 
-/**
- * PageHeader (No background)
- * - Left: title (.h3) + subtitle (.kc-subheading) with 4px gap
- * - Right: Plan pill (shadow border), notifications (40x40), avatar initials (40x40)
- *
- * Props:
- * - title: string
- * - subtitle?: string
- * - planName?: string (defaults "Free")
- * - userName?: string (used to generate initial, e.g. "Sam" => "S")
- * - notifications?: Array<{ id: string, title: string, time?: string }>
- */
+function cleanLower(v) {
+  return cleanString(v).toLowerCase();
+}
+
+function getPlanLabel(user) {
+  const rawPlan =
+    cleanString(user?.plan) ||
+    cleanString(user?.subscriptionPlan) ||
+    cleanString(user?.subscription_plan) ||
+    cleanString(user?.membershipPlan) ||
+    cleanString(user?.membership_plan) ||
+    cleanString(user?.stripePlan) ||
+    cleanString(user?.stripe_plan) ||
+    cleanString(user?.accountType) ||
+    cleanString(user?.account_type);
+
+  const plan = cleanLower(rawPlan);
+
+  if (!plan) return "Free";
+
+  if (
+    plan === "team" ||
+    plan === "teams" ||
+    plan === "team plan" ||
+    plan === "teams plan"
+  ) {
+    return "Teams";
+  }
+
+  if (
+    plan === "plus" ||
+    plan === "plus plan"
+  ) {
+    return "Plus";
+  }
+
+  if (
+    plan === "pro" ||
+    plan === "professional"
+  ) {
+    return "Pro";
+  }
+
+  if (
+    plan === "free" ||
+    plan === "starter" ||
+    plan === "basic"
+  ) {
+    return "Free";
+  }
+
+  return rawPlan.charAt(0).toUpperCase() + rawPlan.slice(1);
+}
+
+function formatTimeAgo(value) {
+  if (!value) return "";
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return "";
+
+  const diffMs = Date.now() - date.getTime();
+  const mins = Math.floor(diffMs / 60000);
+  const hours = Math.floor(diffMs / 3600000);
+  const days = Math.floor(diffMs / 86400000);
+
+  if (mins < 1) return "Just now";
+  if (mins < 60) return `${mins} min ago`;
+  if (hours < 24) return `${hours} hour${hours === 1 ? "" : "s"} ago`;
+  return `${days} day${days === 1 ? "" : "s"} ago`;
+}
+
 export default function PageHeader({
   title,
   subtitle,
-  planName = "Free",
-  userName = "",
   notifications = [],
 }) {
-  const navigate = useNavigate();
+  const { data: authUser } = useAuthUser();
+  const [menuOpen, setMenuOpen] = useState(false);
+  const menuRef = useRef(null);
 
-  const [open, setOpen] = useState(false);
-  const wrapRef = useRef(null);
+  const planLabel = useMemo(() => getPlanLabel(authUser), [authUser]);
+
+  const safeNotifications = Array.isArray(notifications) ? notifications : [];
+  const unreadCount = safeNotifications.length;
 
   useEffect(() => {
-    const onDown = (e) => {
-      if (!wrapRef.current) return;
-      if (!wrapRef.current.contains(e.target)) setOpen(false);
+    if (!menuOpen) return;
+
+    function handleClickOutside(event) {
+      if (!menuRef.current) return;
+      if (!menuRef.current.contains(event.target)) {
+        setMenuOpen(false);
+      }
+    }
+
+    function handleEscape(event) {
+      if (event.key === "Escape") {
+        setMenuOpen(false);
+      }
+    }
+
+    document.addEventListener("mousedown", handleClickOutside);
+    document.addEventListener("keydown", handleEscape);
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+      document.removeEventListener("keydown", handleEscape);
     };
-    window.addEventListener("mousedown", onDown);
-    return () => window.removeEventListener("mousedown", onDown);
-  }, []);
-
-  const items = useMemo(() => notifications.slice(0, 6), [notifications]);
-
-  const initial = useMemo(() => {
-    const t = (userName || "").trim();
-    if (!t) return "U";
-    return t[0].toUpperCase();
-  }, [userName]);
+  }, [menuOpen]);
 
   return (
     <header className="ph4">
       <div className="ph4-left">
-        <div className="ph4-title h3">{title}</div>
-        {subtitle ? <div className="ph4-sub kc-subheading">{subtitle}</div> : null}
+        {title ? <h1 className="ph4-title h3">{title}</h1> : null}
+        {subtitle ? <p className="ph4-sub kc-subheading">{subtitle}</p> : null}
       </div>
 
-      <div className="ph4-right" ref={wrapRef}>
-        <span className="ph4-pill" aria-label={`Plan: ${planName}`}>
-          Plan: <strong>{planName}</strong>
-        </span>
+      <div className="ph4-right">
+        <div className="ph4-pill">
+          <span>Plan:</span>
+          <strong>{planLabel}</strong>
+        </div>
 
-        <div className="ph4-dd">
+        <div className="ph4-dd" ref={menuRef}>
           <button
             type="button"
-            className={`ph4-iconBtn ${open ? "active" : ""}`}
+            className="ph4-iconBtn"
             aria-label="Notifications"
-            aria-haspopup="menu"
-            aria-expanded={open ? "true" : "false"}
-            onClick={() => setOpen((v) => !v)}
+            aria-expanded={menuOpen}
+            onClick={() => setMenuOpen((prev) => !prev)}
           >
-            <img className="ph4-iconImg" src={NotificationsIcon} alt="" aria-hidden="true" />
-            {notifications.length ? <span className="ph4-dot" /> : null}
+            <img
+              src={NotificationIcon}
+              alt=""
+              className="ph4-iconImg"
+              aria-hidden="true"
+            />
+            {unreadCount > 0 ? <span className="ph4-dot" /> : null}
           </button>
 
-          {open ? (
-            <div className="ph4-menu" role="menu">
+          {menuOpen ? (
+            <div className="ph4-menu" role="menu" aria-label="Notifications menu">
               <div className="ph4-menuHead">Notifications</div>
 
-              {items.length ? (
+              {safeNotifications.length > 0 ? (
                 <div className="ph4-menuList">
-                  {items.map((n) => (
-                    <div className="ph4-item" key={n.id} role="menuitem">
-                      <div className="ph4-itemTitle">{n.title}</div>
-                      {n.time ? <div className="ph4-itemTime">{n.time}</div> : null}
+                  {safeNotifications.map((item, index) => (
+                    <div
+                      key={item?.id || item?._id || `notification-${index}`}
+                      className="ph4-item"
+                    >
+                      <div className="ph4-itemTitle">
+                        {cleanString(item?.title) ||
+                          cleanString(item?.message) ||
+                          "New notification"}
+                      </div>
+                      <div className="ph4-itemTime">
+                        {formatTimeAgo(item?.createdAt || item?.date || item?.timestamp)}
+                      </div>
                     </div>
                   ))}
                 </div>
@@ -93,11 +179,15 @@ export default function PageHeader({
         <button
           type="button"
           className="ph4-avatarBtn"
-          aria-label="Account settings"
-          onClick={() => navigate("/settings")}
+          aria-label="User profile"
         >
-          <span className="ph4-avatar" aria-hidden="true">
-            <span className="ph4-avatarInner">{initial}</span>
+          <span className="ph4-avatar">
+            <img
+              src={UserProfileIcon}
+              alt=""
+              className="ph4-avatarIcon"
+              aria-hidden="true"
+            />
           </span>
         </button>
       </div>
