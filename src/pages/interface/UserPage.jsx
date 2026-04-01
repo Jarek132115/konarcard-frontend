@@ -262,6 +262,53 @@ function getSessionId() {
     }
 }
 
+function getNavigationTypeSafe() {
+    try {
+        const entries = window.performance?.getEntriesByType?.("navigation");
+        if (Array.isArray(entries) && entries.length > 0) {
+            return String(entries[0]?.type || "").toLowerCase();
+        }
+
+        const legacyType = window.performance?.navigation?.type;
+        if (legacyType === 1) return "reload";
+        if (legacyType === 2) return "back_forward";
+        if (legacyType === 0) return "navigate";
+    } catch {
+        // ignore
+    }
+
+    return "";
+}
+
+function buildVisitStorageKey(profileSlug, source) {
+    return `konarcard_visit_id:${profileSlug}:${source}`;
+}
+
+function getVisitId(profileSlug, source) {
+    const safeSlug = normalizeSlug(profileSlug);
+    const safeSource = String(source || "unknown").trim().toLowerCase() || "unknown";
+    const storageKey = buildVisitStorageKey(safeSlug, safeSource);
+
+    try {
+        const navType = getNavigationTypeSafe();
+        const existing = sessionStorage.getItem(storageKey);
+
+        if (existing && (navType === "reload" || navType === "back_forward")) {
+            return existing;
+        }
+
+        if (existing && navType === "") {
+            return existing;
+        }
+
+        const created = makeRandomId("visit_");
+        sessionStorage.setItem(storageKey, created);
+        return created;
+    } catch {
+        return makeRandomId("visit_");
+    }
+}
+
 async function trackProfileEvent({
     profileSlug,
     eventType,
@@ -272,17 +319,20 @@ async function trackProfileEvent({
     try {
         if (!profileSlug || !eventType) return;
 
+        const finalSource = String(source || "unknown").trim().toLowerCase() || "unknown";
+
         await api.post(
             "/api/analytics/track",
             {
                 profileSlug,
                 eventType,
-                source,
+                source: finalSource,
                 platform,
                 meta: {
                     ...meta,
                     visitorId: getVisitorId(),
                     sessionId: getSessionId(),
+                    visitId: getVisitId(profileSlug, finalSource),
                 },
             },
             {
