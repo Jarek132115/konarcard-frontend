@@ -787,14 +787,136 @@ export default function UpgradePlan() {
                     </div>
 
                     <div className="upg-plansGrid">
-                        {planCards.map((plan) => (
-                            <PlanCard
-                                key={plan.key}
-                                plan={plan}
-                                currentPlan={currentPlan}
-                                loadingKey={loadingKey}
-                            />
-                        ))}
+                        {planCards.map((plan) => {
+                            const featured = !!plan.featured;
+                            const current = currentPlan === plan.key;
+
+                            return (
+                                <article
+                                    key={plan.key}
+                                    className={`upg-planCard ${featured ? "upg-planCard--featured" : ""} ${current ? "upg-planCard--current" : ""
+                                        }`}
+                                >
+                                    <div className="upg-planTop">
+                                        <div className="upg-planTopRow">
+                                            <div className={`upg-planTag ${featured ? "upg-planTag--featured" : ""}`}>
+                                                {plan.tag}
+                                            </div>
+
+                                            {current ? (
+                                                <div
+                                                    className={`upg-planCurrentBadge ${featured ? "upg-planCurrentBadge--featured" : ""
+                                                        }`}
+                                                >
+                                                    Current Plan
+                                                </div>
+                                            ) : null}
+                                        </div>
+
+                                        <div className="upg-planNameRow">
+                                            <span
+                                                className={`upg-planIconWrap ${featured ? "upg-planIconWrap--featured" : ""
+                                                    }`}
+                                            >
+                                                <img src={plan.icon} alt="" className="upg-planIcon" />
+                                            </span>
+
+                                            <div className="upg-planNameBlock">
+                                                <h3
+                                                    className={`upg-planName ${featured ? "upg-planName--featured" : ""
+                                                        }`}
+                                                >
+                                                    {plan.title}
+                                                </h3>
+                                            </div>
+                                        </div>
+
+                                        <div className="upg-planPriceRow">
+                                            <div
+                                                className={`upg-planPrice ${featured ? "upg-planPrice--featured" : ""
+                                                    }`}
+                                            >
+                                                {plan.price}
+                                            </div>
+
+                                            <div
+                                                className={`upg-planCadence ${featured ? "upg-planCadence--featured" : ""
+                                                    }`}
+                                            >
+                                                {plan.cadence}
+                                            </div>
+                                        </div>
+
+                                        {plan.meta?.length ? (
+                                            <div
+                                                className={`upg-planMeta ${featured ? "upg-planMeta--featured" : ""
+                                                    }`}
+                                            >
+                                                {plan.meta.map((m, i) => (
+                                                    <div key={i}>{m}</div>
+                                                ))}
+                                            </div>
+                                        ) : null}
+                                    </div>
+
+                                    <div
+                                        className={`upg-planDivider ${featured ? "upg-planDivider--featured" : ""}`}
+                                    />
+
+                                    <div className="upg-planBody">
+                                        <div
+                                            className={`upg-planIncluded ${featured ? "upg-planIncluded--featured" : ""
+                                                }`}
+                                        >
+                                            What’s included
+                                        </div>
+
+                                        <ul className="upg-planList">
+                                            {plan.highlights.map((item, index) => (
+                                                <li
+                                                    key={`${plan.key}-${index}`}
+                                                    className={`upg-planListItem ${featured ? "upg-planListItem--featured" : ""
+                                                        }`}
+                                                >
+                                                    {item}
+                                                </li>
+                                            ))}
+                                        </ul>
+
+                                        <div className="upg-planActions">
+                                            {plan.button?.type === "link" ? (
+                                                <a
+                                                    href={plan.button.to}
+                                                    className={`kx-btn ${featured ? "upg-btn-featured" : "kx-btn--black"
+                                                        } upg-btn`}
+                                                >
+                                                    {plan.button.label}
+                                                </a>
+                                            ) : (
+                                                <button
+                                                    type="button"
+                                                    className={`kx-btn ${featured ? "upg-btn-featured" : "kx-btn--black"
+                                                        } upg-btn`}
+                                                    onClick={plan.button?.onClick || undefined}
+                                                    disabled={!!plan.button?.disabled}
+                                                >
+                                                    {loadingKey === plan.loadingMatch ? "Working…" : plan.button?.label}
+                                                </button>
+                                            )}
+
+                                            {plan.button?.helper ? (
+                                                <div
+                                                    className={`upg-planHelper ${featured ? "upg-planHelper--featured" : ""
+                                                        }`}
+                                                >
+                                                    {plan.button.helper}
+                                                </div>
+                                            ) : null}
+                                        </div>
+                                    </div>
+                                </article>
+                            );
+                        })}
                     </div>
                 </section>
             </div>
