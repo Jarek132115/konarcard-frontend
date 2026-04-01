@@ -8,7 +8,7 @@ import "../../styling/dashboard/upgradeplan.css";
 import { BASE_URL } from "../../services/api";
 
 import FreePlanIcon from "../../assets/icons/FreePlan.svg";
-import PlusPlanIcon from "../../assets/icons/FreePlan.svg";
+import PlusPlanIcon from "../../assets/icons/PlusPlan.svg";
 import TeamsPlanIcon from "../../assets/icons/TeamsPlan.svg";
 
 const CHECKOUT_INTENT_KEY = "konar_checkout_intent_v1";
@@ -96,17 +96,14 @@ function normalizePlanLabel(plan) {
     return "Free";
 }
 
-function PlanCard({
-    plan,
-    currentPlan,
-    loadingKey,
-}) {
+function PlanCard({ plan, currentPlan, loadingKey }) {
     const featured = !!plan.featured;
     const current = currentPlan === plan.key;
 
     return (
         <article
-            className={`upg-planCard ${featured ? "upg-planCard--featured" : ""} ${current ? "upg-planCard--current" : ""}`}
+            className={`upg-planCard ${featured ? "upg-planCard--featured" : ""} ${current ? "upg-planCard--current" : ""
+                }`}
         >
             <div className="upg-planTop">
                 <div className="upg-planTopRow">
@@ -115,35 +112,53 @@ function PlanCard({
                     </div>
 
                     {current ? (
-                        <div className={`upg-planCurrentBadge ${featured ? "upg-planCurrentBadge--featured" : ""}`}>
+                        <div
+                            className={`upg-planCurrentBadge ${featured ? "upg-planCurrentBadge--featured" : ""
+                                }`}
+                        >
                             Current Plan
                         </div>
                     ) : null}
                 </div>
 
                 <div className="upg-planNameRow">
-                    <span className={`upg-planIconWrap ${featured ? "upg-planIconWrap--featured" : ""}`}>
+                    <span
+                        className={`upg-planIconWrap ${featured ? "upg-planIconWrap--featured" : ""
+                            }`}
+                    >
                         <img src={plan.icon} alt="" className="upg-planIcon" />
                     </span>
 
                     <div className="upg-planNameBlock">
-                        <h3 className={`upg-planName ${featured ? "upg-planName--featured" : ""}`}>
+                        <h3
+                            className={`upg-planName ${featured ? "upg-planName--featured" : ""
+                                }`}
+                        >
                             {plan.title}
                         </h3>
                     </div>
                 </div>
 
                 <div className="upg-planPriceRow">
-                    <div className={`upg-planPrice ${featured ? "upg-planPrice--featured" : ""}`}>
+                    <div
+                        className={`upg-planPrice ${featured ? "upg-planPrice--featured" : ""
+                            }`}
+                    >
                         {plan.price}
                     </div>
-                    <div className={`upg-planCadence ${featured ? "upg-planCadence--featured" : ""}`}>
+                    <div
+                        className={`upg-planCadence ${featured ? "upg-planCadence--featured" : ""
+                            }`}
+                    >
                         {plan.cadence}
                     </div>
                 </div>
 
                 {plan.meta?.length ? (
-                    <div className={`upg-planMeta ${featured ? "upg-planMeta--featured" : ""}`}>
+                    <div
+                        className={`upg-planMeta ${featured ? "upg-planMeta--featured" : ""
+                            }`}
+                    >
                         {plan.meta.map((m, i) => (
                             <div key={i}>{m}</div>
                         ))}
@@ -151,16 +166,24 @@ function PlanCard({
                 ) : null}
             </div>
 
-            <div className={`upg-planDivider ${featured ? "upg-planDivider--featured" : ""}`} />
+            <div
+                className={`upg-planDivider ${featured ? "upg-planDivider--featured" : ""}`}
+            />
 
             <div className="upg-planBody">
-                <div className="upg-planIncluded">What’s included</div>
+                <div
+                    className={`upg-planIncluded ${featured ? "upg-planIncluded--featured" : ""
+                        }`}
+                >
+                    What’s included
+                </div>
 
                 <ul className="upg-planList">
                     {plan.highlights.map((item, index) => (
                         <li
                             key={`${plan.key}-${index}`}
-                            className={`upg-planListItem ${featured ? "upg-planListItem--featured" : ""}`}
+                            className={`upg-planListItem ${featured ? "upg-planListItem--featured" : ""
+                                }`}
                         >
                             {item}
                         </li>
@@ -171,14 +194,16 @@ function PlanCard({
                     {plan.button.type === "link" ? (
                         <a
                             href={plan.button.to}
-                            className={`kx-btn ${featured ? "upg-btn-featured" : "kx-btn--black"} upg-btn`}
+                            className={`kx-btn ${featured ? "upg-btn-featured" : "kx-btn--black"
+                                } upg-btn`}
                         >
                             {plan.button.label}
                         </a>
                     ) : (
                         <button
                             type="button"
-                            className={`kx-btn ${featured ? "upg-btn-featured" : "kx-btn--black"} upg-btn`}
+                            className={`kx-btn ${featured ? "upg-btn-featured" : "kx-btn--black"
+                                } upg-btn`}
                             onClick={plan.button.onClick || undefined}
                             disabled={!!plan.button.disabled}
                         >
@@ -187,7 +212,10 @@ function PlanCard({
                     )}
 
                     {plan.button.helper ? (
-                        <div className={`upg-planHelper ${featured ? "upg-planHelper--featured" : ""}`}>
+                        <div
+                            className={`upg-planHelper ${featured ? "upg-planHelper--featured" : ""
+                                }`}
+                        >
                             {plan.button.helper}
                         </div>
                     ) : null}
@@ -346,7 +374,9 @@ export default function UpgradePlan() {
         if (!isLoggedIn()) return "";
         if (!subState) return "";
         if (currentPlan === "free" && !isActive) return "You’re currently on the Free plan.";
-        if (hasFutureAccess) return `Your ${normalizePlanLabel(currentPlan)} plan is active until ${activeUntilLabel}.`;
+        if (hasFutureAccess) {
+            return `Your ${normalizePlanLabel(currentPlan)} plan is active until ${activeUntilLabel}.`;
+        }
         if (isActive) return `Your ${normalizePlanLabel(currentPlan)} plan is active.`;
         return "No active paid subscription found.";
     }, [subState, currentPlan, isActive, hasFutureAccess, activeUntilLabel]);
@@ -496,10 +526,10 @@ export default function UpgradePlan() {
         if (planName === current && stillHasPaidAccess) {
             return {
                 type: "button",
-                label: hasFutureAccess ? `Active until ${activeUntilLabel}` : "Active",
+                label: "Active",
                 onClick: null,
                 disabled: true,
-                helper: "",
+                helper: hasFutureAccess ? `Active until ${activeUntilLabel}` : "",
             };
         }
 
@@ -507,7 +537,7 @@ export default function UpgradePlan() {
             if (stillHasPaidAccess) {
                 return {
                     type: "button",
-                    label: "Switch to Free",
+                    label: "Downgrade",
                     onClick: openBillingPortal,
                     disabled: !!loadingKey || subLoading,
                     helper: hasFutureAccess
@@ -519,7 +549,7 @@ export default function UpgradePlan() {
             if (current === "free") {
                 return {
                     type: "button",
-                    label: "Current plan",
+                    label: "Active",
                     onClick: null,
                     disabled: true,
                     helper: "",
@@ -541,7 +571,7 @@ export default function UpgradePlan() {
         if (isDowngrade) {
             return {
                 type: "button",
-                label: "Downgrade (Billing)",
+                label: "Downgrade",
                 onClick: openBillingPortal,
                 disabled: !!loadingKey || subLoading,
                 helper: hasFutureAccess ? `Current plan active until ${activeUntilLabel}` : "",
@@ -551,7 +581,7 @@ export default function UpgradePlan() {
         if (isUpgrade && current !== "free" && stillHasPaidAccess) {
             return {
                 type: "button",
-                label: "Upgrade (Billing)",
+                label: "Upgrade",
                 onClick: openBillingPortal,
                 disabled: !!loadingKey || subLoading,
                 helper: "",
@@ -560,7 +590,7 @@ export default function UpgradePlan() {
 
         return {
             type: "button",
-            label: isUpgrade ? "Upgrade" : "Choose plan",
+            label: "Upgrade",
             onClick: () => startSubscription(planKeyForPaid),
             disabled: !!loadingKey || subLoading,
             helper: "",
@@ -671,7 +701,9 @@ export default function UpgradePlan() {
                 <section className="upg-summaryGrid">
                     <div className="upg-summaryCard upg-summaryCard--featured">
                         <div className="upg-summaryLabel">Current Plan</div>
-                        <div className="upg-summaryValue">{normalizePlanLabel(currentPlan)}</div>
+                        <div className="upg-summaryHeading upg-summaryHeading--featured">
+                            {normalizePlanLabel(currentPlan)}
+                        </div>
                         <p className="upg-summaryText upg-summaryText--featured">
                             {currentPlan === "teams"
                                 ? "Best for small teams managing multiple profiles."
@@ -717,9 +749,10 @@ export default function UpgradePlan() {
                 <section className="upg-mainCard">
                     <div className="upg-mainHead">
                         <div className="upg-mainHeadCopy">
-                            <div className="upg-mainKicker">Plans & Billing</div>
-                            <h2 className="upg-mainTitle">Choose the plan that fits your business</h2>
-                            <p className="upg-mainSub">
+                            <h2 className="upg-mainTitle kc-title">
+                                Choose the plan that fits your business
+                            </h2>
+                            <p className="upg-mainSub kc-body">
                                 Start free, upgrade anytime, and manage everything from your dashboard.
                             </p>
                         </div>
