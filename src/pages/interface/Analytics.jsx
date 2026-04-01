@@ -8,9 +8,12 @@ import api from "../../services/api";
 import "../../styling/dashboard/analytics.css";
 
 const RANGE_OPTIONS = [
+    { value: "1", label: "Today" },
     { value: "7", label: "Last 7 Days" },
     { value: "30", label: "Last 30 Days" },
+    { value: "60", label: "Last 60 Days" },
     { value: "90", label: "Last 90 Days" },
+    { value: "365", label: "Last 365 Days" },
 ];
 
 const CHART_OPTIONS = [
@@ -67,9 +70,12 @@ function formatDateLabel(value) {
 }
 
 function getXAxisTickStep(days, pointCount) {
+    if (days <= 1) return 1;
     if (days <= 7) return 1;
     if (days <= 30) return 5;
+    if (days <= 60) return 10;
     if (days <= 90) return 10;
+    if (days <= 365) return 30;
     return Math.max(1, Math.ceil(pointCount / 8));
 }
 
@@ -206,8 +212,13 @@ function buildFallbackActivity(metrics) {
     return items.slice(0, 5);
 }
 
+function getPeriodLabel(range) {
+    if (String(range) === "1") return "vs previous day";
+    return `vs previous ${range} days`;
+}
+
 function formatTrendLabel(delta, range) {
-    const periodLabel = `vs previous ${range} days`;
+    const periodLabel = getPeriodLabel(range);
 
     if (delta > 0) return `↑ ${numberFormat(delta)} ${periodLabel}`;
     if (delta < 0) return `↓ ${numberFormat(Math.abs(delta))} ${periodLabel}`;
@@ -516,9 +527,9 @@ function getMetricDelta(current, previous, key) {
     return (Number(current?.[key]) || 0) - (Number(previous?.[key]) || 0);
 }
 
-function MetricCard({ label, value, delta, range, isPercentage = false }) {
+function MetricCard({ label, value, delta, range, isPercentage = false, featured = false }) {
     return (
-        <div className="an-metric">
+        <div className={`an-metric ${featured ? "an-metric--featured" : ""}`}>
             <div className="an-metric-label">{label}</div>
             <div className="an-metric-num">
                 {isPercentage ? percentageFormat(value) : numberFormat(value)}
@@ -681,7 +692,7 @@ export default function Analytics() {
 
         const rows = [
             ["Analytics Export"],
-            ["Range", `${range} days`],
+            ["Range", RANGE_OPTIONS.find((r) => r.value === range)?.label || `${range} days`],
             ["Profile", selectedProfileLabel],
             [],
             ["Metric", "Value"],
@@ -744,18 +755,19 @@ export default function Analytics() {
 
                 <section className="an-toolbar">
                     <div className="an-toolbarTop an-toolbarTop--split">
-                        <div className="an-range" role="tablist" aria-label="Analytics range">
-                            {RANGE_OPTIONS.map((item) => (
-                                <button
-                                    key={item.value}
-                                    type="button"
-                                    className={`an-range-btn ${range === item.value ? "active" : ""}`}
-                                    onClick={() => setRange(item.value)}
-                                    aria-pressed={range === item.value}
-                                >
-                                    {item.label}
-                                </button>
-                            ))}
+                        <div className="an-rangePicker">
+                            <select
+                                className="an-select an-select--range"
+                                value={range}
+                                onChange={(e) => setRange(e.target.value)}
+                                aria-label="Choose date range"
+                            >
+                                {RANGE_OPTIONS.map((item) => (
+                                    <option key={item.value} value={item.value}>
+                                        {item.label}
+                                    </option>
+                                ))}
+                            </select>
                         </div>
 
                         <div className="an-toolbarActions">
@@ -804,6 +816,7 @@ export default function Analytics() {
                                 value={metrics.profileViews}
                                 delta={getMetricDelta(metrics, previousMetrics, "profileViews")}
                                 range={range}
+                                featured
                             />
 
                             <MetricCard
