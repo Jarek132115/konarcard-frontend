@@ -1,16 +1,15 @@
-/* PageHeader v4 (NO background, h3 title, subheading subtitle)
-   Spec:
+/* PageHeader v4
    - title uses .h3
    - subtitle uses .kc-subheading
    - 4px gap
    - right cluster: plan pill + notif + avatar
-   - notif + avatar = 40x40
-   - plan pill + notif + avatar share same "shadow border" (no border)
-   - shadow: 0px 0px 1px, 25% black
+   - all 3 right items now black bg with white content
 */
 
 :root {
     --ph4-shadowBorder: 0 0 1px rgba(0, 0, 0, 0.25);
+    --ph4-dark: #0f172a;
+    --ph4-white: #ffffff;
 }
 
 .ph4 {
@@ -47,7 +46,7 @@
     flex: 0 0 auto;
 }
 
-/* Plan pill (shadow border, no border) */
+/* Plan pill */
 .ph4-pill {
     display: inline-flex;
     align-items: center;
@@ -58,19 +57,20 @@
     padding: 0 14px;
     border-radius: 999px;
 
-    background: #ffffff;
+    border: none;
+    background: var(--ph4-dark);
     box-shadow: var(--ph4-shadowBorder);
 
     font-family: "Inter", sans-serif;
     font-size: 12px;
     font-weight: 600;
-    color: rgba(15, 23, 42, 0.78);
+    color: rgba(255, 255, 255, 0.88);
     white-space: nowrap;
 }
 
 .ph4-pill strong {
     font-weight: 800;
-    color: rgba(15, 23, 42, 0.92);
+    color: #ffffff;
 }
 
 /* Notifications */
@@ -86,18 +86,18 @@
     border-radius: 999px;
 
     border: none;
-    background: #ffffff;
+    background: var(--ph4-dark);
     box-shadow: var(--ph4-shadowBorder);
 
     display: grid;
     place-items: center;
 
     cursor: pointer;
-    transition: transform 0.08s ease, background 0.15s ease;
+    transition: transform 0.08s ease, opacity 0.15s ease, box-shadow 0.15s ease;
 }
 
 .ph4-iconBtn:hover {
-    background: rgba(15, 23, 42, 0.02);
+    opacity: 0.92;
 }
 
 .ph4-iconBtn:active {
@@ -113,6 +113,7 @@
     width: 18px;
     height: 18px;
     display: block;
+    filter: brightness(0) invert(1);
 }
 
 .ph4-dot {
@@ -123,7 +124,7 @@
     height: 8px;
     border-radius: 999px;
     background: var(--kc-accent-primary, #f97316);
-    box-shadow: 0 0 0 2px #ffffff;
+    box-shadow: 0 0 0 2px var(--ph4-dark);
 }
 
 /* Dropdown */
@@ -185,7 +186,7 @@
     color: rgba(71, 85, 105, 0.75);
 }
 
-/* Avatar (40x40, shadow border, no border) */
+/* Avatar */
 .ph4-avatarBtn {
     border: none;
     background: transparent;
@@ -198,7 +199,7 @@
     height: 40px;
     border-radius: 999px;
 
-    background: #ffffff;
+    background: var(--ph4-dark);
     box-shadow: var(--ph4-shadowBorder);
 
     display: grid;
@@ -209,61 +210,20 @@
     font-family: "Inter", sans-serif;
     font-size: 12px;
     font-weight: 800;
-    color: rgba(15, 23, 42, 0.9);
+    color: #ffffff;
+}
+
+.ph4-avatarIcon {
+    width: 18px;
+    height: 18px;
+    display: block;
+    filter: brightness(0) invert(1);
 }
 
 /* Responsive */
 @media (max-width: 1000px) {
     .ph4 {
         align-items: flex-start;
-    }
-
-    .ph4-right {
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        gap: 10px;
-        width: auto;
-        margin-left: auto;
-    }
-
-    .ph4-dd,
-    .ph4-avatarBtn {
-        flex: 0 0 auto;
-    }
-
-    .ph4-right .ph4-pill {
-        align-self: center;
-    }
-
-    .ph4-right .ph4-dd,
-    .ph4-right .ph4-avatarBtn {
-        display: inline-flex;
-    }
-
-    .ph4-right {
-        position: relative;
-    }
-
-    .ph4-right::after {
-        content: "";
-        display: block;
-    }
-
-    .ph4-right .ph4-dd {
-        order: 2;
-    }
-
-    .ph4-right .ph4-avatarBtn {
-        order: 3;
-    }
-
-    .ph4-right .ph4-pill {
-        order: 1;
-    }
-
-    .ph4-right {
-        --mobile-icons-gap: 10px;
     }
 
     .ph4-right {
@@ -276,6 +236,8 @@
         align-items: center;
         column-gap: 10px;
         row-gap: 10px;
+        width: auto;
+        margin-left: auto;
     }
 
     .ph4-right .ph4-pill {
