@@ -55,33 +55,195 @@ function downloadCsv(filename, rows) {
     URL.revokeObjectURL(url);
 }
 
+function formatDateLabel(value) {
+    if (!value) return "";
+    const date = new Date(value);
+    if (Number.isNaN(date.getTime())) return String(value);
+    return date.toLocaleDateString("en-GB", {
+        day: "numeric",
+        month: "short",
+    });
+}
+
+function getXAxisTickStep(days, pointCount) {
+    if (days <= 7) return 1;
+    if (days <= 30) return 5;
+    if (days <= 90) return 10;
+    return Math.max(1, Math.ceil(pointCount / 8));
+}
+
+function buildYAxisTicks(maxValue) {
+    const safeMax = Math.max(Number(maxValue) || 0, 1);
+    return [safeMax, Math.round((safeMax * 2) / 3), Math.round(safeMax / 3), 0];
+}
+
+function formatActivityTime(dateValue) {
+    if (!dateValue) return "";
+    const now = Date.now();
+    const date = new Date(dateValue).getTime();
+    if (Number.isNaN(date)) return "";
+
+    const diffMs = Math.max(0, now - date);
+    const minutes = Math.floor(diffMs / (1000 * 60));
+    const hours = Math.floor(diffMs / (1000 * 60 * 60));
+    const days = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+
+    if (minutes < 1) return "Just now";
+    if (minutes < 60) return `${minutes} min ago`;
+    if (hours < 24) return `${hours} hour${hours === 1 ? "" : "s"} ago`;
+    return `${days} day${days === 1 ? "" : "s"} ago`;
+}
+
+function getActivityMessage(item) {
+    const type = item?.event_type || item?.eventType || "";
+    const name = item?.contact_name || item?.contactName || item?.name || "";
+    const target = item?.action_target || item?.actionTarget || "";
+
+    switch (type) {
+        case "qr_scan":
+            return "Someone scanned your QR code";
+        case "nfc_tap":
+            return "Someone tapped your NFC card";
+        case "link_open":
+            return "Someone clicked your link";
+        case "contact_save":
+            return "Someone saved your number";
+        case "contact_exchange":
+        case "contact_exchange_submitted":
+            return name ? `${name} exchanged contacts with you` : "Someone exchanged contacts with you";
+        case "contact_exchange_opened":
+            return "Someone opened your contact exchange form";
+        case "email_clicked":
+            return "Someone clicked your email";
+        case "phone_clicked":
+            return "Someone clicked your phone number";
+        case "social_clicked":
+            return target ? `Someone clicked your ${target} profile` : "Someone clicked one of your social links";
+        case "profile_view":
+            return "Someone viewed your profile";
+        default:
+            return item?.message || "New activity on your profile";
+    }
+}
+
+function buildFallbackActivity(metrics) {
+    const items = [];
+
+    if ((metrics.qrScans || 0) > 0) {
+        items.push({
+            id: "fallback-qr",
+            message: "Someone scanned your QR code",
+            timeLabel: `${numberFormat(metrics.qrScans)} total`,
+        });
+    }
+
+    if ((metrics.cardTaps || 0) > 0) {
+        items.push({
+            id: "fallback-nfc",
+            message: "Someone tapped your NFC card",
+            timeLabel: `${numberFormat(metrics.cardTaps)} total`,
+        });
+    }
+
+    if ((metrics.linkOpens || 0) > 0) {
+        items.push({
+            id: "fallback-link",
+            message: "Someone clicked your link",
+            timeLabel: `${numberFormat(metrics.linkOpens)} total`,
+        });
+    }
+
+    if ((metrics.contactExchangeSubmits || 0) > 0) {
+        items.push({
+            id: "fallback-exchange",
+            message: "Someone exchanged contacts with you",
+            timeLabel: `${numberFormat(metrics.contactExchangeSubmits)} total`,
+        });
+    }
+
+    if ((metrics.contactsSaved || 0) > 0) {
+        items.push({
+            id: "fallback-save",
+            message: "Someone saved your number",
+            timeLabel: `${numberFormat(metrics.contactsSaved)} total`,
+        });
+    }
+
+    return items.slice(0, 5);
+}
+
+function RecentActivityCard({ items = [], metrics }) {
+    const finalItems = items.length ? items : buildFallbackActivity(metrics);
+
+    return (
+        <div className="an-chartCard">
+            <div className="an-chartHead">
+                <div>
+                    <h3 className="an-chartTitle">Recent Activity</h3>
+                    <p className="an-chartMuted">
+                        The latest actions people have taken on your profile.
+                    </p>
+                </div>
+            </div>
+
+            {finalItems.length ? (
+                <div className="an-activityList">
+                    {finalItems.map((item, index) => (
+                        <div key={item.id || item._id || `${item.message}-${index}`} className="an-activityRow">
+                            <span className="an-activityDot" />
+                            <div className="an-activityContent">
+                                <strong>{item.message || getActivityMessage(item)}</strong>
+                                <p>{item.timeLabel || formatActivityTime(item.createdAt || item.timestamp || item.date)}</p>
+                            </div>
+                        </div>
+                    ))}
+                </div>
+            ) : (
+                <div className="an-state an-state--compact">No recent activity yet</div>
+            )}
+        </div>
+    );
+}
+
 function MiniLineChart({
     data = [],
     seriesKey = "profileViews",
     title = "Engagement Over Time",
     subtitle = "Tracked profile visits over time.",
     onChangeSeries,
+    rangeDays = 7,
 }) {
     const values = useMemo(
         () => data.map((item) => Number(item?.[seriesKey]) || 0),
         [data, seriesKey]
     );
 
+    const maxValue = values.length ? Math.max(...values, 0) : 0;
+    const yTicks = buildYAxisTicks(maxValue);
+    const safeMax = Math.max(maxValue, 1);
+
     const points = useMemo(() => {
         if (!data.length) return "";
-
-        const max = values.length ? Math.max(...values, 1) : 1;
 
         return values
             .map((value, index) => {
                 const x = data.length <= 1 ? 0 : (index / (data.length - 1)) * 100;
-                const y = 100 - (value / max) * 100;
+                const y = 100 - (value / safeMax) * 100;
                 return `${x},${y}`;
             })
             .join(" ");
-    }, [data, values]);
+    }, [data, values, safeMax]);
 
-    const maxValue = values.length ? Math.max(...values, 0) : 0;
+    const tickStep = getXAxisTickStep(Number(rangeDays) || data.length, data.length);
+    const xAxisLabels = data.map((item, index) => {
+        const isLast = index === data.length - 1;
+        const shouldShow = index % tickStep === 0 || isLast;
+
+        return {
+            key: item.date || `${index}`,
+            label: shouldShow ? (item.label || formatDateLabel(item.date)) : "",
+        };
+    });
 
     if (!data.length) {
         return (
@@ -135,34 +297,47 @@ function MiniLineChart({
                 ))}
             </div>
 
-            <div className="an-lineChart">
-                <svg
-                    viewBox="0 0 100 100"
-                    className="an-lineChartSvg"
-                    preserveAspectRatio="none"
-                    aria-hidden="true"
-                >
-                    <polyline className="an-lineChartGrid" points="0,100 100,100" />
-                    <polyline className="an-lineChartGrid" points="0,66 100,66" />
-                    <polyline className="an-lineChartGrid" points="0,33 100,33" />
-                    <polyline className="an-lineChartGrid" points="0,0 100,0" />
-                    <polyline className="an-lineChartPath" points={points} />
-                </svg>
-
-                <div className="an-lineLabels">
-                    {data.map((item) => (
-                        <span key={item.date} className="an-lineLabel">
-                            {item.label}
+            <div className="an-lineChartWrap">
+                <div className="an-yAxis">
+                    {yTicks.map((tick, index) => (
+                        <span key={`${tick}-${index}`} className="an-yAxisLabel">
+                            {numberFormat(tick)}
                         </span>
                     ))}
+                </div>
+
+                <div className="an-lineChartMain">
+                    <div className="an-lineChart">
+                        <svg
+                            viewBox="0 0 100 100"
+                            className="an-lineChartSvg"
+                            preserveAspectRatio="none"
+                            aria-hidden="true"
+                        >
+                            <polyline className="an-lineChartGrid" points="0,100 100,100" />
+                            <polyline className="an-lineChartGrid" points="0,66.66 100,66.66" />
+                            <polyline className="an-lineChartGrid" points="0,33.33 100,33.33" />
+                            <polyline className="an-lineChartGrid" points="0,0 100,0" />
+                            <polyline className="an-lineChartPath" points={points} />
+                        </svg>
+                    </div>
+
+                    <div className="an-lineLabels an-lineLabels--spaced">
+                        {xAxisLabels.map((item) => (
+                            <span key={item.key} className="an-lineLabel">
+                                {item.label}
+                            </span>
+                        ))}
+                    </div>
                 </div>
             </div>
         </div>
     );
 }
 
-function BarBreakdown({ title, subtitle, items = [] }) {
-    const max = Math.max(...items.map((item) => Number(item?.value) || 0), 1);
+function VerticalBarBreakdown({ title, subtitle, items = [] }) {
+    const normalizedItems = items.filter(Boolean);
+    const max = Math.max(...normalizedItems.map((item) => Number(item?.value) || 0), 1);
 
     return (
         <div className="an-chartCard">
@@ -173,23 +348,30 @@ function BarBreakdown({ title, subtitle, items = [] }) {
                 </div>
             </div>
 
-            <div className="an-barList">
-                {items.map((item) => {
-                    const value = Number(item?.value) || 0;
-                    const width = `${Math.max((value / max) * 100, value > 0 ? 8 : 0)}%`;
+            <div className="an-vBarWrap">
+                <div className="an-vBarGrid">
+                    <span />
+                    <span />
+                    <span />
+                    <span />
+                </div>
 
-                    return (
-                        <div key={item.key} className="an-barRow">
-                            <div className="an-barMeta">
-                                <span className="an-barLabel">{item.label}</span>
-                                <span className="an-barValue">{numberFormat(value)}</span>
+                <div className="an-vBarList">
+                    {normalizedItems.map((item) => {
+                        const value = Number(item?.value) || 0;
+                        const height = `${Math.max((value / max) * 100, value > 0 ? 8 : 0)}%`;
+
+                        return (
+                            <div key={item.key} className="an-vBarItem">
+                                <div className="an-vBarValue">{numberFormat(value)}</div>
+                                <div className="an-vBarTrack">
+                                    <div className="an-vBarFill" style={{ height }} />
+                                </div>
+                                <div className="an-vBarLabel">{item.label}</div>
                             </div>
-                            <div className="an-barTrack">
-                                <div className="an-barFill" style={{ width }} />
-                            </div>
-                        </div>
-                    );
-                })}
+                        );
+                    })}
+                </div>
             </div>
         </div>
     );
@@ -259,19 +441,37 @@ export default function Analytics() {
                     ? res.data.profiles
                     : [];
 
-            return raw.map((item) => ({
-                id: item?._id || item?.id || "",
-                slug: item?.profile_slug || item?.profileSlug || "",
-                name:
-                    item?.business_card_name ||
-                    item?.businessCardName ||
-                    item?.main_heading ||
-                    item?.mainHeading ||
-                    item?.business_name ||
-                    item?.businessName ||
-                    item?.profile_slug ||
-                    "Untitled profile",
-            }));
+            return raw
+                .map((item, index) => {
+                    const slug =
+                        item?.profile_slug ||
+                        item?.profileSlug ||
+                        item?.slug ||
+                        item?.username ||
+                        item?.public_slug ||
+                        "";
+
+                    const id = item?._id || item?.id || `profile-${index}`;
+
+                    const name =
+                        item?.business_card_name ||
+                        item?.businessCardName ||
+                        item?.main_heading ||
+                        item?.mainHeading ||
+                        item?.business_name ||
+                        item?.businessName ||
+                        item?.title ||
+                        slug ||
+                        "Untitled profile";
+
+                    return {
+                        id,
+                        slug,
+                        value: slug || id,
+                        name,
+                    };
+                })
+                .filter((item) => item.value);
         },
         staleTime: 5 * 60 * 1000,
     });
@@ -281,7 +481,13 @@ export default function Analytics() {
         queryFn: async () => {
             const params = new URLSearchParams();
             params.set("days", range);
-            if (profile !== "all") params.set("profileSlug", profile);
+
+            if (profile !== "all") {
+                const selectedProfile = (profilesQuery.data || []).find((p) => p.value === profile);
+                if (selectedProfile?.slug) {
+                    params.set("profileSlug", selectedProfile.slug);
+                }
+            }
 
             const res = await api.get(`/api/analytics/summary?${params.toString()}`);
             return res.data;
@@ -307,8 +513,8 @@ export default function Analytics() {
     };
 
     const timeline = summaryQuery.data?.timeline || [];
-    const trafficSources = summaryQuery.data?.trafficSources || [];
     const socialBreakdownRaw = summaryQuery.data?.socialBreakdown || [];
+    const recentActivityRaw = summaryQuery.data?.recentActivity || summaryQuery.data?.recentEvents || [];
 
     const socialBreakdown = ["facebook", "instagram", "tiktok", "linkedin", "x"].map((key) => {
         const found = socialBreakdownRaw.find((row) => row.key === key);
@@ -322,11 +528,20 @@ export default function Analytics() {
         };
     });
 
+    const recentActivity = recentActivityRaw.slice(0, 5).map((item, index) => ({
+        id: item?._id || item?.id || `activity-${index}`,
+        message: getActivityMessage(item),
+        timeLabel: formatActivityTime(item?.createdAt || item?.timestamp || item?.date),
+        ...item,
+    }));
+
     const exportData = () => {
+        const selectedProfile = (profilesQuery.data || []).find((p) => p.value === profile);
+
         const selectedProfileLabel =
             profile === "all"
                 ? "all-profiles"
-                : profilesQuery.data?.find((p) => p.slug === profile)?.slug || profile;
+                : selectedProfile?.slug || selectedProfile?.name || profile;
 
         const rows = [
             ["Analytics Export"],
@@ -351,10 +566,6 @@ export default function Analytics() {
                 item.qrScans ?? 0,
                 item.cardTaps ?? 0,
             ]),
-            [],
-            ["Traffic Sources"],
-            ["Source", "Count"],
-            ...trafficSources.map((item) => [item.label ?? "", item.value ?? 0]),
             [],
             ["Social Breakdown"],
             ["Platform", "Count"],
@@ -403,8 +614,9 @@ export default function Analytics() {
                                 <option value="all">
                                     {profilesQuery.isLoading ? "Loading profiles..." : "All profiles"}
                                 </option>
+
                                 {(profilesQuery.data || []).map((item) => (
-                                    <option key={item.slug || item.id} value={item.slug}>
+                                    <option key={item.value} value={item.value}>
                                         {item.name}
                                     </option>
                                 ))}
@@ -490,29 +702,22 @@ export default function Analytics() {
                 </section>
 
                 <section className="an-chartGrid">
+                    <RecentActivityCard items={recentActivity} metrics={metrics} />
+
                     <MiniLineChart
                         data={timeline}
                         seriesKey={chartSeries}
                         title={chartMeta[chartSeries]?.title}
                         subtitle={chartMeta[chartSeries]?.subtitle}
                         onChangeSeries={setChartSeries}
-                    />
-
-                    <BarBreakdown
-                        title="Engagement Breakdown"
-                        subtitle="How your total visits are split across link, QR and NFC traffic."
-                        items={[
-                            { key: "link", label: "Link Visits", value: metrics.linkOpens || 0 },
-                            { key: "qr", label: "QR Scans", value: metrics.qrScans || 0 },
-                            { key: "nfc", label: "NFC Taps", value: metrics.cardTaps || 0 },
-                        ]}
+                        rangeDays={Number(range)}
                     />
                 </section>
 
                 <section className="an-chartGrid">
                     <ActionDetailsCard metrics={metrics} />
 
-                    <BarBreakdown
+                    <VerticalBarBreakdown
                         title="Social Click Breakdown"
                         subtitle="How many clicks each added social profile received."
                         items={socialBreakdown}
