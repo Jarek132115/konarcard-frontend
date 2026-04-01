@@ -1,28 +1,19 @@
-// frontend/src/pages/interface/UpgradePlan.jsx
 import React, { useEffect, useMemo, useState } from "react";
 import DashboardLayout from "../../components/Dashboard/DashboardLayout";
 import PageHeader from "../../components/Dashboard/PageHeader";
 
 import "../../styling/fonts.css";
-
-/* ✅ Dashboard-scoped layout */
 import "../../styling/dashboard/upgradeplan.css";
-
-/* ✅ Reuse the card system you already perfected */
 import "../../styling/home/pricing.css";
 
 import { BASE_URL } from "../../services/api";
 
-/* ✅ plan icons (same ones used on website pricing) */
 import FreePlanIcon from "../../assets/icons/FreePlan.svg";
 import PlusPlanIcon from "../../assets/icons/PlusPlan.svg";
 import TeamsPlanIcon from "../../assets/icons/TeamsPlan.svg";
 
 const CHECKOUT_INTENT_KEY = "konar_checkout_intent_v1";
 
-/* =========================
-   Helpers (auth + jwt)
-   ========================= */
 function safeGetToken() {
     try {
         return localStorage.getItem("token") || "";
@@ -75,7 +66,11 @@ function formatDate(d) {
     if (!d) return "";
     const dt = new Date(d);
     if (Number.isNaN(dt.getTime())) return "";
-    return dt.toLocaleDateString(undefined, { year: "numeric", month: "short", day: "numeric" });
+    return dt.toLocaleDateString(undefined, {
+        year: "numeric",
+        month: "short",
+        day: "numeric",
+    });
 }
 
 function planRank(plan) {
@@ -84,9 +79,6 @@ function planRank(plan) {
     return 0;
 }
 
-/* =========================
-   Money helpers
-   ========================= */
 function fmtGBP(n) {
     const num = Number(n);
     if (!Number.isFinite(num)) return "—";
@@ -99,8 +91,14 @@ function savingsLabel(fromPerMonth, toPerMonth) {
     return `Save ${fmtGBP(diff)}/mo`;
 }
 
+function normalizePlanLabel(plan) {
+    if (plan === "teams") return "Teams";
+    if (plan === "plus") return "Plus";
+    return "Free";
+}
+
 export default function UpgradePlan() {
-    const [billing, setBilling] = useState("monthly"); // monthly | quarterly | yearly
+    const [billing, setBilling] = useState("monthly");
     const [loadingKey, setLoadingKey] = useState(null);
 
     const [subLoading, setSubLoading] = useState(false);
@@ -109,9 +107,6 @@ export default function UpgradePlan() {
 
     const apiBase = BASE_URL;
 
-    /* =========================
-       Pricing rules (your exact spec)
-       ========================= */
     const PRICES = useMemo(() => {
         const plusMonthly = 4.95;
         const plusQuarterlyPerMonth = 4.45;
@@ -122,15 +117,26 @@ export default function UpgradePlan() {
         const quarterMonths = 3;
         const yearMonths = 12;
 
-        const plusQuarterTotal = plusQuarterlyPerMonth * quarterMonths; // 13.35
-        const plusYearTotal = plusYearlyPerMonth * yearMonths; // 47.40
+        const plusQuarterTotal = plusQuarterlyPerMonth * quarterMonths;
+        const plusYearTotal = plusYearlyPerMonth * yearMonths;
 
         return {
             addOnPerExtraProfilePerMonth,
             plus: {
-                monthly: { perMonth: plusMonthly, billedLabel: `${fmtGBP(plusMonthly)} / month` },
-                quarterly: { perMonth: plusQuarterlyPerMonth, billedTotal: plusQuarterTotal, billedLabel: `${fmtGBP(plusQuarterTotal)} / quarter` },
-                yearly: { perMonth: plusYearlyPerMonth, billedTotal: plusYearTotal, billedLabel: `${fmtGBP(plusYearTotal)} / year` },
+                monthly: {
+                    perMonth: plusMonthly,
+                    billedLabel: `${fmtGBP(plusMonthly)} / month`,
+                },
+                quarterly: {
+                    perMonth: plusQuarterlyPerMonth,
+                    billedTotal: plusQuarterTotal,
+                    billedLabel: `${fmtGBP(plusQuarterTotal)} / quarter`,
+                },
+                yearly: {
+                    perMonth: plusYearlyPerMonth,
+                    billedTotal: plusYearTotal,
+                    billedLabel: `${fmtGBP(plusYearTotal)} / year`,
+                },
             },
             free: {
                 monthly: { perMonth: 0, billedLabel: "£0" },
@@ -165,7 +171,6 @@ export default function UpgradePlan() {
                 ? "Billed every 3 months. Cancel anytime."
                 : "Best value. Billed yearly.";
 
-    /* ---------------- Subscription status ---------------- */
     useEffect(() => {
         let mounted = true;
 
@@ -187,7 +192,10 @@ export default function UpgradePlan() {
                 const token = safeGetToken();
                 const res = await fetch(`${apiBase}/api/subscription-status`, {
                     method: "GET",
-                    headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+                    headers: {
+                        "Content-Type": "application/json",
+                        Authorization: `Bearer ${token}`,
+                    },
                     credentials: "include",
                 });
 
@@ -201,9 +209,12 @@ export default function UpgradePlan() {
                     return;
                 }
 
-                if (!res.ok) throw new Error(data?.error || "Failed to load subscription status");
+                if (!res.ok) {
+                    throw new Error(data?.error || "Failed to load subscription status");
+                }
 
                 if (!mounted) return;
+
                 setSubState({
                     active: !!data?.active,
                     plan: data?.plan || "free",
@@ -240,13 +251,12 @@ export default function UpgradePlan() {
     const planStatusLine = useMemo(() => {
         if (!isLoggedIn()) return "";
         if (!subState) return "";
-        if (currentPlan === "free" && !isActive) return "You’re on the Free plan.";
-        if (hasFutureAccess) return `Active until ${activeUntilLabel}`;
-        if (isActive) return "Active";
-        return "Inactive";
+        if (currentPlan === "free" && !isActive) return "You’re currently on the Free plan.";
+        if (hasFutureAccess) return `Your ${normalizePlanLabel(currentPlan)} plan is active until ${activeUntilLabel}.`;
+        if (isActive) return `Your ${normalizePlanLabel(currentPlan)} plan is active.`;
+        return "No active paid subscription found.";
     }, [subState, currentPlan, isActive, hasFutureAccess, activeUntilLabel]);
 
-    /* ---------------- Stripe intent storage ---------------- */
     const saveCheckoutIntent = (planKey) => {
         try {
             const returnUrl = `${window.location.origin}/myprofile?subscribed=1`;
@@ -261,7 +271,6 @@ export default function UpgradePlan() {
         } catch { }
     };
 
-    /* ---------------- Stripe: start checkout ---------------- */
     const startSubscription = async (planKey) => {
         if (!isLoggedIn()) {
             saveCheckoutIntent(planKey);
@@ -282,22 +291,34 @@ export default function UpgradePlan() {
 
             const res = await fetch(`${apiBase}/api/subscribe`, {
                 method: "POST",
-                headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${token}`,
+                },
                 credentials: "include",
                 body: JSON.stringify({ planKey, returnUrl }),
             });
 
             const data = await res.json().catch(() => ({}));
 
-            if (res.status === 401 || res.status === 404 || /user not found/i.test(String(data?.error || ""))) {
+            if (
+                res.status === 401 ||
+                res.status === 404 ||
+                /user not found/i.test(String(data?.error || ""))
+            ) {
                 clearLocalAuth();
                 alert("Your session is no longer valid. Please log in again.");
                 window.location.href = "/login";
                 return;
             }
 
-            if (!res.ok || data?.error) throw new Error(data?.error || "Failed to start checkout");
-            if (!data?.url) throw new Error("Stripe session URL missing");
+            if (!res.ok || data?.error) {
+                throw new Error(data?.error || "Failed to start checkout");
+            }
+
+            if (!data?.url) {
+                throw new Error("Stripe session URL missing");
+            }
 
             try {
                 localStorage.removeItem(CHECKOUT_INTENT_KEY);
@@ -311,7 +332,6 @@ export default function UpgradePlan() {
         }
     };
 
-    /* ---------------- Billing portal ---------------- */
     const openBillingPortal = async () => {
         if (!isLoggedIn()) {
             window.location.href = "/login";
@@ -323,7 +343,10 @@ export default function UpgradePlan() {
 
             const res = await fetch(`${apiBase}/api/billing-portal`, {
                 method: "POST",
-                headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${token}`,
+                },
                 credentials: "include",
                 body: JSON.stringify({}),
             });
@@ -336,8 +359,13 @@ export default function UpgradePlan() {
                 return;
             }
 
-            if (!res.ok || data?.error) throw new Error(data?.error || "Could not open billing portal");
-            if (!data?.url) throw new Error("Billing portal URL missing");
+            if (!res.ok || data?.error) {
+                throw new Error(data?.error || "Could not open billing portal");
+            }
+
+            if (!data?.url) {
+                throw new Error("Billing portal URL missing");
+            }
 
             window.location.href = data.url;
         } catch (e) {
@@ -345,14 +373,20 @@ export default function UpgradePlan() {
         }
     };
 
-    /* ---------------- Button logic per plan ---------------- */
     const getPlanButton = (planName, planKeyForPaid) => {
         const logged = isLoggedIn();
 
         if (!logged) {
             if (planName === "free") {
-                return { type: "link", label: "Start Free", to: "/register", disabled: false, helper: "" };
+                return {
+                    type: "link",
+                    label: "Start Free",
+                    to: "/register",
+                    disabled: false,
+                    helper: "",
+                };
             }
+
             return {
                 type: "button",
                 label: `Upgrade to ${planName === "plus" ? "Plus" : "Teams"}`,
@@ -382,16 +416,33 @@ export default function UpgradePlan() {
                     label: "Switch to Free",
                     onClick: openBillingPortal,
                     disabled: !!loadingKey || subLoading,
-                    helper: hasFutureAccess ? `Paid plan stays active until ${activeUntilLabel}` : "Manage downgrade in Billing",
+                    helper: hasFutureAccess
+                        ? `Paid access remains until ${activeUntilLabel}`
+                        : "Manage downgrade in billing",
                 };
             }
-            if (current === "free") return { type: "button", label: "Current plan", onClick: null, disabled: true, helper: "" };
-            return { type: "button", label: "Choose Free", onClick: openBillingPortal, disabled: false, helper: "" };
+
+            if (current === "free") {
+                return {
+                    type: "button",
+                    label: "Current plan",
+                    onClick: null,
+                    disabled: true,
+                    helper: "",
+                };
+            }
+
+            return {
+                type: "button",
+                label: "Choose Free",
+                onClick: openBillingPortal,
+                disabled: false,
+                helper: "",
+            };
         }
 
-        const targetPlan = planName;
-        const isUpgrade = planRank(targetPlan) > planRank(current);
-        const isDowngrade = planRank(targetPlan) < planRank(current);
+        const isUpgrade = planRank(planName) > planRank(current);
+        const isDowngrade = planRank(planName) < planRank(current);
 
         if (isDowngrade) {
             return {
@@ -404,7 +455,13 @@ export default function UpgradePlan() {
         }
 
         if (isUpgrade && current !== "free" && stillHasPaidAccess) {
-            return { type: "button", label: "Upgrade (Billing)", onClick: openBillingPortal, disabled: !!loadingKey || subLoading, helper: "" };
+            return {
+                type: "button",
+                label: "Upgrade (Billing)",
+                onClick: openBillingPortal,
+                disabled: !!loadingKey || subLoading,
+                helper: "",
+            };
         }
 
         return {
@@ -416,13 +473,9 @@ export default function UpgradePlan() {
         };
     };
 
-    /* =========================
-       Plans cards (Home system)
-       ========================= */
     const planCards = useMemo(() => {
         const plusKey = `plus-${billing}`;
         const teamsKey = `teams-${billing}`;
-
         const teamsExample3Profiles = plusPerMonth + PRICES.addOnPerExtraProfilePerMonth * 2;
 
         return [
@@ -435,7 +488,14 @@ export default function UpgradePlan() {
                 price: "£0",
                 cadence: "No monthly fees",
                 meta: [],
-                highlights: ["Your KonarCard link", "Contact buttons", "QR sharing", "Works on any phone", "Unlimited updates", "Tap or scan share"],
+                highlights: [
+                    "Your KonarCard link",
+                    "Contact buttons",
+                    "QR sharing",
+                    "Works on any phone",
+                    "Unlimited updates",
+                    "Tap or scan share",
+                ],
                 button: getPlanButton("free"),
             },
             {
@@ -447,10 +507,20 @@ export default function UpgradePlan() {
                 price: fmtGBP(plusPerMonth),
                 cadence: "per month",
                 meta: [
-                    billing === "monthly" ? "Cancel anytime. No contracts." : `Billed ${plusBilledLabel}. Cancel anytime.`,
-                    plusSavings ? plusSavings : null,
+                    billing === "monthly"
+                        ? "Cancel anytime. No contracts."
+                        : `Billed ${plusBilledLabel}. Cancel anytime.`,
+                    plusSavings || null,
                 ].filter(Boolean),
-                highlights: ["Full customisation", "More photos", "Services & pricing", "Reviews & ratings", "Unlimited edits", "Remove branding", "Deeper analytics"],
+                highlights: [
+                    "Full customisation",
+                    "More photos",
+                    "Services & pricing",
+                    "Reviews & ratings",
+                    "Unlimited edits",
+                    "Remove branding",
+                    "Deeper analytics",
+                ],
                 button: getPlanButton("plus", plusKey),
             },
             {
@@ -462,15 +532,57 @@ export default function UpgradePlan() {
                 price: fmtGBP(plusPerMonth),
                 cadence: "+ £1.95 per extra profile",
                 meta: [
-                    billing === "monthly" ? "Billed monthly. Cancel anytime." : `Base billed ${plusBilledLabel}.`,
+                    billing === "monthly"
+                        ? "Billed monthly. Cancel anytime."
+                        : `Base billed ${plusBilledLabel}.`,
                     `Example: 3 profiles = ${fmtGBP(teamsExample3Profiles)} / month`,
                 ],
-                highlights: ["Everything in Plus", "Add staff profiles", "Centralised controls", "Shared branding", "Team analytics", "Manage in one place"],
+                highlights: [
+                    "Everything in Plus",
+                    "Add staff profiles",
+                    "Centralised controls",
+                    "Shared branding",
+                    "Team analytics",
+                    "Manage in one place",
+                ],
                 button: getPlanButton("teams", teamsKey),
             },
         ];
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [billing, plusPerMonth, plusBilledLabel, plusSavings, currentPlan, isActive, hasFutureAccess, activeUntilLabel, loadingKey, subLoading, PRICES]);
+    }, [
+        billing,
+        plusPerMonth,
+        plusBilledLabel,
+        plusSavings,
+        currentPlan,
+        isActive,
+        hasFutureAccess,
+        activeUntilLabel,
+        loadingKey,
+        subLoading,
+        PRICES,
+    ]);
+
+    const currentPlanCard = useMemo(() => {
+        if (currentPlan === "teams") {
+            return {
+                title: "Teams",
+                summary: "Best for small teams managing multiple profiles together.",
+            };
+        }
+
+        if (currentPlan === "plus") {
+            return {
+                title: "Plus",
+                summary: "More customisation, better branding control and stronger analytics.",
+            };
+        }
+
+        return {
+            title: "Free",
+            summary: "A simple starting plan for sharing your KonarCard and basic contact details.",
+        };
+    }, [currentPlan]);
 
     return (
         <DashboardLayout hideDesktopHeader>
@@ -480,141 +592,173 @@ export default function UpgradePlan() {
                     subtitle="Upgrade, manage billing, and change plans without leaving your dashboard."
                 />
 
-                <section className="upg-hero">
-                    <div className="upg-heroInner">
-                        <div className="upg-heroCopy">
-                            <div className="kc-pill upg-pill">Plans & Billing</div>
+                <section className="upg-summaryGrid">
+                    <div className="upg-summaryCard upg-summaryCard--current">
+                        <div className="upg-summaryEyebrow">Current Plan</div>
+                        <h2 className="upg-summaryTitle">{currentPlanCard.title}</h2>
+                        <p className="upg-summaryText">{currentPlanCard.summary}</p>
+                    </div>
 
-                            <h1 className="h1 upg-title">
-                                Choose the plan that fits your{" "}
-                                <span className="upg-accent">business</span>
-                            </h1>
+                    <div className="upg-summaryCard">
+                        <div className="upg-summaryEyebrow">Billing Status</div>
+                        <h3 className="upg-statusTitle">
+                            {subLoading ? "Checking your billing…" : "Your subscription"}
+                        </h3>
+                        <p className="upg-summaryText">
+                            {subErr
+                                ? subErr
+                                : isLoggedIn()
+                                    ? planStatusLine || "No billing status available."
+                                    : "Log in to manage your subscription and billing details."}
+                        </p>
+                    </div>
 
-                            <p className="kc-subheading upg-sub">
-                                Start free, upgrade anytime. Manage billing from here — no need to leave your dashboard.
+                    <div className="upg-summaryCard">
+                        <div className="upg-summaryEyebrow">Manage Billing</div>
+                        <h3 className="upg-statusTitle">Billing portal</h3>
+                        <p className="upg-summaryText">
+                            Update payment methods, switch plans, or manage renewals in one place.
+                        </p>
+
+                        <div className="upg-summaryActions">
+                            <button
+                                type="button"
+                                className="kx-btn kx-btn--black"
+                                onClick={openBillingPortal}
+                            >
+                                Open Billing Portal
+                            </button>
+                        </div>
+                    </div>
+                </section>
+
+                <section className="upg-plansCard">
+                    <div className="upg-plansHead">
+                        <div>
+                            <div className="upg-kicker">Plans & Billing</div>
+                            <h2 className="upg-sectionTitle">Choose the plan that fits your business</h2>
+                            <p className="upg-sectionSub">
+                                Start free, upgrade anytime, and manage everything from your dashboard.
                             </p>
-
-                            {isLoggedIn() ? (
-                                <div className="upg-status">
-                                    {subLoading ? (
-                                        <div className="upg-statusMuted">Checking your plan…</div>
-                                    ) : subErr ? (
-                                        <div className="upg-statusErr">{subErr}</div>
-                                    ) : planStatusLine ? (
-                                        <div className="upg-statusMuted">{planStatusLine}</div>
-                                    ) : null}
-                                </div>
-                            ) : (
-                                <div className="upg-status">
-                                    <div className="upg-statusMuted">Log in to manage billing and upgrade instantly.</div>
-                                </div>
-                            )}
-
-                            <div className="upg-billing">
-                                <div className="upg-billingTabs" role="tablist" aria-label="Billing interval">
-                                    <button
-                                        type="button"
-                                        className={`upg-tab ${billing === "monthly" ? "is-active" : ""}`}
-                                        onClick={() => setBilling("monthly")}
-                                    >
-                                        Monthly
-                                    </button>
-                                    <button
-                                        type="button"
-                                        className={`upg-tab ${billing === "quarterly" ? "is-active" : ""}`}
-                                        onClick={() => setBilling("quarterly")}
-                                    >
-                                        Quarterly
-                                    </button>
-                                    <button
-                                        type="button"
-                                        className={`upg-tab ${billing === "yearly" ? "is-active" : ""}`}
-                                        onClick={() => setBilling("yearly")}
-                                    >
-                                        Yearly
-                                    </button>
-                                </div>
-
-                                <div className="upg-note">{billingNote}</div>
-                            </div>
                         </div>
 
-                        {/* ✅ Plans grid using existing card system */}
-                        <div className="kpr upg-kpr">
-                            <div className="kpr__container upg-kprContainer">
-                                <div className="kpr__grid upg-grid">
-                                    {planCards.map((p) => {
-                                        const featured = !!p.featured;
+                        <div className="upg-billingBox">
+                            <div className="upg-billingTabs" role="tablist" aria-label="Billing interval">
+                                <button
+                                    type="button"
+                                    className={`upg-tab ${billing === "monthly" ? "is-active" : ""}`}
+                                    onClick={() => setBilling("monthly")}
+                                >
+                                    Monthly
+                                </button>
+                                <button
+                                    type="button"
+                                    className={`upg-tab ${billing === "quarterly" ? "is-active" : ""}`}
+                                    onClick={() => setBilling("quarterly")}
+                                >
+                                    Quarterly
+                                </button>
+                                <button
+                                    type="button"
+                                    className={`upg-tab ${billing === "yearly" ? "is-active" : ""}`}
+                                    onClick={() => setBilling("yearly")}
+                                >
+                                    Yearly
+                                </button>
+                            </div>
 
-                                        return (
-                                            <article key={p.key} className={`kpr-card ${featured ? "is-featured" : ""}`}>
-                                                <div className="kpr-top">
-                                                    <div className={`kpr-tag ${featured ? "is-featured" : ""}`}>{p.tag}</div>
+                            <div className="upg-note">{billingNote}</div>
+                        </div>
+                    </div>
 
-                                                    <div className="kpr-nameRow">
-                                                        <span className={`kpr-icon ${featured ? "is-featured" : ""}`}>
-                                                            <img src={p.icon} alt="" />
-                                                        </span>
-                                                        <div className={`kpr-name ${featured ? "is-featured" : ""}`}>{p.title}</div>
-                                                    </div>
+                    <div className="kpr upg-kpr">
+                        <div className="kpr__container upg-kprContainer">
+                            <div className="kpr__grid upg-grid">
+                                {planCards.map((p) => {
+                                    const featured = !!p.featured;
 
-                                                    <div className="kpr-priceRow">
-                                                        <div className={`kpr-price ${featured ? "is-featured" : ""}`}>{p.price}</div>
-                                                        <div className={`kpr-cadence ${featured ? "is-featured" : ""}`}>{p.cadence}</div>
-                                                    </div>
-
-                                                    {p.meta?.length ? (
-                                                        <div className={`kpr-meta ${featured ? "is-featured" : ""}`}>
-                                                            {p.meta.map((m, i) => (
-                                                                <div key={i}>{m}</div>
-                                                            ))}
-                                                        </div>
-                                                    ) : null}
+                                    return (
+                                        <article key={p.key} className={`kpr-card ${featured ? "is-featured" : ""}`}>
+                                            <div className="kpr-top">
+                                                <div className={`kpr-tag ${featured ? "is-featured" : ""}`}>
+                                                    {p.tag}
                                                 </div>
 
-                                                <div className={`kpr-divider ${featured ? "is-featured" : ""}`} />
-
-                                                <div className="kpr-body">
-                                                    <div className="kpr-content">
-                                                        <div className={`kpr-included ${featured ? "is-featured" : ""}`}>What’s included</div>
-                                                        <ul className="kpr-list">
-                                                            {p.highlights.map((h, i) => (
-                                                                <li key={i} className="kpr-li">
-                                                                    <span className={`kpr-liText ${featured ? "is-featured" : ""}`}>{h}</span>
-                                                                </li>
-                                                            ))}
-                                                        </ul>
+                                                <div className="kpr-nameRow">
+                                                    <span className={`kpr-icon ${featured ? "is-featured" : ""}`}>
+                                                        <img src={p.icon} alt="" />
+                                                    </span>
+                                                    <div className={`kpr-name ${featured ? "is-featured" : ""}`}>
+                                                        {p.title}
                                                     </div>
-
-                                                    <div className="kpr-actions">
-                                                        {p.button.type === "link" ? (
-                                                            <a className={`kx-btn ${featured ? "kpr-btn--featured" : "kx-btn--black"} kpr-btn`} href={p.button.to}>
-                                                                {p.button.label}
-                                                            </a>
-                                                        ) : (
-                                                            <button
-                                                                type="button"
-                                                                className={`kx-btn ${featured ? "kpr-btn--featured" : "kx-btn--black"} kpr-btn`}
-                                                                onClick={p.button.onClick || undefined}
-                                                                disabled={!!p.button.disabled}
-                                                            >
-                                                                {loadingKey ? "Working…" : p.button.label}
-                                                            </button>
-                                                        )}
-                                                    </div>
-
-                                                    {p.button.helper ? <div className={`upg-helper ${featured ? "is-featured" : ""}`}>{p.button.helper}</div> : null}
                                                 </div>
-                                            </article>
-                                        );
-                                    })}
-                                </div>
 
-                                <div className="upg-portalRow">
-                                    <button type="button" className="kx-btn kx-btn--white upg-portalBtn" onClick={openBillingPortal}>
-                                        Open Billing Portal
-                                    </button>
-                                </div>
+                                                <div className="kpr-priceRow">
+                                                    <div className={`kpr-price ${featured ? "is-featured" : ""}`}>
+                                                        {p.price}
+                                                    </div>
+                                                    <div className={`kpr-cadence ${featured ? "is-featured" : ""}`}>
+                                                        {p.cadence}
+                                                    </div>
+                                                </div>
+
+                                                {p.meta?.length ? (
+                                                    <div className={`kpr-meta ${featured ? "is-featured" : ""}`}>
+                                                        {p.meta.map((m, i) => (
+                                                            <div key={i}>{m}</div>
+                                                        ))}
+                                                    </div>
+                                                ) : null}
+                                            </div>
+
+                                            <div className={`kpr-divider ${featured ? "is-featured" : ""}`} />
+
+                                            <div className="kpr-body">
+                                                <div className="kpr-content">
+                                                    <div className={`kpr-included ${featured ? "is-featured" : ""}`}>
+                                                        What’s included
+                                                    </div>
+
+                                                    <ul className="kpr-list">
+                                                        {p.highlights.map((h, i) => (
+                                                            <li key={i} className="kpr-li">
+                                                                <span className={`kpr-liText ${featured ? "is-featured" : ""}`}>
+                                                                    {h}
+                                                                </span>
+                                                            </li>
+                                                        ))}
+                                                    </ul>
+                                                </div>
+
+                                                <div className="kpr-actions">
+                                                    {p.button.type === "link" ? (
+                                                        <a
+                                                            className={`kx-btn ${featured ? "kpr-btn--featured" : "kx-btn--black"} kpr-btn`}
+                                                            href={p.button.to}
+                                                        >
+                                                            {p.button.label}
+                                                        </a>
+                                                    ) : (
+                                                        <button
+                                                            type="button"
+                                                            className={`kx-btn ${featured ? "kpr-btn--featured" : "kx-btn--black"} kpr-btn`}
+                                                            onClick={p.button.onClick || undefined}
+                                                            disabled={!!p.button.disabled}
+                                                        >
+                                                            {loadingKey ? "Working…" : p.button.label}
+                                                        </button>
+                                                    )}
+                                                </div>
+
+                                                {p.button.helper ? (
+                                                    <div className={`upg-helper ${featured ? "is-featured" : ""}`}>
+                                                        {p.button.helper}
+                                                    </div>
+                                                ) : null}
+                                            </div>
+                                        </article>
+                                    );
+                                })}
                             </div>
                         </div>
                     </div>
