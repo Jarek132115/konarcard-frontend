@@ -4,7 +4,6 @@
     margin: 0;
 }
 
-/* header right */
 .db-headRight {
     display: inline-flex;
     align-items: center;
@@ -30,7 +29,6 @@
     margin-right: 8px;
 }
 
-/* grid */
 .db-grid {
     display: grid;
     grid-template-columns: repeat(12, minmax(0, 1fr));
@@ -46,7 +44,6 @@
     grid-column: span 6;
 }
 
-/* generic card */
 .db-card {
     background: #fff;
     border: 1px solid rgba(15, 23, 42, 0.10);
@@ -87,7 +84,6 @@
     color: rgba(71, 85, 105, 0.95);
 }
 
-/* stats */
 .db-statsRow {
     grid-column: span 12;
     display: grid;
@@ -141,7 +137,6 @@
     color: rgba(71, 85, 105, 0.95);
 }
 
-/* share strip */
 .db-card--share {
     display: flex;
     align-items: center;
@@ -182,7 +177,6 @@
     justify-content: flex-end;
 }
 
-/* shared scroll panel */
 .db-scrollPanel {
     margin-top: 18px;
     flex: 1 1 auto;
@@ -192,7 +186,6 @@
     padding-right: 4px;
 }
 
-/* activity */
 .db-activityRow {
     display: flex;
     align-items: center;
@@ -213,6 +206,15 @@
     flex: 0 0 auto;
 }
 
+.db-activityDot--right {
+    margin-left: 12px;
+    background: rgba(15, 23, 42, 0.14);
+}
+
+.db-activityDot--right.done {
+    background: #5fb464;
+}
+
 .db-activityMain {
     min-width: 0;
     width: 100%;
@@ -228,6 +230,11 @@
     font-weight: 600;
     line-height: 1.45;
     color: rgba(15, 23, 42, 0.94);
+}
+
+.db-activityText.done {
+    color: rgba(71, 85, 105, 0.82);
+    text-decoration: line-through;
 }
 
 .db-activityMeta {
@@ -250,7 +257,6 @@
     background: #fff;
 }
 
-/* completion */
 .db-progressMeta {
     margin-top: 18px;
     display: flex;
@@ -289,54 +295,6 @@
     color: rgba(15, 23, 42, 0.92);
 }
 
-.db-list {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-    display: grid;
-    gap: 0;
-}
-
-.db-listRow {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 14px;
-    padding: 14px 0;
-    border-bottom: 1px solid rgba(15, 23, 42, 0.06);
-}
-
-.db-listRow:last-child {
-    border-bottom: 0;
-}
-
-.db-listText {
-    font-family: "Inter", sans-serif;
-    font-weight: 600;
-    color: rgba(15, 23, 42, 0.88);
-    line-height: 1.45;
-}
-
-.db-listText.done {
-    color: rgba(71, 85, 105, 0.82);
-    text-decoration: line-through;
-}
-
-.db-box {
-    width: 22px;
-    height: 22px;
-    border-radius: 999px;
-    border: 1px solid rgba(15, 23, 42, 0.14);
-    background: #fff;
-    flex: 0 0 auto;
-}
-
-.db-box.done {
-    background: #5fb464;
-    border-color: #5fb464;
-}
-
-/* physical product callout */
 .db-physicalCallout {
     margin-top: 18px;
     padding: 16px;
@@ -370,13 +328,11 @@
     margin-top: 14px;
 }
 
-/* bottom cta */
 .db-bottomCta {
     margin-top: 20px;
     padding-top: 0;
 }
 
-/* responsive */
 @media (max-width: 1200px) {
     .db-statsRow {
         grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -415,7 +371,11 @@
     .db-activityMain {
         flex-direction: column;
         align-items: flex-start;
-        gap: 4px;
+        gap: 6px;
+    }
+
+    .db-activityDot--right {
+        margin-left: 0;
     }
 
     .db-activityMeta {

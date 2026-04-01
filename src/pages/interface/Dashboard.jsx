@@ -250,7 +250,13 @@ function ownsPhysicalProduct(orders) {
     return xs.some((order) => {
         const status = safeLower(order?.status);
         const quantity = Number(order?.quantity || order?.qty || 0);
-        return quantity > 0 || status === "paid" || status === "processing" || status === "shipped" || status === "delivered";
+        return (
+            quantity > 0 ||
+            status === "paid" ||
+            status === "processing" ||
+            status === "shipped" ||
+            status === "delivered"
+        );
     });
 }
 
@@ -345,11 +351,13 @@ export default function Dashboard() {
     const recentActivityRaw =
         analyticsQuery.data?.recentActivity || analyticsQuery.data?.recentEvents || [];
 
-    const recentActivity = recentActivityRaw.map((item, index) => ({
-        id: item?.id || item?._id || `activity-${index}`,
-        message: item?.message || getActivityMessage(item),
-        timeLabel: formatActivityTime(item?.createdAt || item?.timestamp || item?.date),
-    }));
+    const recentActivity = recentActivityRaw
+        .slice(0, 20)
+        .map((item, index) => ({
+            id: item?.id || item?._id || `activity-${index}`,
+            message: item?.message || getActivityMessage(item),
+            timeLabel: formatActivityTime(item?.createdAt || item?.timestamp || item?.date),
+        }));
 
     const hasPhysicalCard = useMemo(() => ownsPhysicalProduct(ordersQuery.data), [ordersQuery.data]);
 
@@ -522,14 +530,26 @@ export default function Dashboard() {
                         <div className="db-completeLabel">Still to do:</div>
 
                         <div className="db-scrollPanel">
-                            <ul className="db-list">
-                                {completion.items.map((item) => (
-                                    <li key={item.key} className="db-listRow">
-                                        <span className={`db-listText ${item.done ? "done" : ""}`}>{item.label}</span>
-                                        <span className={`db-box ${item.done ? "done" : ""}`} aria-hidden="true" />
-                                    </li>
-                                ))}
-                            </ul>
+                            {completion.items.length ? (
+                                completion.items.map((item) => (
+                                    <div key={item.key} className="db-activityRow">
+                                        <div className="db-activityMain">
+                                            <span className={`db-activityText ${item.done ? "done" : ""}`}>
+                                                {item.label}
+                                            </span>
+                                            <span
+                                                className={`db-activityDot db-activityDot--right ${item.done ? "done" : ""
+                                                    }`}
+                                                aria-hidden="true"
+                                            />
+                                        </div>
+                                    </div>
+                                ))
+                            ) : (
+                                <div className="db-emptyState">
+                                    Start building your profile to unlock more value from KonarCard.
+                                </div>
+                            )}
                         </div>
 
                         {!hasPhysicalCard ? (
