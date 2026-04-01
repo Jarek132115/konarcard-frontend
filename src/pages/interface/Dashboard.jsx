@@ -352,14 +352,13 @@ export default function Dashboard() {
         analyticsQuery.data?.recentActivity || analyticsQuery.data?.recentEvents || [];
 
     const recentActivity = recentActivityRaw
-        .slice(0, 20)
+        .slice(0, 10)
         .map((item, index) => ({
             id: item?.id || item?._id || `activity-${index}`,
             message: item?.message || getActivityMessage(item),
             timeLabel: formatActivityTime(item?.createdAt || item?.timestamp || item?.date),
         }));
 
-    const hasPhysicalCard = useMemo(() => ownsPhysicalProduct(ordersQuery.data), [ordersQuery.data]);
 
     const headerRight = (
         <div className="db-headRight">
@@ -551,27 +550,6 @@ export default function Dashboard() {
                                 </div>
                             )}
                         </div>
-
-                        {!hasPhysicalCard ? (
-                            <div className="db-physicalCallout">
-                                <div className="db-physicalTitle">Get your KonarCard today</div>
-                                <div className="db-physicalText">
-                                    Get ready to share anytime with a physical KonarCard.
-                                </div>
-                                <div className="db-physicalActions">
-                                    <Link to="/cards" className="kx-btn kx-btn--orange">
-                                        Order Your KonarCard
-                                    </Link>
-                                </div>
-                            </div>
-                        ) : (
-                            <div className="db-physicalCallout db-physicalCallout--owned">
-                                <div className="db-physicalTitle">Your KonarCard is ready to share</div>
-                                <div className="db-physicalText">
-                                    Keep sharing in person and drive more taps to your profile.
-                                </div>
-                            </div>
-                        )}
 
                         <div className="db-bottomCta">
                             <Link to="/profiles" className="kx-btn kx-btn--black">
