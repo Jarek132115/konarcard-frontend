@@ -64,19 +64,17 @@ function formatDateLabel(value) {
     if (Number.isNaN(date.getTime())) return String(value);
 
     return date.toLocaleDateString("en-GB", {
-        day: "numeric",
         month: "short",
+        day: "numeric",
     });
 }
 
 function getXAxisTickStep(days, pointCount) {
-    if (days <= 1) return 1;
     if (days <= 7) return 1;
-    if (days <= 30) return 5;
-    if (days <= 60) return 10;
-    if (days <= 90) return 10;
-    if (days <= 365) return 30;
-    return Math.max(1, Math.ceil(pointCount / 8));
+    if (days <= 30) return 3;
+    if (days <= 90) return Math.max(1, Math.ceil(pointCount / 10));
+    if (days <= 365) return Math.max(1, Math.ceil(pointCount / 10));
+    return Math.max(1, Math.ceil(pointCount / 10));
 }
 
 function buildYAxisTicks(maxValue) {
@@ -166,52 +164,6 @@ function getActivityMessage(item) {
     }
 }
 
-function buildFallbackActivity(metrics) {
-    const items = [];
-
-    if ((metrics.qrScans || 0) > 0) {
-        items.push({
-            id: "fallback-qr",
-            message: "Someone scanned your QR code",
-            timeLabel: `${numberFormat(metrics.qrScans)} total`,
-        });
-    }
-
-    if ((metrics.cardTaps || 0) > 0) {
-        items.push({
-            id: "fallback-nfc",
-            message: "Someone tapped your NFC card",
-            timeLabel: `${numberFormat(metrics.cardTaps)} total`,
-        });
-    }
-
-    if ((metrics.linkOpens || 0) > 0) {
-        items.push({
-            id: "fallback-link",
-            message: "Someone clicked your link",
-            timeLabel: `${numberFormat(metrics.linkOpens)} total`,
-        });
-    }
-
-    if ((metrics.contactExchangeSubmits || 0) > 0) {
-        items.push({
-            id: "fallback-exchange",
-            message: "Someone exchanged contacts with you",
-            timeLabel: `${numberFormat(metrics.contactExchangeSubmits)} total`,
-        });
-    }
-
-    if ((metrics.contactsSaved || 0) > 0) {
-        items.push({
-            id: "fallback-save",
-            message: "Someone saved your number",
-            timeLabel: `${numberFormat(metrics.contactsSaved)} total`,
-        });
-    }
-
-    return items.slice(0, 5);
-}
-
 function getPeriodLabel(range) {
     if (String(range) === "1") return "vs previous day";
     return `vs previous ${range} days`;
@@ -231,35 +183,87 @@ function getTrendClass(delta) {
     return "neutral";
 }
 
-function RecentActivityCard({ items = [], metrics }) {
-    const finalItems = items.length ? items : buildFallbackActivity(metrics);
+function extractProfiles(data) {
+    if (Array.isArray(data)) return data;
+    if (Array.isArray(data?.profiles)) return data.profiles;
+    if (Array.isArray(data?.businessCards)) return data.businessCards;
+    if (Array.isArray(data?.cards)) return data.cards;
+    if (Array.isArray(data?.items)) return data.items;
+    if (data && typeof data === "object") return [data];
+    return [];
+}
 
+function createEmptyMetrics() {
+    return {
+        profileViews: 0,
+        linkOpens: 0,
+        cardTaps: 0,
+        qrScans: 0,
+        contactsSaved: 0,
+        contactExchangeOpens: 0,
+        contactExchangeSubmits: 0,
+        emailClicks: 0,
+        phoneClicks: 0,
+        socialClicks: 0,
+        uniqueVisitors: 0,
+        contactConversions: 0,
+        totalConversions: 0,
+        conversionRate: 0,
+    };
+}
+
+function getMetricDelta(current, previous, key) {
+    return (Number(current?.[key]) || 0) - (Number(previous?.[key]) || 0);
+}
+
+function MetricCard({ label, value, delta, range, isPercentage = false, featured = false }) {
+    return (
+        <div className={`an-metric ${featured ? "an-metric--featured" : ""}`}>
+            <div className="an-metric-label">{label}</div>
+            <div className="an-metric-num">
+                {isPercentage ? percentageFormat(value) : numberFormat(value)}
+            </div>
+            <div className={`an-metric-change ${getTrendClass(delta)}`}>
+                {formatTrendLabel(delta, range)}
+            </div>
+        </div>
+    );
+}
+
+function RecentActivityCard({ items = [] }) {
     return (
         <div className="an-chartCard">
             <div className="an-chartHead">
                 <div>
-                    <h3 className="an-chartTitle">Recent Activity</h3>
-                    <p className="an-chartMuted">
+                    <h3 className="an-chartTitle kc-title">Recent Activity</h3>
+                    <p className="an-chartMuted kc-body">
                         The latest actions people have taken on your profile.
                     </p>
                 </div>
             </div>
 
-            {finalItems.length ? (
-                <div className="an-activityList">
-                    {finalItems.map((item, index) => (
-                        <div key={item.id || item._id || `${item.message}-${index}`} className="an-activityRow">
-                            <span className="an-activityDot" />
-                            <div className="an-activityContent">
-                                <strong>{item.message || getActivityMessage(item)}</strong>
-                                <p>{item.timeLabel || formatActivityTime(item.createdAt || item.timestamp || item.date)}</p>
+            <div className="an-scrollList">
+                {items.length ? (
+                    items.map((item, index) => (
+                        <div
+                            key={item.id || item._id || `${item.message}-${index}`}
+                            className="an-listRow"
+                        >
+                            <span className="an-listDot" />
+                            <div className="an-listMain">
+                                <span className="an-listText">
+                                    {item.message || getActivityMessage(item)}
+                                </span>
+                                <span className="an-listMeta">
+                                    {item.timeLabel || formatActivityTime(item.createdAt || item.timestamp || item.date)}
+                                </span>
                             </div>
                         </div>
-                    ))}
-                </div>
-            ) : (
-                <div className="an-state an-state--compact">No recent activity yet</div>
-            )}
+                    ))
+                ) : (
+                    <div className="an-state an-state--compact">No recent activity yet</div>
+                )}
+            </div>
         </div>
     );
 }
@@ -303,7 +307,7 @@ function MiniLineChart({
 
             return {
                 key: item.date || `${index}`,
-                label: item.label || formatDateLabel(item.date),
+                label: formatDateLabel(item.date),
                 left: data.length <= 1 ? 0 : (index / (data.length - 1)) * 100,
             };
         })
@@ -314,8 +318,8 @@ function MiniLineChart({
             <div className="an-chartCard">
                 <div className="an-chartHead">
                     <div>
-                        <h3 className="an-chartTitle">{title}</h3>
-                        <p className="an-chartMuted">{subtitle}</p>
+                        <h3 className="an-chartTitle kc-title">{title}</h3>
+                        <p className="an-chartMuted kc-body">{subtitle}</p>
                     </div>
                     <div className="an-chartBadge">Peak: 0</div>
                 </div>
@@ -342,8 +346,8 @@ function MiniLineChart({
         <div className="an-chartCard">
             <div className="an-chartHead">
                 <div>
-                    <h3 className="an-chartTitle">{title}</h3>
-                    <p className="an-chartMuted">{subtitle}</p>
+                    <h3 className="an-chartTitle kc-title">{title}</h3>
+                    <p className="an-chartMuted kc-body">{subtitle}</p>
                 </div>
                 <div className="an-chartBadge">Peak: {numberFormat(maxValue)}</div>
             </div>
@@ -403,7 +407,7 @@ function MiniLineChart({
     );
 }
 
-function VerticalBarBreakdown({ title, subtitle, items = [] }) {
+function HorizontalBarBreakdown({ title, subtitle, items = [] }) {
     const normalizedItems = items.filter(Boolean);
     const max = Math.max(...normalizedItems.map((item) => Number(item?.value) || 0), 1);
 
@@ -411,131 +415,78 @@ function VerticalBarBreakdown({ title, subtitle, items = [] }) {
         <div className="an-chartCard">
             <div className="an-chartHead">
                 <div>
-                    <h3 className="an-chartTitle">{title}</h3>
-                    <p className="an-chartMuted">{subtitle}</p>
+                    <h3 className="an-chartTitle kc-title">{title}</h3>
+                    <p className="an-chartMuted kc-body">{subtitle}</p>
                 </div>
             </div>
 
-            <div className="an-vBarWrap">
-                <div className="an-vBarGrid">
-                    <span />
-                    <span />
-                    <span />
-                    <span />
-                </div>
+            <div className="an-hBarList">
+                {normalizedItems.map((item) => {
+                    const value = Number(item?.value) || 0;
+                    const width = `${Math.max((value / max) * 100, value > 0 ? 8 : 0)}%`;
 
-                <div className="an-vBarList">
-                    {normalizedItems.map((item) => {
-                        const value = Number(item?.value) || 0;
-                        const height = `${Math.max((value / max) * 100, value > 0 ? 8 : 0)}%`;
-
-                        return (
-                            <div key={item.key} className="an-vBarItem">
-                                <div className="an-vBarValue">{numberFormat(value)}</div>
-                                <div className="an-vBarTrack">
-                                    <div className="an-vBarFill" style={{ height }} />
-                                </div>
-                                <div className="an-vBarLabel">{item.label}</div>
+                    return (
+                        <div key={item.key} className="an-hBarRow">
+                            <div className="an-hBarTop">
+                                <span className="an-hBarLabel">{item.label}</span>
+                                <span className="an-hBarValue">{numberFormat(value)}</span>
                             </div>
-                        );
-                    })}
-                </div>
+                            <div className="an-hBarTrack">
+                                <div className="an-hBarFill" style={{ width }} />
+                            </div>
+                        </div>
+                    );
+                })}
             </div>
         </div>
     );
 }
 
-function ActionDetailsCard({ metrics }) {
+function ContactActionDetailsCard({ metrics }) {
+    const rows = [
+        {
+            key: "exchange-opens",
+            title: "Exchange Opens",
+            meta: `${numberFormat(metrics.contactExchangeOpens)} opened the exchange contact form`,
+        },
+        {
+            key: "exchange-submits",
+            title: "Exchange Submits",
+            meta: `${numberFormat(metrics.contactExchangeSubmits)} submitted the exchange form`,
+        },
+        {
+            key: "email-clicks",
+            title: "Email Clicks",
+            meta: `${numberFormat(metrics.emailClicks)} clicked your email contact action`,
+        },
+        {
+            key: "phone-clicks",
+            title: "Phone Clicks",
+            meta: `${numberFormat(metrics.phoneClicks)} clicked your phone number`,
+        },
+    ];
+
     return (
         <div className="an-chartCard">
             <div className="an-chartHead">
                 <div>
-                    <h3 className="an-chartTitle">Contact Action Details</h3>
-                    <p className="an-chartMuted">
+                    <h3 className="an-chartTitle kc-title">Contact Action Details</h3>
+                    <p className="an-chartMuted kc-body">
                         The actions people took after landing on your profile.
                     </p>
                 </div>
             </div>
 
-            <div className="an-infoList">
-                <div className="an-infoRow">
-                    <span className="an-infoDot" />
-                    <div>
-                        <strong>Exchange Opens</strong>
-                        <p>{numberFormat(metrics.contactExchangeOpens)} people opened the exchange contact form.</p>
+            <div className="an-scrollList an-scrollList--static">
+                {rows.map((row) => (
+                    <div key={row.key} className="an-listRow">
+                        <span className="an-listDot" />
+                        <div className="an-listMain">
+                            <span className="an-listText">{row.title}</span>
+                            <span className="an-listMeta">{row.meta}</span>
+                        </div>
                     </div>
-                </div>
-
-                <div className="an-infoRow">
-                    <span className="an-infoDot" />
-                    <div>
-                        <strong>Exchange Submits</strong>
-                        <p>{numberFormat(metrics.contactExchangeSubmits)} people submitted the exchange form.</p>
-                    </div>
-                </div>
-
-                <div className="an-infoRow">
-                    <span className="an-infoDot" />
-                    <div>
-                        <strong>Email Clicks</strong>
-                        <p>{numberFormat(metrics.emailClicks)} people clicked your email contact action.</p>
-                    </div>
-                </div>
-
-                <div className="an-infoRow">
-                    <span className="an-infoDot" />
-                    <div>
-                        <strong>Phone Clicks</strong>
-                        <p>{numberFormat(metrics.phoneClicks)} people clicked your phone number.</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    );
-}
-
-function extractProfiles(data) {
-    if (Array.isArray(data)) return data;
-    if (Array.isArray(data?.profiles)) return data.profiles;
-    if (Array.isArray(data?.businessCards)) return data.businessCards;
-    if (Array.isArray(data?.cards)) return data.cards;
-    if (Array.isArray(data?.items)) return data.items;
-    if (data && typeof data === "object") return [data];
-    return [];
-}
-
-function createEmptyMetrics() {
-    return {
-        profileViews: 0,
-        linkOpens: 0,
-        cardTaps: 0,
-        qrScans: 0,
-        contactsSaved: 0,
-        contactExchangeOpens: 0,
-        contactExchangeSubmits: 0,
-        emailClicks: 0,
-        phoneClicks: 0,
-        socialClicks: 0,
-        uniqueVisitors: 0,
-        contactConversions: 0,
-        totalConversions: 0,
-        conversionRate: 0,
-    };
-}
-
-function getMetricDelta(current, previous, key) {
-    return (Number(current?.[key]) || 0) - (Number(previous?.[key]) || 0);
-}
-
-function MetricCard({ label, value, delta, range, isPercentage = false, featured = false }) {
-    return (
-        <div className={`an-metric ${featured ? "an-metric--featured" : ""}`}>
-            <div className="an-metric-label">{label}</div>
-            <div className="an-metric-num">
-                {isPercentage ? percentageFormat(value) : numberFormat(value)}
-            </div>
-            <div className={`an-metric-change ${getTrendClass(delta)}`}>
-                {formatTrendLabel(delta, range)}
+                ))}
             </div>
         </div>
     );
@@ -628,8 +579,27 @@ export default function Analytics() {
         staleTime: 30 * 1000,
     });
 
+    const chartDays = Math.max(Number(range) || 7, 7);
+
+    const chartSummaryQuery = useQuery({
+        queryKey: ["analytics-summary-chart", chartDays, profile, selectedProfile?.slug || "all"],
+        queryFn: async () => {
+            const params = new URLSearchParams();
+            params.set("days", String(chartDays));
+
+            if (profile !== "all" && selectedProfile?.slug) {
+                params.set("profileSlug", selectedProfile.slug);
+            }
+
+            const res = await api.get(`/api/analytics/summary?${params.toString()}`);
+            return res.data;
+        },
+        enabled: profile === "all" || profilesQuery.isSuccess,
+        staleTime: 30 * 1000,
+    });
+
     const metrics = summaryQuery.data?.metrics || createEmptyMetrics();
-    const timeline = summaryQuery.data?.timeline || [];
+    const chartTimeline = chartSummaryQuery.data?.timeline || [];
     const socialBreakdownRaw = summaryQuery.data?.socialBreakdown || [];
     const recentActivityRaw =
         summaryQuery.data?.recentActivity || summaryQuery.data?.recentEvents || [];
@@ -677,7 +647,7 @@ export default function Analytics() {
         };
     });
 
-    const recentActivity = recentActivityRaw.slice(0, 5).map((item, index) => ({
+    const recentActivity = recentActivityRaw.slice(0, 20).map((item, index) => ({
         id: item?.id || item?._id || `activity-${index}`,
         message: item?.message || getActivityMessage(item),
         timeLabel: formatActivityTime(item?.createdAt || item?.timestamp || item?.date),
@@ -706,7 +676,7 @@ export default function Analytics() {
             [],
             ["Timeline"],
             ["Date", "Total Visits", "Link Visits", "QR Scans", "NFC Taps"],
-            ...timeline.map((item) => [
+            ...chartTimeline.map((item) => [
                 item.date ?? "",
                 item.profileViews ?? 0,
                 item.linkOpens ?? 0,
@@ -866,26 +836,26 @@ export default function Analytics() {
                 </section>
 
                 <section className="an-chartGrid">
-                    <RecentActivityCard items={recentActivity} metrics={metrics} />
+                    <RecentActivityCard items={recentActivity} />
 
                     <MiniLineChart
-                        data={timeline}
+                        data={chartTimeline}
                         seriesKey={chartSeries}
                         title={chartMeta[chartSeries]?.title}
                         subtitle={chartMeta[chartSeries]?.subtitle}
                         onChangeSeries={setChartSeries}
-                        rangeDays={Number(range)}
+                        rangeDays={chartDays}
                     />
                 </section>
 
-                <section className="an-chartGrid">
-                    <ActionDetailsCard metrics={metrics} />
-
-                    <VerticalBarBreakdown
+                <section className="an-chartGrid an-chartGrid--socialFirst">
+                    <HorizontalBarBreakdown
                         title="Social Click Breakdown"
                         subtitle="How many clicks each added social profile received."
                         items={socialBreakdown}
                     />
+
+                    <ContactActionDetailsCard metrics={metrics} />
                 </section>
             </div>
         </DashboardLayout>

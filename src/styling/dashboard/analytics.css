@@ -75,20 +75,12 @@
 
 .an-chartTitle {
     margin: 0;
-    font-family: "Inter", sans-serif;
-    font-weight: 800;
     color: var(--an-ink);
-    font-size: 18px;
-    letter-spacing: -0.01em;
 }
 
 .an-chartMuted {
     margin: 8px 0 0;
     color: var(--an-muted);
-    font-family: "Inter", sans-serif;
-    font-weight: 600;
-    font-size: 14px;
-    line-height: 1.55;
 }
 
 .an-profilePick,
@@ -196,8 +188,8 @@
     font-family: "Inter", sans-serif;
     font-weight: 500;
     font-size: 14px;
-    color: var(--an-ink);
     line-height: 1.3;
+    color: var(--an-ink);
 }
 
 .an-metric--featured .an-metric-label,
@@ -377,163 +369,105 @@
     transform: translateX(-100%);
 }
 
-.an-activityList {
+.an-scrollList {
     margin-top: 18px;
+    max-height: 420px;
+    overflow-y: auto;
+    padding-right: 4px;
+}
+
+.an-scrollList--static {
+    max-height: none;
+    overflow: visible;
+}
+
+.an-listRow {
     display: flex;
-    flex-direction: column;
-    gap: 14px;
-}
-
-.an-activityRow {
-    display: flex;
-    align-items: flex-start;
-    gap: 12px;
-    padding: 14px 16px;
-    border-radius: 16px;
-    background: #fff;
-    border: 1px solid rgba(15, 23, 42, 0.08);
-}
-
-.an-activityDot {
-    width: 10px;
-    height: 10px;
-    margin-top: 5px;
-    border-radius: 999px;
-    background: var(--an-orange);
-    flex: 0 0 auto;
-}
-
-.an-activityContent strong {
-    display: block;
-    font-family: "Inter", sans-serif;
-    font-size: 14px;
-    font-weight: 800;
-    color: var(--an-ink);
-}
-
-.an-activityContent p {
-    margin: 6px 0 0;
-    font-family: "Inter", sans-serif;
-    font-size: 13px;
-    line-height: 1.55;
-    color: var(--an-muted);
-}
-
-.an-vBarWrap {
-    position: relative;
-    margin-top: 20px;
-    min-height: 320px;
-    padding-top: 8px;
-}
-
-.an-vBarGrid {
-    position: absolute;
-    inset: 8px 0 44px 0;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    pointer-events: none;
-}
-
-.an-vBarGrid span {
-    display: block;
-    width: 100%;
-    border-top: 1px solid rgba(15, 23, 42, 0.10);
-}
-
-.an-vBarList {
-    position: relative;
-    z-index: 1;
-    min-height: 320px;
-    display: grid;
-    grid-template-columns: repeat(5, minmax(0, 1fr));
-    gap: 16px;
-    align-items: end;
-}
-
-.an-vBarItem {
-    min-width: 0;
-    display: flex;
-    flex-direction: column;
     align-items: center;
-    justify-content: flex-end;
-    gap: 10px;
-    height: 320px;
-}
-
-.an-vBarValue {
-    font-family: "Inter", sans-serif;
-    font-size: 13px;
-    font-weight: 800;
-    color: var(--an-ink);
-}
-
-.an-vBarTrack {
-    width: 100%;
-    max-width: 66px;
-    height: 240px;
-    display: flex;
-    align-items: flex-end;
-    justify-content: center;
-}
-
-.an-vBarFill {
-    width: 100%;
-    border-radius: 16px 16px 0 0;
-    background: var(--an-orange-soft);
-    min-height: 0;
-}
-
-.an-vBarLabel {
-    text-align: center;
-    font-family: "Inter", sans-serif;
-    font-size: 12px;
-    font-weight: 700;
-    color: var(--an-muted);
-    line-height: 1.35;
-    word-break: break-word;
-}
-
-.an-infoList {
-    margin-top: 18px;
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
-}
-
-.an-infoRow {
-    display: flex;
-    align-items: flex-start;
     gap: 12px;
-    padding: 14px 16px;
-    border-radius: 16px;
-    background: #fff;
-    border: 1px solid rgba(15, 23, 42, 0.08);
+    padding: 14px 0;
+    border-bottom: 1px solid rgba(15, 23, 42, 0.08);
 }
 
-.an-infoRow strong {
-    display: block;
-    font-family: "Inter", sans-serif;
-    font-size: 14px;
-    font-weight: 800;
-    color: var(--an-ink);
+.an-listRow:last-child {
+    border-bottom: 0;
 }
 
-.an-infoRow p {
-    margin: 6px 0 0;
-    font-family: "Inter", sans-serif;
-    font-size: 13px;
-    line-height: 1.55;
-    color: var(--an-muted);
-}
-
-.an-infoDot {
-    width: 10px;
-    height: 10px;
-    margin-top: 5px;
+.an-listDot {
+    width: 8px;
+    height: 8px;
     border-radius: 999px;
     background: var(--an-orange);
     flex: 0 0 auto;
+}
+
+.an-listMain {
+    min-width: 0;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+}
+
+.an-listText {
+    font-family: "Inter", sans-serif;
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--an-ink);
+    line-height: 1.4;
+    min-width: 0;
+}
+
+.an-listMeta {
+    font-family: "Inter", sans-serif;
+    font-size: 13px;
+    font-weight: 400;
+    color: var(--an-muted);
+    white-space: nowrap;
+    flex: 0 0 auto;
+}
+
+.an-hBarList {
+    margin-top: 18px;
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+}
+
+.an-hBarRow {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.an-hBarTop {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+}
+
+.an-hBarLabel,
+.an-hBarValue {
+    font-family: "Inter", sans-serif;
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--an-ink);
+}
+
+.an-hBarTrack {
+    width: 100%;
+    height: 12px;
+    border-radius: 999px;
+    background: rgba(15, 23, 42, 0.07);
+    overflow: hidden;
+}
+
+.an-hBarFill {
+    height: 100%;
+    border-radius: 999px;
+    background: var(--an-orange-soft);
 }
 
 @media (max-width: 1400px) {
@@ -612,10 +546,6 @@
     .an-lineChartWrap {
         grid-template-columns: 42px minmax(0, 1fr);
     }
-
-    .an-vBarList {
-        gap: 10px;
-    }
 }
 
 @media (max-width: 640px) {
@@ -653,15 +583,13 @@
         font-size: 10px;
     }
 
-    .an-vBarWrap,
-    .an-vBarList,
-    .an-vBarItem {
-        min-height: 260px;
-        height: 260px;
+    .an-listMain {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 4px;
     }
 
-    .an-vBarTrack {
-        height: 180px;
-        max-width: 46px;
+    .an-listMeta {
+        white-space: normal;
     }
 }
