@@ -3,6 +3,7 @@ import DashboardLayout from "../../components/Dashboard/DashboardLayout";
 import PageHeader from "../../components/Dashboard/PageHeader";
 
 import "../../styling/fonts.css";
+import "../../styling/spacing.css";
 import "../../styling/dashboard/upgradeplan.css";
 
 import { BASE_URL } from "../../services/api";
@@ -130,22 +131,17 @@ function PlanCard({ plan, currentPlan, loadingKey }) {
                     </span>
 
                     <div className="upg-planNameBlock">
-                        <h3
-                            className={`upg-planName ${featured ? "upg-planName--featured" : ""
-                                }`}
-                        >
+                        <h3 className={`upg-planName ${featured ? "upg-planName--featured" : ""}`}>
                             {plan.title}
                         </h3>
                     </div>
                 </div>
 
                 <div className="upg-planPriceRow">
-                    <div
-                        className={`upg-planPrice ${featured ? "upg-planPrice--featured" : ""
-                            }`}
-                    >
+                    <div className={`upg-planPrice ${featured ? "upg-planPrice--featured" : ""}`}>
                         {plan.price}
                     </div>
+
                     <div
                         className={`upg-planCadence ${featured ? "upg-planCadence--featured" : ""
                             }`}
@@ -155,10 +151,7 @@ function PlanCard({ plan, currentPlan, loadingKey }) {
                 </div>
 
                 {plan.meta?.length ? (
-                    <div
-                        className={`upg-planMeta ${featured ? "upg-planMeta--featured" : ""
-                            }`}
-                    >
+                    <div className={`upg-planMeta ${featured ? "upg-planMeta--featured" : ""}`}>
                         {plan.meta.map((m, i) => (
                             <div key={i}>{m}</div>
                         ))}
@@ -166,9 +159,7 @@ function PlanCard({ plan, currentPlan, loadingKey }) {
                 ) : null}
             </div>
 
-            <div
-                className={`upg-planDivider ${featured ? "upg-planDivider--featured" : ""}`}
-            />
+            <div className={`upg-planDivider ${featured ? "upg-planDivider--featured" : ""}`} />
 
             <div className="upg-planBody">
                 <div
@@ -194,16 +185,14 @@ function PlanCard({ plan, currentPlan, loadingKey }) {
                     {plan.button.type === "link" ? (
                         <a
                             href={plan.button.to}
-                            className={`kx-btn ${featured ? "upg-btn-featured" : "kx-btn--black"
-                                } upg-btn`}
+                            className={`kx-btn ${featured ? "upg-btn-featured" : "kx-btn--black"} upg-btn`}
                         >
                             {plan.button.label}
                         </a>
                     ) : (
                         <button
                             type="button"
-                            className={`kx-btn ${featured ? "upg-btn-featured" : "kx-btn--black"
-                                } upg-btn`}
+                            className={`kx-btn ${featured ? "upg-btn-featured" : "kx-btn--black"} upg-btn`}
                             onClick={plan.button.onClick || undefined}
                             disabled={!!plan.button.disabled}
                         >
@@ -714,8 +703,8 @@ export default function UpgradePlan() {
                     </div>
 
                     <div className="upg-summaryCard">
-                        <div className="upg-summaryLabel">Billing Status</div>
-                        <div className="upg-summaryHeading">Your subscription</div>
+                        <div className="upg-summaryLabel">Billing & subscription</div>
+                        <div className="upg-summaryHeading">Manage your billing</div>
                         <p className="upg-summaryText">
                             {subLoading
                                 ? "Checking your billing status..."
@@ -723,15 +712,7 @@ export default function UpgradePlan() {
                                     ? subErr
                                     : isLoggedIn()
                                         ? planStatusLine || "No billing status available."
-                                        : "Log in to manage your subscription and billing details."}
-                        </p>
-                    </div>
-
-                    <div className="upg-summaryCard">
-                        <div className="upg-summaryLabel">Manage Billing</div>
-                        <div className="upg-summaryHeading">Billing portal</div>
-                        <p className="upg-summaryText">
-                            Update payment methods, switch plans, and manage renewals all in one place.
+                                        : "Log in to manage your subscription, billing details, and renewals."}
                         </p>
 
                         <div className="upg-summaryActions">
@@ -749,10 +730,8 @@ export default function UpgradePlan() {
                 <section className="upg-mainCard">
                     <div className="upg-mainHead">
                         <div className="upg-mainHeadCopy">
-                            <h2 className="upg-mainTitle kc-title">
-                                Choose the plan that fits your business
-                            </h2>
-                            <p className="upg-mainSub kc-body">
+                            <h2 className="upg-mainTitle">Choose the plan that fits your business</h2>
+                            <p className="upg-mainSub">
                                 Start free, upgrade anytime, and manage everything from your dashboard.
                             </p>
                         </div>
@@ -787,136 +766,14 @@ export default function UpgradePlan() {
                     </div>
 
                     <div className="upg-plansGrid">
-                        {planCards.map((plan) => {
-                            const featured = !!plan.featured;
-                            const current = currentPlan === plan.key;
-
-                            return (
-                                <article
-                                    key={plan.key}
-                                    className={`upg-planCard ${featured ? "upg-planCard--featured" : ""} ${current ? "upg-planCard--current" : ""
-                                        }`}
-                                >
-                                    <div className="upg-planTop">
-                                        <div className="upg-planTopRow">
-                                            <div className={`upg-planTag ${featured ? "upg-planTag--featured" : ""}`}>
-                                                {plan.tag}
-                                            </div>
-
-                                            {current ? (
-                                                <div
-                                                    className={`upg-planCurrentBadge ${featured ? "upg-planCurrentBadge--featured" : ""
-                                                        }`}
-                                                >
-                                                    Current Plan
-                                                </div>
-                                            ) : null}
-                                        </div>
-
-                                        <div className="upg-planNameRow">
-                                            <span
-                                                className={`upg-planIconWrap ${featured ? "upg-planIconWrap--featured" : ""
-                                                    }`}
-                                            >
-                                                <img src={plan.icon} alt="" className="upg-planIcon" />
-                                            </span>
-
-                                            <div className="upg-planNameBlock">
-                                                <h3
-                                                    className={`upg-planName ${featured ? "upg-planName--featured" : ""
-                                                        }`}
-                                                >
-                                                    {plan.title}
-                                                </h3>
-                                            </div>
-                                        </div>
-
-                                        <div className="upg-planPriceRow">
-                                            <div
-                                                className={`upg-planPrice ${featured ? "upg-planPrice--featured" : ""
-                                                    }`}
-                                            >
-                                                {plan.price}
-                                            </div>
-
-                                            <div
-                                                className={`upg-planCadence ${featured ? "upg-planCadence--featured" : ""
-                                                    }`}
-                                            >
-                                                {plan.cadence}
-                                            </div>
-                                        </div>
-
-                                        {plan.meta?.length ? (
-                                            <div
-                                                className={`upg-planMeta ${featured ? "upg-planMeta--featured" : ""
-                                                    }`}
-                                            >
-                                                {plan.meta.map((m, i) => (
-                                                    <div key={i}>{m}</div>
-                                                ))}
-                                            </div>
-                                        ) : null}
-                                    </div>
-
-                                    <div
-                                        className={`upg-planDivider ${featured ? "upg-planDivider--featured" : ""}`}
-                                    />
-
-                                    <div className="upg-planBody">
-                                        <div
-                                            className={`upg-planIncluded ${featured ? "upg-planIncluded--featured" : ""
-                                                }`}
-                                        >
-                                            What’s included
-                                        </div>
-
-                                        <ul className="upg-planList">
-                                            {plan.highlights.map((item, index) => (
-                                                <li
-                                                    key={`${plan.key}-${index}`}
-                                                    className={`upg-planListItem ${featured ? "upg-planListItem--featured" : ""
-                                                        }`}
-                                                >
-                                                    {item}
-                                                </li>
-                                            ))}
-                                        </ul>
-
-                                        <div className="upg-planActions">
-                                            {plan.button?.type === "link" ? (
-                                                <a
-                                                    href={plan.button.to}
-                                                    className={`kx-btn ${featured ? "upg-btn-featured" : "kx-btn--black"
-                                                        } upg-btn`}
-                                                >
-                                                    {plan.button.label}
-                                                </a>
-                                            ) : (
-                                                <button
-                                                    type="button"
-                                                    className={`kx-btn ${featured ? "upg-btn-featured" : "kx-btn--black"
-                                                        } upg-btn`}
-                                                    onClick={plan.button?.onClick || undefined}
-                                                    disabled={!!plan.button?.disabled}
-                                                >
-                                                    {loadingKey === plan.loadingMatch ? "Working…" : plan.button?.label}
-                                                </button>
-                                            )}
-
-                                            {plan.button?.helper ? (
-                                                <div
-                                                    className={`upg-planHelper ${featured ? "upg-planHelper--featured" : ""
-                                                        }`}
-                                                >
-                                                    {plan.button.helper}
-                                                </div>
-                                            ) : null}
-                                        </div>
-                                    </div>
-                                </article>
-                            );
-                        })}
+                        {planCards.map((plan) => (
+                            <PlanCard
+                                key={plan.key}
+                                plan={plan}
+                                currentPlan={currentPlan}
+                                loadingKey={loadingKey}
+                            />
+                        ))}
                     </div>
                 </section>
             </div>
