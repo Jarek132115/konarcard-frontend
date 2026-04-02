@@ -2,6 +2,9 @@
     width: 100%;
     padding: 0;
     margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: var(--sp-3);
 }
 
 .db-headRight {
@@ -13,14 +16,18 @@
 }
 
 .db-pill {
-    font-family: "Inter", sans-serif;
-    font-size: 12px;
-    font-weight: 700;
-    padding: 10px 12px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 34px;
+    padding: 0 12px;
     border-radius: 999px;
-    border: 1px solid rgba(15, 23, 42, 0.12);
-    background: #fff;
-    color: rgba(15, 23, 42, 0.92);
+    background: #0b1635;
+    color: rgba(255, 255, 255, 0.84);
+    font-family: "Inter", sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    line-height: 1;
     white-space: nowrap;
 }
 
@@ -32,8 +39,7 @@
 .db-grid {
     display: grid;
     grid-template-columns: repeat(12, minmax(0, 1fr));
-    gap: 16px;
-    margin-top: 16px;
+    gap: var(--sp-3);
 }
 
 .db-span-12 {
@@ -46,10 +52,10 @@
 
 .db-card {
     background: #fff;
-    border: 1px solid rgba(15, 23, 42, 0.10);
-    border-radius: 22px;
-    box-shadow: 0 1px 2px rgba(15, 23, 42, 0.05);
-    padding: 22px;
+    border: 1px solid rgba(15, 23, 42, 0.1);
+    border-radius: 24px;
+    box-shadow: 0 1px 0 rgba(15, 23, 42, 0.04), 0 10px 22px rgba(15, 23, 42, 0.04);
+    padding: var(--sp-6);
     min-width: 0;
 }
 
@@ -63,24 +69,25 @@
     display: flex;
     align-items: flex-start;
     justify-content: space-between;
-    gap: 12px;
+    gap: var(--sp-3);
 }
 
 .db-cardTitle {
     margin: 0;
     font-family: "Cal Sans", sans-serif;
-    font-weight: 500;
-    font-size: 18px;
-    letter-spacing: -0.01em;
-    color: rgba(15, 23, 42, 0.92);
+    font-weight: 400;
+    font-size: 22px;
+    line-height: 1.08;
+    letter-spacing: -0.02em;
+    color: rgba(15, 23, 42, 0.94);
 }
 
 .db-muted {
-    margin: 8px 0 0;
+    margin: var(--sp-2) 0 0;
     font-family: "Inter", sans-serif;
     font-weight: 500;
     font-size: 14px;
-    line-height: 1.5;
+    line-height: 1.55;
     color: rgba(71, 85, 105, 0.95);
 }
 
@@ -88,15 +95,15 @@
     grid-column: span 12;
     display: grid;
     grid-template-columns: repeat(4, minmax(0, 1fr));
-    gap: 16px;
+    gap: var(--sp-3);
 }
 
 .db-statCard {
     background: #fff;
-    border: 1px solid rgba(15, 23, 42, 0.10);
-    border-radius: 22px;
-    box-shadow: 0 1px 2px rgba(15, 23, 42, 0.05);
-    padding: 22px;
+    border: 1px solid rgba(15, 23, 42, 0.1);
+    border-radius: 24px;
+    box-shadow: 0 1px 0 rgba(15, 23, 42, 0.04), 0 10px 22px rgba(15, 23, 42, 0.04);
+    padding: var(--sp-6);
     min-width: 0;
 }
 
@@ -107,8 +114,9 @@
 
 .db-statLabel {
     font-family: "Inter", sans-serif;
-    font-size: 15px;
-    font-weight: 600;
+    font-size: 14px;
+    font-weight: 700;
+    line-height: 1.35;
     color: rgba(15, 23, 42, 0.9);
 }
 
@@ -119,7 +127,7 @@
 }
 
 .db-statValue {
-    margin-top: 14px;
+    margin-top: var(--sp-4);
     font-family: "Inter", sans-serif;
     font-size: 48px;
     line-height: 1;
@@ -129,10 +137,10 @@
 }
 
 .db-statHelper {
-    margin-top: 10px;
+    margin-top: var(--sp-2);
     font-family: "Inter", sans-serif;
     font-size: 13px;
-    line-height: 1.45;
+    line-height: 1.5;
     font-weight: 500;
     color: rgba(71, 85, 105, 0.95);
 }
@@ -141,13 +149,13 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 18px;
+    gap: var(--sp-4);
 }
 
 .db-shareLeft {
     display: flex;
     align-items: center;
-    gap: 14px;
+    gap: var(--sp-4);
     min-width: 0;
 }
 
@@ -172,31 +180,28 @@
 .db-shareActions {
     display: inline-flex;
     align-items: center;
-    gap: 12px;
+    gap: var(--sp-3);
     flex-wrap: wrap;
     justify-content: flex-end;
 }
 
-/* shared panel */
 .db-scrollPanel {
-    margin-top: 18px;
+    margin-top: var(--sp-5);
     flex: 1 1 auto;
     min-height: 0;
     padding-right: 0;
 }
 
-/* recent activity should hug content height and not scroll */
 .db-card--equal:first-of-type .db-scrollPanel,
 .db-recentPanel {
     max-height: none;
     overflow: visible;
 }
 
-/* generic row */
 .db-activityRow {
     display: flex;
     align-items: center;
-    gap: 12px;
+    gap: var(--sp-3);
     padding: 14px 0;
     border-bottom: 1px solid rgba(15, 23, 42, 0.08);
 }
@@ -228,13 +233,13 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 12px;
+    gap: var(--sp-3);
 }
 
 .db-activityText {
     font-family: "Inter", sans-serif;
     font-size: 14px;
-    font-weight: 600;
+    font-weight: 700;
     line-height: 1.45;
     color: rgba(15, 23, 42, 0.94);
 }
@@ -255,21 +260,21 @@
 
 .db-emptyState {
     border: 1px dashed rgba(15, 23, 42, 0.12);
-    border-radius: 16px;
+    border-radius: 20px;
     padding: 18px;
     font-family: "Inter", sans-serif;
     font-size: 14px;
-    line-height: 1.5;
+    line-height: 1.55;
     color: rgba(71, 85, 105, 0.92);
     background: #fff;
 }
 
 .db-progressMeta {
-    margin-top: 18px;
+    margin-top: var(--sp-5);
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 12px;
+    gap: var(--sp-3);
     font-family: "Inter", sans-serif;
     font-size: 13px;
     font-style: italic;
@@ -278,7 +283,7 @@
 }
 
 .db-progressBar {
-    margin-top: 10px;
+    margin-top: var(--sp-2);
     width: 100%;
     height: 12px;
     border-radius: 999px;
@@ -294,7 +299,7 @@
 }
 
 .db-completeLabel {
-    margin-top: 22px;
+    margin-top: var(--sp-5);
     margin-bottom: 0;
     font-family: "Inter", sans-serif;
     font-weight: 800;
@@ -303,7 +308,7 @@
 }
 
 .db-bottomCta {
-    margin-top: 20px;
+    margin-top: var(--sp-5);
     padding-top: 0;
 }
 
@@ -384,13 +389,9 @@
         font-size: 40px;
     }
 
-    .db-card {
-        padding: 18px;
-        border-radius: 18px;
-    }
-
+    .db-card,
     .db-statCard {
-        padding: 18px;
-        border-radius: 18px;
+        padding: var(--sp-6);
+        border-radius: 24px;
     }
 }

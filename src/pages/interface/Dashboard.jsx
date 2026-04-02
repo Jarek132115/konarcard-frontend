@@ -2,6 +2,7 @@ import React, { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 
+import "../../styling/spacing.css";
 import "../../styling/dashboard/dashboard.css";
 
 import DashboardLayout from "../../components/Dashboard/DashboardLayout";
@@ -359,6 +360,10 @@ export default function Dashboard() {
             timeLabel: formatActivityTime(item?.createdAt || item?.timestamp || item?.date),
         }));
 
+    const hasPhysicalCard = useMemo(
+        () => ownsPhysicalProduct(ordersQuery.data),
+        [ordersQuery.data]
+    );
 
     const headerRight = (
         <div className="db-headRight">
@@ -415,9 +420,11 @@ export default function Dashboard() {
                             label="NFC Taps"
                             value={metrics.cardTaps}
                             helper={
-                                Number(metrics.cardTaps) > 0
-                                    ? "People are tapping your card."
-                                    : "Share more to start getting taps."
+                                hasPhysicalCard
+                                    ? Number(metrics.cardTaps) > 0
+                                        ? "People are tapping your card."
+                                        : "Start tapping your card to drive traffic."
+                                    : "Order a physical card to unlock taps."
                             }
                         />
 
@@ -537,8 +544,7 @@ export default function Dashboard() {
                                                 {item.label}
                                             </span>
                                             <span
-                                                className={`db-activityDot db-activityDot--right ${item.done ? "done" : ""
-                                                    }`}
+                                                className={`db-activityDot db-activityDot--right ${item.done ? "done" : ""}`}
                                                 aria-hidden="true"
                                             />
                                         </div>
