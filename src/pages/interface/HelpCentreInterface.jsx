@@ -189,14 +189,13 @@ export default function HelpCentreInterface() {
             <div className="hc4-heroEyebrow">Here is your guide</div>
 
             <h2 className="hc4-heroTitle">
-              8 quick videos to help you set up, improve, and share your
-              KonarCard
+              8 quick videos to help you set up, improve, and share your KonarCard
             </h2>
 
             <p className="hc4-heroText">
-              Work through the tutorials below to learn everything step by
-              step. If you get stuck at any point and need help from someone
-              on our team, live chat with us now.
+              Work through the tutorials below to learn everything step by step. If
+              you get stuck at any point and need help from someone on our team, live
+              chat with us now.
             </p>
           </div>
 
@@ -209,49 +208,57 @@ export default function HelpCentreInterface() {
         </section>
 
         <section className="hc4-grid" aria-label="Help videos">
-          {videos.map((video) => (
-            <article key={video.id} className="hc4-card">
-              <button
-                type="button"
-                className="hc4-cardMedia"
-                onClick={() => handleOpenVideo(video)}
-                aria-label={`Watch ${video.title}`}
+          {videos.map((video, index) => {
+            const rowIndex = Math.floor(index / 2);
+            const mediaRight = rowIndex % 2 === 1;
+
+            return (
+              <article
+                key={video.id}
+                className={`hc4-card ${mediaRight ? "hc4-card--mediaRight" : ""}`}
               >
-                <img
-                  src={video.thumbnail}
-                  alt=""
-                  aria-hidden="true"
-                  className="hc4-cardImg"
-                />
-                <span className="hc4-cardPlay">
-                  <span className="hc4-cardPlayCircle">
-                    <PlayIcon className="hc4-cardPlayIcon" />
+                <button
+                  type="button"
+                  className="hc4-cardMedia"
+                  onClick={() => handleOpenVideo(video)}
+                  aria-label={`Watch ${video.title}`}
+                >
+                  <img
+                    src={video.thumbnail}
+                    alt=""
+                    aria-hidden="true"
+                    className="hc4-cardImg"
+                  />
+                  <span className="hc4-cardPlay">
+                    <span className="hc4-cardPlayCircle">
+                      <PlayIcon className="hc4-cardPlayIcon" />
+                    </span>
                   </span>
-                </span>
-              </button>
+                </button>
 
-              <div className="hc4-cardBody">
-                <div className="hc4-cardTop">
-                  <div className="hc4-cardTag">Tutorial</div>
-                  <h3 className="hc4-cardTitle">{video.title}</h3>
-                  <p className="hc4-cardDesc">{video.desc}</p>
+                <div className="hc4-cardBody">
+                  <div className="hc4-cardTop">
+                    <div className="hc4-cardTag">Tutorial</div>
+                    <h3 className="hc4-cardTitle">{video.title}</h3>
+                    <p className="hc4-cardDesc">{video.desc}</p>
+                  </div>
+
+                  <div className="hc4-cardBottom">
+                    <div className="hc4-cardLength">{video.length}</div>
+
+                    <button
+                      type="button"
+                      className="hc4-watchBtn"
+                      onClick={() => handleOpenVideo(video)}
+                    >
+                      <PlayIcon className="hc4-watchBtnIcon" />
+                      <span>Watch Video</span>
+                    </button>
+                  </div>
                 </div>
-
-                <div className="hc4-cardBottom">
-                  <div className="hc4-cardLength">{video.length}</div>
-
-                  <button
-                    type="button"
-                    className="hc4-watchBtn"
-                    onClick={() => handleOpenVideo(video)}
-                  >
-                    <PlayIcon className="hc4-watchBtnIcon" />
-                    <span>Watch Video</span>
-                  </button>
-                </div>
-              </div>
-            </article>
-          ))}
+              </article>
+            );
+          })}
         </section>
 
         {activeVideo ? (
@@ -314,10 +321,9 @@ export default function HelpCentreInterface() {
                         {activeVideo.title}
                       </h4>
                       <p className="hc4-videoPlaceholderText">
-                        This popup is fully wired up and ready. Once you
-                        add a real video file URL to this tutorial, it
-                        will play here automatically with full video
-                        controls.
+                        This popup is fully wired up and ready. Once you add
+                        a real video file URL to this tutorial, it will play
+                        here automatically with full video controls.
                       </p>
                     </div>
                   </div>
