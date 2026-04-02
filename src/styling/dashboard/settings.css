@@ -107,7 +107,6 @@
     overflow: hidden;
 }
 
-/* pills */
 .stg-pill {
     display: inline-flex;
     align-items: center;
@@ -141,7 +140,6 @@
     color: #ffffff;
 }
 
-/* account */
 .stg-accountRow {
     display: flex;
     align-items: center;
@@ -276,7 +274,6 @@
     align-self: flex-start;
 }
 
-/* billing */
 .stg-stats3 {
     display: grid;
     grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -321,10 +318,10 @@
 
 .stg-subTitle {
     margin: 0;
-    font-family: "Cal Sans", sans-serif;
-    font-size: 18px;
-    font-weight: 500;
-    line-height: 1.08;
+    font-family: "Inter", sans-serif;
+    font-size: 16px;
+    font-weight: 800;
+    line-height: 1.35;
     letter-spacing: -0.01em;
     color: var(--stg-ink);
 }
@@ -338,7 +335,14 @@
     color: var(--stg-muted);
 }
 
-/* tables */
+.stg-billingBox .stg-subText {
+    margin-top: 0;
+}
+
+.stg-billingBox .stg-actions {
+    margin-top: 2px;
+}
+
 .stg-table {
     border-radius: 18px;
     border: 1px solid var(--stg-border);
@@ -367,6 +371,7 @@
 
 .stg-rowHead {
     background: var(--stg-orange);
+    font-family: "Inter", sans-serif;
     font-weight: 800;
     letter-spacing: 0.06em;
     text-transform: uppercase;
@@ -376,6 +381,8 @@
 
 .stg-rowHead>div {
     color: #ffffff;
+    font-family: "Inter", sans-serif;
+    font-weight: 800;
 }
 
 .stg-row4 {
@@ -402,6 +409,7 @@
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
+    font-family: "Inter", sans-serif;
 }
 
 .stg-badge {
@@ -443,13 +451,13 @@
 }
 
 .stg-sectionTitle {
-    font-family: "Cal Sans", sans-serif;
-    font-size: 18px;
-    line-height: 1.08;
-    font-weight: 500;
+    margin: 0;
+    font-family: "Inter", sans-serif;
+    font-size: 16px;
+    line-height: 1.35;
+    font-weight: 800;
     color: var(--stg-ink);
     letter-spacing: -0.01em;
-    margin: 0;
 }
 
 .stg-sectionText {
@@ -486,7 +494,6 @@
     display: none;
 }
 
-/* skeletons */
 .stg-skelText,
 .stg-skelBadge,
 .stg-skelBlock,
@@ -633,6 +640,7 @@
         letter-spacing: 0.06em;
         text-transform: uppercase;
         color: rgba(15, 23, 42, 0.52);
+        font-family: "Inter", sans-serif;
     }
 
     .stg-ellipsis {
@@ -669,9 +677,7 @@
         flex-basis: 52px;
     }
 
-    .stg-cardTitle,
-    .stg-sectionTitle,
-    .stg-subTitle {
+    .stg-cardTitle {
         font-size: 18px;
     }
 
@@ -682,5 +688,10 @@
     .stg-sectionText,
     .stg-subText {
         font-size: 14px;
+    }
+
+    .stg-subTitle,
+    .stg-sectionTitle {
+        font-size: 16px;
     }
 }
