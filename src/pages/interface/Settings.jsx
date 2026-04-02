@@ -3,6 +3,7 @@ import { toast } from "react-hot-toast";
 
 import DashboardLayout from "../../components/Dashboard/DashboardLayout";
 import PageHeader from "../../components/Dashboard/PageHeader";
+import "../../styling/spacing.css";
 import "../../styling/dashboard/settings.css";
 
 import { useAuthUser } from "../../hooks/useAuthUser";
@@ -451,10 +452,12 @@ export default function Settings() {
                             </div>
 
                             <div className="stg-billingBox">
-                                <h3 className="stg-subTitle">Manage your subscription</h3>
-                                <p className="stg-subText">
-                                    Update your card, review invoices, change plans, or cancel from the billing portal.
-                                </p>
+                                <div className="stg-billingBoxCopy">
+                                    <h3 className="stg-subTitle">Manage your subscription</h3>
+                                    <p className="stg-subText">
+                                        Update your card, review invoices, change plans, or cancel from the billing portal.
+                                    </p>
+                                </div>
 
                                 <div className="stg-actions">
                                     <button
