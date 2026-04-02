@@ -1,7 +1,8 @@
 .hc4-shell {
   display: flex;
   flex-direction: column;
-  gap: var(--sp-6);
+  gap: var(--sp-3);
+  padding-top: 0;
 }
 
 /* hero */
@@ -527,7 +528,7 @@
 
 @media (max-width: 640px) {
   .hc4-shell {
-    gap: var(--sp-4);
+    gap: var(--sp-3);
   }
 
   .hc4-heroCard,
