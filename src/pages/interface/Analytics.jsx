@@ -5,6 +5,7 @@ import DashboardLayout from "../../components/Dashboard/DashboardLayout";
 import PageHeader from "../../components/Dashboard/PageHeader";
 import api from "../../services/api";
 
+import "../../styling/spacing.css";
 import "../../styling/dashboard/analytics.css";
 
 const RANGE_OPTIONS = [
@@ -235,8 +236,8 @@ function RecentActivityCard({ items = [] }) {
         <div className="an-chartCard">
             <div className="an-chartHead">
                 <div>
-                    <h3 className="an-chartTitle kc-title">Recent Activity</h3>
-                    <p className="an-chartMuted kc-body">
+                    <h3 className="an-chartTitle">Recent Activity</h3>
+                    <p className="an-chartMuted">
                         The latest actions people have taken on your profile.
                     </p>
                 </div>
@@ -318,8 +319,8 @@ function MiniLineChart({
             <div className="an-chartCard">
                 <div className="an-chartHead">
                     <div>
-                        <h3 className="an-chartTitle kc-title">{title}</h3>
-                        <p className="an-chartMuted kc-body">{subtitle}</p>
+                        <h3 className="an-chartTitle">{title}</h3>
+                        <p className="an-chartMuted">{subtitle}</p>
                     </div>
                     <div className="an-chartBadge">Peak: 0</div>
                 </div>
@@ -346,8 +347,8 @@ function MiniLineChart({
         <div className="an-chartCard">
             <div className="an-chartHead">
                 <div>
-                    <h3 className="an-chartTitle kc-title">{title}</h3>
-                    <p className="an-chartMuted kc-body">{subtitle}</p>
+                    <h3 className="an-chartTitle">{title}</h3>
+                    <p className="an-chartMuted">{subtitle}</p>
                 </div>
                 <div className="an-chartBadge">Peak: {numberFormat(maxValue)}</div>
             </div>
@@ -415,8 +416,8 @@ function HorizontalBarBreakdown({ title, subtitle, items = [] }) {
         <div className="an-chartCard">
             <div className="an-chartHead">
                 <div>
-                    <h3 className="an-chartTitle kc-title">{title}</h3>
-                    <p className="an-chartMuted kc-body">{subtitle}</p>
+                    <h3 className="an-chartTitle">{title}</h3>
+                    <p className="an-chartMuted">{subtitle}</p>
                 </div>
             </div>
 
@@ -470,8 +471,8 @@ function ContactActionDetailsCard({ metrics }) {
         <div className="an-chartCard">
             <div className="an-chartHead">
                 <div>
-                    <h3 className="an-chartTitle kc-title">Contact Action Details</h3>
-                    <p className="an-chartMuted kc-body">
+                    <h3 className="an-chartTitle">Contact Action Details</h3>
+                    <p className="an-chartMuted">
                         The actions people took after landing on your profile.
                     </p>
                 </div>
