@@ -39,6 +39,18 @@ function CloseIcon() {
   );
 }
 
+function formatVideoLength(totalSeconds) {
+  const seconds = Number(totalSeconds) || 0;
+  const mins = Math.floor(seconds / 60);
+  const secs = seconds % 60;
+
+  if (mins <= 0) {
+    return `${secs} sec`;
+  }
+
+  return `${mins} min ${secs} sec`;
+}
+
 export default function HelpCentreInterface() {
   const { user } = useContext(AuthContext);
   useFetchBusinessCard(user?._id);
@@ -60,7 +72,7 @@ export default function HelpCentreInterface() {
         id: "1",
         title: "Getting Started with Your Digital Business Card",
         desc: "Learn how to create your first profile, organise your key information properly, and get your KonarCard ready to share with potential clients.",
-        length: "86 sec video",
+        lengthSeconds: 86,
         thumbnail: UpgradeToPlusImage,
         videoUrl: "",
       },
@@ -68,7 +80,7 @@ export default function HelpCentreInterface() {
         id: "2",
         title: "Editing and Optimising Your Profile for More Conversions",
         desc: "Update your details, improve how your profile looks, and make sure customers instantly understand your service and trust your business.",
-        length: "94 sec video",
+        lengthSeconds: 94,
         thumbnail: UpgradeToPlusImage,
         videoUrl: "",
       },
@@ -76,7 +88,7 @@ export default function HelpCentreInterface() {
         id: "3",
         title: "Adding Photos That Actually Help You Win More Work",
         desc: "Upload strong, high-quality images that build trust, showcase your work clearly, and help customers feel confident choosing you.",
-        length: "73 sec video",
+        lengthSeconds: 73,
         thumbnail: UpgradeToPlusImage,
         videoUrl: "",
       },
@@ -84,7 +96,7 @@ export default function HelpCentreInterface() {
         id: "4",
         title: "Collecting Reviews to Build Stronger Social Proof",
         desc: "Learn how to gather customer reviews and display them effectively so new visitors quickly see that other people trust your work.",
-        length: "102 sec video",
+        lengthSeconds: 102,
         thumbnail: UpgradeToPlusImage,
         videoUrl: "",
       },
@@ -92,7 +104,7 @@ export default function HelpCentreInterface() {
         id: "5",
         title: "Sharing Your Profile the Right Way",
         desc: "Send your KonarCard link strategically so customers can quickly view your details, save your information, and contact you without friction.",
-        length: "68 sec video",
+        lengthSeconds: 68,
         thumbnail: UpgradeToPlusImage,
         videoUrl: "",
       },
@@ -100,7 +112,7 @@ export default function HelpCentreInterface() {
         id: "6",
         title: "Using Your NFC Card in Real Customer Situations",
         desc: "Understand how tap-to-share works in practice and how customers interact with your card in real life when you hand it over or tap it.",
-        length: "91 sec video",
+        lengthSeconds: 91,
         thumbnail: UpgradeToPlusImage,
         videoUrl: "",
       },
@@ -108,7 +120,7 @@ export default function HelpCentreInterface() {
         id: "7",
         title: "Branding and Themes That Make You Look More Professional",
         desc: "Keep your profile clean, consistent, and visually strong so it represents your business properly and leaves a better first impression.",
-        length: "88 sec video",
+        lengthSeconds: 88,
         thumbnail: UpgradeToPlusImage,
         videoUrl: "",
       },
@@ -116,7 +128,7 @@ export default function HelpCentreInterface() {
         id: "8",
         title: "Understanding Your Analytics and Improving Results",
         desc: "Learn how to read your analytics properly and use the data to improve profile performance, visibility, and lead generation over time.",
-        length: "97 sec video",
+        lengthSeconds: 97,
         thumbnail: UpgradeToPlusImage,
         videoUrl: "",
       },
@@ -244,7 +256,9 @@ export default function HelpCentreInterface() {
                   </div>
 
                   <div className="hc4-cardBottom">
-                    <div className="hc4-cardLength">{video.length}</div>
+                    <div className="hc4-cardLength">
+                      {formatVideoLength(video.lengthSeconds)}
+                    </div>
 
                     <button
                       type="button"
