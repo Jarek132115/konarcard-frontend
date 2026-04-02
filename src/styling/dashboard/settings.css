@@ -1,15 +1,14 @@
 :root {
     --stg-ink: var(--kc-text-primary, #0f172a);
     --stg-muted: var(--kc-text-secondary, #475569);
-    --stg-border: rgba(15, 23, 42, 0.10);
+    --stg-border: rgba(15, 23, 42, 0.1);
     --stg-softLine: rgba(15, 23, 42, 0.08);
-    --stg-radius: 22px;
+    --stg-radius: 24px;
     --stg-shadow: 0 1px 0 rgba(15, 23, 42, 0.04), 0 10px 22px rgba(15, 23, 42, 0.04);
 
     --stg-card-bg: #ffffff;
     --stg-orange: #f97316;
     --stg-orange-dark: #ea580c;
-    --stg-orange-border: rgba(249, 115, 22, 0.22);
     --stg-green: #16a34a;
     --stg-red: #dc2626;
     --stg-red-border: rgba(220, 38, 38, 0.22);
@@ -22,7 +21,7 @@
     padding: 0;
     display: flex;
     flex-direction: column;
-    gap: 16px;
+    gap: var(--sp-3);
     min-height: 0;
 }
 
@@ -45,7 +44,7 @@
 .stg-grid {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 16px;
+    gap: var(--sp-3);
     align-items: stretch;
     min-height: 0;
 }
@@ -55,7 +54,7 @@
     border: 1px solid var(--stg-border);
     border-radius: var(--stg-radius);
     box-shadow: var(--stg-shadow);
-    padding: 24px;
+    padding: var(--sp-6);
     min-width: 0;
     min-height: 0;
     display: flex;
@@ -67,7 +66,7 @@
     display: flex;
     align-items: flex-start;
     justify-content: space-between;
-    gap: 14px;
+    gap: var(--sp-3);
     flex: 0 0 auto;
 }
 
@@ -78,7 +77,7 @@
 .stg-cardTitle {
     margin: 0;
     font-family: "Cal Sans", sans-serif;
-    font-weight: 500;
+    font-weight: 400;
     font-size: 18px;
     line-height: 1.08;
     color: var(--stg-ink);
@@ -86,7 +85,7 @@
 }
 
 .stg-cardText {
-    margin: 8px 0 0;
+    margin: var(--sp-2) 0 0;
     font-family: "Inter", sans-serif;
     font-weight: 500;
     font-size: 14px;
@@ -99,8 +98,8 @@
     min-height: 0;
     display: flex;
     flex-direction: column;
-    gap: 16px;
-    margin-top: 18px;
+    gap: var(--sp-4);
+    margin-top: var(--sp-4);
 }
 
 .stg-scrollArea {
@@ -110,30 +109,31 @@
 .stg-pill {
     display: inline-flex;
     align-items: center;
-    justify-content: center;
-    gap: 4px;
-    min-height: 34px;
-    padding: 0 12px;
+    min-height: 28px;
+    padding: 0 10px;
     border-radius: 999px;
-    border: 1px solid var(--stg-orange);
-    background: var(--stg-orange);
+    background: rgba(249, 115, 22, 0.1);
+    color: #c2410c;
+    border: 0;
     font-family: "Inter", sans-serif;
-    font-size: 13px;
+    font-size: 12px;
+    font-weight: 800;
     line-height: 1;
-    font-weight: 700;
-    color: #ffffff;
     white-space: nowrap;
+    gap: 4px;
 }
 
 .stg-pill strong {
-    color: #ffffff;
+    color: #c2410c;
     font-weight: 800;
 }
 
 .stg-pill--dark {
     background: var(--stg-navy);
-    border-color: var(--stg-navy);
     color: rgba(255, 255, 255, 0.84);
+    min-height: 34px;
+    padding: 0 12px;
+    font-size: 13px;
 }
 
 .stg-pill--dark strong {
@@ -143,7 +143,7 @@
 .stg-accountRow {
     display: flex;
     align-items: center;
-    gap: 14px;
+    gap: var(--sp-3);
     border: 1px solid var(--stg-border);
     background: #ffffff;
     border-radius: 18px;
@@ -209,12 +209,12 @@
 .stg-fields2 {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 12px;
+    gap: var(--sp-3);
 }
 
 .stg-field {
     display: grid;
-    gap: 8px;
+    gap: var(--sp-2);
 }
 
 .stg-k {
@@ -277,7 +277,7 @@
 .stg-stats3 {
     display: grid;
     grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: 12px;
+    gap: var(--sp-3);
 }
 
 .stg-stat {
@@ -297,7 +297,7 @@
 }
 
 .stg-statV {
-    margin-top: 8px;
+    margin-top: var(--sp-2);
     font-family: "Inter", sans-serif;
     font-weight: 800;
     color: var(--stg-ink);
@@ -313,7 +313,12 @@
     padding: 18px;
     display: flex;
     flex-direction: column;
-    gap: 14px;
+    gap: var(--sp-4);
+}
+
+.stg-billingBoxCopy {
+    display: flex;
+    flex-direction: column;
 }
 
 .stg-subTitle {
@@ -327,20 +332,12 @@
 }
 
 .stg-subText {
-    margin: 8px 0 0;
+    margin: var(--sp-2) 0 0;
     font-family: "Inter", sans-serif;
     font-size: 14px;
     font-weight: 500;
     line-height: 1.55;
     color: var(--stg-muted);
-}
-
-.stg-billingBox .stg-subText {
-    margin-top: 0;
-}
-
-.stg-billingBox .stg-actions {
-    margin-top: 2px;
 }
 
 .stg-table {
@@ -461,7 +458,7 @@
 }
 
 .stg-sectionText {
-    margin-top: 8px;
+    margin-top: var(--sp-2);
     font-family: "Inter", sans-serif;
     font-size: 14px;
     line-height: 1.55;
@@ -470,15 +467,15 @@
 }
 
 .stg-banner {
-    border-radius: 18px;
+    border-radius: 24px;
     border: 1px solid var(--stg-border);
     background: #ffffff;
     box-shadow: var(--stg-shadow);
-    padding: 18px 20px;
+    padding: var(--sp-6);
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 16px;
+    gap: var(--sp-4);
 }
 
 .stg-bannerCopy {
@@ -569,7 +566,7 @@
 @media (max-width: 1200px) {
     .stg-grid {
         grid-template-columns: 1fr;
-        gap: 14px;
+        gap: var(--sp-3);
     }
 }
 
@@ -602,7 +599,7 @@
 
 @media (max-width: 760px) {
     .stg-card {
-        padding: 18px;
+        padding: var(--sp-6);
     }
 
     .stg-headRight {
@@ -650,16 +647,16 @@
 
 @media (max-width: 560px) {
     .stg-shell {
-        gap: 12px;
+        gap: var(--sp-3);
     }
 
     .stg-grid {
-        gap: 12px;
+        gap: var(--sp-3);
     }
 
     .stg-card {
-        padding: 16px;
-        border-radius: 20px;
+        padding: var(--sp-6);
+        border-radius: 24px;
     }
 
     .stg-accountRow,
