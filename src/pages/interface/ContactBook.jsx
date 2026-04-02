@@ -2,6 +2,7 @@ import React, { useMemo, useState, useEffect } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import DashboardLayout from "../../components/Dashboard/DashboardLayout";
 import PageHeader from "../../components/Dashboard/PageHeader";
+import "../../styling/spacing.css";
 import "../../styling/dashboard/contactbook.css";
 import api from "../../services/api";
 import { useAuthUser } from "../../hooks/useAuthUser";
@@ -228,7 +229,7 @@ export default function ContactBook() {
 
                 <div className="cb-grid">
                     <section className="cb-card cb-listCard">
-                        <div className="cb-card-head cb-card-head--stack">
+                        <div className="cb-card-head cb-card-head--row">
                             <div className="cb-titleWrap">
                                 <h2 className="cb-card-title">My Contacts</h2>
                                 <p className="cb-muted">Search and select a contact to view details.</p>
@@ -414,10 +415,7 @@ export default function ContactBook() {
                                 </div>
 
                                 {showDeleteConfirm ? (
-                                    <div
-                                        className="cb-inlineState cb-error"
-                                        style={{ marginTop: 14 }}
-                                    >
+                                    <div className="cb-inlineState cb-error cb-inlineState--confirm">
                                         <div className="cb-inlineTitle">Delete this contact?</div>
                                         <div className="cb-inlineText">
                                             This cannot be undone.
