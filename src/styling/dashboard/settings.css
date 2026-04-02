@@ -7,18 +7,12 @@
     --stg-shadow: 0 1px 0 rgba(15, 23, 42, 0.04), 0 10px 22px rgba(15, 23, 42, 0.04);
 
     --stg-card-bg: #ffffff;
-
     --stg-orange: #f97316;
     --stg-orange-dark: #ea580c;
-    --stg-orange-soft: rgba(249, 115, 22, 0.10);
-    --stg-orange-soft-2: rgba(249, 115, 22, 0.06);
     --stg-orange-border: rgba(249, 115, 22, 0.22);
-
     --stg-green: #16a34a;
     --stg-red: #dc2626;
-    --stg-red-soft: rgba(220, 38, 38, 0.06);
     --stg-red-border: rgba(220, 38, 38, 0.22);
-
     --stg-navy: #0b1635;
 }
 
@@ -122,18 +116,18 @@
     min-height: 34px;
     padding: 0 12px;
     border-radius: 999px;
-    border: 1px solid var(--stg-orange-border);
-    background: var(--stg-orange-soft);
+    border: 1px solid var(--stg-orange);
+    background: var(--stg-orange);
     font-family: "Inter", sans-serif;
     font-size: 13px;
     line-height: 1;
     font-weight: 700;
-    color: #c2410c;
+    color: #ffffff;
     white-space: nowrap;
 }
 
 .stg-pill strong {
-    color: #9a3412;
+    color: #ffffff;
     font-weight: 800;
 }
 
@@ -153,7 +147,7 @@
     align-items: center;
     gap: 14px;
     border: 1px solid var(--stg-border);
-    background: linear-gradient(180deg, #ffffff 0%, rgba(249, 115, 22, 0.025) 100%);
+    background: #ffffff;
     border-radius: 18px;
     padding: 14px;
 }
@@ -163,8 +157,8 @@
     height: 58px;
     border-radius: 18px;
     overflow: hidden;
-    border: 1px solid rgba(249, 115, 22, 0.16);
-    background: rgba(249, 115, 22, 0.08);
+    border: 1px solid var(--stg-softLine);
+    background: rgba(15, 23, 42, 0.03);
     flex: 0 0 58px;
     display: grid;
     place-items: center;
@@ -249,11 +243,6 @@
     line-height: 1.45;
     color: var(--stg-ink);
     overflow-wrap: anywhere;
-    transition: border-color 0.15s ease, box-shadow 0.15s ease;
-}
-
-.stg-vBox:hover {
-    border-color: rgba(249, 115, 22, 0.20);
 }
 
 .stg-hint {
@@ -270,8 +259,8 @@
 }
 
 .stg-hint--info {
-    border: 1px solid var(--stg-orange-border);
-    background: var(--stg-orange-soft-2);
+    border: 1px solid var(--stg-border);
+    background: #ffffff;
     border-radius: 16px;
     padding: 14px 16px;
 }
@@ -296,7 +285,7 @@
 
 .stg-stat {
     border: 1px solid var(--stg-border);
-    background: linear-gradient(180deg, #ffffff 0%, rgba(249, 115, 22, 0.025) 100%);
+    background: #ffffff;
     border-radius: 18px;
     padding: 16px;
 }
@@ -321,8 +310,8 @@
 }
 
 .stg-billingBox {
-    border: 1px solid var(--stg-orange-border);
-    background: linear-gradient(180deg, #ffffff 0%, rgba(249, 115, 22, 0.04) 100%);
+    border: 1px solid var(--stg-border);
+    background: #ffffff;
     border-radius: 18px;
     padding: 18px;
     display: flex;
@@ -352,7 +341,7 @@
 /* tables */
 .stg-table {
     border-radius: 18px;
-    border: 1px solid var(--stg-orange-border);
+    border: 1px solid var(--stg-border);
     overflow: auto;
     background: #ffffff;
     min-height: 0;
@@ -362,7 +351,7 @@
     display: grid;
     gap: 10px;
     padding: 14px 14px;
-    border-top: 1px solid rgba(249, 115, 22, 0.10);
+    border-top: 1px solid var(--stg-softLine);
     align-items: center;
     font-family: "Inter", sans-serif;
     font-weight: 500;
@@ -370,24 +359,23 @@
     font-size: 14px;
     line-height: 1.45;
     background: #ffffff;
-    transition: background-color 0.15s ease;
 }
 
 .stg-row:first-child {
     border-top: none;
 }
 
-.stg-row:not(.stg-rowHead):hover {
-    background: rgba(249, 115, 22, 0.025);
-}
-
 .stg-rowHead {
-    background: linear-gradient(180deg, rgba(249, 115, 22, 0.10) 0%, rgba(249, 115, 22, 0.06) 100%);
+    background: var(--stg-orange);
     font-weight: 800;
     letter-spacing: 0.06em;
     text-transform: uppercase;
     font-size: 12px;
-    color: #9a3412;
+    color: #ffffff;
+}
+
+.stg-rowHead>div {
+    color: #ffffff;
 }
 
 .stg-row4 {
@@ -423,7 +411,7 @@
     padding: 7px 10px;
     border-radius: 999px;
     border: 1px solid rgba(15, 23, 42, 0.12);
-    background: rgba(15, 23, 42, 0.03);
+    background: #ffffff;
     font-family: "Inter", sans-serif;
     font-weight: 800;
     font-size: 12px;
@@ -450,8 +438,8 @@
 
 .stg-emptyRow {
     padding: 18px;
-    border-top: 1px solid rgba(249, 115, 22, 0.10);
-    background: linear-gradient(180deg, rgba(249, 115, 22, 0.03) 0%, rgba(249, 115, 22, 0.01) 100%);
+    border-top: 1px solid var(--stg-softLine);
+    background: #ffffff;
 }
 
 .stg-sectionTitle {
@@ -491,7 +479,7 @@
 
 .stg-banner--danger {
     border-color: var(--stg-red-border);
-    background: #fff;
+    background: #ffffff;
 }
 
 .stg-mobileLabel {
