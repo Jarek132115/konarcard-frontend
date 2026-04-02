@@ -148,9 +148,7 @@ export default function HelpCentreInterface() {
     document.body.style.overflow = "hidden";
 
     const onKeyDown = (event) => {
-      if (event.key === "Escape") {
-        handleCloseVideo();
-      }
+      if (event.key === "Escape") handleCloseVideo();
     };
 
     document.addEventListener("keydown", onKeyDown);
@@ -170,7 +168,7 @@ export default function HelpCentreInterface() {
       try {
         await player.play();
       } catch {
-        // autoplay can fail depending on browser rules
+        // ignore autoplay failure
       }
     };
 
@@ -186,55 +184,39 @@ export default function HelpCentreInterface() {
           rightSlot={null}
         />
 
-        <section className="hc4-supportBanner">
-          <div className="hc4-supportLeft">
-            <div className="hc4-supportIcon" aria-hidden="true">
-              <img
-                src={LiveChatIcon}
-                alt=""
-                aria-hidden="true"
-                className="hc4-supportIconImg"
-              />
+        <section className="hc4-guideHero">
+          <div className="hc4-guideHeroLeft">
+            <div className="hc4-guideIcon" aria-hidden="true">
+              <img src={LiveChatIcon} alt="" className="hc4-guideIconImg" />
             </div>
 
-            <div className="hc4-supportCopy">
-              <h2 className="hc4-supportTitle">We’re here to help</h2>
-              <p className="hc4-supportText">
-                Live chat is the quickest way to get support. Watch quick tutorials
-                below or chat with us if you need a hand.
+            <div className="hc4-guideCopy">
+              <div className="hc4-guideKicker">Here is your guide</div>
+              <h2 className="hc4-guideTitle">
+                8 quick videos to help you set up, improve, and share your KonarCard
+              </h2>
+              <p className="hc4-guideText">
+                Work through the tutorials below to learn the essentials. If you get
+                stuck and need to talk to someone from our team, live chat with us now.
               </p>
             </div>
           </div>
 
-          <button type="button" className="hc4-liveBtn" onClick={openChat}>
-            <img
-              src={LiveChatIcon}
-              alt=""
-              aria-hidden="true"
-              className="hc4-liveBtnIcon"
-            />
-            <span>Start Live Chat</span>
-          </button>
-        </section>
-
-        <section className="hc4-introCard">
-          <div className="hc4-introCopy">
-            <div className="hc4-kicker">Video Help Library</div>
-            <h2 className="hc4-introTitle">
-              Learn the essentials of building and sharing your KonarCard profile
-            </h2>
-            <p className="hc4-introText">
-              These walkthroughs are designed to help users set up their profile
-              faster, improve trust, and understand how to get more value from the
-              platform.
-            </p>
-          </div>
-
-          <div className="hc4-introMeta">
-            <div className="hc4-introStat">
-              <span className="hc4-introStatValue">{videos.length}</span>
-              <span className="hc4-introStatLabel">Guides</span>
+          <div className="hc4-guideHeroRight">
+            <div className="hc4-guideCount">
+              <span className="hc4-guideCountValue">{videos.length}</span>
+              <span className="hc4-guideCountLabel">Videos</span>
             </div>
+
+            <button type="button" className="hc4-liveBtn" onClick={openChat}>
+              <img
+                src={LiveChatIcon}
+                alt=""
+                aria-hidden="true"
+                className="hc4-liveBtnIcon"
+              />
+              <span>Start Live Chat</span>
+            </button>
           </div>
         </section>
 
@@ -346,9 +328,8 @@ export default function HelpCentreInterface() {
                         {activeVideo.title}
                       </h4>
                       <p className="hc4-videoPlaceholderText">
-                        This tutorial popup is now fully wired up. As soon as
-                        you add a real video file URL to this card, it will
-                        autoplay here with stop, skip, and close controls.
+                        Add a real video file URL to this tutorial card and it
+                        will autoplay here with full video controls.
                       </p>
                     </div>
                   </div>
@@ -359,7 +340,7 @@ export default function HelpCentreInterface() {
                 <div className="hc4-modalHint">
                   {activeVideo.videoUrl
                     ? "Use the player controls to pause, skip, or replay."
-                    : "Add a real video URL later and this player will work automatically."}
+                    : "This popup is wired and ready for real videos."}
                 </div>
 
                 <button

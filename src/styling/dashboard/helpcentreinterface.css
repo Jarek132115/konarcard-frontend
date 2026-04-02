@@ -2,25 +2,18 @@
   --hc4-ink: var(--kc-text-primary, #0f172a);
   --hc4-muted: var(--kc-text-secondary, #475569);
   --hc4-border: rgba(15, 23, 42, 0.10);
-  --hc4-softLine: rgba(15, 23, 42, 0.08);
-  --hc4-radius: 22px;
-  --hc4-shadow: 0 1px 0 rgba(15, 23, 42, 0.04), 0 10px 22px rgba(15, 23, 42, 0.04);
-
-  --hc4-card-bg: #ffffff;
-  --hc4-item-bg: #fafafa;
+  --hc4-line: rgba(15, 23, 42, 0.08);
+  --hc4-card: #ffffff;
   --hc4-orange: #f97316;
   --hc4-orange-dark: #ea580c;
   --hc4-orange-soft: rgba(249, 115, 22, 0.10);
-  --hc4-orange-border: rgba(249, 115, 22, 0.20);
   --hc4-navy: #0b1635;
-  --hc4-blackBtn: #0f172a;
+  --hc4-shadow: 0 1px 0 rgba(15, 23, 42, 0.04), 0 10px 22px rgba(15, 23, 42, 0.04);
   --hc4-overlay: rgba(15, 23, 42, 0.64);
 }
 
 .hc4-shell {
   width: 100%;
-  margin: 0;
-  padding: 0;
   display: flex;
   flex-direction: column;
   gap: 16px;
@@ -30,13 +23,11 @@
   margin-bottom: 0;
 }
 
-/* -------------------------------------------------------
-   TOP SUPPORT BANNER
--------------------------------------------------------- */
-.hc4-supportBanner {
-  background: var(--hc4-card-bg);
+/* hero */
+.hc4-guideHero {
+  background: var(--hc4-card);
   border: 1px solid var(--hc4-border);
-  border-radius: var(--hc4-radius);
+  border-radius: 22px;
   box-shadow: var(--hc4-shadow);
   padding: 24px;
   display: flex;
@@ -45,7 +36,7 @@
   gap: 18px;
 }
 
-.hc4-supportLeft {
+.hc4-guideHeroLeft {
   display: flex;
   align-items: flex-start;
   gap: 16px;
@@ -53,7 +44,7 @@
   flex: 1;
 }
 
-.hc4-supportIcon {
+.hc4-guideIcon {
   width: 48px;
   height: 48px;
   flex: 0 0 48px;
@@ -61,107 +52,22 @@
   place-items: center;
   border-radius: 16px;
   background: var(--hc4-orange-soft);
-  border: 1px solid var(--hc4-orange-border);
+  border: 1px solid rgba(249, 115, 22, 0.18);
 }
 
-.hc4-supportIconImg {
+.hc4-guideIconImg {
   width: 22px;
   height: 22px;
   display: block;
-  object-fit: contain;
   filter: brightness(0) saturate(100%) invert(57%) sepia(80%) saturate(2710%) hue-rotate(351deg) brightness(99%) contrast(95%);
 }
 
-.hc4-supportCopy {
+.hc4-guideCopy {
   min-width: 0;
-}
-
-.hc4-supportTitle {
-  margin: 0;
-  font-family: "Cal Sans", sans-serif;
-  font-weight: 500;
-  font-size: 18px;
-  line-height: 1.1;
-  letter-spacing: -0.01em;
-  color: var(--hc4-ink);
-}
-
-.hc4-supportText {
-  margin: 8px 0 0;
-  font-family: "Inter", sans-serif;
-  font-weight: 500;
-  font-size: 14px;
-  line-height: 1.55;
-  color: var(--hc4-muted);
   max-width: 760px;
 }
 
-.hc4-liveBtn {
-  appearance: none;
-  border: 0;
-  background: var(--hc4-orange);
-  color: #ffffff;
-  border-radius: 14px;
-  min-height: 46px;
-  padding: 0 18px;
-  font-family: "Inter", sans-serif;
-  font-size: 14px;
-  font-weight: 700;
-  line-height: 1;
-  cursor: pointer;
-  white-space: nowrap;
-  flex: 0 0 auto;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 10px;
-  transition: background-color 0.16s ease, transform 0.12s ease, box-shadow 0.16s ease;
-}
-
-.hc4-liveBtn:hover {
-  background: var(--hc4-orange-dark);
-  transform: translateY(-1px);
-}
-
-.hc4-liveBtn:active {
-  transform: translateY(0);
-}
-
-.hc4-liveBtn:focus-visible {
-  outline: none;
-  box-shadow: 0 0 0 3px rgba(249, 115, 22, 0.16);
-}
-
-.hc4-liveBtnIcon {
-  width: 16px;
-  height: 16px;
-  display: block;
-  flex: 0 0 16px;
-  object-fit: contain;
-  filter: brightness(0) saturate(100%) invert(100%) sepia(0%) saturate(0%) hue-rotate(215deg) brightness(103%) contrast(101%);
-}
-
-/* -------------------------------------------------------
-   INTRO CARD
--------------------------------------------------------- */
-.hc4-introCard {
-  background: var(--hc4-card-bg);
-  border: 1px solid var(--hc4-border);
-  border-radius: var(--hc4-radius);
-  box-shadow: var(--hc4-shadow);
-  padding: 24px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 18px;
-}
-
-.hc4-introCopy {
-  min-width: 0;
-  max-width: 820px;
-}
-
-.hc4-kicker {
+.hc4-guideKicker {
   display: inline-flex;
   align-items: center;
   min-height: 30px;
@@ -172,20 +78,19 @@
   font-family: "Inter", sans-serif;
   font-size: 12px;
   font-weight: 800;
-  letter-spacing: 0.01em;
 }
 
-.hc4-introTitle {
+.hc4-guideTitle {
   margin: 14px 0 0;
   font-family: "Cal Sans", sans-serif;
-  font-size: 28px;
+  font-size: 30px;
   font-weight: 500;
-  line-height: 1.08;
+  line-height: 1.06;
   letter-spacing: -0.02em;
   color: var(--hc4-ink);
 }
 
-.hc4-introText {
+.hc4-guideText {
   margin: 10px 0 0;
   font-family: "Inter", sans-serif;
   font-size: 14px;
@@ -194,45 +99,74 @@
   color: var(--hc4-muted);
 }
 
-.hc4-introMeta {
+.hc4-guideHeroRight {
   display: flex;
   align-items: center;
-  justify-content: flex-end;
+  gap: 14px;
   flex: 0 0 auto;
 }
 
-.hc4-introStat {
-  min-width: 112px;
-  padding: 18px 20px;
-  border-radius: 18px;
+.hc4-guideCount {
+  min-width: 100px;
+  min-height: 100px;
+  border-radius: 20px;
+  border: 1px solid rgba(249, 115, 22, 0.20);
   background: #fff7ed;
-  border: 1px solid rgba(249, 115, 22, 0.18);
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 6px;
+  gap: 4px;
+  padding: 14px;
 }
 
-.hc4-introStatValue {
+.hc4-guideCountValue {
   font-family: "Inter", sans-serif;
-  font-size: 30px;
+  font-size: 34px;
   line-height: 1;
   font-weight: 800;
   color: var(--hc4-orange);
   letter-spacing: -0.03em;
 }
 
-.hc4-introStatLabel {
+.hc4-guideCountLabel {
   font-family: "Inter", sans-serif;
   font-size: 13px;
   font-weight: 700;
   color: var(--hc4-muted);
 }
 
-/* -------------------------------------------------------
-   GRID
--------------------------------------------------------- */
+.hc4-liveBtn {
+  appearance: none;
+  border: 0;
+  background: var(--hc4-orange);
+  color: #ffffff;
+  border-radius: 14px;
+  min-height: 46px;
+  padding: 0 18px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  font-family: "Inter", sans-serif;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.hc4-liveBtn:hover {
+  background: var(--hc4-orange-dark);
+}
+
+.hc4-liveBtnIcon {
+  width: 16px;
+  height: 16px;
+  display: block;
+  filter: brightness(0) saturate(100%) invert(100%) sepia(0%) saturate(0%) hue-rotate(215deg) brightness(103%) contrast(101%);
+}
+
+/* grid */
 .hc4-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -240,18 +174,16 @@
   align-items: stretch;
 }
 
-/* -------------------------------------------------------
-   VIDEO CARD
--------------------------------------------------------- */
+/* cards */
 .hc4-card {
-  background: var(--hc4-card-bg);
+  background: var(--hc4-card);
   border: 1px solid var(--hc4-border);
-  border-radius: var(--hc4-radius);
+  border-radius: 22px;
   box-shadow: var(--hc4-shadow);
-  padding: 20px;
+  padding: 16px;
   display: grid;
-  grid-template-columns: minmax(220px, 250px) minmax(0, 1fr);
-  gap: 18px;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 16px;
   align-items: stretch;
   min-width: 0;
 }
@@ -260,34 +192,24 @@
   width: 100%;
   aspect-ratio: 4 / 3;
   border-radius: 18px;
-  border: 1px solid var(--hc4-softLine);
-  background: var(--hc4-item-bg);
   overflow: hidden;
+  border: 1px solid var(--hc4-line);
   position: relative;
+  background: #f8fafc;
 }
 
 .hc4-cardMediaBtn {
+  appearance: none;
   padding: 0;
   cursor: pointer;
-  appearance: none;
   outline: none;
-}
-
-.hc4-cardMediaBtn:focus-visible {
-  box-shadow: 0 0 0 3px rgba(249, 115, 22, 0.16);
 }
 
 .hc4-cardImg {
   width: 100%;
   height: 100%;
-  display: block;
   object-fit: cover;
-  transition: transform 0.25s ease;
-}
-
-.hc4-card:hover .hc4-cardImg,
-.hc4-cardMediaBtn:hover .hc4-cardImg {
-  transform: scale(1.03);
+  display: block;
 }
 
 .hc4-mediaOverlay {
@@ -295,24 +217,18 @@
   inset: 0;
   display: grid;
   place-items: center;
-  background: linear-gradient(180deg, rgba(15, 23, 42, 0.05) 0%, rgba(15, 23, 42, 0.32) 100%);
-  transition: background 0.18s ease;
-}
-
-.hc4-card:hover .hc4-mediaOverlay,
-.hc4-cardMediaBtn:hover .hc4-mediaOverlay {
-  background: linear-gradient(180deg, rgba(15, 23, 42, 0.06) 0%, rgba(15, 23, 42, 0.42) 100%);
+  background: rgba(15, 23, 42, 0.12);
 }
 
 .hc4-mediaPlay {
-  width: 58px;
-  height: 58px;
+  width: 56px;
+  height: 56px;
   border-radius: 999px;
-  background: rgba(255, 255, 255, 0.94);
-  color: var(--hc4-blackBtn);
+  background: rgba(255, 255, 255, 0.96);
+  color: var(--hc4-navy);
   display: grid;
   place-items: center;
-  box-shadow: 0 10px 24px rgba(15, 23, 42, 0.16);
+  box-shadow: 0 10px 24px rgba(15, 23, 42, 0.14);
 }
 
 .hc4-mediaPlay .hc4-watchBtnIcon {
@@ -325,13 +241,13 @@
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  gap: 18px;
+  gap: 14px;
 }
 
 .hc4-cardTop {
-  display: grid;
+  display: flex;
+  flex-direction: column;
   gap: 8px;
-  align-content: start;
 }
 
 .hc4-cardBadge {
@@ -346,15 +262,14 @@
   font-family: "Inter", sans-serif;
   font-size: 12px;
   font-weight: 800;
-  letter-spacing: 0.01em;
 }
 
 .hc4-cardTitle {
   margin: 0;
   font-family: "Cal Sans", sans-serif;
-  font-weight: 500;
   font-size: 18px;
-  line-height: 1.1;
+  font-weight: 500;
+  line-height: 1.08;
   letter-spacing: -0.01em;
   color: var(--hc4-ink);
 }
@@ -362,11 +277,10 @@
 .hc4-cardDesc {
   margin: 0;
   font-family: "Inter", sans-serif;
-  font-weight: 500;
   font-size: 14px;
+  font-weight: 500;
   line-height: 1.55;
   color: var(--hc4-muted);
-  max-width: 44ch;
 }
 
 .hc4-cardActions {
@@ -377,10 +291,8 @@
 }
 
 .hc4-cardLength {
-  margin: 0;
   font-family: "Inter", sans-serif;
   font-size: 13px;
-  line-height: 1.45;
   font-style: italic;
   font-weight: 500;
   color: var(--hc4-muted);
@@ -392,8 +304,7 @@
   background: var(--hc4-navy);
   color: #ffffff;
   border-radius: 14px;
-  min-height: 44px;
-  width: fit-content;
+  min-height: 42px;
   padding: 0 18px;
   display: inline-flex;
   align-items: center;
@@ -402,35 +313,20 @@
   font-family: "Inter", sans-serif;
   font-size: 14px;
   font-weight: 700;
-  line-height: 1;
   cursor: pointer;
-  transition: transform 0.12s ease, box-shadow 0.15s ease, background-color 0.15s ease;
 }
 
 .hc4-watchBtn:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 10px 22px rgba(15, 23, 42, 0.12);
-}
-
-.hc4-watchBtn:active {
-  transform: translateY(0);
-}
-
-.hc4-watchBtn:focus-visible {
-  outline: none;
-  box-shadow: 0 0 0 3px rgba(15, 23, 42, 0.12);
+  opacity: 0.96;
 }
 
 .hc4-watchBtnIcon {
   width: 18px;
   height: 18px;
   display: block;
-  flex: 0 0 18px;
 }
 
-/* -------------------------------------------------------
-   MODAL
--------------------------------------------------------- */
+/* modal */
 .hc4-modalOverlay {
   position: fixed;
   inset: 0;
@@ -447,7 +343,6 @@
   width: min(1040px, 100%);
   max-height: min(92vh, 900px);
   background: #ffffff;
-  border: 1px solid rgba(255, 255, 255, 0.2);
   border-radius: 24px;
   box-shadow: 0 24px 80px rgba(15, 23, 42, 0.28);
   display: flex;
@@ -473,7 +368,6 @@
   font-size: 12px;
   font-weight: 800;
   color: #c2410c;
-  letter-spacing: 0.01em;
   text-transform: uppercase;
 }
 
@@ -509,17 +403,6 @@
   place-items: center;
   cursor: pointer;
   flex: 0 0 auto;
-  transition: background 0.15s ease, border-color 0.15s ease, transform 0.12s ease;
-}
-
-.hc4-modalClose:hover {
-  background: rgba(15, 23, 42, 0.04);
-  transform: translateY(-1px);
-}
-
-.hc4-modalClose:focus-visible {
-  outline: none;
-  box-shadow: 0 0 0 3px rgba(15, 23, 42, 0.10);
 }
 
 .hc4-modalCloseIcon {
@@ -548,7 +431,6 @@
   border-radius: 18px;
   overflow: hidden;
   background: #0f172a;
-  border: 1px solid rgba(15, 23, 42, 0.08);
 }
 
 .hc4-videoPlaceholderImg {
@@ -569,7 +451,7 @@
   align-items: flex-start;
   justify-content: center;
   padding: 36px;
-  background: linear-gradient(135deg, rgba(15, 23, 42, 0.70) 0%, rgba(15, 23, 42, 0.35) 100%);
+  background: rgba(15, 23, 42, 0.45);
 }
 
 .hc4-videoPlaceholderBadge {
@@ -625,7 +507,7 @@
 .hc4-modalDoneBtn {
   appearance: none;
   border: 0;
-  background: var(--hc4-blackBtn);
+  background: var(--hc4-navy);
   color: #ffffff;
   border-radius: 14px;
   min-height: 44px;
@@ -634,22 +516,9 @@
   font-size: 14px;
   font-weight: 700;
   cursor: pointer;
-  white-space: nowrap;
-  transition: transform 0.12s ease, box-shadow 0.15s ease;
 }
 
-.hc4-modalDoneBtn:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 10px 22px rgba(15, 23, 42, 0.12);
-}
-
-.hc4-modalDoneBtn:active {
-  transform: translateY(0);
-}
-
-/* -------------------------------------------------------
-   RESPONSIVE
--------------------------------------------------------- */
+/* responsive */
 @media (max-width: 1240px) {
   .hc4-grid {
     grid-template-columns: 1fr;
@@ -657,28 +526,18 @@
 }
 
 @media (max-width: 980px) {
-
-  .hc4-supportBanner,
-  .hc4-introCard {
+  .hc4-guideHero {
     flex-direction: column;
     align-items: flex-start;
   }
 
-  .hc4-introMeta {
+  .hc4-guideHeroRight {
     width: 100%;
-    justify-content: flex-start;
-  }
-
-  .hc4-liveBtn {
-    width: 100%;
+    justify-content: space-between;
   }
 
   .hc4-card {
     grid-template-columns: 1fr;
-  }
-
-  .hc4-cardBody {
-    justify-content: flex-start;
   }
 
   .hc4-modalOverlay {
@@ -706,14 +565,21 @@
 
 @media (max-width: 760px) {
 
-  .hc4-supportBanner,
-  .hc4-introCard,
+  .hc4-guideHero,
   .hc4-card {
     padding: 18px;
     border-radius: 20px;
   }
 
-  .hc4-introTitle {
+  .hc4-guideTitle {
+    font-size: 24px;
+  }
+
+  .hc4-modal {
+    border-radius: 20px;
+  }
+
+  .hc4-modalTitle {
     font-size: 24px;
   }
 
@@ -729,14 +595,6 @@
   .hc4-videoPlaceholderTitle {
     font-size: 24px;
   }
-
-  .hc4-modal {
-    border-radius: 20px;
-  }
-
-  .hc4-modalTitle {
-    font-size: 24px;
-  }
 }
 
 @media (max-width: 560px) {
@@ -744,39 +602,50 @@
     gap: 12px;
   }
 
-  .hc4-supportBanner,
-  .hc4-introCard,
+  .hc4-guideHero,
   .hc4-card {
     padding: 16px;
     border-radius: 18px;
   }
 
-  .hc4-supportLeft {
+  .hc4-guideHeroLeft {
     gap: 14px;
   }
 
-  .hc4-supportIcon {
+  .hc4-guideIcon {
     width: 42px;
     height: 42px;
     flex: 0 0 42px;
     border-radius: 14px;
   }
 
-  .hc4-supportIconImg {
+  .hc4-guideIconImg {
     width: 20px;
     height: 20px;
   }
 
-  .hc4-introTitle {
+  .hc4-guideHeroRight {
+    flex-direction: column;
+    align-items: stretch;
+    width: 100%;
+  }
+
+  .hc4-guideCount {
+    width: 100%;
+    min-height: 84px;
+  }
+
+  .hc4-liveBtn,
+  .hc4-watchBtn {
+    width: 100%;
+  }
+
+  .hc4-guideTitle {
     font-size: 22px;
   }
 
   .hc4-cardTitle {
     font-size: 18px;
-  }
-
-  .hc4-watchBtn {
-    width: 100%;
   }
 
   .hc4-modalOverlay {
