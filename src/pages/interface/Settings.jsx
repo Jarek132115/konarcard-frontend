@@ -49,29 +49,6 @@ const fmtMoneyFromMinor = (minorAmount, currency) => {
 
 const pick = (v, fallback = "—") => (v == null || v === "" ? fallback : String(v));
 
-function getStatusTone(status) {
-    const s = safeLower(status);
-
-    if (["paid", "succeeded", "active"].includes(s)) return "success";
-    if (["open", "draft", "pending", "processing", "trialing"].includes(s)) return "warning";
-    if (["failed", "canceled", "cancelled", "uncollectible", "void", "past_due"].includes(s)) {
-        return "danger";
-    }
-
-    return "neutral";
-}
-
-function SettingsStatCard({ label, value, tone = "neutral", loading = false }) {
-    return (
-        <div className={`stg-topStat stg-topStat--${tone}`}>
-            <div className="stg-topStatLabel">{label}</div>
-            <div className="stg-topStatValue">
-                {loading ? <span className="stg-skelText w64" /> : value}
-            </div>
-        </div>
-    );
-}
-
 export default function Settings() {
     const {
         data: authUser,
@@ -282,9 +259,7 @@ export default function Settings() {
         toast("Delete account flow can be connected next.");
     };
 
-    const displayPlan = String(plan || "free");
-    const displayPlanUpper = displayPlan.toUpperCase();
-    const statusTone = getStatusTone(subscriptionStatus);
+    const displayPlanUpper = String(plan || "free").toUpperCase();
 
     const headerRight = (
         <div className="stg-headRight">
@@ -343,29 +318,6 @@ export default function Settings() {
                     </div>
                 ) : null}
 
-                <section className="stg-topStats">
-                    <SettingsStatCard
-                        label="Current Plan"
-                        value={isBusy ? "" : pick(plan)}
-                        loading={isBusy}
-                        tone="neutral"
-                    />
-
-                    <SettingsStatCard
-                        label="Billing Status"
-                        value={isBusy ? "" : pick(subscriptionStatus)}
-                        loading={isBusy}
-                        tone={statusTone}
-                    />
-
-                    <SettingsStatCard
-                        label="Renews On"
-                        value={isBusy ? "" : currentPeriodEnd ? fmtDate(currentPeriodEnd) : "—"}
-                        loading={isBusy}
-                        tone="neutral"
-                    />
-                </section>
-
                 <div className="stg-grid">
                     <section className="stg-card">
                         <div className="stg-cardHead">
@@ -382,29 +334,27 @@ export default function Settings() {
                         </div>
 
                         <div className="stg-cardBody">
-                            <div className="stg-accountHero">
-                                <div className="stg-accountRow">
-                                    <div className="stg-avatar">
-                                        {accountAvatar && !isBusy ? (
-                                            <img src={accountAvatar} alt="Avatar" />
-                                        ) : (
-                                            <div
-                                                className={`stg-avatarFallback ${isBusy ? "stg-skelBlock" : ""}`}
-                                            >
-                                                {!isBusy
-                                                    ? (accountName || "U").trim().charAt(0).toUpperCase()
-                                                    : ""}
-                                            </div>
-                                        )}
-                                    </div>
+                            <div className="stg-accountRow">
+                                <div className="stg-avatar">
+                                    {accountAvatar && !isBusy ? (
+                                        <img src={accountAvatar} alt="Avatar" />
+                                    ) : (
+                                        <div
+                                            className={`stg-avatarFallback ${isBusy ? "stg-skelBlock" : ""}`}
+                                        >
+                                            {!isBusy
+                                                ? (accountName || "U").trim().charAt(0).toUpperCase()
+                                                : ""}
+                                        </div>
+                                    )}
+                                </div>
 
-                                    <div className="stg-accountMeta">
-                                        <div className="stg-accountName">
-                                            {isBusy ? <span className="stg-skelText w52" /> : accountName}
-                                        </div>
-                                        <div className="stg-accountEmail">
-                                            {isBusy ? <span className="stg-skelText w72" /> : accountEmail}
-                                        </div>
+                                <div className="stg-accountMeta">
+                                    <div className="stg-accountName">
+                                        {isBusy ? <span className="stg-skelText w52" /> : accountName}
+                                    </div>
+                                    <div className="stg-accountEmail">
+                                        {isBusy ? <span className="stg-skelText w72" /> : accountEmail}
                                     </div>
                                 </div>
                             </div>
@@ -474,12 +424,7 @@ export default function Settings() {
                             <div className="stg-stats3">
                                 <div className="stg-stat">
                                     <div className="stg-statK">Status</div>
-                                    <div
-                                        className={`stg-statV ${safeLower(subscriptionStatus) === "active" && !isBusy
-                                                ? "is-active"
-                                                : ""
-                                            }`}
-                                    >
+                                    <div className="stg-statV">
                                         {isBusy ? <span className="stg-skelText w70" /> : pick(subscriptionStatus)}
                                     </div>
                                 </div>
@@ -505,14 +450,11 @@ export default function Settings() {
                                 </div>
                             </div>
 
-                            <div className="stg-billingCallout">
-                                <div className="stg-billingCalloutCopy">
-                                    <h3 className="stg-subTitle">Manage your subscription</h3>
-                                    <p className="stg-subText">
-                                        Update your card, review invoices, change plans, or cancel
-                                        from the billing portal.
-                                    </p>
-                                </div>
+                            <div className="stg-billingBox">
+                                <h3 className="stg-subTitle">Manage your subscription</h3>
+                                <p className="stg-subText">
+                                    Update your card, review invoices, change plans, or cancel from the billing portal.
+                                </p>
 
                                 <div className="stg-actions">
                                     <button
@@ -536,8 +478,7 @@ export default function Settings() {
                             </div>
 
                             <div className="stg-hint">
-                                Use <strong>Manage Billing</strong> to update payment method, view
-                                invoices, or cancel your subscription.
+                                Use <strong>Manage Billing</strong> to update payment method, view invoices, or cancel your subscription.
                             </div>
                         </div>
                     </section>
