@@ -48,7 +48,7 @@ export default function KonarTag3D({
             <div className="pc3d__stage">
                 <Canvas
                     dpr={[1, 2]}
-                    camera={{ position: [0, 0.18, 1.3], fov: 32 }}
+                    camera={{ position: [0, 0.16, 1.24], fov: 31 }}
                     gl={{
                         antialias: true,
                         alpha: true,
@@ -59,14 +59,14 @@ export default function KonarTag3D({
                         gl.setClearColor(0x000000, 0);
                         gl.outputColorSpace = THREE.SRGBColorSpace;
                         gl.toneMapping = THREE.ACESFilmicToneMapping;
-                        gl.toneMappingExposure = 1.12;
+                        gl.toneMappingExposure = 1.08;
                         gl.domElement.style.touchAction = interactive ? "none" : "auto";
                     }}
                 >
-                    <ambientLight intensity={0.95} />
-                    <directionalLight position={[2.8, 3.4, 2.6]} intensity={1.25} />
-                    <directionalLight position={[-2.4, 1.8, -2.2]} intensity={0.7} />
-                    <directionalLight position={[0, 2.2, -3]} intensity={0.38} />
+                    <ambientLight intensity={0.9} />
+                    <directionalLight position={[2.8, 3.6, 2.4]} intensity={1.22} />
+                    <directionalLight position={[-2.4, 1.8, -2.2]} intensity={0.64} />
+                    <directionalLight position={[0.2, 2.0, -3.0]} intensity={0.34} />
 
                     <Environment preset="studio" />
 
@@ -77,7 +77,7 @@ export default function KonarTag3D({
                             autoRotateSpeed={autoRotateSpeed}
                             rotationOffset={rotationOffset}
                         >
-                            <group position={[0, compact ? 0.03 : -0.01, 0]}>
+                            <group position={[0, compact ? 0.02 : -0.015, 0]}>
                                 <KeyfobMesh
                                     logoSrc={safeLogo}
                                     backIconSrc={safeBackIcon}
@@ -105,16 +105,16 @@ function ResponsiveRig({ children, compact = false }) {
         if (compact) {
             scale =
                 w >= 1400
-                    ? 0.98
+                    ? 0.96
                     : w >= 1200
-                        ? 0.95
+                        ? 0.93
                         : w >= 980
-                            ? 0.92
+                            ? 0.9
                             : w >= 720
-                                ? 0.89
+                                ? 0.87
                                 : w >= 520
-                                    ? 0.86
-                                    : 0.83;
+                                    ? 0.84
+                                    : 0.81;
         } else {
             scale =
                 w >= 1400
@@ -149,10 +149,10 @@ function TagRig({
         isDown: false,
         startX: 0,
         startY: 0,
-        baseRX: 0.12,
-        baseRY: 0.64 + rotationOffset,
-        rx: 0.12,
-        ry: 0.64 + rotationOffset,
+        baseRX: 0.11,
+        baseRY: 0.62 + rotationOffset,
+        rx: 0.11,
+        ry: 0.62 + rotationOffset,
         idle: true,
         t: rotationOffset * 2,
     });
@@ -169,7 +169,7 @@ function TagRig({
                 drag.current.ry += autoRotateSpeed * dt;
             }
 
-            const breathe = Math.sin(drag.current.t * 1.02) * 0.02;
+            const breathe = Math.sin(drag.current.t * 1.02) * 0.018;
             const targetRx = clamp(drag.current.baseRX + breathe, -0.55, 0.55);
 
             drag.current.rx = THREE.MathUtils.lerp(drag.current.rx, targetRx, 0.08);
@@ -198,10 +198,8 @@ function TagRig({
         e.stopPropagation();
         drag.current.isDown = true;
         drag.current.idle = false;
-
         drag.current.startX = e.clientX;
         drag.current.startY = e.clientY;
-
         drag.current.baseRX = drag.current.rx;
         drag.current.baseRY = drag.current.ry;
 
@@ -250,10 +248,13 @@ function TagRig({
 function KeyfobMesh({ logoSrc, backIconSrc, logoSize, finish }) {
     const isGold = String(finish).toLowerCase() === "gold";
 
-    const discRadius = 0.34;
-    const discThickness = 0.045;
-    const epoxyInset = 0.028;
-    const epoxyLift = 0.0045;
+    const discRadius = 0.35;
+    const rimThickness = 0.045;
+    const epoxyFaceThickness = 0.012;
+    const epoxyInset = 0.026;
+
+    const ringRadius = 0.165;
+    const ringTube = 0.016;
 
     const [logoTex, backIconTex] = useTexture([logoSrc, backIconSrc]);
 
@@ -274,69 +275,55 @@ function KeyfobMesh({ logoSrc, backIconSrc, logoSize, finish }) {
         setup(backIconTex);
     }, [logoTex, backIconTex]);
 
-    const metalMat = useMemo(() => {
+    const chromeMat = useMemo(() => {
         const m = new THREE.MeshPhysicalMaterial({
-            color: "#d8dbe1",
+            color: "#dfe4ea",
             metalness: 1,
-            roughness: 0.18,
+            roughness: 0.14,
             clearcoat: 0.35,
-            clearcoatRoughness: 0.12,
-            envMapIntensity: 2.1,
-        });
-        return m;
-    }, []);
-
-    const connectorMat = useMemo(() => {
-        const m = new THREE.MeshPhysicalMaterial({
-            color: "#e1e5ec",
-            metalness: 1,
-            roughness: 0.16,
-            clearcoat: 0.4,
-            clearcoatRoughness: 0.1,
+            clearcoatRoughness: 0.08,
             envMapIntensity: 2.2,
         });
         return m;
     }, []);
 
-    const epoxyColor = isGold ? "#b89544" : "#b5635e";
-    const epoxyBackColor = isGold ? "#b89544" : "#b5635e";
+    const epoxyBaseColor = isGold ? "#b08e43" : "#121826";
 
     const epoxyFrontMat = useMemo(() => {
         return new THREE.MeshPhysicalMaterial({
-            color: epoxyColor,
-            roughness: 0.18,
+            color: epoxyBaseColor,
+            roughness: 0.16,
             metalness: 0.02,
-            transmission: 0.0,
             clearcoat: 1,
-            clearcoatRoughness: 0.06,
-            envMapIntensity: 1.4,
+            clearcoatRoughness: 0.04,
+            envMapIntensity: 1.5,
         });
-    }, [epoxyColor]);
+    }, [epoxyBaseColor]);
 
     const epoxyBackMat = useMemo(() => {
         return new THREE.MeshPhysicalMaterial({
-            color: epoxyBackColor,
-            roughness: 0.2,
+            color: epoxyBaseColor,
+            roughness: 0.16,
             metalness: 0.02,
-            transmission: 0.0,
             clearcoat: 1,
-            clearcoatRoughness: 0.06,
-            envMapIntensity: 1.35,
+            clearcoatRoughness: 0.04,
+            envMapIntensity: 1.5,
         });
-    }, [epoxyBackColor]);
+    }, [epoxyBaseColor]);
 
     const logoPlaneDims = useMemo(() => {
         const d = discRadius * 2;
         const percent = Math.max(10, Math.min(100, Number(logoSize || 75))) / 100;
-        let planeH = d * percent * 0.72;
+
+        let planeH = d * percent * 0.62;
 
         const img = logoTex?.image;
         const aspect =
             img && img.width && img.height ? img.width / img.height : 1;
 
         let planeW = planeH * aspect;
-        const maxW = d * 0.68;
-        const maxH = d * 0.42;
+        const maxW = d * 0.58;
+        const maxH = d * 0.34;
 
         if (planeH > maxH) {
             planeH = maxH;
@@ -353,7 +340,7 @@ function KeyfobMesh({ logoSrc, backIconSrc, logoSize, finish }) {
 
     const backIconDims = useMemo(() => {
         const d = discRadius * 2;
-        const plane = d * 0.34;
+        const plane = d * 0.28;
         return { planeW: plane, planeH: plane };
     }, [discRadius]);
 
@@ -391,71 +378,99 @@ function KeyfobMesh({ logoSrc, backIconSrc, logoSize, finish }) {
         return m;
     }, [backIconTex]);
 
-    const zFront = discThickness / 2 + epoxyLift + 0.001;
-    const zBack = -discThickness / 2 - epoxyLift - 0.001;
+    const frontArtZ = rimThickness / 2 + epoxyFaceThickness + 0.0015;
+    const backArtZ = -rimThickness / 2 - epoxyFaceThickness - 0.0015;
 
     return (
         <group>
             <group position={[0, 0.02, 0]}>
-                {/* outer ring */}
-                <mesh position={[0, 0.72, 0]} rotation={[Math.PI / 2, 0, 0]} material={metalMat}>
-                    <torusGeometry args={[0.16, 0.018, 20, 72]} />
+                {/* main split ring */}
+                <mesh
+                    position={[0, 0.735, 0]}
+                    rotation={[Math.PI / 2, 0, 0]}
+                    material={chromeMat}
+                >
+                    <torusGeometry args={[ringRadius, ringTube, 24, 96]} />
                 </mesh>
 
-                {/* connector loop */}
-                <mesh position={[0, 0.52, 0]} rotation={[Math.PI / 2, 0, 0]} material={connectorMat}>
-                    <torusGeometry args={[0.05, 0.012, 18, 48]} />
+                {/* small jump ring */}
+                <mesh
+                    position={[0, 0.515, 0]}
+                    rotation={[Math.PI / 2, 0, 0]}
+                    material={chromeMat}
+                >
+                    <torusGeometry args={[0.052, 0.0105, 18, 56]} />
                 </mesh>
 
-                {/* connector strap */}
-                <mesh position={[0, 0.43, 0]} material={connectorMat}>
-                    <boxGeometry args={[0.08, 0.14, 0.03]} />
+                {/* metal strap */}
+                <mesh position={[0, 0.43, 0]} material={chromeMat}>
+                    <boxGeometry args={[0.084, 0.145, 0.03]} />
                 </mesh>
 
-                {/* metal rim */}
-                <mesh material={metalMat}>
-                    <cylinderGeometry args={[discRadius, discRadius, discThickness, 96]} />
+                {/* round metal rim */}
+                <mesh material={chromeMat}>
+                    <cylinderGeometry args={[discRadius, discRadius, rimThickness, 96]} />
                 </mesh>
 
-                {/* front epoxy face */}
-                <mesh position={[0, 0, discThickness / 2 + epoxyLift]} material={epoxyFrontMat}>
+                {/* front epoxy */}
+                <mesh
+                    position={[0, 0, rimThickness / 2 + epoxyFaceThickness * 0.55]}
+                    material={epoxyFrontMat}
+                >
                     <cylinderGeometry
-                        args={[discRadius - epoxyInset, discRadius - epoxyInset, 0.012, 96]}
+                        args={[discRadius - epoxyInset, discRadius - epoxyInset, epoxyFaceThickness, 96]}
                     />
                 </mesh>
 
-                {/* back epoxy face */}
-                <mesh position={[0, 0, -discThickness / 2 - epoxyLift]} material={epoxyBackMat}>
+                {/* back epoxy */}
+                <mesh
+                    position={[0, 0, -rimThickness / 2 - epoxyFaceThickness * 0.55]}
+                    material={epoxyBackMat}
+                >
                     <cylinderGeometry
-                        args={[discRadius - epoxyInset, discRadius - epoxyInset, 0.012, 96]}
+                        args={[discRadius - epoxyInset, discRadius - epoxyInset, epoxyFaceThickness, 96]}
                     />
                 </mesh>
 
                 {/* front logo */}
-                <mesh position={[0, 0, zFront]} material={logoMat}>
+                <mesh position={[0, 0, frontArtZ]} material={logoMat}>
                     <planeGeometry args={[logoPlaneDims.planeW, logoPlaneDims.planeH]} />
                 </mesh>
 
-                {/* back NFC icon */}
+                {/* back nfc icon */}
                 <mesh
-                    position={[0, 0, zBack]}
+                    position={[0, 0, backArtZ]}
                     rotation={[0, Math.PI, 0]}
                     material={backIconMat}
                 >
                     <planeGeometry args={[backIconDims.planeW, backIconDims.planeH]} />
                 </mesh>
 
-                {/* front glossy dome highlight */}
-                <mesh position={[0, 0, discThickness / 2 + epoxyLift + 0.003]}>
-                    <circleGeometry args={[discRadius - epoxyInset - 0.004, 96]} />
+                {/* subtle front gloss */}
+                <mesh position={[0, 0, rimThickness / 2 + epoxyFaceThickness + 0.0028]}>
+                    <circleGeometry args={[discRadius - epoxyInset - 0.006, 96]} />
                     <meshPhysicalMaterial
                         color="#ffffff"
                         transparent
-                        opacity={0.08}
-                        roughness={0.05}
+                        opacity={0.07}
+                        roughness={0.04}
                         metalness={0}
                         clearcoat={1}
                         clearcoatRoughness={0.04}
+                        depthWrite={false}
+                    />
+                </mesh>
+
+                {/* soft diagonal shine */}
+                <mesh
+                    position={[0.045, 0.04, rimThickness / 2 + epoxyFaceThickness + 0.0032]}
+                    rotation={[0, 0, -0.7]}
+                >
+                    <planeGeometry args={[0.22, 0.56]} />
+                    <meshBasicMaterial
+                        color="#ffffff"
+                        transparent
+                        opacity={0.06}
                         depthWrite={false}
                     />
                 </mesh>
