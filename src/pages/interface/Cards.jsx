@@ -5,6 +5,7 @@ import { toast } from "react-hot-toast";
 import DashboardLayout from "../../components/Dashboard/DashboardLayout";
 import PageHeader from "../../components/Dashboard/PageHeader";
 import OrderDetailsView from "../../components/Cards/OrderDetailsView";
+import "../../styling/spacing.css";
 import "../../styling/dashboard/cards.css";
 
 import api from "../../services/api";
@@ -30,6 +31,7 @@ const PRODUCT_META = {
     variantLabel: "Colour",
     buyLabel: "Buy KonarCard",
     edition: "plastic",
+    topTag: "Plastic Card",
   },
   "metal-card": {
     key: "metal-card",
@@ -44,6 +46,7 @@ const PRODUCT_META = {
     variantLabel: "Finish",
     buyLabel: "Buy KonarCard",
     edition: "metal",
+    topTag: "Metal Card",
   },
   konartag: {
     key: "konartag",
@@ -58,6 +61,7 @@ const PRODUCT_META = {
     variantLabel: "Finish",
     buyLabel: "Buy KonarTag",
     edition: "tag",
+    topTag: "KonarTag",
   },
 };
 
@@ -216,12 +220,35 @@ async function getMyOrders() {
 
 function Card3DDetails({ productKey, logoSrc, qrSrc, logoPercent, variant }) {
   if (productKey === "metal-card") {
-    return <MetalCard3D logoSrc={logoSrc} qrSrc={qrSrc} logoSize={logoPercent} finish={variant} />;
+    return (
+      <MetalCard3D
+        logoSrc={logoSrc}
+        qrSrc={qrSrc}
+        logoSize={logoPercent}
+        finish={variant}
+      />
+    );
   }
+
   if (productKey === "konartag") {
-    return <KonarTag3D logoSrc={logoSrc} qrSrc={qrSrc} logoSize={logoPercent} finish={variant} />;
+    return (
+      <KonarTag3D
+        logoSrc={logoSrc}
+        qrSrc={qrSrc}
+        logoSize={logoPercent}
+        finish={variant}
+      />
+    );
   }
-  return <PlasticCard3D logoSrc={logoSrc} qrSrc={qrSrc} logoSize={logoPercent} variant={variant} />;
+
+  return (
+    <PlasticCard3D
+      logoSrc={logoSrc}
+      qrSrc={qrSrc}
+      logoSize={logoPercent}
+      variant={variant}
+    />
+  );
 }
 
 function ProductPickerCard({ productKey, active, onSelect }) {
@@ -234,7 +261,7 @@ function ProductPickerCard({ productKey, active, onSelect }) {
       onClick={() => onSelect(productKey)}
     >
       <div className="cp-productTileTop">
-        <span className="cp-pill">{meta.name}</span>
+        <span className="cp-pill cp-pill--soft">{meta.topTag}</span>
       </div>
 
       <div className="cp-productTileBody">
@@ -244,7 +271,7 @@ function ProductPickerCard({ productKey, active, onSelect }) {
 
       <div className="cp-productTileFoot">
         <span className="cp-productTilePrice">{meta.price}</span>
-        <span className="cp-productTileCta">Configure</span>
+        <span className="cp-productTileCta">Buy now</span>
       </div>
     </button>
   );
@@ -253,7 +280,9 @@ function ProductPickerCard({ productKey, active, onSelect }) {
 function OrderFlatPreview({ order }) {
   const productKey = String(order?.productKey || "");
   const meta = PRODUCT_META[productKey] || null;
-  const variant = String(order?.variantRaw || order?.preview?.variant || meta?.defaultVariant || "white").toLowerCase();
+  const variant = String(
+    order?.variantRaw || order?.preview?.variant || meta?.defaultVariant || "white"
+  ).toLowerCase();
   const logoSrc = trim(order?.logoUrl) || DEFAULT_LOGO_DATAURL;
   const isTag = productKey === "konartag";
   const isDark =
@@ -381,7 +410,12 @@ export default function Cards() {
         );
       } catch (e) {
         if (!alive) return;
-        setError(e?.response?.data?.message || e?.response?.data?.error || e?.message || "Failed to load orders.");
+        setError(
+          e?.response?.data?.message ||
+          e?.response?.data?.error ||
+          e?.message ||
+          "Failed to load orders."
+        );
         setOrders([]);
         setPurchasedOrders([]);
       } finally {
@@ -665,7 +699,8 @@ export default function Cards() {
     </div>
   );
 
-  const previewResetKey = `${selectedProduct?.key || "none"}-${selectedVariant}-${logoPreset}-${logoUrl ? "custom" : "default"}`;
+  const previewResetKey = `${selectedProduct?.key || "none"}-${selectedVariant}-${logoPreset}-${logoUrl ? "custom" : "default"
+    }`;
 
   return (
     <DashboardLayout title="Cards" subtitle="Manage your KonarCards." hideDesktopHeader>
@@ -679,12 +714,11 @@ export default function Cards() {
         <section className="cp-card">
           {!selectedProduct && !selectedOrderView ? (
             <>
-              <div className="cp-cardHead">
+              <div className="cp-cardHead cp-cardHead--intro">
                 <div>
-                  <h2 className="cp-cardTitle">Choose your product</h2>
-                  <p className="cp-muted">
-                    Pick the product you want to customise and buy.
-                  </p>
+                  <div className="cp-eyebrow">Your cards</div>
+                  <h2 className="cp-cardTitle">Get a product</h2>
+                  <p className="cp-muted">Buy and customise your NFC product in seconds.</p>
                 </div>
               </div>
 
@@ -719,7 +753,8 @@ export default function Cards() {
                   <div className="cp-emptyStateCard">
                     <div className="cp-emptyStateTitle">Get your first card</div>
                     <p className="cp-emptyStateText">
-                      Once you complete your first order, your purchased card will show here with its details and preview.
+                      Once you complete your first order, your purchased card will show here with its
+                      details and preview.
                     </p>
                     <button
                       type="button"
@@ -890,7 +925,11 @@ export default function Cards() {
                       disabled={isProfilesLoading || busy}
                     >
                       <option value="">
-                        {isProfilesLoading ? "Loading..." : myProfiles.length ? "Choose profile" : "No profiles"}
+                        {isProfilesLoading
+                          ? "Loading..."
+                          : myProfiles.length
+                            ? "Choose profile"
+                            : "No profiles"}
                       </option>
 
                       {myProfiles.map((p) => {
@@ -974,9 +1013,7 @@ export default function Cards() {
               <div className="cp-cardHead">
                 <div>
                   <h2 className="cp-cardTitle">Product details</h2>
-                  <p className="cp-muted">
-                    Review what you selected before checkout.
-                  </p>
+                  <p className="cp-muted">Review what you selected before checkout.</p>
                 </div>
               </div>
 

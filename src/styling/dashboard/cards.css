@@ -10,17 +10,18 @@ Cards Page
 :root {
     --cp-ink: var(--kc-text-primary, #0f172a);
     --cp-muted: var(--kc-text-secondary, #475569);
-    --cp-border: rgba(15, 23, 42, 0.10);
+    --cp-border: rgba(15, 23, 42, 0.1);
     --cp-soft: rgba(15, 23, 42, 0.03);
     --cp-soft-2: rgba(15, 23, 42, 0.05);
-    --cp-shadow: 0 10px 26px rgba(15, 23, 42, 0.06);
-    --cp-shadow-hover: 0 14px 34px rgba(15, 23, 42, 0.09);
-    --cp-radius-xl: 22px;
-    --cp-radius-lg: 18px;
-    --cp-radius-md: 14px;
+    --cp-shadow: 0 1px 0 rgba(15, 23, 42, 0.04), 0 10px 22px rgba(15, 23, 42, 0.04);
+    --cp-shadow-hover: 0 14px 34px rgba(15, 23, 42, 0.08);
+    --cp-radius-xl: 24px;
+    --cp-radius-lg: 20px;
+    --cp-radius-md: 16px;
     --cp-accent: #f97316;
-    --cp-accent-soft: rgba(249, 115, 22, 0.10);
-    --cp-accent-border: rgba(249, 115, 22, 0.28);
+    --cp-accent-dark: #ea580c;
+    --cp-accent-soft: rgba(249, 115, 22, 0.1);
+    --cp-accent-border: rgba(249, 115, 22, 0.22);
     --cp-bg: #ffffff;
 }
 
@@ -28,6 +29,9 @@ Cards Page
     width: 100%;
     padding: 0;
     margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: var(--sp-3);
 }
 
 .cp-headRight {
@@ -42,17 +46,31 @@ Cards Page
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    min-height: 40px;
-    padding: 8px 12px;
+    min-height: 34px;
+    padding: 0 12px;
     border-radius: 999px;
-    border: 1px solid rgba(15, 23, 42, 0.12);
-    background: #fff;
-    color: var(--cp-ink);
+    background: #0b1635;
+    color: rgba(255, 255, 255, 0.84);
     font-family: "Inter", sans-serif;
-    font-size: 12px;
+    font-size: 13px;
     font-weight: 700;
     line-height: 1;
     white-space: nowrap;
+}
+
+.cp-pill strong {
+    color: #ffffff;
+    font-weight: 800;
+}
+
+.cp-pill--soft {
+    min-height: 28px;
+    padding: 0 10px;
+    background: #ffffff;
+    border: 1px solid rgba(15, 23, 42, 0.1);
+    color: rgba(15, 23, 42, 0.86);
+    font-size: 12px;
+    font-weight: 800;
 }
 
 .cp-btnIcon {
@@ -66,30 +84,48 @@ Cards Page
     border: 1px solid var(--cp-border);
     border-radius: var(--cp-radius-xl);
     box-shadow: var(--cp-shadow);
-    padding: 18px;
-    margin-top: 16px;
+    padding: var(--sp-6);
 }
 
 .cp-cardHead {
     display: flex;
     align-items: flex-start;
     justify-content: space-between;
-    gap: 14px;
+    gap: var(--sp-4);
     flex-wrap: wrap;
+}
+
+.cp-cardHead--intro {
+    margin-bottom: 0;
+}
+
+.cp-eyebrow {
+    display: inline-flex;
+    align-items: center;
+    min-height: 28px;
+    padding: 0 10px;
+    border-radius: 999px;
+    background: rgba(249, 115, 22, 0.1);
+    color: #c2410c;
+    font-family: "Inter", sans-serif;
+    font-size: 12px;
+    font-weight: 800;
+    line-height: 1;
+    margin-bottom: var(--sp-4);
 }
 
 .cp-cardTitle {
     margin: 0;
     font-family: "Cal Sans", sans-serif;
-    font-weight: 500;
+    font-weight: 400;
     font-size: 22px;
-    line-height: 1.15;
+    line-height: 1.08;
     letter-spacing: -0.02em;
     color: var(--cp-ink);
 }
 
 .cp-muted {
-    margin: 8px 0 0;
+    margin: var(--sp-2) 0 0;
     font-family: "Inter", sans-serif;
     font-size: 14px;
     line-height: 1.55;
@@ -98,10 +134,10 @@ Cards Page
 }
 
 .cp-alert {
-    margin-top: 14px;
+    margin-top: var(--sp-4);
     padding: 12px 14px;
-    border-radius: 16px;
-    border: 1px solid rgba(15, 23, 42, 0.10);
+    border-radius: var(--cp-radius-md);
+    border: 1px solid rgba(15, 23, 42, 0.1);
     background: rgba(15, 23, 42, 0.02);
     color: var(--cp-ink);
     font-family: "Inter", sans-serif;
@@ -118,8 +154,8 @@ Cards Page
 .cp-divider {
     width: 100%;
     height: 1px;
-    background: rgba(15, 23, 42, 0.08);
-    margin: 20px 0;
+    background: rgba(15, 23, 42, 0.06);
+    margin: var(--sp-6) 0;
 }
 
 /* =========================================================
@@ -127,10 +163,10 @@ Cards Page
 ========================================================= */
 
 .cp-productGrid {
-    margin-top: 18px;
+    margin-top: var(--sp-6);
     display: grid;
     grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: 14px;
+    gap: var(--sp-3);
 }
 
 @media (max-width: 1080px) {
@@ -143,22 +179,23 @@ Cards Page
     width: 100%;
     text-align: left;
     background: #fff;
-    border: 1px solid var(--cp-border);
-    border-radius: 20px;
-    padding: 18px;
+    border: 1px solid rgba(15, 23, 42, 0.08);
+    border-radius: 24px;
+    padding: var(--sp-6);
     display: flex;
     flex-direction: column;
-    gap: 18px;
+    gap: 20px;
     cursor: pointer;
     transition:
-        transform 0.12s ease,
+        transform 0.18s ease,
         box-shadow 0.18s ease,
         border-color 0.18s ease;
 }
 
 .cp-productTile:hover {
-    transform: translateY(-1px);
+    transform: translateY(-2px);
     box-shadow: var(--cp-shadow-hover);
+    border-color: rgba(15, 23, 42, 0.12);
 }
 
 .cp-productTile.is-active {
@@ -175,7 +212,7 @@ Cards Page
 .cp-productTileBody {
     display: flex;
     flex-direction: column;
-    gap: 8px;
+    gap: 6px;
     min-height: 120px;
 }
 
@@ -183,8 +220,8 @@ Cards Page
     margin: 0;
     font-family: "Cal Sans", sans-serif;
     font-size: 20px;
-    font-weight: 500;
-    line-height: 1.15;
+    font-weight: 400;
+    line-height: 1.1;
     letter-spacing: -0.02em;
     color: var(--cp-ink);
 }
@@ -209,11 +246,11 @@ Cards Page
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    min-height: 42px;
-    padding: 0 14px;
+    min-height: 40px;
+    padding: 0 16px;
     border-radius: 999px;
-    background: #0b1220;
-    color: #fff;
+    background: #0b1635;
+    color: #ffffff;
     font-family: "Inter", sans-serif;
     font-size: 13px;
     font-weight: 700;
@@ -226,10 +263,10 @@ Cards Page
 ========================================================= */
 
 .cp-grid {
-    margin-top: 16px;
+    margin-top: 20px;
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 14px;
+    gap: 16px;
 }
 
 @media (max-width: 980px) {
@@ -242,12 +279,12 @@ Cards Page
     width: 100%;
     text-align: left;
     background: #fff;
-    border: 1px solid rgba(15, 23, 42, 0.10);
-    border-radius: 18px;
-    padding: 16px;
+    border: 1px solid rgba(15, 23, 42, 0.1);
+    border-radius: 20px;
+    padding: var(--sp-4);
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 16px;
+    gap: var(--sp-4);
     transition:
         box-shadow 0.15s ease,
         border-color 0.15s ease,
@@ -259,8 +296,8 @@ Cards Page
 }
 
 .cp-item.active {
-    border-color: rgba(249, 115, 22, 0.30);
-    box-shadow: 0 12px 28px rgba(249, 115, 22, 0.10);
+    border-color: rgba(249, 115, 22, 0.3);
+    box-shadow: 0 12px 28px rgba(249, 115, 22, 0.1);
 }
 
 .cp-item--muted {
@@ -271,7 +308,7 @@ Cards Page
     width: 100%;
     min-height: 132px;
     border-radius: 16px;
-    border: 1px solid rgba(15, 23, 42, 0.10);
+    border: 1px solid rgba(15, 23, 42, 0.1);
     background: linear-gradient(180deg, #ffffff, #fafafa);
     padding: 14px;
     display: flex;
@@ -305,12 +342,12 @@ Cards Page
 }
 
 .cp-subLabel {
-    color: rgba(71, 85, 105, 0.90);
+    color: rgba(71, 85, 105, 0.9);
     font-weight: 650;
 }
 
 .cp-subValue {
-    color: rgba(15, 23, 42, 0.90);
+    color: rgba(15, 23, 42, 0.9);
     font-weight: 750;
 }
 
@@ -326,10 +363,10 @@ Cards Page
     width: 100%;
     max-width: 360px;
     border-radius: 18px;
-    border: 1px solid rgba(15, 23, 42, 0.10);
+    border: 1px solid rgba(15, 23, 42, 0.1);
     position: relative;
     overflow: hidden;
-    box-shadow: 0 10px 30px rgba(15, 23, 42, 0.10);
+    box-shadow: 0 10px 30px rgba(15, 23, 42, 0.1);
 }
 
 .cp-flatCard.is-card {
@@ -421,8 +458,31 @@ Cards Page
     opacity: 0.92;
     box-shadow: inset 0 0 0 1px rgba(15, 23, 42, 0.14);
     background:
-        linear-gradient(90deg, #111 0 8%, #fff 8% 16%, #111 16% 24%, #fff 24% 32%, #111 32% 40%, #fff 40% 48%, #111 48% 56%, #fff 56% 64%, #111 64% 72%, #fff 72% 80%, #111 80% 88%, #fff 88% 100%),
-        linear-gradient(#111 0 8%, #fff 8% 16%, #111 16% 24%, #fff 24% 32%, #111 32% 40%, #fff 40% 48%, #111 48% 56%, #fff 56% 64%, #111 64% 72%, #fff 72% 80%, #111 80% 88%, #fff 88% 100%);
+        linear-gradient(90deg,
+            #111 0 8%,
+            #fff 8% 16%,
+            #111 16% 24%,
+            #fff 24% 32%,
+            #111 32% 40%,
+            #fff 40% 48%,
+            #111 48% 56%,
+            #fff 56% 64%,
+            #111 64% 72%,
+            #fff 72% 80%,
+            #111 80% 88%,
+            #fff 88% 100%),
+        linear-gradient(#111 0 8%,
+            #fff 8% 16%,
+            #111 16% 24%,
+            #fff 24% 32%,
+            #111 32% 40%,
+            #fff 40% 48%,
+            #111 48% 56%,
+            #fff 56% 64%,
+            #111 64% 72%,
+            #fff 72% 80%,
+            #111 80% 88%,
+            #fff 88% 100%);
     background-blend-mode: multiply;
 }
 
@@ -546,8 +606,8 @@ Cards Page
 
 .cp-previewCard {
     background: #fff;
-    border: 1px solid rgba(15, 23, 42, 0.10);
-    border-radius: 18px;
+    border: 1px solid rgba(15, 23, 42, 0.1);
+    border-radius: 20px;
     min-height: 420px;
     overflow: hidden;
     display: grid;
@@ -559,7 +619,7 @@ Cards Page
 .cp-previewFallback {
     font-family: "Cal Sans", sans-serif;
     font-size: 36px;
-    font-weight: 500;
+    font-weight: 400;
     line-height: 1.1;
     text-align: center;
     color: rgba(15, 23, 42, 0.88);
@@ -568,8 +628,8 @@ Cards Page
 
 .cp-innerCard {
     background: #fff;
-    border: 1px solid rgba(15, 23, 42, 0.10);
-    border-radius: 18px;
+    border: 1px solid rgba(15, 23, 42, 0.1);
+    border-radius: 20px;
     padding: 16px;
     min-width: 0;
 }
@@ -615,7 +675,7 @@ Cards Page
 
 .cp-profileSelect:focus {
     border-color: rgba(249, 115, 22, 0.42);
-    box-shadow: 0 0 0 4px rgba(249, 115, 22, 0.10);
+    box-shadow: 0 0 0 4px rgba(249, 115, 22, 0.1);
 }
 
 .cp-profileSelect:disabled {
@@ -638,7 +698,7 @@ Cards Page
 }
 
 .cp-rowKey {
-    color: rgba(71, 85, 105, 0.90);
+    color: rgba(71, 85, 105, 0.9);
     font-family: "Inter", sans-serif;
     font-size: 14px;
     font-weight: 650;
@@ -725,13 +785,51 @@ Cards Page
 }
 
 /* =========================================================
+   Empty states
+========================================================= */
+
+.cp-emptyState {
+    margin-top: 16px;
+}
+
+.cp-emptyStateCard {
+    border: 1px dashed rgba(15, 23, 42, 0.16);
+    border-radius: 20px;
+    background: linear-gradient(180deg, #fff, #fafafa);
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    align-items: flex-start;
+}
+
+.cp-emptyStateTitle {
+    font-family: "Cal Sans", sans-serif;
+    font-size: 22px;
+    font-weight: 400;
+    line-height: 1.08;
+    letter-spacing: -0.02em;
+    color: var(--cp-ink);
+}
+
+.cp-emptyStateText {
+    margin: 0;
+    max-width: 560px;
+    font-family: "Inter", sans-serif;
+    font-size: 14px;
+    line-height: 1.6;
+    font-weight: 500;
+    color: var(--cp-muted);
+}
+
+/* =========================================================
    Responsive tightening
 ========================================================= */
 
 @media (max-width: 640px) {
     .cp-card {
-        padding: 14px;
-        border-radius: 18px;
+        padding: var(--sp-6);
+        border-radius: 24px;
     }
 
     .cp-cardTitle {
@@ -752,7 +850,7 @@ Cards Page
     }
 
     .cp-productTile {
-        padding: 16px;
+        padding: var(--sp-6);
     }
 
     .cp-productTileBody {
@@ -768,36 +866,37 @@ Cards Page
     }
 }
 
-.cp-emptyState {
-    margin-top: 16px;
-}
+@media (max-width: 520px) {
+    .cp-headRight {
+        width: 100%;
+        justify-content: flex-start;
+    }
 
-.cp-emptyStateCard {
-    border: 1px dashed rgba(15, 23, 42, 0.16);
-    border-radius: 18px;
-    background: linear-gradient(180deg, #fff, #fafafa);
-    padding: 24px;
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-    align-items: flex-start;
-}
+    .cp-headRight .kx-btn {
+        width: 100%;
+        justify-content: center;
+    }
 
-.cp-emptyStateTitle {
-    font-family: "Cal Sans", sans-serif;
-    font-size: 22px;
-    font-weight: 500;
-    line-height: 1.1;
-    letter-spacing: -0.02em;
-    color: var(--cp-ink);
-}
+    .cp-detailsGrid,
+    .cp-grid,
+    .cp-productGrid {
+        gap: var(--sp-3);
+    }
 
-.cp-emptyStateText {
-    margin: 0;
-    max-width: 560px;
-    font-family: "Inter", sans-serif;
-    font-size: 14px;
-    line-height: 1.6;
-    font-weight: 500;
-    color: var(--cp-muted);
+    .cp-row {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 4px;
+    }
+
+    .cp-rowVal {
+        max-width: 100%;
+        text-align: left;
+        white-space: normal;
+    }
+
+    .cp-productTileFoot {
+        flex-direction: column;
+        align-items: flex-start;
+    }
 }
