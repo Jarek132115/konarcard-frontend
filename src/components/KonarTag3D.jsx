@@ -48,7 +48,7 @@ export default function KonarTag3D({
             <div className="pc3d__stage">
                 <Canvas
                     dpr={[1, 2]}
-                    camera={{ position: [0, 0.16, 1.24], fov: 31 }}
+                    camera={{ position: [0, 0.12, 1.22], fov: 31 }}
                     gl={{
                         antialias: true,
                         alpha: true,
@@ -63,10 +63,10 @@ export default function KonarTag3D({
                         gl.domElement.style.touchAction = interactive ? "none" : "auto";
                     }}
                 >
-                    <ambientLight intensity={0.9} />
-                    <directionalLight position={[2.8, 3.6, 2.4]} intensity={1.22} />
-                    <directionalLight position={[-2.4, 1.8, -2.2]} intensity={0.64} />
-                    <directionalLight position={[0.2, 2.0, -3.0]} intensity={0.34} />
+                    <ambientLight intensity={0.92} />
+                    <directionalLight position={[2.8, 3.2, 2.4]} intensity={1.18} />
+                    <directionalLight position={[-2.0, 1.6, -2.0]} intensity={0.62} />
+                    <directionalLight position={[0.2, 2.0, -3.0]} intensity={0.32} />
 
                     <Environment preset="studio" />
 
@@ -77,8 +77,8 @@ export default function KonarTag3D({
                             autoRotateSpeed={autoRotateSpeed}
                             rotationOffset={rotationOffset}
                         >
-                            <group position={[0, compact ? 0.02 : -0.015, 0]}>
-                                <KeyfobMesh
+                            <group position={[0, compact ? 0.03 : -0.01, 0]}>
+                                <TagDiscMesh
                                     logoSrc={safeLogo}
                                     backIconSrc={safeBackIcon}
                                     logoSize={logoSize}
@@ -105,16 +105,16 @@ function ResponsiveRig({ children, compact = false }) {
         if (compact) {
             scale =
                 w >= 1400
-                    ? 0.96
+                    ? 0.94
                     : w >= 1200
-                        ? 0.93
+                        ? 0.91
                         : w >= 980
-                            ? 0.9
+                            ? 0.88
                             : w >= 720
-                                ? 0.87
+                                ? 0.85
                                 : w >= 520
-                                    ? 0.84
-                                    : 0.81;
+                                    ? 0.82
+                                    : 0.79;
         } else {
             scale =
                 w >= 1400
@@ -149,10 +149,10 @@ function TagRig({
         isDown: false,
         startX: 0,
         startY: 0,
-        baseRX: 0.11,
-        baseRY: 0.62 + rotationOffset,
-        rx: 0.11,
-        ry: 0.62 + rotationOffset,
+        baseRX: 0.12,
+        baseRY: 0.68 + rotationOffset,
+        rx: 0.12,
+        ry: 0.68 + rotationOffset,
         idle: true,
         t: rotationOffset * 2,
     });
@@ -194,7 +194,6 @@ function TagRig({
 
     const onPointerDown = (e) => {
         if (!interactive) return;
-
         e.stopPropagation();
         drag.current.isDown = true;
         drag.current.idle = false;
@@ -216,16 +215,12 @@ function TagRig({
         const dx = e.clientX - drag.current.startX;
         const dy = e.clientY - drag.current.startY;
 
-        const gainX = 0.0064;
-        const gainY = 0.0046;
-
-        drag.current.ry = drag.current.baseRY + dx * gainX;
-        drag.current.rx = clamp(drag.current.baseRX - dy * gainY, -0.55, 0.55);
+        drag.current.ry = drag.current.baseRY + dx * 0.0064;
+        drag.current.rx = clamp(drag.current.baseRX - dy * 0.0046, -0.55, 0.55);
     };
 
     const onPointerUp = () => {
         if (!interactive) return;
-
         drag.current.isDown = false;
         drag.current.baseRX = drag.current.rx;
         drag.current.baseRY = drag.current.ry;
@@ -245,16 +240,13 @@ function TagRig({
     );
 }
 
-function KeyfobMesh({ logoSrc, backIconSrc, logoSize, finish }) {
+function TagDiscMesh({ logoSrc, backIconSrc, logoSize, finish }) {
     const isGold = String(finish).toLowerCase() === "gold";
 
     const discRadius = 0.35;
-    const rimThickness = 0.045;
-    const epoxyFaceThickness = 0.012;
-    const epoxyInset = 0.026;
-
-    const ringRadius = 0.165;
-    const ringTube = 0.016;
+    const rimDepth = 0.048;
+    const faceDepth = 0.013;
+    const inset = 0.026;
 
     const [logoTex, backIconTex] = useTexture([logoSrc, backIconSrc]);
 
@@ -275,41 +267,46 @@ function KeyfobMesh({ logoSrc, backIconSrc, logoSize, finish }) {
         setup(backIconTex);
     }, [logoTex, backIconTex]);
 
-    const chromeMat = useMemo(() => {
-        const m = new THREE.MeshPhysicalMaterial({
-            color: "#dfe4ea",
-            metalness: 1,
-            roughness: 0.14,
-            clearcoat: 0.35,
-            clearcoatRoughness: 0.08,
-            envMapIntensity: 2.2,
-        });
-        return m;
-    }, []);
+    const chromeMat = useMemo(
+        () =>
+            new THREE.MeshPhysicalMaterial({
+                color: "#dde2e8",
+                metalness: 1,
+                roughness: 0.14,
+                clearcoat: 0.34,
+                clearcoatRoughness: 0.08,
+                envMapIntensity: 2.1,
+            }),
+        []
+    );
 
-    const epoxyBaseColor = isGold ? "#b08e43" : "#121826";
+    const faceColor = isGold ? "#b08d41" : "#0f1726";
 
-    const epoxyFrontMat = useMemo(() => {
-        return new THREE.MeshPhysicalMaterial({
-            color: epoxyBaseColor,
-            roughness: 0.16,
-            metalness: 0.02,
-            clearcoat: 1,
-            clearcoatRoughness: 0.04,
-            envMapIntensity: 1.5,
-        });
-    }, [epoxyBaseColor]);
+    const frontFaceMat = useMemo(
+        () =>
+            new THREE.MeshPhysicalMaterial({
+                color: faceColor,
+                roughness: 0.16,
+                metalness: 0.02,
+                clearcoat: 1,
+                clearcoatRoughness: 0.04,
+                envMapIntensity: 1.45,
+            }),
+        [faceColor]
+    );
 
-    const epoxyBackMat = useMemo(() => {
-        return new THREE.MeshPhysicalMaterial({
-            color: epoxyBaseColor,
-            roughness: 0.16,
-            metalness: 0.02,
-            clearcoat: 1,
-            clearcoatRoughness: 0.04,
-            envMapIntensity: 1.5,
-        });
-    }, [epoxyBaseColor]);
+    const backFaceMat = useMemo(
+        () =>
+            new THREE.MeshPhysicalMaterial({
+                color: faceColor,
+                roughness: 0.16,
+                metalness: 0.02,
+                clearcoat: 1,
+                clearcoatRoughness: 0.04,
+                envMapIntensity: 1.45,
+            }),
+        [faceColor]
+    );
 
     const logoPlaneDims = useMemo(() => {
         const d = discRadius * 2;
@@ -322,6 +319,7 @@ function KeyfobMesh({ logoSrc, backIconSrc, logoSize, finish }) {
             img && img.width && img.height ? img.width / img.height : 1;
 
         let planeW = planeH * aspect;
+
         const maxW = d * 0.58;
         const maxH = d * 0.34;
 
@@ -378,57 +376,39 @@ function KeyfobMesh({ logoSrc, backIconSrc, logoSize, finish }) {
         return m;
     }, [backIconTex]);
 
-    const frontArtZ = rimThickness / 2 + epoxyFaceThickness + 0.0015;
-    const backArtZ = -rimThickness / 2 - epoxyFaceThickness - 0.0015;
+    const frontArtZ = rimDepth / 2 + faceDepth + 0.0014;
+    const backArtZ = -rimDepth / 2 - faceDepth - 0.0014;
 
     return (
         <group>
             <group position={[0, 0.02, 0]}>
-                {/* main split ring */}
-                <mesh
-                    position={[0, 0.735, 0]}
-                    rotation={[Math.PI / 2, 0, 0]}
-                    material={chromeMat}
-                >
-                    <torusGeometry args={[ringRadius, ringTube, 24, 96]} />
+                {/* top tab */}
+                <mesh position={[0, 0.49, 0]} material={chromeMat}>
+                    <boxGeometry args={[0.09, 0.06, 0.03]} />
                 </mesh>
 
-                {/* small jump ring */}
-                <mesh
-                    position={[0, 0.515, 0]}
-                    rotation={[Math.PI / 2, 0, 0]}
-                    material={chromeMat}
-                >
-                    <torusGeometry args={[0.052, 0.0105, 18, 56]} />
-                </mesh>
-
-                {/* metal strap */}
-                <mesh position={[0, 0.43, 0]} material={chromeMat}>
-                    <boxGeometry args={[0.084, 0.145, 0.03]} />
-                </mesh>
-
-                {/* round metal rim */}
+                {/* circular metal body */}
                 <mesh material={chromeMat}>
-                    <cylinderGeometry args={[discRadius, discRadius, rimThickness, 96]} />
+                    <cylinderGeometry args={[discRadius, discRadius, rimDepth, 96]} />
                 </mesh>
 
-                {/* front epoxy */}
+                {/* front face */}
                 <mesh
-                    position={[0, 0, rimThickness / 2 + epoxyFaceThickness * 0.55]}
-                    material={epoxyFrontMat}
+                    position={[0, 0, rimDepth / 2 + faceDepth * 0.52]}
+                    material={frontFaceMat}
                 >
                     <cylinderGeometry
-                        args={[discRadius - epoxyInset, discRadius - epoxyInset, epoxyFaceThickness, 96]}
+                        args={[discRadius - inset, discRadius - inset, faceDepth, 96]}
                     />
                 </mesh>
 
-                {/* back epoxy */}
+                {/* back face */}
                 <mesh
-                    position={[0, 0, -rimThickness / 2 - epoxyFaceThickness * 0.55]}
-                    material={epoxyBackMat}
+                    position={[0, 0, -rimDepth / 2 - faceDepth * 0.52]}
+                    material={backFaceMat}
                 >
                     <cylinderGeometry
-                        args={[discRadius - epoxyInset, discRadius - epoxyInset, epoxyFaceThickness, 96]}
+                        args={[discRadius - inset, discRadius - inset, faceDepth, 96]}
                     />
                 </mesh>
 
@@ -446,9 +426,9 @@ function KeyfobMesh({ logoSrc, backIconSrc, logoSize, finish }) {
                     <planeGeometry args={[backIconDims.planeW, backIconDims.planeH]} />
                 </mesh>
 
-                {/* subtle front gloss */}
-                <mesh position={[0, 0, rimThickness / 2 + epoxyFaceThickness + 0.0028]}>
-                    <circleGeometry args={[discRadius - epoxyInset - 0.006, 96]} />
+                {/* front gloss */}
+                <mesh position={[0, 0, rimDepth / 2 + faceDepth + 0.0025]}>
+                    <circleGeometry args={[discRadius - inset - 0.006, 96]} />
                     <meshPhysicalMaterial
                         color="#ffffff"
                         transparent
@@ -463,36 +443,18 @@ function KeyfobMesh({ logoSrc, backIconSrc, logoSize, finish }) {
 
                 {/* soft diagonal shine */}
                 <mesh
-                    position={[0.045, 0.04, rimThickness / 2 + epoxyFaceThickness + 0.0032]}
-                    rotation={[0, 0, -0.7]}
+                    position={[0.045, 0.04, rimDepth / 2 + faceDepth + 0.003]}
+                    rotation={[0, 0, -0.72]}
                 >
                     <planeGeometry args={[0.22, 0.56]} />
                     <meshBasicMaterial
                         color="#ffffff"
                         transparent
-                        opacity={0.06}
+                        opacity={0.055}
                         depthWrite={false}
                     />
                 </mesh>
             </group>
         </group>
     );
-}
-
-function roundedRectShape(w, h, r) {
-    const shape = new THREE.Shape();
-    const x = -w / 2;
-    const y = -h / 2;
-
-    shape.moveTo(x + r, y);
-    shape.lineTo(x + w - r, y);
-    shape.quadraticCurveTo(x + w, y, x + w, y + r);
-    shape.lineTo(x + w, y + h - r);
-    shape.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
-    shape.lineTo(x + r, y + h);
-    shape.quadraticCurveTo(x, y + h, x, y + h - r);
-    shape.lineTo(x, y + r);
-    shape.quadraticCurveTo(x, y, x + r, y);
-
-    return shape;
 }
