@@ -5,32 +5,10 @@ import { Environment, useTexture } from "@react-three/drei";
 
 import "../styling/products/plasticcard3d.css";
 import LogoIcon from "../assets/icons/Logo-Icon.svg";
-import LogoIconWhite from "../assets/icons/Logo-Icon-White.svg";
+import KonarTagNFC from "../assets/icons/KonarTagNFC.svg";
 
 const TRANSPARENT_1PX =
     "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO9qWZkAAAAASUVORK5CYII=";
-
-const NFC_ICON_BLACK_DATA_URI = `data:image/svg+xml;utf8,${encodeURIComponent(`
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128">
-  <g fill="none" stroke="#0f172a" stroke-linecap="round" stroke-linejoin="round">
-    <path d="M28 74 C35 66, 41 58, 47 50" stroke-width="10"/>
-    <path d="M52 84 C63 72, 70 58, 74 42" stroke-width="10"/>
-    <path d="M75 90 C88 76, 96 58, 99 37" stroke-width="10"/>
-    <path d="M95 95 C108 80, 115 61, 117 38" stroke-width="10"/>
-  </g>
-</svg>
-`)}`;
-
-const NFC_ICON_WHITE_DATA_URI = `data:image/svg+xml;utf8,${encodeURIComponent(`
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128">
-  <g fill="none" stroke="#ffffff" stroke-linecap="round" stroke-linejoin="round">
-    <path d="M28 74 C35 66, 41 58, 47 50" stroke-width="10"/>
-    <path d="M52 84 C63 72, 70 58, 74 42" stroke-width="10"/>
-    <path d="M75 90 C88 76, 96 58, 99 37" stroke-width="10"/>
-    <path d="M95 95 C108 80, 115 61, 117 38" stroke-width="10"/>
-  </g>
-</svg>
-`)}`;
 
 const safeTexSrc = (src) => {
     const s = (src ?? "").toString().trim();
@@ -38,7 +16,6 @@ const safeTexSrc = (src) => {
 };
 
 export default function KonarTag3D({
-    finish = "white",
     interactive = true,
     autoRotate = true,
     autoRotateSpeed = 0.68,
@@ -46,12 +23,8 @@ export default function KonarTag3D({
     stageClassName = "",
     compact = false,
 }) {
-    const isBlack = String(finish).toLowerCase() === "black";
-
-    const fixedFrontLogo = safeTexSrc(isBlack ? LogoIconWhite : LogoIcon);
-    const fixedBackIcon = isBlack
-        ? NFC_ICON_WHITE_DATA_URI
-        : NFC_ICON_BLACK_DATA_URI;
+    const fixedFrontLogo = safeTexSrc(LogoIcon);
+    const fixedBackIcon = safeTexSrc(KonarTagNFC);
 
     return (
         <div
@@ -73,7 +46,7 @@ export default function KonarTag3D({
                         gl.setClearColor(0x000000, 0);
                         gl.outputColorSpace = THREE.SRGBColorSpace;
                         gl.toneMapping = THREE.ACESFilmicToneMapping;
-                        gl.toneMappingExposure = 1.04;
+                        gl.toneMappingExposure = 1.02;
                         gl.domElement.style.touchAction = interactive ? "none" : "auto";
                     }}
                 >
@@ -95,7 +68,6 @@ export default function KonarTag3D({
                                 <TagMesh
                                     frontLogoSrc={fixedFrontLogo}
                                     backIconSrc={fixedBackIcon}
-                                    finish={finish}
                                 />
                             </group>
                         </TagRig>
@@ -258,9 +230,7 @@ function TagRig({
     );
 }
 
-function TagMesh({ frontLogoSrc, backIconSrc, finish }) {
-    const isBlack = String(finish).toLowerCase() === "black";
-
+function TagMesh({ frontLogoSrc, backIconSrc }) {
     const cardW = 0.92;
     const cardH = cardW * (54 / 85.6);
 
@@ -268,8 +238,11 @@ function TagMesh({ frontLogoSrc, backIconSrc, finish }) {
     const w = h;
     const t = 0.06;
 
-    const bodyGeo = useMemo(() => {
-        const shape = circleShape(w);
+    const outerDiameter = w;
+    const innerDiameter = w * 0.9;
+
+    const outerGeo = useMemo(() => {
+        const shape = circleShape(outerDiameter);
         const geo = new THREE.ExtrudeGeometry(shape, {
             depth: t,
             bevelEnabled: true,
@@ -282,7 +255,23 @@ function TagMesh({ frontLogoSrc, backIconSrc, finish }) {
         geo.center();
         geo.computeVertexNormals();
         return geo;
-    }, [w, t]);
+    }, [outerDiameter, t]);
+
+    const innerGeo = useMemo(() => {
+        const shape = circleShape(innerDiameter);
+        const geo = new THREE.ExtrudeGeometry(shape, {
+            depth: t * 0.76,
+            bevelEnabled: true,
+            bevelThickness: 0.002,
+            bevelSize: 0.0035,
+            bevelSegments: 14,
+            curveSegments: 48,
+            steps: 1,
+        });
+        geo.center();
+        geo.computeVertexNormals();
+        return geo;
+    }, [innerDiameter, t]);
 
     const [frontLogoTex, backIconTex] = useTexture([frontLogoSrc, backIconSrc]);
 
@@ -304,38 +293,40 @@ function TagMesh({ frontLogoSrc, backIconSrc, finish }) {
     }, [frontLogoTex, backIconTex]);
 
     const iconPlaneDims = useMemo(() => {
-        const target = h * 0.34;
+        const target = innerDiameter * 0.34;
         return { planeW: target, planeH: target };
-    }, [h]);
+    }, [innerDiameter]);
 
     const iconPlaneGeo = useMemo(
         () => new THREE.PlaneGeometry(iconPlaneDims.planeW, iconPlaneDims.planeH),
         [iconPlaneDims]
     );
 
-    const faceMat = useMemo(() => {
+    const outerMat = useMemo(() => {
         const m = new THREE.MeshPhysicalMaterial({
-            color: isBlack ? "#05070b" : "#ffffff",
-            roughness: isBlack ? 0.3 : 0.22,
-            metalness: 0.02,
-            clearcoat: 0.7,
-            clearcoatRoughness: isBlack ? 0.16 : 0.12,
-        });
-        m.envMapIntensity = isBlack ? 0.55 : 0.32;
-        return m;
-    }, [isBlack]);
-
-    const edgeMat = useMemo(() => {
-        const m = new THREE.MeshPhysicalMaterial({
-            color: "#bcc3cc",
-            roughness: 0.18,
+            color: "#b6bec8",
+            roughness: 0.16,
             metalness: 1,
-            clearcoat: 0.26,
-            clearcoatRoughness: 0.1,
+            clearcoat: 0.28,
+            clearcoatRoughness: 0.09,
             specularIntensity: 1,
             specularColor: new THREE.Color("#ffffff"),
         });
-        m.envMapIntensity = 1.7;
+        m.envMapIntensity = 1.9;
+        return m;
+    }, []);
+
+    const innerMat = useMemo(() => {
+        const m = new THREE.MeshPhysicalMaterial({
+            color: "#d9dee4",
+            roughness: 0.22,
+            metalness: 0.72,
+            clearcoat: 0.22,
+            clearcoatRoughness: 0.12,
+            specularIntensity: 0.92,
+            specularColor: new THREE.Color("#ffffff"),
+        });
+        m.envMapIntensity = 1.05;
         return m;
     }, []);
 
@@ -373,29 +364,40 @@ function TagMesh({ frontLogoSrc, backIconSrc, finish }) {
         return m;
     }, [backIconTex]);
 
-    const halfT = t / 2;
-    const zFront = halfT + 0.004;
-    const zBack = -halfT - 0.004;
+    const outerHalfT = t / 2;
+    const innerFrontZ = outerHalfT + 0.0005;
+    const innerBackZ = -outerHalfT - 0.0005;
+
+    const iconFrontZ = outerHalfT + 0.004;
+    const iconBackZ = -outerHalfT - 0.004;
 
     return (
         <group>
-            <mesh geometry={bodyGeo} material={edgeMat} />
+            <mesh geometry={outerGeo} material={outerMat} />
+
             <mesh
-                geometry={bodyGeo}
-                material={faceMat}
-                scale={[0.955, 0.955, 0.9]}
+                geometry={innerGeo}
+                material={innerMat}
+                position={[0, 0, innerFrontZ]}
+            />
+
+            <mesh
+                geometry={innerGeo}
+                material={innerMat}
+                position={[0, 0, innerBackZ]}
+                rotation={[0, Math.PI, 0]}
             />
 
             <mesh
                 geometry={iconPlaneGeo}
                 material={frontLogoMat}
-                position={[0, 0, zFront]}
+                position={[0, 0, iconFrontZ]}
             />
 
             <mesh
                 geometry={iconPlaneGeo}
                 material={backIconMat}
-                position={[0, 0, zBack]}
+                position={[0, 0, iconBackZ]}
                 rotation={[0, Math.PI, 0]}
             />
         </group>
