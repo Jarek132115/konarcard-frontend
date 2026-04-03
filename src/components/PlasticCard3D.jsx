@@ -16,7 +16,7 @@ const safeTexSrc = (src) => {
 export default function PlasticCard3D({
     logoSrc,
     qrSrc,
-    logoSize = 75,
+    logoSize = 50,
     variant = "white",
     interactive = true,
     autoRotate = true,
