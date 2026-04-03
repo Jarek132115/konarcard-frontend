@@ -73,14 +73,14 @@ export default function KonarTag3D({
                         gl.setClearColor(0x000000, 0);
                         gl.outputColorSpace = THREE.SRGBColorSpace;
                         gl.toneMapping = THREE.ACESFilmicToneMapping;
-                        gl.toneMappingExposure = 1.02;
+                        gl.toneMappingExposure = 1.04;
                         gl.domElement.style.touchAction = interactive ? "none" : "auto";
                     }}
                 >
-                    <ambientLight intensity={0.92} />
-                    <directionalLight position={[2.8, 3.2, 2.6]} intensity={1.2} />
-                    <directionalLight position={[-2.2, 1.6, -2.1]} intensity={0.58} />
-                    <directionalLight position={[0.4, -1.2, 1.6]} intensity={0.16} />
+                    <ambientLight intensity={0.95} />
+                    <directionalLight position={[2.8, 3.3, 2.5]} intensity={1.18} />
+                    <directionalLight position={[-2.1, 1.5, -2.1]} intensity={0.54} />
+                    <directionalLight position={[0.2, -1.2, 1.7]} intensity={0.12} />
 
                     <Environment preset="studio" />
 
@@ -266,23 +266,23 @@ function TagMesh({ frontLogoSrc, backIconSrc, finish }) {
 
     const h = cardH;
     const w = h;
-    const t = 0.065;
+    const t = 0.06;
 
     const bodyGeo = useMemo(() => {
-        const shape = circleShape(w, h);
+        const shape = circleShape(w);
         const geo = new THREE.ExtrudeGeometry(shape, {
             depth: t,
             bevelEnabled: true,
-            bevelThickness: 0.0032,
-            bevelSize: 0.0052,
-            bevelSegments: 18,
+            bevelThickness: 0.003,
+            bevelSize: 0.0045,
+            bevelSegments: 16,
             curveSegments: 48,
             steps: 1,
         });
         geo.center();
         geo.computeVertexNormals();
         return geo;
-    }, [w, h, t]);
+    }, [w, t]);
 
     const [frontLogoTex, backIconTex] = useTexture([frontLogoSrc, backIconSrc]);
 
@@ -313,47 +313,31 @@ function TagMesh({ frontLogoSrc, backIconSrc, finish }) {
         [iconPlaneDims]
     );
 
-    const edgeMat = useMemo(() => {
-        const m = new THREE.MeshPhysicalMaterial({
-            color: "#bfc5cd",
-            roughness: 0.14,
-            metalness: 1,
-            clearcoat: 0.3,
-            clearcoatRoughness: 0.08,
-            specularIntensity: 1,
-            specularColor: new THREE.Color("#ffffff"),
-        });
-        m.envMapIntensity = 2.35;
-        return m;
-    }, []);
-
     const faceMat = useMemo(() => {
-        if (isBlack) {
-            const m = new THREE.MeshPhysicalMaterial({
-                color: "#0a1220",
-                roughness: 0.2,
-                metalness: 0.92,
-                clearcoat: 0.34,
-                clearcoatRoughness: 0.1,
-                specularIntensity: 0.96,
-                specularColor: new THREE.Color("#ffffff"),
-            });
-            m.envMapIntensity = 1.95;
-            return m;
-        }
-
         const m = new THREE.MeshPhysicalMaterial({
-            color: "#d7dce2",
-            roughness: 0.12,
-            metalness: 1,
-            clearcoat: 0.26,
-            clearcoatRoughness: 0.08,
-            specularIntensity: 1,
-            specularColor: new THREE.Color("#ffffff"),
+            color: isBlack ? "#05070b" : "#ffffff",
+            roughness: isBlack ? 0.3 : 0.22,
+            metalness: 0.02,
+            clearcoat: 0.7,
+            clearcoatRoughness: isBlack ? 0.16 : 0.12,
         });
-        m.envMapIntensity = 2.25;
+        m.envMapIntensity = isBlack ? 0.55 : 0.32;
         return m;
     }, [isBlack]);
+
+    const edgeMat = useMemo(() => {
+        const m = new THREE.MeshPhysicalMaterial({
+            color: "#bcc3cc",
+            roughness: 0.18,
+            metalness: 1,
+            clearcoat: 0.26,
+            clearcoatRoughness: 0.1,
+            specularIntensity: 1,
+            specularColor: new THREE.Color("#ffffff"),
+        });
+        m.envMapIntensity = 1.7;
+        return m;
+    }, []);
 
     const frontLogoMat = useMemo(() => {
         const m = new THREE.MeshBasicMaterial({
@@ -399,7 +383,7 @@ function TagMesh({ frontLogoSrc, backIconSrc, finish }) {
             <mesh
                 geometry={bodyGeo}
                 material={faceMat}
-                scale={[0.962, 0.962, 0.93]}
+                scale={[0.955, 0.955, 0.9]}
             />
 
             <mesh
@@ -418,10 +402,8 @@ function TagMesh({ frontLogoSrc, backIconSrc, finish }) {
     );
 }
 
-function circleShape(w, h) {
+function circleShape(size) {
     const shape = new THREE.Shape();
-    const rx = w / 2;
-    const ry = h / 2;
-    shape.absellipse(0, 0, rx, ry, 0, Math.PI * 2, false, 0);
+    shape.absarc(0, 0, size / 2, 0, Math.PI * 2, false);
     return shape;
 }
