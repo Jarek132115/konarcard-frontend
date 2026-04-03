@@ -4,6 +4,7 @@ import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import { Environment, useTexture } from "@react-three/drei";
 
 import "../styling/products/plasticcard3d.css";
+import LogoIconWhite from "../assets/icons/Logo-Icon-White.svg";
 
 const TRANSPARENT_1PX =
     "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO9qWZkAAAAASUVORK5CYII=";
@@ -25,7 +26,7 @@ export default function MetalCard3D({
     stageClassName = "",
     compact = false,
 }) {
-    const safeLogo = safeTexSrc(logoSrc);
+    const safeLogo = safeTexSrc(LogoIconWhite);
     const safeQr = safeTexSrc(qrSrc);
 
     return (
@@ -66,7 +67,7 @@ export default function MetalCard3D({
                             autoRotateSpeed={autoRotateSpeed}
                             rotationOffset={rotationOffset}
                         >
-                            <group position={[0, compact ? 0.06 : -0.01, 0]}>
+                            <group position={[0, compact ? 0.025 : -0.01, 0]}>
                                 <MetalCardMesh
                                     logoSrc={safeLogo}
                                     qrSrc={safeQr}
@@ -95,16 +96,16 @@ function ResponsiveRig({ children, compact = false }) {
         if (compact) {
             scale =
                 w >= 1400
-                    ? 1.08
+                    ? 0.98
                     : w >= 1200
-                        ? 1.03
+                        ? 0.95
                         : w >= 980
-                            ? 0.98
+                            ? 0.92
                             : w >= 720
-                                ? 0.94
+                                ? 0.89
                                 : w >= 520
-                                    ? 0.9
-                                    : 0.86;
+                                    ? 0.86
+                                    : 0.83;
         } else {
             scale =
                 w >= 1400
@@ -197,7 +198,9 @@ function CardRig({
 
         try {
             e.target.setPointerCapture(e.pointerId);
-        } catch { }
+        } catch {
+            // ignore
+        }
     };
 
     const onPointerMove = (e) => {
