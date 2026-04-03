@@ -1,4 +1,6 @@
-import React, { useEffect, useMemo, useRef, useState } from "react";
+// frontend/src/components/Cards/ProductCardPreview3D.jsx
+import React, { useEffect, useMemo, useState } from "react";
+import { useTexture } from "@react-three/drei";
 
 import PlasticCard3D from "../PlasticCard3D";
 import MetalCard3D from "../MetalCard3D";
@@ -6,21 +8,39 @@ import KonarTag3D from "../KonarTag3D";
 
 import LogoIcon from "../../assets/icons/Logo-Icon.svg";
 import LogoIconWhite from "../../assets/icons/Logo-Icon-White.svg";
-
 import CardChangeLogo1 from "../../assets/icons/CardChangeLogo1.svg";
 import CardChangeLogo2 from "../../assets/icons/CardChangeLogo2.svg";
 import CardChangeLogo3 from "../../assets/icons/CardChangeLogo3.svg";
 import CardChangeLogo4 from "../../assets/icons/CardChangeLogo4.svg";
 import CardChangeLogo5 from "../../assets/icons/CardChangeLogo5.svg";
 import CardChangeLogo6 from "../../assets/icons/CardChangeLogo6.svg";
-
 import CardQrCode from "../../assets/images/CardQrCode.png";
 
 const LOGO_CHANGE_MS = 4000;
-const LOGO_STEPS_PER_VARIANT = 7; // Konar logo + 6 uploaded logos
-const FADE_OUT_MS = 180;
-const FADE_IN_MS = 220;
-const DEFAULT_LOGO_PERCENT = 70;
+const DEFAULT_LOGO_PERCENT = 92;
+
+const PRODUCT_PHASE_MAP = {
+    "plastic-card": 0,
+    "metal-card": 1,
+    konartag: 2,
+};
+
+const PRODUCT_ROTATION_OFFSET_MAP = {
+    "plastic-card": 0,
+    "metal-card": (Math.PI * 2) / 3,
+    konartag: (Math.PI * 4) / 3,
+};
+
+const ALL_LOGOS = [
+    LogoIcon,
+    LogoIconWhite,
+    CardChangeLogo1,
+    CardChangeLogo2,
+    CardChangeLogo3,
+    CardChangeLogo4,
+    CardChangeLogo5,
+    CardChangeLogo6,
+];
 
 function getVariantSequence(productKey) {
     if (productKey === "metal-card") return ["black", "gold"];
@@ -28,23 +48,14 @@ function getVariantSequence(productKey) {
     return ["white", "black"];
 }
 
-function getProductDelay(productKey) {
-    if (productKey === "plastic-card") return 0;
-    if (productKey === "metal-card") return Math.round(LOGO_CHANGE_MS / 3);
-    if (productKey === "konartag") return Math.round((LOGO_CHANGE_MS / 3) * 2);
-    return 0;
-}
-
-function getLogoSequenceForVariant(productKey, variant) {
+function getLogoSequence(productKey, variant) {
     const isDark =
         variant === "black" ||
         (productKey === "metal-card" && variant === "black") ||
         (productKey === "konartag" && variant === "black");
 
-    const firstLogo = isDark ? LogoIconWhite : LogoIcon;
-
     return [
-        firstLogo,
+        isDark ? LogoIconWhite : LogoIcon,
         CardChangeLogo1,
         CardChangeLogo2,
         CardChangeLogo3,
@@ -54,45 +65,50 @@ function getLogoSequenceForVariant(productKey, variant) {
     ];
 }
 
-function preloadAssets(urls) {
-    urls.forEach((src) => {
-        if (!src) return;
-        const img = new Image();
-        img.src = src;
-    });
+function getFrameState(productKey, tick) {
+    const variants = getVariantSequence(productKey);
+    const logosPerVariant = 7;
+    const totalFrames = variants.length * logosPerVariant;
+    const safeTick = ((tick % totalFrames) + totalFrames) % totalFrames;
+
+    const variantIndex = Math.floor(safeTick / logosPerVariant);
+    const logoIndex = safeTick % logosPerVariant;
+
+    return {
+        variant: variants[variantIndex] || variants[0],
+        logoIndex,
+    };
 }
 
-function renderCard3D({ productKey, logoSrc, qrSrc, logoPercent, variant }) {
+function renderProduct3D({
+    productKey,
+    logoSrc,
+    qrSrc,
+    logoPercent,
+    variant,
+    rotationOffset,
+}) {
+    const sharedProps = {
+        logoSrc,
+        qrSrc,
+        logoSize: logoPercent,
+        interactive: false,
+        autoRotate: true,
+        autoRotateSpeed: 0.3,
+        rotationOffset,
+        compact: true,
+        stageClassName: "cp-preview3dScene",
+    };
+
     if (productKey === "metal-card") {
-        return (
-            <MetalCard3D
-                logoSrc={logoSrc}
-                qrSrc={qrSrc}
-                logoSize={logoPercent}
-                finish={variant}
-            />
-        );
+        return <MetalCard3D {...sharedProps} finish={variant} />;
     }
 
     if (productKey === "konartag") {
-        return (
-            <KonarTag3D
-                logoSrc={logoSrc}
-                qrSrc={qrSrc}
-                logoSize={logoPercent}
-                finish={variant}
-            />
-        );
+        return <KonarTag3D {...sharedProps} finish={variant} />;
     }
 
-    return (
-        <PlasticCard3D
-            logoSrc={logoSrc}
-            qrSrc={qrSrc}
-            logoSize={logoPercent}
-            variant={variant}
-        />
-    );
+    return <PlasticCard3D {...sharedProps} variant={variant} />;
 }
 
 export default function ProductCardPreview3D({
@@ -100,108 +116,56 @@ export default function ProductCardPreview3D({
     className = "",
     logoPercent = DEFAULT_LOGO_PERCENT,
 }) {
-    const variantSequence = useMemo(() => getVariantSequence(productKey), [productKey]);
+    const phaseIndex = PRODUCT_PHASE_MAP[productKey] ?? 0;
+    const rotationOffset = PRODUCT_ROTATION_OFFSET_MAP[productKey] ?? 0;
 
-    const [variantIndex, setVariantIndex] = useState(0);
-    const [logoStep, setLogoStep] = useState(0);
-    const [isFading, setIsFading] = useState(false);
-
-    const fadeTimeoutRef = useRef(null);
-    const loopTimeoutRef = useRef(null);
-
-    const currentVariant =
-        variantSequence[variantIndex] || variantSequence[0] || "white";
-
-    const logoSequence = useMemo(
-        () => getLogoSequenceForVariant(productKey, currentVariant),
-        [productKey, currentVariant]
-    );
-
-    const currentLogo = logoSequence[logoStep] || logoSequence[0] || LogoIcon;
+    const [tick, setTick] = useState(phaseIndex);
 
     useEffect(() => {
-        const allAssets = [
-            LogoIcon,
-            LogoIconWhite,
-            CardChangeLogo1,
-            CardChangeLogo2,
-            CardChangeLogo3,
-            CardChangeLogo4,
-            CardChangeLogo5,
-            CardChangeLogo6,
-            CardQrCode,
-        ];
-        preloadAssets(allAssets);
+        ALL_LOGOS.forEach((src) => useTexture.preload(src));
+        useTexture.preload(CardQrCode);
     }, []);
 
     useEffect(() => {
-        setVariantIndex(0);
-        setLogoStep(0);
-        setIsFading(false);
-    }, [productKey]);
+        setTick(phaseIndex);
 
-    useEffect(() => {
-        const clearTimers = () => {
-            if (fadeTimeoutRef.current) {
-                window.clearTimeout(fadeTimeoutRef.current);
-                fadeTimeoutRef.current = null;
-            }
-            if (loopTimeoutRef.current) {
-                window.clearTimeout(loopTimeoutRef.current);
-                loopTimeoutRef.current = null;
-            }
-        };
+        const delay = Math.round((LOGO_CHANGE_MS / 3) * phaseIndex);
+        let intervalId;
 
-        const runStep = () => {
-            setIsFading(true);
-
-            fadeTimeoutRef.current = window.setTimeout(() => {
-                setLogoStep((prevLogoStep) => {
-                    const nextLogoStep = prevLogoStep + 1;
-
-                    if (nextLogoStep >= LOGO_STEPS_PER_VARIANT) {
-                        setVariantIndex((prevVariantIndex) => {
-                            const nextVariantIndex = prevVariantIndex + 1;
-                            return nextVariantIndex >= variantSequence.length ? 0 : nextVariantIndex;
-                        });
-                        return 0;
-                    }
-
-                    return nextLogoStep;
-                });
-
-                setIsFading(false);
-
-                loopTimeoutRef.current = window.setTimeout(runStep, LOGO_CHANGE_MS - FADE_OUT_MS);
-            }, FADE_OUT_MS);
-        };
-
-        const initialDelay = getProductDelay(productKey);
-
-        loopTimeoutRef.current = window.setTimeout(runStep, initialDelay || LOGO_CHANGE_MS);
+        const timeoutId = window.setTimeout(() => {
+            intervalId = window.setInterval(() => {
+                setTick((prev) => prev + 1);
+            }, LOGO_CHANGE_MS);
+        }, delay);
 
         return () => {
-            clearTimers();
+            window.clearTimeout(timeoutId);
+            if (intervalId) window.clearInterval(intervalId);
         };
-    }, [productKey, variantSequence.length]);
+    }, [phaseIndex, productKey]);
+
+    const { variant, logoIndex } = useMemo(
+        () => getFrameState(productKey, tick),
+        [productKey, tick]
+    );
+
+    const logoSequence = useMemo(
+        () => getLogoSequence(productKey, variant),
+        [productKey, variant]
+    );
+
+    const currentLogo = logoSequence[logoIndex] || logoSequence[0] || LogoIcon;
 
     return (
         <div className={`cp-preview3dWrap ${className}`.trim()} aria-hidden="true">
-            <div
-                className={`cp-preview3dInner ${isFading ? "is-fading" : ""}`}
-                style={{
-                    transition: `opacity ${isFading ? FADE_OUT_MS : FADE_IN_MS}ms ease`,
-                    pointerEvents: "none",
-                }}
-            >
-                {renderCard3D({
-                    productKey,
-                    logoSrc: currentLogo,
-                    qrSrc: CardQrCode,
-                    logoPercent,
-                    variant: currentVariant,
-                })}
-            </div>
+            {renderProduct3D({
+                productKey,
+                logoSrc: currentLogo,
+                qrSrc: CardQrCode,
+                logoPercent,
+                variant,
+                rotationOffset,
+            })}
         </div>
     );
 }

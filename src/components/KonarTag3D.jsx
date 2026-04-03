@@ -14,12 +14,27 @@ const safeTexSrc = (src) => {
     return s ? s : TRANSPARENT_1PX;
 };
 
-export default function KonarTag3D({ logoSrc, qrSrc, logoSize = 70, finish = "black" }) {
+export default function KonarTag3D({
+    logoSrc,
+    qrSrc,
+    logoSize = 70,
+    finish = "black",
+    interactive = true,
+    autoRotate = true,
+    autoRotateSpeed = 0.32,
+    rotationOffset = 0,
+    stageClassName = "",
+    compact = false,
+}) {
     const safeLogo = safeTexSrc(logoSrc);
     const safeQr = safeTexSrc(qrSrc);
 
     return (
-        <div className="pc3d" aria-label="3D KonarTag preview">
+        <div
+            className={`pc3d ${compact ? "pc3d--compact" : ""} ${interactive ? "pc3d--interactive" : "pc3d--locked"
+                } ${stageClassName}`.trim()}
+            aria-label="3D KonarTag preview"
+        >
             <div className="pc3d__stage">
                 <Canvas
                     dpr={[1, 2]}
@@ -33,12 +48,9 @@ export default function KonarTag3D({ logoSrc, qrSrc, logoSize = 70, finish = "bl
                     onCreated={({ gl }) => {
                         gl.setClearColor(0x000000, 0);
                         gl.outputColorSpace = THREE.SRGBColorSpace;
-
-                        // ✅ keeps gold bright + not muddy
                         gl.toneMapping = THREE.ACESFilmicToneMapping;
                         gl.toneMappingExposure = 1.25;
-
-                        gl.domElement.style.touchAction = "none";
+                        gl.domElement.style.touchAction = interactive ? "none" : "auto";
                     }}
                 >
                     <ambientLight intensity={1.05} />
@@ -48,10 +60,20 @@ export default function KonarTag3D({ logoSrc, qrSrc, logoSize = 70, finish = "bl
 
                     <Environment preset="warehouse" />
 
-                    <ResponsiveRig>
-                        <TagRig>
-                            <group position={[0, -0.01, 0]}>
-                                <TagMesh logoSrc={safeLogo} qrSrc={safeQr} logoSize={logoSize} finish={finish} />
+                    <ResponsiveRig compact={compact}>
+                        <TagRig
+                            interactive={interactive}
+                            autoRotate={autoRotate}
+                            autoRotateSpeed={autoRotateSpeed}
+                            rotationOffset={rotationOffset}
+                        >
+                            <group position={[0, compact ? -0.005 : -0.01, 0]}>
+                                <TagMesh
+                                    logoSrc={safeLogo}
+                                    qrSrc={safeQr}
+                                    logoSize={logoSize}
+                                    finish={finish}
+                                />
                             </group>
                         </TagRig>
                     </ResponsiveRig>
@@ -61,8 +83,7 @@ export default function KonarTag3D({ logoSrc, qrSrc, logoSize = 70, finish = "bl
     );
 }
 
-/** ✅ same scale breakpoints as Plastic/Metal */
-function ResponsiveRig({ children }) {
+function ResponsiveRig({ children, compact = false }) {
     const g = useRef();
     const { size } = useThree();
 
@@ -70,21 +91,48 @@ function ResponsiveRig({ children }) {
         if (!g.current) return;
         const w = size.width;
 
-        const scale =
-            w >= 1400 ? 0.96 :
-                w >= 1200 ? 0.94 :
-                    w >= 980 ? 0.92 :
-                        w >= 720 ? 0.88 :
-                            w >= 520 ? 0.84 :
-                                0.80;
+        let scale;
+        if (compact) {
+            scale =
+                w >= 1400
+                    ? 0.88
+                    : w >= 1200
+                        ? 0.84
+                        : w >= 980
+                            ? 0.8
+                            : w >= 720
+                                ? 0.76
+                                : w >= 520
+                                    ? 0.72
+                                    : 0.68;
+        } else {
+            scale =
+                w >= 1400
+                    ? 0.96
+                    : w >= 1200
+                        ? 0.94
+                        : w >= 980
+                            ? 0.92
+                            : w >= 720
+                                ? 0.88
+                                : w >= 520
+                                    ? 0.84
+                                    : 0.8;
+        }
 
         g.current.scale.setScalar(scale);
-    }, [size.width]);
+    }, [size.width, compact]);
 
     return <group ref={g}>{children}</group>;
 }
 
-function TagRig({ children }) {
+function TagRig({
+    children,
+    interactive = true,
+    autoRotate = true,
+    autoRotateSpeed = 0.32,
+    rotationOffset = 0,
+}) {
     const group = useRef();
 
     const drag = useRef({
@@ -92,11 +140,11 @@ function TagRig({ children }) {
         startX: 0,
         startY: 0,
         baseRX: 0.08,
-        baseRY: 0.7,
+        baseRY: 0.7 + rotationOffset,
         rx: 0.08,
-        ry: 0.7,
+        ry: 0.7 + rotationOffset,
         idle: true,
-        t: 0,
+        t: rotationOffset * 2,
     });
 
     const clamp = (v, min, max) => Math.max(min, Math.min(max, v));
@@ -106,17 +154,37 @@ function TagRig({ children }) {
 
         if (drag.current.idle) {
             drag.current.t += dt;
-            drag.current.ry += 0.32 * dt;
+
+            if (autoRotate) {
+                drag.current.ry += autoRotateSpeed * dt;
+            }
+
             const breathe = Math.sin(drag.current.t * 1.05) * 0.03;
-            drag.current.rx = clamp(drag.current.baseRX + breathe, -0.55, 0.55);
+            const targetRx = clamp(drag.current.baseRX + breathe, -0.55, 0.55);
+
+            drag.current.rx = THREE.MathUtils.lerp(drag.current.rx, targetRx, 0.08);
         }
 
-        group.current.rotation.x = drag.current.rx;
-        group.current.rotation.y = drag.current.ry;
-        group.current.rotation.z = 0.02;
+        group.current.rotation.x = THREE.MathUtils.lerp(
+            group.current.rotation.x,
+            drag.current.rx,
+            0.1
+        );
+        group.current.rotation.y = THREE.MathUtils.lerp(
+            group.current.rotation.y,
+            drag.current.ry,
+            0.1
+        );
+        group.current.rotation.z = THREE.MathUtils.lerp(
+            group.current.rotation.z,
+            0.02,
+            0.08
+        );
     });
 
     const onPointerDown = (e) => {
+        if (!interactive) return;
+
         e.stopPropagation();
         drag.current.isDown = true;
         drag.current.idle = false;
@@ -129,11 +197,13 @@ function TagRig({ children }) {
 
         try {
             e.target.setPointerCapture(e.pointerId);
-        } catch { }
+        } catch {
+            // ignore
+        }
     };
 
     const onPointerMove = (e) => {
-        if (!drag.current.isDown) return;
+        if (!interactive || !drag.current.isDown) return;
 
         const dx = e.clientX - drag.current.startX;
         const dy = e.clientY - drag.current.startY;
@@ -146,6 +216,8 @@ function TagRig({ children }) {
     };
 
     const onPointerUp = () => {
+        if (!interactive) return;
+
         drag.current.isDown = false;
         drag.current.baseRX = drag.current.rx;
         drag.current.baseRY = drag.current.ry;
@@ -155,10 +227,10 @@ function TagRig({ children }) {
     return (
         <group
             ref={group}
-            onPointerDown={onPointerDown}
-            onPointerMove={onPointerMove}
-            onPointerUp={onPointerUp}
-            onPointerCancel={onPointerUp}
+            onPointerDown={interactive ? onPointerDown : undefined}
+            onPointerMove={interactive ? onPointerMove : undefined}
+            onPointerUp={interactive ? onPointerUp : undefined}
+            onPointerCancel={interactive ? onPointerUp : undefined}
         >
             {children}
         </group>
@@ -166,13 +238,12 @@ function TagRig({ children }) {
 }
 
 function TagMesh({ logoSrc, qrSrc, logoSize, finish }) {
-    // tag is slightly smaller than card, but we keep the same overall canvas sizing
     const w = 0.86;
     const h = w * 0.96;
     const t = 0.014;
 
     const holeR = w * 0.09;
-    const holeY = h * 0.30;
+    const holeY = h * 0.3;
 
     const bodyGeo = useMemo(() => {
         const shape = tagShape(w, h, holeR, holeY);
@@ -203,41 +274,49 @@ function TagMesh({ logoSrc, qrSrc, logoSize, finish }) {
             tex.generateMipmaps = true;
             tex.needsUpdate = true;
         };
+
         setup(logoTex);
         setup(qrTex);
     }, [logoTex, qrTex]);
 
-    // art area slightly below center (feels like a real tag)
     const artY = -h * 0.06;
 
     const logoPlaneDims = useMemo(() => {
         const desiredH = h * 0.46;
         const maxW = w * 0.74;
 
-        const clamped = Math.max(60, Math.min(80, Number(logoSize || 70)));
+        const clamped = Math.max(70, Math.min(110, Number(logoSize || 70)));
         const s = clamped / 70;
 
-        const scaledH = desiredH * (s * 0.72);
+        const scaledH = desiredH * (s * 0.82);
 
         const img = logoTex?.image;
-        const aspect = img && img.width && img.height ? img.width / img.height : 1;
+        const aspect =
+            img && img.width && img.height ? img.width / img.height : 1;
 
-        const planeH = Math.min(h * 0.62, Math.max(h * 0.18, scaledH));
+        const planeH = Math.min(h * 0.66, Math.max(h * 0.2, scaledH));
         const planeW = Math.min(maxW, planeH * aspect);
 
         return { planeW, planeH };
     }, [logoTex, w, h, logoSize]);
 
     const qrPlaneDims = useMemo(() => {
-        const plane = Math.min(h * 0.50, Math.max(h * 0.18, h * 0.42));
+        const plane = Math.min(h * 0.5, Math.max(h * 0.18, h * 0.42));
         return { planeW: plane, planeH: plane };
     }, [h]);
 
-    const logoPlaneGeo = useMemo(() => new THREE.PlaneGeometry(logoPlaneDims.planeW, logoPlaneDims.planeH), [logoPlaneDims]);
-    const qrPlaneGeo = useMemo(() => new THREE.PlaneGeometry(qrPlaneDims.planeW, qrPlaneDims.planeH), [qrPlaneDims]);
+    const logoPlaneGeo = useMemo(
+        () => new THREE.PlaneGeometry(logoPlaneDims.planeW, logoPlaneDims.planeH),
+        [logoPlaneDims]
+    );
+    const qrPlaneGeo = useMemo(
+        () => new THREE.PlaneGeometry(qrPlaneDims.planeW, qrPlaneDims.planeH),
+        [qrPlaneDims]
+    );
 
     const metalPreset = useMemo(() => {
         const f = String(finish).toLowerCase();
+
         if (f === "gold") {
             return {
                 base: "#d6b24a",
@@ -251,6 +330,7 @@ function TagMesh({ logoSrc, qrSrc, logoSize, finish }) {
                 specularColor: "#fff4c8",
             };
         }
+
         return {
             base: "#14171c",
             edge: "#1c2027",
@@ -292,7 +372,6 @@ function TagMesh({ logoSrc, qrSrc, logoSize, finish }) {
         return m;
     }, [metalPreset]);
 
-    // ✅ front-only (no bleed), like Plastic/Metal
     const logoMat = useMemo(() => {
         const m = new THREE.MeshBasicMaterial({
             map: logoTex || null,
@@ -336,8 +415,17 @@ function TagMesh({ logoSrc, qrSrc, logoSize, finish }) {
             <mesh geometry={bodyGeo} material={bodyMat} />
             <mesh geometry={bodyGeo} material={edgeMat} />
 
-            <mesh geometry={logoPlaneGeo} material={logoMat} position={[0, artY, zFront]} />
-            <mesh geometry={qrPlaneGeo} material={qrMat} position={[0, artY, zBack]} rotation={[0, Math.PI, 0]} />
+            <mesh
+                geometry={logoPlaneGeo}
+                material={logoMat}
+                position={[0, artY, zFront]}
+            />
+            <mesh
+                geometry={qrPlaneGeo}
+                material={qrMat}
+                position={[0, artY, zBack]}
+                rotation={[0, Math.PI, 0]}
+            />
         </group>
     );
 }

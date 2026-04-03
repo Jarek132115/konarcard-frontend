@@ -13,12 +13,27 @@ const safeTexSrc = (src) => {
     return s ? s : TRANSPARENT_1PX;
 };
 
-export default function PlasticCard3D({ logoSrc, qrSrc, logoSize = 70, variant = "white" }) {
+export default function PlasticCard3D({
+    logoSrc,
+    qrSrc,
+    logoSize = 70,
+    variant = "white",
+    interactive = true,
+    autoRotate = true,
+    autoRotateSpeed = 0.32,
+    rotationOffset = 0,
+    stageClassName = "",
+    compact = false,
+}) {
     const safeLogo = safeTexSrc(logoSrc);
     const safeQr = safeTexSrc(qrSrc);
 
     return (
-        <div className="pc3d" aria-label="3D KonarCard preview">
+        <div
+            className={`pc3d ${compact ? "pc3d--compact" : ""} ${interactive ? "pc3d--interactive" : "pc3d--locked"
+                } ${stageClassName}`.trim()}
+            aria-label="3D KonarCard preview"
+        >
             <div className="pc3d__stage">
                 <Canvas
                     dpr={[1, 2]}
@@ -32,7 +47,7 @@ export default function PlasticCard3D({ logoSrc, qrSrc, logoSize = 70, variant =
                     onCreated={({ gl }) => {
                         gl.setClearColor(0x000000, 0);
                         gl.outputColorSpace = THREE.SRGBColorSpace;
-                        gl.domElement.style.touchAction = "none";
+                        gl.domElement.style.touchAction = interactive ? "none" : "auto";
                     }}
                 >
                     <ambientLight intensity={0.78} />
@@ -41,11 +56,20 @@ export default function PlasticCard3D({ logoSrc, qrSrc, logoSize = 70, variant =
 
                     <Environment preset="studio" />
 
-                    <ResponsiveRig>
-                        <CardRig>
-                            {/* keep the current top spacing behaviour (card nudged slightly down) */}
-                            <group position={[0, -0.01, 0]}>
-                                <CardMesh logoSrc={safeLogo} qrSrc={safeQr} logoSize={logoSize} variant={variant} />
+                    <ResponsiveRig compact={compact}>
+                        <CardRig
+                            interactive={interactive}
+                            autoRotate={autoRotate}
+                            autoRotateSpeed={autoRotateSpeed}
+                            rotationOffset={rotationOffset}
+                        >
+                            <group position={[0, compact ? -0.005 : -0.01, 0]}>
+                                <CardMesh
+                                    logoSrc={safeLogo}
+                                    qrSrc={safeQr}
+                                    logoSize={logoSize}
+                                    variant={variant}
+                                />
                             </group>
                         </CardRig>
                     </ResponsiveRig>
@@ -55,7 +79,7 @@ export default function PlasticCard3D({ logoSrc, qrSrc, logoSize = 70, variant =
     );
 }
 
-function ResponsiveRig({ children }) {
+function ResponsiveRig({ children, compact = false }) {
     const g = useRef();
     const { size } = useThree();
 
@@ -63,21 +87,48 @@ function ResponsiveRig({ children }) {
         if (!g.current) return;
         const w = size.width;
 
-        const scale =
-            w >= 1400 ? 0.96 :
-                w >= 1200 ? 0.94 :
-                    w >= 980 ? 0.92 :
-                        w >= 720 ? 0.88 :
-                            w >= 520 ? 0.84 :
-                                0.80;
+        let scale;
+        if (compact) {
+            scale =
+                w >= 1400
+                    ? 0.88
+                    : w >= 1200
+                        ? 0.84
+                        : w >= 980
+                            ? 0.8
+                            : w >= 720
+                                ? 0.76
+                                : w >= 520
+                                    ? 0.72
+                                    : 0.68;
+        } else {
+            scale =
+                w >= 1400
+                    ? 0.96
+                    : w >= 1200
+                        ? 0.94
+                        : w >= 980
+                            ? 0.92
+                            : w >= 720
+                                ? 0.88
+                                : w >= 520
+                                    ? 0.84
+                                    : 0.8;
+        }
 
         g.current.scale.setScalar(scale);
-    }, [size.width]);
+    }, [size.width, compact]);
 
     return <group ref={g}>{children}</group>;
 }
 
-function CardRig({ children }) {
+function CardRig({
+    children,
+    interactive = true,
+    autoRotate = true,
+    autoRotateSpeed = 0.32,
+    rotationOffset = 0,
+}) {
     const group = useRef();
 
     const drag = useRef({
@@ -85,11 +136,11 @@ function CardRig({ children }) {
         startX: 0,
         startY: 0,
         baseRX: 0.08,
-        baseRY: 0.7,
+        baseRY: 0.7 + rotationOffset,
         rx: 0.08,
-        ry: 0.7,
+        ry: 0.7 + rotationOffset,
         idle: true,
-        t: 0,
+        t: rotationOffset * 2,
     });
 
     const clamp = (v, min, max) => Math.max(min, Math.min(max, v));
@@ -99,17 +150,37 @@ function CardRig({ children }) {
 
         if (drag.current.idle) {
             drag.current.t += dt;
-            drag.current.ry += 0.32 * dt;
+
+            if (autoRotate) {
+                drag.current.ry += autoRotateSpeed * dt;
+            }
+
             const breathe = Math.sin(drag.current.t * 1.05) * 0.03;
-            drag.current.rx = clamp(drag.current.baseRX + breathe, -0.55, 0.55);
+            const targetRx = clamp(drag.current.baseRX + breathe, -0.55, 0.55);
+
+            drag.current.rx = THREE.MathUtils.lerp(drag.current.rx, targetRx, 0.08);
         }
 
-        group.current.rotation.x = drag.current.rx;
-        group.current.rotation.y = drag.current.ry;
-        group.current.rotation.z = 0.02;
+        group.current.rotation.x = THREE.MathUtils.lerp(
+            group.current.rotation.x,
+            drag.current.rx,
+            0.1
+        );
+        group.current.rotation.y = THREE.MathUtils.lerp(
+            group.current.rotation.y,
+            drag.current.ry,
+            0.1
+        );
+        group.current.rotation.z = THREE.MathUtils.lerp(
+            group.current.rotation.z,
+            0.02,
+            0.08
+        );
     });
 
     const onPointerDown = (e) => {
+        if (!interactive) return;
+
         e.stopPropagation();
         drag.current.isDown = true;
         drag.current.idle = false;
@@ -122,11 +193,13 @@ function CardRig({ children }) {
 
         try {
             e.target.setPointerCapture(e.pointerId);
-        } catch { }
+        } catch {
+            // ignore
+        }
     };
 
     const onPointerMove = (e) => {
-        if (!drag.current.isDown) return;
+        if (!interactive || !drag.current.isDown) return;
 
         const dx = e.clientX - drag.current.startX;
         const dy = e.clientY - drag.current.startY;
@@ -139,6 +212,8 @@ function CardRig({ children }) {
     };
 
     const onPointerUp = () => {
+        if (!interactive) return;
+
         drag.current.isDown = false;
         drag.current.baseRX = drag.current.rx;
         drag.current.baseRY = drag.current.ry;
@@ -148,10 +223,10 @@ function CardRig({ children }) {
     return (
         <group
             ref={group}
-            onPointerDown={onPointerDown}
-            onPointerMove={onPointerMove}
-            onPointerUp={onPointerUp}
-            onPointerCancel={onPointerUp}
+            onPointerDown={interactive ? onPointerDown : undefined}
+            onPointerMove={interactive ? onPointerMove : undefined}
+            onPointerUp={interactive ? onPointerUp : undefined}
+            onPointerCancel={interactive ? onPointerUp : undefined}
         >
             {children}
         </group>
@@ -161,7 +236,7 @@ function CardRig({ children }) {
 function CardMesh({ logoSrc, qrSrc, logoSize, variant }) {
     const w = 0.92;
     const h = w * (54 / 85.6);
-    const t = 0.010;
+    const t = 0.01;
 
     const bodyGeo = useMemo(() => {
         const shape = roundedRectShape(w, h, 0.06);
@@ -192,6 +267,7 @@ function CardMesh({ logoSrc, qrSrc, logoSize, variant }) {
             tex.generateMipmaps = true;
             tex.needsUpdate = true;
         };
+
         setup(logoTex);
         setup(qrTex);
     }, [logoTex, qrTex]);
@@ -200,15 +276,16 @@ function CardMesh({ logoSrc, qrSrc, logoSize, variant }) {
         const desiredH = h * 0.55;
         const maxW = w * 0.78;
 
-        const clamped = Math.max(60, Math.min(80, Number(logoSize || 70)));
+        const clamped = Math.max(70, Math.min(110, Number(logoSize || 70)));
         const s = clamped / 70;
 
-        const scaledH = desiredH * (s * 0.72);
+        const scaledH = desiredH * (s * 0.82);
 
         const img = logoTex?.image;
-        const aspect = img && img.width && img.height ? img.width / img.height : 1;
+        const aspect =
+            img && img.width && img.height ? img.width / img.height : 1;
 
-        const planeH = Math.min(h * 0.78, Math.max(h * 0.22, scaledH));
+        const planeH = Math.min(h * 0.82, Math.max(h * 0.24, scaledH));
         const planeW = Math.min(maxW, planeH * aspect);
 
         return { planeW, planeH };
@@ -231,13 +308,14 @@ function CardMesh({ logoSrc, qrSrc, logoSize, variant }) {
 
     const edgeMat = useMemo(() => {
         const isBlack = variant === "black";
+
         return new THREE.MeshPhysicalMaterial({
             color: isBlack ? "#0b1220" : "#ffffff",
             roughness: isBlack ? 0.48 : 0.42,
             metalness: isBlack ? 0.06 : 0.0,
             clearcoat: isBlack ? 0.62 : 0.55,
             clearcoatRoughness: isBlack ? 0.26 : 0.28,
-            sheen: isBlack ? 0.10 : 0.08,
+            sheen: isBlack ? 0.1 : 0.08,
             sheenRoughness: 0.75,
         });
     }, [variant]);
@@ -283,8 +361,17 @@ function CardMesh({ logoSrc, qrSrc, logoSize, variant }) {
     return (
         <group>
             <mesh geometry={bodyGeo} material={edgeMat} />
-            <mesh geometry={logoPlaneGeo} material={logoMat} position={[0, 0, zFront]} />
-            <mesh geometry={qrPlaneGeo} material={qrMat} position={[0, 0, zBack]} rotation={[0, Math.PI, 0]} />
+            <mesh
+                geometry={logoPlaneGeo}
+                material={logoMat}
+                position={[0, 0, zFront]}
+            />
+            <mesh
+                geometry={qrPlaneGeo}
+                material={qrMat}
+                position={[0, 0, zBack]}
+                rotation={[0, Math.PI, 0]}
+            />
         </group>
     );
 }
