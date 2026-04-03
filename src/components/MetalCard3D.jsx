@@ -17,7 +17,7 @@ const safeTexSrc = (src) => {
 export default function MetalCard3D({
     logoSrc,
     qrSrc,
-    logoSize = 75,
+    logoSize = 50,
     finish = "black",
     interactive = true,
     autoRotate = true,
