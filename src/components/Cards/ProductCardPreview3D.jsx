@@ -1,4 +1,3 @@
-// frontend/src/components/Cards/ProductCardPreview3D.jsx
 import React, { useEffect, useMemo, useState } from "react";
 import { useTexture } from "@react-three/drei";
 
@@ -49,10 +48,23 @@ function getVariantSequence(productKey) {
 }
 
 function getLogoSequence(productKey, variant) {
-    const isDark =
-        variant === "black" ||
-        (productKey === "metal-card" && variant === "black") ||
-        (productKey === "konartag" && variant === "black");
+    if (productKey === "metal-card") {
+        return [LogoIconWhite];
+    }
+
+    if (productKey === "konartag") {
+        return [
+            CardChangeLogo1,
+            CardChangeLogo2,
+            CardChangeLogo3,
+            CardChangeLogo4,
+            CardChangeLogo5,
+            CardChangeLogo6,
+            LogoIcon,
+        ];
+    }
+
+    const isDark = variant === "black";
 
     return [
         isDark ? LogoIconWhite : LogoIcon,
@@ -67,17 +79,23 @@ function getLogoSequence(productKey, variant) {
 
 function getFrameState(productKey, tick) {
     const variants = getVariantSequence(productKey);
-    const logosPerVariant = 7;
-    const totalFrames = variants.length * logosPerVariant;
+
+    const frames = variants.flatMap((variant) => {
+        const logos = getLogoSequence(productKey, variant);
+        return logos.map((_, logoIndex) => ({
+            variant,
+            logoIndex,
+        }));
+    });
+
+    const totalFrames = frames.length || 1;
     const safeTick = ((tick % totalFrames) + totalFrames) % totalFrames;
-
-    const variantIndex = Math.floor(safeTick / logosPerVariant);
-    const logoIndex = safeTick % logosPerVariant;
-
-    return {
-        variant: variants[variantIndex] || variants[0],
-        logoIndex,
+    const frame = frames[safeTick] || {
+        variant: variants[0] || "white",
+        logoIndex: 0,
     };
+
+    return frame;
 }
 
 function renderProduct3D({
