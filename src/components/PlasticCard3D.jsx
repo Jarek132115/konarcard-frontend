@@ -237,6 +237,7 @@ function CardMesh({ logoSrc, qrSrc, logoSize, variant }) {
     const w = 0.92;
     const h = w * (54 / 85.6);
     const t = 0.01;
+    const isBlack = variant === "black";
 
     const bodyGeo = useMemo(() => {
         const shape = roundedRectShape(w, h, 0.06);
@@ -256,7 +257,7 @@ function CardMesh({ logoSrc, qrSrc, logoSize, variant }) {
     const [logoTex, qrTex] = useTexture([logoSrc, qrSrc]);
 
     useEffect(() => {
-        const setup = (tex) => {
+        const setupColorTexture = (tex) => {
             if (!tex) return;
             tex.colorSpace = THREE.SRGBColorSpace;
             tex.anisotropy = 12;
@@ -268,8 +269,8 @@ function CardMesh({ logoSrc, qrSrc, logoSize, variant }) {
             tex.needsUpdate = true;
         };
 
-        setup(logoTex);
-        setup(qrTex);
+        setupColorTexture(logoTex);
+        setupColorTexture(qrTex);
     }, [logoTex, qrTex]);
 
     const logoPlaneDims = useMemo(() => {
@@ -307,8 +308,6 @@ function CardMesh({ logoSrc, qrSrc, logoSize, variant }) {
     );
 
     const edgeMat = useMemo(() => {
-        const isBlack = variant === "black";
-
         return new THREE.MeshPhysicalMaterial({
             color: isBlack ? "#0b1220" : "#ffffff",
             roughness: isBlack ? 0.48 : 0.42,
@@ -318,9 +317,27 @@ function CardMesh({ logoSrc, qrSrc, logoSize, variant }) {
             sheen: isBlack ? 0.1 : 0.08,
             sheenRoughness: 0.75,
         });
-    }, [variant]);
+    }, [isBlack]);
 
     const logoMat = useMemo(() => {
+        if (isBlack) {
+            const m = new THREE.MeshBasicMaterial({
+                color: "#ffffff",
+                alphaMap: logoTex || null,
+                transparent: true,
+                opacity: 1,
+                toneMapped: false,
+                side: THREE.FrontSide,
+                depthTest: true,
+                depthWrite: false,
+            });
+            m.alphaTest = 0.02;
+            m.polygonOffset = true;
+            m.polygonOffsetFactor = -6;
+            m.polygonOffsetUnits = -6;
+            return m;
+        }
+
         const m = new THREE.MeshBasicMaterial({
             map: logoTex || null,
             transparent: true,
@@ -335,7 +352,7 @@ function CardMesh({ logoSrc, qrSrc, logoSize, variant }) {
         m.polygonOffsetFactor = -6;
         m.polygonOffsetUnits = -6;
         return m;
-    }, [logoTex]);
+    }, [logoTex, isBlack]);
 
     const qrMat = useMemo(() => {
         const m = new THREE.MeshBasicMaterial({
