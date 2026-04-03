@@ -48,7 +48,7 @@ export default function KonarTag3D({
             <div className="pc3d__stage">
                 <Canvas
                     dpr={[1, 2]}
-                    camera={{ position: [0, 0.12, 1.22], fov: 31 }}
+                    camera={{ position: [0, 0.08, 1.18], fov: 30 }}
                     gl={{
                         antialias: true,
                         alpha: true,
@@ -63,10 +63,10 @@ export default function KonarTag3D({
                         gl.domElement.style.touchAction = interactive ? "none" : "auto";
                     }}
                 >
-                    <ambientLight intensity={0.92} />
-                    <directionalLight position={[2.8, 3.2, 2.4]} intensity={1.18} />
-                    <directionalLight position={[-2.0, 1.6, -2.0]} intensity={0.62} />
-                    <directionalLight position={[0.2, 2.0, -3.0]} intensity={0.32} />
+                    <ambientLight intensity={0.9} />
+                    <directionalLight position={[2.6, 3.0, 2.4]} intensity={1.18} />
+                    <directionalLight position={[-2.0, 1.8, -2.2]} intensity={0.58} />
+                    <directionalLight position={[0, 2.0, -3.0]} intensity={0.28} />
 
                     <Environment preset="studio" />
 
@@ -77,7 +77,7 @@ export default function KonarTag3D({
                             autoRotateSpeed={autoRotateSpeed}
                             rotationOffset={rotationOffset}
                         >
-                            <group position={[0, compact ? 0.03 : -0.01, 0]}>
+                            <group position={[0, compact ? 0.015 : -0.01, 0]}>
                                 <TagDiscMesh
                                     logoSrc={safeLogo}
                                     backIconSrc={safeBackIcon}
@@ -105,16 +105,16 @@ function ResponsiveRig({ children, compact = false }) {
         if (compact) {
             scale =
                 w >= 1400
-                    ? 0.94
+                    ? 0.92
                     : w >= 1200
-                        ? 0.91
+                        ? 0.89
                         : w >= 980
-                            ? 0.88
+                            ? 0.86
                             : w >= 720
-                                ? 0.85
+                                ? 0.83
                                 : w >= 520
-                                    ? 0.82
-                                    : 0.79;
+                                    ? 0.8
+                                    : 0.77;
         } else {
             scale =
                 w >= 1400
@@ -149,10 +149,10 @@ function TagRig({
         isDown: false,
         startX: 0,
         startY: 0,
-        baseRX: 0.12,
-        baseRY: 0.68 + rotationOffset,
-        rx: 0.12,
-        ry: 0.68 + rotationOffset,
+        baseRX: 0.16,
+        baseRY: 0.8 + rotationOffset,
+        rx: 0.16,
+        ry: 0.8 + rotationOffset,
         idle: true,
         t: rotationOffset * 2,
     });
@@ -169,7 +169,7 @@ function TagRig({
                 drag.current.ry += autoRotateSpeed * dt;
             }
 
-            const breathe = Math.sin(drag.current.t * 1.02) * 0.018;
+            const breathe = Math.sin(drag.current.t * 1.02) * 0.014;
             const targetRx = clamp(drag.current.baseRX + breathe, -0.55, 0.55);
 
             drag.current.rx = THREE.MathUtils.lerp(drag.current.rx, targetRx, 0.08);
@@ -187,13 +187,14 @@ function TagRig({
         );
         group.current.rotation.z = THREE.MathUtils.lerp(
             group.current.rotation.z,
-            0.01,
+            0.0,
             0.08
         );
     });
 
     const onPointerDown = (e) => {
         if (!interactive) return;
+
         e.stopPropagation();
         drag.current.isDown = true;
         drag.current.idle = false;
@@ -221,6 +222,7 @@ function TagRig({
 
     const onPointerUp = () => {
         if (!interactive) return;
+
         drag.current.isDown = false;
         drag.current.baseRX = drag.current.rx;
         drag.current.baseRY = drag.current.ry;
@@ -243,10 +245,10 @@ function TagRig({
 function TagDiscMesh({ logoSrc, backIconSrc, logoSize, finish }) {
     const isGold = String(finish).toLowerCase() === "gold";
 
-    const discRadius = 0.35;
-    const rimDepth = 0.048;
-    const faceDepth = 0.013;
-    const inset = 0.026;
+    const discRadius = 0.37;
+    const bodyDepth = 0.085;
+    const faceDepth = 0.014;
+    const inset = 0.028;
 
     const [logoTex, backIconTex] = useTexture([logoSrc, backIconSrc]);
 
@@ -267,20 +269,20 @@ function TagDiscMesh({ logoSrc, backIconSrc, logoSize, finish }) {
         setup(backIconTex);
     }, [logoTex, backIconTex]);
 
-    const chromeMat = useMemo(
+    const rimMat = useMemo(
         () =>
             new THREE.MeshPhysicalMaterial({
-                color: "#dde2e8",
+                color: "#dfe4ea",
                 metalness: 1,
                 roughness: 0.14,
                 clearcoat: 0.34,
                 clearcoatRoughness: 0.08,
-                envMapIntensity: 2.1,
+                envMapIntensity: 2.0,
             }),
         []
     );
 
-    const faceColor = isGold ? "#b08d41" : "#0f1726";
+    const faceColor = isGold ? "#b18d42" : "#101828";
 
     const frontFaceMat = useMemo(
         () =>
@@ -312,7 +314,7 @@ function TagDiscMesh({ logoSrc, backIconSrc, logoSize, finish }) {
         const d = discRadius * 2;
         const percent = Math.max(10, Math.min(100, Number(logoSize || 75))) / 100;
 
-        let planeH = d * percent * 0.62;
+        let planeH = d * percent * 0.58;
 
         const img = logoTex?.image;
         const aspect =
@@ -320,8 +322,8 @@ function TagDiscMesh({ logoSrc, backIconSrc, logoSize, finish }) {
 
         let planeW = planeH * aspect;
 
-        const maxW = d * 0.58;
-        const maxH = d * 0.34;
+        const maxW = d * 0.56;
+        const maxH = d * 0.30;
 
         if (planeH > maxH) {
             planeH = maxH;
@@ -338,7 +340,7 @@ function TagDiscMesh({ logoSrc, backIconSrc, logoSize, finish }) {
 
     const backIconDims = useMemo(() => {
         const d = discRadius * 2;
-        const plane = d * 0.28;
+        const plane = d * 0.24;
         return { planeW: plane, planeH: plane };
     }, [discRadius]);
 
@@ -376,85 +378,78 @@ function TagDiscMesh({ logoSrc, backIconSrc, logoSize, finish }) {
         return m;
     }, [backIconTex]);
 
-    const frontArtZ = rimDepth / 2 + faceDepth + 0.0014;
-    const backArtZ = -rimDepth / 2 - faceDepth - 0.0014;
+    const frontArtZ = bodyDepth / 2 + faceDepth + 0.0016;
+    const backArtZ = -bodyDepth / 2 - faceDepth - 0.0016;
 
     return (
         <group>
-            <group position={[0, 0.02, 0]}>
-                {/* top tab */}
-                <mesh position={[0, 0.49, 0]} material={chromeMat}>
-                    <boxGeometry args={[0.09, 0.06, 0.03]} />
-                </mesh>
+            {/* metal body */}
+            <mesh material={rimMat}>
+                <cylinderGeometry args={[discRadius, discRadius, bodyDepth, 96]} />
+            </mesh>
 
-                {/* circular metal body */}
-                <mesh material={chromeMat}>
-                    <cylinderGeometry args={[discRadius, discRadius, rimDepth, 96]} />
-                </mesh>
+            {/* front inset face */}
+            <mesh
+                position={[0, 0, bodyDepth / 2 + faceDepth * 0.55]}
+                material={frontFaceMat}
+            >
+                <cylinderGeometry
+                    args={[discRadius - inset, discRadius - inset, faceDepth, 96]}
+                />
+            </mesh>
 
-                {/* front face */}
-                <mesh
-                    position={[0, 0, rimDepth / 2 + faceDepth * 0.52]}
-                    material={frontFaceMat}
-                >
-                    <cylinderGeometry
-                        args={[discRadius - inset, discRadius - inset, faceDepth, 96]}
-                    />
-                </mesh>
+            {/* back inset face */}
+            <mesh
+                position={[0, 0, -bodyDepth / 2 - faceDepth * 0.55]}
+                material={backFaceMat}
+            >
+                <cylinderGeometry
+                    args={[discRadius - inset, discRadius - inset, faceDepth, 96]}
+                />
+            </mesh>
 
-                {/* back face */}
-                <mesh
-                    position={[0, 0, -rimDepth / 2 - faceDepth * 0.52]}
-                    material={backFaceMat}
-                >
-                    <cylinderGeometry
-                        args={[discRadius - inset, discRadius - inset, faceDepth, 96]}
-                    />
-                </mesh>
+            {/* front logo */}
+            <mesh position={[0, 0, frontArtZ]} material={logoMat}>
+                <planeGeometry args={[logoPlaneDims.planeW, logoPlaneDims.planeH]} />
+            </mesh>
 
-                {/* front logo */}
-                <mesh position={[0, 0, frontArtZ]} material={logoMat}>
-                    <planeGeometry args={[logoPlaneDims.planeW, logoPlaneDims.planeH]} />
-                </mesh>
+            {/* back nfc icon */}
+            <mesh
+                position={[0, 0, backArtZ]}
+                rotation={[0, Math.PI, 0]}
+                material={backIconMat}
+            >
+                <planeGeometry args={[backIconDims.planeW, backIconDims.planeH]} />
+            </mesh>
 
-                {/* back nfc icon */}
-                <mesh
-                    position={[0, 0, backArtZ]}
-                    rotation={[0, Math.PI, 0]}
-                    material={backIconMat}
-                >
-                    <planeGeometry args={[backIconDims.planeW, backIconDims.planeH]} />
-                </mesh>
+            {/* front gloss */}
+            <mesh position={[0, 0, bodyDepth / 2 + faceDepth + 0.0025]}>
+                <circleGeometry args={[discRadius - inset - 0.006, 96]} />
+                <meshPhysicalMaterial
+                    color="#ffffff"
+                    transparent
+                    opacity={0.07}
+                    roughness={0.04}
+                    metalness={0}
+                    clearcoat={1}
+                    clearcoatRoughness={0.04}
+                    depthWrite={false}
+                />
+            </mesh>
 
-                {/* front gloss */}
-                <mesh position={[0, 0, rimDepth / 2 + faceDepth + 0.0025]}>
-                    <circleGeometry args={[discRadius - inset - 0.006, 96]} />
-                    <meshPhysicalMaterial
-                        color="#ffffff"
-                        transparent
-                        opacity={0.07}
-                        roughness={0.04}
-                        metalness={0}
-                        clearcoat={1}
-                        clearcoatRoughness={0.04}
-                        depthWrite={false}
-                    />
-                </mesh>
-
-                {/* soft diagonal shine */}
-                <mesh
-                    position={[0.045, 0.04, rimDepth / 2 + faceDepth + 0.003]}
-                    rotation={[0, 0, -0.72]}
-                >
-                    <planeGeometry args={[0.22, 0.56]} />
-                    <meshBasicMaterial
-                        color="#ffffff"
-                        transparent
-                        opacity={0.055}
-                        depthWrite={false}
-                    />
-                </mesh>
-            </group>
+            {/* subtle diagonal shine */}
+            <mesh
+                position={[0.05, 0.035, bodyDepth / 2 + faceDepth + 0.003]}
+                rotation={[0, 0, -0.7]}
+            >
+                <planeGeometry args={[0.2, 0.56]} />
+                <meshBasicMaterial
+                    color="#ffffff"
+                    transparent
+                    opacity={0.05}
+                    depthWrite={false}
+                />
+            </mesh>
         </group>
     );
 }
