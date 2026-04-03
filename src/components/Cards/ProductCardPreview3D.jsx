@@ -17,7 +17,7 @@ import CardChangeLogo6 from "../../assets/icons/CardChangeLogo6.svg";
 import CardQrCode from "../../assets/images/CardQrCode.png";
 
 const LOGO_CHANGE_MS = 4000;
-const DEFAULT_LOGO_PERCENT = 92;
+const DEFAULT_LOGO_PERCENT = 75;
 
 const PRODUCT_PHASE_MAP = {
     "plastic-card": 0,
@@ -94,7 +94,7 @@ function renderProduct3D({
         logoSize: logoPercent,
         interactive: false,
         autoRotate: true,
-        autoRotateSpeed: 0.3,
+        autoRotateSpeed: 0.68,
         rotationOffset,
         compact: true,
         stageClassName: "cp-preview3dScene",

@@ -16,11 +16,11 @@ const safeTexSrc = (src) => {
 export default function PlasticCard3D({
     logoSrc,
     qrSrc,
-    logoSize = 70,
+    logoSize = 75,
     variant = "white",
     interactive = true,
     autoRotate = true,
-    autoRotateSpeed = 0.32,
+    autoRotateSpeed = 0.68,
     rotationOffset = 0,
     stageClassName = "",
     compact = false,
@@ -37,7 +37,7 @@ export default function PlasticCard3D({
             <div className="pc3d__stage">
                 <Canvas
                     dpr={[1, 2]}
-                    camera={{ position: [0, 0.22, 1.58], fov: 34 }}
+                    camera={{ position: [0, 0.14, 1.22], fov: 32 }}
                     gl={{
                         antialias: true,
                         alpha: true,
@@ -91,16 +91,16 @@ function ResponsiveRig({ children, compact = false }) {
         if (compact) {
             scale =
                 w >= 1400
-                    ? 0.88
+                    ? 1.08
                     : w >= 1200
-                        ? 0.84
+                        ? 1.03
                         : w >= 980
-                            ? 0.8
+                            ? 0.98
                             : w >= 720
-                                ? 0.76
+                                ? 0.94
                                 : w >= 520
-                                    ? 0.72
-                                    : 0.68;
+                                    ? 0.9
+                                    : 0.86;
         } else {
             scale =
                 w >= 1400
@@ -126,7 +126,7 @@ function CardRig({
     children,
     interactive = true,
     autoRotate = true,
-    autoRotateSpeed = 0.32,
+    autoRotateSpeed = 0.68,
     rotationOffset = 0,
 }) {
     const group = useRef();
@@ -273,20 +273,20 @@ function CardMesh({ logoSrc, qrSrc, logoSize, variant }) {
     }, [logoTex, qrTex]);
 
     const logoPlaneDims = useMemo(() => {
-        const desiredH = h * 0.55;
-        const maxW = w * 0.78;
-
-        const clamped = Math.max(70, Math.min(110, Number(logoSize || 70)));
-        const s = clamped / 70;
-
-        const scaledH = desiredH * (s * 0.82);
+        const percent = Math.max(10, Math.min(100, Number(logoSize || 75))) / 100;
+        let planeH = h * percent;
 
         const img = logoTex?.image;
         const aspect =
             img && img.width && img.height ? img.width / img.height : 1;
 
-        const planeH = Math.min(h * 0.82, Math.max(h * 0.24, scaledH));
-        const planeW = Math.min(maxW, planeH * aspect);
+        let planeW = planeH * aspect;
+        const maxW = w * 0.82;
+
+        if (planeW > maxW) {
+            planeW = maxW;
+            planeH = planeW / aspect;
+        }
 
         return { planeW, planeH };
     }, [logoTex, w, h, logoSize]);

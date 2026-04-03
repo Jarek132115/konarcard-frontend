@@ -17,11 +17,11 @@ const safeTexSrc = (src) => {
 export default function KonarTag3D({
     logoSrc,
     qrSrc,
-    logoSize = 70,
+    logoSize = 75,
     finish = "black",
     interactive = true,
     autoRotate = true,
-    autoRotateSpeed = 0.32,
+    autoRotateSpeed = 0.68,
     rotationOffset = 0,
     stageClassName = "",
     compact = false,
@@ -38,7 +38,7 @@ export default function KonarTag3D({
             <div className="pc3d__stage">
                 <Canvas
                     dpr={[1, 2]}
-                    camera={{ position: [0, 0.24, 1.62], fov: 34 }}
+                    camera={{ position: [0, 0.12, 1.22], fov: 32 }}
                     gl={{
                         antialias: true,
                         alpha: true,
@@ -95,16 +95,16 @@ function ResponsiveRig({ children, compact = false }) {
         if (compact) {
             scale =
                 w >= 1400
-                    ? 0.88
+                    ? 1.1
                     : w >= 1200
-                        ? 0.84
+                        ? 1.05
                         : w >= 980
-                            ? 0.8
+                            ? 1.0
                             : w >= 720
-                                ? 0.76
+                                ? 0.96
                                 : w >= 520
-                                    ? 0.72
-                                    : 0.68;
+                                    ? 0.92
+                                    : 0.88;
         } else {
             scale =
                 w >= 1400
@@ -130,7 +130,7 @@ function TagRig({
     children,
     interactive = true,
     autoRotate = true,
-    autoRotateSpeed = 0.32,
+    autoRotateSpeed = 0.68,
     rotationOffset = 0,
 }) {
     const group = useRef();
@@ -279,23 +279,23 @@ function TagMesh({ logoSrc, qrSrc, logoSize, finish }) {
         setup(qrTex);
     }, [logoTex, qrTex]);
 
-    const artY = -h * 0.06;
+    const artY = -h * 0.08;
 
     const logoPlaneDims = useMemo(() => {
-        const desiredH = h * 0.46;
-        const maxW = w * 0.74;
-
-        const clamped = Math.max(70, Math.min(110, Number(logoSize || 70)));
-        const s = clamped / 70;
-
-        const scaledH = desiredH * (s * 0.82);
+        const percent = Math.max(10, Math.min(100, Number(logoSize || 75))) / 100;
+        let planeH = h * percent;
 
         const img = logoTex?.image;
         const aspect =
             img && img.width && img.height ? img.width / img.height : 1;
 
-        const planeH = Math.min(h * 0.66, Math.max(h * 0.2, scaledH));
-        const planeW = Math.min(maxW, planeH * aspect);
+        let planeW = planeH * aspect;
+        const maxW = w * 0.7;
+
+        if (planeW > maxW) {
+            planeW = maxW;
+            planeH = planeW / aspect;
+        }
 
         return { planeW, planeH };
     }, [logoTex, w, h, logoSize]);
