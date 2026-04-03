@@ -66,7 +66,7 @@ export default function MetalCard3D({
                             autoRotateSpeed={autoRotateSpeed}
                             rotationOffset={rotationOffset}
                         >
-                            <group position={[0, compact ? -0.005 : -0.01, 0]}>
+                            <group position={[0, compact ? 0.045 : -0.01, 0]}>
                                 <MetalCardMesh
                                     logoSrc={safeLogo}
                                     qrSrc={safeQr}
