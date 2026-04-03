@@ -1,11 +1,19 @@
 const trim = (v) => (v ?? "").toString().trim();
 
+/* =========================================================
+   PRODUCT LABELS
+========================================================= */
+
 export function prettyProduct(productKey) {
     if (productKey === "plastic-card") return "Plastic Card";
     if (productKey === "metal-card") return "Metal Card";
     if (productKey === "konartag") return "KonarTag";
     return "KonarCard";
 }
+
+/* =========================================================
+   PROFILE HELPERS
+========================================================= */
 
 export function assignedProfileFromOrder(order) {
     return (
@@ -32,6 +40,10 @@ export function profileLinkFromOrder(order) {
     return `${window.location.origin}/u/${slug}`;
 }
 
+/* =========================================================
+   VARIANT / FINISH
+========================================================= */
+
 export function variantRaw(order) {
     return order?.variant || order?.preview?.variant || "";
 }
@@ -41,6 +53,10 @@ export function finishFromVariant(variantRawValue) {
     if (v === "gold") return "gold";
     return "black";
 }
+
+/* =========================================================
+   MONEY FORMAT
+========================================================= */
 
 export function formatMoneyMinor(amountMinor, currency) {
     const a = Number(amountMinor || 0);
@@ -54,12 +70,20 @@ export function formatMoneyMinor(amountMinor, currency) {
     return `${c} ${major}`;
 }
 
+/* =========================================================
+   QR HELPER
+========================================================= */
+
 export function qrSrcFromLink(link) {
     const url = trim(link);
     if (!url) return "";
     const data = encodeURIComponent(url);
     return `https://api.qrserver.com/v1/create-qr-code/?size=700x700&margin=10&data=${data}`;
 }
+
+/* =========================================================
+   DEFAULT LOGO
+========================================================= */
 
 const KONAR_LOGO_SVG = encodeURIComponent(`
 <svg xmlns="http://www.w3.org/2000/svg" width="512" height="512">
@@ -76,6 +100,10 @@ const KONAR_LOGO_SVG = encodeURIComponent(`
 
 export const DEFAULT_LOGO_DATAURL = `data:image/svg+xml;charset=utf-8,${KONAR_LOGO_SVG}`;
 
+/* =========================================================
+   ORDER NORMALIZATION
+========================================================= */
+
 export function normalizeOrder(order) {
     const id = String(order?._id || order?.id || "");
     const productKey = String(order?.productKey || "");
@@ -85,20 +113,45 @@ export function normalizeOrder(order) {
         id,
         productKey,
         title: prettyProduct(productKey),
+
+        /* profile */
         assignedProfile: assignedProfileFromOrder(order),
         profileSlug: profileSlugFromOrder(order),
         link,
+
+        /* variant */
         variantRaw: String(variantRaw(order) || ""),
+        finish: finishFromVariant(variantRaw(order)),
+
+        /* order meta */
         status: String(order?.status || ""),
         quantity: Number(order?.quantity || 1),
         amountTotal: Number(order?.amountTotal || 0),
         currency: String(order?.currency || ""),
-        createdAt: order?.createdAt ? new Date(order.createdAt).toLocaleString() : "",
+        createdAt: order?.createdAt
+            ? new Date(order.createdAt).toLocaleString()
+            : "",
+
+        /* visuals */
         logoUrl: String(order?.logoUrl || ""),
         previewImageUrl: String(order?.previewImageUrl || ""),
+
+        /* preview config (important for 3D reuse later) */
+        preview: {
+            logoPercent: Number(order?.preview?.logoPercent || 70),
+            logoPreset: String(order?.preview?.logoPreset || "medium"),
+            variant: String(order?.preview?.variant || ""),
+            edition: String(order?.preview?.edition || ""),
+        },
+
+        /* raw fallback */
         _raw: order,
     };
 }
+
+/* =========================================================
+   OWNERSHIP CHECK
+========================================================= */
 
 export function isOwnedOrder(order) {
     const s = String(order?.status || "").toLowerCase();

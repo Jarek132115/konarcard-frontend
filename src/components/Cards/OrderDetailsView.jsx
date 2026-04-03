@@ -5,10 +5,7 @@ function OrderFlatPreview({ order, productMeta, defaultLogoDataUrl }) {
     const productKey = String(order?.productKey || "");
     const meta = productMeta?.[productKey] || null;
     const variant = String(
-        order?.variantRaw ||
-        order?.preview?.variant ||
-        meta?.defaultVariant ||
-        "white"
+        order?.variantRaw || order?.preview?.variant || meta?.defaultVariant || "white"
     ).toLowerCase();
 
     const logoSrc =
@@ -45,9 +42,7 @@ function OrderFlatPreview({ order, productMeta, defaultLogoDataUrl }) {
                 </div>
 
                 <div className="odv-flatFooter">
-                    <div
-                        className={`odv-flatName ${isDark ? "is-dark" : "is-light"}`}
-                    >
+                    <div className={`odv-flatName ${isDark ? "is-dark" : "is-light"}`}>
                         {meta?.name || "KonarCard"}
                     </div>
 
@@ -83,9 +78,10 @@ export default function OrderDetailsView({
     const qrSrc = selectedOrder.link ? qrSrcFromLink(selectedOrder.link) : "";
 
     return (
-        <>
+        <div className="odv-shell">
             <div className="cp-cardHead">
                 <div>
+                    <div className="cp-eyebrow">Order details</div>
                     <h2 className="cp-cardTitle">{selectedOrder.title || "Order details"}</h2>
                     <p className="cp-muted">
                         View your saved card, order status, and full order details.
@@ -109,7 +105,7 @@ export default function OrderDetailsView({
                 </div>
 
                 <div className="cp-innerCard">
-                    <div className="cp-innerTitle">Order details</div>
+                    <div className="cp-innerTitle">Order summary</div>
 
                     <div className="cp-row">
                         <span className="cp-rowKey">Product</span>
@@ -203,6 +199,6 @@ export default function OrderDetailsView({
                     </div>
                 </div>
             </div>
-        </>
+        </div>
     );
 }

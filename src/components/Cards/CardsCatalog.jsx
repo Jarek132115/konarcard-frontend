@@ -1,14 +1,20 @@
 import React from "react";
 import { CARDS_PRODUCT_CATALOG } from "./cardsConfig";
+import ProductCardPreview3D from "./ProductCardPreview3D";
 
-export default function CardsCatalog({ onChooseProduct }) {
+export default function CardsCatalog({ onChooseProduct, hasPurchasedCards = false }) {
     return (
-        <section className="cp-card">
-            <div className="cp-cardHead">
+        <section className="cp-card cp-card--catalog">
+            <div className="cp-cardHead cp-cardHead--intro">
                 <div>
-                    <h2 className="cp-cardTitle">Choose your product</h2>
+                    <div className="cp-eyebrow">{hasPurchasedCards ? "Buy more cards" : "Buy a card"}</div>
+                    <h2 className="cp-cardTitle">
+                        {hasPurchasedCards ? "Get another product" : "Get your first product"}
+                    </h2>
                     <p className="cp-muted">
-                        Pick the NFC product you want to buy, then customise it before checkout.
+                        {hasPurchasedCards
+                            ? "Order more NFC products for your business and customise each one before checkout."
+                            : "Choose your first NFC product, customise it, and check out in seconds."}
                     </p>
                 </div>
             </div>
@@ -19,27 +25,28 @@ export default function CardsCatalog({ onChooseProduct }) {
                         <div className="cp-catalogMedia">
                             <span className="cp-catalogTag">{item.tag}</span>
 
-                            <img
-                                src={item.image}
-                                alt={item.imageAlt}
-                                className="cp-catalogImg"
-                                loading="lazy"
-                                decoding="async"
-                            />
+                            <div className="cp-catalogPreview3D">
+                                <ProductCardPreview3D productKey={item.key} />
+                            </div>
                         </div>
 
                         <div className="cp-catalogBody">
-                            <div className="cp-catalogTitle">{item.title}</div>
-                            <div className="cp-catalogDesc">{item.desc}</div>
-                            <div className="cp-catalogPrice">{item.priceText}</div>
+                            <div className="cp-catalogTextGroup">
+                                <h3 className="cp-catalogTitle">{item.title}</h3>
+                                <p className="cp-catalogDesc">{item.desc}</p>
+                            </div>
 
-                            <button
-                                type="button"
-                                className="kx-btn kx-btn--white cp-catalogBtn"
-                                onClick={() => onChooseProduct(item.key)}
-                            >
-                                {item.cta}
-                            </button>
+                            <div className="cp-catalogFoot">
+                                <div className="cp-catalogPrice">{item.priceText}</div>
+
+                                <button
+                                    type="button"
+                                    className="kx-btn kx-btn--black cp-catalogBtn"
+                                    onClick={() => onChooseProduct(item.key)}
+                                >
+                                    {item.cta}
+                                </button>
+                            </div>
                         </div>
                     </article>
                 ))}
