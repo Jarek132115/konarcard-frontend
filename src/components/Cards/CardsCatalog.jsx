@@ -2,15 +2,22 @@ import React from "react";
 import { CARDS_PRODUCT_CATALOG } from "./cardsConfig";
 import ProductCardPreview3D from "./ProductCardPreview3D";
 
-export default function CardsCatalog({ onChooseProduct, hasPurchasedCards = false }) {
+export default function CardsCatalog({
+    onChooseProduct,
+    hasPurchasedCards = false,
+}) {
     return (
         <section className="cp-card cp-card--catalog">
             <div className="cp-cardHead cp-cardHead--intro">
                 <div>
-                    <div className="cp-eyebrow">{hasPurchasedCards ? "Buy more cards" : "Buy a card"}</div>
+                    <div className="cp-eyebrow">
+                        {hasPurchasedCards ? "Buy more cards" : "Buy a card"}
+                    </div>
+
                     <h2 className="cp-cardTitle">
                         {hasPurchasedCards ? "Get another product" : "Get your first product"}
                     </h2>
+
                     <p className="cp-muted">
                         {hasPurchasedCards
                             ? "Order more NFC products for your business and customise each one before checkout."

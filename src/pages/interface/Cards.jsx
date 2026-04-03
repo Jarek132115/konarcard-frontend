@@ -180,7 +180,9 @@ function PurchasedCardItem({ card, isActive, onOpenDetails }) {
 
         <div className="cp-sub">
           <span className="cp-subLabel">Assigned Profile:</span>
-          <span className="cp-subValue">{card.assignedProfile || card.profileSlug || "—"}</span>
+          <span className="cp-subValue">
+            {card.assignedProfile || card.profileSlug || "—"}
+          </span>
         </div>
 
         <div className="cp-sub">
@@ -243,7 +245,9 @@ export default function Cards() {
               ? data.data
               : [];
 
-        const purchased = Array.isArray(data?.purchasedOrders) ? data.purchasedOrders : [];
+        const purchased = Array.isArray(data?.purchasedOrders)
+          ? data.purchasedOrders
+          : [];
 
         if (!alive) return;
 
@@ -251,7 +255,10 @@ export default function Cards() {
           purchased.length
             ? purchased
             : all.filter((o) => {
-              const s = String(o?.normalizedStatus || o?.status || "").toLowerCase();
+              const s = String(
+                o?.normalizedStatus || o?.status || ""
+              ).toLowerCase();
+
               return [
                 "paid",
                 "processing",
@@ -264,6 +271,7 @@ export default function Cards() {
         );
       } catch (e) {
         if (!alive) return;
+
         setError(
           e?.response?.data?.message ||
           e?.response?.data?.error ||
@@ -310,12 +318,17 @@ export default function Cards() {
 
       const resumeProduct =
         (product && PRODUCT_META[product] && product) ||
-        (intent?.productKey && PRODUCT_META[intent.productKey] && intent.productKey) ||
+        (intent?.productKey &&
+          PRODUCT_META[intent.productKey] &&
+          intent.productKey) ||
         "";
 
-      navigate(resumeProduct ? `/cards?product=${encodeURIComponent(resumeProduct)}` : "/cards", {
-        replace: true,
-      });
+      navigate(
+        resumeProduct
+          ? `/cards?product=${encodeURIComponent(resumeProduct)}`
+          : "/cards",
+        { replace: true }
+      );
       return;
     }
 
@@ -340,7 +353,9 @@ export default function Cards() {
   const openConfigurator = (productKey) => {
     setSelectedOrderView(false);
     setSelectedProductKey(productKey);
-    navigate(`/cards?product=${encodeURIComponent(productKey)}`, { replace: true });
+    navigate(`/cards?product=${encodeURIComponent(productKey)}`, {
+      replace: true,
+    });
   };
 
   const openOrderDetails = (orderId) => {
@@ -373,7 +388,11 @@ export default function Cards() {
   );
 
   return (
-    <DashboardLayout title="Cards" subtitle="Manage your KonarCards." hideDesktopHeader>
+    <DashboardLayout
+      title="Cards"
+      subtitle="Manage your KonarCards."
+      hideDesktopHeader
+    >
       <div className="cp-shell">
         <PageHeader
           title="Cards"
