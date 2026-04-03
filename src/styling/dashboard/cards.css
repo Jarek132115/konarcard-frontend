@@ -271,8 +271,8 @@ Cards Page
     position: relative;
     background: #ffffff;
     border-bottom: 1px solid rgba(15, 23, 42, 0.06);
-    height: 380px;
-    padding: 28px 18px;
+    min-height: 320px;
+    padding: 18px 18px 0;
     overflow: hidden;
     display: flex;
     align-items: center;
@@ -301,8 +301,7 @@ Cards Page
 .cp-catalogPreview3D {
     width: 100%;
     height: 100%;
-    min-height: 0;
-    padding: 0;
+    min-height: 280px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -317,9 +316,10 @@ Cards Page
     width: 78%;
     max-width: none;
     min-width: 0;
-    height: 250px;
-    min-height: 250px;
+    height: 236px;
+    min-height: 236px;
     padding: 0;
+    margin: auto 0;
 }
 
 .cp-catalogBody {
@@ -644,18 +644,17 @@ Cards Page
     }
 
     .cp-catalogMedia {
-        height: 400px;
+        min-height: 340px;
     }
 
     .cp-catalogPreview3D {
-        min-height: 0;
-        padding: 0;
+        min-height: 300px;
     }
 
     .cp-catalogPreview3D .pc3d__stage {
         width: 74%;
-        height: 260px;
-        min-height: 260px;
+        height: 248px;
+        min-height: 248px;
     }
 }
 
@@ -685,19 +684,18 @@ Cards Page
     }
 
     .cp-catalogMedia {
-        height: 340px;
-        padding: 20px 16px;
+        min-height: 300px;
+        padding: 16px 16px 0;
     }
 
     .cp-catalogPreview3D {
-        min-height: 0;
-        padding: 0;
+        min-height: 260px;
     }
 
     .cp-catalogPreview3D .pc3d__stage {
         width: 82%;
-        height: 220px;
-        min-height: 220px;
+        height: 214px;
+        min-height: 214px;
     }
 
     .cp-rowVal {
@@ -745,19 +743,17 @@ Cards Page
     }
 
     .cp-catalogMedia {
-        height: 300px;
-        padding: 18px 14px;
+        min-height: 260px;
     }
 
     .cp-catalogPreview3D {
-        min-height: 0;
-        padding: 0;
+        min-height: 220px;
     }
 
     .cp-catalogPreview3D .pc3d__stage {
         width: 86%;
-        height: 190px;
-        min-height: 190px;
+        height: 182px;
+        min-height: 182px;
     }
 }
 
