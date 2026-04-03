@@ -66,7 +66,7 @@ export default function MetalCard3D({
                             autoRotateSpeed={autoRotateSpeed}
                             rotationOffset={rotationOffset}
                         >
-                            <group position={[0, compact ? 0.085 : -0.01, 0]}>
+                            <group position={[0, compact ? 0.06 : -0.01, 0]}>
                                 <MetalCardMesh
                                     logoSrc={safeLogo}
                                     qrSrc={safeQr}
@@ -197,9 +197,7 @@ function CardRig({
 
         try {
             e.target.setPointerCapture(e.pointerId);
-        } catch {
-            // ignore
-        }
+        } catch { }
     };
 
     const onPointerMove = (e) => {
