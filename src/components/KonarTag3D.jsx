@@ -4,9 +4,22 @@ import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import { Environment, useTexture } from "@react-three/drei";
 
 import "../styling/products/plasticcard3d.css";
+import LogoIcon from "../assets/icons/Logo-Icon.svg";
+import LogoIconWhite from "../assets/icons/Logo-Icon-White.svg";
 
 const TRANSPARENT_1PX =
     "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO9qWZkAAAAASUVORK5CYII=";
+
+const NFC_ICON_BLACK_DATA_URI = `data:image/svg+xml;utf8,${encodeURIComponent(`
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128">
+  <g fill="none" stroke="#0f172a" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M28 74 C35 66, 41 58, 47 50" stroke-width="10"/>
+    <path d="M52 84 C63 72, 70 58, 74 42" stroke-width="10"/>
+    <path d="M75 90 C88 76, 96 58, 99 37" stroke-width="10"/>
+    <path d="M95 95 C108 80, 115 61, 117 38" stroke-width="10"/>
+  </g>
+</svg>
+`)}`;
 
 const NFC_ICON_WHITE_DATA_URI = `data:image/svg+xml;utf8,${encodeURIComponent(`
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128">
@@ -25,10 +38,7 @@ const safeTexSrc = (src) => {
 };
 
 export default function KonarTag3D({
-    logoSrc,
-    qrSrc,
-    logoSize = 75,
-    finish = "black",
+    finish = "white",
     interactive = true,
     autoRotate = true,
     autoRotateSpeed = 0.68,
@@ -36,8 +46,12 @@ export default function KonarTag3D({
     stageClassName = "",
     compact = false,
 }) {
-    const safeLogo = safeTexSrc(logoSrc);
-    const safeBackIcon = NFC_ICON_WHITE_DATA_URI;
+    const isBlack = String(finish).toLowerCase() === "black";
+
+    const fixedFrontLogo = safeTexSrc(isBlack ? LogoIconWhite : LogoIcon);
+    const fixedBackIcon = isBlack
+        ? NFC_ICON_WHITE_DATA_URI
+        : NFC_ICON_BLACK_DATA_URI;
 
     return (
         <div
@@ -59,13 +73,14 @@ export default function KonarTag3D({
                         gl.setClearColor(0x000000, 0);
                         gl.outputColorSpace = THREE.SRGBColorSpace;
                         gl.toneMapping = THREE.ACESFilmicToneMapping;
-                        gl.toneMappingExposure = 1.08;
+                        gl.toneMappingExposure = 1.06;
                         gl.domElement.style.touchAction = interactive ? "none" : "auto";
                     }}
                 >
-                    <ambientLight intensity={0.88} />
-                    <directionalLight position={[2.6, 3.2, 2.4]} intensity={1.16} />
-                    <directionalLight position={[-2, 1.6, -2]} intensity={0.56} />
+                    <ambientLight intensity={0.9} />
+                    <directionalLight position={[2.7, 3.2, 2.5]} intensity={1.18} />
+                    <directionalLight position={[-2.1, 1.5, -2.1]} intensity={0.58} />
+                    <directionalLight position={[0.2, -1.4, 1.8]} intensity={0.18} />
 
                     <Environment preset="studio" />
 
@@ -76,11 +91,10 @@ export default function KonarTag3D({
                             autoRotateSpeed={autoRotateSpeed}
                             rotationOffset={rotationOffset}
                         >
-                            <group position={[0, compact ? 0.02 : -0.01, 0]}>
+                            <group position={[0, compact ? 0.025 : -0.01, 0]}>
                                 <TagMesh
-                                    logoSrc={safeLogo}
-                                    backIconSrc={safeBackIcon}
-                                    logoSize={logoSize}
+                                    frontLogoSrc={fixedFrontLogo}
+                                    backIconSrc={fixedBackIcon}
                                     finish={finish}
                                 />
                             </group>
@@ -104,16 +118,16 @@ function ResponsiveRig({ children, compact = false }) {
         if (compact) {
             scale =
                 w >= 1400
-                    ? 0.96
+                    ? 0.98
                     : w >= 1200
-                        ? 0.93
+                        ? 0.95
                         : w >= 980
-                            ? 0.9
+                            ? 0.92
                             : w >= 720
-                                ? 0.87
+                                ? 0.89
                                 : w >= 520
-                                    ? 0.84
-                                    : 0.81;
+                                    ? 0.86
+                                    : 0.83;
         } else {
             scale =
                 w >= 1400
@@ -148,9 +162,9 @@ function TagRig({
         isDown: false,
         startX: 0,
         startY: 0,
-        baseRX: 0.14,
+        baseRX: 0.08,
         baseRY: 0.74 + rotationOffset,
-        rx: 0.14,
+        rx: 0.08,
         ry: 0.74 + rotationOffset,
         idle: true,
         t: rotationOffset * 2,
@@ -168,7 +182,7 @@ function TagRig({
                 drag.current.ry += autoRotateSpeed * dt;
             }
 
-            const breathe = Math.sin(drag.current.t * 1.03) * 0.018;
+            const breathe = Math.sin(drag.current.t * 1.02) * 0.02;
             const targetRx = clamp(drag.current.baseRX + breathe, -0.55, 0.55);
 
             drag.current.rx = THREE.MathUtils.lerp(drag.current.rx, targetRx, 0.08);
@@ -186,7 +200,7 @@ function TagRig({
         );
         group.current.rotation.z = THREE.MathUtils.lerp(
             group.current.rotation.z,
-            0.01,
+            0.012,
             0.08
         );
     });
@@ -197,10 +211,8 @@ function TagRig({
         e.stopPropagation();
         drag.current.isDown = true;
         drag.current.idle = false;
-
         drag.current.startX = e.clientX;
         drag.current.startY = e.clientY;
-
         drag.current.baseRX = drag.current.rx;
         drag.current.baseRY = drag.current.ry;
 
@@ -246,29 +258,33 @@ function TagRig({
     );
 }
 
-function TagMesh({ logoSrc, backIconSrc, logoSize, finish }) {
-    const isGold = String(finish).toLowerCase() === "gold";
+function TagMesh({ frontLogoSrc, backIconSrc, finish }) {
+    const isBlack = String(finish).toLowerCase() === "black";
 
-    const w = 0.74;
-    const h = 0.74;
-    const t = 0.08;
+    const cardW = 0.92;
+    const cardH = cardW * (54 / 85.6);
+
+    const h = cardH;
+    const w = h;
+    const t = 0.065;
 
     const bodyGeo = useMemo(() => {
-        const shape = roundedRectShape(w, h, 0.18);
+        const shape = circleShape(w, h);
         const geo = new THREE.ExtrudeGeometry(shape, {
             depth: t,
             bevelEnabled: true,
-            bevelThickness: 0.004,
-            bevelSize: 0.006,
-            bevelSegments: 10,
-            curveSegments: 32,
+            bevelThickness: 0.0032,
+            bevelSize: 0.0054,
+            bevelSegments: 18,
+            curveSegments: 48,
             steps: 1,
         });
         geo.center();
+        geo.computeVertexNormals();
         return geo;
     }, [w, h, t]);
 
-    const [logoTex, backIconTex] = useTexture([logoSrc, backIconSrc]);
+    const [frontLogoTex, backIconTex] = useTexture([frontLogoSrc, backIconSrc]);
 
     useEffect(() => {
         const setupColorTexture = (tex) => {
@@ -283,54 +299,79 @@ function TagMesh({ logoSrc, backIconSrc, logoSize, finish }) {
             tex.needsUpdate = true;
         };
 
-        setupColorTexture(logoTex);
+        setupColorTexture(frontLogoTex);
         setupColorTexture(backIconTex);
-    }, [logoTex, backIconTex]);
+    }, [frontLogoTex, backIconTex]);
 
-    const logoPlaneDims = useMemo(() => {
-        const percent = Math.max(10, Math.min(100, Number(logoSize || 75))) / 100;
-        let planeH = h * percent * 0.62;
-
-        const img = logoTex?.image;
-        const aspect =
-            img && img.width && img.height ? img.width / img.height : 1;
-
-        let planeW = planeH * aspect;
-        const maxW = w * 0.52;
-        const maxH = h * 0.28;
-
-        if (planeH > maxH) {
-            planeH = maxH;
-            planeW = planeH * aspect;
-        }
-
-        if (planeW > maxW) {
-            planeW = maxW;
-            planeH = planeW / aspect;
-        }
-
-        return { planeW, planeH };
-    }, [logoTex, w, h, logoSize]);
-
-    const backIconDims = useMemo(() => {
-        const plane = h * 0.22;
-        return { planeW: plane, planeH: plane };
+    const iconPlaneDims = useMemo(() => {
+        const target = h * 0.34;
+        return { planeW: target, planeH: target };
     }, [h]);
 
-    const edgeMat = useMemo(() => {
-        return new THREE.MeshPhysicalMaterial({
-            color: isGold ? "#caa54a" : "#0b1220",
-            roughness: isGold ? 0.2 : 0.34,
-            metalness: isGold ? 0.95 : 0.4,
-            clearcoat: 0.6,
-            clearcoatRoughness: 0.18,
-            envMapIntensity: 1.8,
-        });
-    }, [isGold]);
+    const iconPlaneGeo = useMemo(
+        () => new THREE.PlaneGeometry(iconPlaneDims.planeW, iconPlaneDims.planeH),
+        [iconPlaneDims]
+    );
 
-    const logoMat = useMemo(() => {
+    const faceMat = useMemo(() => {
+        if (isBlack) {
+            const m = new THREE.MeshPhysicalMaterial({
+                color: "#0b1220",
+                roughness: 0.34,
+                metalness: 0.26,
+                clearcoat: 0.72,
+                clearcoatRoughness: 0.18,
+                sheen: 0.08,
+                sheenRoughness: 0.7,
+            });
+            m.envMapIntensity = 1.55;
+            return m;
+        }
+
+        const m = new THREE.MeshPhysicalMaterial({
+            color: "#ffffff",
+            roughness: 0.18,
+            metalness: 0.04,
+            clearcoat: 0.82,
+            clearcoatRoughness: 0.12,
+            sheen: 0.05,
+            sheenRoughness: 0.65,
+        });
+        m.envMapIntensity = 1.2;
+        return m;
+    }, [isBlack]);
+
+    const edgeMat = useMemo(() => {
+        if (isBlack) {
+            const m = new THREE.MeshPhysicalMaterial({
+                color: "#1b2432",
+                roughness: 0.24,
+                metalness: 0.72,
+                clearcoat: 0.52,
+                clearcoatRoughness: 0.16,
+                specularIntensity: 0.82,
+                specularColor: new THREE.Color("#ffffff"),
+            });
+            m.envMapIntensity = 1.8;
+            return m;
+        }
+
+        const m = new THREE.MeshPhysicalMaterial({
+            color: "#c7ced8",
+            roughness: 0.16,
+            metalness: 1,
+            clearcoat: 0.34,
+            clearcoatRoughness: 0.12,
+            specularIntensity: 0.95,
+            specularColor: new THREE.Color("#ffffff"),
+        });
+        m.envMapIntensity = 2.05;
+        return m;
+    }, [isBlack]);
+
+    const frontLogoMat = useMemo(() => {
         const m = new THREE.MeshBasicMaterial({
-            map: logoTex || null,
+            map: frontLogoTex || null,
             transparent: true,
             opacity: 1,
             toneMapped: false,
@@ -343,7 +384,7 @@ function TagMesh({ logoSrc, backIconSrc, logoSize, finish }) {
         m.polygonOffsetFactor = -6;
         m.polygonOffsetUnits = -6;
         return m;
-    }, [logoTex]);
+    }, [frontLogoTex]);
 
     const backIconMat = useMemo(() => {
         const m = new THREE.MeshBasicMaterial({
@@ -369,15 +410,16 @@ function TagMesh({ logoSrc, backIconSrc, logoSize, finish }) {
     return (
         <group>
             <mesh geometry={bodyGeo} material={edgeMat} />
+            <mesh geometry={bodyGeo} material={faceMat} scale={[0.992, 0.992, 0.985]} />
 
             <mesh
-                geometry={new THREE.PlaneGeometry(logoPlaneDims.planeW, logoPlaneDims.planeH)}
-                material={logoMat}
+                geometry={iconPlaneGeo}
+                material={frontLogoMat}
                 position={[0, 0, zFront]}
             />
 
             <mesh
-                geometry={new THREE.PlaneGeometry(backIconDims.planeW, backIconDims.planeH)}
+                geometry={iconPlaneGeo}
                 material={backIconMat}
                 position={[0, 0, zBack]}
                 rotation={[0, Math.PI, 0]}
@@ -386,20 +428,11 @@ function TagMesh({ logoSrc, backIconSrc, logoSize, finish }) {
     );
 }
 
-function roundedRectShape(w, h, r) {
+function circleShape(w, h) {
     const shape = new THREE.Shape();
-    const x = -w / 2;
-    const y = -h / 2;
+    const rx = w / 2;
+    const ry = h / 2;
 
-    shape.moveTo(x + r, y);
-    shape.lineTo(x + w - r, y);
-    shape.quadraticCurveTo(x + w, y, x + w, y + r);
-    shape.lineTo(x + w, y + h - r);
-    shape.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
-    shape.lineTo(x + r, y + h);
-    shape.quadraticCurveTo(x, y + h, x, y + h - r);
-    shape.lineTo(x, y + r);
-    shape.quadraticCurveTo(x, y, x + r, y);
-
+    shape.absellipse(0, 0, rx, ry, 0, Math.PI * 2, false, 0);
     return shape;
 }

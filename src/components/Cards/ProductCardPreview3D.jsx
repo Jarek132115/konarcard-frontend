@@ -43,7 +43,7 @@ const ALL_LOGOS = [
 
 function getVariantSequence(productKey) {
     if (productKey === "metal-card") return ["black", "gold"];
-    if (productKey === "konartag") return ["black", "gold"];
+    if (productKey === "konartag") return ["white", "black"];
     return ["white", "black"];
 }
 
@@ -53,15 +53,7 @@ function getLogoSequence(productKey, variant) {
     }
 
     if (productKey === "konartag") {
-        return [
-            CardChangeLogo1,
-            CardChangeLogo2,
-            CardChangeLogo3,
-            CardChangeLogo4,
-            CardChangeLogo5,
-            CardChangeLogo6,
-            LogoIcon,
-        ];
+        return [variant === "black" ? LogoIconWhite : LogoIcon];
     }
 
     const isDark = variant === "black";
