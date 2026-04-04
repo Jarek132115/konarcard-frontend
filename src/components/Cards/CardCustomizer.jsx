@@ -14,13 +14,6 @@ import LogoIcon from "../../assets/icons/Logo-Icon.svg";
 import LogoIconWhite from "../../assets/icons/Logo-Icon-White.svg";
 import CardQrCode from "../../assets/images/CardQrCode.png";
 
-import OneJobIcon from "../../assets/icons/OneJob.svg";
-import NoReprintsIcon from "../../assets/icons/NoReprints.svg";
-import UpToDateIcon from "../../assets/icons/UpToDate.svg";
-import WorksEverywhereIcon from "../../assets/icons/WorksEverywhere.svg";
-import HammerIcon from "../../assets/icons/Hammer.svg";
-import ProfessionalFastIcon from "../../assets/icons/ProfessionalFast.svg";
-
 const NFC_INTENT_KEY = "konar_nfc_intent_v1";
 
 const PRESET_TO_PERCENT = {
@@ -135,38 +128,6 @@ const PRODUCT_CONFIG = {
             { k: "QR backup", v: "Printed QR code on the back for instant access" },
             { k: "Setup", v: "Linked to your Konar profile — update anytime, no reprints" },
         ],
-        features: [
-            {
-                icon: OneJobIcon,
-                t: "One job pays for everything",
-                s: "One extra job can easily cover the cost of your card.",
-            },
-            {
-                icon: NoReprintsIcon,
-                t: "No reprints, ever",
-                s: "Update your details anytime — no reordering required.",
-            },
-            {
-                icon: UpToDateIcon,
-                t: "Always up to date",
-                s: "Your latest work, reviews, and services stay live instantly.",
-            },
-            {
-                icon: WorksEverywhereIcon,
-                t: "Works everywhere",
-                s: "In person, online, or on the phone — no apps needed.",
-            },
-            {
-                icon: HammerIcon,
-                t: "Built for real trades",
-                s: "Designed for everyday work, not office desks.",
-            },
-            {
-                icon: ProfessionalFastIcon,
-                t: "Looks professional fast",
-                s: "Make a strong first impression in seconds.",
-            },
-        ],
     },
 
     "metal-card": {
@@ -199,38 +160,6 @@ const PRODUCT_CONFIG = {
             { k: "QR backup", v: "Printed QR code on the back for instant access" },
             { k: "Setup", v: "Linked to your Konar profile — update anytime, no reprints" },
         ],
-        features: [
-            {
-                icon: OneJobIcon,
-                t: "Premium metal that stands out",
-                s: "Heavier feel designed to leave a strong first impression.",
-            },
-            {
-                icon: NoReprintsIcon,
-                t: "No reprints, ever",
-                s: "Update your details anytime — no reordering required.",
-            },
-            {
-                icon: UpToDateIcon,
-                t: "Always up to date",
-                s: "Your latest work, reviews, and services stay live instantly.",
-            },
-            {
-                icon: WorksEverywhereIcon,
-                t: "Works everywhere",
-                s: "In person, online, or on the phone — no apps needed.",
-            },
-            {
-                icon: HammerIcon,
-                t: "Built for serious trades",
-                s: "Clean, practical, and made for the way you actually work.",
-            },
-            {
-                icon: ProfessionalFastIcon,
-                t: "Looks premium fast",
-                s: "Metal helps you look the part before you even speak.",
-            },
-        ],
     },
 
     konartag: {
@@ -262,38 +191,6 @@ const PRODUCT_CONFIG = {
             { k: "NFC", v: "Tap compatible — works with iPhone & Android" },
             { k: "QR backup", v: "Printed on the rear for instant scan access" },
             { k: "Setup", v: "Linked to your Konar profile — update anytime" },
-        ],
-        features: [
-            {
-                icon: WorksEverywhereIcon,
-                t: "Pocket-friendly",
-                s: "A compact NFC tag — ideal for keys, vans, and everyday carry.",
-            },
-            {
-                icon: UpToDateIcon,
-                t: "Tap to share instantly",
-                s: "One tap opens your Konar profile in seconds.",
-            },
-            {
-                icon: NoReprintsIcon,
-                t: "QR backup included",
-                s: "If NFC is off, they can scan the QR and still save your details.",
-            },
-            {
-                icon: HammerIcon,
-                t: "Built for daily use",
-                s: "Durable finish designed for busy days and real work.",
-            },
-            {
-                icon: OneJobIcon,
-                t: "One-time purchase",
-                s: "Pay once — keep sharing. Your profile stays up to date anytime.",
-            },
-            {
-                icon: ProfessionalFastIcon,
-                t: "Looks professional fast",
-                s: "Clean, premium, and easy to share anywhere.",
-            },
         ],
     },
 };
@@ -657,7 +554,7 @@ export default function CardCustomizer({
                                     <button
                                         type="button"
                                         onClick={handleBuy}
-                                        className="kx-btn kx-btn--black ccz-buyBtn"
+                                        className="kx-btn kx-btn--orange ccz-buyBtn"
                                         disabled={busy}
                                     >
                                         {busy ? "Starting checkout..." : config.buyLabel}
@@ -688,49 +585,13 @@ export default function CardCustomizer({
                     </div>
                 </div>
 
-                <div className="khv cp-khvEmbed" aria-label="Product details">
-                    <div className="khv__inner">
-                        <div className="khv__grid">
-                            {config.specs.map((s, i) => (
-                                <article className="khv__cell kc-specCell" key={i}>
-                                    <p className="kc-pill kc-specPill">{s.k}</p>
-                                    <p className="body khv__cellDesc kc-specValue">{s.v}</p>
-                                </article>
-                            ))}
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-            <section className="cp-card cp-card--builderInfo">
-                <div className="cp-cardHead">
-                    <div>
-                        <h2 className="cp-cardTitle">Why it works</h2>
-                        <p className="cp-muted">Built to help you look more professional and share faster.</p>
-                    </div>
-                </div>
-
-                <div className="khv khv--white cp-khvEmbed" aria-label="What you get">
-                    <div className="khv__inner">
-                        <div className="khv__grid">
-                            {config.features.map((it, i) => (
-                                <article className="khv__cell" key={i}>
-                                    <div className="khv__icon" aria-hidden="true">
-                                        <img
-                                            className="khv__iconImg"
-                                            src={it.icon}
-                                            alt=""
-                                            loading="lazy"
-                                            decoding="async"
-                                        />
-                                    </div>
-
-                                    <h3 className="kc-title khv__cellTitle">{it.t}</h3>
-                                    <p className="body khv__cellDesc">{it.s}</p>
-                                </article>
-                            ))}
-                        </div>
-                    </div>
+                <div className="ccz-specsGrid" aria-label="Product details">
+                    {config.specs.map((s, i) => (
+                        <article className="ccz-specCard" key={i}>
+                            <span className="ccz-specPill">{s.k}</span>
+                            <p className="ccz-specValue">{s.v}</p>
+                        </article>
+                    ))}
                 </div>
             </section>
         </>
