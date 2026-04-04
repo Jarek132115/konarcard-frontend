@@ -179,26 +179,26 @@ function PurchasedCardItem({ card, isActive, onOpenDetails }) {
         <div className="cp-name">{card.title}</div>
 
         <div className="cp-sub">
-          <span className="cp-subLabel">Assigned Profile:</span>
+          <span className="cp-subLabel">Assigned Profile</span>
           <span className="cp-subValue">
             {card.assignedProfile || card.profileSlug || "—"}
           </span>
         </div>
 
         <div className="cp-sub">
-          <span className="cp-subLabel">Status:</span>
+          <span className="cp-subLabel">Status</span>
           <span className="cp-subValue">{card.status || "—"}</span>
         </div>
 
         <div className="cp-sub">
-          <span className="cp-subLabel">Total:</span>
+          <span className="cp-subLabel">Total</span>
           <span className="cp-subValue">
             {formatMoneyMinor(card.amountTotal, card.currency)}
           </span>
         </div>
 
         <div className="cp-sub">
-          <span className="cp-subLabel">Ordered:</span>
+          <span className="cp-subLabel">Ordered</span>
           <span className="cp-subValue">{card.createdAt || "—"}</span>
         </div>
 
