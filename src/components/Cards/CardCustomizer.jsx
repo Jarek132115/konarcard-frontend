@@ -136,12 +136,36 @@ const PRODUCT_CONFIG = {
             { k: "Setup", v: "Linked to your Konar profile — update anytime, no reprints" },
         ],
         features: [
-            { icon: OneJobIcon, t: "One job pays for everything", s: "One extra job can easily cover the cost of your card." },
-            { icon: NoReprintsIcon, t: "No reprints, ever", s: "Update your details anytime — no reordering required." },
-            { icon: UpToDateIcon, t: "Always up to date", s: "Your latest work, reviews, and services stay live instantly." },
-            { icon: WorksEverywhereIcon, t: "Works everywhere", s: "In person, online, or on the phone — no apps needed." },
-            { icon: HammerIcon, t: "Built for real trades", s: "Designed for everyday work, not office desks." },
-            { icon: ProfessionalFastIcon, t: "Looks professional fast", s: "Make a strong first impression in seconds." },
+            {
+                icon: OneJobIcon,
+                t: "One job pays for everything",
+                s: "One extra job can easily cover the cost of your card.",
+            },
+            {
+                icon: NoReprintsIcon,
+                t: "No reprints, ever",
+                s: "Update your details anytime — no reordering required.",
+            },
+            {
+                icon: UpToDateIcon,
+                t: "Always up to date",
+                s: "Your latest work, reviews, and services stay live instantly.",
+            },
+            {
+                icon: WorksEverywhereIcon,
+                t: "Works everywhere",
+                s: "In person, online, or on the phone — no apps needed.",
+            },
+            {
+                icon: HammerIcon,
+                t: "Built for real trades",
+                s: "Designed for everyday work, not office desks.",
+            },
+            {
+                icon: ProfessionalFastIcon,
+                t: "Looks professional fast",
+                s: "Make a strong first impression in seconds.",
+            },
         ],
     },
 
@@ -176,12 +200,36 @@ const PRODUCT_CONFIG = {
             { k: "Setup", v: "Linked to your Konar profile — update anytime, no reprints" },
         ],
         features: [
-            { icon: OneJobIcon, t: "Premium metal that stands out", s: "Heavier feel designed to leave a strong first impression." },
-            { icon: NoReprintsIcon, t: "No reprints, ever", s: "Update your details anytime — no reordering required." },
-            { icon: UpToDateIcon, t: "Always up to date", s: "Your latest work, reviews, and services stay live instantly." },
-            { icon: WorksEverywhereIcon, t: "Works everywhere", s: "In person, online, or on the phone — no apps needed." },
-            { icon: HammerIcon, t: "Built for serious trades", s: "Clean, practical, and made for the way you actually work." },
-            { icon: ProfessionalFastIcon, t: "Looks premium fast", s: "Metal helps you look the part before you even speak." },
+            {
+                icon: OneJobIcon,
+                t: "Premium metal that stands out",
+                s: "Heavier feel designed to leave a strong first impression.",
+            },
+            {
+                icon: NoReprintsIcon,
+                t: "No reprints, ever",
+                s: "Update your details anytime — no reordering required.",
+            },
+            {
+                icon: UpToDateIcon,
+                t: "Always up to date",
+                s: "Your latest work, reviews, and services stay live instantly.",
+            },
+            {
+                icon: WorksEverywhereIcon,
+                t: "Works everywhere",
+                s: "In person, online, or on the phone — no apps needed.",
+            },
+            {
+                icon: HammerIcon,
+                t: "Built for serious trades",
+                s: "Clean, practical, and made for the way you actually work.",
+            },
+            {
+                icon: ProfessionalFastIcon,
+                t: "Looks premium fast",
+                s: "Metal helps you look the part before you even speak.",
+            },
         ],
     },
 
@@ -216,12 +264,36 @@ const PRODUCT_CONFIG = {
             { k: "Setup", v: "Linked to your Konar profile — update anytime" },
         ],
         features: [
-            { icon: WorksEverywhereIcon, t: "Pocket-friendly", s: "A compact NFC tag — ideal for keys, vans, and everyday carry." },
-            { icon: UpToDateIcon, t: "Tap to share instantly", s: "One tap opens your Konar profile in seconds." },
-            { icon: NoReprintsIcon, t: "QR backup included", s: "If NFC is off, they can scan the QR and still save your details." },
-            { icon: HammerIcon, t: "Built for daily use", s: "Durable finish designed for busy days and real work." },
-            { icon: OneJobIcon, t: "One-time purchase", s: "Pay once — keep sharing. Your profile stays up to date anytime." },
-            { icon: ProfessionalFastIcon, t: "Looks professional fast", s: "Clean, premium, and easy to share anywhere." },
+            {
+                icon: WorksEverywhereIcon,
+                t: "Pocket-friendly",
+                s: "A compact NFC tag — ideal for keys, vans, and everyday carry.",
+            },
+            {
+                icon: UpToDateIcon,
+                t: "Tap to share instantly",
+                s: "One tap opens your Konar profile in seconds.",
+            },
+            {
+                icon: NoReprintsIcon,
+                t: "QR backup included",
+                s: "If NFC is off, they can scan the QR and still save your details.",
+            },
+            {
+                icon: HammerIcon,
+                t: "Built for daily use",
+                s: "Durable finish designed for busy days and real work.",
+            },
+            {
+                icon: OneJobIcon,
+                t: "One-time purchase",
+                s: "Pay once — keep sharing. Your profile stays up to date anytime.",
+            },
+            {
+                icon: ProfessionalFastIcon,
+                t: "Looks professional fast",
+                s: "Clean, premium, and easy to share anywhere.",
+            },
         ],
     },
 };
