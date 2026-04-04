@@ -310,30 +310,21 @@ export default function Cards() {
     const sp = new URLSearchParams(location.search);
     const checkout = sp.get("checkout");
     const product = sp.get("product");
-    const intent = readIntent();
 
     if (checkout === "success") {
       toast.success("Payment received ✅");
       clearIntent();
-
-      const resumeProduct =
-        (product && PRODUCT_META[product] && product) ||
-        (intent?.productKey &&
-          PRODUCT_META[intent.productKey] &&
-          intent.productKey) ||
-        "";
-
-      navigate(
-        resumeProduct
-          ? `/cards?product=${encodeURIComponent(resumeProduct)}`
-          : "/cards",
-        { replace: true }
-      );
+      setSelectedOrderView(false);
+      setSelectedProductKey("");
+      navigate("/cards", { replace: true });
       return;
     }
 
     if (checkout === "cancel") {
       toast.error("Checkout cancelled.");
+      clearIntent();
+      setSelectedOrderView(false);
+      setSelectedProductKey("");
       navigate("/cards", { replace: true });
       return;
     }
@@ -344,10 +335,7 @@ export default function Cards() {
       return;
     }
 
-    if (intent?.productKey && PRODUCT_META[intent.productKey]) {
-      setSelectedOrderView(false);
-      setSelectedProductKey(intent.productKey);
-    }
+    setSelectedProductKey("");
   }, [location.search, navigate]);
 
   const openConfigurator = (productKey) => {
@@ -359,6 +347,7 @@ export default function Cards() {
   };
 
   const openOrderDetails = (orderId) => {
+    clearIntent();
     setSelectedProductKey("");
     setSelectedId(orderId);
     setSelectedOrderView(true);
@@ -366,6 +355,7 @@ export default function Cards() {
   };
 
   const backToCardsHome = () => {
+    clearIntent();
     setSelectedProductKey("");
     setSelectedOrderView(false);
     navigate("/cards", { replace: true });

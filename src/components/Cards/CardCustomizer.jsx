@@ -7,7 +7,7 @@ import MetalCard3D from "../MetalCard3D";
 import KonarTag3D from "../KonarTag3D";
 
 import "../../styling/fonts.css";
-import "../../styling/products/konarcard.css";
+import "../../styling/dashboard/card-customizer.css";
 import "../../styling/home/value.css";
 
 import LogoIcon from "../../assets/icons/Logo-Icon.svg";
@@ -68,6 +68,40 @@ function writeNfcIntent(value) {
     } catch {
         // ignore
     }
+}
+
+function pad2(value) {
+    return String(value).padStart(2, "0");
+}
+
+function formatDeliveryDate(date) {
+    return date.toLocaleDateString("en-GB", {
+        weekday: "short",
+        day: "numeric",
+        month: "short",
+    });
+}
+
+function getEstimatedDelivery() {
+    const now = new Date();
+    const hour = now.getHours();
+
+    const deliveryDate = new Date(now);
+    deliveryDate.setHours(12, 0, 0, 0);
+
+    if (hour < 13) {
+        deliveryDate.setDate(deliveryDate.getDate() + 1);
+        return {
+            label: formatDeliveryDate(deliveryDate),
+            helper: "Same-day shipping when you order before 1pm.",
+        };
+    }
+
+    deliveryDate.setDate(deliveryDate.getDate() + 2);
+    return {
+        label: formatDeliveryDate(deliveryDate),
+        helper: "Orders after 1pm ship next working day.",
+    };
 }
 
 const PRODUCT_CONFIG = {
@@ -291,6 +325,9 @@ export default function CardCustomizer({
     const displayedLogo = logoUrl || config.getDefaultLogo(variant);
     const logoLabel = logoFile?.name || "Upload logo";
     const sizeLabel = (k) => (k === "small" ? "S" : k === "medium" ? "M" : "L");
+    const deliveryInfo = useMemo(() => getEstimatedDelivery(), []);
+    const now = new Date();
+    const cutOffText = `${pad2(now.getHours())}:${pad2(now.getMinutes())}`;
 
     const onPickLogo = (e) => {
         const file = e.target.files?.[0];
@@ -384,16 +421,19 @@ export default function CardCustomizer({
 
     return (
         <>
-            <section className="cp-card cp-card--builder">
-                <div className="cp-cardHead cp-cardHead--builder">
-                    <div>
+            <div className="ccz-backRow">
+                <button type="button" className="kx-btn kx-btn--white" onClick={onBack}>
+                    Back to products
+                </button>
+            </div>
+
+            <section className="cp-card ccz-heroCard">
+                <div className="ccz-heroIntro">
+                    <div className="ccz-heroText">
+                        <span className="ccz-badge">{config.badge}</span>
                         <h2 className="cp-cardTitle">{config.title}</h2>
                         <p className="cp-muted">{config.subtitle}</p>
                     </div>
-
-                    <button type="button" className="kx-btn kx-btn--white" onClick={onBack}>
-                        Back to products
-                    </button>
                 </div>
 
                 {(errorMsg || infoMsg) && (
@@ -402,13 +442,9 @@ export default function CardCustomizer({
                     </div>
                 )}
 
-                <div className="cp-builderStage">
-                    <div className="cp-builderPreviewCard">
-                        <div className="cp-builderBadgeRow">
-                            <span className="cp-builderBadge">{config.badge}</span>
-                        </div>
-
-                        <div className="cp-builderCanvas">
+                <div className="ccz-mainGrid">
+                    <div className="ccz-previewCard">
+                        <div className="ccz-previewCanvas">
                             {config.render3D({
                                 logoSrc: displayedLogo,
                                 qrSrc: CardQrCode,
@@ -418,142 +454,155 @@ export default function CardCustomizer({
                         </div>
                     </div>
 
-                    <div className="cp-builderControlsCard">
-                        <div className="cp-builderControlsGrid">
-                            <div className="cp-builderField">
-                                <div className="cp-builderLabel">Logo</div>
+                    <div className="ccz-controlsCol">
+                        <div className="ccz-controlsCard">
+                            <div className="ccz-controlsGrid">
+                                <div className="ccz-field">
+                                    <div className="ccz-label">Logo</div>
 
-                                <div className="cp-builderInline">
-                                    <label className="cp-builderTextAction" title="Upload logo">
-                                        <input type="file" accept="image/*" onChange={onPickLogo} />
-                                        {logoLabel}
-                                    </label>
-
-                                    <button
-                                        type="button"
-                                        className="cp-builderTextAction cp-builderTextAction--muted"
-                                        onClick={clearLogo}
-                                        disabled={!logoUrl || busy}
-                                    >
-                                        Remove
-                                    </button>
-                                </div>
-                            </div>
-
-                            <div className="cp-builderField">
-                                <div className="cp-builderLabel">Logo size</div>
-
-                                <div className="cp-builderInline" role="group" aria-label="Choose logo size">
-                                    {["small", "medium", "large"].map((k) => (
-                                        <button
-                                            key={k}
-                                            type="button"
-                                            className={`cp-builderToggle ${logoPreset === k ? "is-active" : ""}`}
-                                            onClick={() => setLogoPreset(k)}
-                                            disabled={busy}
-                                        >
-                                            {sizeLabel(k)}
-                                        </button>
-                                    ))}
-                                </div>
-                            </div>
-
-                            <div className="cp-builderField">
-                                <div className="cp-builderLabel">{config.controlsLabel}</div>
-
-                                <div className="cp-builderInline" role="group" aria-label="Choose product option">
-                                    {config.options.map((opt) => (
-                                        <button
-                                            key={opt.value}
-                                            type="button"
-                                            className={`cp-builderToggle ${variant === opt.value ? "is-active" : ""}`}
-                                            onClick={() => setVariant(opt.value)}
-                                            disabled={busy}
-                                        >
-                                            {opt.label}
-                                        </button>
-                                    ))}
-                                </div>
-                            </div>
-
-                            <div className="cp-builderField">
-                                <div className="cp-builderLabel">Link to profile</div>
-
-                                <div className="cp-builderSelectWrap">
-                                    <select
-                                        className="cp-builderSelect"
-                                        value={profileId}
-                                        onChange={(e) => setProfileId(e.target.value)}
-                                        disabled={busy || isProfilesLoading}
-                                        aria-label="Choose profile"
-                                    >
-                                        <option value="">
-                                            {isProfilesLoading
-                                                ? "Loading..."
-                                                : myProfiles.length
-                                                    ? "Choose profile"
-                                                    : "No profiles"}
-                                        </option>
-
-                                        {myProfiles.map((p) => {
-                                            const id = String(p?._id || "");
-                                            if (!id) return null;
-
-                                            const label =
-                                                p?.business_card_name ||
-                                                p?.full_name ||
-                                                p?.main_heading ||
-                                                p?.profile_slug ||
-                                                "Profile";
-
-                                            return (
-                                                <option key={id} value={id}>
-                                                    {label}
-                                                </option>
-                                            );
-                                        })}
-                                    </select>
-                                </div>
-                            </div>
-
-                            <div className="cp-builderBuyCard">
-                                <div className="cp-builderPrice">{config.priceText}</div>
-
-                                <div className="cp-builderBuyControls">
-                                    <div className="cp-builderQty" aria-label="Quantity">
-                                        <button
-                                            type="button"
-                                            className="cp-builderQtyBtn"
-                                            onClick={() => setQty((q) => Math.max(1, q - 1))}
-                                            disabled={busy}
-                                            aria-label="Decrease quantity"
-                                        >
-                                            −
-                                        </button>
-
-                                        <div className="cp-builderQtyVal">{qty}</div>
+                                    <div className="ccz-uploadRow">
+                                        <label className="ccz-uploadBtn" title="Upload logo">
+                                            <input type="file" accept="image/*" onChange={onPickLogo} />
+                                            <span>{logoLabel}</span>
+                                        </label>
 
                                         <button
                                             type="button"
-                                            className="cp-builderQtyBtn"
-                                            onClick={() => setQty((q) => Math.min(20, q + 1))}
-                                            disabled={busy}
-                                            aria-label="Increase quantity"
+                                            className="ccz-textBtn"
+                                            onClick={clearLogo}
+                                            disabled={!logoUrl || busy}
                                         >
-                                            +
+                                            Remove
                                         </button>
+                                    </div>
+                                </div>
+
+                                <div className="ccz-field">
+                                    <div className="ccz-label">Logo size</div>
+
+                                    <div className="ccz-toggleRow" role="group" aria-label="Choose logo size">
+                                        {["small", "medium", "large"].map((k) => (
+                                            <button
+                                                key={k}
+                                                type="button"
+                                                className={`ccz-toggle ${logoPreset === k ? "is-active" : ""}`}
+                                                onClick={() => setLogoPreset(k)}
+                                                disabled={busy}
+                                            >
+                                                {sizeLabel(k)}
+                                            </button>
+                                        ))}
+                                    </div>
+                                </div>
+
+                                <div className="ccz-field">
+                                    <div className="ccz-label">{config.controlsLabel}</div>
+
+                                    <div className="ccz-toggleRow" role="group" aria-label="Choose product option">
+                                        {config.options.map((opt) => (
+                                            <button
+                                                key={opt.value}
+                                                type="button"
+                                                className={`ccz-toggle ${variant === opt.value ? "is-active" : ""}`}
+                                                onClick={() => setVariant(opt.value)}
+                                                disabled={busy}
+                                            >
+                                                {opt.label}
+                                            </button>
+                                        ))}
+                                    </div>
+                                </div>
+
+                                <div className="ccz-field">
+                                    <div className="ccz-label">Link to profile</div>
+
+                                    <div className="ccz-selectWrap">
+                                        <select
+                                            className="ccz-select"
+                                            value={profileId}
+                                            onChange={(e) => setProfileId(e.target.value)}
+                                            disabled={busy || isProfilesLoading}
+                                            aria-label="Choose profile"
+                                        >
+                                            <option value="">
+                                                {isProfilesLoading
+                                                    ? "Loading..."
+                                                    : myProfiles.length
+                                                        ? "Choose profile"
+                                                        : "No profiles"}
+                                            </option>
+
+                                            {myProfiles.map((p) => {
+                                                const id = String(p?._id || "");
+                                                if (!id) return null;
+
+                                                const label =
+                                                    p?.business_card_name ||
+                                                    p?.full_name ||
+                                                    p?.main_heading ||
+                                                    p?.profile_slug ||
+                                                    "Profile";
+
+                                                return (
+                                                    <option key={id} value={id}>
+                                                        {label}
+                                                    </option>
+                                                );
+                                            })}
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div className="ccz-field ccz-field--buy">
+                                    <div className="ccz-priceRow">
+                                        <div className="ccz-price">{config.priceText}</div>
+
+                                        <div className="ccz-qty" aria-label="Quantity">
+                                            <button
+                                                type="button"
+                                                className="ccz-qtyBtn"
+                                                onClick={() => setQty((q) => Math.max(1, q - 1))}
+                                                disabled={busy}
+                                                aria-label="Decrease quantity"
+                                            >
+                                                −
+                                            </button>
+
+                                            <div className="ccz-qtyVal">{qty}</div>
+
+                                            <button
+                                                type="button"
+                                                className="ccz-qtyBtn"
+                                                onClick={() => setQty((q) => Math.min(20, q + 1))}
+                                                disabled={busy}
+                                                aria-label="Increase quantity"
+                                            >
+                                                +
+                                            </button>
+                                        </div>
                                     </div>
 
                                     <button
                                         type="button"
                                         onClick={handleBuy}
-                                        className="kx-btn kx-btn--black cp-builderBuyBtn"
+                                        className="kx-btn kx-btn--black ccz-buyBtn"
                                         disabled={busy}
                                     >
                                         {busy ? "Starting checkout..." : config.buyLabel}
                                     </button>
                                 </div>
                             </div>
+                        </div>
+
+                        <div className="ccz-deliveryCard">
+                            <div className="ccz-deliveryLabel">Estimated delivery</div>
+                            <div className="ccz-deliveryDate">{deliveryInfo.label}</div>
+                            <p className="ccz-deliveryText">
+                                {deliveryInfo.helper}
+                            </p>
+                            <p className="ccz-deliveryMeta">
+                                Current time: {cutOffText} • Next day delivery available
+                            </p>
                         </div>
                     </div>
                 </div>

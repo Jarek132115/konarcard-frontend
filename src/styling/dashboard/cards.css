@@ -3,7 +3,6 @@
 Cards Page
 - purchased products
 - product catalog
-- configurator
 - order/details blocks
 ========================================================= */
 
@@ -11,17 +10,12 @@ Cards Page
     --cp-ink: var(--kc-text-primary, #0f172a);
     --cp-muted: var(--kc-text-secondary, #475569);
     --cp-border: rgba(15, 23, 42, 0.1);
-    --cp-soft: rgba(15, 23, 42, 0.03);
-    --cp-soft-2: rgba(15, 23, 42, 0.05);
     --cp-shadow: 0 1px 0 rgba(15, 23, 42, 0.04), 0 10px 22px rgba(15, 23, 42, 0.04);
     --cp-shadow-hover: 0 14px 34px rgba(15, 23, 42, 0.08);
     --cp-radius-xl: 24px;
     --cp-radius-lg: 20px;
     --cp-radius-md: 16px;
     --cp-accent: #f97316;
-    --cp-accent-dark: #ea580c;
-    --cp-accent-soft: rgba(249, 115, 22, 0.1);
-    --cp-accent-border: rgba(249, 115, 22, 0.22);
     --cp-bg: #ffffff;
 }
 
@@ -60,16 +54,6 @@ Cards Page
 
 .cp-pill strong {
     color: #ffffff;
-    font-weight: 800;
-}
-
-.cp-pill--soft {
-    min-height: 28px;
-    padding: 0 10px;
-    background: #ffffff;
-    border: 1px solid rgba(15, 23, 42, 0.1);
-    color: rgba(15, 23, 42, 0.86);
-    font-size: 12px;
     font-weight: 800;
 }
 
@@ -383,102 +367,7 @@ Cards Page
 }
 
 /* =========================================================
-   Generic actions / buttons
-========================================================= */
-
-.cp-actions {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    flex-wrap: wrap;
-}
-
-.cp-miniBtn {
-    width: 44px;
-    height: 44px;
-    border: 1px solid rgba(15, 23, 42, 0.12);
-    border-radius: 14px;
-    background: #0b1220;
-    color: #fff;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    font-family: "Inter", sans-serif;
-    font-size: 18px;
-    font-weight: 800;
-    cursor: pointer;
-    transition: transform 0.08s ease, box-shadow 0.15s ease, opacity 0.15s ease;
-}
-
-.cp-miniBtn:hover {
-    box-shadow: 0 10px 20px rgba(15, 23, 42, 0.12);
-}
-
-.cp-miniBtn:active {
-    transform: translateY(1px);
-}
-
-.cp-miniBtn:disabled {
-    opacity: 0.55;
-    cursor: not-allowed;
-    box-shadow: none;
-}
-
-.cp-selectBtn {
-    min-height: 44px;
-    padding: 0 16px;
-    border-radius: 14px;
-    border: 1px solid rgba(15, 23, 42, 0.14);
-    background: #fff;
-    color: var(--cp-ink);
-    font-family: "Inter", sans-serif;
-    font-size: 14px;
-    font-weight: 750;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    transition:
-        border-color 0.15s ease,
-        background 0.15s ease,
-        color 0.15s ease,
-        box-shadow 0.15s ease,
-        transform 0.08s ease;
-}
-
-.cp-selectBtn:hover {
-    box-shadow: 0 8px 18px rgba(15, 23, 42, 0.06);
-}
-
-.cp-selectBtn:active {
-    transform: translateY(1px);
-}
-
-.cp-selectBtn.selected,
-.cp-selectBtn.is-active {
-    background: var(--cp-accent);
-    border-color: var(--cp-accent);
-    color: #fff;
-}
-
-.cp-selectBtn:disabled {
-    opacity: 0.55;
-    cursor: not-allowed;
-    box-shadow: none;
-}
-
-.cp-fileBtn {
-    justify-content: center;
-    display: inline-flex;
-    align-items: center;
-}
-
-.cp-buyWrap {
-    margin-top: 16px;
-}
-
-/* =========================================================
-   Configurator / details layout
+   Order/details layout only
 ========================================================= */
 
 .cp-detailsGrid {
@@ -527,46 +416,6 @@ Cards Page
     font-weight: 800;
     line-height: 1.2;
     color: var(--cp-ink);
-}
-
-.cp-formBlock {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    padding: 0 0 14px;
-}
-
-.cp-fieldLabel {
-    font-family: "Inter", sans-serif;
-    font-size: 13px;
-    font-weight: 750;
-    line-height: 1.2;
-    color: rgba(15, 23, 42, 0.86);
-}
-
-.cp-profileSelect {
-    width: 100%;
-    min-height: 48px;
-    border-radius: 14px;
-    border: 1px solid rgba(15, 23, 42, 0.14);
-    background: #fff;
-    color: var(--cp-ink);
-    padding: 0 14px;
-    font-family: "Inter", sans-serif;
-    font-size: 14px;
-    font-weight: 600;
-    outline: none;
-    transition: border-color 0.15s ease, box-shadow 0.15s ease;
-}
-
-.cp-profileSelect:focus {
-    border-color: rgba(249, 115, 22, 0.42);
-    box-shadow: 0 0 0 4px rgba(249, 115, 22, 0.1);
-}
-
-.cp-profileSelect:disabled {
-    opacity: 0.6;
-    cursor: not-allowed;
 }
 
 .cp-row {
