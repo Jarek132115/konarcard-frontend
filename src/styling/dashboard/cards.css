@@ -623,3 +623,23 @@ Cards Page
         min-height: 214px;
     }
 }
+
+/* =========================
+   OWNED PRODUCT CARDS
+========================= */
+
+.cp-ownedCard .cp-catalogTag {
+    background: rgba(249, 115, 22, 0.1);
+    color: #ea580c;
+    border: 1px solid rgba(249, 115, 22, 0.25);
+}
+
+.cp-ownedMeta {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    margin-top: 6px;
+    font-size: 12px;
+    font-weight: 500;
+    color: rgba(15, 23, 42, 0.6);
+}
