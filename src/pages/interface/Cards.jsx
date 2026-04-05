@@ -32,18 +32,50 @@ const PRODUCT_META = {
     key: "plastic-card",
     title: "Plastic NFC Business Card",
     edition: "plastic",
+    defaultVariant: "white",
   },
   "metal-card": {
     key: "metal-card",
     title: "Metal NFC Business Card",
     edition: "metal",
+    defaultVariant: "black",
   },
   konartag: {
     key: "konartag",
     title: "KonarTag NFC Key Tag",
     edition: "tag",
+    defaultVariant: "black",
   },
 };
+
+class CardPreviewErrorBoundary extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = { hasError: false };
+  }
+
+  static getDerivedStateFromError() {
+    return { hasError: true };
+  }
+
+  componentDidCatch(err) {
+    console.error("3D preview crashed:", err);
+  }
+
+  componentDidUpdate(prevProps) {
+    if (prevProps.resetKey !== this.props.resetKey && this.state.hasError) {
+      this.setState({ hasError: false });
+    }
+  }
+
+  render() {
+    if (this.state.hasError) {
+      return this.props.fallback || null;
+    }
+
+    return this.props.children;
+  }
+}
 
 function readIntent() {
   try {
@@ -208,6 +240,7 @@ export default function Cards() {
       clearIntent();
       setSelectedOrderView(false);
       setSelectedProductKey("");
+      setSelectedId(null);
       navigate("/cards", { replace: true });
       return;
     }
@@ -216,6 +249,7 @@ export default function Cards() {
       toast.error("Checkout cancelled.");
       setSelectedOrderView(false);
       setSelectedProductKey("");
+      setSelectedId(null);
       navigate("/cards", { replace: true });
       return;
     }
@@ -298,6 +332,7 @@ export default function Cards() {
               defaultLogoDataUrl={DEFAULT_LOGO_DATAURL}
               qrSrcFromLink={qrSrcFromLink}
               Card3DDetails={Card3DDetails}
+              CardPreviewErrorBoundary={CardPreviewErrorBoundary}
               formatMoneyMinor={formatMoneyMinor}
               onBack={backToCardsHome}
             />
