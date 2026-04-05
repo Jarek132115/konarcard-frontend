@@ -3,9 +3,6 @@
     --p-muted: var(--kc-text-secondary, #475569);
     --p-softLine: rgba(15, 23, 42, 0.1);
     --p-softShadow: 0 1px 0 rgba(15, 23, 42, 0.04), 0 10px 22px rgba(15, 23, 42, 0.04);
-    --p-orange: #f97316;
-    --p-orange-soft: rgba(249, 115, 22, 0.1);
-    --p-orange-border: rgba(249, 115, 22, 0.18);
     --p-red: rgba(239, 68, 68, 0.95);
     --p-red-border: rgba(239, 68, 68, 0.35);
 }
@@ -203,16 +200,18 @@
 }
 
 .profiles-actionBtn {
-    min-height: 50px;
-    padding: 12px 16px;
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    gap: 12px;
-    line-height: 1.15;
+    gap: 8px;
+    min-height: 44px;
+    padding: 10px 20px;
+    border-radius: 10px;
+    line-height: 1.1;
+    font-family: "Inter", sans-serif;
     font-size: 14px;
     font-weight: 700;
-    border-radius: 16px;
+    white-space: nowrap;
 }
 
 .profiles-actionBtn--wide {
@@ -223,23 +222,25 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    flex: 0 0 auto;
-    width: 20px;
-    height: 20px;
-    min-width: 20px;
-    min-height: 20px;
+    flex: 0 0 18px;
+    width: 18px;
+    height: 18px;
+    min-width: 18px;
+    min-height: 18px;
     color: currentColor;
 }
 
 .profiles-btnIconImg,
 .profiles-btnIconSvg {
     display: block;
-    width: 20px;
-    height: 20px;
-    min-width: 20px;
-    min-height: 20px;
+    width: 18px;
+    height: 18px;
+    min-width: 18px;
+    min-height: 18px;
     max-width: none;
-    flex: 0 0 20px;
+    max-height: none;
+    object-fit: contain;
+    flex: 0 0 18px;
 }
 
 .profiles-qrBlock {
@@ -334,18 +335,7 @@
     }
 
     .profiles-actionBtn {
-        gap: 10px;
         font-size: 13px;
-        min-height: 48px;
-    }
-
-    .profiles-btnIcon,
-    .profiles-btnIconImg,
-    .profiles-btnIconSvg {
-        width: 18px;
-        height: 18px;
-        min-width: 18px;
-        min-height: 18px;
     }
 
     .profiles-metricInlineVal {
@@ -428,8 +418,7 @@
     }
 
     .profiles-actionBtn {
-        min-height: 46px;
-        font-size: 13px;
+        width: 100%;
     }
 
     .profiles-qrWrap {
