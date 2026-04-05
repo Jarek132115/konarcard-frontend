@@ -59,6 +59,7 @@
 .odv-previewCard {
     min-height: 760px;
     padding: 16px;
+    min-width: 0;
 }
 
 .odv-sideStack {

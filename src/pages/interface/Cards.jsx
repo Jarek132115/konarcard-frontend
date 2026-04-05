@@ -11,7 +11,6 @@ import PurchasedProductCard from "../../components/Cards/PurchasedProductCard";
 
 import "../../styling/spacing.css";
 import "../../styling/dashboard/cards.css";
-import "../../styling/dashboard/order-details-view.css";
 
 import api from "../../services/api";
 
@@ -33,19 +32,16 @@ const PRODUCT_META = {
     key: "plastic-card",
     title: "Plastic NFC Business Card",
     edition: "plastic",
-    defaultVariant: "white",
   },
   "metal-card": {
     key: "metal-card",
     title: "Metal NFC Business Card",
     edition: "metal",
-    defaultVariant: "black",
   },
   konartag: {
     key: "konartag",
     title: "KonarTag NFC Key Tag",
     edition: "tag",
-    defaultVariant: "black",
   },
 };
 
@@ -318,29 +314,16 @@ export default function Cards() {
             onCheckoutSuccess={async () => { }}
           />
         ) : selectedOrderView ? (
-          <>
-            <div className="odv-backRow">
-              <button
-                type="button"
-                className="odv-backBtn"
-                onClick={backToCardsHome}
-              >
-                Back to cards
-              </button>
-            </div>
-
-            <section className="cp-card">
-              <OrderDetailsView
-                selectedOrder={selectedOrder}
-                productMeta={PRODUCT_META}
-                defaultLogoDataUrl={DEFAULT_LOGO_DATAURL}
-                qrSrcFromLink={qrSrcFromLink}
-                Card3DDetails={Card3DDetails}
-                CardPreviewErrorBoundary={CardPreviewErrorBoundary}
-                formatMoneyMinor={formatMoneyMinor}
-              />
-            </section>
-          </>
+          <OrderDetailsView
+            selectedOrder={selectedOrder}
+            productMeta={PRODUCT_META}
+            defaultLogoDataUrl={DEFAULT_LOGO_DATAURL}
+            qrSrcFromLink={qrSrcFromLink}
+            Card3DDetails={Card3DDetails}
+            CardPreviewErrorBoundary={CardPreviewErrorBoundary}
+            formatMoneyMinor={formatMoneyMinor}
+            onBack={backToCardsHome}
+          />
         ) : (
           <>
             <section className="cp-card">
