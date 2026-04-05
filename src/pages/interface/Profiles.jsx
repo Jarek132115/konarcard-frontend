@@ -462,6 +462,7 @@ export default function Profiles() {
 
         window.open(url, "_blank", "noopener,noreferrer,width=680,height=720");
     };
+
     const shareToWhatsApp = () => {
         if (!selectedPublicUrl) {
             toast.error("No profile link available yet.");
@@ -909,7 +910,7 @@ export default function Profiles() {
         return (
             <DashboardLayout hideDesktopHeader>
                 <div className="profiles-shell">
-                    <section className="profiles-card profiles-empty">
+                    <section className="profiles-card profiles-emptyCard">
                         <h2 className="profiles-card-title">We couldn’t load your profiles</h2>
                         <p className="profiles-muted">
                             Please try again. If this keeps happening, contact support.
@@ -938,149 +939,117 @@ export default function Profiles() {
                     subtitle="Profiles are your public digital business cards."
                 />
 
-                <div className="profiles-grid">
-                    <ProfilesList
-                        railRef={railRef}
-                        claimRef={claimRef}
-                        suppressClickRef={suppressClickRef}
-                        sortedProfiles={sortedProfiles}
-                        cappedProfiles={cappedProfiles}
-                        selectedProfile={selectedProfile}
-                        maxProfiles={maxProfiles}
-                        claimOpen={claimOpen}
-                        claimSlugInput={claimSlugInput}
-                        claimSlugNormalized={claimSlugNormalized}
-                        claimStatus={claimStatus}
-                        claimMessage={claimMessage}
-                        isTeams={isTeams}
-                        isPlus={isPlus}
-                        isFree={isFree}
-                        ProfileMiniMainPreview={ProfileMiniMainPreview}
-                        onRailPointerDown={handleRailPointerDown}
-                        onRailPointerMove={handleRailPointerMove}
-                        onRailPointerUp={handleRailPointerUp}
-                        onRailPointerLeave={handleRailPointerLeave}
-                        onCardSelect={handleCardSelect}
-                        onOpenLockedOverlay={openLockedOverlay}
-                        onEdit={handleEdit}
-                        onVisitProfile={handleVisitProfile}
-                        onOpenClaim={openClaimPanel}
-                        onCloseClaim={closeClaimPanel}
-                        onCheckAvailability={checkSlugAvailability}
-                        onCreateTeamsProfile={createTeamsProfileNow}
-                        onStartTeamsCheckout={startTeamsCheckout}
-                        onClaimInputChange={(value) => {
-                            setClaimSlugInput(value);
-                            setClaimStatus("idle");
-                            setClaimMessage("");
-                        }}
-                    />
-
-                    {selectedProfile ? (
-                        <ProfilesInfo
+                <section className="profiles-main">
+                    <div className="profiles-grid">
+                        <ProfilesList
+                            railRef={railRef}
+                            claimRef={claimRef}
+                            suppressClickRef={suppressClickRef}
+                            sortedProfiles={sortedProfiles}
+                            cappedProfiles={cappedProfiles}
                             selectedProfile={selectedProfile}
-                            selectedPublicUrl={selectedPublicUrl}
-                            selectedQrTrackedUrl={selectedQrTrackedUrl}
-                            selectedNfcTrackedUrl={selectedNfcTrackedUrl}
-                            onCopyLink={handleCopyPublicLink}
-                            onCopyQrLink={handleCopyQrLink}
-                            onCopyNfcLink={handleCopyNfcLink}
-                            onDownloadQr={handleDownloadQr}
-                            onFacebook={shareToFacebook}
-                            onInstagram={shareToInstagram}
-                            onMessenger={shareToMessenger}
-                            onWhatsApp={shareToWhatsApp}
-                            onText={shareByText}
-                            onAppleWallet={handleAppleWallet}
-                            onGoogleWallet={handleGoogleWallet}
+                            maxProfiles={maxProfiles}
+                            claimOpen={claimOpen}
+                            claimSlugInput={claimSlugInput}
+                            claimSlugNormalized={claimSlugNormalized}
+                            claimStatus={claimStatus}
+                            claimMessage={claimMessage}
+                            isTeams={isTeams}
+                            isPlus={isPlus}
+                            isFree={isFree}
+                            ProfileMiniMainPreview={ProfileMiniMainPreview}
+                            onRailPointerDown={handleRailPointerDown}
+                            onRailPointerMove={handleRailPointerMove}
+                            onRailPointerUp={handleRailPointerUp}
+                            onRailPointerLeave={handleRailPointerLeave}
+                            onCardSelect={handleCardSelect}
+                            onOpenLockedOverlay={openLockedOverlay}
                             onEdit={handleEdit}
-                            onDelete={handleDelete}
+                            onVisitProfile={handleVisitProfile}
+                            onOpenClaim={openClaimPanel}
+                            onCloseClaim={closeClaimPanel}
+                            onCheckAvailability={checkSlugAvailability}
+                            onCreateTeamsProfile={createTeamsProfileNow}
+                            onStartTeamsCheckout={startTeamsCheckout}
+                            onClaimInputChange={(value) => {
+                                setClaimSlugInput(value);
+                                setClaimStatus("idle");
+                                setClaimMessage("");
+                            }}
                         />
-                    ) : (
-                        <section className="profiles-card profiles-emptyInfoCard">
-                            <div className="profiles-emptyInfoHead">
-                                <h2 className="profiles-card-title">Profile details</h2>
-                                <p className="profiles-muted">
-                                    Once you create a profile, your public link, QR code, sharing tools
-                                    and actions will show here.
-                                </p>
-                            </div>
 
-                            <div className="profiles-emptyInfoPanel">
-                                <div className="profiles-emptyInfoBlock">
-                                    <div className="profiles-emptyInfoLabel">Public link</div>
-                                    <div className="profiles-emptyInfoValue">
-                                        Create a profile to generate your link.
-                                    </div>
+                        {selectedProfile ? (
+                            <ProfilesInfo
+                                selectedProfile={selectedProfile}
+                                selectedPublicUrl={selectedPublicUrl}
+                                selectedQrTrackedUrl={selectedQrTrackedUrl}
+                                selectedNfcTrackedUrl={selectedNfcTrackedUrl}
+                                onCopyLink={handleCopyPublicLink}
+                                onCopyQrLink={handleCopyQrLink}
+                                onCopyNfcLink={handleCopyNfcLink}
+                                onDownloadQr={handleDownloadQr}
+                                onFacebook={shareToFacebook}
+                                onInstagram={shareToInstagram}
+                                onMessenger={shareToMessenger}
+                                onWhatsApp={shareToWhatsApp}
+                                onText={shareByText}
+                                onAppleWallet={handleAppleWallet}
+                                onGoogleWallet={handleGoogleWallet}
+                                onEdit={handleEdit}
+                                onDelete={handleDelete}
+                            />
+                        ) : (
+                            <section className="profiles-card profiles-emptyInfoCard">
+                                <div className="profiles-emptyInfoHead">
+                                    <h2 className="profiles-card-title">Profile details</h2>
+                                    <p className="profiles-muted">
+                                        Once you create a profile, your public link, QR code, sharing tools
+                                        and actions will show here.
+                                    </p>
                                 </div>
 
-                                <div className="profiles-emptyInfoBlock">
-                                    <div className="profiles-emptyInfoLabel">QR code</div>
-                                    <div className="profiles-emptyInfoValue">
-                                        Your QR code will appear here once your first profile is created.
+                                <div className="profiles-emptyInfoPanel">
+                                    <div className="profiles-emptyInfoBlock">
+                                        <div className="profiles-emptyInfoLabel">Public link</div>
+                                        <div className="profiles-emptyInfoValue">
+                                            Create a profile to generate your link.
+                                        </div>
                                     </div>
-                                </div>
 
-                                <div className="profiles-emptyInfoBlock">
-                                    <div className="profiles-emptyInfoLabel">Share tools</div>
-                                    <div className="profiles-emptyInfoValue">
-                                        Copy link, social share, wallet tools and profile actions will
-                                        appear here.
+                                    <div className="profiles-emptyInfoBlock">
+                                        <div className="profiles-emptyInfoLabel">QR code</div>
+                                        <div className="profiles-emptyInfoValue">
+                                            Your QR code will appear here once your first profile is created.
+                                        </div>
+                                    </div>
+
+                                    <div className="profiles-emptyInfoBlock">
+                                        <div className="profiles-emptyInfoLabel">Share tools</div>
+                                        <div className="profiles-emptyInfoValue">
+                                            Copy link, social share, wallet tools and profile actions will
+                                            appear here.
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                        </section>
-                    )}
-                </div>
+                            </section>
+                        )}
+                    </div>
+                </section>
 
                 {lockedOverlayOpen ? (
                     <div
+                        className="profiles-overlay"
                         role="dialog"
                         aria-modal="true"
                         onMouseDown={(e) => {
                             if (e.target === e.currentTarget) closeLockedOverlay();
                         }}
-                        style={{
-                            position: "fixed",
-                            inset: 0,
-                            zIndex: 9999,
-                            background: "rgba(15, 23, 42, 0.55)",
-                            display: "grid",
-                            placeItems: "center",
-                            padding: 16,
-                        }}
                     >
-                        <div
-                            style={{
-                                width: "min(520px, 100%)",
-                                background: "#fff",
-                                borderRadius: 18,
-                                border: "1px solid rgba(15,23,42,0.12)",
-                                boxShadow: "0 30px 80px rgba(15,23,42,0.28)",
-                                padding: 18,
-                                fontFamily: "Inter, sans-serif",
-                                color: "var(--kc-text-primary, #0f172a)",
-                            }}
-                        >
-                            <div
-                                style={{
-                                    display: "flex",
-                                    alignItems: "flex-start",
-                                    justifyContent: "space-between",
-                                    gap: 12,
-                                }}
-                            >
+                        <div className="profiles-overlayCard">
+                            <div className="profiles-overlayHead">
                                 <div>
-                                    <div style={{ fontSize: 16, fontWeight: 800, marginBottom: 6 }}>
-                                        This profile is locked
-                                    </div>
-                                    <div
-                                        style={{
-                                            fontSize: 13,
-                                            fontWeight: 500,
-                                            color: "rgba(15,23,42,0.75)",
-                                        }}
-                                    >
+                                    <div className="profiles-overlayTitle">This profile is locked</div>
+                                    <div className="profiles-overlaySub">
                                         You downgraded to the <strong>{overlayPlanName}</strong> plan.
                                     </div>
                                 </div>
@@ -1089,29 +1058,13 @@ export default function Profiles() {
                                     type="button"
                                     onClick={closeLockedOverlay}
                                     aria-label="Close"
-                                    style={{
-                                        border: "1px solid rgba(15,23,42,0.12)",
-                                        background: "#fff",
-                                        borderRadius: 12,
-                                        width: 38,
-                                        height: 38,
-                                        cursor: "pointer",
-                                        fontWeight: 900,
-                                        lineHeight: 1,
-                                    }}
+                                    className="profiles-overlayClose"
                                 >
                                     ✕
                                 </button>
                             </div>
 
-                            <div
-                                style={{
-                                    marginTop: 12,
-                                    fontSize: 13,
-                                    color: "rgba(15,23,42,0.85)",
-                                    lineHeight: 1.5,
-                                }}
-                            >
+                            <div className="profiles-overlayCopy">
                                 {overlayLimitText}{" "}
                                 {lockedCount > 0 ? (
                                     <>
@@ -1121,40 +1074,19 @@ export default function Profiles() {
                                 ) : null}
                             </div>
 
-                            <div
-                                style={{
-                                    marginTop: 10,
-                                    fontSize: 13,
-                                    color: "rgba(15,23,42,0.85)",
-                                    lineHeight: 1.5,
-                                }}
-                            >
+                            <div className="profiles-overlayCopy">
                                 To unlock your old profiles, upgrade back to <strong>Teams</strong>. If
                                 you don’t upgrade, your locked profiles will be permanently removed in{" "}
                                 <strong>30 days</strong>.
                             </div>
 
                             {lockedClickedSlug ? (
-                                <div
-                                    style={{
-                                        marginTop: 10,
-                                        fontSize: 12,
-                                        color: "rgba(15,23,42,0.6)",
-                                    }}
-                                >
+                                <div className="profiles-overlayMeta">
                                     Locked profile: <strong>{lockedClickedSlug}</strong>
                                 </div>
                             ) : null}
 
-                            <div
-                                style={{
-                                    display: "flex",
-                                    gap: 10,
-                                    marginTop: 16,
-                                    justifyContent: "flex-end",
-                                    flexWrap: "wrap",
-                                }}
-                            >
+                            <div className="profiles-overlayActions">
                                 <button
                                     type="button"
                                     className="kx-btn kx-btn--white"
