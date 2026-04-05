@@ -1,55 +1,71 @@
-import React, { useEffect, useMemo, useState } from "react";
-import { Link } from "react-router-dom";
+import React, { useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
+import CopyLinkIcon from "../../assets/icons/CopyLink.svg";
 
-import "../../styling/spacing.css";
-import "../../styling/dashboard/dashboard.css";
+import ShareOnFacebookIcon from "../../assets/icons/ShareOnFacebook.svg";
+import ShareOnInstagramIcon from "../../assets/icons/ShareOnInstagram.svg";
+import ShareOnMessengerIcon from "../../assets/icons/ShareOnMessenger.svg";
+import ShareOnWhatsappIcon from "../../assets/icons/ShareOnWhatsapp.svg";
+import ShareOnTextIcon from "../../assets/icons/ShareOnText.svg";
+import ShareOnCopyIcon from "../../assets/icons/ShareOnCopy.svg";
+import ShareOnQRCodeIcon from "../../assets/icons/ShareOnQRCode.svg";
+import ShareOnAppleWalletIcon from "../../assets/icons/ShareOnAppleWallet.svg";
+import ShareOnGoogleWalletIcon from "../../assets/icons/ShareOnGoogleWallet.svg";
+import ShareOnEditProfileIcon from "../../assets/icons/ShareOnEditProfile.svg";
 
-import DashboardLayout from "../../components/Dashboard/DashboardLayout";
-import PageHeader from "../../components/Dashboard/PageHeader";
-import ShareProfile from "../../components/ShareProfile";
-
-import { useAuthUser } from "../../hooks/useAuthUser";
-import { useMyProfiles } from "../../hooks/useBusinessCard";
 import api from "../../services/api";
+import { resolveMediaUrl } from "../../utils/profileHelpers";
 
-import GrowYourReachIcon from "../../assets/icons/GrowYourReach.svg";
-
-const centerTrim = (v) => (v ?? "").toString().trim();
-const safeLower = (v) => centerTrim(v).toLowerCase();
-const asArray = (v) => (Array.isArray(v) ? v : []);
-const hasText = (v) => typeof v === "string" && v.trim().length > 0;
-
-const normalizeSlug = (raw) =>
-    safeLower(raw)
-        .replace(/[^a-z0-9-]/g, "")
-        .replace(/-+/g, "-")
-        .replace(/^-|-$/g, "");
-
-const buildPublicUrl = (profileSlug) => {
-    const s = normalizeSlug(profileSlug);
-    if (!s) return `${window.location.origin}/u/`;
-    return `${window.location.origin}/u/${encodeURIComponent(s)}`;
-};
-
-function ShareIcon() {
+function ActionIcon({ src, alt = "" }) {
     return (
-        <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true">
+        <span className="profiles-btnIcon" aria-hidden="true">
+            <img src={src} alt={alt} className="profiles-btnIconImg" />
+        </span>
+    );
+}
+
+function IconTrash() {
+    return (
+        <svg viewBox="0 0 24 24" className="profiles-btnIconSvg" aria-hidden="true">
             <path
-                d="M16 5a3 3 0 1 0 2.83 4H19a1 1 0 0 0-1-1h-.17A3 3 0 0 0 16 5zM6 14a3 3 0 1 0 2.83 4H9a1 1 0 0 0-1-1h-.17A3 3 0 0 0 6 14zM16 14a3 3 0 1 0 2.83 4H19a1 1 0 0 0-1-1h-.17A3 3 0 0 0 16 14z"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinejoin="round"
-            />
-            <path
-                d="M8.6 15.3l6.8-3.6M8.6 8.7l6.8 3.6"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinejoin="round"
+                fill="currentColor"
+                d="M9 3h6l1 2h4v2H4V5h4l1-2Zm1 6h2v8h-2V9Zm4 0h2v8h-2V9ZM7 9h2v8H7V9Zm1 12a2 2 0 0 1-2-2V8h12v11a2 2 0 0 1-2 2H8Z"
             />
         </svg>
+    );
+}
+
+function MetricInline({ value, label }) {
+    return (
+        <div className="profiles-metricInline">
+            <span className="profiles-metricInlineVal">{value}</span>
+            <span className="profiles-metricInlineLab">{label}</span>
+        </div>
+    );
+}
+
+function LinkRow({ label, value, onCopy, copyLabel }) {
+    if (!value) return null;
+
+    return (
+        <div className="profiles-linkBlock">
+            <div className="profiles-previewLinkLabel">{label}</div>
+
+            <div className="profiles-previewLinkRow">
+                <div className="profiles-previewLinkUrl" title={value}>
+                    {value}
+                </div>
+
+                <button
+                    type="button"
+                    className="profiles-copyIconBtn"
+                    onClick={onCopy}
+                    aria-label={copyLabel || `Copy ${label}`}
+                >
+                    <img src={CopyLinkIcon} alt="" className="profiles-copyIcon24" />
+                </button>
+            </div>
+        </div>
     );
 }
 
@@ -57,514 +73,267 @@ function numberFormat(value) {
     return new Intl.NumberFormat("en-GB").format(Number(value) || 0);
 }
 
-function formatActivityTime(dateValue) {
-    if (!dateValue) return "";
-    const now = Date.now();
-    const date = new Date(dateValue).getTime();
-    if (Number.isNaN(date)) return "";
-
-    const diffMs = Math.max(0, now - date);
-    const minutes = Math.floor(diffMs / (1000 * 60));
-    const hours = Math.floor(diffMs / (1000 * 60 * 60));
-    const days = Math.floor(diffMs / (1000 * 60 * 60 * 24));
-
-    if (minutes < 1) return "Just now";
-    if (minutes < 60) return `${minutes} min ago`;
-    if (hours < 24) return `${hours} hour${hours === 1 ? "" : "s"} ago`;
-    return `${days} day${days === 1 ? "" : "s"} ago`;
-}
-
-function humanizeSocialTarget(target = "") {
-    const clean = String(target || "").trim().toLowerCase();
-
-    if (clean === "facebook_url" || clean === "facebook") return "Facebook";
-    if (clean === "instagram_url" || clean === "instagram") return "Instagram";
-    if (clean === "linkedin_url" || clean === "linkedin") return "LinkedIn";
-    if (clean === "x_url" || clean === "twitter_url" || clean === "x" || clean === "twitter") return "X";
-    if (clean === "tiktok_url" || clean === "tiktok") return "TikTok";
-
-    return "";
-}
-
-function getActivityMessage(item) {
-    const type = item?.event_type || item?.eventType || "";
-    const name = item?.contact_name || item?.contactName || item?.name || "";
-    const target = item?.action_target || item?.actionTarget || "";
-
-    switch (type) {
-        case "qr_scan":
-            return "Someone scanned your QR code";
-        case "nfc_tap":
-            return "Someone tapped your NFC card";
-        case "link_open":
-            return "Someone clicked your link";
-        case "contact_save":
-            return "Someone saved your number";
-        case "contact_exchange":
-        case "contact_exchange_submitted":
-            return name ? `${name} exchanged contacts with you` : "Someone exchanged contacts with you";
-        case "contact_exchange_opened":
-            return "Someone opened your contact exchange form";
-        case "email_clicked":
-            return "Someone clicked your email";
-        case "phone_clicked":
-            return "Someone clicked your phone number";
-        case "social_clicked": {
-            const socialName = humanizeSocialTarget(target);
-            return socialName
-                ? `Someone clicked your ${socialName} profile`
-                : "Someone clicked one of your social links";
-        }
-        case "profile_view":
-            return "Someone viewed your profile";
-        default:
-            return item?.message || "New activity on your profile";
-    }
-}
-
-function getPrimaryProfile(cards) {
-    const xs = asArray(cards);
-    if (!xs.length) return null;
-
-    return (
-        xs.find((c) => c?.is_default === true || c?.isDefault === true) ||
-        xs.find((c) => safeLower(c?.profile_slug) === "main") ||
-        xs[0]
-    );
-}
-
-function computeProfileCompletion(card) {
-    const works = asArray(card?.works || card?.workImages);
-    const services = asArray(card?.services);
-    const reviews = asArray(card?.reviews);
-
-    const items = [
-        {
-            key: "coverPhoto",
-            label: "Add a cover photo",
-            done: hasText(card?.cover_photo) || hasText(card?.coverPhoto),
-        },
-        {
-            key: "logo",
-            label: "Add logo",
-            done: hasText(card?.logo) || hasText(card?.avatar),
-        },
-        {
-            key: "businessName",
-            label: "Add business name",
-            done:
-                hasText(card?.business_card_name) ||
-                hasText(card?.businessCardName) ||
-                hasText(card?.business_name) ||
-                hasText(card?.businessName) ||
-                hasText(card?.main_heading) ||
-                hasText(card?.mainHeading),
-        },
-        {
-            key: "tradeTitle",
-            label: "Add trade title",
-            done:
-                hasText(card?.trade_title) ||
-                hasText(card?.tradeTitle) ||
-                hasText(card?.sub_heading) ||
-                hasText(card?.subHeading) ||
-                hasText(card?.job_title) ||
-                hasText(card?.jobTitle),
-        },
-        {
-            key: "bio",
-            label: "Add a bio",
-            done: hasText(card?.bio),
-        },
-        {
-            key: "location",
-            label: "Add your location",
-            done: hasText(card?.location),
-        },
-        {
-            key: "workImages",
-            label: "Add your work images",
-            done: works.length > 0,
-        },
-        {
-            key: "services",
-            label: "Add your services",
-            done: services.length > 0,
-        },
-        {
-            key: "reviews",
-            label: "Add your reviews",
-            done: reviews.length > 0,
-        },
-        {
-            key: "email",
-            label: "Add your email",
-            done:
-                hasText(card?.contact_email) ||
-                hasText(card?.contactEmail) ||
-                hasText(card?.email),
-        },
-        {
-            key: "phone",
-            label: "Add your phone number",
-            done:
-                hasText(card?.phone_number) ||
-                hasText(card?.phoneNumber) ||
-                hasText(card?.phone),
-        },
-        {
-            key: "socials",
-            label: "Add your social medias",
-            done:
-                hasText(card?.facebook_url) ||
-                hasText(card?.instagram_url) ||
-                hasText(card?.linkedin_url) ||
-                hasText(card?.x_url) ||
-                hasText(card?.twitter_url) ||
-                hasText(card?.tiktok_url),
-        },
-    ];
-
-    const sortedItems = [...items].sort((a, b) => {
-        if (a.done === b.done) return 0;
-        return a.done ? 1 : -1;
-    });
-
-    const doneCount = items.filter((i) => i.done).length;
-    const total = items.length;
-    const percent = Math.round((doneCount / total) * 100);
-
-    return { items: sortedItems, doneCount, total, percent };
-}
-
-function extractOrders(data) {
-    if (Array.isArray(data)) return data;
-    if (Array.isArray(data?.orders)) return data.orders;
-    if (Array.isArray(data?.items)) return data.items;
-    if (Array.isArray(data?.data)) return data.data;
-    return [];
-}
-
-function ownsPhysicalProduct(orders) {
-    const xs = extractOrders(orders);
-
-    return xs.some((order) => {
-        const status = safeLower(order?.status);
-        const quantity = Number(order?.quantity || order?.qty || 0);
-        return (
-            quantity > 0 ||
-            status === "paid" ||
-            status === "processing" ||
-            status === "shipped" ||
-            status === "delivered"
-        );
-    });
-}
-
-function MetricCard({ label, value, helper, featured = false }) {
-    return (
-        <div className={`db-statCard ${featured ? "db-statCard--featured" : ""}`}>
-            <div className="db-statLabel">{label}</div>
-            <div className="db-statValue">{numberFormat(value)}</div>
-            <div className="db-statHelper">{helper}</div>
-        </div>
-    );
-}
-
-export default function Dashboard() {
-    const { data: authUser } = useAuthUser();
-    const { data: cards } = useMyProfiles();
-
-    const plan = safeLower(authUser?.plan || "free");
-    const displayPlan = `Plan: ${plan.charAt(0).toUpperCase()}${plan.slice(1)}`;
-    const displayName = authUser?.name?.split(" ")?.[0] || "there";
-
-    const profilesForShare = useMemo(() => {
-        const xs = Array.isArray(cards) ? cards : [];
-        return xs
-            .map((c) => {
-                const slug = centerTrim(c.profile_slug);
-                if (!slug) return null;
-
-                const name =
-                    centerTrim(c.business_card_name) ||
-                    centerTrim(c.full_name) ||
-                    (slug === "main" ? "Main Profile" : "Profile");
-
-                return { slug, name, url: buildPublicUrl(slug) };
-            })
-            .filter(Boolean);
-    }, [cards]);
-
-    const [shareOpen, setShareOpen] = useState(false);
-    const [selectedSlug, setSelectedSlug] = useState(null);
-
-    useEffect(() => {
-        if (!profilesForShare.length) {
-            setSelectedSlug(null);
-            return;
-        }
-        setSelectedSlug((prev) => prev || profilesForShare[0].slug);
-    }, [profilesForShare]);
-
-    const selectedProfile = useMemo(() => {
-        if (!profilesForShare.length) return null;
-        return profilesForShare.find((p) => p.slug === selectedSlug) || profilesForShare[0];
-    }, [profilesForShare, selectedSlug]);
-
-    const primaryProfile = useMemo(() => getPrimaryProfile(cards), [cards]);
-    const completion = useMemo(() => computeProfileCompletion(primaryProfile), [primaryProfile]);
+export default function ProfilesInfo({
+    selectedProfile,
+    selectedPublicUrl,
+    onCopyLink,
+    onDownloadQr,
+    onFacebook,
+    onInstagram,
+    onMessenger,
+    onWhatsApp,
+    onText,
+    onAppleWallet,
+    onGoogleWallet,
+    onEdit,
+    onDelete,
+}) {
+    const resolvedQrCodeUrl = resolveMediaUrl(selectedProfile?.qrCodeUrl);
+    const publicUrl = selectedPublicUrl || "";
+    const profileSlug = selectedProfile?.slug || "";
+    const showCompletionPill = Number(selectedProfile?.pct || 0) < 100;
 
     const analyticsQuery = useQuery({
-        queryKey: ["dashboard-analytics-summary"],
+        queryKey: ["profiles-info-summary", profileSlug],
         queryFn: async () => {
-            const res = await api.get("/api/analytics/summary?days=7");
+            const params = new URLSearchParams();
+            params.set("days", "3650");
+            params.set("profileSlug", profileSlug);
+
+            const res = await api.get(`/api/analytics/summary?${params.toString()}`);
             return res.data;
         },
+        enabled: !!profileSlug,
         staleTime: 30 * 1000,
     });
 
-    const ordersQuery = useQuery({
-        queryKey: ["dashboard-physical-orders"],
-        queryFn: async () => {
-            try {
-                const res = await api.get("/api/nfc-orders/my-orders");
-                return res.data;
-            } catch {
-                try {
-                    const res = await api.get("/api/nfc-orders");
-                    return res.data;
-                } catch {
-                    return [];
-                }
-            }
-        },
-        staleTime: 2 * 60 * 1000,
-    });
-
-    const metrics = analyticsQuery.data?.metrics || {
-        profileViews: 0,
-        cardTaps: 0,
-        qrScans: 0,
-        linkOpens: 0,
-    };
-
-    const recentActivityRaw =
-        analyticsQuery.data?.recentActivity || analyticsQuery.data?.recentEvents || [];
-
-    const recentActivity = recentActivityRaw
-        .slice(0, 10)
-        .map((item, index) => ({
-            id: item?.id || item?._id || `activity-${index}`,
-            message: item?.message || getActivityMessage(item),
-            timeLabel: formatActivityTime(item?.createdAt || item?.timestamp || item?.date),
-        }));
-
-    const hasPhysicalCard = useMemo(
-        () => ownsPhysicalProduct(ordersQuery.data),
-        [ordersQuery.data]
-    );
-
-    const headerRight = (
-        <div className="db-headRight">
-            <span className="db-pill">{displayPlan}</span>
-
-            <button
-                type="button"
-                className="kx-btn kx-btn--black"
-                onClick={() => setShareOpen(true)}
-                disabled={!selectedProfile}
-                title={!selectedProfile ? "Create a profile first" : "Share your profile"}
-            >
-                <span className="db-btnIco" aria-hidden="true">
-                    <ShareIcon />
-                </span>
-                Share Your Profile
-            </button>
-        </div>
-    );
+    const metrics = useMemo(() => {
+        const raw = analyticsQuery.data?.metrics || {};
+        return {
+            profileViews: Number(raw.profileViews) || 0,
+            linkOpens: Number(raw.linkOpens) || 0,
+            cardTaps: Number(raw.cardTaps) || 0,
+            qrScans: Number(raw.qrScans) || 0,
+        };
+    }, [analyticsQuery.data]);
 
     return (
-        <DashboardLayout hideDesktopHeader>
-            <div className="db-shell">
-                <PageHeader
-                    title="Dashboard"
-                    subtitle={`Welcome back ${displayName}. Here’s how your profile is performing.`}
-                    rightSlot={headerRight}
-                />
+        <aside className="profiles-right">
+            <section className="profiles-card profiles-actionsCard">
+                {selectedProfile ? (
+                    <>
+                        <div className="profiles-infoSection profiles-infoSection--first">
+                            <div className="profiles-actionsTop">
+                                <div className="profiles-pillRow profiles-previewPills">
+                                    <span className={`profiles-pill ${selectedProfile.isLive ? "live" : "draft"}`}>
+                                        {selectedProfile.isLive ? "Live" : "Draft"}
+                                    </span>
 
-                <ShareProfile
-                    isOpen={shareOpen}
-                    onClose={() => setShareOpen(false)}
-                    profiles={profilesForShare}
-                    selectedSlug={selectedSlug}
-                    onSelectSlug={setSelectedSlug}
-                    username={authUser?.name || "konarcard"}
-                    profileUrl={selectedProfile?.url || ""}
-                />
-
-                <div className="db-grid">
-                    <section className="db-statsRow db-span-12">
-                        <MetricCard
-                            label="Total Views"
-                            value={metrics.profileViews}
-                            helper={
-                                Number(metrics.profileViews) > 0
-                                    ? "Your profile is getting attention."
-                                    : "Share more to start getting views."
-                            }
-                            featured
-                        />
-
-                        <MetricCard
-                            label="NFC Taps"
-                            value={metrics.cardTaps}
-                            helper={
-                                hasPhysicalCard
-                                    ? Number(metrics.cardTaps) > 0
-                                        ? "People are tapping your card."
-                                        : "Start tapping your card to drive traffic."
-                                    : "Order a physical card to unlock taps."
-                            }
-                        />
-
-                        <MetricCard
-                            label="QR Scans"
-                            value={metrics.qrScans}
-                            helper={
-                                Number(metrics.qrScans) > 0
-                                    ? "Your QR code is being scanned."
-                                    : "Share more to start getting scans."
-                            }
-                        />
-
-                        <MetricCard
-                            label="Link Clicks"
-                            value={metrics.linkOpens}
-                            helper={
-                                Number(metrics.linkOpens) > 0
-                                    ? "Your link is driving visits."
-                                    : "Share more to start getting clicks."
-                            }
-                        />
-                    </section>
-
-                    <section className="db-card db-card--share db-span-12">
-                        <div className="db-shareLeft">
-                            <span className="db-shareIcon" aria-hidden="true">
-                                <img src={GrowYourReachIcon} alt="" />
-                            </span>
-
-                            <div>
-                                <h2 className="db-cardTitle">Share More</h2>
-                                <p className="db-muted">
-                                    Share your profile to get more views, taps, scans and saved contacts.
-                                </p>
-                            </div>
-                        </div>
-
-                        <div className="db-shareActions">
-                            <button
-                                type="button"
-                                className="kx-btn kx-btn--orange"
-                                onClick={() => setShareOpen(true)}
-                                disabled={!selectedProfile}
-                            >
-                                Share Profile
-                            </button>
-
-                            <Link to="/analytics" className="kx-btn kx-btn--white">
-                                View Analytics
-                            </Link>
-                        </div>
-                    </section>
-
-                    <section className="db-card db-card--equal db-span-6">
-                        <div className="db-cardHead">
-                            <div>
-                                <h2 className="db-cardTitle">Recent Activity</h2>
-                                <p className="db-muted">See what’s been happening on your profile recently.</p>
-                            </div>
-                        </div>
-
-                        <div className="db-scrollPanel">
-                            {recentActivity.length ? (
-                                recentActivity.map((item) => (
-                                    <div key={item.id} className="db-activityRow">
-                                        <span className="db-activityDot" />
-                                        <div className="db-activityMain">
-                                            <span className="db-activityText">{item.message}</span>
-                                            <span className="db-activityMeta">{item.timeLabel}</span>
-                                        </div>
-                                    </div>
-                                ))
-                            ) : (
-                                <div className="db-emptyState">
-                                    No recent activity yet. Share your profile to start seeing engagement.
+                                    {showCompletionPill ? (
+                                        <span className={`profiles-pill completion ${selectedProfile.tone}`}>
+                                            {selectedProfile.pct}% Complete
+                                        </span>
+                                    ) : null}
                                 </div>
-                            )}
-                        </div>
 
-                        <div className="db-bottomCta">
-                            <Link to="/analytics" className="kx-btn kx-btn--black">
-                                View Recent Activity
-                            </Link>
-                        </div>
-                    </section>
+                                <LinkRow
+                                    label="Profile link"
+                                    value={publicUrl}
+                                    onCopy={onCopyLink}
+                                    copyLabel="Copy profile link"
+                                />
 
-                    <section className="db-card db-card--equal db-span-6">
-                        <div className="db-cardHead">
-                            <div>
-                                <h2 className="db-cardTitle">Profile Completion</h2>
-                                <p className="db-muted">
-                                    Finish your profile to look more professional and get more jobs.
-                                </p>
-                            </div>
-                        </div>
-
-                        <div className="db-progressMeta">
-                            <span>{completion.percent}% complete</span>
-                            <span>
-                                {completion.doneCount} of {completion.total} steps finished
-                            </span>
-                        </div>
-
-                        <div className="db-progressBar">
-                            <span className="db-progressFill" style={{ width: `${completion.percent}%` }} />
-                        </div>
-
-                        <div className="db-completeLabel">Still to do:</div>
-
-                        <div className="db-scrollPanel">
-                            {completion.items.length ? (
-                                completion.items.map((item) => (
-                                    <div key={item.key} className="db-activityRow">
-                                        <div className="db-activityMain">
-                                            <span className={`db-activityText ${item.done ? "done" : ""}`}>
-                                                {item.label}
-                                            </span>
-                                            <span
-                                                className={`db-activityDot db-activityDot--right ${item.done ? "done" : ""}`}
-                                                aria-hidden="true"
+                                <div className="profiles-previewMetricsRow">
+                                    {analyticsQuery.isLoading ? (
+                                        <div className="profiles-metricsInline profiles-metricsInline--loading">
+                                            <div className="profiles-metricSkeleton" />
+                                            <div className="profiles-metricSkeleton" />
+                                            <div className="profiles-metricSkeleton" />
+                                            <div className="profiles-metricSkeleton" />
+                                        </div>
+                                    ) : (
+                                        <div className="profiles-metricsInline" aria-label="Profile lifetime metrics">
+                                            <MetricInline
+                                                value={numberFormat(metrics.profileViews)}
+                                                label="Profile Views"
+                                            />
+                                            <MetricInline
+                                                value={numberFormat(metrics.linkOpens)}
+                                                label="Link Taps"
+                                            />
+                                            <MetricInline
+                                                value={numberFormat(metrics.cardTaps)}
+                                                label="NFC Taps"
+                                            />
+                                            <MetricInline
+                                                value={numberFormat(metrics.qrScans)}
+                                                label="QR Scans"
                                             />
                                         </div>
-                                    </div>
-                                ))
-                            ) : (
-                                <div className="db-emptyState">
-                                    Start building your profile to unlock more value from KonarCard.
+                                    )}
                                 </div>
-                            )}
+                            </div>
                         </div>
 
-                        <div className="db-bottomCta">
-                            <Link to="/profiles" className="kx-btn kx-btn--black">
-                                Complete Your Profile
-                            </Link>
+                        <div className="profiles-divider" />
+
+                        <div className="profiles-infoSection">
+                            <div className="profiles-actionGroup">
+                                <h3 className="profiles-groupTitle">QR code</h3>
+
+                                <div className="profiles-qrBlock">
+                                    <div className="profiles-qrWrap profiles-qrWrap--wide">
+                                        {resolvedQrCodeUrl ? (
+                                            <img
+                                                src={resolvedQrCodeUrl}
+                                                alt={`${selectedProfile.slug} QR code`}
+                                                className="profiles-qrImage"
+                                            />
+                                        ) : (
+                                            <div className="profiles-qrPlaceholder">QR not available yet</div>
+                                        )}
+                                    </div>
+
+                                    <div className="profiles-singleAction profiles-singleAction--wide">
+                                        <button
+                                            type="button"
+                                            className="kx-btn kx-btn--white profiles-actionBtn profiles-actionBtn--wide"
+                                            onClick={onDownloadQr}
+                                        >
+                                            <ActionIcon src={ShareOnQRCodeIcon} />
+                                            <span>Download QR code</span>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
-                    </section>
-                </div>
-            </div>
-        </DashboardLayout>
+
+                        <div className="profiles-divider" />
+
+                        <div className="profiles-infoSection">
+                            <div className="profiles-actionGroup">
+                                <h3 className="profiles-groupTitle">Share your profile</h3>
+
+                                <div className="profiles-actionGrid">
+                                    <button
+                                        type="button"
+                                        className="kx-btn kx-btn--white profiles-actionBtn"
+                                        onClick={onFacebook}
+                                    >
+                                        <ActionIcon src={ShareOnFacebookIcon} />
+                                        <span>Facebook</span>
+                                    </button>
+
+                                    <button
+                                        type="button"
+                                        className="kx-btn kx-btn--white profiles-actionBtn"
+                                        onClick={onInstagram}
+                                    >
+                                        <ActionIcon src={ShareOnInstagramIcon} />
+                                        <span>Instagram</span>
+                                    </button>
+
+                                    <button
+                                        type="button"
+                                        className="kx-btn kx-btn--white profiles-actionBtn"
+                                        onClick={onMessenger}
+                                    >
+                                        <ActionIcon src={ShareOnMessengerIcon} />
+                                        <span>Messenger</span>
+                                    </button>
+
+                                    <button
+                                        type="button"
+                                        className="kx-btn kx-btn--white profiles-actionBtn"
+                                        onClick={onWhatsApp}
+                                    >
+                                        <ActionIcon src={ShareOnWhatsappIcon} />
+                                        <span>WhatsApp</span>
+                                    </button>
+
+                                    <button
+                                        type="button"
+                                        className="kx-btn kx-btn--white profiles-actionBtn"
+                                        onClick={onText}
+                                    >
+                                        <ActionIcon src={ShareOnTextIcon} />
+                                        <span>Text</span>
+                                    </button>
+
+                                    <button
+                                        type="button"
+                                        className="kx-btn kx-btn--white profiles-actionBtn"
+                                        onClick={onCopyLink}
+                                    >
+                                        <ActionIcon src={ShareOnCopyIcon} />
+                                        <span>Copy link</span>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div className="profiles-divider" />
+
+                        <div className="profiles-infoSection">
+                            <div className="profiles-actionGroup">
+                                <h3 className="profiles-groupTitle">Add to wallet</h3>
+
+                                <div className="profiles-actionGrid profiles-actionGrid--two">
+                                    <button
+                                        type="button"
+                                        className="kx-btn kx-btn--white profiles-actionBtn"
+                                        onClick={onAppleWallet}
+                                    >
+                                        <ActionIcon src={ShareOnAppleWalletIcon} />
+                                        <span>Apple Wallet</span>
+                                    </button>
+
+                                    <button
+                                        type="button"
+                                        className="kx-btn kx-btn--white profiles-actionBtn"
+                                        onClick={onGoogleWallet}
+                                    >
+                                        <ActionIcon src={ShareOnGoogleWalletIcon} />
+                                        <span>Google Wallet</span>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div className="profiles-divider" />
+
+                        <div className="profiles-infoSection profiles-infoSection--last">
+                            <div className="profiles-actionGroup">
+                                <h3 className="profiles-groupTitle">Manage profile</h3>
+
+                                <div className="profiles-actionGrid profiles-actionGrid--two">
+                                    <button
+                                        type="button"
+                                        className="kx-btn kx-btn--white profiles-actionBtn"
+                                        onClick={() => onEdit(selectedProfile.slug)}
+                                    >
+                                        <ActionIcon src={ShareOnEditProfileIcon} />
+                                        <span>Edit</span>
+                                    </button>
+
+                                    <button
+                                        type="button"
+                                        className="kx-btn kx-btn--white profiles-deleteBtn profiles-actionBtn"
+                                        onClick={() => onDelete(selectedProfile.slug)}
+                                    >
+                                        <span className="profiles-btnIcon" aria-hidden="true">
+                                            <IconTrash />
+                                        </span>
+                                        <span>Delete</span>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </>
+                ) : (
+                    <div className="profiles-previewLoading">Select a profile to see actions.</div>
+                )}
+            </section>
+        </aside>
     );
 }
