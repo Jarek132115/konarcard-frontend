@@ -262,13 +262,9 @@ export default function Cards() {
       return;
     }
 
-    if (location.search) {
-      return;
-    }
-
-    if (selectedOrderView || selectedId) {
-      return;
-    }
+    if (location.search) return;
+    if (selectedOrderView) return;
+    if (selectedId) return;
 
     if (intent?.productKey && PRODUCT_META[intent.productKey]) {
       setSelectedOrderView(false);
@@ -329,7 +325,7 @@ export default function Cards() {
                 className="odv-backBtn"
                 onClick={backToCardsHome}
               >
-                Back to products
+                Back to cards
               </button>
             </div>
 
@@ -342,7 +338,6 @@ export default function Cards() {
                 Card3DDetails={Card3DDetails}
                 CardPreviewErrorBoundary={CardPreviewErrorBoundary}
                 formatMoneyMinor={formatMoneyMinor}
-                onBack={backToCardsHome}
               />
             </section>
           </>
