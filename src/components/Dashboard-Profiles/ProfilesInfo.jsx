@@ -66,6 +66,20 @@ function LinkRow({ label, value, onCopy, copyLabel }) {
     );
 }
 
+function getLifetimeMetric(raw, keys) {
+    for (const key of keys) {
+        const value = raw?.[key];
+        if (value !== undefined && value !== null && value !== "") {
+            return Number(value) || 0;
+        }
+    }
+    return 0;
+}
+
+function formatMetric(value) {
+    return new Intl.NumberFormat("en-GB").format(Number(value) || 0);
+}
+
 export default function ProfilesInfo({
     selectedProfile,
     selectedPublicUrl,
@@ -83,6 +97,36 @@ export default function ProfilesInfo({
 }) {
     const resolvedQrCodeUrl = resolveMediaUrl(selectedProfile?.qrCodeUrl);
     const publicUrl = selectedPublicUrl || "";
+    const raw = selectedProfile?.raw || {};
+
+    const lifetimeProfileViews = getLifetimeMetric(raw, [
+        "views",
+        "profile_views",
+        "total_views",
+        "profileViews",
+    ]);
+
+    const lifetimeLinkTaps = getLifetimeMetric(raw, [
+        "link_taps",
+        "linkTaps",
+        "link_opens",
+        "linkOpens",
+    ]);
+
+    const lifetimeNfcTaps = getLifetimeMetric(raw, [
+        "nfc_taps",
+        "nfcTaps",
+        "card_taps",
+        "cardTaps",
+    ]);
+
+    const lifetimeQrScans = getLifetimeMetric(raw, [
+        "qr_scans",
+        "qrScans",
+        "total_qr_scans",
+    ]);
+
+    const showCompletionPill = Number(selectedProfile?.pct || 0) < 100;
 
     return (
         <aside className="profiles-right">
@@ -96,11 +140,11 @@ export default function ProfilesInfo({
                                         {selectedProfile.isLive ? "Live" : "Draft"}
                                     </span>
 
-                                    <span className={`profiles-pill completion ${selectedProfile.tone}`}>
-                                        {selectedProfile.pct >= 95
-                                            ? "Profile Complete"
-                                            : `${selectedProfile.pct}% Complete`}
-                                    </span>
+                                    {showCompletionPill ? (
+                                        <span className={`profiles-pill completion ${selectedProfile.tone}`}>
+                                            {selectedProfile.pct}% Complete
+                                        </span>
+                                    ) : null}
                                 </div>
 
                                 <LinkRow
@@ -115,10 +159,23 @@ export default function ProfilesInfo({
                                 </div>
 
                                 <div className="profiles-previewMetricsRow">
-                                    <div className="profiles-metricsInline" aria-label="Profile metrics">
-                                        <MetricInline value={selectedProfile.views ?? 0} label="Profile Views" />
-                                        <MetricInline value={selectedProfile.linkTaps ?? 0} label="Link Taps" />
-                                        <MetricInline value={selectedProfile.qrScans ?? 0} label="QR Scans" />
+                                    <div className="profiles-metricsInline" aria-label="Profile lifetime metrics">
+                                        <MetricInline
+                                            value={formatMetric(lifetimeProfileViews)}
+                                            label="Profile Views"
+                                        />
+                                        <MetricInline
+                                            value={formatMetric(lifetimeLinkTaps)}
+                                            label="Link Taps"
+                                        />
+                                        <MetricInline
+                                            value={formatMetric(lifetimeNfcTaps)}
+                                            label="NFC Taps"
+                                        />
+                                        <MetricInline
+                                            value={formatMetric(lifetimeQrScans)}
+                                            label="QR Scans"
+                                        />
                                     </div>
                                 </div>
                             </div>

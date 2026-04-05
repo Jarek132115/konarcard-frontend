@@ -133,15 +133,15 @@
 }
 
 .profiles-previewMetricsRow {
-    margin-top: 10px;
+    margin-top: 12px;
     display: flex;
 }
 
 .profiles-metricsInline {
-    display: flex;
-    align-items: center;
-    flex-wrap: wrap;
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, auto));
     gap: 18px;
+    align-items: end;
 }
 
 .profiles-metricInline {
@@ -323,6 +323,11 @@
         overflow: visible;
         padding-right: 0;
     }
+
+    .profiles-metricsInline {
+        grid-template-columns: repeat(2, minmax(0, auto));
+        row-gap: 10px;
+    }
 }
 
 @media (max-width: 900px) {
@@ -397,6 +402,7 @@
     }
 
     .profiles-metricsInline {
+        grid-template-columns: repeat(2, minmax(0, auto));
         gap: 12px;
     }
 
