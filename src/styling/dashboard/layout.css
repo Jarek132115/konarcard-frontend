@@ -4,17 +4,16 @@
     --dash-bg: #f8f8f8;
     --dash-ink: var(--kc-text-primary, #0f172a);
     --dash-muted: var(--kc-text-secondary, #475569);
-    --dash-border: rgba(15, 23, 42, 0.08);
 }
 
 .dash-layout {
     min-height: 100vh;
     display: flex;
     align-items: stretch;
-    background: var(--dash-bg);
     gap: 0;
     padding: 0;
     margin: 0;
+    background: var(--dash-bg);
 }
 
 .dash-main {
@@ -69,7 +68,7 @@
     color: var(--dash-muted);
 }
 
-/* Page padding lives here */
+/* Content padding only here */
 .dash-content {
     flex: 1 1 auto;
     min-width: 0;
@@ -110,7 +109,7 @@
 .dash-topbar-right {
     display: inline-flex;
     align-items: flex-start;
-    gap: 10px;
+    gap: 12px;
     margin-left: auto;
 }
 
@@ -123,7 +122,7 @@
     width: 34px;
     height: 34px;
     border-radius: 12px;
-    border: 1px solid rgba(15, 23, 42, 0.10);
+    border: 1px solid rgba(15, 23, 42, 0.1);
     background: #ffffff;
     color: var(--dash-ink);
     font-size: 17px;
@@ -147,16 +146,18 @@
 
 .dash-burger:focus-visible {
     outline: none;
-    box-shadow: 0 0 0 3px var(--kc-focus-ring);
+    box-shadow: 0 0 0 3px rgba(249, 115, 22, 0.14);
 }
 
 @media (max-width: 1000px) {
     .dash-layout {
         display: block;
+        background: var(--dash-bg);
     }
 
     .dash-main {
         min-height: 100vh;
+        background: transparent;
     }
 
     .dash-topbar {
@@ -164,9 +165,9 @@
         align-items: flex-start;
         justify-content: space-between;
         gap: 12px;
-        padding: var(--dash-gutter-mobile);
-        padding-bottom: 10px;
-        background: transparent;
+        padding: 20px var(--dash-gutter-mobile) 16px;
+        background: #ffffff;
+        border-bottom: 1px solid rgba(15, 23, 42, 0.08);
     }
 
     .dash-desktop-header {
@@ -177,7 +178,7 @@
 
     .dash-content {
         padding: var(--dash-gutter-mobile);
-        padding-top: 12px;
+        padding-top: 16px;
     }
 
     .dash-desktop-title {
@@ -191,13 +192,12 @@
 
 @media (max-width: 640px) {
     .dash-topbar {
-        padding: 14px;
-        padding-bottom: 8px;
+        padding: 18px 14px 14px;
     }
 
     .dash-content {
         padding: 14px;
-        padding-top: 10px;
+        padding-top: 14px;
     }
 
     .dash-desktop-header {

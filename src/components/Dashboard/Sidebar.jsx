@@ -60,7 +60,7 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen }) {
             />
 
             <aside
-                className={`sb3 ${isMobile ? "mobile" : ""} ${sidebarOpen ? "open" : ""}`}
+                className={`sb3 ${isMobile ? "mobile" : "desktop"} ${sidebarOpen ? "open" : ""}`}
                 aria-label="Sidebar"
             >
                 <div className="sb3-top">
@@ -84,7 +84,7 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen }) {
                 </div>
 
                 <div className="sb3-divider" />
-                <div className="sb3-gap36" />
+                <div className="sb3-gap" />
 
                 <nav className="sb3-nav" aria-label="Main navigation">
                     {MAIN_ITEMS.map((item) => (
@@ -102,9 +102,9 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen }) {
                     ))}
                 </nav>
 
-                <div className="sb3-gap36" />
+                <div className="sb3-gap" />
                 <div className="sb3-divider" />
-                <div className="sb3-gap36" />
+                <div className="sb3-gap" />
 
                 <nav className="sb3-nav" aria-label="Upgrade">
                     <Link
@@ -119,9 +119,9 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen }) {
                     </Link>
                 </nav>
 
-                <div className="sb3-gap36" />
+                <div className="sb3-gap" />
                 <div className="sb3-divider" />
-                <div className="sb3-gap36" />
+                <div className="sb3-gap" />
 
                 <nav className="sb3-nav" aria-label="Help">
                     <Link
@@ -138,7 +138,7 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen }) {
 
                 <div className="sb3-bottom">
                     <div className="sb3-divider" />
-                    <div className="sb3-gap36" />
+                    <div className="sb3-gap" />
 
                     <div className="sb3-nav sb3-nav--bottom">
                         <Link
@@ -152,7 +152,11 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen }) {
                             <span className="sb3-text">Settings</span>
                         </Link>
 
-                        <button type="button" className="sb3-link sb3-link--logout" onClick={handleLogout}>
+                        <button
+                            type="button"
+                            className="sb3-link sb3-link--logout"
+                            onClick={handleLogout}
+                        >
                             <span className="sb3-icoWrap sb3-icoWrap--logout" aria-hidden="true">
                                 <img className="sb3-ico" src={LogoutIcon} alt="" />
                             </span>

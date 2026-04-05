@@ -1,4 +1,3 @@
-// src/components/Dashboard/DashboardLayout.jsx
 import React, { useEffect, useMemo, useState } from "react";
 import Sidebar from "./Sidebar";
 
@@ -22,7 +21,10 @@ export default function DashboardLayout({
         const onResize = () => {
             const mobileNow = window.innerWidth <= 1000;
             setIsMobile(mobileNow);
-            if (!mobileNow) setSidebarOpen(false);
+
+            if (!mobileNow) {
+                setSidebarOpen(false);
+            }
         };
 
         window.addEventListener("resize", onResize);
@@ -30,10 +32,13 @@ export default function DashboardLayout({
     }, []);
 
     useEffect(() => {
-        if (!isMobile) return;
+        if (!isMobile) return undefined;
 
-        if (sidebarOpen) document.body.style.overflow = "hidden";
-        else document.body.style.overflow = "";
+        if (sidebarOpen) {
+            document.body.style.overflow = "hidden";
+        } else {
+            document.body.style.overflow = "";
+        }
 
         return () => {
             document.body.style.overflow = "";
@@ -49,7 +54,6 @@ export default function DashboardLayout({
                     <span className="dash-topbar-logo" aria-hidden="true">
                         <img src={LogoIcon} alt="" />
                     </span>
-                    {/* ✅ NO TEXT on mobile */}
                 </div>
 
                 <div className="dash-topbar-right">
@@ -73,15 +77,16 @@ export default function DashboardLayout({
             <Sidebar sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
 
             <div className="dash-main">
-                {mobileTopbar}
+                {isMobile ? mobileTopbar : null}
 
-                {!hideDesktopHeader && (title || subtitle || rightSlot) ? (
+                {!hideDesktopHeader && !isMobile && (title || subtitle || rightSlot) ? (
                     <div className="dash-desktop-header">
                         <div className="dash-desktop-left">
                             {title ? <div className="dash-desktop-title">{title}</div> : null}
                             {subtitle ? <div className="dash-desktop-sub">{subtitle}</div> : null}
                         </div>
-                        <div className="dash-desktop-right">{rightSlot}</div>
+
+                        {rightSlot ? <div className="dash-desktop-right">{rightSlot}</div> : null}
                     </div>
                 ) : null}
 
