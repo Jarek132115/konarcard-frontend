@@ -123,49 +123,66 @@
     display: block;
 }
 
-.profiles-previewHint {
-    margin-top: 2px;
-    font-family: "Inter", sans-serif;
-    font-weight: 500;
-    font-size: 14px;
-    line-height: 1.6;
-    color: var(--p-muted);
-}
-
 .profiles-previewMetricsRow {
-    margin-top: 12px;
+    margin-top: 14px;
     display: flex;
 }
 
-.profiles-metricsInline {
+.profiles-statsGrid {
+    width: 100%;
     display: grid;
-    grid-template-columns: repeat(4, minmax(0, auto));
-    gap: 18px;
-    align-items: end;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 12px;
 }
 
-.profiles-metricInline {
-    display: inline-flex;
-    align-items: baseline;
-    gap: 6px;
-    white-space: nowrap;
+.profiles-statCard {
+    background: #ffffff;
+    border: 1px solid rgba(15, 23, 42, 0.1);
+    border-radius: 20px;
+    box-shadow: var(--p-softShadow);
+    padding: 16px;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
 }
 
-.profiles-metricInlineVal {
+.profiles-statCard--skeleton {
+    min-height: 102px;
+    background: linear-gradient(90deg,
+            rgba(15, 23, 42, 0.04) 25%,
+            rgba(15, 23, 42, 0.07) 37%,
+            rgba(15, 23, 42, 0.04) 63%);
+    background-size: 400% 100%;
+    animation: profilesInfoShimmer 1.2s ease infinite;
+}
+
+@keyframes profilesInfoShimmer {
+    0% {
+        background-position: 100% 0;
+    }
+
+    100% {
+        background-position: 0 0;
+    }
+}
+
+.profiles-statLabel {
+    font-family: "Inter", sans-serif;
+    font-weight: 700;
+    font-size: 13px;
+    line-height: 1.35;
+    color: var(--p-ink);
+}
+
+.profiles-statValue {
     font-family: "Inter", sans-serif;
     font-weight: 800;
-    font-size: 18px;
+    font-size: 32px;
     line-height: 1;
     color: var(--p-ink);
-    letter-spacing: -0.02em;
-}
-
-.profiles-metricInlineLab {
-    font-family: "Inter", sans-serif;
-    font-weight: 500;
-    font-size: 14px;
-    line-height: 1.2;
-    color: var(--p-muted);
+    letter-spacing: -0.03em;
+    word-break: break-word;
 }
 
 .profiles-actionGroup {
@@ -324,9 +341,8 @@
         padding-right: 0;
     }
 
-    .profiles-metricsInline {
-        grid-template-columns: repeat(2, minmax(0, auto));
-        row-gap: 10px;
+    .profiles-statsGrid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
     }
 }
 
@@ -343,12 +359,8 @@
         font-size: 13px;
     }
 
-    .profiles-metricInlineVal {
-        font-size: 17px;
-    }
-
-    .profiles-metricInlineLab {
-        font-size: 13px;
+    .profiles-statValue {
+        font-size: 28px;
     }
 }
 
@@ -378,14 +390,6 @@
         width: 100%;
         max-width: 100%;
     }
-
-    .profiles-actionsTop {
-        gap: 8px;
-    }
-
-    .profiles-previewMetricsRow {
-        margin-top: 12px;
-    }
 }
 
 @media (max-width: 640px) {
@@ -397,21 +401,12 @@
         font-size: 16px;
     }
 
-    .profiles-previewHint {
-        font-size: 14px;
+    .profiles-statsGrid {
+        grid-template-columns: 1fr;
     }
 
-    .profiles-metricsInline {
-        grid-template-columns: repeat(2, minmax(0, auto));
-        gap: 12px;
-    }
-
-    .profiles-metricInlineVal {
-        font-size: 16px;
-    }
-
-    .profiles-metricInlineLab {
-        font-size: 13px;
+    .profiles-statValue {
+        font-size: 24px;
     }
 
     .profiles-actionGrid,
