@@ -3,6 +3,9 @@
     --p-muted: var(--kc-text-secondary, #475569);
     --p-softLine: rgba(15, 23, 42, 0.12);
     --p-softShadow: 0 0 1px rgba(0, 0, 0, 0.25);
+    --p-border: rgba(15, 23, 42, 0.1);
+    --p-orange: #f97316;
+    --p-red: rgba(239, 68, 68, 0.95);
 }
 
 .profiles-right {
@@ -112,16 +115,18 @@
     display: block;
 }
 
+/* NEW METRIC CARDS */
 .profiles-previewMetricsRow {
-    margin-top: 14px;
+    margin-top: 16px;
     display: flex;
+    width: 100%;
 }
 
 .profiles-metricsInline {
-    display: flex;
-    align-items: center;
-    flex-wrap: wrap;
-    gap: 18px;
+    width: 100%;
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 12px;
 }
 
 .profiles-metricsInline--loading {
@@ -129,33 +134,49 @@
 }
 
 .profiles-metricInline {
-    display: inline-flex;
-    align-items: baseline;
-    gap: 6px;
-    white-space: nowrap;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: flex-start;
+    gap: 8px;
+    background: #ffffff;
+    border: 1px solid var(--p-border);
+    border-radius: 20px;
+    box-shadow: 0 1px 0 rgba(15, 23, 42, 0.04), 0 10px 22px rgba(15, 23, 42, 0.04);
+    padding: 16px;
+}
+
+.profiles-metricsInline .profiles-metricInline:first-child {
+    background: var(--p-orange);
+    border-color: var(--p-orange);
 }
 
 .profiles-metricInlineVal {
     font-family: "Inter", sans-serif;
     font-weight: 800;
-    font-size: 22px;
+    font-size: 30px;
     line-height: 1;
     color: var(--kc-text-primary);
-    letter-spacing: -0.02em;
+    letter-spacing: -0.03em;
 }
 
 .profiles-metricInlineLab {
     font-family: "Inter", sans-serif;
-    font-weight: 500;
-    font-size: 14px;
-    line-height: 1.1;
-    color: var(--kc-text-secondary);
+    font-weight: 700;
+    font-size: 13px;
+    line-height: 1.3;
+    color: var(--kc-text-primary);
+}
+
+.profiles-metricsInline .profiles-metricInline:first-child .profiles-metricInlineVal,
+.profiles-metricsInline .profiles-metricInline:first-child .profiles-metricInlineLab {
+    color: #ffffff;
 }
 
 .profiles-metricSkeleton {
-    width: 130px;
-    height: 30px;
-    border-radius: 999px;
+    height: 92px;
+    border-radius: 20px;
     border: 1px solid rgba(15, 23, 42, 0.08);
     background: linear-gradient(90deg,
             rgba(15, 23, 42, 0.04) 25%,
@@ -324,6 +345,10 @@
     .profiles-actionsCard {
         overflow: visible;
     }
+
+    .profiles-metricsInline {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
 }
 
 @media (max-width: 900px) {
@@ -341,11 +366,11 @@
     }
 
     .profiles-metricInlineVal {
-        font-size: 20px;
+        font-size: 26px;
     }
 
     .profiles-metricInlineLab {
-        font-size: 13px;
+        font-size: 12px;
     }
 }
 
@@ -401,11 +426,12 @@
     }
 
     .profiles-metricsInline {
+        grid-template-columns: 1fr;
         gap: 12px;
     }
 
     .profiles-metricInlineVal {
-        font-size: 18px;
+        font-size: 24px;
     }
 
     .profiles-metricInlineLab {
