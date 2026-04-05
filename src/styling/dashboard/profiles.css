@@ -4,16 +4,18 @@
     --p-border: rgba(15, 23, 42, 0.1);
     --p-softLine: rgba(15, 23, 42, 0.08);
     --p-radius: 24px;
-    --p-softShadow: 0 1px 0 rgba(15, 23, 42, 0.04), 0 10px 22px rgba(15, 23, 42, 0.04);
+    --p-softShadow: 0 1px 0 rgba(15, 23, 42, 0.04),
+        0 10px 22px rgba(15, 23, 42, 0.04);
 }
 
-.profiles-shell .ph2-wrap {
-    margin-bottom: 0;
-}
+/* ===== PAGE WRAP (THIS IS THE IMPORTANT FIX) ===== */
 
 .profiles-shell {
     width: 100%;
-    margin: 0;
+    max-width: 1120px;
+    /* 👈 THIS controls the “sidebar-sized” feel */
+    margin: 0 auto;
+    /* 👈 centers it */
     padding: 0;
     display: flex;
     flex-direction: column;
@@ -21,21 +23,32 @@
     min-height: 0;
 }
 
+/* remove full-width feeling from header */
+.profiles-shell .ph2-wrap {
+    margin-bottom: 0;
+}
+
+/* ===== MAIN ===== */
+
 .profiles-main {
     display: flex;
     flex-direction: column;
     gap: var(--sp-3);
     min-height: 0;
-    flex: 1 1 auto;
 }
+
+/* ===== GRID ===== */
 
 .profiles-grid {
     display: grid;
-    grid-template-columns: minmax(0, 1fr) minmax(520px, 0.96fr);
+    grid-template-columns: 1fr 1fr;
+    /* 👈 equal columns now */
     gap: var(--sp-3);
     align-items: stretch;
     min-height: 0;
 }
+
+/* ===== CARDS ===== */
 
 .profiles-card {
     background: #ffffff;
@@ -47,7 +60,10 @@
     display: flex;
     flex-direction: column;
     min-height: 0;
+    /* 👈 remove forced full height */
 }
+
+/* ===== TYPO ===== */
 
 .profiles-card-title {
     margin: 0;
@@ -68,24 +84,12 @@
     color: var(--p-muted);
 }
 
-.profiles-actions-row {
-    margin-top: var(--sp-4);
-    display: flex;
-    gap: var(--sp-3);
-    flex-wrap: wrap;
-}
+/* ===== EMPTY STATES ===== */
 
 .profiles-emptyCard,
 .profiles-emptyInfoCard {
-    min-height: 100%;
-}
-
-.profiles-emptyCard {
-    justify-content: flex-start;
-}
-
-.profiles-emptyInfoCard {
-    justify-content: flex-start;
+    min-height: auto;
+    /* 👈 important */
 }
 
 .profiles-emptyInfoHead {
@@ -126,6 +130,8 @@
     color: var(--p-muted);
 }
 
+/* ===== SKELETON ===== */
+
 .profiles-skeleton {
     display: grid;
     gap: var(--sp-3);
@@ -153,7 +159,7 @@
     }
 }
 
-/* locked overlay */
+/* ===== OVERLAY ===== */
 
 .profiles-overlay {
     position: fixed;
@@ -172,58 +178,6 @@
     border: 1px solid rgba(15, 23, 42, 0.12);
     box-shadow: 0 30px 80px rgba(15, 23, 42, 0.28);
     padding: var(--sp-6);
-    font-family: "Inter", sans-serif;
-    color: var(--p-ink);
-}
-
-.profiles-overlayHead {
-    display: flex;
-    align-items: flex-start;
-    justify-content: space-between;
-    gap: 12px;
-}
-
-.profiles-overlayTitle {
-    font-size: 18px;
-    line-height: 1.2;
-    font-weight: 800;
-    color: var(--p-ink);
-    margin: 0 0 6px;
-}
-
-.profiles-overlaySub {
-    font-size: 13px;
-    line-height: 1.5;
-    font-weight: 500;
-    color: rgba(15, 23, 42, 0.75);
-}
-
-.profiles-overlayClose {
-    border: 1px solid rgba(15, 23, 42, 0.12);
-    background: #fff;
-    border-radius: 14px;
-    width: 40px;
-    height: 40px;
-    cursor: pointer;
-    font-weight: 900;
-    line-height: 1;
-    color: var(--p-ink);
-    flex: 0 0 auto;
-}
-
-.profiles-overlayCopy {
-    margin-top: 12px;
-    font-size: 13px;
-    color: rgba(15, 23, 42, 0.85);
-    line-height: 1.6;
-    font-weight: 500;
-}
-
-.profiles-overlayMeta {
-    margin-top: 10px;
-    font-size: 12px;
-    color: rgba(15, 23, 42, 0.6);
-    font-weight: 600;
 }
 
 .profiles-overlayActions {
@@ -231,73 +185,32 @@
     gap: 10px;
     margin-top: 18px;
     justify-content: flex-end;
-    flex-wrap: wrap;
 }
 
-@media (max-width: 1320px) {
-    .profiles-grid {
-        grid-template-columns: minmax(0, 1fr) minmax(460px, 0.92fr);
-    }
-}
+/* ===== RESPONSIVE ===== */
 
 @media (max-width: 1180px) {
-    .profiles-grid {
-        grid-template-columns: 1fr;
-    }
-
-    .profiles-emptyCard,
-    .profiles-emptyInfoCard {
-        min-height: auto;
+    .profiles-shell {
+        max-width: 920px;
+        /* 👈 tighter on smaller screens */
     }
 }
 
 @media (max-width: 900px) {
-    .profiles-card {
-        padding: 20px;
+    .profiles-grid {
+        grid-template-columns: 1fr;
+        /* stack */
     }
 
-    .profiles-overlayCard {
-        padding: 20px;
-    }
-}
-
-@media (max-width: 760px) {
-    .profiles-card {
-        padding: 18px;
+    .profiles-shell {
+        max-width: 100%;
+        padding: 0 16px;
     }
 }
 
 @media (max-width: 640px) {
-    .profiles-grid {
-        gap: 14px;
-    }
-
     .profiles-card {
         padding: 16px;
         border-radius: 20px;
-    }
-
-    .profiles-overlayCard {
-        border-radius: 20px;
-        padding: 16px;
-    }
-
-    .profiles-muted,
-    .profiles-emptyInfoValue {
-        font-size: 14px;
-    }
-
-    .profiles-actions-row .kx-btn {
-        width: 100%;
-        justify-content: center;
-    }
-
-    .profiles-overlayActions {
-        flex-direction: column;
-    }
-
-    .profiles-overlayActions .kx-btn {
-        width: 100%;
-        justify-content: center;
     }
 }
