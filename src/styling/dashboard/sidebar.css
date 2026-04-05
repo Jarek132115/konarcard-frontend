@@ -33,17 +33,19 @@
     visibility: visible;
 }
 
-/* Desktop sidebar - EDGE TO EDGE */
+/* Desktop sidebar */
 .sb3 {
     position: sticky;
     top: 0;
+    align-self: flex-start;
+
     width: var(--sb3-w);
     height: 100vh;
     min-height: 100vh;
     max-height: 100vh;
     flex: 0 0 var(--sb3-w);
 
-    background: var(--sb3-bg);
+    background: #ffffff;
     border: 0;
     border-right: 1px solid var(--sb3-border);
     border-radius: 0;
@@ -57,6 +59,7 @@
     overflow-y: auto;
     overscroll-behavior: contain;
     -webkit-overflow-scrolling: touch;
+    z-index: 20;
 }
 
 /* Prevent internal sections from shrinking */
@@ -71,6 +74,7 @@
     align-items: center;
     justify-content: space-between;
     gap: 12px;
+    background: #ffffff;
 }
 
 .sb3-brand {
@@ -240,6 +244,7 @@
 .sb3-bottom {
     margin-top: auto;
     padding: 18px 0 16px;
+    background: #ffffff;
 }
 
 .sb3-nav--bottom {
