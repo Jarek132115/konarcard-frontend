@@ -69,11 +69,7 @@ function LinkRow({ label, value, onCopy, copyLabel }) {
 export default function ProfilesInfo({
     selectedProfile,
     selectedPublicUrl,
-    selectedQrTrackedUrl,
-    selectedNfcTrackedUrl,
     onCopyLink,
-    onCopyQrLink,
-    onCopyNfcLink,
     onDownloadQr,
     onFacebook,
     onInstagram,
@@ -86,16 +82,13 @@ export default function ProfilesInfo({
     onDelete,
 }) {
     const resolvedQrCodeUrl = resolveMediaUrl(selectedProfile?.qrCodeUrl);
-
     const publicUrl = selectedPublicUrl || "";
-    const qrTrackedUrl = selectedQrTrackedUrl || publicUrl || "";
-    const nfcTrackedUrl = selectedNfcTrackedUrl || publicUrl || "";
 
     return (
         <aside className="profiles-right">
             <section className="profiles-card profiles-actionsCard">
                 {selectedProfile ? (
-                    <>
+                    <div className="profiles-infoScroll">
                         <div className="profiles-infoSection profiles-infoSection--first">
                             <div className="profiles-actionsTop">
                                 <div className="profiles-pillRow profiles-previewPills">
@@ -118,7 +111,7 @@ export default function ProfilesInfo({
                                 />
 
                                 <div className="profiles-previewHint">
-                                    This is your standard public profile link — use this for normal sharing.
+                                    This is your public profile link — use this when sharing your profile.
                                 </div>
 
                                 <div className="profiles-previewMetricsRow">
@@ -127,33 +120,6 @@ export default function ProfilesInfo({
                                         <MetricInline value={selectedProfile.linkTaps ?? 0} label="Link Taps" />
                                         <MetricInline value={selectedProfile.qrScans ?? 0} label="QR Scans" />
                                     </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div className="profiles-divider" />
-
-                        <div className="profiles-infoSection">
-                            <div className="profiles-actionGroup">
-                                <h3 className="profiles-groupTitle">Tracked links</h3>
-
-                                <LinkRow
-                                    label="QR tracked link"
-                                    value={qrTrackedUrl}
-                                    onCopy={onCopyQrLink}
-                                    copyLabel="Copy QR tracked link"
-                                />
-
-                                <LinkRow
-                                    label="NFC tracked link"
-                                    value={nfcTrackedUrl}
-                                    onCopy={onCopyNfcLink}
-                                    copyLabel="Copy NFC tracked link"
-                                />
-
-                                <div className="profiles-previewHint">
-                                    Use the QR tracked link for QR generation and the NFC tracked link when
-                                    programming an NFC card or tag, so analytics records scans and taps properly.
                                 </div>
                             </div>
                         </div>
@@ -312,11 +278,11 @@ export default function ProfilesInfo({
                                 </div>
                             </div>
                         </div>
-                    </>
+                    </div>
                 ) : (
                     <div className="profiles-previewLoading">Select a profile to see actions.</div>
                 )}
             </section>
         </aside>
     );
-}
+} F

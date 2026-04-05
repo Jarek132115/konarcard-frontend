@@ -1,7 +1,13 @@
 :root {
     --p-ink: var(--kc-text-primary, #0f172a);
-    --p-softLine: rgba(15, 23, 42, 0.12);
-    --p-softShadow: 0 0 1px rgba(0, 0, 0, 0.25);
+    --p-muted: var(--kc-text-secondary, #475569);
+    --p-softLine: rgba(15, 23, 42, 0.1);
+    --p-softShadow: 0 1px 0 rgba(15, 23, 42, 0.04), 0 10px 22px rgba(15, 23, 42, 0.04);
+    --p-orange: #f97316;
+    --p-orange-soft: rgba(249, 115, 22, 0.1);
+    --p-orange-border: rgba(249, 115, 22, 0.18);
+    --p-red: rgba(239, 68, 68, 0.95);
+    --p-red-border: rgba(239, 68, 68, 0.35);
 }
 
 .profiles-right {
@@ -13,17 +19,25 @@
 .profiles-actionsCard {
     flex: 1;
     min-height: 0;
-    overflow: auto;
+    overflow: hidden;
+}
+
+.profiles-infoScroll {
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding-right: 4px;
 }
 
 .profiles-infoSection {
-    padding-top: 24px;
-    padding-bottom: 24px;
+    padding-top: var(--sp-6);
+    padding-bottom: var(--sp-6);
 }
 
 .profiles-infoSection--first {
     padding-top: 0;
-    padding-bottom: 24px;
+    padding-bottom: var(--sp-6);
 }
 
 .profiles-infoSection--last {
@@ -34,7 +48,7 @@
     display: block;
     height: 1px;
     min-height: 1px;
-    background: rgba(15, 23, 42, 0.12);
+    background: rgba(15, 23, 42, 0.1);
     width: 100%;
     border: 0;
     opacity: 1;
@@ -42,53 +56,64 @@
 
 .profiles-actionsTop {
     display: grid;
-    gap: 4px;
+    gap: 10px;
 }
 
 .profiles-previewPills {
-    margin-bottom: 10px;
+    margin-bottom: 6px;
+}
+
+.profiles-linkBlock {
+    display: grid;
+    gap: 6px;
 }
 
 .profiles-previewLinkLabel {
     font-family: "Inter", sans-serif;
-    font-weight: 400;
+    font-weight: 500;
     font-size: 12px;
     font-style: italic;
     color: rgba(71, 85, 105, 0.85);
 }
 
 .profiles-previewLinkRow {
-    margin-top: 4px;
     display: flex;
-    align-items: center;
+    align-items: flex-start;
     justify-content: space-between;
-    gap: 12px;
+    gap: 14px;
     min-width: 0;
 }
 
 .profiles-previewLinkUrl {
     font-family: "Inter", sans-serif;
-    font-weight: 700;
-    font-size: 20px;
+    font-weight: 800;
+    font-size: 18px;
+    line-height: 1.3;
     color: var(--p-ink);
-    letter-spacing: -0.01em;
+    letter-spacing: -0.02em;
     min-width: 0;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
+    overflow-wrap: anywhere;
+    word-break: break-word;
 }
 
 .profiles-copyIconBtn {
     flex: 0 0 auto;
-    width: 24px;
-    height: 24px;
+    width: 34px;
+    height: 34px;
     padding: 0;
-    border: none;
-    background: transparent;
+    border: 1px solid rgba(15, 23, 42, 0.08);
+    border-radius: 12px;
+    background: #ffffff;
     cursor: pointer;
     display: inline-flex;
     align-items: center;
     justify-content: center;
+    transition: background-color 0.15s ease, border-color 0.15s ease, transform 0.1s ease;
+}
+
+.profiles-copyIconBtn:hover {
+    background: rgba(15, 23, 42, 0.03);
+    border-color: rgba(15, 23, 42, 0.12);
 }
 
 .profiles-copyIconBtn:active {
@@ -96,22 +121,22 @@
 }
 
 .profiles-copyIcon24 {
-    width: 24px;
-    height: 24px;
+    width: 18px;
+    height: 18px;
     display: block;
 }
 
 .profiles-previewHint {
-    margin-top: 4px;
+    margin-top: 2px;
     font-family: "Inter", sans-serif;
-    font-weight: 400;
-    font-size: var(--kc-body-size);
-    line-height: var(--kc-body-line);
-    color: var(--kc-text-secondary);
+    font-weight: 500;
+    font-size: 14px;
+    line-height: 1.6;
+    color: var(--p-muted);
 }
 
 .profiles-previewMetricsRow {
-    margin-top: 14px;
+    margin-top: 10px;
     display: flex;
 }
 
@@ -132,9 +157,9 @@
 .profiles-metricInlineVal {
     font-family: "Inter", sans-serif;
     font-weight: 800;
-    font-size: 22px;
+    font-size: 18px;
     line-height: 1;
-    color: var(--kc-text-primary);
+    color: var(--p-ink);
     letter-spacing: -0.02em;
 }
 
@@ -142,8 +167,8 @@
     font-family: "Inter", sans-serif;
     font-weight: 500;
     font-size: 14px;
-    line-height: 1.1;
-    color: var(--kc-text-secondary);
+    line-height: 1.2;
+    color: var(--p-muted);
 }
 
 .profiles-actionGroup {
@@ -158,7 +183,7 @@
     font-size: 18px;
     line-height: 1.1;
     letter-spacing: -0.01em;
-    color: var(--kc-text-primary);
+    color: var(--p-ink);
 }
 
 .profiles-actionGrid {
@@ -167,21 +192,27 @@
     gap: 12px;
 }
 
-.profiles-actionGrid .kx-btn {
-    width: 100%;
-    justify-content: center;
-}
-
 .profiles-actionGrid--two {
     grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 
+.profiles-actionGrid .kx-btn,
+.profiles-actionGrid--two .kx-btn {
+    width: 100%;
+    justify-content: center;
+}
+
 .profiles-actionBtn {
+    min-height: 50px;
+    padding: 12px 16px;
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    gap: 10px;
+    gap: 12px;
     line-height: 1.15;
+    font-size: 14px;
+    font-weight: 700;
+    border-radius: 16px;
 }
 
 .profiles-actionBtn--wide {
@@ -193,36 +224,35 @@
     align-items: center;
     justify-content: center;
     flex: 0 0 auto;
-    width: 16px;
-    height: 16px;
-    min-width: 16px;
-    min-height: 16px;
+    width: 20px;
+    height: 20px;
+    min-width: 20px;
+    min-height: 20px;
     color: currentColor;
 }
 
 .profiles-btnIconImg,
 .profiles-btnIconSvg {
     display: block;
-    width: 16px;
-    height: 16px;
-    min-width: 16px;
-    min-height: 16px;
+    width: 20px;
+    height: 20px;
+    min-width: 20px;
+    min-height: 20px;
     max-width: none;
-    flex: 0 0 16px;
+    flex: 0 0 20px;
 }
 
 .profiles-qrBlock {
-    width: calc((100% - 12px) / 2);
-    max-width: calc((100% - 12px) / 2);
+    width: min(320px, 100%);
     display: grid;
-    gap: 12px;
+    gap: 14px;
 }
 
 .profiles-qrWrap {
     width: 100%;
     aspect-ratio: 1 / 1;
     border-radius: 20px;
-    border: 1px solid rgba(15, 23, 42, 0.10);
+    border: 1px solid rgba(15, 23, 42, 0.1);
     background: #ffffff;
     overflow: hidden;
     display: grid;
@@ -263,8 +293,8 @@
 }
 
 .profiles-deleteBtn {
-    border-color: rgba(239, 68, 68, 0.55) !important;
-    color: rgba(239, 68, 68, 0.95) !important;
+    border-color: var(--p-red-border) !important;
+    color: var(--p-red) !important;
 }
 
 .profiles-deleteBtn:hover {
@@ -276,7 +306,7 @@
     padding: 16px;
     border-radius: 14px;
     background: rgba(15, 23, 42, 0.03);
-    border: 1px solid rgba(15, 23, 42, 0.10);
+    border: 1px solid rgba(15, 23, 42, 0.1);
     font-family: "Inter", sans-serif;
     font-weight: 700;
     font-size: 13px;
@@ -287,11 +317,16 @@
     .profiles-actionsCard {
         overflow: visible;
     }
+
+    .profiles-infoScroll {
+        overflow: visible;
+        padding-right: 0;
+    }
 }
 
 @media (max-width: 900px) {
     .profiles-previewLinkUrl {
-        font-size: 18px;
+        font-size: 17px;
     }
 
     .profiles-groupTitle {
@@ -299,12 +334,22 @@
     }
 
     .profiles-actionBtn {
-        gap: 8px;
+        gap: 10px;
         font-size: 13px;
+        min-height: 48px;
+    }
+
+    .profiles-btnIcon,
+    .profiles-btnIconImg,
+    .profiles-btnIconSvg {
+        width: 18px;
+        height: 18px;
+        min-width: 18px;
+        min-height: 18px;
     }
 
     .profiles-metricInlineVal {
-        font-size: 20px;
+        font-size: 17px;
     }
 
     .profiles-metricInlineLab {
@@ -314,13 +359,13 @@
 
 @media (max-width: 760px) {
     .profiles-infoSection {
-        padding-top: 24px;
-        padding-bottom: 24px;
+        padding-top: var(--sp-6);
+        padding-bottom: var(--sp-6);
     }
 
     .profiles-infoSection--first {
         padding-top: 0;
-        padding-bottom: 24px;
+        padding-bottom: var(--sp-6);
     }
 
     .profiles-infoSection--last {
@@ -340,15 +385,11 @@
     }
 
     .profiles-actionsTop {
-        gap: 6px;
+        gap: 8px;
     }
 
     .profiles-previewMetricsRow {
         margin-top: 12px;
-    }
-
-    .profiles-divider {
-        background: rgba(15, 23, 42, 0.12);
     }
 }
 
@@ -359,8 +400,6 @@
 
     .profiles-previewLinkUrl {
         font-size: 16px;
-        white-space: normal;
-        word-break: break-word;
     }
 
     .profiles-previewHint {
@@ -372,7 +411,7 @@
     }
 
     .profiles-metricInlineVal {
-        font-size: 18px;
+        font-size: 16px;
     }
 
     .profiles-metricInlineLab {
@@ -389,7 +428,7 @@
     }
 
     .profiles-actionBtn {
-        min-height: 44px;
+        min-height: 46px;
         font-size: 13px;
     }
 
