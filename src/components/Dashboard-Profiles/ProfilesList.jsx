@@ -55,6 +55,7 @@ function getPreviewName(profile) {
     const found = firstNonEmpty(
         raw?.businessName,
         raw?.business_name,
+        raw?.business_card_name,
         raw?.companyName,
         raw?.company_name,
         raw?.displayName,
@@ -109,11 +110,7 @@ function getPreviewAccent(profile) {
     if (explicit) return explicit;
 
     const templateValue = String(
-        raw?.template ||
-        raw?.templateId ||
-        raw?.template_id ||
-        profile?.template ||
-        ""
+        raw?.template || raw?.templateId || raw?.template_id || profile?.template || ""
     ).toLowerCase();
 
     if (templateValue.includes("1")) return "#f59e0b";
@@ -125,13 +122,20 @@ function getPreviewAccent(profile) {
     return "var(--kc-accent-primary, #f97316)";
 }
 
-function ProfileMainPreview({ profile }) {
+function ProfileMainPreview({
+    profile,
+    suppressClickRef,
+    onOpenLockedOverlay,
+    onEdit,
+    onVisitProfile,
+}) {
     const theme = getPreviewTheme(profile);
     const cover = getPreviewCover(profile);
     const name = getPreviewName(profile);
     const trade = getPreviewTrade(profile);
     const location = getPreviewLocation(profile);
     const accent = getPreviewAccent(profile);
+    const locked = profile?.isLockedByPlan;
 
     return (
         <div
@@ -162,6 +166,56 @@ function ProfileMainPreview({ profile }) {
                         <div className="profiles-mainPreviewName">{name}</div>
                         <div className="profiles-mainPreviewTrade">{trade}</div>
                         <div className="profiles-mainPreviewLocation">{location}</div>
+                    </div>
+
+                    <div className="profiles-mainPreviewBottom">
+                        <div className="profiles-updated profiles-updated--centered">
+                            {profile?.updatedAt}
+                        </div>
+
+                        <div className="profiles-cardBtns profiles-cardBtns--stack">
+                            <button
+                                type="button"
+                                className="kx-btn kx-btn--orange profiles-cardBtn profiles-cardBtn--withIcon"
+                                disabled={locked}
+                                data-no-rail-drag="true"
+                                onClick={(e) => {
+                                    e.stopPropagation();
+                                    if (suppressClickRef.current) return;
+                                    if (locked) return onOpenLockedOverlay(profile.slug);
+                                    onEdit(profile.slug);
+                                }}
+                            >
+                                <img
+                                    src={ShareOnEditProfileIcon}
+                                    alt=""
+                                    aria-hidden="true"
+                                    className="profiles-cardBtnIcon profiles-cardBtnIcon--light"
+                                />
+                                <span>Edit profile</span>
+                            </button>
+
+                            <button
+                                type="button"
+                                className="kx-btn kx-btn--black profiles-cardBtn profiles-cardBtn--withIcon"
+                                disabled={locked}
+                                data-no-rail-drag="true"
+                                onClick={(e) => {
+                                    e.stopPropagation();
+                                    if (suppressClickRef.current) return;
+                                    if (locked) return onOpenLockedOverlay(profile.slug);
+                                    onVisitProfile(profile.slug);
+                                }}
+                            >
+                                <img
+                                    src={ShareOnVisitProfileIcon}
+                                    alt=""
+                                    aria-hidden="true"
+                                    className="profiles-cardBtnIcon profiles-cardBtnIcon--light"
+                                />
+                                <span>Visit profile</span>
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -429,7 +483,7 @@ function ClaimCardOpen({
                     </>
                 )}
 
-                {(isFree || isPlus) ? (
+                {isFree || isPlus ? (
                     <div className="profiles-hint profiles-hint--center">
                         Free and Plus allow <strong>1 profile</strong>. Upgrade to <strong>Teams</strong> to add
                         more.
@@ -514,61 +568,13 @@ export default function ProfilesList({
                             aria-disabled={locked ? "true" : "false"}
                             style={locked ? { opacity: 0.62, cursor: "pointer" } : undefined}
                         >
-                            <div className="profiles-cardPreviewWrap">
-                                <ProfileMainPreview profile={p} />
-                            </div>
-
-                            <div className="profiles-cardContent">
-                                <div className="profiles-profileBottom">
-                                    <div className="profiles-updated profiles-updated--centered">
-                                        {p.updatedAt}
-                                    </div>
-
-                                    <div className="profiles-cardBtns profiles-cardBtns--stack">
-                                        <button
-                                            type="button"
-                                            className="kx-btn kx-btn--orange profiles-cardBtn profiles-cardBtn--withIcon"
-                                            disabled={locked}
-                                            data-no-rail-drag="true"
-                                            onClick={(e) => {
-                                                e.stopPropagation();
-                                                if (suppressClickRef.current) return;
-                                                if (locked) return onOpenLockedOverlay(p.slug);
-                                                onEdit(p.slug);
-                                            }}
-                                        >
-                                            <img
-                                                src={ShareOnEditProfileIcon}
-                                                alt=""
-                                                aria-hidden="true"
-                                                className="profiles-cardBtnIcon profiles-cardBtnIcon--light"
-                                            />
-                                            <span>Edit profile</span>
-                                        </button>
-
-                                        <button
-                                            type="button"
-                                            className="kx-btn kx-btn--black profiles-cardBtn profiles-cardBtn--withIcon"
-                                            disabled={locked}
-                                            data-no-rail-drag="true"
-                                            onClick={(e) => {
-                                                e.stopPropagation();
-                                                if (suppressClickRef.current) return;
-                                                if (locked) return onOpenLockedOverlay(p.slug);
-                                                onVisitProfile(p.slug);
-                                            }}
-                                        >
-                                            <img
-                                                src={ShareOnVisitProfileIcon}
-                                                alt=""
-                                                aria-hidden="true"
-                                                className="profiles-cardBtnIcon profiles-cardBtnIcon--light"
-                                            />
-                                            <span>Visit profile</span>
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
+                            <ProfileMainPreview
+                                profile={p}
+                                suppressClickRef={suppressClickRef}
+                                onOpenLockedOverlay={onOpenLockedOverlay}
+                                onEdit={onEdit}
+                                onVisitProfile={onVisitProfile}
+                            />
                         </article>
                     );
                 })}
