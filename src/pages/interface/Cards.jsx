@@ -11,6 +11,7 @@ import PurchasedProductCard from "../../components/Cards/PurchasedProductCard";
 
 import "../../styling/spacing.css";
 import "../../styling/dashboard/cards.css";
+import "../../styling/dashboard/order-details-view.css";
 
 import api from "../../services/api";
 
@@ -265,11 +266,7 @@ export default function Cards() {
       return;
     }
 
-    if (selectedOrderView) {
-      return;
-    }
-
-    if (selectedId) {
+    if (selectedOrderView || selectedId) {
       return;
     }
 
@@ -325,18 +322,30 @@ export default function Cards() {
             onCheckoutSuccess={async () => { }}
           />
         ) : selectedOrderView ? (
-          <section className="cp-card">
-            <OrderDetailsView
-              selectedOrder={selectedOrder}
-              productMeta={PRODUCT_META}
-              defaultLogoDataUrl={DEFAULT_LOGO_DATAURL}
-              qrSrcFromLink={qrSrcFromLink}
-              Card3DDetails={Card3DDetails}
-              CardPreviewErrorBoundary={CardPreviewErrorBoundary}
-              formatMoneyMinor={formatMoneyMinor}
-              onBack={backToCardsHome}
-            />
-          </section>
+          <>
+            <div className="odv-backRow">
+              <button
+                type="button"
+                className="odv-backBtn"
+                onClick={backToCardsHome}
+              >
+                Back to products
+              </button>
+            </div>
+
+            <section className="cp-card">
+              <OrderDetailsView
+                selectedOrder={selectedOrder}
+                productMeta={PRODUCT_META}
+                defaultLogoDataUrl={DEFAULT_LOGO_DATAURL}
+                qrSrcFromLink={qrSrcFromLink}
+                Card3DDetails={Card3DDetails}
+                CardPreviewErrorBoundary={CardPreviewErrorBoundary}
+                formatMoneyMinor={formatMoneyMinor}
+                onBack={backToCardsHome}
+              />
+            </section>
+          </>
         ) : (
           <>
             <section className="cp-card">
