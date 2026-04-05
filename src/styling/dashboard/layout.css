@@ -1,7 +1,6 @@
 :root {
     --dash-gutter: 24px;
     --dash-gutter-mobile: 18px;
-    --dash-max-width: none;
     --dash-bg: #f8f8f8;
     --dash-ink: var(--kc-text-primary, #0f172a);
     --dash-muted: var(--kc-text-secondary, #475569);
@@ -29,7 +28,7 @@
     background: transparent;
 }
 
-/* Desktop header area inside main */
+/* Desktop header */
 .dash-desktop-header {
     display: flex;
     align-items: flex-start;
@@ -70,16 +69,16 @@
     color: var(--dash-muted);
 }
 
-/* THIS is where page padding should live */
+/* Page padding lives here */
 .dash-content {
     flex: 1 1 auto;
     min-width: 0;
     min-height: 0;
+    width: 100%;
+    box-sizing: border-box;
     padding: var(--dash-gutter);
     padding-top: 20px;
     margin: 0;
-    width: 100%;
-    box-sizing: border-box;
 }
 
 /* Mobile topbar */
@@ -110,24 +109,24 @@
 
 .dash-topbar-right {
     display: inline-flex;
-    align-items: center;
+    align-items: flex-start;
     gap: 10px;
     margin-left: auto;
 }
 
 .dash-topbar-slot {
     display: flex;
-    align-items: center;
+    align-items: flex-start;
 }
 
 .dash-burger {
-    width: 42px;
-    height: 42px;
-    border-radius: 14px;
+    width: 34px;
+    height: 34px;
+    border-radius: 12px;
     border: 1px solid rgba(15, 23, 42, 0.10);
     background: #ffffff;
     color: var(--dash-ink);
-    font-size: 18px;
+    font-size: 17px;
     font-weight: 900;
     line-height: 1;
     display: inline-flex;
@@ -135,6 +134,7 @@
     justify-content: center;
     cursor: pointer;
     transition: background 0.16s ease, transform 0.08s ease;
+    flex: 0 0 auto;
 }
 
 .dash-burger:hover {
@@ -161,7 +161,7 @@
 
     .dash-topbar {
         display: flex;
-        align-items: center;
+        align-items: flex-start;
         justify-content: space-between;
         gap: 12px;
         padding: var(--dash-gutter-mobile);

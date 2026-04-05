@@ -11,7 +11,7 @@
     --sb3-active-bg: #f5f5f5;
     --sb3-active-shadow: 0 0 1px rgba(0, 0, 0, 0.25);
 
-    --sb3-divider: rgba(15, 23, 42, 0.10);
+    --sb3-divider: rgba(15, 23, 42, 0.1);
 
     --sb3-danger: rgba(220, 38, 38, 0.95);
     --sb3-danger-soft: rgba(220, 38, 38, 0.08);
@@ -62,12 +62,11 @@
     z-index: 20;
 }
 
-/* Prevent internal sections from shrinking */
 .sb3>* {
     flex-shrink: 0;
 }
 
-/* Top brand row */
+/* Top */
 .sb3-top {
     padding: 20px 18px 18px;
     display: flex;
@@ -91,7 +90,6 @@
     display: grid;
     place-items: center;
     flex: 0 0 auto;
-
     background: transparent !important;
     border: 0 !important;
     box-shadow: none !important;
@@ -103,7 +101,6 @@
     width: 40px;
     height: 40px;
     display: block;
-
     background: transparent !important;
     border: 0 !important;
     box-shadow: none !important;
@@ -120,12 +117,11 @@
     white-space: nowrap;
 }
 
-/* Close (mobile) */
 .sb3-close {
     width: 42px;
     height: 42px;
     border-radius: 14px;
-    border: 1px solid rgba(15, 23, 42, 0.10);
+    border: 1px solid rgba(15, 23, 42, 0.1);
     background: rgba(15, 23, 42, 0.03);
     cursor: pointer;
     font-size: 18px;
@@ -149,7 +145,6 @@
     margin: 0 18px;
 }
 
-/* Gap blocks */
 .sb3-gap36 {
     height: 18px;
 }
@@ -161,16 +156,13 @@
     padding: 0 18px;
 }
 
-/* Links */
 .sb3-link {
     display: flex;
     align-items: center;
     gap: 8px;
     min-height: 40px;
-
     text-decoration: none;
     padding: 6px 8px;
-
     border-radius: 8px;
     background: transparent;
 
@@ -182,7 +174,6 @@
     border: none;
     box-shadow: none;
     cursor: pointer;
-
     flex-shrink: 0;
 
     transition:
@@ -209,10 +200,8 @@
     width: 28px;
     height: 28px;
     padding: 2px;
-
     background: var(--sb3-soft);
     border-radius: 4px;
-
     display: grid;
     place-items: center;
     flex: 0 0 auto;
@@ -225,7 +214,6 @@
     filter: invert(33%) sepia(10%) saturate(980%) hue-rotate(182deg) brightness(95%) contrast(90%);
 }
 
-/* Active */
 .sb3-link.active {
     background: var(--sb3-active-bg);
     box-shadow: var(--sb3-active-shadow);
@@ -240,7 +228,7 @@
     filter: none;
 }
 
-/* Bottom area */
+/* Bottom */
 .sb3-bottom {
     margin-top: auto;
     padding: 18px 0 16px;
@@ -256,7 +244,7 @@
     font-family: "Inter", sans-serif;
     font-size: 12px;
     font-weight: 700;
-    color: rgba(71, 85, 105, 0.60);
+    color: rgba(71, 85, 105, 0.6);
     text-align: center;
 }
 
@@ -282,7 +270,6 @@
     background: var(--sb3-danger-soft);
 }
 
-/* Short-height screens */
 @media (max-height: 860px) {
     .sb3-bottom {
         margin-top: 20px;
@@ -312,7 +299,6 @@
         transition: transform 0.35s ease;
         z-index: 1002;
         background: #ffffff;
-
         overflow-x: hidden;
         overflow-y: auto;
         overscroll-behavior: contain;
@@ -337,7 +323,6 @@
     }
 }
 
-/* Smaller phones / short landscape */
 @media (max-width: 1000px) and (max-height: 860px) {
     .sb3-top {
         padding: 16px 18px;
