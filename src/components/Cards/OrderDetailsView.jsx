@@ -79,7 +79,7 @@ export default function OrderDetailsView({
     return (
         <div className="odv-shell">
             <div className="odv-topActions">
-                <button type="button" className="cp-selectBtn" onClick={onBack}>
+                <button type="button" className="odv-backBtn" onClick={onBack}>
                     Back to cards
                 </button>
             </div>
@@ -173,8 +173,8 @@ export default function OrderDetailsView({
                                 <span className="cp-rowVal">
                                     {prettyLabel(
                                         selectedOrder?.preview?.edition ||
-                                            meta?.edition ||
-                                            ""
+                                        meta?.edition ||
+                                        ""
                                     )}
                                 </span>
                             </div>
