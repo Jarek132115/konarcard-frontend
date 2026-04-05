@@ -31,14 +31,17 @@ const PRODUCT_META = {
   "plastic-card": {
     key: "plastic-card",
     title: "Plastic NFC Business Card",
+    edition: "plastic",
   },
   "metal-card": {
     key: "metal-card",
     title: "Metal NFC Business Card",
+    edition: "metal",
   },
   konartag: {
     key: "konartag",
     title: "KonarTag NFC Key Tag",
+    edition: "tag",
   },
 };
 
@@ -46,8 +49,16 @@ function readIntent() {
   try {
     const raw = localStorage.getItem(NFC_INTENT_KEY);
     if (!raw) return null;
+
     const parsed = JSON.parse(raw);
     if (!parsed?.productKey) return null;
+
+    const age = Date.now() - Number(parsed.createdAt || parsed.updatedAt || 0);
+    if (Number.isFinite(age) && age > 30 * 60 * 1000) {
+      localStorage.removeItem(NFC_INTENT_KEY);
+      return null;
+    }
+
     return parsed;
   } catch {
     return null;
@@ -57,13 +68,15 @@ function readIntent() {
 function clearIntent() {
   try {
     localStorage.removeItem(NFC_INTENT_KEY);
-  } catch { }
+  } catch {
+    // ignore
+  }
 }
 
 async function getMyOrders() {
   const r = await api.get("/api/nfc-orders/mine");
   if (r.status !== 200) {
-    throw new Error(r.data?.message || "Failed to load orders");
+    throw new Error(r.data?.message || r.data?.error || "Failed to load orders");
   }
   return r.data;
 }
@@ -108,6 +121,7 @@ export default function Cards() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [purchasedOrders, setPurchasedOrders] = useState([]);
+
   const [selectedId, setSelectedId] = useState(null);
   const [selectedOrderView, setSelectedOrderView] = useState(false);
   const [selectedProductKey, setSelectedProductKey] = useState("");
@@ -126,19 +140,42 @@ export default function Cards() {
           ? data
           : Array.isArray(data?.orders)
             ? data.orders
-            : [];
+            : Array.isArray(data?.data)
+              ? data.data
+              : [];
+
+        const purchased = Array.isArray(data?.purchasedOrders)
+          ? data.purchasedOrders
+          : [];
 
         if (!alive) return;
 
         setPurchasedOrders(
-          all.filter((o) => {
-            const s = String(o?.status || "").toLowerCase();
-            return ["paid", "processing", "fulfilled", "shipped"].includes(s);
-          })
+          purchased.length
+            ? purchased
+            : all.filter((o) => {
+              const s = String(o?.normalizedStatus || o?.status || "").toLowerCase();
+
+              return [
+                "paid",
+                "processing",
+                "fulfilled",
+                "shipped",
+                "complete",
+                "completed",
+              ].includes(s);
+            })
         );
       } catch (e) {
         if (!alive) return;
-        setError(e.message || "Failed to load orders.");
+
+        setError(
+          e?.response?.data?.message ||
+          e?.response?.data?.error ||
+          e?.message ||
+          "Failed to load orders."
+        );
+        setPurchasedOrders([]);
       } finally {
         if (!alive) return;
         setLoading(false);
@@ -155,27 +192,71 @@ export default function Cards() {
     [purchasedOrders]
   );
 
+  const selectedOrder = useMemo(
+    () => purchasedCards.find((c) => c.id === selectedId) || null,
+    [purchasedCards, selectedId]
+  );
+
   useEffect(() => {
     const sp = new URLSearchParams(location.search);
+    const checkout = sp.get("checkout");
     const product = sp.get("product");
     const intent = readIntent();
 
+    if (checkout === "success") {
+      toast.success("Payment received ✅");
+      clearIntent();
+      setSelectedOrderView(false);
+      setSelectedProductKey("");
+      navigate("/cards", { replace: true });
+      return;
+    }
+
+    if (checkout === "cancel") {
+      toast.error("Checkout cancelled.");
+      setSelectedOrderView(false);
+      setSelectedProductKey("");
+      navigate("/cards", { replace: true });
+      return;
+    }
+
     if (product && PRODUCT_META[product]) {
+      setSelectedOrderView(false);
+      setSelectedId(null);
       setSelectedProductKey(product);
       return;
     }
 
-    if (intent?.productKey) {
-      setSelectedProductKey(intent.productKey);
+    if (location.search) {
+      return;
     }
-  }, [location.search]);
+
+    if (selectedOrderView) {
+      return;
+    }
+
+    if (selectedId) {
+      return;
+    }
+
+    if (intent?.productKey && PRODUCT_META[intent.productKey]) {
+      setSelectedOrderView(false);
+      setSelectedProductKey(intent.productKey);
+      return;
+    }
+
+    setSelectedProductKey("");
+  }, [location.search, navigate, selectedOrderView, selectedId]);
 
   const openConfigurator = (productKey) => {
+    setSelectedOrderView(false);
+    setSelectedId(null);
     setSelectedProductKey(productKey);
-    navigate(`/cards?product=${productKey}`, { replace: true });
+    navigate(`/cards?product=${encodeURIComponent(productKey)}`, { replace: true });
   };
 
   const openOrderDetails = (orderId) => {
+    clearIntent();
     setSelectedProductKey("");
     setSelectedId(orderId);
     setSelectedOrderView(true);
@@ -183,13 +264,19 @@ export default function Cards() {
   };
 
   const backToCardsHome = () => {
+    clearIntent();
     setSelectedProductKey("");
+    setSelectedId(null);
     setSelectedOrderView(false);
     navigate("/cards", { replace: true });
   };
 
   return (
-    <DashboardLayout title="Cards" subtitle="Manage your KonarCards.">
+    <DashboardLayout
+      title="Cards"
+      subtitle="Manage your KonarCards."
+      hideDesktopHeader
+    >
       <div className="cp-shell">
         <PageHeader
           title="Cards"
@@ -201,32 +288,50 @@ export default function Cards() {
             productKey={selectedProductKey}
             initialIntent={readIntent()}
             onBack={backToCardsHome}
+            onCheckoutSuccess={async () => { }}
           />
         ) : selectedOrderView ? (
-          <OrderDetailsView
-            selectedOrder={purchasedCards.find((c) => c.id === selectedId)}
-            productMeta={PRODUCT_META}
-            defaultLogoDataUrl={DEFAULT_LOGO_DATAURL}
-            qrSrcFromLink={qrSrcFromLink}
-            Card3DDetails={Card3DDetails}
-            formatMoneyMinor={formatMoneyMinor}
-            onBack={backToCardsHome}
-          />
+          <section className="cp-card">
+            <OrderDetailsView
+              selectedOrder={selectedOrder}
+              productMeta={PRODUCT_META}
+              defaultLogoDataUrl={DEFAULT_LOGO_DATAURL}
+              qrSrcFromLink={qrSrcFromLink}
+              Card3DDetails={Card3DDetails}
+              formatMoneyMinor={formatMoneyMinor}
+              onBack={backToCardsHome}
+            />
+          </section>
         ) : (
           <>
-            {/* PURCHASED PRODUCTS */}
-            {!!purchasedCards.length && (
-              <section className="cp-card">
-                <div className="cp-cardHead">
-                  <div>
-                    <div className="cp-eyebrow">Your cards</div>
-                    <h2 className="cp-cardTitle">
-                      Your purchased products
-                    </h2>
+            <section className="cp-card">
+              <div className="cp-cardHead">
+                <div>
+                  <div className="cp-eyebrow">Your cards</div>
+                  <h2 className="cp-cardTitle">Your purchased products</h2>
+                  <p className="cp-muted">
+                    {purchasedCards.length
+                      ? "View the products you already bought and open any order for full details."
+                      : "Once you buy your first product, it will appear here."}
+                  </p>
+                </div>
+              </div>
+
+              {error ? <div className="cp-alert danger">{error}</div> : null}
+
+              {!loading && !purchasedCards.length ? (
+                <div className="cp-emptyState">
+                  <div className="cp-emptyStateCard">
+                    <div className="cp-emptyStateTitle">No cards yet</div>
+                    <p className="cp-emptyStateText">
+                      Your purchased products will appear here after checkout.
+                    </p>
                   </div>
                 </div>
+              ) : null}
 
-                <div className="cp-catalogGrid">
+              {!!purchasedCards.length && (
+                <div className="cp-catalogGrid cp-catalogGrid--owned">
                   {purchasedCards.map((card) => (
                     <PurchasedProductCard
                       key={card.id}
@@ -241,10 +346,9 @@ export default function Cards() {
                     />
                   ))}
                 </div>
-              </section>
-            )}
+              )}
+            </section>
 
-            {/* CATALOG */}
             <CardsCatalog
               onChooseProduct={openConfigurator}
               hasPurchasedCards={purchasedCards.length > 0}
