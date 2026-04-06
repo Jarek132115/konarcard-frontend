@@ -46,6 +46,80 @@ function SearchIcon() {
     );
 }
 
+function escapeVCardValue(value = "") {
+    return String(value)
+        .replace(/\\/g, "\\\\")
+        .replace(/\n/g, "\\n")
+        .replace(/\r/g, "")
+        .replace(/,/g, "\\,")
+        .replace(/;/g, "\\;");
+}
+
+function sanitizeFileName(value = "") {
+    const clean = String(value || "")
+        .trim()
+        .replace(/[<>:"/\\|?*\u0000-\u001F]/g, "")
+        .replace(/\s+/g, "-");
+
+    return clean || "contact";
+}
+
+function buildPublicProfileUrl(profileSlug = "") {
+    if (!nonEmpty(profileSlug) || typeof window === "undefined") return "";
+    return `${window.location.origin}/u/${encodeURIComponent(profileSlug.trim())}`;
+}
+
+function buildVCard(contact) {
+    const fullName = nonEmpty(contact?.name) ? contact.name.trim() : "Unknown Contact";
+    const email = nonEmpty(contact?.email) ? contact.email.trim() : "";
+    const phone = nonEmpty(contact?.phone) ? contact.phone.trim() : "";
+    const profile = nonEmpty(contact?.profile) ? contact.profile.trim() : "";
+    const profileUrl = buildPublicProfileUrl(profile);
+    const received = nonEmpty(contact?.received) ? contact.received.trim() : "";
+    const message = nonEmpty(contact?.message) ? contact.message.trim() : "";
+
+    const noteParts = [
+        profile ? `KonarCard profile: ${profile}` : "",
+        profileUrl ? `Profile link: ${profileUrl}` : "",
+        received ? `Received: ${received}` : "",
+        message ? `Message: ${message}` : "",
+    ].filter(Boolean);
+
+    const lines = [
+        "BEGIN:VCARD",
+        "VERSION:3.0",
+        `FN:${escapeVCardValue(fullName)}`,
+        `N:${escapeVCardValue(fullName)};;;;`,
+    ];
+
+    if (phone) {
+        lines.push(`TEL;TYPE=CELL:${escapeVCardValue(phone)}`);
+    }
+
+    if (email) {
+        lines.push(`EMAIL;TYPE=INTERNET:${escapeVCardValue(email)}`);
+    }
+
+    if (noteParts.length) {
+        lines.push(`NOTE:${escapeVCardValue(noteParts.join("\n"))}`);
+    }
+
+    if (profileUrl) {
+        lines.push(`URL:${escapeVCardValue(profileUrl)}`);
+    }
+
+    lines.push("END:VCARD");
+
+    return lines.join("\r\n");
+}
+
+function isLikelyMobileDevice() {
+    if (typeof navigator === "undefined") return false;
+
+    const ua = navigator.userAgent || "";
+    return /Android|iPhone|iPad|iPod|Mobile/i.test(ua);
+}
+
 export default function ContactBook() {
     const { data: authUser } = useAuthUser();
     const queryClient = useQueryClient();
@@ -172,48 +246,68 @@ export default function ContactBook() {
         }
     };
 
-    const exportCSV = (rowsSource = contacts) => {
-        if (!rowsSource.length) {
-            toast.error("No contacts to export.");
-            return;
-        }
-
-        const rows = [
-            ["Name", "Email", "Phone", "Profile", "Received", "Message"],
-            ...rowsSource.map((c) => [
-                c.name || "",
-                c.email || "",
-                c.phone || "",
-                c.profile || "",
-                c.firstSeen || "",
-                (c.message || "").replace(/\n/g, " "),
-            ]),
-        ];
-
-        const csv = rows
-            .map((row) => row.map((cell) => `"${String(cell).replace(/"/g, '""')}"`).join(","))
-            .join("\n");
-
-        const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
-        const url = URL.createObjectURL(blob);
-
-        const a = document.createElement("a");
-        a.href = url;
-        a.download = "konarcard-contact-book.csv";
-        document.body.appendChild(a);
-        a.click();
-        a.remove();
-
-        URL.revokeObjectURL(url);
-        toast.success("CSV export started.");
-    };
-
-    const exportSelected = () => {
+    const saveSelectedContact = async () => {
         if (!selected) {
             toast.error("Select a contact first.");
             return;
         }
-        exportCSV([selected]);
+
+        if (!nonEmpty(selected.name) && !nonEmpty(selected.phone) && !nonEmpty(selected.email)) {
+            toast.error("This contact doesn’t have enough information to save.");
+            return;
+        }
+
+        try {
+            const vcard = buildVCard(selected);
+            const fileName = `${sanitizeFileName(selected.name)}.vcf`;
+            const blob = new Blob([vcard], { type: "text/vcard;charset=utf-8" });
+            const file = new File([blob], fileName, { type: "text/vcard" });
+
+            if (
+                typeof navigator !== "undefined" &&
+                navigator.share &&
+                typeof navigator.canShare === "function" &&
+                navigator.canShare({ files: [file] })
+            ) {
+                try {
+                    await navigator.share({
+                        files: [file],
+                        title: selected.name || "Contact",
+                        text: "Save contact",
+                    });
+                    return;
+                } catch (shareError) {
+                    if (shareError?.name === "AbortError") {
+                        return;
+                    }
+                }
+            }
+
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement("a");
+            link.href = url;
+
+            if (isLikelyMobileDevice()) {
+                link.target = "_self";
+                link.rel = "noopener";
+            } else {
+                link.download = fileName;
+            }
+
+            document.body.appendChild(link);
+            link.click();
+            link.remove();
+
+            window.setTimeout(() => {
+                URL.revokeObjectURL(url);
+            }, 1500);
+
+            if (!isLikelyMobileDevice()) {
+                toast.success("Contact file opened/downloaded.");
+            }
+        } catch (err) {
+            toast.error(err?.message || "Couldn’t prepare this contact.");
+        }
     };
 
     const showEmpty = !isLoading && !isError && contacts.length === 0;
@@ -462,7 +556,7 @@ export default function ContactBook() {
                                     <button
                                         type="button"
                                         className="cb-actionBtn cb-actionBtn--save"
-                                        onClick={exportSelected}
+                                        onClick={saveSelectedContact}
                                     >
                                         <img
                                             src={SaveIcon}
