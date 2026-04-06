@@ -9,6 +9,8 @@
     --an-white: #ffffff;
     --an-green: #15803d;
     --an-red: #b91c1c;
+    --an-graph-grid: rgba(15, 23, 42, 0.12);
+    --an-graph-dot-ring: rgba(249, 115, 22, 0.16);
 }
 
 .an-shell .ph2-wrap {
@@ -64,6 +66,10 @@
     box-shadow: var(--an-shadow);
     padding: var(--sp-6);
     min-width: 0;
+}
+
+.an-chartCard--graph {
+    overflow: hidden;
 }
 
 .an-chartHead {
@@ -188,12 +194,11 @@
     align-self: start;
 }
 
-.an-metric--featured {
+.an-overview .an-metric.an-metric--featured {
     background: var(--an-orange);
     border-color: var(--an-orange);
 }
 
-/* LARGE DESKTOP: 4 top / 3 bottom */
 .an-overview .an-metrics7>.an-metric:nth-child(1),
 .an-overview .an-metrics7>.an-metric:nth-child(2),
 .an-overview .an-metrics7>.an-metric:nth-child(3),
@@ -215,9 +220,12 @@
     color: var(--an-ink);
 }
 
-.an-metric--featured .an-metric-label,
-.an-metric--featured .an-metric-num,
-.an-metric--featured .an-metric-change {
+.an-overview .an-metric.an-metric--featured .an-metric-label,
+.an-overview .an-metric.an-metric--featured .an-metric-num,
+.an-overview .an-metric.an-metric--featured .an-metric-change,
+.an-overview .an-metric.an-metric--featured .an-metric-change.up,
+.an-overview .an-metric.an-metric--featured .an-metric-change.down,
+.an-overview .an-metric.an-metric--featured .an-metric-change.neutral {
     color: #ffffff;
 }
 
@@ -252,12 +260,6 @@
 
 .an-metric-change.neutral {
     color: var(--an-muted);
-}
-
-.an-metric--featured .an-metric-change.up,
-.an-metric--featured .an-metric-change.down,
-.an-metric--featured .an-metric-change.neutral {
-    color: #ffffff;
 }
 
 /* =========================
@@ -315,24 +317,24 @@
 .an-lineChartWrap {
     margin-top: var(--sp-5);
     display: grid;
-    grid-template-columns: 54px minmax(0, 1fr);
-    gap: var(--sp-3);
+    grid-template-columns: 48px minmax(0, 1fr);
+    gap: var(--sp-4);
     align-items: stretch;
 }
 
 .an-yAxis {
-    height: 280px;
+    height: 308px;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    padding-top: 2px;
+    padding: 8px 0 18px;
 }
 
 .an-yAxisLabel {
     font-family: "Inter", sans-serif;
     font-size: 12px;
     font-weight: 700;
-    color: var(--an-muted);
+    color: rgba(71, 85, 105, 0.92);
     line-height: 1;
 }
 
@@ -342,43 +344,53 @@
 
 .an-lineChart {
     position: relative;
+    padding-top: 2px;
 }
 
 .an-lineChartSvg {
     width: 100%;
-    height: 280px;
+    height: 308px;
     display: block;
     overflow: visible;
 }
 
 .an-lineChartGrid {
-    fill: none;
-    stroke: rgba(15, 23, 42, 0.1);
+    stroke: var(--an-graph-grid);
     stroke-width: 0.75;
+    shape-rendering: geometricPrecision;
 }
 
 .an-lineChartPath {
     fill: none;
-    stroke: #f97316;
-    stroke-width: 1.8;
+    stroke: var(--an-orange);
+    stroke-width: 0.9;
     stroke-linecap: round;
     stroke-linejoin: round;
+    vector-effect: non-scaling-stroke;
+    shape-rendering: geometricPrecision;
+}
+
+.an-lineChartDot {
+    fill: var(--an-orange);
+    stroke: #ffffff;
+    stroke-width: 0.8;
+    vector-effect: non-scaling-stroke;
 }
 
 .an-lineLabels {
     position: relative;
-    height: 34px;
-    margin-top: 12px;
+    height: 30px;
+    margin-top: 8px;
 }
 
 .an-lineLabel {
-    min-height: 28px;
+    min-height: 24px;
     text-align: center;
     font-family: "Inter", sans-serif;
     font-size: 11px;
     font-weight: 700;
-    color: var(--an-muted);
-    line-height: 1.25;
+    color: rgba(71, 85, 105, 0.95);
+    line-height: 1.2;
     white-space: nowrap;
 }
 
@@ -508,7 +520,6 @@
    BREAKPOINTS
    ========================= */
 
-/* SMALLER DESKTOP / LAPTOP: 3 / 2 / 2 */
 @media (max-width: 1460px) {
 
     .an-overview .an-metrics7>.an-metric:nth-child(1),
@@ -525,7 +536,6 @@
     }
 }
 
-/* TABLET / SMALL LAPTOP */
 @media (max-width: 1180px) {
     .an-chartGrid {
         grid-template-columns: 1fr;
@@ -575,7 +585,6 @@
     }
 }
 
-/* PORTRAIT TABLET: 2 / 2 / 2 / 1 */
 @media (max-width: 920px) {
     .an-overview .an-metric {
         grid-column: span 6 !important;
@@ -590,7 +599,16 @@
     }
 
     .an-lineChartWrap {
-        grid-template-columns: 42px minmax(0, 1fr);
+        grid-template-columns: 40px minmax(0, 1fr);
+        gap: var(--sp-3);
+    }
+
+    .an-yAxis {
+        height: 280px;
+    }
+
+    .an-lineChartSvg {
+        height: 280px;
     }
 
     .an-toolbarTop--split {
@@ -605,7 +623,6 @@
     }
 }
 
-/* MOBILE */
 @media (max-width: 640px) {
     .an-overview .an-metric {
         grid-column: 1 / -1 !important;
@@ -625,12 +642,18 @@
         min-width: 96px;
     }
 
+    .an-lineChartWrap {
+        grid-template-columns: 34px minmax(0, 1fr);
+        gap: var(--sp-2);
+    }
+
     .an-lineChartSvg {
-        height: 220px;
+        height: 232px;
     }
 
     .an-yAxis {
-        height: 220px;
+        height: 232px;
+        padding-bottom: 16px;
     }
 
     .an-miniFilters {
@@ -667,7 +690,6 @@
     }
 }
 
-/* VERY SMALL MOBILE */
 @media (max-width: 480px) {
     .an-toolbarActions {
         width: 100%;
@@ -692,12 +714,19 @@
     }
 
     .an-lineChartWrap {
-        grid-template-columns: 34px minmax(0, 1fr);
-        gap: var(--sp-2);
+        grid-template-columns: 28px minmax(0, 1fr);
     }
 
     .an-chartBadge {
         padding: 7px 11px;
         font-size: 11px;
+    }
+
+    .an-lineChartSvg {
+        height: 216px;
+    }
+
+    .an-yAxis {
+        height: 216px;
     }
 }

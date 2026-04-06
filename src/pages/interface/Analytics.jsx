@@ -217,17 +217,9 @@ function getMetricDelta(current, previous, key) {
     return (Number(current?.[key]) || 0) - (Number(previous?.[key]) || 0);
 }
 
-function MetricCard({
-    label,
-    value,
-    delta,
-    range,
-    isPercentage = false,
-    featured = false,
-    className = "",
-}) {
+function MetricCard({ label, value, delta, range, isPercentage = false, featured = false }) {
     return (
-        <div className={`an-metric ${featured ? "an-metric--featured" : ""} ${className}`.trim()}>
+        <div className={`an-metric ${featured ? "an-metric--featured" : ""}`}>
             <div className="an-metric-label">{label}</div>
             <div className="an-metric-num">
                 {isPercentage ? percentageFormat(value) : numberFormat(value)}
@@ -294,17 +286,23 @@ function MiniLineChart({
     const yTicks = buildYAxisTicks(maxValue);
     const safeMax = Math.max(yTicks[0] || maxValue, 1);
 
-    const points = useMemo(() => {
-        if (!data.length) return "";
+    const chartPoints = useMemo(() => {
+        if (!data.length) return [];
 
-        return values
-            .map((value, index) => {
-                const x = data.length <= 1 ? 0 : (index / (data.length - 1)) * 100;
-                const y = 100 - (value / safeMax) * 100;
-                return `${x},${y}`;
-            })
-            .join(" ");
+        return values.map((value, index) => {
+            const x = data.length <= 1 ? 0 : (index / (data.length - 1)) * 100;
+            const y = 100 - (value / safeMax) * 100;
+            return {
+                id: itemKey(data[index], index),
+                x,
+                y,
+                rawValue: value,
+                label: formatDateLabel(data[index]?.date),
+            };
+        });
     }, [data, values, safeMax]);
+
+    const polylinePoints = chartPoints.map((point) => `${point.x},${point.y}`).join(" ");
 
     const tickStep = getXAxisTickStep(Number(rangeDays) || data.length, data.length);
     const xAxisLabels = data
@@ -315,7 +313,7 @@ function MiniLineChart({
             if (!shouldShow) return null;
 
             return {
-                key: item.date || `${index}`,
+                key: itemKey(item, index),
                 label: formatDateLabel(item.date),
                 left: data.length <= 1 ? 0 : (index / (data.length - 1)) * 100,
             };
@@ -324,7 +322,7 @@ function MiniLineChart({
 
     if (!data.length) {
         return (
-            <div className="an-chartCard">
+            <div className="an-chartCard an-chartCard--graph">
                 <div className="an-chartHead">
                     <div>
                         <h3 className="an-chartTitle">{title}</h3>
@@ -352,7 +350,7 @@ function MiniLineChart({
     }
 
     return (
-        <div className="an-chartCard">
+        <div className="an-chartCard an-chartCard--graph">
             <div className="an-chartHead">
                 <div>
                     <h3 className="an-chartTitle">{title}</h3>
@@ -391,11 +389,22 @@ function MiniLineChart({
                             preserveAspectRatio="none"
                             aria-hidden="true"
                         >
-                            <polyline className="an-lineChartGrid" points="0,100 100,100" />
-                            <polyline className="an-lineChartGrid" points="0,66.66 100,66.66" />
-                            <polyline className="an-lineChartGrid" points="0,33.33 100,33.33" />
-                            <polyline className="an-lineChartGrid" points="0,0 100,0" />
-                            <polyline className="an-lineChartPath" points={points} />
+                            <line className="an-lineChartGrid" x1="0" y1="100" x2="100" y2="100" />
+                            <line className="an-lineChartGrid" x1="0" y1="66.66" x2="100" y2="66.66" />
+                            <line className="an-lineChartGrid" x1="0" y1="33.33" x2="100" y2="33.33" />
+                            <line className="an-lineChartGrid" x1="0" y1="0" x2="100" y2="0" />
+
+                            <polyline className="an-lineChartPath" points={polylinePoints} />
+
+                            {chartPoints.map((point) => (
+                                <circle
+                                    key={point.id}
+                                    className="an-lineChartDot"
+                                    cx={point.x}
+                                    cy={point.y}
+                                    r="1.35"
+                                />
+                            ))}
                         </svg>
                     </div>
 
@@ -414,6 +423,10 @@ function MiniLineChart({
             </div>
         </div>
     );
+}
+
+function itemKey(item, index) {
+    return item?.date || item?.id || item?._id || `point-${index}`;
 }
 
 function HorizontalBarBreakdown({ title, subtitle, items = [] }) {
@@ -839,7 +852,6 @@ export default function Analytics() {
                                 delta={conversionRateDelta}
                                 range={range}
                                 isPercentage
-                                className="an-metric--conversion"
                             />
                         </div>
                     )}
