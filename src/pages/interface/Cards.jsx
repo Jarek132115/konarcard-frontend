@@ -328,7 +328,7 @@ export default function Cards() {
           <>
             <section className="cp-card">
               <div className="cp-cardHead">
-                <div>
+                <div className="cp-cardHeadCopy">
                   <div className="cp-eyebrow">Your cards</div>
                   <h2 className="cp-cardTitle">Your purchased products</h2>
                   <p className="cp-muted">
@@ -341,6 +341,13 @@ export default function Cards() {
 
               {error ? <div className="cp-alert danger">{error}</div> : null}
 
+              {loading ? (
+                <div className="cp-ownedLoadingGrid">
+                  <div className="cp-ownedSkeleton" />
+                  <div className="cp-ownedSkeleton" />
+                </div>
+              ) : null}
+
               {!loading && !purchasedCards.length ? (
                 <div className="cp-emptyState">
                   <div className="cp-emptyStateCard">
@@ -352,7 +359,7 @@ export default function Cards() {
                 </div>
               ) : null}
 
-              {!!purchasedCards.length && (
+              {!loading && !!purchasedCards.length && (
                 <div className="cp-catalogGrid cp-catalogGrid--owned">
                   {purchasedCards.map((card) => (
                     <PurchasedProductCard
