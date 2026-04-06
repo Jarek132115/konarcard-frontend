@@ -34,7 +34,6 @@ body,
     overflow: visible;
 }
 
-/* Desktop header */
 .dash-desktop-header {
     display: flex;
     align-items: flex-start;
@@ -75,7 +74,6 @@ body,
     color: var(--dash-muted);
 }
 
-/* Content padding only here */
 .dash-content {
     flex: 1 1 auto;
     min-width: 0;
@@ -87,7 +85,6 @@ body,
     margin: 0;
 }
 
-/* Mobile topbar */
 .dash-topbar {
     display: none;
 }
@@ -156,7 +153,7 @@ body,
     box-shadow: 0 0 0 3px rgba(249, 115, 22, 0.14);
 }
 
-@media (max-width: 1000px) {
+@media (max-width: 1279px) {
     .dash-layout {
         display: block;
         background: var(--dash-bg);

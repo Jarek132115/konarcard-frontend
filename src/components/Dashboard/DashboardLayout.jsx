@@ -4,6 +4,8 @@ import Sidebar from "./Sidebar";
 import LogoIcon from "../../assets/icons/Logo-Icon.svg";
 import "../../styling/dashboard/layout.css";
 
+const MOBILE_NAV_BREAKPOINT = 1279;
+
 export default function DashboardLayout({
     title,
     subtitle,
@@ -14,12 +16,12 @@ export default function DashboardLayout({
 }) {
     const [sidebarOpen, setSidebarOpen] = useState(false);
     const [isMobileNav, setIsMobileNav] = useState(() =>
-        typeof window !== "undefined" ? window.innerWidth <= 1000 : false
+        typeof window !== "undefined" ? window.innerWidth <= MOBILE_NAV_BREAKPOINT : false
     );
 
     useEffect(() => {
         const onResize = () => {
-            const mobileNow = window.innerWidth <= 1000;
+            const mobileNow = window.innerWidth <= MOBILE_NAV_BREAKPOINT;
             setIsMobileNav(mobileNow);
 
             if (!mobileNow) {

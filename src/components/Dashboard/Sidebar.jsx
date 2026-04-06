@@ -16,17 +16,19 @@ import LogoutIcon from "../../assets/icons/SidebarLinkLogout.svg";
 
 import "../../styling/dashboard/sidebar.css";
 
+const MOBILE_NAV_BREAKPOINT = 1279;
+
 export default function Sidebar({ sidebarOpen, setSidebarOpen }) {
     const { logout } = useContext(AuthContext);
     const navigate = useNavigate();
     const location = useLocation();
 
     const [isMobileNav, setIsMobileNav] = useState(() =>
-        typeof window !== "undefined" ? window.innerWidth <= 1000 : false
+        typeof window !== "undefined" ? window.innerWidth <= MOBILE_NAV_BREAKPOINT : false
     );
 
     useEffect(() => {
-        const onResize = () => setIsMobileNav(window.innerWidth <= 1000);
+        const onResize = () => setIsMobileNav(window.innerWidth <= MOBILE_NAV_BREAKPOINT);
         window.addEventListener("resize", onResize);
         return () => window.removeEventListener("resize", onResize);
     }, []);
@@ -84,7 +86,7 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen }) {
                 </div>
 
                 <div className="sb3-divider" />
-                <div className="sb3-gap" />
+                <div className="sb3-gap36" />
 
                 <nav className="sb3-nav" aria-label="Main navigation">
                     {MAIN_ITEMS.map((item) => (
@@ -102,10 +104,8 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen }) {
                     ))}
                 </nav>
 
-                <div className="sb3-sectionPush" />
-
                 <div className="sb3-divider" />
-                <div className="sb3-gap" />
+                <div className="sb3-gap36" />
 
                 <nav className="sb3-nav" aria-label="Upgrade">
                     <Link
@@ -120,9 +120,8 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen }) {
                     </Link>
                 </nav>
 
-                <div className="sb3-gap" />
                 <div className="sb3-divider" />
-                <div className="sb3-gap" />
+                <div className="sb3-gap36" />
 
                 <nav className="sb3-nav" aria-label="Help">
                     <Link
@@ -139,7 +138,7 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen }) {
 
                 <div className="sb3-bottom">
                     <div className="sb3-divider" />
-                    <div className="sb3-gap" />
+                    <div className="sb3-gap36" />
 
                     <div className="sb3-nav sb3-nav--bottom">
                         <Link
