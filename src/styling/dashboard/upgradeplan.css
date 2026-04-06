@@ -5,12 +5,14 @@
     display: flex;
     flex-direction: column;
     gap: var(--sp-3);
+    min-width: 0;
 }
 
 .upg-summaryGrid {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: var(--sp-3);
+    align-items: stretch;
 }
 
 .upg-summaryCard {
@@ -23,6 +25,7 @@
     min-height: 172px;
     display: flex;
     flex-direction: column;
+    overflow: hidden;
 }
 
 .upg-summaryCard--featured {
@@ -34,6 +37,7 @@
     display: inline-flex;
     align-items: center;
     width: fit-content;
+    max-width: 100%;
     min-height: 28px;
     padding: 0 10px;
     border-radius: 999px;
@@ -43,6 +47,7 @@
     font-size: 12px;
     line-height: 1;
     font-weight: 800;
+    white-space: nowrap;
 }
 
 .upg-summaryCard--featured .upg-summaryLabel {
@@ -58,6 +63,7 @@
     font-weight: 400;
     letter-spacing: -0.02em;
     color: #0f172a;
+    word-break: break-word;
 }
 
 .upg-summaryHeading--featured {
@@ -81,6 +87,9 @@
 .upg-summaryActions {
     margin-top: auto;
     padding-top: var(--sp-4);
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--sp-2);
 }
 
 .upg-mainCard {
@@ -89,6 +98,8 @@
     border-radius: 24px;
     box-shadow: 0 1px 0 rgba(15, 23, 42, 0.04), 0 10px 22px rgba(15, 23, 42, 0.04);
     padding: var(--sp-6);
+    min-width: 0;
+    overflow: hidden;
 }
 
 .upg-mainHead {
@@ -128,6 +139,7 @@
     flex-direction: column;
     align-items: flex-end;
     gap: var(--sp-2);
+    min-width: 0;
 }
 
 .upg-billingTabs {
@@ -135,6 +147,7 @@
     align-items: center;
     gap: var(--sp-2);
     flex-wrap: wrap;
+    justify-content: flex-end;
 }
 
 .upg-tab {
@@ -150,7 +163,12 @@
     font-weight: 700;
     line-height: 1;
     cursor: pointer;
-    transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease, transform 0.08s ease;
+    transition:
+        background 0.15s ease,
+        border-color 0.15s ease,
+        color 0.15s ease,
+        transform 0.08s ease;
+    white-space: nowrap;
 }
 
 .upg-tab:hover {
@@ -202,15 +220,21 @@
     box-shadow: 0 14px 28px rgba(249, 115, 22, 0.2);
 }
 
+.upg-planCard--current {
+    position: relative;
+}
+
 .upg-planTop {
     padding: var(--sp-6);
+    min-width: 0;
 }
 
 .upg-planTopRow {
     display: flex;
-    align-items: center;
+    align-items: flex-start;
     justify-content: space-between;
     gap: var(--sp-2);
+    min-width: 0;
 }
 
 .upg-planTag,
@@ -219,6 +243,7 @@
     align-items: center;
     justify-content: center;
     min-height: 28px;
+    max-width: 100%;
     padding: 0 10px;
     border-radius: 999px;
     border: 1px solid rgba(15, 23, 42, 0.12);
@@ -243,6 +268,7 @@
     display: flex;
     align-items: center;
     gap: 10px;
+    min-width: 0;
 }
 
 .upg-planIconWrap {
@@ -264,6 +290,11 @@
     display: block;
 }
 
+.upg-planNameBlock {
+    min-width: 0;
+    flex: 1 1 auto;
+}
+
 .upg-planName {
     margin: 0;
     font-family: "Inter", sans-serif;
@@ -272,6 +303,7 @@
     font-weight: 800;
     color: #0f172a;
     letter-spacing: -0.02em;
+    word-break: break-word;
 }
 
 .upg-planName--featured {
@@ -284,6 +316,7 @@
     align-items: flex-end;
     gap: 8px;
     flex-wrap: wrap;
+    min-width: 0;
 }
 
 .upg-planPrice {
@@ -293,6 +326,7 @@
     font-weight: 800;
     letter-spacing: -0.04em;
     color: #0f172a;
+    word-break: break-word;
 }
 
 .upg-planPrice--featured {
@@ -331,6 +365,7 @@
     height: 1px;
     margin: 0 var(--sp-6);
     background: rgba(15, 23, 42, 0.1);
+    flex: 0 0 auto;
 }
 
 .upg-planDivider--featured {
@@ -362,6 +397,7 @@
     padding-left: 18px;
     display: grid;
     gap: var(--sp-3);
+    min-width: 0;
 }
 
 .upg-planListItem {
@@ -412,6 +448,10 @@
     color: rgba(255, 255, 255, 0.92);
 }
 
+/* =========================
+   RESPONSIVE
+   ========================= */
+
 @media (max-width: 1280px) {
     .upg-mainHead {
         flex-direction: column;
@@ -421,6 +461,10 @@
     .upg-mainHeadControls {
         width: 100%;
         align-items: flex-start;
+    }
+
+    .upg-billingTabs {
+        justify-content: flex-start;
     }
 
     .upg-billingNote {
@@ -451,7 +495,10 @@
     }
 
     .upg-mainCard,
-    .upg-summaryCard,
+    .upg-summaryCard {
+        padding: var(--sp-6);
+    }
+
     .upg-planTop,
     .upg-planBody {
         padding: var(--sp-6);
@@ -479,13 +526,16 @@
 @media (max-width: 520px) {
     .upg-billingTabs {
         width: 100%;
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
     }
 
     .upg-tab {
-        flex: 1 1 calc(33.333% - 6px);
+        width: 100%;
         justify-content: center;
         text-align: center;
         padding: 0 12px;
+        min-width: 0;
     }
 
     .upg-planTopRow {
@@ -501,5 +551,40 @@
 
     .upg-planCadence {
         padding-bottom: 0;
+    }
+}
+
+@media (max-width: 420px) {
+
+    .upg-mainCard,
+    .upg-summaryCard {
+        padding: var(--sp-5);
+    }
+
+    .upg-planTop,
+    .upg-planBody {
+        padding: var(--sp-5);
+    }
+
+    .upg-planDivider {
+        margin: 0 var(--sp-5);
+    }
+
+    .upg-planPrice {
+        font-size: 42px;
+    }
+
+    .upg-planMeta,
+    .upg-planListItem {
+        font-size: 14px;
+    }
+
+    .upg-summaryHeading,
+    .upg-mainTitle {
+        font-size: 20px;
+    }
+
+    .upg-planName {
+        font-size: 18px;
     }
 }
