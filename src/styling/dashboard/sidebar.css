@@ -34,7 +34,7 @@
     visibility: visible;
 }
 
-/* Desktop */
+/* Sidebar base */
 .sb3 {
     position: sticky;
     top: 0;
@@ -70,19 +70,20 @@
     flex-shrink: 0;
 }
 
+/* Top */
 .sb3-top {
-    padding: 26px 24px 24px;
+    padding: var(--sp-6);
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 12px;
+    gap: var(--sp-3);
     background: #ffffff;
 }
 
 .sb3-brand {
     display: inline-flex;
     align-items: center;
-    gap: 12px;
+    gap: var(--sp-3);
     min-width: 0;
     text-decoration: none;
 }
@@ -141,32 +142,34 @@
     transform: translateY(1px);
 }
 
+/* Dividers + spacing */
 .sb3-divider {
     height: 1px;
     background: var(--sb3-divider);
-    margin: 0 24px;
+    margin: 0 var(--sp-6);
 }
 
 .sb3-gap36 {
-    height: 24px;
+    height: var(--sp-5);
 }
 
+/* Nav */
 .sb3-nav {
     display: grid;
-    gap: 16px;
-    padding: 0 24px;
+    gap: var(--sp-3);
+    padding: 0 var(--sp-4);
 }
 
 .sb3-link {
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: var(--sp-2);
     min-height: 40px;
 
     text-decoration: none;
-    padding: 6px;
+    padding: var(--sp-2) var(--sp-3);
 
-    border-radius: 8px;
+    border-radius: 10px;
     background: transparent;
 
     font-family: "Inter", sans-serif;
@@ -231,18 +234,19 @@
     filter: none;
 }
 
+/* Bottom area */
 .sb3-bottom {
     margin-top: auto;
-    padding: 24px 0 18px;
+    padding: var(--sp-5) 0 var(--sp-4);
     background: #ffffff;
 }
 
 .sb3-nav--bottom {
-    padding: 0 24px;
+    padding: 0 var(--sp-4);
 }
 
 .sb3-footnote {
-    margin-top: 18px;
+    margin-top: var(--sp-4);
     font-family: "Inter", sans-serif;
     font-size: 12px;
     font-weight: 700;
@@ -250,6 +254,7 @@
     text-align: center;
 }
 
+/* Logout */
 .sb3-link--logout {
     background: transparent;
     color: var(--sb3-danger);
@@ -271,23 +276,36 @@
     background: var(--sb3-danger-soft);
 }
 
-/* Only tighten vertical spacing a bit on shorter desktop screens */
+/* Slightly tighter on shorter desktop screens */
 @media (max-height: 860px) and (min-width: 1001px) {
+    .sb3-top {
+        padding: var(--sp-5);
+    }
+
+    .sb3-divider {
+        margin: 0 var(--sp-5);
+    }
+
     .sb3-gap36 {
-        height: 20px;
+        height: var(--sp-4);
+    }
+
+    .sb3-nav,
+    .sb3-nav--bottom {
+        padding: 0 var(--sp-4);
     }
 
     .sb3-nav {
-        gap: 14px;
+        gap: var(--sp-2);
     }
 
     .sb3-bottom {
-        padding-top: 18px;
-        padding-bottom: 16px;
+        padding-top: var(--sp-4);
+        padding-bottom: var(--sp-3);
     }
 }
 
-/* Mobile / tablet drawer only */
+/* Mobile drawer */
 @media (max-width: 1000px) {
     .sb3 {
         position: fixed;
@@ -317,57 +335,47 @@
     }
 
     .sb3-top {
-        padding: 20px 24px;
+        padding: var(--sp-6);
     }
 
     .sb3-divider {
-        margin: 0 24px;
+        margin: 0 var(--sp-6);
+    }
+
+    .sb3-gap36 {
+        height: var(--sp-4);
     }
 
     .sb3-nav,
     .sb3-nav--bottom {
-        padding: 0 24px;
-    }
-
-    .sb3-gap36 {
-        height: 20px;
+        padding: 0 var(--sp-4);
     }
 
     .sb3-nav {
-        gap: 14px;
-    }
-}
-
-@media (max-width: 1000px) and (max-height: 860px) {
-    .sb3-top {
-        padding: 18px 24px;
-    }
-
-    .sb3-gap36 {
-        height: 16px;
-    }
-
-    .sb3-nav {
-        gap: 12px;
-    }
-
-    .sb3-bottom {
-        padding-bottom: 14px;
+        gap: var(--sp-3);
     }
 }
 
 @media (max-width: 640px) {
     .sb3-top {
-        padding: 16px 18px;
+        padding: var(--sp-5);
     }
 
     .sb3-divider {
-        margin: 0 18px;
+        margin: 0 var(--sp-5);
+    }
+
+    .sb3-gap36 {
+        height: var(--sp-3);
     }
 
     .sb3-nav,
     .sb3-nav--bottom {
-        padding: 0 18px;
+        padding: 0 var(--sp-4);
+    }
+
+    .sb3-nav {
+        gap: var(--sp-2);
     }
 
     .sb3-brandName {
@@ -376,13 +384,11 @@
 
     .sb3-link {
         font-size: 15px;
+        min-height: 38px;
     }
 
-    .sb3-gap36 {
-        height: 16px;
-    }
-
-    .sb3-nav {
-        gap: 12px;
+    .sb3-bottom {
+        padding-top: var(--sp-4);
+        padding-bottom: var(--sp-3);
     }
 }
