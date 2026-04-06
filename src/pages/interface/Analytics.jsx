@@ -217,9 +217,17 @@ function getMetricDelta(current, previous, key) {
     return (Number(current?.[key]) || 0) - (Number(previous?.[key]) || 0);
 }
 
-function MetricCard({ label, value, delta, range, isPercentage = false, featured = false }) {
+function MetricCard({
+    label,
+    value,
+    delta,
+    range,
+    isPercentage = false,
+    featured = false,
+    className = "",
+}) {
     return (
-        <div className={`an-metric ${featured ? "an-metric--featured" : ""}`}>
+        <div className={`an-metric ${featured ? "an-metric--featured" : ""} ${className}`.trim()}>
             <div className="an-metric-label">{label}</div>
             <div className="an-metric-num">
                 {isPercentage ? percentageFormat(value) : numberFormat(value)}
@@ -243,7 +251,7 @@ function RecentActivityCard({ items = [] }) {
                 </div>
             </div>
 
-            <div className="an-scrollList">
+            <div className="an-scrollList an-scrollList--activity">
                 {items.length ? (
                     items.map((item, index) => (
                         <div
@@ -831,6 +839,7 @@ export default function Analytics() {
                                 delta={conversionRateDelta}
                                 range={range}
                                 isPercentage
+                                className="an-metric--conversion"
                             />
                         </div>
                     )}
