@@ -476,7 +476,7 @@
     }
 }
 
-@media (max-width: 980px) {
+@media (max-width: 640px) {
     .upg-summaryGrid {
         grid-template-columns: 1fr;
     }
