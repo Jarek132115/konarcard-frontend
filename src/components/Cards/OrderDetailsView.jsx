@@ -86,7 +86,7 @@ export default function OrderDetailsView({
 
             <section className="cp-card odv-heroCard">
                 <div className="cp-cardHead odv-heroHead">
-                    <div>
+                    <div className="cp-cardHeadCopy">
                         <div className="cp-eyebrow">Order details</div>
                         <h2 className="cp-cardTitle">
                             {selectedOrder?.title || "Order details"}

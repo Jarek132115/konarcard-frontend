@@ -566,9 +566,7 @@ export default function CardCustomizer({
                         <div className="ccz-deliveryCard">
                             <div className="ccz-deliveryLabel">Estimated delivery</div>
                             <div className="ccz-deliveryDate">{deliveryInfo.label}</div>
-                            <p className="ccz-deliveryText">
-                                {deliveryInfo.helper}
-                            </p>
+                            <p className="ccz-deliveryText">{deliveryInfo.helper}</p>
                             <p className="ccz-deliveryMeta">
                                 Current time: {cutOffText} • Next day delivery available
                             </p>
@@ -579,7 +577,7 @@ export default function CardCustomizer({
 
             <section className="cp-card cp-card--builderInfo">
                 <div className="cp-cardHead">
-                    <div>
+                    <div className="cp-cardHeadCopy">
                         <h2 className="cp-cardTitle">Product details</h2>
                         <p className="cp-muted">Everything you need to know before checkout.</p>
                     </div>

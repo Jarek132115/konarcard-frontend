@@ -15,6 +15,7 @@
     justify-content: space-between;
     gap: var(--sp-4);
     margin-bottom: var(--sp-5);
+    min-width: 0;
 }
 
 .ccz-heroText {
@@ -35,6 +36,9 @@
     font-weight: 800;
     line-height: 1;
     margin-bottom: var(--sp-4);
+    width: fit-content;
+    max-width: 100%;
+    white-space: nowrap;
 }
 
 .ccz-mainGrid {
@@ -42,6 +46,7 @@
     grid-template-columns: minmax(0, 1.08fr) minmax(360px, 0.92fr);
     gap: var(--sp-3);
     align-items: stretch;
+    min-width: 0;
 }
 
 .ccz-previewCard,
@@ -69,6 +74,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
+    min-width: 0;
 }
 
 .ccz-previewCanvas .pc3d {
@@ -100,6 +106,7 @@
     display: flex;
     flex-direction: column;
     gap: var(--sp-5);
+    min-width: 0;
 }
 
 .ccz-field {
@@ -152,6 +159,7 @@
         box-shadow 0.15s ease,
         transform 0.08s ease;
     max-width: 100%;
+    min-width: 0;
 }
 
 .ccz-uploadBtn:hover {
@@ -176,6 +184,7 @@
     max-width: 240px;
     font-family: "Inter", sans-serif;
     font-weight: 500;
+    min-width: 0;
 }
 
 .ccz-textBtn {
@@ -240,6 +249,7 @@
 
 .ccz-selectWrap {
     width: 100%;
+    min-width: 0;
 }
 
 .ccz-select {
@@ -300,6 +310,7 @@
     border-radius: 14px;
     overflow: hidden;
     background: #fff;
+    flex: 0 0 auto;
 }
 
 .ccz-qtyBtn {
@@ -347,6 +358,7 @@
 
 .ccz-deliveryCard {
     padding: var(--sp-5);
+    min-width: 0;
 }
 
 .ccz-deliveryLabel {
@@ -395,6 +407,7 @@
     background: #ffffff;
     border-radius: 24px;
     overflow: hidden;
+    border: 1px solid rgba(15, 23, 42, 0.1);
 }
 
 .ccz-specCard {
@@ -409,6 +422,7 @@
     background: #ffffff;
     border-right: 1px solid rgba(15, 23, 42, 0.1);
     border-bottom: 1px solid rgba(15, 23, 42, 0.1);
+    min-width: 0;
 }
 
 .ccz-specCard:nth-child(3n) {
@@ -433,6 +447,8 @@
     font-weight: 700;
     line-height: 1;
     white-space: nowrap;
+    width: fit-content;
+    max-width: 100%;
 }
 
 .ccz-specValue {
@@ -443,7 +459,10 @@
     line-height: 1.65;
     font-weight: 500;
     color: rgba(15, 23, 42, 0.88);
+    overflow-wrap: anywhere;
 }
+
+/* responsive */
 
 @media (max-width: 1180px) {
     .ccz-mainGrid {
@@ -537,6 +556,10 @@
 }
 
 @media (max-width: 520px) {
+    .ccz-backRow {
+        width: 100%;
+    }
+
     .ccz-backRow .kx-btn {
         width: 100%;
         justify-content: center;
