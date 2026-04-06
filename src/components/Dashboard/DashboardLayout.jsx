@@ -13,14 +13,14 @@ export default function DashboardLayout({
     hideMobileTopbar = false,
 }) {
     const [sidebarOpen, setSidebarOpen] = useState(false);
-    const [isMobile, setIsMobile] = useState(() =>
+    const [isMobileNav, setIsMobileNav] = useState(() =>
         typeof window !== "undefined" ? window.innerWidth <= 1000 : false
     );
 
     useEffect(() => {
         const onResize = () => {
             const mobileNow = window.innerWidth <= 1000;
-            setIsMobile(mobileNow);
+            setIsMobileNav(mobileNow);
 
             if (!mobileNow) {
                 setSidebarOpen(false);
@@ -32,21 +32,17 @@ export default function DashboardLayout({
     }, []);
 
     useEffect(() => {
-        if (!isMobile) return undefined;
+        if (!isMobileNav) return undefined;
 
-        if (sidebarOpen) {
-            document.body.style.overflow = "hidden";
-        } else {
-            document.body.style.overflow = "";
-        }
+        document.body.style.overflow = sidebarOpen ? "hidden" : "";
 
         return () => {
             document.body.style.overflow = "";
         };
-    }, [sidebarOpen, isMobile]);
+    }, [sidebarOpen, isMobileNav]);
 
     const mobileTopbar = useMemo(() => {
-        if (hideMobileTopbar) return null;
+        if (hideMobileTopbar || !isMobileNav) return null;
 
         return (
             <header className="dash-topbar" role="banner">
@@ -70,16 +66,16 @@ export default function DashboardLayout({
                 </div>
             </header>
         );
-    }, [hideMobileTopbar, rightSlot]);
+    }, [hideMobileTopbar, isMobileNav, rightSlot]);
 
     return (
-        <div className="dash-layout">
+        <div className={`dash-layout ${isMobileNav ? "is-mobileNav" : "is-desktopNav"}`}>
             <Sidebar sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
 
             <div className="dash-main">
-                {isMobile ? mobileTopbar : null}
+                {mobileTopbar}
 
-                {!hideDesktopHeader && !isMobile && (title || subtitle || rightSlot) ? (
+                {!isMobileNav && !hideDesktopHeader && (title || subtitle || rightSlot) ? (
                     <div className="dash-desktop-header">
                         <div className="dash-desktop-left">
                             {title ? <div className="dash-desktop-title">{title}</div> : null}

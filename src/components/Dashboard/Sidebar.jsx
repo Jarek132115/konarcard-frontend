@@ -21,12 +21,12 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen }) {
     const navigate = useNavigate();
     const location = useLocation();
 
-    const [isMobile, setIsMobile] = useState(() =>
+    const [isMobileNav, setIsMobileNav] = useState(() =>
         typeof window !== "undefined" ? window.innerWidth <= 1000 : false
     );
 
     useEffect(() => {
-        const onResize = () => setIsMobile(window.innerWidth <= 1000);
+        const onResize = () => setIsMobileNav(window.innerWidth <= 1000);
         window.addEventListener("resize", onResize);
         return () => window.removeEventListener("resize", onResize);
     }, []);
@@ -55,12 +55,12 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen }) {
     return (
         <>
             <div
-                className={`sb3-overlay ${isMobile && sidebarOpen ? "active" : ""}`}
+                className={`sb3-overlay ${isMobileNav && sidebarOpen ? "active" : ""}`}
                 onClick={closeSidebar}
             />
 
             <aside
-                className={`sb3 ${isMobile ? "mobile" : "desktop"} ${sidebarOpen ? "open" : ""}`}
+                className={`sb3 ${isMobileNav ? "mobile" : "desktop"} ${sidebarOpen ? "open" : ""}`}
                 aria-label="Sidebar"
             >
                 <div className="sb3-top">
@@ -71,7 +71,7 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen }) {
                         <span className="sb3-brandName">KonarCard</span>
                     </Link>
 
-                    {isMobile ? (
+                    {isMobileNav ? (
                         <button
                             className="sb3-close"
                             aria-label="Close menu"
@@ -102,7 +102,8 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen }) {
                     ))}
                 </nav>
 
-                <div className="sb3-gap" />
+                <div className="sb3-sectionPush" />
+
                 <div className="sb3-divider" />
                 <div className="sb3-gap" />
 
