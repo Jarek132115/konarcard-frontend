@@ -6,6 +6,12 @@
     --dash-muted: var(--kc-text-secondary, #475569);
 }
 
+html,
+body,
+#root {
+    min-height: 100%;
+}
+
 .dash-layout {
     min-height: 100vh;
     display: flex;
@@ -25,6 +31,7 @@
     padding: 0;
     margin: 0;
     background: transparent;
+    overflow: visible;
 }
 
 /* Desktop header */
@@ -158,6 +165,7 @@
     .dash-main {
         min-height: 100vh;
         background: transparent;
+        overflow: visible;
     }
 
     .dash-topbar {
@@ -168,6 +176,9 @@
         padding: 20px var(--dash-gutter-mobile) 16px;
         background: #ffffff;
         border-bottom: 1px solid rgba(15, 23, 42, 0.08);
+        position: sticky;
+        top: 0;
+        z-index: 120;
     }
 
     .dash-desktop-header {
