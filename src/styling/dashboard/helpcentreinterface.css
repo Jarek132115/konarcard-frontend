@@ -138,14 +138,6 @@
   align-items: center;
 }
 
-.hc4-card--mediaRight .hc4-cardMedia {
-  order: 2;
-}
-
-.hc4-card--mediaRight .hc4-cardBody {
-  order: 1;
-}
-
 .hc4-cardMedia {
   position: relative;
   width: 100%;
@@ -158,6 +150,17 @@
   background: #f8fafc;
   cursor: pointer;
   display: block;
+  order: 1;
+}
+
+.hc4-cardBody {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: var(--sp-5);
+  padding: 0;
+  order: 2;
 }
 
 .hc4-cardImg {
@@ -190,15 +193,6 @@
   height: 22px;
   display: block;
   color: #0f172a;
-}
-
-.hc4-cardBody {
-  min-width: 0;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  gap: var(--sp-5);
-  padding: 0;
 }
 
 .hc4-cardTop {
@@ -495,6 +489,26 @@
    RESPONSIVE
    ========================= */
 
+@media (min-width: 1201px) {
+  .hc4-cardMedia {
+    order: 1;
+  }
+
+  .hc4-cardBody {
+    order: 2;
+  }
+
+  .hc4-card:nth-child(4n-1) .hc4-cardMedia,
+  .hc4-card:nth-child(4n) .hc4-cardMedia {
+    order: 2;
+  }
+
+  .hc4-card:nth-child(4n-1) .hc4-cardBody,
+  .hc4-card:nth-child(4n) .hc4-cardBody {
+    order: 1;
+  }
+}
+
 @media (max-width: 1320px) {
   .hc4-heroTitle {
     max-width: none;
@@ -509,6 +523,22 @@
   .hc4-card {
     grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: var(--sp-5);
+  }
+
+  .hc4-cardMedia {
+    order: 1;
+  }
+
+  .hc4-cardBody {
+    order: 2;
+  }
+
+  .hc4-card:nth-child(even) .hc4-cardMedia {
+    order: 2;
+  }
+
+  .hc4-card:nth-child(even) .hc4-cardBody {
+    order: 1;
   }
 }
 
@@ -542,14 +572,6 @@
     width: 100%;
     height: auto;
     aspect-ratio: 4 / 3;
-  }
-
-  .hc4-card--mediaRight .hc4-cardMedia {
-    order: 2;
-  }
-
-  .hc4-card--mediaRight .hc4-cardBody {
-    order: 1;
   }
 
   .hc4-modalOverlay {
@@ -590,8 +612,7 @@
     font-size: 22px;
   }
 
-  .hc4-card,
-  .hc4-card--mediaRight {
+  .hc4-card {
     grid-template-columns: 1fr;
     gap: var(--sp-4);
   }
@@ -602,6 +623,7 @@
 
   .hc4-cardBody {
     gap: var(--sp-4);
+    order: 2;
   }
 
   .hc4-cardMedia {
@@ -609,11 +631,7 @@
     height: auto;
     aspect-ratio: 4 / 3;
     border-radius: 14px;
-  }
-
-  .hc4-card--mediaRight .hc4-cardMedia,
-  .hc4-card--mediaRight .hc4-cardBody {
-    order: initial;
+    order: 1;
   }
 
   .hc4-watchBtn {
@@ -663,33 +681,5 @@
   .hc4-modalHead {
     padding-top: var(--sp-4);
     padding-bottom: var(--sp-4);
-  }
-}
-
-/* =========================
-   FINAL FIX — DESKTOP ROW ALTERNATION ONLY
-   (DO NOT TOUCH TABLET OR MOBILE)
-   ========================= */
-
-@media (min-width: 1201px) {
-
-  /* reset any previous ordering */
-  .hc4-cardMedia {
-    order: 1;
-  }
-
-  .hc4-cardBody {
-    order: 2;
-  }
-
-  /* flip rows 2,4,6... */
-  .hc4-card:nth-child(4n-1) .hc4-cardMedia,
-  .hc4-card:nth-child(4n) .hc4-cardMedia {
-    order: 2;
-  }
-
-  .hc4-card:nth-child(4n-1) .hc4-cardBody,
-  .hc4-card:nth-child(4n) .hc4-cardBody {
-    order: 1;
   }
 }

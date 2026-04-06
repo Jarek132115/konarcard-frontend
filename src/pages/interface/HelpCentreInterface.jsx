@@ -220,14 +220,9 @@ export default function HelpCentreInterface() {
         </section>
 
         <section className="hc4-grid" aria-label="Help videos">
-          {videos.map((video, index) => {
-            const mediaRight = index % 2 === 1;
-
+          {videos.map((video) => {
             return (
-              <article
-                key={video.id}
-                className={`hc4-card ${mediaRight ? "hc4-card--mediaRight" : ""}`}
-              >
+              <article key={video.id} className="hc4-card">
                 <button
                   type="button"
                   className="hc4-cardMedia"
