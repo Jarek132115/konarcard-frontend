@@ -224,41 +224,46 @@
     line-height: 1.2;
     color: var(--cb-ink);
     letter-spacing: -0.01em;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
 .cb-contactMetaGroup {
     margin-top: var(--sp-2);
     display: grid;
-    gap: 4px;
+    gap: 6px;
+    min-width: 0;
 }
 
 .cb-contactMeta {
     font-family: "Inter", sans-serif;
-    font-size: 14px;
+    font-size: 16px;
     line-height: 1.45;
     font-weight: 500;
     color: #43506a;
-    overflow-wrap: anywhere;
+    min-width: 0;
 }
 
 .cb-contactMeta--withIcon {
     display: flex;
-    align-items: flex-start;
-    gap: 8px;
+    align-items: center;
+    gap: 10px;
+    min-width: 0;
 }
 
 .cb-contactMetaIcon {
-    width: 16px;
-    height: 16px;
+    width: 18px;
+    height: 18px;
     display: block;
-    flex: 0 0 16px;
-    margin-top: 2px;
+    flex: 0 0 18px;
     object-fit: contain;
 }
 
 .cb-contactMeta--withIcon span {
     min-width: 0;
-    overflow-wrap: anywhere;
+    flex: 1 1 auto;
 }
 
 .cb-contactDate {
@@ -269,6 +274,10 @@
     font-style: italic;
     font-weight: 500;
     color: var(--cb-ink);
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
 .cb-contactCard.is-active .cb-contactCard-title,
@@ -618,6 +627,33 @@
         padding: var(--sp-4);
     }
 
+    .cb-contactCard-title {
+        min-width: 0;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    .cb-contactMeta {
+        font-size: 15px;
+    }
+
+    .cb-contactMetaIcon {
+        width: 18px;
+        height: 18px;
+        flex: 0 0 18px;
+    }
+
+    .cb-contactMeta--withIcon {
+        min-width: 0;
+    }
+
+    .cb-contactMeta--withIcon span {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
     .cb-detailPanel {
         padding: var(--sp-6);
     }
@@ -654,12 +690,33 @@
         font-size: 17px;
     }
 
-    .cb-contactMeta,
+    .cb-contactMeta {
+        font-size: 15px;
+    }
+
     .cb-contactDate,
     .cb-detailLabel,
     .cb-detailValue,
     .cb-inlineText {
         font-size: 14px;
+    }
+
+    .cb-contactMeta--withIcon {
+        gap: 10px;
+    }
+
+    .cb-contactMetaIcon {
+        width: 18px;
+        height: 18px;
+        flex: 0 0 18px;
+    }
+
+    .cb-contactMeta--withIcon span,
+    .cb-contactDate {
+        min-width: 0;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
     }
 
     .cb-detailPanel {
