@@ -47,7 +47,7 @@
 
 .hc4-heroTitle {
   margin: 0 0 var(--sp-2);
-  max-width: 24ch;
+  max-width: 34ch;
   font-family: "Cal Sans", sans-serif;
   font-size: 26px;
   font-weight: 400;
@@ -503,6 +503,10 @@
   .hc4-grid {
     grid-template-columns: 1fr;
   }
+
+  .hc4-heroTitle {
+    max-width: none;
+  }
 }
 
 @media (max-width: 980px) {
@@ -527,17 +531,20 @@
 
   .hc4-card,
   .hc4-card--mediaRight {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(240px, 42%) minmax(0, 58%);
     gap: var(--sp-5);
   }
 
-  .hc4-card--mediaRight .hc4-cardMedia,
-  .hc4-card--mediaRight .hc4-cardBody {
-    order: initial;
+  .hc4-cardMedia {
+    aspect-ratio: 4 / 3;
   }
 
-  .hc4-cardMedia {
-    aspect-ratio: 16 / 10;
+  .hc4-card--mediaRight .hc4-cardMedia {
+    order: 2;
+  }
+
+  .hc4-card--mediaRight .hc4-cardBody {
+    order: 1;
   }
 
   .hc4-modalOverlay {
@@ -578,6 +585,12 @@
     font-size: 22px;
   }
 
+  .hc4-card,
+  .hc4-card--mediaRight {
+    grid-template-columns: 1fr;
+    gap: var(--sp-4);
+  }
+
   .hc4-cardTitle {
     font-size: 18px;
   }
@@ -589,6 +602,11 @@
   .hc4-cardMedia {
     border-radius: 14px;
     aspect-ratio: 4 / 3;
+  }
+
+  .hc4-card--mediaRight .hc4-cardMedia,
+  .hc4-card--mediaRight .hc4-cardBody {
+    order: initial;
   }
 
   .hc4-watchBtn {
