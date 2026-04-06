@@ -4,6 +4,16 @@
     --dash-bg: #f8f8f8;
     --dash-ink: var(--kc-text-primary, #0f172a);
     --dash-muted: var(--kc-text-secondary, #475569);
+
+    /* shared mobile header sizing */
+    --dash-mobile-header-px: 14px;
+    --dash-mobile-header-py-top: 16px;
+    --dash-mobile-header-py-bottom: 14px;
+    --dash-mobile-header-gap: 12px;
+    --dash-mobile-logo-size: 40px;
+    --dash-mobile-action-size: 34px;
+    --dash-mobile-action-radius: 12px;
+    --dash-mobile-header-divider: rgba(15, 23, 42, 0.08);
 }
 
 html,
@@ -92,28 +102,28 @@ body,
 .dash-topbar-left {
     display: inline-flex;
     align-items: center;
-    gap: 12px;
+    gap: var(--dash-mobile-header-gap);
     min-width: 0;
 }
 
 .dash-topbar-logo {
-    width: 40px;
-    height: 40px;
+    width: var(--dash-mobile-logo-size);
+    height: var(--dash-mobile-logo-size);
     display: grid;
     place-items: center;
     flex: 0 0 auto;
 }
 
 .dash-topbar-logo img {
-    width: 40px;
-    height: 40px;
+    width: var(--dash-mobile-logo-size);
+    height: var(--dash-mobile-logo-size);
     display: block;
 }
 
 .dash-topbar-right {
     display: inline-flex;
     align-items: flex-start;
-    gap: 12px;
+    gap: var(--dash-mobile-header-gap);
     margin-left: auto;
 }
 
@@ -123,9 +133,9 @@ body,
 }
 
 .dash-burger {
-    width: 34px;
-    height: 34px;
-    border-radius: 12px;
+    width: var(--dash-mobile-action-size);
+    height: var(--dash-mobile-action-size);
+    border-radius: var(--dash-mobile-action-radius);
     border: 1px solid rgba(15, 23, 42, 0.1);
     background: #ffffff;
     color: var(--dash-ink);
@@ -138,6 +148,7 @@ body,
     cursor: pointer;
     transition: background 0.16s ease, transform 0.08s ease;
     flex: 0 0 auto;
+    padding: 0;
 }
 
 .dash-burger:hover {
@@ -169,10 +180,11 @@ body,
         display: flex;
         align-items: flex-start;
         justify-content: space-between;
-        gap: 12px;
-        padding: 20px var(--dash-gutter-mobile) 16px;
+        gap: var(--dash-mobile-header-gap);
+        padding:
+            var(--dash-mobile-header-py-top) var(--dash-mobile-header-px) var(--dash-mobile-header-py-bottom);
         background: #ffffff;
-        border-bottom: 1px solid rgba(15, 23, 42, 0.08);
+        border-bottom: 1px solid var(--dash-mobile-header-divider);
         position: sticky;
         top: 0;
         z-index: 120;
@@ -199,10 +211,6 @@ body,
 }
 
 @media (max-width: 640px) {
-    .dash-topbar {
-        padding: 18px 14px 14px;
-    }
-
     .dash-content {
         padding: 14px;
         padding-top: 14px;

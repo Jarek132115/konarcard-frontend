@@ -16,9 +16,18 @@
 
     --sb3-danger: rgba(220, 38, 38, 0.95);
     --sb3-danger-soft: rgba(220, 38, 38, 0.08);
+
+    /* shared with mobile topbar */
+    --dash-mobile-header-px: 14px;
+    --dash-mobile-header-py-top: 16px;
+    --dash-mobile-header-py-bottom: 14px;
+    --dash-mobile-header-gap: 12px;
+    --dash-mobile-logo-size: 40px;
+    --dash-mobile-action-size: 34px;
+    --dash-mobile-action-radius: 12px;
+    --dash-mobile-header-divider: rgba(15, 23, 42, 0.08);
 }
 
-/* Overlay */
 .sb3-overlay {
     position: fixed;
     inset: 0;
@@ -34,7 +43,7 @@
     visibility: visible;
 }
 
-/* Sidebar base */
+/* desktop sidebar */
 .sb3 {
     position: sticky;
     top: 0;
@@ -70,7 +79,6 @@
     flex-shrink: 0;
 }
 
-/* Top */
 .sb3-top {
     padding: var(--sp-6);
     display: flex;
@@ -142,7 +150,6 @@
     transform: translateY(1px);
 }
 
-/* Dividers + spacing */
 .sb3-divider {
     height: 1px;
     background: var(--sb3-divider);
@@ -154,7 +161,6 @@
     height: 0;
 }
 
-/* Nav */
 .sb3-nav {
     display: flex;
     flex-direction: column;
@@ -236,7 +242,6 @@
     filter: none;
 }
 
-/* Bottom area */
 .sb3-bottom {
     margin-top: auto;
     padding: var(--sp-3) 0 var(--sp-4);
@@ -256,7 +261,6 @@
     text-align: center;
 }
 
-/* Logout */
 .sb3-link--logout {
     background: transparent;
     color: var(--sb3-danger);
@@ -278,8 +282,7 @@
     background: var(--sb3-danger-soft);
 }
 
-/* Slightly tighter on shorter desktop screens */
-@media (max-height: 860px) and (min-width: 1001px) {
+@media (max-height: 860px) and (min-width: 1280px) {
     .sb3-top {
         padding: var(--sp-5);
     }
@@ -303,7 +306,7 @@
     }
 }
 
-/* Mobile drawer */
+/* tablet + mobile drawer */
 @media (max-width: 1279px) {
     .sb3 {
         position: fixed;
@@ -332,21 +335,58 @@
         transform: translateX(0);
     }
 
+    /* make opened drawer header match closed topbar exactly */
     .sb3-top {
-        padding: var(--sp-6);
+        padding:
+            var(--dash-mobile-header-py-top) var(--dash-mobile-header-px) var(--dash-mobile-header-py-bottom);
+        gap: var(--dash-mobile-header-gap);
+        align-items: flex-start;
+    }
+
+    .sb3-brand {
+        gap: var(--dash-mobile-header-gap);
+    }
+
+    .sb3-logo {
+        width: var(--dash-mobile-logo-size);
+        height: var(--dash-mobile-logo-size);
+    }
+
+    .sb3-logo img {
+        width: var(--dash-mobile-logo-size);
+        height: var(--dash-mobile-logo-size);
+    }
+
+    .sb3-brandName {
+        font-size: 18px;
+        line-height: 1;
+        padding-top: 2px;
+    }
+
+    .sb3-close {
+        width: var(--dash-mobile-action-size);
+        height: var(--dash-mobile-action-size);
+        border-radius: var(--dash-mobile-action-radius);
+        font-size: 17px;
+        padding: 0;
+        margin: 0;
+        flex: 0 0 auto;
+    }
+
+    /* divider aligns with closed topbar width rhythm */
+    .sb3-divider {
+        margin-left: var(--dash-mobile-header-px);
+        margin-right: var(--dash-mobile-header-px);
     }
 
     .sb3-nav,
     .sb3-nav--bottom {
-        padding: 0 var(--sp-4);
+        padding-left: var(--dash-mobile-header-px);
+        padding-right: var(--dash-mobile-header-px);
     }
 
     .sb3-nav {
         gap: var(--sp-3);
-    }
-
-    .sb3-divider {
-        margin: var(--sp-3) var(--sp-4);
     }
 
     .sb3-bottom {
@@ -356,30 +396,18 @@
 }
 
 @media (max-width: 640px) {
-    .sb3-top {
-        padding: var(--sp-5);
-    }
-
-    .sb3-nav,
-    .sb3-nav--bottom {
-        padding: 0 var(--sp-4);
-    }
-
     .sb3-nav {
         gap: var(--sp-2);
-    }
-
-    .sb3-divider {
-        margin: var(--sp-2) var(--sp-4);
-    }
-
-    .sb3-brandName {
-        font-size: 18px;
     }
 
     .sb3-link {
         font-size: 15px;
         min-height: 38px;
+    }
+
+    .sb3-divider {
+        margin-top: var(--sp-2);
+        margin-bottom: var(--sp-2);
     }
 
     .sb3-bottom {
