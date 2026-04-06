@@ -455,7 +455,7 @@ export default function Dashboard() {
                                 <img src={GrowYourReachIcon} alt="" />
                             </span>
 
-                            <div>
+                            <div className="db-shareCopy">
                                 <h2 className="db-cardTitle">Share More</h2>
                                 <p className="db-muted">
                                     Share your profile to get more views, taps, scans and saved contacts.
@@ -481,13 +481,13 @@ export default function Dashboard() {
 
                     <section className="db-card db-card--equal db-span-6">
                         <div className="db-cardHead">
-                            <div>
+                            <div className="db-cardHeadLeft">
                                 <h2 className="db-cardTitle">Recent Activity</h2>
                                 <p className="db-muted">See what’s been happening on your profile recently.</p>
                             </div>
                         </div>
 
-                        <div className="db-scrollPanel">
+                        <div className="db-scrollPanel db-scrollPanel--activity">
                             {recentActivity.length ? (
                                 recentActivity.map((item) => (
                                     <div key={item.id} className="db-activityRow">
@@ -514,7 +514,7 @@ export default function Dashboard() {
 
                     <section className="db-card db-card--equal db-span-6">
                         <div className="db-cardHead">
-                            <div>
+                            <div className="db-cardHeadLeft">
                                 <h2 className="db-cardTitle">Profile Completion</h2>
                                 <p className="db-muted">
                                     Finish your profile to look more professional and get more jobs.
@@ -535,7 +535,7 @@ export default function Dashboard() {
 
                         <div className="db-completeLabel">Still to do:</div>
 
-                        <div className="db-scrollPanel">
+                        <div className="db-scrollPanel db-scrollPanel--completion">
                             {completion.items.length ? (
                                 completion.items.map((item) => (
                                     <div key={item.key} className="db-activityRow">
