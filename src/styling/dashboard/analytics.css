@@ -98,8 +98,8 @@
 }
 
 .an-select {
-    min-width: 240px;
     width: auto;
+    min-width: 220px;
     max-width: 100%;
     height: 44px;
     padding: 0 42px 0 14px;
@@ -127,7 +127,7 @@
 }
 
 .an-select--range {
-    min-width: 168px;
+    min-width: 164px;
 }
 
 .an-select:focus {
@@ -166,14 +166,17 @@
     min-height: 140px;
 }
 
-.an-metrics7 {
+/* =========================
+   METRICS GRID
+   ========================= */
+
+.an-overview .an-metrics7 {
     display: grid;
     grid-template-columns: repeat(12, minmax(0, 1fr));
     gap: var(--sp-3);
 }
 
-.an-metric {
-    grid-column: span 3;
+.an-overview .an-metric {
     background: #ffffff;
     border: 1px solid rgba(15, 23, 42, 0.1);
     border-radius: 24px;
@@ -190,7 +193,17 @@
     border-color: var(--an-orange);
 }
 
-.an-metric--conversion {
+/* LARGE DESKTOP: 4 top / 3 bottom */
+.an-overview .an-metrics7>.an-metric:nth-child(1),
+.an-overview .an-metrics7>.an-metric:nth-child(2),
+.an-overview .an-metrics7>.an-metric:nth-child(3),
+.an-overview .an-metrics7>.an-metric:nth-child(4) {
+    grid-column: span 3;
+}
+
+.an-overview .an-metrics7>.an-metric:nth-child(5),
+.an-overview .an-metrics7>.an-metric:nth-child(6),
+.an-overview .an-metrics7>.an-metric:nth-child(7) {
     grid-column: span 4;
 }
 
@@ -246,6 +259,10 @@
 .an-metric--featured .an-metric-change.neutral {
     color: #ffffff;
 }
+
+/* =========================
+   CHART GRID
+   ========================= */
 
 .an-chartGrid {
     display: grid;
@@ -379,6 +396,10 @@
     transform: translateX(-100%);
 }
 
+/* =========================
+   LISTS
+   ========================= */
+
 .an-scrollList {
     margin-top: var(--sp-5);
     padding-right: 4px;
@@ -483,27 +504,29 @@
     background: var(--an-orange-soft);
 }
 
-@media (min-width: 1261px) and (max-width: 1540px) {
-    .an-metric {
+/* =========================
+   BREAKPOINTS
+   ========================= */
+
+/* SMALLER DESKTOP / LAPTOP: 3 / 2 / 2 */
+@media (max-width: 1460px) {
+
+    .an-overview .an-metrics7>.an-metric:nth-child(1),
+    .an-overview .an-metrics7>.an-metric:nth-child(2),
+    .an-overview .an-metrics7>.an-metric:nth-child(3) {
         grid-column: span 4;
     }
 
-    .an-metric--conversion {
+    .an-overview .an-metrics7>.an-metric:nth-child(4),
+    .an-overview .an-metrics7>.an-metric:nth-child(5),
+    .an-overview .an-metrics7>.an-metric:nth-child(6),
+    .an-overview .an-metrics7>.an-metric:nth-child(7) {
         grid-column: span 6;
     }
 }
 
-@media (max-width: 1260px) {
-    .an-metric {
-        grid-column: span 4;
-    }
-
-    .an-metric--conversion {
-        grid-column: span 4;
-    }
-}
-
-@media (max-width: 1100px) {
+/* TABLET / SMALL LAPTOP */
+@media (max-width: 1180px) {
     .an-chartGrid {
         grid-template-columns: 1fr;
     }
@@ -552,21 +575,24 @@
     }
 }
 
-@media (max-width: 980px) {
-    .an-metric {
-        grid-column: span 6;
+/* PORTRAIT TABLET: 2 / 2 / 2 / 1 */
+@media (max-width: 920px) {
+    .an-overview .an-metric {
+        grid-column: span 6 !important;
     }
 
-    .an-metric--conversion {
-        grid-column: span 6;
+    .an-overview .an-metrics7>.an-metric:nth-child(7) {
+        grid-column: 1 / -1 !important;
     }
 
     .an-metric-num {
         font-size: 42px;
     }
-}
 
-@media (max-width: 820px) {
+    .an-lineChartWrap {
+        grid-template-columns: 42px minmax(0, 1fr);
+    }
+
     .an-toolbarTop--split {
         flex-direction: column;
         align-items: flex-start;
@@ -577,21 +603,14 @@
         justify-content: flex-start;
         flex-wrap: wrap;
     }
-
-    .an-metric {
-        grid-column: span 6;
-    }
-
-    .an-metric--conversion {
-        grid-column: span 6;
-    }
-
-    .an-lineChartWrap {
-        grid-template-columns: 42px minmax(0, 1fr);
-    }
 }
 
+/* MOBILE */
 @media (max-width: 640px) {
+    .an-overview .an-metric {
+        grid-column: 1 / -1 !important;
+    }
+
     .an-select {
         min-width: 0;
         width: auto;
@@ -604,14 +623,6 @@
 
     .an-exportBtn {
         min-width: 96px;
-    }
-
-    .an-metric {
-        grid-column: span 12;
-    }
-
-    .an-metric--conversion {
-        grid-column: span 12;
     }
 
     .an-lineChartSvg {
@@ -656,6 +667,7 @@
     }
 }
 
+/* VERY SMALL MOBILE */
 @media (max-width: 480px) {
     .an-toolbarActions {
         width: 100%;
