@@ -26,11 +26,14 @@
     display: flex;
     flex-direction: column;
     min-height: 0;
+    height: calc(100vh - var(--dash-gutter, 24px) * 2);
     gap: var(--sp-3);
+    overflow: hidden;
 }
 
 .cb-shell .ph2-wrap {
     margin-bottom: 0;
+    flex: 0 0 auto;
 }
 
 .cb-grid {
@@ -39,6 +42,8 @@
     gap: var(--sp-3);
     align-items: stretch;
     min-height: 0;
+    flex: 1 1 auto;
+    overflow: hidden;
 }
 
 .cb-card {
@@ -51,6 +56,7 @@
     display: flex;
     flex-direction: column;
     min-height: 0;
+    height: 100%;
     overflow: hidden;
 }
 
@@ -153,6 +159,11 @@
    LIST SIDE
    ========================= */
 
+.cb-listCard,
+.cb-detailCard {
+    height: 100%;
+}
+
 .cb-listWrap {
     flex: 1 1 auto;
     min-height: 0;
@@ -202,7 +213,7 @@
 .cb-contactCard.is-active {
     background: var(--cb-orange);
     border-color: var(--cb-orange);
-    box-shadow: 0 10px 24px rgba(249, 115, 22, 0.24);
+    box-shadow: none;
 }
 
 .cb-contactCard-title {
@@ -286,6 +297,7 @@
     font-weight: 600;
     cursor: pointer;
     transition: background-color 0.15s ease, border-color 0.15s ease, transform 0.1s ease;
+    flex: 0 0 auto;
 }
 
 .cb-viewMore:hover {
@@ -318,6 +330,7 @@
     border: 1px solid var(--cb-softLine);
     border-radius: 24px;
     padding: var(--sp-6);
+    flex: 0 0 auto;
 }
 
 .cb-detailName {
@@ -562,8 +575,19 @@
    ========================= */
 
 @media (max-width: 1280px) {
+    .cb-shell {
+        height: auto;
+        overflow: visible;
+    }
+
     .cb-grid {
         grid-template-columns: 1fr;
+        flex: initial;
+        overflow: visible;
+    }
+
+    .cb-card {
+        height: auto;
     }
 
     .cb-listWrap,
