@@ -79,6 +79,7 @@
     justify-content: space-between;
     gap: var(--sp-3);
     min-width: 0;
+    flex: 0 0 auto;
 }
 
 .db-cardHeadLeft {
@@ -307,6 +308,7 @@
     font-style: italic;
     font-weight: 500;
     color: rgba(71, 85, 105, 0.95);
+    flex: 0 0 auto;
 }
 
 .db-progressBar {
@@ -316,6 +318,7 @@
     border-radius: 999px;
     background: rgba(15, 23, 42, 0.08);
     overflow: hidden;
+    flex: 0 0 auto;
 }
 
 .db-progressFill {
@@ -332,11 +335,51 @@
     font-weight: 800;
     font-size: 14px;
     color: rgba(15, 23, 42, 0.92);
+    flex: 0 0 auto;
 }
 
 .db-bottomCta {
     margin-top: var(--sp-5);
     padding-top: 0;
+    flex: 0 0 auto;
+}
+
+@media (min-width: 1101px) {
+    .db-card--equal {
+        height: 560px;
+        min-height: 560px;
+        max-height: 560px;
+    }
+
+    .db-scrollPanel--activity,
+    .db-scrollPanel--completion {
+        overflow-y: auto;
+        overflow-x: hidden;
+        max-height: 100%;
+        padding-right: 6px;
+    }
+}
+
+@media (min-width: 1101px) {
+    .db-scrollPanel--completion .db-activityMain {
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-between;
+        gap: var(--sp-3);
+    }
+
+    .db-scrollPanel--completion .db-activityText {
+        flex: 1 1 auto;
+        min-width: 0;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .db-scrollPanel--completion .db-activityDot--right {
+        margin-left: 0;
+        flex: 0 0 auto;
+    }
 }
 
 @media (max-width: 1200px) {
@@ -362,11 +405,34 @@
 
     .db-card--equal {
         min-height: 0;
+        height: auto;
+        max-height: none;
     }
 
     .db-scrollPanel {
         max-height: none;
         overflow: visible;
+        padding-right: 0;
+    }
+
+    .db-scrollPanel--completion .db-activityMain {
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-between;
+        gap: var(--sp-3);
+    }
+
+    .db-scrollPanel--completion .db-activityText {
+        flex: 1 1 auto;
+        min-width: 0;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .db-scrollPanel--completion .db-activityDot--right {
+        margin-left: 0;
+        flex: 0 0 auto;
     }
 }
 
@@ -409,6 +475,26 @@
     .db-progressMeta {
         flex-direction: column;
         align-items: flex-start;
+    }
+
+    .db-scrollPanel--completion .db-activityMain {
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-between;
+        gap: var(--sp-3);
+    }
+
+    .db-scrollPanel--completion .db-activityText {
+        flex: 1 1 auto;
+        min-width: 0;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .db-scrollPanel--completion .db-activityDot--right {
+        margin-left: 0;
+        flex: 0 0 auto;
     }
 }
 
@@ -476,6 +562,26 @@
     .db-statValue {
         font-size: 40px;
     }
+
+    .db-scrollPanel--completion .db-activityMain {
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-between;
+        gap: var(--sp-3);
+    }
+
+    .db-scrollPanel--completion .db-activityText {
+        flex: 1 1 auto;
+        min-width: 0;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .db-scrollPanel--completion .db-activityDot--right {
+        margin-left: 0;
+        flex: 0 0 auto;
+    }
 }
 
 @media (max-width: 420px) {
@@ -502,5 +608,25 @@
     .db-shareIcon img {
         width: 22px;
         height: 22px;
+    }
+
+    .db-scrollPanel--completion .db-activityMain {
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+    }
+
+    .db-scrollPanel--completion .db-activityText {
+        flex: 1 1 auto;
+        min-width: 0;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .db-scrollPanel--completion .db-activityDot--right {
+        margin-left: 0;
+        flex: 0 0 auto;
     }
 }
