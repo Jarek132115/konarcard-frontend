@@ -340,7 +340,7 @@
         padding:
             var(--dash-mobile-header-py-top) var(--dash-mobile-header-px) var(--dash-mobile-header-py-bottom);
         gap: var(--dash-mobile-header-gap);
-        align-items: flex-start;
+        align-items: center;
     }
 
     .sb3-brand {
