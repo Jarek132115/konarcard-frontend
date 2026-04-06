@@ -221,8 +221,7 @@ export default function HelpCentreInterface() {
 
         <section className="hc4-grid" aria-label="Help videos">
           {videos.map((video, index) => {
-            const rowIndex = Math.floor(index / 2);
-            const mediaRight = rowIndex % 2 === 1;
+            const mediaRight = index % 2 === 1;
 
             return (
               <article
