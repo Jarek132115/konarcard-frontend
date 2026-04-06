@@ -415,3 +415,13 @@
         padding-bottom: var(--sp-3);
     }
 }
+
+/* REMOVE GAP BETWEEN LOGO HEADER AND FIRST DIVIDER ONLY */
+.sb3-top {
+    padding-bottom: 0;
+}
+
+/* target ONLY the divider directly after the top section */
+.sb3-top+.sb3-divider {
+    margin-top: 0;
+}
