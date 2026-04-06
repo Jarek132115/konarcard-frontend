@@ -312,7 +312,7 @@
         position: fixed;
         top: 0;
         left: 0;
-        width: min(92vw, 320px);
+        width: 100vw;
         min-width: 0;
         max-width: none;
         flex: none;
@@ -373,7 +373,6 @@
         flex: 0 0 auto;
     }
 
-    /* divider aligns with closed topbar width rhythm */
     .sb3-divider {
         margin-left: var(--dash-mobile-header-px);
         margin-right: var(--dash-mobile-header-px);
@@ -389,9 +388,10 @@
         gap: var(--sp-3);
     }
 
+    /* extra breathing room under © 2026 KonarCard on tablet/mobile */
     .sb3-bottom {
         padding-top: var(--sp-3);
-        padding-bottom: var(--sp-4);
+        padding-bottom: var(--sp-10);
     }
 }
 
@@ -412,13 +412,11 @@
 
     .sb3-bottom {
         padding-top: var(--sp-2);
-        padding-bottom: var(--sp-3);
+        padding-bottom: var(--sp-10);
     }
 }
 
 /* REMOVE GAP BETWEEN LOGO HEADER AND FIRST DIVIDER ONLY */
-
-/* target ONLY the divider directly after the top section */
 .sb3-top+.sb3-divider {
     margin-top: 0;
 }
