@@ -146,16 +146,18 @@
 .sb3-divider {
     height: 1px;
     background: var(--sb3-divider);
-    margin: 0 var(--sp-6);
+    margin: var(--sp-3) var(--sp-4);
+    opacity: 0.6;
 }
 
 .sb3-gap36 {
-    height: var(--sp-5);
+    height: 0;
 }
 
 /* Nav */
 .sb3-nav {
-    display: grid;
+    display: flex;
+    flex-direction: column;
     gap: var(--sp-3);
     padding: 0 var(--sp-4);
 }
@@ -237,7 +239,7 @@
 /* Bottom area */
 .sb3-bottom {
     margin-top: auto;
-    padding: var(--sp-5) 0 var(--sp-4);
+    padding: var(--sp-3) 0 var(--sp-4);
     background: #ffffff;
 }
 
@@ -282,14 +284,6 @@
         padding: var(--sp-5);
     }
 
-    .sb3-divider {
-        margin: 0 var(--sp-5);
-    }
-
-    .sb3-gap36 {
-        height: var(--sp-4);
-    }
-
     .sb3-nav,
     .sb3-nav--bottom {
         padding: 0 var(--sp-4);
@@ -299,8 +293,12 @@
         gap: var(--sp-2);
     }
 
+    .sb3-divider {
+        margin: var(--sp-2) var(--sp-4);
+    }
+
     .sb3-bottom {
-        padding-top: var(--sp-4);
+        padding-top: var(--sp-2);
         padding-bottom: var(--sp-3);
     }
 }
@@ -338,14 +336,6 @@
         padding: var(--sp-6);
     }
 
-    .sb3-divider {
-        margin: 0 var(--sp-6);
-    }
-
-    .sb3-gap36 {
-        height: var(--sp-4);
-    }
-
     .sb3-nav,
     .sb3-nav--bottom {
         padding: 0 var(--sp-4);
@@ -354,19 +344,20 @@
     .sb3-nav {
         gap: var(--sp-3);
     }
+
+    .sb3-divider {
+        margin: var(--sp-3) var(--sp-4);
+    }
+
+    .sb3-bottom {
+        padding-top: var(--sp-3);
+        padding-bottom: var(--sp-4);
+    }
 }
 
 @media (max-width: 640px) {
     .sb3-top {
         padding: var(--sp-5);
-    }
-
-    .sb3-divider {
-        margin: 0 var(--sp-5);
-    }
-
-    .sb3-gap36 {
-        height: var(--sp-3);
     }
 
     .sb3-nav,
@@ -376,6 +367,10 @@
 
     .sb3-nav {
         gap: var(--sp-2);
+    }
+
+    .sb3-divider {
+        margin: var(--sp-2) var(--sp-4);
     }
 
     .sb3-brandName {
@@ -388,7 +383,7 @@
     }
 
     .sb3-bottom {
-        padding-top: var(--sp-4);
+        padding-top: var(--sp-2);
         padding-bottom: var(--sp-3);
     }
 }
