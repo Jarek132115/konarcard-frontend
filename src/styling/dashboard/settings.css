@@ -35,6 +35,7 @@
     align-items: center;
     justify-content: flex-end;
     flex-wrap: wrap;
+    min-width: 0;
 }
 
 .stg-headRight .kx-btn {
@@ -68,6 +69,7 @@
     justify-content: space-between;
     gap: var(--sp-3);
     flex: 0 0 auto;
+    min-width: 0;
 }
 
 .stg-cardHeadLeft {
@@ -121,6 +123,8 @@
     line-height: 1;
     white-space: nowrap;
     gap: 4px;
+    flex: 0 0 auto;
+    max-width: 100%;
 }
 
 .stg-pill strong {
@@ -148,6 +152,7 @@
     background: #ffffff;
     border-radius: 18px;
     padding: 14px;
+    min-width: 0;
 }
 
 .stg-avatar {
@@ -181,6 +186,7 @@
 
 .stg-accountMeta {
     min-width: 0;
+    flex: 1 1 auto;
 }
 
 .stg-accountName {
@@ -215,6 +221,7 @@
 .stg-field {
     display: grid;
     gap: var(--sp-2);
+    min-width: 0;
 }
 
 .stg-k {
@@ -241,6 +248,7 @@
     line-height: 1.45;
     color: var(--stg-ink);
     overflow-wrap: anywhere;
+    min-width: 0;
 }
 
 .stg-hint {
@@ -285,6 +293,7 @@
     background: #ffffff;
     border-radius: 18px;
     padding: 16px;
+    min-width: 0;
 }
 
 .stg-statK {
@@ -319,6 +328,7 @@
 .stg-billingBoxCopy {
     display: flex;
     flex-direction: column;
+    min-width: 0;
 }
 
 .stg-subTitle {
@@ -346,6 +356,7 @@
     overflow: auto;
     background: #ffffff;
     min-height: 0;
+    min-width: 0;
 }
 
 .stg-row {
@@ -360,6 +371,11 @@
     font-size: 14px;
     line-height: 1.45;
     background: #ffffff;
+    min-width: 0;
+}
+
+.stg-row>div {
+    min-width: 0;
 }
 
 .stg-row:first-child {
@@ -407,6 +423,7 @@
     text-overflow: ellipsis;
     white-space: nowrap;
     font-family: "Inter", sans-serif;
+    min-width: 0;
 }
 
 .stg-badge {
@@ -424,6 +441,7 @@
     color: rgba(15, 23, 42, 0.88);
     width: fit-content;
     text-transform: lowercase;
+    max-width: 100%;
 }
 
 .stg-badge.paid,
@@ -690,5 +708,32 @@
     .stg-subTitle,
     .stg-sectionTitle {
         font-size: 16px;
+    }
+}
+
+@media (max-width: 480px) {
+
+    .stg-banner,
+    .stg-card {
+        padding: var(--sp-5);
+    }
+
+    .stg-accountRow {
+        align-items: flex-start;
+    }
+
+    .stg-accountName,
+    .stg-accountEmail {
+        white-space: normal;
+        overflow: visible;
+        text-overflow: clip;
+        word-break: break-word;
+    }
+
+    .stg-pill,
+    .stg-pill--dark {
+        white-space: normal;
+        text-align: center;
+        justify-content: center;
     }
 }

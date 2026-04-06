@@ -122,61 +122,8 @@ export default function Settings() {
             return;
         }
 
-        let cancelled = false;
-
-        (async () => {
-            try {
-                setLoading(true);
-                setLoadErr("");
-
-                const ts = Date.now();
-
-                const [sRes, iRes, pRes] = await Promise.all([
-                    api.get(`/api/billing/summary?ts=${ts}`),
-                    api.get(`/api/billing/invoices?ts=${ts}`),
-                    api.get(`/api/billing/payments?ts=${ts}`),
-                ]);
-
-                if (cancelled) return;
-
-                const sStatus = Number(sRes?.status || 0);
-                const iStatus = Number(iRes?.status || 0);
-                const pStatus = Number(pRes?.status || 0);
-
-                if (sStatus >= 400) {
-                    throw new Error(sRes?.data?.error || "Could not load billing summary.");
-                }
-
-                if (iStatus >= 400) {
-                    throw new Error(iRes?.data?.error || "Could not load invoices.");
-                }
-
-                if (pStatus >= 400) {
-                    throw new Error(pRes?.data?.error || "Could not load payments.");
-                }
-
-                const summaryPayload = sRes?.data || null;
-                const invoicesPayload = iRes?.data || {};
-                const paymentsPayload = pRes?.data || {};
-
-                setSummary(summaryPayload && typeof summaryPayload === "object" ? summaryPayload : null);
-                setInvoices(Array.isArray(invoicesPayload?.invoices) ? invoicesPayload.invoices : []);
-                setPayments(Array.isArray(paymentsPayload?.payments) ? paymentsPayload.payments : []);
-            } catch (e) {
-                if (cancelled) return;
-                setLoadErr(e?.response?.data?.error || e?.message || "Could not load settings.");
-                setSummary(null);
-                setInvoices([]);
-                setPayments([]);
-            } finally {
-                if (!cancelled) setLoading(false);
-            }
-        })();
-
-        return () => {
-            cancelled = true;
-        };
-    }, [authLoading, authUser]);
+        loadBillingData();
+    }, [authLoading, authUser, loadBillingData]);
 
     const provider = useMemo(() => {
         const p = safeLower(
@@ -247,9 +194,7 @@ export default function Settings() {
             // ignore
         }
 
-        if (authUser) {
-            await loadBillingData();
-        }
+        await loadBillingData();
     };
 
     const handleResetPassword = () => {
