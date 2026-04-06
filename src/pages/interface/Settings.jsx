@@ -299,7 +299,7 @@ export default function Settings() {
                                     <div className="stg-accountName">
                                         {isBusy ? <span className="stg-skelText w52" /> : accountName}
                                     </div>
-                                    <div className="stg-accountEmail">
+                                    <div className="stg-accountEmail" title={!isBusy ? accountEmail : undefined}>
                                         {isBusy ? <span className="stg-skelText w72" /> : accountEmail}
                                     </div>
                                 </div>
@@ -315,7 +315,10 @@ export default function Settings() {
 
                                 <div className="stg-field">
                                     <div className="stg-k">Email</div>
-                                    <div className={`stg-vBox ${isBusy ? "stg-skelLine" : ""}`}>
+                                    <div
+                                        className={`stg-vBox stg-vBox--singleLine ${isBusy ? "stg-skelLine" : ""}`}
+                                        title={!isBusy ? accountEmail : undefined}
+                                    >
                                         {isBusy ? "" : accountEmail}
                                     </div>
                                 </div>
@@ -404,7 +407,7 @@ export default function Settings() {
                                     </p>
                                 </div>
 
-                                <div className="stg-actions">
+                                <div className="stg-actions stg-actions--billing">
                                     <button
                                         type="button"
                                         className="kx-btn kx-btn--black"
@@ -440,7 +443,7 @@ export default function Settings() {
                         </div>
 
                         <div className="stg-cardBody stg-scrollArea">
-                            <div className="stg-table">
+                            <div className="stg-table stg-table--invoices">
                                 <div className="stg-row stg-rowHead stg-row4">
                                     <div>Date</div>
                                     <div>Amount</div>
@@ -526,7 +529,7 @@ export default function Settings() {
                         </div>
 
                         <div className="stg-cardBody stg-scrollArea">
-                            <div className="stg-table">
+                            <div className="stg-table stg-table--payments">
                                 <div className="stg-row stg-rowHead stg-row4p">
                                     <div>Date</div>
                                     <div>Amount</div>

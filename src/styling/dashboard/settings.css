@@ -9,10 +9,12 @@
     --stg-card-bg: #ffffff;
     --stg-orange: #f97316;
     --stg-orange-dark: #ea580c;
+    --stg-orange-soft: rgba(249, 115, 22, 0.1);
     --stg-green: #16a34a;
     --stg-red: #dc2626;
     --stg-red-border: rgba(220, 38, 38, 0.22);
     --stg-navy: #0b1635;
+    --stg-mobile-row-shadow: 0 1px 0 rgba(15, 23, 42, 0.03), 0 8px 20px rgba(15, 23, 42, 0.04);
 }
 
 .stg-shell {
@@ -118,7 +120,7 @@
     min-height: 28px;
     padding: 0 10px;
     border-radius: 999px;
-    background: rgba(249, 115, 22, 0.1);
+    background: var(--stg-orange-soft);
     color: #c2410c;
     border: 0;
     font-family: "Inter", sans-serif;
@@ -214,6 +216,9 @@
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+    min-width: 0;
+    max-width: 100%;
+    display: block;
 }
 
 .stg-fields2 {
@@ -255,6 +260,14 @@
     min-width: 0;
 }
 
+.stg-vBox--singleLine {
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow-wrap: normal;
+    word-break: normal;
+}
+
 .stg-hint {
     font-family: "Inter", sans-serif;
     font-weight: 500;
@@ -284,6 +297,18 @@
 
 .stg-actions .kx-btn {
     align-self: flex-start;
+}
+
+.stg-actions--billing {
+    flex-direction: row;
+    align-items: center;
+    flex-wrap: nowrap;
+}
+
+.stg-actions--billing .kx-btn {
+    flex: 1 1 0;
+    width: auto;
+    justify-content: center;
 }
 
 .stg-stats3 {
@@ -609,6 +634,17 @@
         justify-content: center;
     }
 
+    .stg-actions--billing {
+        flex-direction: row;
+        align-items: center;
+        flex-wrap: nowrap;
+    }
+
+    .stg-actions--billing .kx-btn {
+        width: auto;
+        flex: 1 1 0;
+    }
+
     .stg-banner {
         flex-direction: column;
         align-items: stretch;
@@ -712,6 +748,81 @@
     }
 }
 
+@media (max-width: 520px) {
+    .stg-cardHead {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .stg-cardHeadLeft {
+        width: 100%;
+    }
+
+    .stg-pill {
+        align-self: flex-start;
+    }
+
+    .stg-actions--billing {
+        flex-direction: column;
+        align-items: stretch;
+        flex-wrap: nowrap;
+    }
+
+    .stg-actions--billing .kx-btn {
+        width: 100%;
+        flex: 0 0 auto;
+    }
+
+    .stg-table {
+        border: 0;
+        background: transparent;
+        overflow: visible;
+        border-radius: 0;
+    }
+
+    .stg-table--invoices,
+    .stg-table--payments {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+    }
+
+    .stg-table--invoices .stg-row:not(.stg-rowHead),
+    .stg-table--payments .stg-row:not(.stg-rowHead) {
+        border: 1px solid var(--stg-border);
+        border-radius: 18px;
+        background: #ffffff;
+        box-shadow: var(--stg-mobile-row-shadow);
+        padding: 16px;
+        gap: 12px;
+        margin: 0;
+    }
+
+    .stg-table--invoices .stg-row:not(.stg-rowHead)+.stg-row:not(.stg-rowHead),
+    .stg-table--payments .stg-row:not(.stg-rowHead)+.stg-row:not(.stg-rowHead) {
+        border-top: 1px solid var(--stg-border);
+    }
+
+    .stg-table--invoices .stg-row:not(.stg-rowHead)>div,
+    .stg-table--payments .stg-row:not(.stg-rowHead)>div {
+        padding: 0;
+    }
+
+    .stg-table--invoices .stg-row:not(.stg-rowHead) .stg-mobileLabel,
+    .stg-table--payments .stg-row:not(.stg-rowHead) .stg-mobileLabel {
+        margin-bottom: 6px;
+        color: rgba(15, 23, 42, 0.48);
+    }
+
+    .stg-emptyRow {
+        border: 1px solid var(--stg-border);
+        border-radius: 18px;
+        background: #ffffff;
+        box-shadow: var(--stg-mobile-row-shadow);
+        padding: 18px;
+    }
+}
+
 @media (max-width: 480px) {
 
     .stg-banner,
@@ -720,20 +831,31 @@
     }
 
     .stg-accountRow {
-        align-items: flex-start;
+        align-items: center;
     }
 
-    .stg-accountName,
+    .stg-accountName {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
     .stg-accountEmail {
-        white-space: normal;
-        overflow: visible;
-        text-overflow: clip;
-        word-break: break-word;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        word-break: normal;
+    }
+
+    .stg-vBox--singleLine {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
     }
 
     .stg-pill,
     .stg-pill--dark {
-        white-space: normal;
+        white-space: nowrap;
         text-align: center;
         justify-content: center;
         width: fit-content;
