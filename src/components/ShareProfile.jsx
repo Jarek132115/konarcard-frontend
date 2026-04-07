@@ -28,7 +28,9 @@ function buildFacebookShareUrl(url) {
 }
 
 function buildMessengerShareUrl(url) {
-    return `https://www.facebook.com/dialog/send?link=${encodeURIComponent(url)}&app_id=1217981644879628&redirect_uri=${encodeURIComponent(url)}`;
+    return `https://www.facebook.com/dialog/send?link=${encodeURIComponent(
+        url
+    )}&app_id=1217981644879628&redirect_uri=${encodeURIComponent(url)}`;
 }
 
 function buildWhatsAppShareUrl(url) {
@@ -216,7 +218,7 @@ export default function ShareProfile({
             onAppleWallet();
             return;
         }
-        toast("Apple Wallet action is not connected yet.");
+        toast("Apple Wallet is coming soon.");
     };
 
     const handleGoogleWallet = () => {
@@ -224,7 +226,7 @@ export default function ShareProfile({
             onGoogleWallet();
             return;
         }
-        toast("Google Wallet action is not connected yet.");
+        toast("Google Wallet is coming soon.");
     };
 
     return (

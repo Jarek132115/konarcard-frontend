@@ -402,47 +402,6 @@ export default function Dashboard() {
                     onSelectSlug={setSelectedSlug}
                     username={authUser?.name || "konarcard"}
                     profileUrl={selectedProfile?.url || ""}
-                    onFacebook={() => {
-                        if (!selectedProfile?.url) return;
-                        window.open(
-                            `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(selectedProfile.url)}`,
-                            "_blank",
-                            "noopener,noreferrer"
-                        );
-                    }}
-                    onInstagram={async () => {
-                        if (!selectedProfile?.url) return;
-                        try {
-                            await navigator.clipboard.writeText(selectedProfile.url);
-                        } catch { }
-                        window.open("https://www.instagram.com/", "_blank", "noopener,noreferrer");
-                    }}
-                    onMessenger={() => {
-                        if (!selectedProfile?.url) return;
-                        window.open(
-                            `https://www.facebook.com/dialog/send?link=${encodeURIComponent(selectedProfile.url)}&app_id=1217981644879628&redirect_uri=${encodeURIComponent(selectedProfile.url)}`,
-                            "_blank",
-                            "noopener,noreferrer"
-                        );
-                    }}
-                    onWhatsApp={() => {
-                        if (!selectedProfile?.url) return;
-                        window.open(
-                            `https://wa.me/?text=${encodeURIComponent(selectedProfile.url)}`,
-                            "_blank",
-                            "noopener,noreferrer"
-                        );
-                    }}
-                    onText={() => {
-                        if (!selectedProfile?.url) return;
-                        window.location.href = `sms:?&body=${encodeURIComponent(selectedProfile.url)}`;
-                    }}
-                    onAppleWallet={() => {
-                        console.log("Apple Wallet not connected yet");
-                    }}
-                    onGoogleWallet={() => {
-                        console.log("Google Wallet not connected yet");
-                    }}
                 />
 
                 <div className="db-grid">
