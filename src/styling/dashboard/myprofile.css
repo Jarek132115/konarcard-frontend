@@ -6,14 +6,17 @@
     --mp-muted: var(--kc-text-secondary, #475569);
 
     --mp-border: rgba(15, 23, 42, 0.10);
+    --mp-border-strong: rgba(15, 23, 42, 0.14);
     --mp-softLine: rgba(15, 23, 42, 0.08);
 
-    --mp-radius: 22px;
-    --mp-softShadow: 0 0 1px rgba(0, 0, 0, 0.25);
+    --mp-radius: 24px;
+    --mp-softShadow: 0 1px 0 rgba(15, 23, 42, 0.04), 0 10px 22px rgba(15, 23, 42, 0.04);
+    --mp-warn-border: rgba(249, 115, 22, 0.22);
+    --mp-warn-bg: linear-gradient(180deg, #ffffff 0%, rgba(249, 115, 22, 0.06) 100%);
 }
 
 /* =========================================
-   Page shell
+   PAGE SHELL
 ========================================= */
 .myprofile-shell {
     width: 100%;
@@ -22,35 +25,49 @@
 
     display: flex;
     flex-direction: column;
+    gap: var(--sp-3);
+
     min-height: 0;
     height: calc(100dvh - (var(--dash-gutter, 24px) * 2));
     overflow: hidden;
 }
 
+.myprofile-shell .ph2-wrap {
+    margin-bottom: 0;
+    flex: 0 0 auto;
+}
+
 /* =========================================
-   Main 2-col grid
+   MAIN 2-COL GRID
 ========================================= */
 .myprofile-grid {
     display: grid;
     grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-    gap: 16px;
+    gap: var(--sp-3);
     align-items: stretch;
 
-    flex: 1;
+    flex: 1 1 auto;
     min-height: 0;
     overflow: hidden;
 }
 
 /* =========================================
-   Preview column keeps card styling
+   SHARED CARD SURFACES
 ========================================= */
-.myprofile-cardShell {
-    background: #ffffff;
+.myprofile-card,
+.myprofile-cardShell,
+.myprofile-editorSurface {
+    background: var(--mp-surface);
     border: 1px solid var(--mp-border);
     border-radius: var(--mp-radius);
     box-shadow: var(--mp-softShadow);
     min-width: 0;
+}
 
+/* =========================================
+   PREVIEW COLUMN
+========================================= */
+.myprofile-cardShell {
     display: flex;
     flex-direction: column;
     min-height: 0;
@@ -58,9 +75,25 @@
 }
 
 .myprofile-previewCard {
-    padding: 24px;
-    flex: 1;
+    padding: var(--sp-6);
+    flex: 1 1 auto;
     min-height: 0;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.myprofile-previewFrame {
+    margin-top: 0;
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+.myprofile-previewFrame--full {
+    height: 100%;
 }
 
 /* =========================================
@@ -75,14 +108,8 @@
 }
 
 .myprofile-editorSurface {
-    background: #ffffff;
-    border: 1px solid var(--mp-border);
-    border-radius: var(--mp-radius);
-    box-shadow: var(--mp-softShadow);
-
-    padding: 24px;
-
-    flex: 1;
+    padding: var(--sp-6);
+    flex: 1 1 auto;
     min-height: 0;
 
     display: flex;
@@ -91,7 +118,7 @@
 }
 
 .myprofile-editorBody {
-    flex: 1;
+    flex: 1 1 auto;
     min-height: 0;
     overflow: hidden;
     display: flex;
@@ -99,33 +126,19 @@
 }
 
 .myprofile-editorBody .kce-root {
-    flex: 1;
+    flex: 1 1 auto;
     min-height: 0;
     height: 100%;
 }
 
 /* =========================================
-   Preview fill + internal scroll
+   PREVIEW OVERRIDES
 ========================================= */
-.myprofile-previewFrame {
-    margin-top: 0;
-    flex: 1;
-    min-height: 0;
-    overflow: hidden;
-    display: flex;
-    flex-direction: column;
-}
-
-.myprofile-previewFrame--full {
-    height: 100%;
-}
-
-/* Keep your existing preview overrides */
 .myprofile-previewFrame .preview-scope.myprofile-preview-wrapper {
     height: 100% !important;
     max-height: 100% !important;
     min-height: 0 !important;
-    flex: 1 !important;
+    flex: 1 1 auto !important;
 }
 
 .myprofile-previewFrame .preview-scope .myprofile-preview {
@@ -147,18 +160,16 @@
     padding: 0 !important;
 }
 
-/* Utility cards (verify/warn) */
+/* =========================================
+   ALERT / VERIFY CARDS
+========================================= */
 .myprofile-card {
-    background: var(--mp-surface);
-    border: 1px solid var(--mp-softLine);
-    border-radius: var(--mp-radius);
-    box-shadow: var(--mp-softShadow);
     padding: 16px;
 }
 
 .myprofile-warn {
-    border-color: rgba(249, 115, 22, 0.22);
-    background: linear-gradient(180deg, #fff, rgba(249, 115, 22, 0.06));
+    border-color: var(--mp-warn-border);
+    background: var(--mp-warn-bg);
 }
 
 .myprofile-verify {
@@ -169,41 +180,172 @@
 
 .text-input {
     width: 100%;
+    min-height: 48px;
     border: 1px solid rgba(15, 23, 42, 0.14);
-    background: #fff;
+    background: #ffffff;
     border-radius: 14px;
-    padding: 12px 12px;
+    padding: 12px 14px;
+    font-family: "Inter", sans-serif;
     font-size: 14px;
+    line-height: 1.45;
+    font-weight: 500;
     color: var(--mp-ink);
     outline: none;
+    transition:
+        border-color 0.16s ease,
+        box-shadow 0.16s ease,
+        background-color 0.16s ease;
 }
 
-/* Responsive */
+.text-input::placeholder {
+    color: rgba(71, 85, 105, 0.72);
+}
+
+.text-input:hover {
+    border-color: rgba(15, 23, 42, 0.18);
+}
+
+.text-input:focus {
+    border-color: rgba(249, 115, 22, 0.40);
+    box-shadow: 0 0 0 4px rgba(249, 115, 22, 0.10);
+}
+
+/* =========================================
+   ERROR / EMPTY SECTION SPACING
+========================================= */
+.myprofile-shell>.myprofile-card {
+    flex: 0 0 auto;
+}
+
+/* =========================================
+   DESKTOP HEIGHT SAFETY
+========================================= */
+@media (min-width: 1001px) {
+
+    .myprofile-shell,
+    .myprofile-grid,
+    .myprofile-editorCol,
+    .myprofile-cardShell,
+    .myprofile-editorSurface,
+    .myprofile-editorBody,
+    .myprofile-previewCard,
+    .myprofile-previewFrame {
+        min-height: 0;
+    }
+}
+
+/* =========================================
+   TABLET
+========================================= */
+@media (max-width: 1200px) {
+
+    .myprofile-editorSurface,
+    .myprofile-previewCard {
+        padding: 20px;
+    }
+}
+
 @media (max-width: 1000px) {
     .myprofile-shell {
         height: auto;
+        min-height: 0;
         overflow: visible;
     }
 
     .myprofile-grid {
         grid-template-columns: 1fr;
+        flex: initial;
+        min-height: auto;
         overflow: visible;
+    }
+
+    .myprofile-editorCol,
+    .myprofile-cardShell {
+        overflow: visible;
+        min-height: 0;
+    }
+
+    .myprofile-editorSurface,
+    .myprofile-previewCard {
+        padding: 18px;
+        flex: initial;
+        overflow: visible;
+    }
+
+    .myprofile-editorBody {
+        overflow: visible;
+        flex: initial;
+    }
+
+    .myprofile-editorBody .kce-root {
+        height: auto;
+        min-height: 0;
+    }
+
+    .myprofile-previewFrame {
+        overflow: visible;
+        flex: initial;
+    }
+
+    .myprofile-previewFrame .preview-scope.myprofile-preview-wrapper,
+    .myprofile-previewFrame .preview-scope .myprofile-preview,
+    .myprofile-previewFrame .preview-iframe-shell,
+    .myprofile-previewFrame .preview-empty-shell,
+    .myprofile-previewFrame .preview-iframe {
+        height: auto !important;
+        max-height: none !important;
+    }
+}
+
+/* =========================================
+   MOBILE
+========================================= */
+@media (max-width: 760px) {
+    .myprofile-shell {
+        gap: var(--sp-3);
+    }
+
+    .myprofile-grid {
+        gap: var(--sp-3);
     }
 
     .myprofile-editorSurface,
     .myprofile-previewCard {
         padding: 16px;
+        border-radius: 24px;
     }
 
-    .myprofile-editorBody {
-        overflow: visible;
+    .myprofile-card {
+        border-radius: 24px;
     }
 
-    .myprofile-editorBody .kce-root {
-        height: auto;
+    .text-input {
+        min-height: 46px;
+        padding: 11px 13px;
+        font-size: 14px;
+    }
+}
+
+@media (max-width: 520px) {
+
+    .myprofile-editorSurface,
+    .myprofile-previewCard,
+    .myprofile-card {
+        padding: 16px;
     }
 
-    .myprofile-previewFrame {
-        overflow: visible;
+    .myprofile-verify {
+        gap: 10px;
+    }
+
+    .myprofile-card .profiles-actions-row {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .myprofile-card .profiles-actions-row .profiles-btn,
+    .myprofile-card .profiles-actions-row .kx-btn {
+        width: 100%;
+        justify-content: center;
     }
 }
