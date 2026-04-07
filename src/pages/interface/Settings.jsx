@@ -3,6 +3,7 @@ import { toast } from "react-hot-toast";
 
 import DashboardLayout from "../../components/Dashboard/DashboardLayout";
 import PageHeader from "../../components/Dashboard/PageHeader";
+
 import "../../styling/spacing.css";
 import "../../styling/dashboard/settings.css";
 
@@ -236,7 +237,7 @@ export default function Settings() {
     );
 
     return (
-        <DashboardLayout title={null} subtitle={null} hideDesktopHeader>
+        <DashboardLayout hideDesktopHeader>
             <div className="stg-shell">
                 <PageHeader
                     title="Settings"
@@ -299,7 +300,10 @@ export default function Settings() {
                                     <div className="stg-accountName">
                                         {isBusy ? <span className="stg-skelText w52" /> : accountName}
                                     </div>
-                                    <div className="stg-accountEmail" title={!isBusy ? accountEmail : undefined}>
+                                    <div
+                                        className="stg-accountEmail"
+                                        title={!isBusy ? accountEmail : undefined}
+                                    >
                                         {isBusy ? <span className="stg-skelText w72" /> : accountEmail}
                                     </div>
                                 </div>
@@ -316,7 +320,8 @@ export default function Settings() {
                                 <div className="stg-field">
                                     <div className="stg-k">Email</div>
                                     <div
-                                        className={`stg-vBox stg-vBox--singleLine ${isBusy ? "stg-skelLine" : ""}`}
+                                        className={`stg-vBox stg-vBox--singleLine ${isBusy ? "stg-skelLine" : ""
+                                            }`}
                                         title={!isBusy ? accountEmail : undefined}
                                     >
                                         {isBusy ? "" : accountEmail}
@@ -374,14 +379,22 @@ export default function Settings() {
                                 <div className="stg-stat">
                                     <div className="stg-statK">Status</div>
                                     <div className="stg-statV">
-                                        {isBusy ? <span className="stg-skelText w70" /> : pick(subscriptionStatus)}
+                                        {isBusy ? (
+                                            <span className="stg-skelText w70" />
+                                        ) : (
+                                            pick(subscriptionStatus)
+                                        )}
                                     </div>
                                 </div>
 
                                 <div className="stg-stat">
                                     <div className="stg-statK">Interval</div>
                                     <div className="stg-statV">
-                                        {isBusy ? <span className="stg-skelText w60" /> : pick(planInterval)}
+                                        {isBusy ? (
+                                            <span className="stg-skelText w60" />
+                                        ) : (
+                                            pick(planInterval)
+                                        )}
                                     </div>
                                 </div>
 
