@@ -164,7 +164,7 @@
    ALERT / VERIFY CARDS
 ========================================= */
 .myprofile-card {
-    padding: 16px;
+    padding: var(--sp-6);
 }
 
 .myprofile-warn {
@@ -240,8 +240,9 @@
 @media (max-width: 1200px) {
 
     .myprofile-editorSurface,
-    .myprofile-previewCard {
-        padding: 20px;
+    .myprofile-previewCard,
+    .myprofile-card {
+        padding: var(--sp-6);
     }
 }
 
@@ -254,6 +255,7 @@
 
     .myprofile-grid {
         grid-template-columns: 1fr;
+        gap: var(--sp-3);
         flex: initial;
         min-height: auto;
         overflow: visible;
@@ -266,8 +268,9 @@
     }
 
     .myprofile-editorSurface,
-    .myprofile-previewCard {
-        padding: 18px;
+    .myprofile-previewCard,
+    .myprofile-card {
+        padding: var(--sp-6);
         flex: initial;
         overflow: visible;
     }
@@ -310,12 +313,9 @@
     }
 
     .myprofile-editorSurface,
-    .myprofile-previewCard {
-        padding: 16px;
-        border-radius: 24px;
-    }
-
+    .myprofile-previewCard,
     .myprofile-card {
+        padding: var(--sp-6);
         border-radius: 24px;
     }
 
@@ -331,7 +331,7 @@
     .myprofile-editorSurface,
     .myprofile-previewCard,
     .myprofile-card {
-        padding: 16px;
+        padding: var(--sp-5);
     }
 
     .myprofile-verify {
