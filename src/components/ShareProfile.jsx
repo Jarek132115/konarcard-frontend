@@ -1,4 +1,3 @@
-// src/components/ShareProfile.jsx
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import PropTypes from "prop-types";
 import { toast } from "react-hot-toast";
@@ -15,7 +14,7 @@ export default function ShareProfile({
     profiles = [],
     selectedSlug,
     onSelectSlug,
-    profileUrl, // fallback (Dashboard passes selected url)
+    profileUrl,
     username,
 }) {
     const profileLinkRef = useRef(null);
@@ -30,31 +29,43 @@ export default function ShareProfile({
 
     const effectiveUrl = selectedProfile?.url || profileUrl || "";
 
-    // Close on ESC
     useEffect(() => {
         const handleEscape = (event) => {
             if (event.key === "Escape") onClose();
         };
-        if (isOpen) document.addEventListener("keydown", handleEscape);
-        return () => document.removeEventListener("keydown", handleEscape);
+
+        if (isOpen) {
+            document.addEventListener("keydown", handleEscape);
+        }
+
+        return () => {
+            document.removeEventListener("keydown", handleEscape);
+        };
     }, [isOpen, onClose]);
 
-    // Lock body scroll while open
     useEffect(() => {
         if (!isOpen) return;
-        const prevOverflow = document.body.style.overflow;
+
+        const previousOverflow = document.body.style.overflow;
         document.body.style.overflow = "hidden";
+
         return () => {
-            document.body.style.overflow = prevOverflow || "";
+            document.body.style.overflow = previousOverflow || "";
         };
     }, [isOpen]);
 
-    // Generate QR
     useEffect(() => {
         if (!isOpen) return;
-        if (!effectiveUrl) return;
+        if (!effectiveUrl) {
+            setQrCodeImage("");
+            return;
+        }
 
-        QRCode.toDataURL(effectiveUrl, { errorCorrectionLevel: "H", width: 220, margin: 0 })
+        QRCode.toDataURL(effectiveUrl, {
+            errorCorrectionLevel: "H",
+            width: 220,
+            margin: 0,
+        })
             .then((url) => setQrCodeImage(url))
             .catch((err) => {
                 console.error(err);
@@ -66,24 +77,30 @@ export default function ShareProfile({
         if (!effectiveUrl) return "";
         try {
             const u = new URL(effectiveUrl);
-            const host = u.host.replace(/\.com$/i, "");
+            const host = u.host.replace(/^www\./i, "");
             return `${host}${u.pathname}`;
         } catch {
             return effectiveUrl.replace(/^https?:\/\//i, "");
         }
     }, [effectiveUrl]);
 
+    const profileLabel = useMemo(() => {
+        if (!selectedProfile) return "";
+        return `${selectedProfile.name} — ${selectedProfile.slug}`;
+    }, [selectedProfile]);
+
     if (!isOpen) return null;
 
     const copyToClipboard = async (text, message) => {
         if (!text) return;
+
         try {
             if (navigator.clipboard?.writeText) {
                 await navigator.clipboard.writeText(text);
                 toast.success(message || "Copied!");
                 return;
             }
-            // fallback
+
             const textArea = document.createElement("textarea");
             textArea.value = text;
             document.body.appendChild(textArea);
@@ -101,7 +118,11 @@ export default function ShareProfile({
     const hasManyProfiles = (profiles?.length || 0) > 1;
 
     return (
-        <div className="sp-overlay" onClick={onClose}>
+        <div
+            className="sp-overlay"
+            onClick={onClose}
+            role="presentation"
+        >
             <div
                 className="sp-modal"
                 onClick={(e) => e.stopPropagation()}
@@ -122,88 +143,146 @@ export default function ShareProfile({
                 </button>
 
                 <div className="sp-head">
+                    <div className="sp-kicker">Share profile</div>
                     <h3 className="sp-title">Share your profile</h3>
-                    <p className="sp-sub">Copy your link, open it, or share a QR code.</p>
+                    <p className="sp-sub">
+                        Copy your link, visit your public page, or download your QR code to
+                        share it anywhere.
+                    </p>
                 </div>
 
-                {/* Profile selector (Teams) */}
-                <div className="sp-block">
-                    {hasManyProfiles ? (
-                        <div className="sp-field">
-                            <label className="sp-label">Choose profile</label>
-                            <select
-                                className="sp-select"
-                                value={selectedProfile?.slug || ""}
-                                onChange={(e) => onSelectSlug?.(e.target.value)}
-                            >
-                                {profiles.map((p) => (
-                                    <option key={p.slug} value={p.slug}>
-                                        {p.name} — {p.slug}
-                                    </option>
-                                ))}
-                            </select>
+                <div className="sp-body">
+                    <div className="sp-main">
+                        <div className="sp-card">
+                            <div className="sp-cardHead">
+                                <h4 className="sp-cardTitle">Profile</h4>
+                                <p className="sp-cardSub">
+                                    Choose which profile you want to share.
+                                </p>
+                            </div>
+
+                            {hasManyProfiles ? (
+                                <div className="sp-field">
+                                    <label className="sp-label" htmlFor="sp-profile-select">
+                                        Choose profile
+                                    </label>
+                                    <select
+                                        id="sp-profile-select"
+                                        className="sp-select"
+                                        value={selectedProfile?.slug || ""}
+                                        onChange={(e) => onSelectSlug?.(e.target.value)}
+                                    >
+                                        {profiles.map((p) => (
+                                            <option key={p.slug} value={p.slug}>
+                                                {p.name} — {p.slug}
+                                            </option>
+                                        ))}
+                                    </select>
+                                </div>
+                            ) : profiles?.length === 1 ? (
+                                <div className="sp-single">
+                                    <div className="sp-singleLabel">Selected profile</div>
+                                    <div className="sp-singleValue">{profileLabel}</div>
+                                </div>
+                            ) : (
+                                <div className="sp-empty">
+                                    No profile available yet. Create a profile first.
+                                </div>
+                            )}
                         </div>
-                    ) : profiles?.length === 1 ? (
-                        <div className="sp-single">
-                            <div className="sp-singleLabel">Profile</div>
-                            <div className="sp-singleValue">
-                                {profiles[0].name} <span>({profiles[0].slug})</span>
+
+                        <div className="sp-card">
+                            <div className="sp-cardHead">
+                                <h4 className="sp-cardTitle">Profile link</h4>
+                                <p className="sp-cardSub">
+                                    Copy your public URL or open it in a new tab.
+                                </p>
+                            </div>
+
+                            <div className="sp-linkRow">
+                                <input
+                                    ref={profileLinkRef}
+                                    type="text"
+                                    readOnly
+                                    value={displayUrl}
+                                    className="sp-input"
+                                    placeholder="Your profile link will appear here"
+                                />
+                            </div>
+
+                            <div className="sp-actions">
+                                <button
+                                    type="button"
+                                    className="kx-btn kx-btn--black sp-btn"
+                                    onClick={() =>
+                                        copyToClipboard(effectiveUrl, "Profile link copied!")
+                                    }
+                                    disabled={!effectiveUrl}
+                                >
+                                    <img src={CopyLinkIcon} alt="" className="sp-ico" />
+                                    Copy link
+                                </button>
+
+                                <a
+                                    href={effectiveUrl || "#"}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="kx-btn kx-btn--orange sp-btn"
+                                    onClick={(e) => {
+                                        if (!effectiveUrl) e.preventDefault();
+                                    }}
+                                >
+                                    <img src={VisitProfileIcon} alt="" className="sp-ico" />
+                                    Visit profile
+                                </a>
                             </div>
                         </div>
-                    ) : null}
-                </div>
-
-                {/* Link */}
-                <div className="sp-block">
-                    <div className="sp-linkRow">
-                        <input ref={profileLinkRef} type="text" readOnly value={displayUrl} className="sp-input" />
                     </div>
 
-                    <div className="sp-actions">
-                        <button
-                            type="button"
-                            className="kx-btn kx-btn--black sp-btn"
-                            onClick={() => copyToClipboard(effectiveUrl, "Profile link copied!")}
-                            disabled={!effectiveUrl}
-                        >
-                            <img src={CopyLinkIcon} alt="" className="sp-ico" />
-                            Copy link
-                        </button>
+                    <aside className="sp-side">
+                        <div className="sp-card sp-card--qr">
+                            <div className="sp-cardHead">
+                                <h4 className="sp-cardTitle">QR code</h4>
+                                <p className="sp-cardSub">
+                                    Download and print it for quick sharing.
+                                </p>
+                            </div>
 
-                        <a
-                            href={effectiveUrl || "#"}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="kx-btn kx-btn--orange sp-btn"
-                            onClick={(e) => {
-                                if (!effectiveUrl) e.preventDefault();
-                            }}
-                        >
-                            <img src={VisitProfileIcon} alt="" className="sp-ico" />
-                            Visit profile
-                        </a>
-                    </div>
-                </div>
+                            {qrCodeImage ? (
+                                <>
+                                    <div className="sp-qrWrap">
+                                        <img
+                                            src={qrCodeImage}
+                                            alt="Profile QR Code"
+                                            className="sp-qr"
+                                        />
+                                    </div>
 
-                {/* QR */}
-                {qrCodeImage ? (
-                    <div className="sp-block">
-                        <div className="sp-qrWrap">
-                            <img src={qrCodeImage} alt="Profile QR Code" className="sp-qr" />
+                                    <div className="sp-actions sp-actionsSingle">
+                                        <a
+                                            href={qrCodeImage}
+                                            download={`${(username || "konarcard")
+                                                .toString()
+                                                .replace(/\s+/g, "-")}-qrcode.png`}
+                                            className="kx-btn kx-btn--white sp-btn"
+                                        >
+                                            <img
+                                                src={DownloadQRIcon}
+                                                alt=""
+                                                className="sp-ico"
+                                            />
+                                            Download QR
+                                        </a>
+                                    </div>
+                                </>
+                            ) : (
+                                <div className="sp-empty">
+                                    QR code will appear once a valid profile is selected.
+                                </div>
+                            )}
                         </div>
-
-                        <div className="sp-actions sp-actionsSingle">
-                            <a
-                                href={qrCodeImage}
-                                download={`${(username || "konarcard").toString().replace(/\s+/g, "-")}-qrcode.png`}
-                                className="kx-btn kx-btn--white sp-btn"
-                            >
-                                <img src={DownloadQRIcon} alt="" className="sp-ico" />
-                                Download QR
-                            </a>
-                        </div>
-                    </div>
-                ) : null}
+                    </aside>
+                </div>
             </div>
         </div>
     );
@@ -212,8 +291,6 @@ export default function ShareProfile({
 ShareProfile.propTypes = {
     isOpen: PropTypes.bool.isRequired,
     onClose: PropTypes.func.isRequired,
-
-    // New Teams-friendly props
     profiles: PropTypes.arrayOf(
         PropTypes.shape({
             slug: PropTypes.string.isRequired,
@@ -223,8 +300,6 @@ ShareProfile.propTypes = {
     ),
     selectedSlug: PropTypes.string,
     onSelectSlug: PropTypes.func,
-
-    // Backward compatible
     profileUrl: PropTypes.string,
     username: PropTypes.string,
 };

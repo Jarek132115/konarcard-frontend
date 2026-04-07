@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import NotificationIcon from "../../assets/icons/Notification.svg";
-import UserProfileIcon from "../../assets/icons/UserProfile.svg";
+import SharePageIcon from "../../assets/icons/SharePage.svg";
 import { useAuthUser } from "../../hooks/useAuthUser";
 import "../../styling/dashboard/pageheader.css";
 
@@ -37,25 +37,15 @@ function getPlanLabel(user) {
     return "Teams";
   }
 
-  if (
-    plan === "plus" ||
-    plan === "plus plan"
-  ) {
+  if (plan === "plus" || plan === "plus plan") {
     return "Plus";
   }
 
-  if (
-    plan === "pro" ||
-    plan === "professional"
-  ) {
+  if (plan === "pro" || plan === "professional") {
     return "Pro";
   }
 
-  if (
-    plan === "free" ||
-    plan === "starter" ||
-    plan === "basic"
-  ) {
+  if (plan === "free" || plan === "starter" || plan === "basic") {
     return "Free";
   }
 
@@ -82,6 +72,9 @@ export default function PageHeader({
   title,
   subtitle,
   notifications = [],
+  onShareClick,
+  shareDisabled = false,
+  shareAriaLabel = "Share profile",
 }) {
   const { data: authUser } = useAuthUser();
   const [menuOpen, setMenuOpen] = useState(false);
@@ -124,7 +117,7 @@ export default function PageHeader({
         {subtitle ? <p className="ph4-sub kc-subheading">{subtitle}</p> : null}
       </div>
 
-      <div className="ph4-right">
+      <div className="ph4-right" aria-label="Page header actions">
         <div className="ph4-pill">
           <span>Plan:</span>
           <strong>{planLabel}</strong>
@@ -164,7 +157,11 @@ export default function PageHeader({
                           "New notification"}
                       </div>
                       <div className="ph4-itemTime">
-                        {formatTimeAgo(item?.createdAt || item?.date || item?.timestamp)}
+                        {formatTimeAgo(
+                          item?.createdAt ||
+                          item?.date ||
+                          item?.timestamp
+                        )}
                       </div>
                     </div>
                   ))}
@@ -178,17 +175,18 @@ export default function PageHeader({
 
         <button
           type="button"
-          className="ph4-avatarBtn"
-          aria-label="User profile"
+          className="ph4-iconBtn ph4-shareBtn"
+          aria-label={shareAriaLabel}
+          onClick={onShareClick}
+          disabled={shareDisabled}
+          title={shareDisabled ? "Create a profile first" : "Share profile"}
         >
-          <span className="ph4-avatar">
-            <img
-              src={UserProfileIcon}
-              alt=""
-              className="ph4-avatarIcon"
-              aria-hidden="true"
-            />
-          </span>
+          <img
+            src={SharePageIcon}
+            alt=""
+            className="ph4-iconImg"
+            aria-hidden="true"
+          />
         </button>
       </div>
     </header>
