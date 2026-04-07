@@ -8,50 +8,93 @@
     --p-card-bg: #ffffff;
 }
 
+/* =========================
+   SHELL (CRITICAL FIXED HEIGHT)
+   ========================= */
+
 .profiles-shell {
     width: 100%;
     margin: 0;
     padding: 0;
+
     display: flex;
     flex-direction: column;
-    min-height: 0;
+
     height: calc(100vh - (var(--dash-gutter, 24px) * 2));
+    min-height: 0;
+
     gap: var(--sp-3);
+
+    overflow: hidden;
+    /* 🔥 IMPORTANT: prevents page scroll */
 }
 
 .profiles-shell .ph2-wrap {
     margin-bottom: 0;
+    flex: 0 0 auto;
 }
+
+/* =========================
+   MAIN
+   ========================= */
 
 .profiles-main {
     display: flex;
     flex-direction: column;
+
     flex: 1;
     min-height: 0;
+
     gap: var(--sp-3);
+
+    overflow: hidden;
+    /* 🔥 IMPORTANT */
 }
+
+/* =========================
+   GRID
+   ========================= */
 
 .profiles-grid {
     display: grid;
     grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-    gap: var(--sp-3);
-    align-items: stretch;
+
     flex: 1;
     min-height: 0;
+
+    gap: var(--sp-3);
+
+    align-items: stretch;
+
+    overflow: hidden;
+    /* 🔥 IMPORTANT */
 }
+
+/* =========================
+   CARDS
+   ========================= */
 
 .profiles-card {
     background: var(--p-card-bg);
     border: 1px solid var(--p-border);
     border-radius: var(--p-radius);
     box-shadow: var(--p-softShadow);
+
     padding: var(--sp-6);
-    min-width: 0;
+
     display: flex;
     flex-direction: column;
+
     min-height: 0;
+    height: 100%;
+
     overflow: hidden;
+    /* 🔥 KEY */
 }
+
+/* =========================
+   TYPOGRAPHY
+   ========================= */
 
 .profiles-card-title {
     margin: 0;
@@ -79,17 +122,13 @@
     flex-wrap: wrap;
 }
 
+/* =========================
+   EMPTY STATES
+   ========================= */
+
 .profiles-emptyCard,
 .profiles-emptyInfoCard {
     height: 100%;
-}
-
-.profiles-emptyCard {
-    justify-content: flex-start;
-}
-
-.profiles-emptyInfoCard {
-    justify-content: flex-start;
 }
 
 .profiles-emptyInfoHead {
@@ -132,6 +171,10 @@
     color: var(--p-muted);
 }
 
+/* =========================
+   SKELETON
+   ========================= */
+
 .profiles-skeleton {
     display: grid;
     gap: var(--sp-3);
@@ -159,7 +202,9 @@
     }
 }
 
-/* overlay */
+/* =========================
+   OVERLAY
+   ========================= */
 
 .profiles-overlay {
     position: fixed;
@@ -178,95 +223,26 @@
     border: 1px solid rgba(15, 23, 42, 0.12);
     box-shadow: 0 30px 80px rgba(15, 23, 42, 0.28);
     padding: var(--sp-6);
-    font-family: "Inter", sans-serif;
-    color: var(--p-ink);
 }
 
-.profiles-overlayHead {
-    display: flex;
-    align-items: flex-start;
-    justify-content: space-between;
-    gap: 12px;
-}
-
-.profiles-overlayTitle {
-    font-size: 18px;
-    line-height: 1.2;
-    font-weight: 800;
-    color: var(--p-ink);
-    margin: 0 0 6px;
-}
-
-.profiles-overlaySub {
-    font-size: 13px;
-    line-height: 1.5;
-    font-weight: 500;
-    color: rgba(15, 23, 42, 0.75);
-}
-
-.profiles-overlayClose {
-    border: 1px solid rgba(15, 23, 42, 0.12);
-    background: #fff;
-    border-radius: 14px;
-    width: 40px;
-    height: 40px;
-    cursor: pointer;
-    font-weight: 900;
-    line-height: 1;
-    color: var(--p-ink);
-    flex: 0 0 auto;
-}
-
-.profiles-overlayCopy {
-    margin-top: 12px;
-    font-size: 13px;
-    color: rgba(15, 23, 42, 0.85);
-    line-height: 1.6;
-    font-weight: 500;
-}
-
-.profiles-overlayMeta {
-    margin-top: 10px;
-    font-size: 12px;
-    color: rgba(15, 23, 42, 0.6);
-    font-weight: 600;
-}
-
-.profiles-overlayActions {
-    display: flex;
-    gap: 10px;
-    margin-top: 18px;
-    justify-content: flex-end;
-    flex-wrap: wrap;
-}
-
-/* make child profile sections behave like contactbook panels */
+/* =========================
+   CONTACTBOOK BEHAVIOUR (CRITICAL)
+   ========================= */
 
 .pl-card,
 .pi-card,
 .profiles-listCard,
 .profiles-infoCard {
-    height: 100%;
-    min-height: 0;
-}
-
-.pl-card,
-.profiles-listCard {
     display: flex;
     flex-direction: column;
+
+    flex: 1;
     min-height: 0;
+
     overflow: hidden;
 }
 
-.pi-card,
-.profiles-infoCard {
-    display: flex;
-    flex-direction: column;
-    min-height: 0;
-    overflow: hidden;
-}
-
-/* useful shared inner scrolling helpers if child css already uses these classes */
+/* 🔥 THIS IS WHAT MAKES INNER SCROLL WORK */
 .profiles-scrollArea,
 .profiles-infoScroll,
 .profiles-listScroll,
@@ -274,85 +250,51 @@
 .pl-scroll {
     flex: 1;
     min-height: 0;
+
     overflow-y: auto;
     overflow-x: hidden;
+
     padding-right: 2px;
 }
 
-/* responsive */
+/* =========================
+   RESPONSIVE
+   ========================= */
 
 @media (max-width: 1200px) {
     .profiles-shell {
         height: auto;
+        overflow: visible;
     }
 
     .profiles-main {
         flex: initial;
+        overflow: visible;
     }
 
     .profiles-grid {
         grid-template-columns: 1fr;
-        gap: var(--sp-3);
         flex: initial;
+        overflow: visible;
     }
 
-    .profiles-emptyCard,
-    .profiles-emptyInfoCard,
+    .profiles-card,
     .pl-card,
-    .pi-card,
-    .profiles-listCard,
-    .profiles-infoCard {
+    .pi-card {
         height: auto;
     }
 
     .profiles-scrollArea,
     .profiles-infoScroll,
-    .profiles-listScroll,
-    .pi-scroll,
-    .pl-scroll {
+    .profiles-listScroll {
         overflow: visible;
     }
 }
 
-@media (max-width: 900px) {
-
-    .profiles-card,
-    .profiles-overlayCard {
-        padding: var(--sp-6);
-    }
-}
-
-@media (max-width: 760px) {
-
-    .profiles-card,
-    .profiles-overlayCard {
-        padding: var(--sp-6);
-    }
-}
-
 @media (max-width: 560px) {
-    .profiles-grid {
-        gap: var(--sp-3);
-    }
-
-    .profiles-card {
-        padding: var(--sp-6);
-        border-radius: 24px;
-    }
-
-    .profiles-muted,
-    .profiles-emptyInfoValue {
-        font-size: 14px;
-    }
-
     .profiles-actions-row .kx-btn {
         width: 100%;
         justify-content: center;
-    }
-
-    .profiles-overlayCard {
-        border-radius: 24px;
-        padding: var(--sp-6);
     }
 
     .profiles-overlayActions {
@@ -361,6 +303,5 @@
 
     .profiles-overlayActions .kx-btn {
         width: 100%;
-        justify-content: center;
     }
 }

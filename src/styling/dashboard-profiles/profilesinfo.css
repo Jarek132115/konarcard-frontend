@@ -2,23 +2,48 @@
     --p-ink: var(--kc-text-primary, #0f172a);
     --p-muted: var(--kc-text-secondary, #475569);
     --p-softLine: rgba(15, 23, 42, 0.12);
-    --p-softShadow: 0 0 1px rgba(0, 0, 0, 0.25);
+    --p-softShadow: 0 1px 0 rgba(15, 23, 42, 0.04), 0 10px 22px rgba(15, 23, 42, 0.04);
     --p-border: rgba(15, 23, 42, 0.1);
     --p-orange: #f97316;
     --p-red: rgba(239, 68, 68, 0.95);
 }
 
+/* =========================
+   RIGHT PANEL
+   ========================= */
+
 .profiles-right {
     display: flex;
     flex-direction: column;
     min-height: 0;
+    height: 100%;
 }
 
 .profiles-actionsCard {
-    flex: 1;
+    flex: 1 1 auto;
     min-height: 0;
+    height: 100%;
     overflow: auto;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(15, 23, 42, 0.18) transparent;
 }
+
+.profiles-actionsCard::-webkit-scrollbar {
+    width: 8px;
+}
+
+.profiles-actionsCard::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.profiles-actionsCard::-webkit-scrollbar-thumb {
+    background: rgba(15, 23, 42, 0.16);
+    border-radius: 999px;
+}
+
+/* =========================
+   SECTIONS / DIVIDERS
+   ========================= */
 
 .profiles-infoSection {
     padding-top: 24px;
@@ -44,18 +69,28 @@
     opacity: 1;
 }
 
+/* =========================
+   TOP AREA
+   ========================= */
+
 .profiles-actionsTop {
     display: grid;
-    gap: 6px;
+    gap: 8px;
+    min-width: 0;
 }
 
 .profiles-previewPills {
     margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
 }
 
 .profiles-linkBlock {
     display: grid;
     gap: 4px;
+    min-width: 0;
 }
 
 .profiles-previewLinkLabel {
@@ -79,12 +114,14 @@
     font-family: "Inter", sans-serif;
     font-weight: 700;
     font-size: 20px;
+    line-height: 1.2;
     color: var(--p-ink);
     letter-spacing: -0.01em;
     min-width: 0;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
+    flex: 1 1 auto;
 }
 
 .profiles-copyIconBtn {
@@ -99,10 +136,16 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
+    transition:
+        background 0.15s ease,
+        border-color 0.15s ease,
+        box-shadow 0.15s ease,
+        transform 0.08s ease;
 }
 
 .profiles-copyIconBtn:hover {
     background: rgba(15, 23, 42, 0.03);
+    box-shadow: 0 8px 18px rgba(15, 23, 42, 0.06);
 }
 
 .profiles-copyIconBtn:active {
@@ -115,11 +158,15 @@
     display: block;
 }
 
-/* NEW METRIC CARDS */
+/* =========================
+   METRICS
+   ========================= */
+
 .profiles-previewMetricsRow {
     margin-top: 16px;
     display: flex;
     width: 100%;
+    min-width: 0;
 }
 
 .profiles-metricsInline {
@@ -159,6 +206,7 @@
     line-height: 1;
     color: var(--kc-text-primary);
     letter-spacing: -0.03em;
+    word-break: break-word;
 }
 
 .profiles-metricInlineLab {
@@ -195,6 +243,10 @@
         background-position: 0 0;
     }
 }
+
+/* =========================
+   ACTION GROUPS
+   ========================= */
 
 .profiles-actionGroup {
     display: grid;
@@ -233,12 +285,13 @@
     gap: 8px;
     min-height: 44px;
     padding: 10px 20px;
-    border-radius: 10px;
+    border-radius: 12px;
     line-height: 1.1;
     font-family: "Inter", sans-serif;
     font-size: 14px;
     font-weight: 700;
     white-space: nowrap;
+    min-width: 0;
 }
 
 .profiles-actionBtn--wide {
@@ -269,6 +322,10 @@
     object-fit: contain;
     flex: 0 0 18px;
 }
+
+/* =========================
+   QR
+   ========================= */
 
 .profiles-qrBlock {
     width: min(320px, 100%);
@@ -320,6 +377,10 @@
     width: 100%;
 }
 
+/* =========================
+   SPECIAL STATES
+   ========================= */
+
 .profiles-deleteBtn {
     border-color: rgba(239, 68, 68, 0.55) !important;
     color: rgba(239, 68, 68, 0.95) !important;
@@ -334,16 +395,21 @@
     padding: 16px;
     border-radius: 14px;
     background: rgba(15, 23, 42, 0.03);
-    border: 1px solid rgba(15, 23, 42, 0.10);
+    border: 1px solid rgba(15, 23, 42, 0.1);
     font-family: "Inter", sans-serif;
     font-weight: 700;
     font-size: 13px;
     color: rgba(71, 85, 105, 0.95);
 }
 
+/* =========================
+   DESKTOP
+   ========================= */
+
 @media (max-width: 1180px) {
     .profiles-actionsCard {
         overflow: visible;
+        height: auto;
     }
 
     .profiles-metricsInline {
@@ -375,6 +441,10 @@
 }
 
 @media (max-width: 760px) {
+    .profiles-right {
+        height: auto;
+    }
+
     .profiles-infoSection {
         padding-top: 24px;
         padding-bottom: 24px;
@@ -450,6 +520,7 @@
     .profiles-actionBtn {
         min-height: 44px;
         font-size: 13px;
+        white-space: nowrap;
     }
 
     .profiles-qrWrap {
@@ -461,5 +532,76 @@
     .profiles-actionBtn--wide {
         width: 100%;
         max-width: 100%;
+    }
+}
+
+@media (max-width: 520px) {
+    .profiles-infoSection {
+        padding-top: 20px;
+        padding-bottom: 20px;
+    }
+
+    .profiles-infoSection--first {
+        padding-top: 0;
+        padding-bottom: 20px;
+    }
+
+    .profiles-previewPills {
+        margin-bottom: 8px;
+    }
+
+    .profiles-previewLinkUrl {
+        font-size: 15px;
+    }
+
+    .profiles-copyIconBtn {
+        width: 34px;
+        height: 34px;
+        border-radius: 11px;
+    }
+
+    .profiles-copyIcon24 {
+        width: 16px;
+        height: 16px;
+    }
+
+    .profiles-metricInline {
+        padding: 14px;
+        border-radius: 18px;
+    }
+
+    .profiles-metricInlineVal {
+        font-size: 22px;
+    }
+
+    .profiles-metricInlineLab {
+        font-size: 12px;
+    }
+
+    .profiles-groupTitle {
+        font-size: 16px;
+    }
+
+    .profiles-actionBtn {
+        padding: 10px 14px;
+        font-size: 13px;
+    }
+
+    .profiles-btnIcon,
+    .profiles-btnIconImg,
+    .profiles-btnIconSvg {
+        width: 17px;
+        height: 17px;
+        min-width: 17px;
+        min-height: 17px;
+    }
+
+    .profiles-qrWrap {
+        border-radius: 18px;
+    }
+
+    .profiles-qrPlaceholder,
+    .profiles-previewLoading {
+        font-size: 13px;
     }
 }

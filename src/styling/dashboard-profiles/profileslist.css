@@ -7,18 +7,29 @@
     --p-softShadow: 0 1px 0 rgba(15, 23, 42, 0.04), 0 10px 22px rgba(15, 23, 42, 0.04);
 }
 
+/* =========================
+   LIST PANEL
+   ========================= */
+
 .profiles-list-card {
     min-height: 0;
     height: 100%;
     display: flex;
     flex-direction: column;
+    overflow: hidden;
 }
 
 .profiles-listHeader {
     display: flex;
-    align-items: center;
+    align-items: flex-start;
     justify-content: space-between;
     gap: 12px;
+    flex: 0 0 auto;
+}
+
+.profiles-listHeaderCopy {
+    min-width: 0;
+    flex: 1 1 auto;
 }
 
 .profiles-listTitle,
@@ -46,7 +57,7 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    height: 40px;
+    min-height: 40px;
     padding: 0 14px;
     border-radius: 999px;
     background: #ffffff;
@@ -57,7 +68,12 @@
     color: rgba(15, 23, 42, 0.86);
     box-shadow: var(--p-softShadow);
     flex: 0 0 auto;
+    white-space: nowrap;
 }
+
+/* =========================
+   RAIL
+   ========================= */
 
 .profiles-listRail {
     margin-top: 18px;
@@ -75,6 +91,7 @@
     -webkit-user-select: none;
     -webkit-overflow-scrolling: touch;
     scrollbar-width: none;
+    scroll-snap-type: x proximity;
 }
 
 .profiles-listRail::-webkit-scrollbar {
@@ -84,6 +101,10 @@
 .profiles-listRail.is-dragging {
     cursor: grabbing;
 }
+
+/* =========================
+   CARD BASE
+   ========================= */
 
 .profiles-profileCard {
     border-radius: 24px;
@@ -97,6 +118,7 @@
         border-color 0.18s ease,
         box-shadow 0.18s ease;
     overflow: hidden;
+    min-width: 0;
 }
 
 .profiles-profileCard:hover {
@@ -123,17 +145,16 @@
     width: clamp(260px, 24vw, 320px);
     min-height: 100%;
     height: 100%;
-}
-
-.profiles-profileCard--rail,
-.profiles-addCard--rail,
-.profiles-addInline--rail {
     display: flex;
     flex-direction: column;
     padding: 0;
+    scroll-snap-align: start;
 }
 
-/* preview card now owns full height */
+/* =========================
+   MAIN PREVIEW
+   ========================= */
+
 .profiles-mainPreview {
     width: 100%;
     height: 100%;
@@ -223,6 +244,7 @@
 }
 
 .profiles-mainPreviewName {
+    margin: 0;
     font-family: "Cal Sans", sans-serif;
     font-size: 34px;
     line-height: 0.96;
@@ -234,10 +256,10 @@
     -webkit-box-orient: vertical;
     -webkit-line-clamp: 2;
     line-clamp: 2;
-    margin: 0;
 }
 
 .profiles-mainPreviewTrade {
+    margin: 0;
     font-family: "Inter", sans-serif;
     font-weight: 600;
     font-size: 14px;
@@ -250,10 +272,10 @@
     -webkit-box-orient: vertical;
     -webkit-line-clamp: 2;
     line-clamp: 2;
-    margin: 0;
 }
 
 .profiles-mainPreviewLocation {
+    margin: 0;
     font-family: "Inter", sans-serif;
     font-weight: 500;
     font-size: 13px;
@@ -264,7 +286,6 @@
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
-    margin: 0;
 }
 
 .profiles-mainPreviewBottom {
@@ -365,7 +386,10 @@
     color: rgba(15, 23, 42, 0.75);
 }
 
-/* add profile closed */
+/* =========================
+   ADD CARD (CLOSED)
+   ========================= */
+
 .profiles-addCard {
     border-radius: 24px;
     border: 1px solid rgba(15, 23, 42, 0.1);
@@ -409,7 +433,7 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    height: 28px;
+    min-height: 28px;
     padding: 0 10px;
     border-radius: 999px;
     background: rgba(244, 118, 41, 0.12);
@@ -522,7 +546,10 @@
     margin-top: 0;
 }
 
-/* open add card */
+/* =========================
+   ADD CARD (OPEN)
+   ========================= */
+
 .profiles-addInline {
     border-radius: 24px;
     border: 1px solid rgba(15, 23, 42, 0.1);
@@ -587,13 +614,13 @@
 }
 
 .profiles-addInlineTitle {
+    margin-top: 0;
     font-family: "Cal Sans", sans-serif;
     font-weight: 400;
     font-size: 28px;
     line-height: 1;
     letter-spacing: -0.02em;
     color: var(--p-ink);
-    margin-top: 0;
 }
 
 .profiles-addInlineIntro {
@@ -635,6 +662,10 @@
     display: grid;
     gap: 10px;
 }
+
+/* =========================
+   INPUTS
+   ========================= */
 
 .profiles-input-wrap {
     display: flex;
@@ -684,6 +715,10 @@
 .profiles-cardBtn--claim {
     min-height: 48px;
 }
+
+/* =========================
+   STATUS / ALERTS
+   ========================= */
 
 .profiles-claimStatusCard {
     padding: 14px;
@@ -784,6 +819,10 @@
     color: var(--kc-accent-primary, #f97316);
 }
 
+/* =========================
+   DESKTOP / LARGE
+   ========================= */
+
 @media (max-width: 1280px) {
 
     .profiles-profileCard--rail,
@@ -806,6 +845,16 @@
     .profiles-addInline--rail {
         flex: 0 0 340px;
         width: 340px;
+        min-height: 540px;
+        height: auto;
+    }
+
+    .profiles-listRail {
+        height: auto;
+        min-height: 0;
+        overflow-x: auto;
+        overflow-y: visible;
+        align-items: stretch;
     }
 
     .profiles-mainPreviewName,
@@ -829,6 +878,7 @@
     .profiles-addInline--rail {
         flex: 0 0 320px;
         width: 320px;
+        min-height: 520px;
     }
 
     .profiles-mainPreviewTopbar,
@@ -877,6 +927,7 @@
     .profiles-addInline--rail {
         flex: 0 0 292px;
         width: 292px;
+        min-height: 500px;
     }
 
     .profiles-updated {
@@ -945,10 +996,27 @@
     }
 }
 
+/* =========================
+   MOBILE / SMALL TABLET
+   ========================= */
+
 @media (max-width: 760px) {
+    .profiles-listHeader {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .profiles-countPill {
+        min-height: 36px;
+        padding: 0 12px;
+        font-size: 13px;
+    }
+
     .profiles-listRail {
         margin-top: 16px;
         gap: 10px;
+        height: auto;
+        flex: initial;
     }
 
     .profiles-profileCard--rail,
@@ -956,6 +1024,8 @@
     .profiles-addInline--rail {
         flex: 0 0 244px;
         width: 244px;
+        min-height: 456px;
+        height: auto;
     }
 
     .profiles-updated {
@@ -1059,9 +1129,9 @@
     }
 
     .profiles-input-prefix {
-        flex: 0 0 20%;
-        max-width: 20%;
-        min-width: 20%;
+        flex: 0 0 22%;
+        max-width: 22%;
+        min-width: 22%;
         font-size: 9px;
         padding: 8px;
     }
@@ -1097,6 +1167,7 @@
     .profiles-addInline--rail {
         flex: 0 0 232px;
         width: 232px;
+        min-height: 440px;
     }
 
     .profiles-updated {
@@ -1128,5 +1199,26 @@
         height: 13px;
         min-width: 13px;
         min-height: 13px;
+    }
+}
+
+@media (max-width: 520px) {
+
+    .profiles-profileCard--rail,
+    .profiles-addCard--rail,
+    .profiles-addInline--rail {
+        flex: 0 0 224px;
+        width: 224px;
+        min-height: 428px;
+    }
+
+    .profiles-listTitle,
+    .profiles-card-title {
+        font-size: 20px;
+    }
+
+    .profiles-listSub,
+    .profiles-muted {
+        font-size: 14px;
     }
 }

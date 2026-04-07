@@ -160,6 +160,8 @@ export default function Profiles() {
     const deleteProfile = useDeleteProfile();
 
     const railRef = useRef(null);
+    const claimRef = useRef(null);
+
     const pointerDownRef = useRef(false);
     const dragActiveRef = useRef(false);
     const suppressClickRef = useRef(false);
@@ -175,8 +177,6 @@ export default function Profiles() {
     const [selectedSlug, setSelectedSlug] = useState(null);
     const [lockedOverlayOpen, setLockedOverlayOpen] = useState(false);
     const [lockedClickedSlug, setLockedClickedSlug] = useState("");
-
-    const claimRef = useRef(null);
 
     useEffect(() => {
         if (!authUser) return;
@@ -326,17 +326,9 @@ export default function Profiles() {
         return found;
     }, [sortedProfiles, selectedSlug, maxProfiles]);
 
-    const selectedPublicUrl = useMemo(() => {
-        return selectedProfile?.publicUrl || "";
-    }, [selectedProfile]);
-
-    const selectedQrTrackedUrl = useMemo(() => {
-        return selectedProfile?.qrTrackedUrl || "";
-    }, [selectedProfile]);
-
-    const selectedNfcTrackedUrl = useMemo(() => {
-        return selectedProfile?.nfcTrackedUrl || "";
-    }, [selectedProfile]);
+    const selectedPublicUrl = useMemo(() => selectedProfile?.publicUrl || "", [selectedProfile]);
+    const selectedQrTrackedUrl = useMemo(() => selectedProfile?.qrTrackedUrl || "", [selectedProfile]);
+    const selectedNfcTrackedUrl = useMemo(() => selectedProfile?.nfcTrackedUrl || "", [selectedProfile]);
 
     const openLockedOverlay = (slug) => {
         setLockedClickedSlug(slug || "");
@@ -792,13 +784,17 @@ export default function Profiles() {
 
                 try {
                     await refetchAuthUser?.();
-                } catch { }
+                } catch {
+                    // ignore
+                }
 
                 try {
                     await refetchProfiles?.();
                     setSelectedSlug(returnedSlug);
                     break;
-                } catch { }
+                } catch {
+                    // ignore
+                }
 
                 await new Promise((r) => setTimeout(r, 900));
             }
@@ -809,7 +805,9 @@ export default function Profiles() {
                 const clean = new URL(window.location.href);
                 clean.search = "";
                 window.history.replaceState({}, document.title, clean.toString());
-            } catch { }
+            } catch {
+                // ignore
+            }
         };
 
         run();
@@ -896,7 +894,7 @@ export default function Profiles() {
     if (isLoading) {
         return (
             <DashboardLayout hideDesktopHeader>
-                <div className="profiles-shell">
+                <div className="profiles-shell profiles-shell--loading">
                     <div className="profiles-skeleton">
                         <div className="profiles-skel-card" />
                         <div className="profiles-skel-card" />
@@ -909,7 +907,7 @@ export default function Profiles() {
     if (isError) {
         return (
             <DashboardLayout hideDesktopHeader>
-                <div className="profiles-shell">
+                <div className="profiles-shell profiles-shell--error">
                     <section className="profiles-card profiles-emptyCard">
                         <h2 className="profiles-card-title">We couldn’t load your profiles</h2>
                         <p className="profiles-muted">
@@ -1003,8 +1001,8 @@ export default function Profiles() {
                                 <div className="profiles-emptyInfoHead">
                                     <h2 className="profiles-card-title">Profile details</h2>
                                     <p className="profiles-muted">
-                                        Once you create a profile, your public link, QR code, sharing tools
-                                        and actions will show here.
+                                        Once you create a profile, your public link, QR code, sharing
+                                        tools and actions will show here.
                                     </p>
                                 </div>
 
@@ -1075,9 +1073,9 @@ export default function Profiles() {
                             </div>
 
                             <div className="profiles-overlayCopy">
-                                To unlock your old profiles, upgrade back to <strong>Teams</strong>. If
-                                you don’t upgrade, your locked profiles will be permanently removed in{" "}
-                                <strong>30 days</strong>.
+                                To unlock your old profiles, upgrade back to <strong>Teams</strong>.
+                                If you don’t upgrade, your locked profiles will be permanently removed
+                                in <strong>30 days</strong>.
                             </div>
 
                             {lockedClickedSlug ? (
