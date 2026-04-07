@@ -875,8 +875,6 @@
 .kce-socialRow> :first-child {
     min-height: 48px;
     border-radius: 14px;
-    border: 1px solid var(--kce-border-strong);
-    background: #ffffff;
     display: grid;
     place-items: center;
 }
