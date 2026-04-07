@@ -1,12 +1,51 @@
-import React, { useEffect, useMemo, useRef, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import PropTypes from "prop-types";
 import { toast } from "react-hot-toast";
 import QRCode from "qrcode";
+
 import "../styling/dashboard/shareprofile.css";
 
 import CopyLinkIcon from "../assets/icons/CopyLink-Icon.svg";
 import VisitProfileIcon from "../assets/icons/VisitProfile-Icon.svg";
 import DownloadQRIcon from "../assets/icons/DownloadQR-Icon.svg";
+
+import ShareOnFacebookIcon from "../assets/icons/ShareOnFacebook.svg";
+import ShareOnInstagramIcon from "../assets/icons/ShareOnInstagram.svg";
+import ShareOnMessengerIcon from "../assets/icons/ShareOnMessenger.svg";
+import ShareOnWhatsappIcon from "../assets/icons/ShareOnWhatsapp.svg";
+import ShareOnTextIcon from "../assets/icons/ShareOnText.svg";
+import ShareOnCopyIcon from "../assets/icons/ShareOnCopy.svg";
+import ShareOnAppleWalletIcon from "../assets/icons/ShareOnAppleWallet.svg";
+import ShareOnGoogleWalletIcon from "../assets/icons/ShareOnGoogleWallet.svg";
+
+function openInNewTab(url) {
+    if (!url) return;
+    window.open(url, "_blank", "noopener,noreferrer");
+}
+
+function buildFacebookShareUrl(url) {
+    return `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`;
+}
+
+function buildMessengerShareUrl(url) {
+    return `https://www.facebook.com/dialog/send?link=${encodeURIComponent(url)}&app_id=1217981644879628&redirect_uri=${encodeURIComponent(url)}`;
+}
+
+function buildWhatsAppShareUrl(url) {
+    return `https://wa.me/?text=${encodeURIComponent(url)}`;
+}
+
+function buildSmsShareUrl(url) {
+    return `sms:?&body=${encodeURIComponent(url)}`;
+}
+
+function ActionIcon({ src, alt = "" }) {
+    return (
+        <span className="sp-actionBtnIcon" aria-hidden="true">
+            <img src={src} alt={alt} className="sp-actionBtnIconImg" />
+        </span>
+    );
+}
 
 export default function ShareProfile({
     isOpen,
@@ -16,8 +55,14 @@ export default function ShareProfile({
     onSelectSlug,
     profileUrl,
     username,
+    onFacebook,
+    onInstagram,
+    onMessenger,
+    onWhatsApp,
+    onText,
+    onAppleWallet,
+    onGoogleWallet,
 }) {
-    const profileLinkRef = useRef(null);
     const [qrCodeImage, setQrCodeImage] = useState("");
 
     const selectedProfile = useMemo(() => {
@@ -56,6 +101,7 @@ export default function ShareProfile({
 
     useEffect(() => {
         if (!isOpen) return;
+
         if (!effectiveUrl) {
             setQrCodeImage("");
             return;
@@ -63,7 +109,7 @@ export default function ShareProfile({
 
         QRCode.toDataURL(effectiveUrl, {
             errorCorrectionLevel: "H",
-            width: 220,
+            width: 300,
             margin: 0,
         })
             .then((url) => setQrCodeImage(url))
@@ -88,6 +134,8 @@ export default function ShareProfile({
         if (!selectedProfile) return "";
         return `${selectedProfile.name} — ${selectedProfile.slug}`;
     }, [selectedProfile]);
+
+    const hasManyProfiles = (profiles?.length || 0) > 1;
 
     if (!isOpen) return null;
 
@@ -115,14 +163,72 @@ export default function ShareProfile({
         }
     };
 
-    const hasManyProfiles = (profiles?.length || 0) > 1;
+    const handleFacebook = () => {
+        if (!effectiveUrl) return;
+        if (typeof onFacebook === "function") {
+            onFacebook();
+            return;
+        }
+        openInNewTab(buildFacebookShareUrl(effectiveUrl));
+    };
+
+    const handleInstagram = async () => {
+        if (!effectiveUrl) return;
+
+        if (typeof onInstagram === "function") {
+            onInstagram();
+            return;
+        }
+
+        await copyToClipboard(effectiveUrl, "Profile link copied for Instagram sharing.");
+        openInNewTab("https://www.instagram.com/");
+    };
+
+    const handleMessenger = () => {
+        if (!effectiveUrl) return;
+        if (typeof onMessenger === "function") {
+            onMessenger();
+            return;
+        }
+        openInNewTab(buildMessengerShareUrl(effectiveUrl));
+    };
+
+    const handleWhatsApp = () => {
+        if (!effectiveUrl) return;
+        if (typeof onWhatsApp === "function") {
+            onWhatsApp();
+            return;
+        }
+        openInNewTab(buildWhatsAppShareUrl(effectiveUrl));
+    };
+
+    const handleText = () => {
+        if (!effectiveUrl) return;
+        if (typeof onText === "function") {
+            onText();
+            return;
+        }
+        window.location.href = buildSmsShareUrl(effectiveUrl);
+    };
+
+    const handleAppleWallet = () => {
+        if (typeof onAppleWallet === "function") {
+            onAppleWallet();
+            return;
+        }
+        toast("Apple Wallet action is not connected yet.");
+    };
+
+    const handleGoogleWallet = () => {
+        if (typeof onGoogleWallet === "function") {
+            onGoogleWallet();
+            return;
+        }
+        toast("Google Wallet action is not connected yet.");
+    };
 
     return (
-        <div
-            className="sp-overlay"
-            onClick={onClose}
-            role="presentation"
-        >
+        <div className="sp-overlay" onClick={onClose} role="presentation">
             <div
                 className="sp-modal"
                 onClick={(e) => e.stopPropagation()}
@@ -146,17 +252,16 @@ export default function ShareProfile({
                     <div className="sp-kicker">Share profile</div>
                     <h3 className="sp-title">Share your profile</h3>
                     <p className="sp-sub">
-                        Copy your link, visit your public page, or download your QR code to
-                        share it anywhere.
+                        Share your link, QR code, socials and wallet options from one place.
                     </p>
                 </div>
 
-                <div className="sp-body">
-                    <div className="sp-main">
-                        <div className="sp-card">
-                            <div className="sp-cardHead">
-                                <h4 className="sp-cardTitle">Profile</h4>
-                                <p className="sp-cardSub">
+                <div className="sp-layout">
+                    <div className="sp-mainCol">
+                        <section className="sp-panel">
+                            <div className="sp-panelHead">
+                                <h4 className="sp-panelTitle">Profile</h4>
+                                <p className="sp-panelSub">
                                     Choose which profile you want to share.
                                 </p>
                             </div>
@@ -180,28 +285,27 @@ export default function ShareProfile({
                                     </select>
                                 </div>
                             ) : profiles?.length === 1 ? (
-                                <div className="sp-single">
-                                    <div className="sp-singleLabel">Selected profile</div>
-                                    <div className="sp-singleValue">{profileLabel}</div>
+                                <div className="sp-selectedCard">
+                                    <div className="sp-selectedLabel">Selected profile</div>
+                                    <div className="sp-selectedValue">{profileLabel}</div>
                                 </div>
                             ) : (
                                 <div className="sp-empty">
                                     No profile available yet. Create a profile first.
                                 </div>
                             )}
-                        </div>
+                        </section>
 
-                        <div className="sp-card">
-                            <div className="sp-cardHead">
-                                <h4 className="sp-cardTitle">Profile link</h4>
-                                <p className="sp-cardSub">
-                                    Copy your public URL or open it in a new tab.
+                        <section className="sp-panel">
+                            <div className="sp-panelHead">
+                                <h4 className="sp-panelTitle">Profile link</h4>
+                                <p className="sp-panelSub">
+                                    Copy your public URL or visit your profile.
                                 </p>
                             </div>
 
                             <div className="sp-linkRow">
                                 <input
-                                    ref={profileLinkRef}
                                     type="text"
                                     readOnly
                                     value={displayUrl}
@@ -210,16 +314,14 @@ export default function ShareProfile({
                                 />
                             </div>
 
-                            <div className="sp-actions">
+                            <div className="sp-primaryActions">
                                 <button
                                     type="button"
-                                    className="kx-btn kx-btn--black sp-btn"
-                                    onClick={() =>
-                                        copyToClipboard(effectiveUrl, "Profile link copied!")
-                                    }
+                                    className="kx-btn kx-btn--black sp-primaryBtn"
+                                    onClick={() => copyToClipboard(effectiveUrl, "Profile link copied!")}
                                     disabled={!effectiveUrl}
                                 >
-                                    <img src={CopyLinkIcon} alt="" className="sp-ico" />
+                                    <img src={CopyLinkIcon} alt="" className="sp-inlineIcon" />
                                     Copy link
                                 </button>
 
@@ -227,23 +329,123 @@ export default function ShareProfile({
                                     href={effectiveUrl || "#"}
                                     target="_blank"
                                     rel="noopener noreferrer"
-                                    className="kx-btn kx-btn--orange sp-btn"
+                                    className="kx-btn kx-btn--orange sp-primaryBtn"
                                     onClick={(e) => {
                                         if (!effectiveUrl) e.preventDefault();
                                     }}
                                 >
-                                    <img src={VisitProfileIcon} alt="" className="sp-ico" />
+                                    <img src={VisitProfileIcon} alt="" className="sp-inlineIcon" />
                                     Visit profile
                                 </a>
                             </div>
-                        </div>
+                        </section>
+
+                        <section className="sp-panel">
+                            <div className="sp-panelHead">
+                                <h4 className="sp-panelTitle">Share your profile</h4>
+                                <p className="sp-panelSub">
+                                    Send your profile through your favourite sharing channels.
+                                </p>
+                            </div>
+
+                            <div className="sp-actionGrid">
+                                <button
+                                    type="button"
+                                    className="kx-btn kx-btn--white sp-actionBtn"
+                                    onClick={handleFacebook}
+                                    disabled={!effectiveUrl}
+                                >
+                                    <ActionIcon src={ShareOnFacebookIcon} />
+                                    <span>Facebook</span>
+                                </button>
+
+                                <button
+                                    type="button"
+                                    className="kx-btn kx-btn--white sp-actionBtn"
+                                    onClick={handleInstagram}
+                                    disabled={!effectiveUrl}
+                                >
+                                    <ActionIcon src={ShareOnInstagramIcon} />
+                                    <span>Instagram</span>
+                                </button>
+
+                                <button
+                                    type="button"
+                                    className="kx-btn kx-btn--white sp-actionBtn"
+                                    onClick={handleMessenger}
+                                    disabled={!effectiveUrl}
+                                >
+                                    <ActionIcon src={ShareOnMessengerIcon} />
+                                    <span>Messenger</span>
+                                </button>
+
+                                <button
+                                    type="button"
+                                    className="kx-btn kx-btn--white sp-actionBtn"
+                                    onClick={handleWhatsApp}
+                                    disabled={!effectiveUrl}
+                                >
+                                    <ActionIcon src={ShareOnWhatsappIcon} />
+                                    <span>WhatsApp</span>
+                                </button>
+
+                                <button
+                                    type="button"
+                                    className="kx-btn kx-btn--white sp-actionBtn"
+                                    onClick={handleText}
+                                    disabled={!effectiveUrl}
+                                >
+                                    <ActionIcon src={ShareOnTextIcon} />
+                                    <span>Text</span>
+                                </button>
+
+                                <button
+                                    type="button"
+                                    className="kx-btn kx-btn--white sp-actionBtn"
+                                    onClick={() => copyToClipboard(effectiveUrl, "Profile link copied!")}
+                                    disabled={!effectiveUrl}
+                                >
+                                    <ActionIcon src={ShareOnCopyIcon} />
+                                    <span>Copy link</span>
+                                </button>
+                            </div>
+                        </section>
+
+                        <section className="sp-panel">
+                            <div className="sp-panelHead">
+                                <h4 className="sp-panelTitle">Add to wallet</h4>
+                                <p className="sp-panelSub">
+                                    Save your profile to Apple Wallet or Google Wallet.
+                                </p>
+                            </div>
+
+                            <div className="sp-actionGrid sp-actionGrid--two">
+                                <button
+                                    type="button"
+                                    className="kx-btn kx-btn--white sp-actionBtn"
+                                    onClick={handleAppleWallet}
+                                >
+                                    <ActionIcon src={ShareOnAppleWalletIcon} />
+                                    <span>Apple Wallet</span>
+                                </button>
+
+                                <button
+                                    type="button"
+                                    className="kx-btn kx-btn--white sp-actionBtn"
+                                    onClick={handleGoogleWallet}
+                                >
+                                    <ActionIcon src={ShareOnGoogleWalletIcon} />
+                                    <span>Google Wallet</span>
+                                </button>
+                            </div>
+                        </section>
                     </div>
 
-                    <aside className="sp-side">
-                        <div className="sp-card sp-card--qr">
-                            <div className="sp-cardHead">
-                                <h4 className="sp-cardTitle">QR code</h4>
-                                <p className="sp-cardSub">
+                    <div className="sp-sideCol">
+                        <section className="sp-panel sp-panel--sticky">
+                            <div className="sp-panelHead">
+                                <h4 className="sp-panelTitle">QR code</h4>
+                                <p className="sp-panelSub">
                                     Download and print it for quick sharing.
                                 </p>
                             </div>
@@ -258,19 +460,15 @@ export default function ShareProfile({
                                         />
                                     </div>
 
-                                    <div className="sp-actions sp-actionsSingle">
+                                    <div className="sp-downloadWrap">
                                         <a
                                             href={qrCodeImage}
                                             download={`${(username || "konarcard")
                                                 .toString()
                                                 .replace(/\s+/g, "-")}-qrcode.png`}
-                                            className="kx-btn kx-btn--white sp-btn"
+                                            className="kx-btn kx-btn--white sp-downloadBtn"
                                         >
-                                            <img
-                                                src={DownloadQRIcon}
-                                                alt=""
-                                                className="sp-ico"
-                                            />
+                                            <img src={DownloadQRIcon} alt="" className="sp-inlineIcon" />
                                             Download QR
                                         </a>
                                     </div>
@@ -280,8 +478,8 @@ export default function ShareProfile({
                                     QR code will appear once a valid profile is selected.
                                 </div>
                             )}
-                        </div>
-                    </aside>
+                        </section>
+                    </div>
                 </div>
             </div>
         </div>
@@ -302,4 +500,11 @@ ShareProfile.propTypes = {
     onSelectSlug: PropTypes.func,
     profileUrl: PropTypes.string,
     username: PropTypes.string,
+    onFacebook: PropTypes.func,
+    onInstagram: PropTypes.func,
+    onMessenger: PropTypes.func,
+    onWhatsApp: PropTypes.func,
+    onText: PropTypes.func,
+    onAppleWallet: PropTypes.func,
+    onGoogleWallet: PropTypes.func,
 };
