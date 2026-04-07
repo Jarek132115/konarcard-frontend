@@ -1424,7 +1424,7 @@
     /* remove ALL styling */
     background: none;
     border: none;
-    padding: 0;
+    padding: 8px;
     margin: 0;
 
     /* center the icon visually */
