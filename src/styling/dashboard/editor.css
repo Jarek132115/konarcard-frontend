@@ -1330,3 +1330,75 @@
         padding: 0 10px;
     }
 }
+
+/* =========================================================
+   REVIEW STARS (APPLE STYLE CLEAN)
+========================================================= */
+
+.kce-stars {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+/* button reset */
+.kce-starBtn {
+    appearance: none;
+    border: none;
+    background: transparent;
+    padding: 0;
+    margin: 0;
+    cursor: pointer;
+
+    width: 28px;
+    height: 28px;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    transition: transform 0.12s ease, opacity 0.16s ease;
+}
+
+/* icon base */
+.kce-starIcon {
+    width: 100%;
+    height: 100%;
+    display: block;
+
+    /* default = inactive (grey) */
+    filter: grayscale(1) brightness(0.7) opacity(0.6);
+
+    transition: filter 0.18s ease, transform 0.12s ease;
+}
+
+/* ACTIVE STAR (this is what your JSX already controls) */
+.kce-starBtn.is-active .kce-starIcon {
+    filter: none;
+    opacity: 1;
+}
+
+/* hover effect (nice subtle Apple feel) */
+.kce-starBtn:hover .kce-starIcon {
+    transform: scale(1.08);
+}
+
+/* slight press feedback */
+.kce-starBtn:active {
+    transform: scale(0.92);
+}
+
+/* disabled state */
+.kce-starBtn:disabled {
+    cursor: not-allowed;
+    opacity: 0.5;
+}
+
+/* =========================================================
+   OPTIONAL: HOVER PREVIEW (LIKE IOS RATINGS)
+   (only applies visually, logic still controlled by React)
+========================================================= */
+
+.kce-stars:hover .kce-starBtn:hover~.kce-starBtn .kce-starIcon {
+    filter: grayscale(1) brightness(0.7) opacity(0.4);
+}
