@@ -1,12 +1,14 @@
 import React, { useMemo, useState, useEffect } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { toast } from "react-hot-toast";
+
 import DashboardLayout from "../../components/Dashboard/DashboardLayout";
 import PageHeader from "../../components/Dashboard/PageHeader";
-import "../../styling/spacing.css";
-import "../../styling/dashboard/contactbook.css";
 import api from "../../services/api";
 import { useAuthUser } from "../../hooks/useAuthUser";
-import { toast } from "react-hot-toast";
+
+import "../../styling/spacing.css";
+import "../../styling/dashboard/contactbook.css";
 
 import DeleteIcon from "../../assets/icons/ShareOnDelete.svg";
 import SaveIcon from "../../assets/icons/SaveProfileIcon.svg";
@@ -362,7 +364,8 @@ export default function ContactBook() {
                             <div className="cb-inlineState cb-emptyState">
                                 <div className="cb-inlineTitle">No contacts yet</div>
                                 <div className="cb-inlineText">
-                                    This page will populate when someone uses <strong>Exchange Contact</strong> on your public profile.
+                                    This page will populate when someone uses{" "}
+                                    <strong>Exchange Contact</strong> on your public profile.
                                 </div>
                             </div>
                         ) : (
@@ -382,13 +385,16 @@ export default function ContactBook() {
                                                     <button
                                                         key={c.id}
                                                         type="button"
-                                                        className={`cb-contactCard ${selected?.id === c.id ? "is-active" : ""}`}
+                                                        className={`cb-contactCard ${selected?.id === c.id ? "is-active" : ""
+                                                            }`}
                                                         onClick={() => {
                                                             setSelectedId(c.id);
                                                             setConfirmDeleteId(null);
                                                         }}
                                                     >
-                                                        <div className="cb-contactCard-title">{c.name || "Unknown"}</div>
+                                                        <div className="cb-contactCard-title">
+                                                            {c.name || "Unknown"}
+                                                        </div>
 
                                                         <div className="cb-contactMetaGroup">
                                                             <div className="cb-contactMeta cb-contactMeta--withIcon">
@@ -398,7 +404,11 @@ export default function ContactBook() {
                                                                     aria-hidden="true"
                                                                     className="cb-contactMetaIcon"
                                                                 />
-                                                                <span>{nonEmpty(c.phone) ? c.phone : "No phone"}</span>
+                                                                <span>
+                                                                    {nonEmpty(c.phone)
+                                                                        ? c.phone
+                                                                        : "No phone"}
+                                                                </span>
                                                             </div>
 
                                                             <div className="cb-contactMeta cb-contactMeta--withIcon">
@@ -408,16 +418,24 @@ export default function ContactBook() {
                                                                     aria-hidden="true"
                                                                     className="cb-contactMetaIcon"
                                                                 />
-                                                                <span>{nonEmpty(c.email) ? c.email : "No email"}</span>
+                                                                <span>
+                                                                    {nonEmpty(c.email)
+                                                                        ? c.email
+                                                                        : "No email"}
+                                                                </span>
                                                             </div>
                                                         </div>
 
-                                                        <div className="cb-contactDate">Received: {c.received || "—"}</div>
+                                                        <div className="cb-contactDate">
+                                                            Received: {c.received || "—"}
+                                                        </div>
                                                     </button>
                                                 ))}
 
                                                 {filtered.length === 0 && (
-                                                    <div className="cb-empty-inline">No contacts match “{search}”.</div>
+                                                    <div className="cb-empty-inline">
+                                                        No contacts match “{search}”.
+                                                    </div>
                                                 )}
                                             </>
                                         )}
@@ -441,7 +459,9 @@ export default function ContactBook() {
                         <div className="cb-card-head cb-card-head--stack">
                             <div className="cb-titleWrap">
                                 <h2 className="cb-card-title">Details</h2>
-                                <p className="cb-muted">Information submitted through Exchange Contact.</p>
+                                <p className="cb-muted">
+                                    Information submitted through Exchange Contact.
+                                </p>
                             </div>
                         </div>
 
@@ -459,23 +479,31 @@ export default function ContactBook() {
                         ) : isError ? (
                             <div className="cb-inlineState cb-error">
                                 <div className="cb-inlineTitle">Details unavailable</div>
-                                <div className="cb-inlineText">Fix the error on the left and try again.</div>
+                                <div className="cb-inlineText">
+                                    Fix the error on the left and try again.
+                                </div>
                             </div>
                         ) : showEmpty ? (
                             <div className="cb-inlineState cb-emptyState">
                                 <div className="cb-inlineTitle">Nothing to show</div>
-                                <div className="cb-inlineText">When you receive contacts, they’ll appear here.</div>
+                                <div className="cb-inlineText">
+                                    When you receive contacts, they’ll appear here.
+                                </div>
                             </div>
                         ) : !selected ? (
                             <div className="cb-inlineState cb-emptyState">
                                 <div className="cb-inlineTitle">Select a contact</div>
-                                <div className="cb-inlineText">Pick someone from the list to view their details.</div>
+                                <div className="cb-inlineText">
+                                    Pick someone from the list to view their details.
+                                </div>
                             </div>
                         ) : (
                             <div className="cb-detailBody">
                                 <div className="cb-detailPanel">
                                     <div className="cb-detailName">{selected.name || "Unknown"}</div>
-                                    <div className="cb-detailReceived">Received: {selected.received || "—"}</div>
+                                    <div className="cb-detailReceived">
+                                        Received: {selected.received || "—"}
+                                    </div>
 
                                     <div className="cb-detailRows">
                                         <div className="cb-detailRow">
@@ -502,7 +530,9 @@ export default function ContactBook() {
                                         <div className="cb-detailRow cb-detailRow--message">
                                             <div className="cb-detailLabel">Message</div>
                                             <div className="cb-detailValue cb-detailValue--message">
-                                                {nonEmpty(selected.message) ? selected.message : "No message."}
+                                                {nonEmpty(selected.message)
+                                                    ? selected.message
+                                                    : "No message."}
                                             </div>
                                         </div>
                                     </div>
@@ -511,9 +541,7 @@ export default function ContactBook() {
                                 {showDeleteConfirm ? (
                                     <div className="cb-inlineState cb-error cb-inlineState--confirm">
                                         <div className="cb-inlineTitle">Delete this contact?</div>
-                                        <div className="cb-inlineText">
-                                            This cannot be undone.
-                                        </div>
+                                        <div className="cb-inlineText">This cannot be undone.</div>
 
                                         <div className="profiles-actions-row" style={{ marginTop: 12 }}>
                                             <button

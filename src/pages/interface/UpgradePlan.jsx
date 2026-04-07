@@ -138,7 +138,10 @@ function PlanCard({ plan, currentPlan, loadingKey }) {
                 </div>
 
                 <div className="upg-planPriceRow">
-                    <div className={`upg-planPrice ${featured ? "upg-planPrice--featured" : ""}`}>
+                    <div
+                        className={`upg-planPrice ${featured ? "upg-planPrice--featured" : ""
+                            }`}
+                    >
                         {plan.price}
                     </div>
 
@@ -159,7 +162,9 @@ function PlanCard({ plan, currentPlan, loadingKey }) {
                 ) : null}
             </div>
 
-            <div className={`upg-planDivider ${featured ? "upg-planDivider--featured" : ""}`} />
+            <div
+                className={`upg-planDivider ${featured ? "upg-planDivider--featured" : ""}`}
+            />
 
             <div className="upg-planBody">
                 <div
@@ -185,14 +190,16 @@ function PlanCard({ plan, currentPlan, loadingKey }) {
                     {plan.button.type === "link" ? (
                         <a
                             href={plan.button.to}
-                            className={`kx-btn ${featured ? "upg-btn-featured" : "kx-btn--black"} upg-btn`}
+                            className={`kx-btn ${featured ? "upg-btn-featured" : "kx-btn--black"
+                                } upg-btn`}
                         >
                             {plan.button.label}
                         </a>
                     ) : (
                         <button
                             type="button"
-                            className={`kx-btn ${featured ? "upg-btn-featured" : "kx-btn--black"} upg-btn`}
+                            className={`kx-btn ${featured ? "upg-btn-featured" : "kx-btn--black"
+                                } upg-btn`}
                             onClick={plan.button.onClick || undefined}
                             disabled={!!plan.button.disabled}
                         >
@@ -350,7 +357,9 @@ export default function UpgradePlan() {
 
     const currentPlan = subState?.plan || "free";
     const isActive = !!subState?.active;
-    const currentPeriodEnd = subState?.currentPeriodEnd ? new Date(subState.currentPeriodEnd) : null;
+    const currentPeriodEnd = subState?.currentPeriodEnd
+        ? new Date(subState.currentPeriodEnd)
+        : null;
 
     const hasFutureAccess =
         !!currentPeriodEnd &&

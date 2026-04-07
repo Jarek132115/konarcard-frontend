@@ -82,7 +82,9 @@ function buildYAxisTicks(maxValue) {
     const safeMax = Math.max(Number(maxValue) || 0, 1);
 
     if (safeMax <= 3) return [safeMax, Math.max(1, safeMax - 1), 1, 0];
-    if (safeMax <= 10) return [safeMax, Math.round((safeMax * 2) / 3), Math.round(safeMax / 3), 0];
+    if (safeMax <= 10) {
+        return [safeMax, Math.round((safeMax * 2) / 3), Math.round(safeMax / 3), 0];
+    }
 
     const roughStep = safeMax / 3;
     const magnitude = Math.pow(10, Math.floor(Math.log10(roughStep)));
@@ -123,7 +125,9 @@ function humanizeSocialTarget(target = "") {
     if (clean === "facebook_url" || clean === "facebook") return "Facebook";
     if (clean === "instagram_url" || clean === "instagram") return "Instagram";
     if (clean === "linkedin_url" || clean === "linkedin") return "LinkedIn";
-    if (clean === "x_url" || clean === "twitter_url" || clean === "x" || clean === "twitter") return "X";
+    if (clean === "x_url" || clean === "twitter_url" || clean === "x" || clean === "twitter") {
+        return "X";
+    }
     if (clean === "tiktok_url" || clean === "tiktok") return "TikTok";
 
     return "";
@@ -256,7 +260,10 @@ function RecentActivityCard({ items = [] }) {
                                     {item.message || getActivityMessage(item)}
                                 </span>
                                 <span className="an-listMeta">
-                                    {item.timeLabel || formatActivityTime(item.createdAt || item.timestamp || item.date)}
+                                    {item.timeLabel ||
+                                        formatActivityTime(
+                                            item.createdAt || item.timestamp || item.date
+                                        )}
                                 </span>
                             </div>
                         </div>
@@ -267,6 +274,10 @@ function RecentActivityCard({ items = [] }) {
             </div>
         </div>
     );
+}
+
+function itemKey(item, index) {
+    return item?.date || item?.id || item?._id || `point-${index}`;
 }
 
 function MiniLineChart({
@@ -423,10 +434,6 @@ function MiniLineChart({
             </div>
         </div>
     );
-}
-
-function itemKey(item, index) {
-    return item?.date || item?.id || item?._id || `point-${index}`;
 }
 
 function HorizontalBarBreakdown({ title, subtitle, items = [] }) {
@@ -738,7 +745,7 @@ export default function Analytics() {
     };
 
     return (
-        <DashboardLayout title={null} subtitle={null} hideDesktopHeader>
+        <DashboardLayout hideDesktopHeader>
             <div className="an-shell">
                 <PageHeader
                     title="Analytics"
@@ -842,7 +849,11 @@ export default function Analytics() {
                             <MetricCard
                                 label="Exchange Contacts"
                                 value={metrics.contactExchangeSubmits}
-                                delta={getMetricDelta(metrics, previousMetrics, "contactExchangeSubmits")}
+                                delta={getMetricDelta(
+                                    metrics,
+                                    previousMetrics,
+                                    "contactExchangeSubmits"
+                                )}
                                 range={range}
                             />
 
