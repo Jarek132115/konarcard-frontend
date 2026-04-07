@@ -1,9 +1,8 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import NotificationIcon from "../../assets/icons/Notification.svg";
-import UserProfileIcon from "../../assets/icons/UserProfile.svg";
 import SharePageIcon from "../../assets/icons/SharePage.svg";
-import { useAuthUser } from "../../hooks/useAuthUser";
 import "../../styling/dashboard/pageheader.css";
+import { useAuthUser } from "../../hooks/useAuthUser";
 
 function cleanString(v) {
   return String(v || "").trim();
@@ -77,14 +76,12 @@ export default function PageHeader({
   onShareClick,
   shareDisabled = false,
   shareAriaLabel = "Share profile",
-  hideDefaultActions = false,
 }) {
   const { data: authUser } = useAuthUser();
   const [menuOpen, setMenuOpen] = useState(false);
   const menuRef = useRef(null);
 
   const planLabel = useMemo(() => getPlanLabel(authUser), [authUser]);
-
   const safeNotifications = Array.isArray(notifications) ? notifications : [];
   const unreadCount = safeNotifications.length;
 
@@ -113,7 +110,7 @@ export default function PageHeader({
     };
   }, [menuOpen]);
 
-  const shouldRenderDefaultActions = !hideDefaultActions && !rightSlot;
+  const shouldUseCustomRightSlot = rightSlot !== null && rightSlot !== undefined;
 
   return (
     <header className="ph4">
@@ -123,9 +120,9 @@ export default function PageHeader({
       </div>
 
       <div className="ph4-right">
-        {rightSlot ? (
+        {shouldUseCustomRightSlot ? (
           rightSlot
-        ) : shouldRenderDefaultActions ? (
+        ) : (
           <>
             <div className="ph4-pill">
               <span>Plan:</span>
@@ -150,22 +147,14 @@ export default function PageHeader({
               </button>
 
               {menuOpen ? (
-                <div
-                  className="ph4-menu"
-                  role="menu"
-                  aria-label="Notifications menu"
-                >
+                <div className="ph4-menu" role="menu" aria-label="Notifications menu">
                   <div className="ph4-menuHead">Notifications</div>
 
                   {safeNotifications.length > 0 ? (
                     <div className="ph4-menuList">
                       {safeNotifications.map((item, index) => (
                         <div
-                          key={
-                            item?.id ||
-                            item?._id ||
-                            `notification-${index}`
-                          }
+                          key={item?.id || item?._id || `notification-${index}`}
                           className="ph4-item"
                         >
                           <div className="ph4-itemTitle">
@@ -184,9 +173,7 @@ export default function PageHeader({
                       ))}
                     </div>
                   ) : (
-                    <div className="ph4-empty">
-                      No notifications yet.
-                    </div>
+                    <div className="ph4-empty">No notifications yet.</div>
                   )}
                 </div>
               ) : null}
@@ -194,7 +181,7 @@ export default function PageHeader({
 
             <button
               type="button"
-              className="ph4-avatarBtn ph4-shareBtn"
+              className="ph4-avatarBtn"
               aria-label={shareAriaLabel}
               onClick={onShareClick}
               disabled={shareDisabled}
@@ -210,7 +197,7 @@ export default function PageHeader({
               </span>
             </button>
           </>
-        ) : null}
+        )}
       </div>
     </header>
   );

@@ -390,7 +390,8 @@ export default function Dashboard() {
                 <PageHeader
                     title="Dashboard"
                     subtitle={`Welcome back ${displayName}. Here’s how your profile is performing.`}
-                    rightSlot={headerRight}
+                    onShareClick={() => setShareOpen(true)}
+                    shareDisabled={!selectedProfile}
                 />
 
                 <ShareProfile
