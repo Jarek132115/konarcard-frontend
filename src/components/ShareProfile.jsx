@@ -186,12 +186,25 @@ export default function ShareProfile({
         openInNewTab("https://www.instagram.com/");
     };
 
-    const handleMessenger = () => {
+    const handleMessenger = async () => {
         if (!effectiveUrl) return;
+
         if (typeof onMessenger === "function") {
             onMessenger();
             return;
         }
+
+        const isMobile =
+            /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent || "");
+
+        if (isMobile) {
+            await copyToClipboard(
+                effectiveUrl,
+                "Messenger sharing is not supported on mobile browsers. Link copied instead."
+            );
+            return;
+        }
+
         openInNewTab(buildMessengerShareUrl(effectiveUrl));
     };
 
