@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import NotificationIcon from "../../assets/icons/Notification.svg";
+import UserProfileIcon from "../../assets/icons/UserProfile.svg";
 import SharePageIcon from "../../assets/icons/SharePage.svg";
 import { useAuthUser } from "../../hooks/useAuthUser";
 import "../../styling/dashboard/pageheader.css";
@@ -72,9 +73,11 @@ export default function PageHeader({
   title,
   subtitle,
   notifications = [],
+  rightSlot = null,
   onShareClick,
   shareDisabled = false,
   shareAriaLabel = "Share profile",
+  hideDefaultActions = false,
 }) {
   const { data: authUser } = useAuthUser();
   const [menuOpen, setMenuOpen] = useState(false);
@@ -110,6 +113,8 @@ export default function PageHeader({
     };
   }, [menuOpen]);
 
+  const shouldRenderDefaultActions = !hideDefaultActions && !rightSlot;
+
   return (
     <header className="ph4">
       <div className="ph4-left">
@@ -117,77 +122,95 @@ export default function PageHeader({
         {subtitle ? <p className="ph4-sub kc-subheading">{subtitle}</p> : null}
       </div>
 
-      <div className="ph4-right" aria-label="Page header actions">
-        <div className="ph4-pill">
-          <span>Plan:</span>
-          <strong>{planLabel}</strong>
-        </div>
-
-        <div className="ph4-dd" ref={menuRef}>
-          <button
-            type="button"
-            className="ph4-iconBtn"
-            aria-label="Notifications"
-            aria-expanded={menuOpen}
-            onClick={() => setMenuOpen((prev) => !prev)}
-          >
-            <img
-              src={NotificationIcon}
-              alt=""
-              className="ph4-iconImg"
-              aria-hidden="true"
-            />
-            {unreadCount > 0 ? <span className="ph4-dot" /> : null}
-          </button>
-
-          {menuOpen ? (
-            <div className="ph4-menu" role="menu" aria-label="Notifications menu">
-              <div className="ph4-menuHead">Notifications</div>
-
-              {safeNotifications.length > 0 ? (
-                <div className="ph4-menuList">
-                  {safeNotifications.map((item, index) => (
-                    <div
-                      key={item?.id || item?._id || `notification-${index}`}
-                      className="ph4-item"
-                    >
-                      <div className="ph4-itemTitle">
-                        {cleanString(item?.title) ||
-                          cleanString(item?.message) ||
-                          "New notification"}
-                      </div>
-                      <div className="ph4-itemTime">
-                        {formatTimeAgo(
-                          item?.createdAt ||
-                          item?.date ||
-                          item?.timestamp
-                        )}
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              ) : (
-                <div className="ph4-empty">No notifications yet.</div>
-              )}
+      <div className="ph4-right">
+        {rightSlot ? (
+          rightSlot
+        ) : shouldRenderDefaultActions ? (
+          <>
+            <div className="ph4-pill">
+              <span>Plan:</span>
+              <strong>{planLabel}</strong>
             </div>
-          ) : null}
-        </div>
 
-        <button
-          type="button"
-          className="ph4-iconBtn ph4-shareBtn"
-          aria-label={shareAriaLabel}
-          onClick={onShareClick}
-          disabled={shareDisabled}
-          title={shareDisabled ? "Create a profile first" : "Share profile"}
-        >
-          <img
-            src={SharePageIcon}
-            alt=""
-            className="ph4-iconImg"
-            aria-hidden="true"
-          />
-        </button>
+            <div className="ph4-dd" ref={menuRef}>
+              <button
+                type="button"
+                className="ph4-iconBtn"
+                aria-label="Notifications"
+                aria-expanded={menuOpen}
+                onClick={() => setMenuOpen((prev) => !prev)}
+              >
+                <img
+                  src={NotificationIcon}
+                  alt=""
+                  className="ph4-iconImg"
+                  aria-hidden="true"
+                />
+                {unreadCount > 0 ? <span className="ph4-dot" /> : null}
+              </button>
+
+              {menuOpen ? (
+                <div
+                  className="ph4-menu"
+                  role="menu"
+                  aria-label="Notifications menu"
+                >
+                  <div className="ph4-menuHead">Notifications</div>
+
+                  {safeNotifications.length > 0 ? (
+                    <div className="ph4-menuList">
+                      {safeNotifications.map((item, index) => (
+                        <div
+                          key={
+                            item?.id ||
+                            item?._id ||
+                            `notification-${index}`
+                          }
+                          className="ph4-item"
+                        >
+                          <div className="ph4-itemTitle">
+                            {cleanString(item?.title) ||
+                              cleanString(item?.message) ||
+                              "New notification"}
+                          </div>
+                          <div className="ph4-itemTime">
+                            {formatTimeAgo(
+                              item?.createdAt ||
+                              item?.date ||
+                              item?.timestamp
+                            )}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <div className="ph4-empty">
+                      No notifications yet.
+                    </div>
+                  )}
+                </div>
+              ) : null}
+            </div>
+
+            <button
+              type="button"
+              className="ph4-avatarBtn ph4-shareBtn"
+              aria-label={shareAriaLabel}
+              onClick={onShareClick}
+              disabled={shareDisabled}
+              title={shareDisabled ? "Create a profile first" : "Share profile"}
+            >
+              <span className="ph4-avatar">
+                <img
+                  src={SharePageIcon}
+                  alt=""
+                  className="ph4-avatarIcon"
+                  aria-hidden="true"
+                />
+              </span>
+            </button>
+          </>
+        ) : null}
       </div>
     </header>
   );
