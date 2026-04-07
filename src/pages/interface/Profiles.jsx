@@ -4,6 +4,7 @@ import { toast } from "react-hot-toast";
 
 import DashboardLayout from "../../components/Dashboard/DashboardLayout";
 import PageHeader from "../../components/Dashboard/PageHeader";
+import ShareProfile from "../../components/ShareProfile";
 import "../../styling/dashboard/profiles.css";
 import "../../styling/dashboard-profiles/profileslist.css";
 import "../../styling/dashboard-profiles/profilesinfo.css";
@@ -177,6 +178,7 @@ export default function Profiles() {
     const [selectedSlug, setSelectedSlug] = useState(null);
     const [lockedOverlayOpen, setLockedOverlayOpen] = useState(false);
     const [lockedClickedSlug, setLockedClickedSlug] = useState("");
+    const [shareOpen, setShareOpen] = useState(false);
 
     useEffect(() => {
         if (!authUser) return;
@@ -330,6 +332,16 @@ export default function Profiles() {
     const selectedQrTrackedUrl = useMemo(() => selectedProfile?.qrTrackedUrl || "", [selectedProfile]);
     const selectedNfcTrackedUrl = useMemo(() => selectedProfile?.nfcTrackedUrl || "", [selectedProfile]);
 
+    const profilesForShare = useMemo(() => {
+        return sortedProfiles
+            .filter((p) => !!p.slug)
+            .map((p) => ({
+                slug: p.slug,
+                name: p.name,
+                url: p.publicUrl || buildAbsolutePublicUrl(p.slug),
+            }));
+    }, [sortedProfiles]);
+
     const openLockedOverlay = (slug) => {
         setLockedClickedSlug(slug || "");
         setLockedOverlayOpen(true);
@@ -338,6 +350,18 @@ export default function Profiles() {
     const closeLockedOverlay = () => {
         setLockedOverlayOpen(false);
         setLockedClickedSlug("");
+    };
+
+    const handleOpenShareProfile = () => {
+        if (!selectedProfile) {
+            toast.error("No profile selected.");
+            return;
+        }
+        setShareOpen(true);
+    };
+
+    const handleCloseShareProfile = () => {
+        setShareOpen(false);
     };
 
     const overlayPlanName = isFree ? "Free" : isPlus ? "Plus" : "your current";
@@ -436,15 +460,41 @@ export default function Profiles() {
         window.open(url, "_blank", "noopener,noreferrer,width=680,height=720");
     };
 
-    const shareToInstagram = () => {
-        toast(
-            "Instagram does not support direct web sharing. Copy the link and paste it into your bio, DM, or story tools."
-        );
-    };
-
-    const shareToMessenger = () => {
+    const shareToInstagram = async () => {
         if (!selectedPublicUrl) {
             toast.error("No profile link available yet.");
+            return;
+        }
+
+        try {
+            await navigator.clipboard.writeText(selectedPublicUrl);
+            toast.success("Profile link copied for Instagram sharing.");
+        } catch {
+            toast.error("Could not copy the link.");
+        }
+
+        window.open("https://www.instagram.com/", "_blank", "noopener,noreferrer");
+    };
+
+    const shareToMessenger = async () => {
+        if (!selectedPublicUrl) {
+            toast.error("No profile link available yet.");
+            return;
+        }
+
+        const isMobile = /Android|iPhone|iPad|iPod|Mobile/i.test(
+            navigator.userAgent || ""
+        );
+
+        if (isMobile) {
+            try {
+                await navigator.clipboard.writeText(selectedPublicUrl);
+                toast.success(
+                    "Messenger sharing is not supported on mobile browsers. Link copied instead."
+                );
+            } catch {
+                toast.error("Could not copy the link.");
+            }
             return;
         }
 
@@ -477,11 +527,11 @@ export default function Profiles() {
     };
 
     const handleAppleWallet = () => {
-        toast("Apple Wallet is not wired yet.");
+        toast("Apple Wallet is coming soon.");
     };
 
     const handleGoogleWallet = () => {
-        toast("Google Wallet is not wired yet.");
+        toast("Google Wallet is coming soon.");
     };
 
     const goUpgradeTeams = () => navigate("/pricing");
@@ -935,6 +985,25 @@ export default function Profiles() {
                 <PageHeader
                     title="Profiles"
                     subtitle="Profiles are your public digital business cards."
+                    onShareClick={handleOpenShareProfile}
+                    shareDisabled={!selectedProfile}
+                />
+
+                <ShareProfile
+                    isOpen={shareOpen}
+                    onClose={handleCloseShareProfile}
+                    profiles={profilesForShare}
+                    selectedSlug={selectedSlug}
+                    onSelectSlug={setSelectedSlug}
+                    username={authUser?.name || "konarcard"}
+                    profileUrl={selectedProfile?.publicUrl || ""}
+                    onFacebook={shareToFacebook}
+                    onInstagram={shareToInstagram}
+                    onMessenger={shareToMessenger}
+                    onWhatsApp={shareToWhatsApp}
+                    onText={shareByText}
+                    onAppleWallet={handleAppleWallet}
+                    onGoogleWallet={handleGoogleWallet}
                 />
 
                 <section className="profiles-main">

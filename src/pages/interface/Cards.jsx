@@ -183,7 +183,9 @@ export default function Cards() {
           purchased.length
             ? purchased
             : all.filter((o) => {
-              const s = String(o?.normalizedStatus || o?.status || "").toLowerCase();
+              const s = String(
+                o?.normalizedStatus || o?.status || ""
+              ).toLowerCase();
 
               return [
                 "paid",
@@ -244,6 +246,7 @@ export default function Cards() {
 
     if (checkout === "cancel") {
       toast.error("Checkout cancelled.");
+      clearIntent();
       setSelectedOrderView(false);
       setSelectedProductKey("");
       setSelectedId(null);
@@ -295,11 +298,7 @@ export default function Cards() {
   };
 
   return (
-    <DashboardLayout
-      title="Cards"
-      subtitle="Manage your KonarCards."
-      hideDesktopHeader
-    >
+    <DashboardLayout hideDesktopHeader>
       <div className="cp-shell">
         <PageHeader
           title="Cards"
