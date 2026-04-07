@@ -163,7 +163,7 @@ Cards Page
 }
 
 /* =========================================================
-   Purchased products
+   Purchased products old grid helpers
 ========================================================= */
 
 .cp-grid {
@@ -246,6 +246,54 @@ Cards Page
 
 .cp-itemActions {
     margin-top: var(--sp-3);
+}
+
+/* =========================================================
+   New owned rail
+========================================================= */
+
+.cp-ownedRail {
+    margin-top: var(--sp-5);
+    display: flex;
+    gap: var(--sp-3);
+    overflow-x: auto;
+    overflow-y: hidden;
+    padding-bottom: 6px;
+    scroll-snap-type: x proximity;
+    -webkit-overflow-scrolling: touch;
+    cursor: grab;
+}
+
+.cp-ownedRail:active {
+    cursor: grabbing;
+}
+
+.cp-ownedRail>* {
+    flex: 0 0 clamp(320px, 31vw, 420px);
+    min-width: 0;
+    scroll-snap-align: start;
+}
+
+.cp-ownedRail--loading>* {
+    flex: 0 0 clamp(320px, 31vw, 420px);
+}
+
+.cp-ownedRail::-webkit-scrollbar {
+    height: 10px;
+}
+
+.cp-ownedRail::-webkit-scrollbar-track {
+    background: rgba(15, 23, 42, 0.05);
+    border-radius: 999px;
+}
+
+.cp-ownedRail::-webkit-scrollbar-thumb {
+    background: rgba(15, 23, 42, 0.16);
+    border-radius: 999px;
+}
+
+.cp-ownedRail::-webkit-scrollbar-thumb:hover {
+    background: rgba(15, 23, 42, 0.22);
 }
 
 /* =========================================================
@@ -414,6 +462,76 @@ Cards Page
 }
 
 /* =========================================================
+   Owned purchased product cards
+========================================================= */
+
+.cp-ownedCard {
+    min-height: 0;
+}
+
+.cp-ownedCard .cp-catalogTag {
+    background: rgba(249, 115, 22, 0.1);
+    color: #ea580c;
+    border: 1px solid rgba(249, 115, 22, 0.25);
+}
+
+.cp-ownedMedia {
+    min-height: 250px;
+    padding: 16px 16px 0;
+}
+
+.cp-ownedPreview3D {
+    min-height: 250px;
+}
+
+.cp-ownedPreview3D .pc3d__stage {
+    width: 72%;
+    height: 208px;
+    min-height: 208px;
+}
+
+.cp-ownedBody {
+    padding: var(--sp-5);
+    gap: var(--sp-4);
+}
+
+.cp-ownedTextGroup {
+    gap: 10px;
+}
+
+.cp-ownedTitle {
+    font-size: 18px;
+    line-height: 1.15;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.cp-ownedOrderDate {
+    font-size: 14px;
+    line-height: 1.45;
+    color: rgba(71, 85, 105, 0.95);
+}
+
+.cp-ownedMeta {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    margin-top: 6px;
+    font-size: 12px;
+    font-weight: 500;
+    color: rgba(15, 23, 42, 0.6);
+}
+
+.cp-ownedFoot {
+    justify-content: flex-start;
+}
+
+.cp-ownedBtn {
+    min-width: 0;
+}
+
+/* =========================================================
    Order/details layout only
 ========================================================= */
 
@@ -550,27 +668,6 @@ Cards Page
     overflow: hidden;
 }
 
-/* =========================================================
-   Owned purchased product cards
-========================================================= */
-
-.cp-ownedCard .cp-catalogTag,
-.cp-catalogGrid--owned .cp-catalogTag {
-    background: rgba(249, 115, 22, 0.1);
-    color: #ea580c;
-    border: 1px solid rgba(249, 115, 22, 0.25);
-}
-
-.cp-ownedMeta {
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-    margin-top: 6px;
-    font-size: 12px;
-    font-weight: 500;
-    color: rgba(15, 23, 42, 0.6);
-}
-
 .cp-ownedLoadingGrid {
     margin-top: var(--sp-5);
     display: grid;
@@ -580,7 +677,7 @@ Cards Page
 }
 
 .cp-ownedSkeleton {
-    min-height: 440px;
+    min-height: 360px;
     border-radius: 24px;
     border: 1px solid var(--cp-border);
     background: linear-gradient(90deg,
@@ -708,6 +805,16 @@ Cards Page
         height: 288px;
         min-height: 288px;
     }
+
+    .cp-ownedPreview3D {
+        min-height: 240px;
+    }
+
+    .cp-ownedPreview3D .pc3d__stage {
+        width: 70%;
+        height: 196px;
+        min-height: 196px;
+    }
 }
 
 @media (max-width: 1100px) {
@@ -717,6 +824,11 @@ Cards Page
 
     .cp-ownedLoadingGrid {
         grid-template-columns: 1fr;
+    }
+
+    .cp-ownedRail>*,
+    .cp-ownedRail--loading>* {
+        flex-basis: 360px;
     }
 }
 
@@ -738,6 +850,11 @@ Cards Page
 
     .cp-catalogGrid {
         grid-template-columns: 1fr;
+    }
+
+    .cp-ownedRail>*,
+    .cp-ownedRail--loading>* {
+        flex-basis: 340px;
     }
 }
 
@@ -788,6 +905,25 @@ Cards Page
     .cp-rowVal {
         max-width: 56%;
     }
+
+    .cp-ownedRail>*,
+    .cp-ownedRail--loading>* {
+        flex-basis: 320px;
+    }
+
+    .cp-ownedMedia {
+        min-height: 228px;
+    }
+
+    .cp-ownedPreview3D {
+        min-height: 228px;
+    }
+
+    .cp-ownedPreview3D .pc3d__stage {
+        width: 74%;
+        height: 180px;
+        min-height: 180px;
+    }
 }
 
 @media (max-width: 560px) {
@@ -817,6 +953,15 @@ Cards Page
     .cp-grid,
     .cp-detailsGrid {
         gap: var(--sp-3);
+    }
+
+    .cp-ownedRail>*,
+    .cp-ownedRail--loading>* {
+        flex-basis: calc(100vw - 88px);
+    }
+
+    .cp-ownedTitle {
+        font-size: 17px;
     }
 }
 
@@ -871,6 +1016,16 @@ Cards Page
         width: fit-content;
         max-width: 100%;
     }
+
+    .cp-ownedFoot {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .cp-ownedBtn {
+        width: 100%;
+        justify-content: center;
+    }
 }
 
 @media (max-width: 420px) {
@@ -895,5 +1050,24 @@ Cards Page
 
     .cp-ownedSkeleton {
         min-height: 280px;
+    }
+
+    .cp-ownedRail>*,
+    .cp-ownedRail--loading>* {
+        flex-basis: calc(100vw - 72px);
+    }
+
+    .cp-ownedMedia {
+        min-height: 212px;
+    }
+
+    .cp-ownedPreview3D {
+        min-height: 212px;
+    }
+
+    .cp-ownedPreview3D .pc3d__stage {
+        width: 78%;
+        height: 168px;
+        min-height: 168px;
     }
 }

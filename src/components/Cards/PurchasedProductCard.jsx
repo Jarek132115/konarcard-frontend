@@ -33,6 +33,37 @@ function renderOwnedPreview(productKey, sharedProps, variant) {
     return <PlasticCard3D {...sharedProps} variant={variant} />;
 }
 
+function formatOwnedTitle(card) {
+    const slugName =
+        String(
+            card?.assignedProfile ||
+            card?.profileSlug ||
+            "KonarCard"
+        ).trim() || "KonarCard";
+
+    const cardLabel =
+        String(card?.title || "Konar Card")
+            .replace(/\bNFC\b/gi, "")
+            .replace(/\bBusiness\b/gi, "")
+            .replace(/\s{2,}/g, " ")
+            .trim() || "Konar Card";
+
+    return `${slugName}'s ${cardLabel}`;
+}
+
+function formatOrderDateOnly(value) {
+    const raw = String(value || "").trim();
+    if (!raw || raw === "—") return "Order placed —";
+
+    const directMatch = raw.match(/^(\d{2}\/\d{2}\/\d{4})/);
+    if (directMatch) return `Order placed ${directMatch[1]}`;
+
+    const parsed = new Date(raw);
+    if (Number.isNaN(parsed.getTime())) return `Order placed ${raw}`;
+
+    return `Order placed ${parsed.toLocaleDateString("en-GB")}`;
+}
+
 export default function PurchasedProductCard({ card, onOpenDetails }) {
     const productKey = String(card?.productKey || "");
     const variant = String(card?.variantRaw || card?.preview?.variant || "white").toLowerCase();
@@ -61,35 +92,34 @@ export default function PurchasedProductCard({ card, onOpenDetails }) {
         stageClassName: "cp-preview3dScene",
     };
 
+    const ownedTitle = formatOwnedTitle(card);
+    const orderPlaced = formatOrderDateOnly(card?.createdAt);
+
     return (
         <article className="cp-catalogCard cp-ownedCard">
-            <div className="cp-catalogMedia">
+            <div className="cp-catalogMedia cp-ownedMedia">
                 <span className="cp-catalogTag">Owned</span>
 
-                <div className="cp-catalogPreview3D">
+                <div className="cp-catalogPreview3D cp-ownedPreview3D">
                     {renderOwnedPreview(productKey, sharedProps, variant)}
                 </div>
             </div>
 
-            <div className="cp-catalogBody">
-                <div className="cp-catalogTextGroup">
-                    <h3 className="cp-catalogTitle">{card?.title || "Purchased product"}</h3>
-                    <p className="cp-catalogDesc">
-                        {card?.assignedProfile || card?.profileSlug || "—"}
-                    </p>
+            <div className="cp-catalogBody cp-ownedBody">
+                <div className="cp-catalogTextGroup cp-ownedTextGroup">
+                    <h3 className="cp-catalogTitle cp-ownedTitle" title={ownedTitle}>
+                        {ownedTitle}
+                    </h3>
 
-                    <div className="cp-ownedMeta">
-                        <span>Status: {card?.status || "—"}</span>
-                        <span>{card?.createdAt || "—"}</span>
-                    </div>
+                    <p className="cp-catalogDesc cp-ownedOrderDate">
+                        {orderPlaced}
+                    </p>
                 </div>
 
-                <div className="cp-catalogFoot">
-                    <div className="cp-catalogPrice">{card?.amountTotalFormatted || "—"}</div>
-
+                <div className="cp-catalogFoot cp-ownedFoot">
                     <button
                         type="button"
-                        className="kx-btn kx-btn--black cp-catalogBtn"
+                        className="kx-btn kx-btn--black cp-catalogBtn cp-ownedBtn"
                         onClick={() => onOpenDetails(card?.id)}
                     >
                         View details

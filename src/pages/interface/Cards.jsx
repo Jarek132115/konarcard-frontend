@@ -342,7 +342,7 @@ export default function Cards() {
               {error ? <div className="cp-alert danger">{error}</div> : null}
 
               {loading ? (
-                <div className="cp-ownedLoadingGrid">
+                <div className="cp-ownedRail cp-ownedRail--loading">
                   <div className="cp-ownedSkeleton" />
                   <div className="cp-ownedSkeleton" />
                 </div>
@@ -360,7 +360,7 @@ export default function Cards() {
               ) : null}
 
               {!loading && !!purchasedCards.length && (
-                <div className="cp-catalogGrid cp-catalogGrid--owned">
+                <div className="cp-ownedRail" aria-label="Purchased cards">
                   {purchasedCards.map((card) => (
                     <PurchasedProductCard
                       key={card.id}
