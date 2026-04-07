@@ -2,8 +2,6 @@
     --ph4-shadowBorder: 0 0 1px rgba(0, 0, 0, 0.25);
     --ph4-dark: #0f172a;
     --ph4-white: #ffffff;
-    --ph4-border: rgba(15, 23, 42, 0.08);
-    --ph4-menu-shadow: 0 20px 48px rgba(15, 23, 42, 0.14);
 }
 
 .ph4 {
@@ -70,127 +68,57 @@
     color: #ffffff;
 }
 
-/* Notifications */
-.ph4-dd {
-    position: relative;
+/* Share button */
+.ph4-shareBtn {
+    border: none;
+    background: transparent;
+    padding: 0;
+    margin: 0;
+    cursor: pointer;
     flex: 0 0 auto;
 }
 
-.ph4-iconBtn {
-    position: relative;
+.ph4-shareBtn:disabled {
+    cursor: not-allowed;
+}
+
+.ph4-shareBtnInner {
     width: 40px;
     height: 40px;
     border-radius: 999px;
-    border: none;
     background: var(--ph4-dark);
     box-shadow: var(--ph4-shadowBorder);
     display: grid;
     place-items: center;
-    cursor: pointer;
     transition: transform 0.08s ease, opacity 0.15s ease, box-shadow 0.15s ease;
-    flex: 0 0 auto;
 }
 
-.ph4-iconBtn:hover:not(:disabled) {
+.ph4-shareBtn:hover:not(:disabled) .ph4-shareBtnInner {
     opacity: 0.92;
 }
 
-.ph4-iconBtn:active:not(:disabled) {
+.ph4-shareBtn:active:not(:disabled) .ph4-shareBtnInner {
     transform: translateY(1px);
 }
 
-.ph4-iconBtn:focus-visible {
+.ph4-shareBtn:focus-visible {
     outline: none;
+}
+
+.ph4-shareBtn:focus-visible .ph4-shareBtnInner {
     box-shadow: 0 0 0 3px var(--kc-focus-ring), var(--ph4-shadowBorder);
 }
 
-.ph4-iconBtn:disabled {
+.ph4-shareBtn:disabled .ph4-shareBtnInner {
     opacity: 0.45;
-    cursor: not-allowed;
     transform: none;
 }
 
-.ph4-iconImg {
+.ph4-shareIcon {
     width: 18px;
     height: 18px;
     display: block;
     filter: brightness(0) invert(1);
-}
-
-.ph4-dot {
-    position: absolute;
-    top: 8px;
-    right: 8px;
-    width: 8px;
-    height: 8px;
-    border-radius: 999px;
-    background: var(--kc-accent-primary, #f97316);
-    box-shadow: 0 0 0 2px var(--ph4-dark);
-}
-
-/* Dropdown */
-.ph4-menu {
-    position: absolute;
-    top: calc(100% + 10px);
-    right: 0;
-    width: 320px;
-    max-height: 380px;
-    overflow: hidden;
-    background: #ffffff;
-    border: 1px solid var(--ph4-border);
-    border-radius: 18px;
-    box-shadow: var(--ph4-menu-shadow);
-    z-index: 50;
-}
-
-.ph4-menuHead {
-    padding: 14px 16px;
-    border-bottom: 1px solid rgba(15, 23, 42, 0.08);
-    font-family: "Inter", sans-serif;
-    font-size: 12px;
-    font-weight: 800;
-    color: rgba(15, 23, 42, 0.9);
-    letter-spacing: 0.01em;
-    text-transform: uppercase;
-}
-
-.ph4-menuList {
-    display: grid;
-    max-height: 320px;
-    overflow-y: auto;
-}
-
-.ph4-item {
-    padding: 12px 16px;
-    border-bottom: 1px solid rgba(15, 23, 42, 0.06);
-}
-
-.ph4-item:last-child {
-    border-bottom: none;
-}
-
-.ph4-itemTitle {
-    font-family: "Inter", sans-serif;
-    font-size: 13px;
-    font-weight: 700;
-    line-height: 1.45;
-    color: rgba(15, 23, 42, 0.9);
-}
-
-.ph4-itemTime {
-    margin-top: 4px;
-    font-family: "Inter", sans-serif;
-    font-size: 12px;
-    font-weight: 600;
-    color: rgba(71, 85, 105, 0.72);
-}
-
-.ph4-empty {
-    padding: 16px;
-    font-family: "Inter", sans-serif;
-    font-size: 13px;
-    font-weight: 600;
-    color: rgba(71, 85, 105, 0.75);
 }
 
 /* Tablet / small desktop */
@@ -211,13 +139,13 @@
 /* Mobile */
 @media (max-width: 640px) {
     .ph4 {
-        flex-direction: column;
-        align-items: stretch;
+        align-items: flex-start;
         gap: 14px;
     }
 
     .ph4-left {
-        width: 100%;
+        min-width: 0;
+        flex: 1 1 auto;
     }
 
     .ph4-sub {
@@ -225,31 +153,13 @@
     }
 
     .ph4-right {
-        width: 100%;
-        justify-content: flex-start;
-        align-items: center;
-        gap: 10px;
-        flex-wrap: nowrap;
-        overflow-x: auto;
-        overflow-y: hidden;
-        padding-bottom: 2px;
-        -ms-overflow-style: none;
-        scrollbar-width: none;
-    }
-
-    .ph4-right::-webkit-scrollbar {
-        display: none;
-    }
-
-    .ph4-pill,
-    .ph4-dd,
-    .ph4-shareBtn {
         flex: 0 0 auto;
+        justify-content: flex-end;
+        align-items: flex-start;
+        gap: 0;
     }
 
-    .ph4-menu {
-        right: auto;
-        left: 0;
-        width: min(320px, calc(100vw - 32px));
+    .ph4-pill {
+        display: none;
     }
 }
