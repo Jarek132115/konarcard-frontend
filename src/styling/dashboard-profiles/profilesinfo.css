@@ -403,7 +403,7 @@
 }
 
 /* =========================
-   DESKTOP
+   BREAKPOINTS
    ========================= */
 
 @media (max-width: 1180px) {
@@ -413,7 +413,20 @@
     }
 
     .profiles-metricsInline {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 10px;
+    }
+
+    .profiles-metricInline {
+        padding: 14px;
+    }
+
+    .profiles-metricInlineVal {
+        font-size: 24px;
+    }
+
+    .profiles-metricInlineLab {
+        font-size: 12px;
     }
 }
 
@@ -431,12 +444,23 @@
         font-size: 13px;
     }
 
+    .profiles-metricsInline {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 10px;
+    }
+
+    .profiles-metricInline {
+        padding: 12px;
+        border-radius: 18px;
+    }
+
     .profiles-metricInlineVal {
-        font-size: 26px;
+        font-size: 21px;
     }
 
     .profiles-metricInlineLab {
-        font-size: 12px;
+        font-size: 11px;
+        line-height: 1.25;
     }
 }
 
@@ -482,6 +506,23 @@
     .profiles-divider {
         background: rgba(15, 23, 42, 0.12);
     }
+
+    .profiles-metricsInline {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 12px;
+    }
+
+    .profiles-metricInline {
+        padding: 14px;
+    }
+
+    .profiles-metricInlineVal {
+        font-size: 24px;
+    }
+
+    .profiles-metricInlineLab {
+        font-size: 12px;
+    }
 }
 
 @media (max-width: 640px) {
@@ -496,7 +537,7 @@
     }
 
     .profiles-metricsInline {
-        grid-template-columns: 1fr;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
         gap: 12px;
     }
 
@@ -563,6 +604,11 @@
     .profiles-copyIcon24 {
         width: 16px;
         height: 16px;
+    }
+
+    .profiles-metricsInline {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 10px;
     }
 
     .profiles-metricInline {
