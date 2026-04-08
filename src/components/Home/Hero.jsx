@@ -11,16 +11,8 @@ import UP6 from "../../assets/images/UP6.jpg";
 import UP7 from "../../assets/images/UP7.jpg";
 import UP8 from "../../assets/images/UP8.jpg";
 
-/* ✅ New logo images (LogoHero1 - 9) */
-import LogoHero1 from "../../assets/images/LogoHero1.jpg";
-import LogoHero2 from "../../assets/images/LogoHero2.jpg";
-import LogoHero3 from "../../assets/images/LogoHero3.jpg";
-import LogoHero4 from "../../assets/images/LogoHero4.jpg";
-import LogoHero5 from "../../assets/images/LogoHero5.jpg";
-import LogoHero6 from "../../assets/images/LogoHero6.jpg";
-import LogoHero7 from "../../assets/images/LogoHero7.jpg";
-import LogoHero8 from "../../assets/images/LogoHero8.jpg";
-import LogoHero9 from "../../assets/images/LogoHero9.jpg";
+/* Hero background */
+import HeroTradieBackground from "../../assets/images/HeroTradieBackground.jpg";
 
 /* CSS */
 import "../../styling/home/hero.css";
@@ -36,27 +28,6 @@ export default function Hero() {
             { src: UP6, tone: "#E9F7E9" },
             { src: UP7, tone: "#FFE3DB" },
             { src: UP8, tone: "#E6ECFA" },
-        ],
-        []
-    );
-
-    const logosTop = useMemo(
-        () => [
-            { src: LogoHero1, alt: "Customer logo 1" },
-            { src: LogoHero2, alt: "Customer logo 2" },
-            { src: LogoHero3, alt: "Customer logo 3" },
-            { src: LogoHero4, alt: "Customer logo 4" },
-            { src: LogoHero5, alt: "Customer logo 5" },
-        ],
-        []
-    );
-
-    const logosBottom = useMemo(
-        () => [
-            { src: LogoHero6, alt: "Customer logo 6" },
-            { src: LogoHero7, alt: "Customer logo 7" },
-            { src: LogoHero8, alt: "Customer logo 8" },
-            { src: LogoHero9, alt: "Customer logo 9" },
         ],
         []
     );
@@ -80,7 +51,7 @@ export default function Hero() {
 
     useEffect(() => {
         const el = scrollerRef.current;
-        if (el) el.style.setProperty("--gap", "24px"); // ✅ 24px gap between images
+        if (el) el.style.setProperty("--gap", "24px");
     }, []);
 
     const computeGroupWidth = () => {
@@ -141,7 +112,6 @@ export default function Hero() {
             clearTimeout(t2);
             window.removeEventListener("resize", onResize);
         };
-        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     useEffect(() => {
@@ -158,7 +128,6 @@ export default function Hero() {
 
         rafRef.current = requestAnimationFrame(tick);
         return () => cancelAnimationFrame(rafRef.current);
-        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     useEffect(() => {
@@ -171,7 +140,6 @@ export default function Hero() {
 
         el.addEventListener("scroll", onScroll, { passive: true });
         return () => el.removeEventListener("scroll", onScroll);
-        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     useEffect(() => {
@@ -246,107 +214,81 @@ export default function Hero() {
             window.removeEventListener("pointercancel", endDrag);
             window.removeEventListener("blur", endDrag);
         };
-        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     return (
         <header className="kc-homeHero">
-            <div className="kc-homeHero__inner">
-                <div className="kc-homeHero__copyGrid">
-                    <div className="kc-pill kc-homeHero__pill">
-                        NFC + QR Digital Business Card for Trades
-                    </div>
+            <section
+                className="kc-homeHero__heroBg"
+                style={{ backgroundImage: `url(${HeroTradieBackground})` }}
+            >
+                <div className="kc-homeHero__heroInner">
+                    <div className="kc-homeHero__copy">
+                        <div className="kc-pill kc-homeHero__pill">
+                            NFC + QR Digital Business Card for Trades
+                        </div>
 
-                    {/* ✅ typography comes from fonts.css */}
-                    <h1 className="h1 kc-homeHero__title">
-                        The Digital{" "}
-                        <span className="kc-homeHero__accent">Business Card</span> Built For Trades
-                    </h1>
+                        <h1 className="h1 kc-homeHero__title">
+                            The Digital{" "}
+                            <span className="kc-homeHero__accent">Business Card</span> Built For
+                            Trades
+                        </h1>
 
-                    {/* ✅ typography comes from fonts.css */}
-                    <p className="kc-subheading kc-homeHero__sub">
-                        Share your contact details with a tap, QR, or link - and update
-                        <br />
-                        them anytime.
-                    </p>
+                        <p className="kc-subheading kc-homeHero__sub">
+                            Share your contact details with a tap, QR, or link - and update them
+                            anytime.
+                        </p>
 
-                    <div className="kc-homeHero__ctaRow">
-                        <Link
-                            to="/register"
-                            className="kx-btn kx-btn--orange kc-homeHero__ctaBtn"
-                        >
-                            Claim Your Link
-                        </Link>
+                        <div className="kc-homeHero__ctaRow">
+                            <Link
+                                to="/register"
+                                className="kx-btn kx-btn--orange kc-homeHero__ctaBtn"
+                            >
+                                Claim Your Link
+                            </Link>
 
-                        <Link
-                            to="/how-it-works"
-                            className="kx-btn kx-btn--white kc-homeHero__ctaBtn"
-                        >
-                            Watch How It Works
-                        </Link>
-                    </div>
-                </div>
-
-                {/* ✅ Logos: bigger on desktop, expand to near full width */}
-                <div className="kc-homeHero__logos" aria-label="Trusted by UK businesses">
-                    <div className="kc-homeHero__logoRow kc-homeHero__logoRow--top">
-                        {logosTop.map((l, idx) => (
-                            <div key={`top-${idx}`} className="kc-homeHero__logoItem">
-                                <img
-                                    src={l.src}
-                                    alt={l.alt}
-                                    className="kc-homeHero__logoImg"
-                                    loading="lazy"
-                                    decoding="async"
-                                />
-                            </div>
-                        ))}
-                    </div>
-
-                    <div className="kc-homeHero__logoRow kc-homeHero__logoRow--bottom">
-                        {logosBottom.map((l, idx) => (
-                            <div key={`bottom-${idx}`} className="kc-homeHero__logoItem">
-                                <img
-                                    src={l.src}
-                                    alt={l.alt}
-                                    className="kc-homeHero__logoImg"
-                                    loading="lazy"
-                                    decoding="async"
-                                />
-                            </div>
-                        ))}
+                            <Link
+                                to="/how-it-works"
+                                className="kx-btn kx-btn--white kc-homeHero__ctaBtn"
+                            >
+                                Watch How It Works
+                            </Link>
+                        </div>
                     </div>
                 </div>
+            </section>
 
-                <div className="kc-homeHero__carousel" aria-label="Example digital business cards">
-                    <div className="kc-homeHero__scrollerOuter">
-                        <div
-                            ref={scrollerRef}
-                            className="kc-homeHero__scroller"
-                            style={{ touchAction: "pan-y" }}
-                        >
-                            <div ref={trackRef} className="kc-homeHero__track">
-                                {groups.map((_, gi) => (
-                                    <React.Fragment key={gi}>
-                                        {items.map((it, i) => (
-                                            <div
-                                                key={`${gi}-${i}`}
-                                                className="kc-homeHero__phone"
-                                                style={{ "--pill": it.tone }}
-                                            >
-                                                <div className="kc-homeHero__viewport">
-                                                    <img
-                                                        src={it.src}
-                                                        alt={`Example digital business card profile ${i + 1}`}
-                                                        draggable={false}
-                                                        loading={gi === 1 ? "eager" : "lazy"}
-                                                    />
-                                                </div>
+            <div
+                className="kc-homeHero__carousel"
+                aria-label="Example digital business cards"
+            >
+                <div className="kc-homeHero__scrollerOuter">
+                    <div
+                        ref={scrollerRef}
+                        className="kc-homeHero__scroller"
+                        style={{ touchAction: "pan-y" }}
+                    >
+                        <div ref={trackRef} className="kc-homeHero__track">
+                            {groups.map((_, gi) => (
+                                <React.Fragment key={gi}>
+                                    {items.map((it, i) => (
+                                        <div
+                                            key={`${gi}-${i}`}
+                                            className="kc-homeHero__phone"
+                                            style={{ "--pill": it.tone }}
+                                        >
+                                            <div className="kc-homeHero__viewport">
+                                                <img
+                                                    src={it.src}
+                                                    alt={`Example digital business card profile ${i + 1}`}
+                                                    draggable={false}
+                                                    loading={gi === 1 ? "eager" : "lazy"}
+                                                />
                                             </div>
-                                        ))}
-                                    </React.Fragment>
-                                ))}
-                            </div>
+                                        </div>
+                                    ))}
+                                </React.Fragment>
+                            ))}
                         </div>
                     </div>
                 </div>
