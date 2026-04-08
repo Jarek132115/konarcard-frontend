@@ -36,7 +36,7 @@ export default function Hero() {
         let distance = 0;
         let offset = 0;
 
-        const baseSpeed = 190;
+        const baseSpeed = 130;
         let direction = 1;
 
         let isDragging = false;
