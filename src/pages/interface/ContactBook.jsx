@@ -4,8 +4,10 @@ import { toast } from "react-hot-toast";
 
 import DashboardLayout from "../../components/Dashboard/DashboardLayout";
 import PageHeader from "../../components/Dashboard/PageHeader";
+import ShareProfile from "../../components/ShareProfile";
 import api from "../../services/api";
 import { useAuthUser } from "../../hooks/useAuthUser";
+import { useMyProfiles } from "../../hooks/useBusinessCard";
 
 import "../../styling/spacing.css";
 import "../../styling/dashboard/contactbook.css";
@@ -16,6 +18,14 @@ import ContactBookPhoneIcon from "../../assets/icons/ContactBookPhone.svg";
 import ContactBookEmailIcon from "../../assets/icons/ContactBookEmail.svg";
 
 const nonEmpty = (v) => typeof v === "string" && v.trim().length > 0;
+const centerTrim = (v) => (v ?? "").toString().trim();
+const safeLower = (v) => centerTrim(v).toLowerCase();
+
+const normalizeSlug = (raw) =>
+    safeLower(raw)
+        .replace(/[^a-z0-9-]/g, "")
+        .replace(/-+/g, "-")
+        .replace(/^-|-$/g, "");
 
 function safeDate(d) {
     try {
@@ -122,8 +132,15 @@ function isLikelyMobileDevice() {
     return /Android|iPhone|iPad|iPod|Mobile/i.test(ua);
 }
 
+function buildPublicUrl(profileSlug) {
+    const s = normalizeSlug(profileSlug);
+    if (!s) return `${window.location.origin}/u/`;
+    return `${window.location.origin}/u/${encodeURIComponent(s)}`;
+}
+
 export default function ContactBook() {
     const { data: authUser } = useAuthUser();
+    const { data: cards } = useMyProfiles();
     const queryClient = useQueryClient();
 
     const [search, setSearch] = useState("");
@@ -134,6 +151,44 @@ export default function ContactBook() {
     );
     const [confirmDeleteId, setConfirmDeleteId] = useState(null);
     const [isDeleting, setIsDeleting] = useState(false);
+
+    const [shareOpen, setShareOpen] = useState(false);
+    const [selectedSlug, setSelectedSlug] = useState(null);
+
+    const profilesForShare = useMemo(() => {
+        const xs = Array.isArray(cards) ? cards : [];
+        return xs
+            .map((c) => {
+                const slug = centerTrim(c?.profile_slug);
+                if (!slug) return null;
+
+                const name =
+                    centerTrim(c?.business_card_name) ||
+                    centerTrim(c?.business_name) ||
+                    centerTrim(c?.full_name) ||
+                    (slug === "main" ? "Main Profile" : "Profile");
+
+                return {
+                    slug,
+                    name,
+                    url: buildPublicUrl(slug),
+                };
+            })
+            .filter(Boolean);
+    }, [cards]);
+
+    useEffect(() => {
+        if (!profilesForShare.length) {
+            setSelectedSlug(null);
+            return;
+        }
+        setSelectedSlug((prev) => prev || profilesForShare[0].slug);
+    }, [profilesForShare]);
+
+    const selectedShareProfile = useMemo(() => {
+        if (!profilesForShare.length) return null;
+        return profilesForShare.find((p) => p.slug === selectedSlug) || profilesForShare[0];
+    }, [profilesForShare, selectedSlug]);
 
     useEffect(() => {
         const onResize = () => setIsCompact(window.innerWidth <= 1200);
@@ -312,6 +367,107 @@ export default function ContactBook() {
         }
     };
 
+    const handleOpenShareProfile = () => {
+        if (!selectedShareProfile) {
+            toast.error("Create a profile first.");
+            return;
+        }
+        setShareOpen(true);
+    };
+
+    const handleCloseShareProfile = () => {
+        setShareOpen(false);
+    };
+
+    const shareToFacebook = () => {
+        if (!selectedShareProfile?.url) {
+            toast.error("No profile link available yet.");
+            return;
+        }
+
+        const url = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(
+            selectedShareProfile.url
+        )}`;
+
+        window.open(url, "_blank", "noopener,noreferrer,width=680,height=720");
+    };
+
+    const shareToInstagram = async () => {
+        if (!selectedShareProfile?.url) {
+            toast.error("No profile link available yet.");
+            return;
+        }
+
+        try {
+            await navigator.clipboard.writeText(selectedShareProfile.url);
+            toast.success("Profile link copied for Instagram sharing.");
+        } catch {
+            toast.error("Could not copy the link.");
+        }
+
+        window.open("https://www.instagram.com/", "_blank", "noopener,noreferrer");
+    };
+
+    const shareToMessenger = async () => {
+        if (!selectedShareProfile?.url) {
+            toast.error("No profile link available yet.");
+            return;
+        }
+
+        const isMobile = /Android|iPhone|iPad|iPod|Mobile/i.test(
+            navigator.userAgent || ""
+        );
+
+        if (isMobile) {
+            try {
+                await navigator.clipboard.writeText(selectedShareProfile.url);
+                toast.success(
+                    "Messenger sharing is not supported on mobile browsers. Link copied instead."
+                );
+            } catch {
+                toast.error("Could not copy the link.");
+            }
+            return;
+        }
+
+        const url = `https://www.facebook.com/dialog/send?link=${encodeURIComponent(
+            selectedShareProfile.url
+        )}&app_id=291494419107518&redirect_uri=${encodeURIComponent(
+            selectedShareProfile.url
+        )}`;
+
+        window.open(url, "_blank", "noopener,noreferrer,width=680,height=720");
+    };
+
+    const shareToWhatsApp = () => {
+        if (!selectedShareProfile?.url) {
+            toast.error("No profile link available yet.");
+            return;
+        }
+
+        const text = `Check out my profile: ${selectedShareProfile.url}`;
+        const url = `https://wa.me/?text=${encodeURIComponent(text)}`;
+        window.open(url, "_blank", "noopener,noreferrer");
+    };
+
+    const shareByText = () => {
+        if (!selectedShareProfile?.url) {
+            toast.error("No profile link available yet.");
+            return;
+        }
+
+        const body = `Check out my profile: ${selectedShareProfile.url}`;
+        window.location.href = `sms:?&body=${encodeURIComponent(body)}`;
+    };
+
+    const handleAppleWallet = () => {
+        toast("Apple Wallet is coming soon.");
+    };
+
+    const handleGoogleWallet = () => {
+        toast("Google Wallet is coming soon.");
+    };
+
     const showEmpty = !isLoading && !isError && contacts.length === 0;
     const showDeleteConfirm = !!selected && confirmDeleteId === selected.id;
 
@@ -321,6 +477,25 @@ export default function ContactBook() {
                 <PageHeader
                     title="Contact Book"
                     subtitle="People who exchanged their details from your public KonarCard profile."
+                    onShareClick={handleOpenShareProfile}
+                    shareDisabled={!selectedShareProfile}
+                />
+
+                <ShareProfile
+                    isOpen={shareOpen}
+                    onClose={handleCloseShareProfile}
+                    profiles={profilesForShare}
+                    selectedSlug={selectedSlug}
+                    onSelectSlug={setSelectedSlug}
+                    username={authUser?.name || "konarcard"}
+                    profileUrl={selectedShareProfile?.url || ""}
+                    onFacebook={shareToFacebook}
+                    onInstagram={shareToInstagram}
+                    onMessenger={shareToMessenger}
+                    onWhatsApp={shareToWhatsApp}
+                    onText={shareByText}
+                    onAppleWallet={handleAppleWallet}
+                    onGoogleWallet={handleGoogleWallet}
                 />
 
                 <div className="cb-grid">
@@ -385,8 +560,7 @@ export default function ContactBook() {
                                                     <button
                                                         key={c.id}
                                                         type="button"
-                                                        className={`cb-contactCard ${selected?.id === c.id ? "is-active" : ""
-                                                            }`}
+                                                        className={`cb-contactCard ${selected?.id === c.id ? "is-active" : ""}`}
                                                         onClick={() => {
                                                             setSelectedId(c.id);
                                                             setConfirmDeleteId(null);
