@@ -180,7 +180,7 @@
 @media (max-width: 1024px) {
     .kc-homeHero__heroBg {
         min-height: 90vh;
-        background-position: center center;
+        background-position: 72% center;
     }
 
     .kc-homeHero__heroInner {
@@ -202,7 +202,7 @@
 @media (max-width: 820px) {
     .kc-homeHero__heroBg {
         min-height: 90vh;
-        background-position: 58% center;
+        background-position: 78% center;
     }
 
     .kc-homeHero__heroInner {
@@ -232,7 +232,7 @@
 @media (max-width: 520px) {
     .kc-homeHero__heroBg {
         min-height: 90vh;
-        background-position: 62% center;
+        background-position: 84% center;
     }
 
     .kc-homeHero__heroBg::before {
