@@ -12,7 +12,7 @@ import UP7 from "../../assets/images/UP7.jpg";
 import UP8 from "../../assets/images/UP8.jpg";
 
 /* Hero background */
-import HeroTradieBackground from "../../assets/images/HeroTradieBackground.png";
+import HeroTradieBackground from "../../assets/images/HeroTradieBackground.jng";
 
 /* CSS */
 import "../../styling/home/hero.css";
