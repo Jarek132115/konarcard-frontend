@@ -19,16 +19,7 @@ import "../../styling/home/hero.css";
 
 export default function Hero() {
     const items = useMemo(
-        () => [
-            { src: UP1, tone: "#FFECD2" },
-            { src: UP2, tone: "#FFDCC7" },
-            { src: UP3, tone: "#E8F0FF" },
-            { src: UP4, tone: "#D9F2EA" },
-            { src: UP5, tone: "#E9F1FF" },
-            { src: UP6, tone: "#E9F7E9" },
-            { src: UP7, tone: "#FFE3DB" },
-            { src: UP8, tone: "#E6ECFA" },
-        ],
+        () => [UP1, UP2, UP3, UP4, UP5, UP6, UP7, UP8],
         []
     );
 
@@ -41,18 +32,15 @@ export default function Hero() {
     const startXRef = useRef(0);
     const startYRef = useRef(0);
     const startScrollRef = useRef(0);
-    const axisLockedRef = useRef(null); // 'x' | 'y' | null
+    const axisLockedRef = useRef(null); // "x" | "y" | null
+    const lastDragDeltaXRef = useRef(0);
 
-    const speedRef = useRef(0.55); // px per frame
+    const baseSpeedRef = useRef(0.55);
+    const motionRef = useRef(-0.55); // negative scrollLeft delta = visual left -> right
 
     const renderGroups = 3;
     const groups = useMemo(() => new Array(renderGroups).fill(0), []);
     const groupWidthRef = useRef(0);
-
-    useEffect(() => {
-        const el = scrollerRef.current;
-        if (el) el.style.setProperty("--gap", "24px");
-    }, []);
 
     const computeGroupWidth = () => {
         const track = trackRef.current;
@@ -91,8 +79,10 @@ export default function Hero() {
 
         const setInitial = () => {
             const gw = computeGroupWidth();
-            if (gw > 0) el.scrollLeft = gw;
-            normalizeLoop(false);
+            if (gw > 0) {
+                el.scrollLeft = gw;
+                normalizeLoop(false);
+            }
         };
 
         setInitial();
@@ -101,8 +91,10 @@ export default function Hero() {
 
         const onResize = () => {
             const gw = computeGroupWidth();
-            if (gw > 0) el.scrollLeft = gw;
-            normalizeLoop(false);
+            if (gw > 0) {
+                el.scrollLeft = gw;
+                normalizeLoop(false);
+            }
         };
 
         window.addEventListener("resize", onResize);
@@ -120,14 +112,17 @@ export default function Hero() {
 
         const tick = () => {
             if (!draggingRef.current) {
-                el.scrollLeft -= speedRef.current;
+                el.scrollLeft += motionRef.current;
                 normalizeLoop(false);
             }
             rafRef.current = requestAnimationFrame(tick);
         };
 
         rafRef.current = requestAnimationFrame(tick);
-        return () => cancelAnimationFrame(rafRef.current);
+
+        return () => {
+            cancelAnimationFrame(rafRef.current);
+        };
     }, []);
 
     useEffect(() => {
@@ -154,6 +149,7 @@ export default function Hero() {
 
             draggingRef.current = true;
             axisLockedRef.current = null;
+            lastDragDeltaXRef.current = 0;
 
             startXRef.current = e.clientX;
             startYRef.current = e.clientY;
@@ -176,21 +172,33 @@ export default function Hero() {
 
             if (axisLockedRef.current === "x") {
                 e.preventDefault();
+                lastDragDeltaXRef.current = dx;
                 el.scrollLeft = startScrollRef.current - dx;
                 normalizeLoop(true);
             } else if (axisLockedRef.current === "y") {
                 draggingRef.current = false;
                 axisLockedRef.current = null;
-                try {
-                    el.releasePointerCapture?.(pointerId);
-                } catch { }
+
+                if (pointerId != null) {
+                    try {
+                        el.releasePointerCapture?.(pointerId);
+                    } catch { }
+                }
             }
         };
 
         const endDrag = () => {
             if (!draggingRef.current) return;
+
             draggingRef.current = false;
             axisLockedRef.current = null;
+
+            const dx = lastDragDeltaXRef.current;
+            const base = baseSpeedRef.current;
+
+            if (Math.abs(dx) > 2) {
+                motionRef.current = dx > 0 ? -base : base;
+            }
 
             normalizeLoop(false);
 
@@ -272,20 +280,18 @@ export default function Hero() {
                         <div ref={trackRef} className="kc-homeHero__track">
                             {groups.map((_, gi) => (
                                 <React.Fragment key={gi}>
-                                    {items.map((it, i) => (
+                                    {items.map((src, i) => (
                                         <div
                                             key={`${gi}-${i}`}
                                             className="kc-homeHero__phone"
-                                            style={{ "--pill": it.tone }}
                                         >
-                                            <div className="kc-homeHero__viewport">
-                                                <img
-                                                    src={it.src}
-                                                    alt={`Example digital business card profile ${i + 1}`}
-                                                    draggable={false}
-                                                    loading={gi === 1 ? "eager" : "lazy"}
-                                                />
-                                            </div>
+                                            <img
+                                                src={src}
+                                                alt={`Example digital business card profile ${i + 1}`}
+                                                className="kc-homeHero__phoneImg"
+                                                draggable={false}
+                                                loading={gi === 1 ? "eager" : "lazy"}
+                                            />
                                         </div>
                                     ))}
                                 </React.Fragment>
