@@ -71,7 +71,6 @@
 
 .kc-homeHero__pill {
     margin-bottom: var(--sp-3);
-    /* 12px */
     color: #0b1220;
     background: rgba(255, 255, 255, 0.94);
     border: 1px solid rgba(11, 18, 32, 0.10);
@@ -79,7 +78,6 @@
 
 .kc-homeHero__title {
     margin: 0 auto var(--sp-2);
-    /* 8px */
     max-width: 980px;
     color: #ffffff;
     word-break: normal;
@@ -94,7 +92,6 @@
 
 .kc-homeHero__sub {
     margin: 0 auto var(--sp-4);
-    /* 16px */
     max-width: 760px;
     color: rgba(255, 255, 255, 0.96);
     text-shadow: 0 1px 10px rgba(11, 18, 32, 0.24);
@@ -105,7 +102,6 @@
     justify-content: center;
     align-items: center;
     gap: var(--sp-4);
-    /* 16px */
     flex-wrap: wrap;
 }
 
@@ -131,40 +127,29 @@
    ========================= */
 .kc-homeHero__carousel {
     margin-top: var(--sp-6);
-    background: #ffffff;
-    position: relative;
-    z-index: 5;
-    overflow: hidden;
-}
-
-.kc-homeHero__marquee {
     width: 100vw;
     margin-left: calc(50% - 50vw);
     overflow: hidden;
+    background: transparent;
     cursor: grab;
     user-select: none;
-    background: transparent;
     padding: var(--sp-3) 0 var(--sp-4);
 }
 
-.kc-homeHero__marquee:active {
+.kc-homeHero__carousel:active {
     cursor: grabbing;
 }
 
 .kc-homeHero__track {
     display: flex;
     align-items: flex-start;
+    gap: var(--sp-4);
     width: max-content;
     will-change: transform;
-    transform: translate3d(0, 0, 0);
 }
 
-.kc-homeHero__set {
-    display: flex;
-    align-items: flex-start;
-    gap: var(--sp-4);
-    padding-right: var(--sp-4);
-    flex: 0 0 auto;
+.kc-homeHero__track--dragging {
+    cursor: grabbing;
 }
 
 .kc-homeHero__phone {
@@ -234,9 +219,8 @@
         max-width: 100%;
     }
 
-    .kc-homeHero__set {
+    .kc-homeHero__track {
         gap: var(--sp-3);
-        padding-right: var(--sp-3);
     }
 
     .kc-homeHero__phone {
@@ -284,13 +268,12 @@
         justify-content: center;
     }
 
-    .kc-homeHero__marquee {
+    .kc-homeHero__carousel {
         padding: var(--sp-2) 0 var(--sp-3);
     }
 
-    .kc-homeHero__set {
+    .kc-homeHero__track {
         gap: var(--sp-3);
-        padding-right: var(--sp-3);
     }
 
     .kc-homeHero__phone {

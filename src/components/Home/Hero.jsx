@@ -1,5 +1,6 @@
-import React, { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
+import React, { useEffect, useMemo, useRef } from "react";
 import { Link } from "react-router-dom";
+import { gsap } from "gsap";
 
 /* Profiles */
 import UP1 from "../../assets/images/UP1.jpg";
@@ -19,185 +20,221 @@ import "../../styling/home/hero.css";
 
 export default function Hero() {
     const items = useMemo(() => [UP1, UP2, UP3, UP4, UP5, UP6, UP7, UP8], []);
+    const loopItems = useMemo(() => [...items, ...items], [items]);
 
-    const viewportRef = useRef(null);
-    const setMeasureRef = useRef(null);
-    const rafRef = useRef(0);
-
-    const offsetRef = useRef(0);
-    const velocityRef = useRef(0.42); // positive = content moves right
-    const draggingRef = useRef(false);
-
-    const pointerIdRef = useRef(null);
-    const startXRef = useRef(0);
-    const startYRef = useRef(0);
-    const startOffsetRef = useRef(0);
-    const lastDxRef = useRef(0);
-    const axisLockedRef = useRef(null); // "x" | "y" | null
-
-    const setWidthRef = useRef(0);
-
-    const [trackStyle, setTrackStyle] = useState({
-        transform: "translate3d(0px, 0, 0)",
-    });
-
-    const applyOffset = (value) => {
-        offsetRef.current = value;
-        setTrackStyle({
-            transform: `translate3d(${value}px, 0, 0)`,
-        });
-    };
-
-    const wrapOffset = (value) => {
-        const setWidth = setWidthRef.current;
-        if (!setWidth) return value;
-
-        let next = value;
-
-        while (next >= 0) next -= setWidth;
-        while (next < -setWidth * 2) next += setWidth;
-
-        return next;
-    };
-
-    useLayoutEffect(() => {
-        const measure = () => {
-            const setEl = setMeasureRef.current;
-            if (!setEl) return;
-
-            const rect = setEl.getBoundingClientRect();
-            const width = rect.width;
-
-            if (!Number.isFinite(width) || width <= 0) return;
-
-            setWidthRef.current = width;
-            applyOffset(-width);
-        };
-
-        measure();
-
-        const timer1 = setTimeout(measure, 60);
-        const timer2 = setTimeout(measure, 300);
-
-        window.addEventListener("resize", measure);
-
-        return () => {
-            clearTimeout(timer1);
-            clearTimeout(timer2);
-            window.removeEventListener("resize", measure);
-        };
-    }, []);
+    const heroRef = useRef(null);
 
     useEffect(() => {
-        let lastTs = 0;
+        const heroEl = heroRef.current;
+        if (!heroEl) return;
 
-        const tick = (ts) => {
-            if (!lastTs) lastTs = ts;
-            const dt = Math.min((ts - lastTs) / 16.6667, 2);
-            lastTs = ts;
+        const carouselEl = heroEl.querySelector(".kc-homeHero__carousel");
+        const trackEl = heroEl.querySelector(".kc-homeHero__track");
 
-            if (!draggingRef.current && setWidthRef.current > 0) {
-                const next = wrapOffset(offsetRef.current + velocityRef.current * dt);
-                applyOffset(next);
+        if (!carouselEl || !trackEl) return;
+
+        let distance = 0;
+        let offset = 0;
+
+        const baseSpeed = 190;
+        let direction = 1;
+
+        let isDragging = false;
+        let isPointerDown = false;
+        let dragStartX = 0;
+        let dragStartY = 0;
+        let dragStartOffset = 0;
+        let lastDragDeltaX = 0;
+        let tickerFn = null;
+
+        const applyTransform = () => {
+            gsap.set(trackEl, { x: -offset });
+        };
+
+        const startTicker = () => {
+            if (!distance) return;
+
+            let lastTime = gsap.ticker.time;
+
+            tickerFn = (time) => {
+                const dt = time - lastTime;
+                lastTime = time;
+
+                if (!isDragging) {
+                    offset += direction * baseSpeed * dt;
+
+                    if (distance > 0) {
+                        offset = ((offset % distance) + distance) % distance;
+                    }
+
+                    applyTransform();
+                }
+            };
+
+            gsap.ticker.add(tickerFn);
+        };
+
+        const measureAndStart = () => {
+            distance = trackEl.scrollWidth / 2;
+
+            if (distance > 0) {
+                offset = 0;
+                applyTransform();
+
+                if (tickerFn) {
+                    gsap.ticker.remove(tickerFn);
+                    tickerFn = null;
+                }
+
+                startTicker();
             }
-
-            rafRef.current = window.requestAnimationFrame(tick);
         };
 
-        rafRef.current = window.requestAnimationFrame(tick);
+        const imgEls = trackEl.querySelectorAll("img");
+        const totalImgs = imgEls.length;
+        let loadedCount = 0;
 
-        return () => {
-            window.cancelAnimationFrame(rafRef.current);
-        };
-    }, []);
-
-    useEffect(() => {
-        const el = viewportRef.current;
-        if (!el) return;
-
-        const releasePointer = () => {
-            if (pointerIdRef.current != null) {
-                try {
-                    el.releasePointerCapture?.(pointerIdRef.current);
-                } catch { }
+        const handleImageLoaded = () => {
+            loadedCount += 1;
+            if (loadedCount >= totalImgs) {
+                measureAndStart();
             }
-            pointerIdRef.current = null;
         };
+
+        if (totalImgs === 0) {
+            measureAndStart();
+        } else {
+            imgEls.forEach((img) => {
+                if (img.complete) {
+                    handleImageLoaded();
+                } else {
+                    img.addEventListener("load", handleImageLoaded);
+                    img.addEventListener("error", handleImageLoaded);
+                }
+            });
+        }
+
+        const onResize = () => {
+            measureAndStart();
+        };
+
+        window.addEventListener("resize", onResize);
+
+        const getClientX = (e) =>
+            e.touches && e.touches.length ? e.touches[0].clientX : e.clientX;
+
+        const getClientY = (e) =>
+            e.touches && e.touches.length ? e.touches[0].clientY : e.clientY;
+
+        const HORIZONTAL_THRESHOLD = 8;
+        const MIN_DIRECTION_DELTA = 4;
 
         const onPointerDown = (e) => {
-            pointerIdRef.current = e.pointerId;
-            el.setPointerCapture?.(e.pointerId);
+            if (!distance) return;
 
-            draggingRef.current = true;
-            axisLockedRef.current = null;
-            startXRef.current = e.clientX;
-            startYRef.current = e.clientY;
-            startOffsetRef.current = offsetRef.current;
-            lastDxRef.current = 0;
+            if (e.button !== undefined && e.button !== 0) return;
+
+            isPointerDown = true;
+            isDragging = false;
+            dragStartX = getClientX(e);
+            dragStartY = getClientY(e);
+            dragStartOffset = offset;
+            lastDragDeltaX = 0;
         };
 
         const onPointerMove = (e) => {
-            if (!draggingRef.current) return;
+            if (!isPointerDown || !distance) return;
 
-            const dx = e.clientX - startXRef.current;
-            const dy = e.clientY - startYRef.current;
+            const currentX = getClientX(e);
+            const currentY = getClientY(e);
+            const deltaX = currentX - dragStartX;
+            const deltaY = currentY - dragStartY;
 
-            if (axisLockedRef.current == null) {
-                if (Math.abs(dx) > 6 || Math.abs(dy) > 6) {
-                    axisLockedRef.current = Math.abs(dx) > Math.abs(dy) ? "x" : "y";
+            if (!isDragging) {
+                if (
+                    Math.abs(deltaX) < HORIZONTAL_THRESHOLD &&
+                    Math.abs(deltaY) < HORIZONTAL_THRESHOLD
+                ) {
+                    return;
+                }
+
+                if (Math.abs(deltaX) > Math.abs(deltaY)) {
+                    isDragging = true;
+                    trackEl.classList.add("kc-homeHero__track--dragging");
+                } else {
+                    isPointerDown = false;
+                    isDragging = false;
+                    return;
                 }
             }
 
-            if (axisLockedRef.current === "y") {
-                draggingRef.current = false;
-                axisLockedRef.current = null;
-                releasePointer();
-                return;
-            }
+            offset = dragStartOffset - deltaX;
+            lastDragDeltaX = deltaX;
+            offset = ((offset % distance) + distance) % distance;
 
-            if (axisLockedRef.current === "x") {
-                e.preventDefault();
-                lastDxRef.current = dx;
-                const next = wrapOffset(startOffsetRef.current + dx);
-                applyOffset(next);
-            }
+            applyTransform();
+
+            if (e.cancelable) e.preventDefault();
         };
 
-        const onPointerEnd = () => {
-            if (!draggingRef.current) return;
+        const endDrag = () => {
+            if (!isPointerDown && !isDragging) return;
 
-            draggingRef.current = false;
+            isPointerDown = false;
+            isDragging = false;
+            trackEl.classList.remove("kc-homeHero__track--dragging");
 
-            const dx = lastDxRef.current;
-            const speed = 0.42;
-
-            if (Math.abs(dx) > 2) {
-                velocityRef.current = dx > 0 ? speed : -speed;
+            if (Math.abs(lastDragDeltaX) > MIN_DIRECTION_DELTA) {
+                direction = lastDragDeltaX > 0 ? -1 : 1;
             }
 
-            axisLockedRef.current = null;
-            releasePointer();
+            lastDragDeltaX = 0;
         };
 
-        el.addEventListener("pointerdown", onPointerDown);
-        window.addEventListener("pointermove", onPointerMove, { passive: false });
-        window.addEventListener("pointerup", onPointerEnd);
-        window.addEventListener("pointercancel", onPointerEnd);
-        window.addEventListener("blur", onPointerEnd);
+        const onNativeDragStart = (e) => {
+            e.preventDefault();
+        };
+
+        trackEl.addEventListener("dragstart", onNativeDragStart);
+
+        carouselEl.addEventListener("mousedown", onPointerDown);
+        window.addEventListener("mousemove", onPointerMove);
+        window.addEventListener("mouseup", endDrag);
+
+        carouselEl.addEventListener("touchstart", onPointerDown, {
+            passive: false,
+        });
+        window.addEventListener("touchmove", onPointerMove, { passive: false });
+        window.addEventListener("touchend", endDrag);
+        window.addEventListener("touchcancel", endDrag);
 
         return () => {
-            el.removeEventListener("pointerdown", onPointerDown);
-            window.removeEventListener("pointermove", onPointerMove);
-            window.removeEventListener("pointerup", onPointerEnd);
-            window.removeEventListener("pointercancel", onPointerEnd);
-            window.removeEventListener("blur", onPointerEnd);
-        };
-    }, []);
+            if (tickerFn) {
+                gsap.ticker.remove(tickerFn);
+            }
 
-    const repeatedSets = useMemo(() => [0, 1, 2], []);
+            imgEls.forEach((img) => {
+                img.removeEventListener("load", handleImageLoaded);
+                img.removeEventListener("error", handleImageLoaded);
+            });
+
+            window.removeEventListener("resize", onResize);
+
+            trackEl.removeEventListener("dragstart", onNativeDragStart);
+
+            carouselEl.removeEventListener("mousedown", onPointerDown);
+            window.removeEventListener("mousemove", onPointerMove);
+            window.removeEventListener("mouseup", endDrag);
+
+            carouselEl.removeEventListener("touchstart", onPointerDown);
+            window.removeEventListener("touchmove", onPointerMove);
+            window.removeEventListener("touchend", endDrag);
+            window.removeEventListener("touchcancel", endDrag);
+        };
+    }, [loopItems]);
 
     return (
-        <header className="kc-homeHero">
+        <header className="kc-homeHero" ref={heroRef}>
             <section
                 className="kc-homeHero__heroBg"
                 style={{ backgroundImage: `url(${HeroTradieBackground})` }}
@@ -238,36 +275,23 @@ export default function Hero() {
                 </div>
             </section>
 
-            <div className="kc-homeHero__carousel" aria-label="Example digital business cards">
-                <div className="kc-homeHero__marquee" ref={viewportRef} style={{ touchAction: "pan-y" }}>
-                    <div className="kc-homeHero__track" style={trackStyle}>
-                        {repeatedSets.map((setIndex) => (
-                            <div
-                                key={setIndex}
-                                ref={setIndex === 1 ? setMeasureRef : null}
-                                className="kc-homeHero__set"
-                                aria-hidden={setIndex !== 1}
-                            >
-                                {items.map((src, i) => (
-                                    <div className="kc-homeHero__phone" key={`${setIndex}-${i}`}>
-                                        <img
-                                            src={src}
-                                            alt={
-                                                setIndex === 1
-                                                    ? `Example digital business card profile ${i + 1}`
-                                                    : ""
-                                            }
-                                            className="kc-homeHero__phoneImg"
-                                            draggable={false}
-                                            loading={setIndex === 1 ? "eager" : "lazy"}
-                                        />
-                                    </div>
-                                ))}
-                            </div>
-                        ))}
-                    </div>
+            <section
+                className="kc-homeHero__carousel"
+                aria-label="Example digital business cards"
+            >
+                <div className="kc-homeHero__track">
+                    {loopItems.map((src, index) => (
+                        <div className="kc-homeHero__phone" key={index}>
+                            <img
+                                src={src}
+                                alt={index < items.length ? `Example digital business card profile ${index + 1}` : ""}
+                                className="kc-homeHero__phoneImg"
+                                draggable="false"
+                            />
+                        </div>
+                    ))}
                 </div>
-            </div>
+            </section>
         </header>
     );
 }
