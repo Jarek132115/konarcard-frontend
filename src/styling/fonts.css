@@ -59,8 +59,8 @@ body {
      RESPONSIVE TYPE SCALE TOKENS
      Desktop values match Figma exactly.
      ========================================================= */
-  --kc-h1-size: 72px;
-  --kc-h1-line: 84px;
+  --kc-h1-size: 84px;
+  --kc-h1-line: 96px;
 
   --kc-h2-size: 48px;
   --kc-h2-line: 62px;
