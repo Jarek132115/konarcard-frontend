@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useRef } from "react";
+import React, { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 
 /* Profiles */
@@ -18,144 +18,122 @@ import HeroTradieBackground from "../../assets/images/HeroTradieBackground.jpg";
 import "../../styling/home/hero.css";
 
 export default function Hero() {
-    const items = useMemo(
-        () => [UP1, UP2, UP3, UP4, UP5, UP6, UP7, UP8],
-        []
-    );
+    const items = useMemo(() => [UP1, UP2, UP3, UP4, UP5, UP6, UP7, UP8], []);
 
-    const scrollerRef = useRef(null);
-    const trackRef = useRef(null);
-
+    const viewportRef = useRef(null);
+    const setMeasureRef = useRef(null);
     const rafRef = useRef(0);
+
+    const offsetRef = useRef(0);
+    const velocityRef = useRef(0.42); // positive = content moves right
     const draggingRef = useRef(false);
 
+    const pointerIdRef = useRef(null);
     const startXRef = useRef(0);
     const startYRef = useRef(0);
-    const startScrollRef = useRef(0);
+    const startOffsetRef = useRef(0);
+    const lastDxRef = useRef(0);
     const axisLockedRef = useRef(null); // "x" | "y" | null
-    const lastDragDeltaXRef = useRef(0);
 
-    const baseSpeedRef = useRef(0.55);
-    const motionRef = useRef(-0.55); // negative scrollLeft delta = visual left -> right
+    const setWidthRef = useRef(0);
 
-    const renderGroups = 3;
-    const groups = useMemo(() => new Array(renderGroups).fill(0), []);
-    const groupWidthRef = useRef(0);
+    const [trackStyle, setTrackStyle] = useState({
+        transform: "translate3d(0px, 0, 0)",
+    });
 
-    const computeGroupWidth = () => {
-        const track = trackRef.current;
-        if (!track) return 0;
-
-        const gw = track.scrollWidth / renderGroups;
-        if (Number.isFinite(gw) && gw > 0) groupWidthRef.current = gw;
-        return groupWidthRef.current;
+    const applyOffset = (value) => {
+        offsetRef.current = value;
+        setTrackStyle({
+            transform: `translate3d(${value}px, 0, 0)`,
+        });
     };
 
-    const normalizeLoop = (alsoAdjustDragBase = false) => {
-        const el = scrollerRef.current;
-        if (!el) return;
+    const wrapOffset = (value) => {
+        const setWidth = setWidthRef.current;
+        if (!setWidth) return value;
 
-        const gw = groupWidthRef.current || computeGroupWidth();
-        if (!gw) return;
+        let next = value;
 
-        const min = gw;
-        const max = gw * 2;
+        while (next >= 0) next -= setWidth;
+        while (next < -setWidth * 2) next += setWidth;
 
-        if (el.scrollLeft < min) {
-            el.scrollLeft += gw;
-            if (alsoAdjustDragBase) startScrollRef.current += gw;
-        }
-
-        if (el.scrollLeft >= max) {
-            el.scrollLeft -= gw;
-            if (alsoAdjustDragBase) startScrollRef.current -= gw;
-        }
+        return next;
     };
 
-    useEffect(() => {
-        const el = scrollerRef.current;
-        const track = trackRef.current;
-        if (!el || !track) return;
+    useLayoutEffect(() => {
+        const measure = () => {
+            const setEl = setMeasureRef.current;
+            if (!setEl) return;
 
-        const setInitial = () => {
-            const gw = computeGroupWidth();
-            if (gw > 0) {
-                el.scrollLeft = gw;
-                normalizeLoop(false);
-            }
+            const rect = setEl.getBoundingClientRect();
+            const width = rect.width;
+
+            if (!Number.isFinite(width) || width <= 0) return;
+
+            setWidthRef.current = width;
+            applyOffset(-width);
         };
 
-        setInitial();
-        const t1 = setTimeout(setInitial, 120);
-        const t2 = setTimeout(setInitial, 520);
+        measure();
 
-        const onResize = () => {
-            const gw = computeGroupWidth();
-            if (gw > 0) {
-                el.scrollLeft = gw;
-                normalizeLoop(false);
-            }
-        };
+        const timer1 = setTimeout(measure, 60);
+        const timer2 = setTimeout(measure, 300);
 
-        window.addEventListener("resize", onResize);
+        window.addEventListener("resize", measure);
 
         return () => {
-            clearTimeout(t1);
-            clearTimeout(t2);
-            window.removeEventListener("resize", onResize);
+            clearTimeout(timer1);
+            clearTimeout(timer2);
+            window.removeEventListener("resize", measure);
         };
     }, []);
 
     useEffect(() => {
-        const el = scrollerRef.current;
-        if (!el) return;
+        let lastTs = 0;
 
-        const tick = () => {
-            if (!draggingRef.current) {
-                el.scrollLeft += motionRef.current;
-                normalizeLoop(false);
+        const tick = (ts) => {
+            if (!lastTs) lastTs = ts;
+            const dt = Math.min((ts - lastTs) / 16.6667, 2);
+            lastTs = ts;
+
+            if (!draggingRef.current && setWidthRef.current > 0) {
+                const next = wrapOffset(offsetRef.current + velocityRef.current * dt);
+                applyOffset(next);
             }
-            rafRef.current = requestAnimationFrame(tick);
+
+            rafRef.current = window.requestAnimationFrame(tick);
         };
 
-        rafRef.current = requestAnimationFrame(tick);
+        rafRef.current = window.requestAnimationFrame(tick);
 
         return () => {
-            cancelAnimationFrame(rafRef.current);
+            window.cancelAnimationFrame(rafRef.current);
         };
     }, []);
 
     useEffect(() => {
-        const el = scrollerRef.current;
+        const el = viewportRef.current;
         if (!el) return;
 
-        const onScroll = () => {
-            if (!draggingRef.current) normalizeLoop(false);
+        const releasePointer = () => {
+            if (pointerIdRef.current != null) {
+                try {
+                    el.releasePointerCapture?.(pointerIdRef.current);
+                } catch { }
+            }
+            pointerIdRef.current = null;
         };
-
-        el.addEventListener("scroll", onScroll, { passive: true });
-        return () => el.removeEventListener("scroll", onScroll);
-    }, []);
-
-    useEffect(() => {
-        const el = scrollerRef.current;
-        if (!el) return;
-
-        let pointerId = null;
 
         const onPointerDown = (e) => {
-            pointerId = e.pointerId;
-            el.setPointerCapture?.(pointerId);
+            pointerIdRef.current = e.pointerId;
+            el.setPointerCapture?.(e.pointerId);
 
             draggingRef.current = true;
             axisLockedRef.current = null;
-            lastDragDeltaXRef.current = 0;
-
             startXRef.current = e.clientX;
             startYRef.current = e.clientY;
-            startScrollRef.current = el.scrollLeft;
-
-            computeGroupWidth();
+            startOffsetRef.current = offsetRef.current;
+            lastDxRef.current = 0;
         };
 
         const onPointerMove = (e) => {
@@ -170,59 +148,53 @@ export default function Hero() {
                 }
             }
 
-            if (axisLockedRef.current === "x") {
-                e.preventDefault();
-                lastDragDeltaXRef.current = dx;
-                el.scrollLeft = startScrollRef.current - dx;
-                normalizeLoop(true);
-            } else if (axisLockedRef.current === "y") {
+            if (axisLockedRef.current === "y") {
                 draggingRef.current = false;
                 axisLockedRef.current = null;
+                releasePointer();
+                return;
+            }
 
-                if (pointerId != null) {
-                    try {
-                        el.releasePointerCapture?.(pointerId);
-                    } catch { }
-                }
+            if (axisLockedRef.current === "x") {
+                e.preventDefault();
+                lastDxRef.current = dx;
+                const next = wrapOffset(startOffsetRef.current + dx);
+                applyOffset(next);
             }
         };
 
-        const endDrag = () => {
+        const onPointerEnd = () => {
             if (!draggingRef.current) return;
 
             draggingRef.current = false;
-            axisLockedRef.current = null;
 
-            const dx = lastDragDeltaXRef.current;
-            const base = baseSpeedRef.current;
+            const dx = lastDxRef.current;
+            const speed = 0.42;
 
             if (Math.abs(dx) > 2) {
-                motionRef.current = dx > 0 ? -base : base;
+                velocityRef.current = dx > 0 ? speed : -speed;
             }
 
-            normalizeLoop(false);
-
-            if (pointerId != null) {
-                try {
-                    el.releasePointerCapture?.(pointerId);
-                } catch { }
-            }
+            axisLockedRef.current = null;
+            releasePointer();
         };
 
         el.addEventListener("pointerdown", onPointerDown);
         window.addEventListener("pointermove", onPointerMove, { passive: false });
-        window.addEventListener("pointerup", endDrag);
-        window.addEventListener("pointercancel", endDrag);
-        window.addEventListener("blur", endDrag);
+        window.addEventListener("pointerup", onPointerEnd);
+        window.addEventListener("pointercancel", onPointerEnd);
+        window.addEventListener("blur", onPointerEnd);
 
         return () => {
             el.removeEventListener("pointerdown", onPointerDown);
             window.removeEventListener("pointermove", onPointerMove);
-            window.removeEventListener("pointerup", endDrag);
-            window.removeEventListener("pointercancel", endDrag);
-            window.removeEventListener("blur", endDrag);
+            window.removeEventListener("pointerup", onPointerEnd);
+            window.removeEventListener("pointercancel", onPointerEnd);
+            window.removeEventListener("blur", onPointerEnd);
         };
     }, []);
+
+    const repeatedSets = useMemo(() => [0, 1, 2], []);
 
     return (
         <header className="kc-homeHero">
@@ -238,9 +210,8 @@ export default function Hero() {
 
                         <h1 className="h1 kc-homeHero__title">
                             The Digital{" "}
-                            <span className="kc-homeHero__accent">Business Card</span>
-                            <br />
-                            Built For Trades
+                            <span className="kc-homeHero__accent">Business Card</span> Built For
+                            Trades
                         </h1>
 
                         <p className="kc-subheading kc-homeHero__sub">
@@ -267,36 +238,33 @@ export default function Hero() {
                 </div>
             </section>
 
-            <div
-                className="kc-homeHero__carousel"
-                aria-label="Example digital business cards"
-            >
-                <div className="kc-homeHero__scrollerOuter">
-                    <div
-                        ref={scrollerRef}
-                        className="kc-homeHero__scroller"
-                        style={{ touchAction: "pan-y" }}
-                    >
-                        <div ref={trackRef} className="kc-homeHero__track">
-                            {groups.map((_, gi) => (
-                                <React.Fragment key={gi}>
-                                    {items.map((src, i) => (
-                                        <div
-                                            key={`${gi}-${i}`}
-                                            className="kc-homeHero__phone"
-                                        >
-                                            <img
-                                                src={src}
-                                                alt={`Example digital business card profile ${i + 1}`}
-                                                className="kc-homeHero__phoneImg"
-                                                draggable={false}
-                                                loading={gi === 1 ? "eager" : "lazy"}
-                                            />
-                                        </div>
-                                    ))}
-                                </React.Fragment>
-                            ))}
-                        </div>
+            <div className="kc-homeHero__carousel" aria-label="Example digital business cards">
+                <div className="kc-homeHero__marquee" ref={viewportRef} style={{ touchAction: "pan-y" }}>
+                    <div className="kc-homeHero__track" style={trackStyle}>
+                        {repeatedSets.map((setIndex) => (
+                            <div
+                                key={setIndex}
+                                ref={setIndex === 1 ? setMeasureRef : null}
+                                className="kc-homeHero__set"
+                                aria-hidden={setIndex !== 1}
+                            >
+                                {items.map((src, i) => (
+                                    <div className="kc-homeHero__phone" key={`${setIndex}-${i}`}>
+                                        <img
+                                            src={src}
+                                            alt={
+                                                setIndex === 1
+                                                    ? `Example digital business card profile ${i + 1}`
+                                                    : ""
+                                            }
+                                            className="kc-homeHero__phoneImg"
+                                            draggable={false}
+                                            loading={setIndex === 1 ? "eager" : "lazy"}
+                                        />
+                                    </div>
+                                ))}
+                            </div>
+                        ))}
                     </div>
                 </div>
             </div>

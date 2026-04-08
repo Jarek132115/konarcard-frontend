@@ -81,9 +81,10 @@
     margin: 0 auto var(--sp-2);
     /* 8px */
     max-width: 980px;
-    word-break: normal;
-    overflow-wrap: anywhere;
     color: #ffffff;
+    word-break: normal;
+    overflow-wrap: normal;
+    text-wrap: balance;
     text-shadow: 0 2px 16px rgba(11, 18, 32, 0.30);
 }
 
@@ -131,50 +132,45 @@
 .kc-homeHero__carousel {
     margin-top: var(--sp-6);
     background: #ffffff;
-    overflow: visible;
     position: relative;
     z-index: 5;
+    overflow: hidden;
 }
 
-.kc-homeHero__scrollerOuter {
+.kc-homeHero__marquee {
     width: 100vw;
     margin-left: calc(50% - 50vw);
-    padding: var(--sp-3) 0 var(--sp-4);
-    background: #ffffff;
-    overflow-x: clip;
-}
-
-.kc-homeHero__scroller {
-    overflow-x: auto;
-    overflow-y: visible;
-    scrollbar-width: none;
-    -ms-overflow-style: none;
-    padding: 0 var(--sp-4);
+    overflow: hidden;
     cursor: grab;
-    touch-action: pan-y;
+    user-select: none;
     background: transparent;
+    padding: var(--sp-3) 0 var(--sp-4);
 }
 
-.kc-homeHero__scroller:active {
+.kc-homeHero__marquee:active {
     cursor: grabbing;
-}
-
-.kc-homeHero__scroller::-webkit-scrollbar {
-    display: none;
 }
 
 .kc-homeHero__track {
     display: flex;
-    gap: var(--sp-4);
     align-items: flex-start;
     width: max-content;
-    padding: 0;
+    will-change: transform;
+    transform: translate3d(0, 0, 0);
+}
+
+.kc-homeHero__set {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--sp-4);
+    padding-right: var(--sp-4);
+    flex: 0 0 auto;
 }
 
 .kc-homeHero__phone {
     position: relative;
     flex: 0 0 auto;
-    width: clamp(150px, 10vw, 188px);
+    width: clamp(168px, 11.2vw, 210px);
     aspect-ratio: 9 / 19.5;
     overflow: hidden;
     border-radius: 20px;
@@ -185,9 +181,9 @@
 .kc-homeHero__phoneImg {
     width: 100%;
     height: 100%;
+    display: block;
     object-fit: cover;
     object-position: top center;
-    display: block;
     user-select: none;
     -webkit-user-drag: none;
     pointer-events: none;
@@ -213,7 +209,8 @@
     }
 
     .kc-homeHero__phone {
-        width: clamp(148px, 16vw, 182px);
+        width: clamp(150px, 21vw, 180px);
+        border-radius: 18px;
     }
 }
 
@@ -227,33 +224,23 @@
         min-height: 90vh;
         padding-top: 104px;
         padding-bottom: var(--sp-8);
-        justify-content: center;
     }
 
     .kc-homeHero__copy {
         width: min(680px, 100%);
-        align-items: center;
-        text-align: center;
     }
 
     .kc-homeHero__sub {
         max-width: 100%;
     }
 
-    .kc-homeHero__ctaRow {
-        justify-content: center;
-    }
-
-    .kc-homeHero__scroller {
-        padding: 0 var(--sp-3);
-    }
-
-    .kc-homeHero__track {
+    .kc-homeHero__set {
         gap: var(--sp-3);
+        padding-right: var(--sp-3);
     }
 
     .kc-homeHero__phone {
-        width: clamp(156px, 22vw, 176px);
+        width: clamp(148px, 24vw, 172px);
         border-radius: 18px;
     }
 }
@@ -297,16 +284,17 @@
         justify-content: center;
     }
 
-    .kc-homeHero__scroller {
-        padding: 0 var(--sp-2);
+    .kc-homeHero__marquee {
+        padding: var(--sp-2) 0 var(--sp-3);
     }
 
-    .kc-homeHero__track {
+    .kc-homeHero__set {
         gap: var(--sp-3);
+        padding-right: var(--sp-3);
     }
 
     .kc-homeHero__phone {
-        width: clamp(148px, 44vw, 168px);
+        width: clamp(146px, 44vw, 168px);
         border-radius: 16px;
     }
 }
