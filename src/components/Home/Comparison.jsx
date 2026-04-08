@@ -41,7 +41,6 @@ export default function Comparison() {
 
                     <p className="kc-subheading kc-comp__sub">
                         Paper cards get lost, go out of date, and can’t show your work
-                        <br />
                         quality.
                     </p>
                 </header>
@@ -50,14 +49,12 @@ export default function Comparison() {
                     className="kc-comp__layout"
                     aria-label="Comparison: paper business cards vs KonarCard"
                 >
-                    {/* LEFT: Old way */}
                     <article
                         className="kc-comp__card kc-comp__card--paper"
                         aria-label="Old way: Paper business cards"
                     >
                         <div className="kc-comp__cardPill">Old way</div>
 
-                        {/* ✅ use title class */}
                         <h3 className="kc-title kc-comp__cardTitle">Paper Business Cards</h3>
 
                         <p className="body kc-comp__cardHint">
@@ -66,7 +63,6 @@ export default function Comparison() {
 
                         <div className="kc-comp__divider" />
 
-                        {/* ✅ Inter subheading style, medium weight */}
                         <h4 className="kc-subheading-md kc-comp__listTitle">
                             What goes wrong
                         </h4>
@@ -87,12 +83,10 @@ export default function Comparison() {
                         </p>
                     </article>
 
-                    {/* CENTER: OR */}
                     <div className="kc-comp__or" aria-hidden="true">
                         <span className="kc-title">OR</span>
                     </div>
 
-                    {/* RIGHT: Smarter option */}
                     <article
                         className="kc-comp__card kc-comp__card--konar"
                         aria-label="Smarter option: KonarCard"
@@ -101,7 +95,6 @@ export default function Comparison() {
                             The smarter option
                         </div>
 
-                        {/* ✅ use title class */}
                         <h3 className="kc-title kc-comp__cardTitle kc-comp__cardTitle--white">
                             KonarCard - The Modern Alternative
                         </h3>
@@ -112,7 +105,6 @@ export default function Comparison() {
 
                         <div className="kc-comp__divider kc-comp__divider--white" />
 
-                        {/* ✅ Inter subheading style, medium weight */}
                         <h4 className="kc-subheading-md kc-comp__listTitle kc-comp__listTitle--white">
                             What You Get
                         </h4>
