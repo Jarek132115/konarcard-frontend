@@ -1,4 +1,3 @@
-// frontend/src/components/home/HowItWorks.jsx
 import React, { useMemo } from "react";
 import { Link } from "react-router-dom";
 import "../../styling/home/howitworks.css";
@@ -41,13 +40,11 @@ export default function HowItWorks() {
                 <header className="hiw__head">
                     <p className="kc-pill hiw__kicker">3 Simple Steps</p>
 
-                    {/* SECTION TITLE → H3 */}
                     <h2 className="h3 hiw__title">
                         Set Up Your <span className="hiw__accent">Profile</span> in{" "}
                         <span className="hiw__accent">Minutes.</span>
                     </h2>
 
-                    {/* SUBHEADING */}
                     <p className="kc-subheading hiw__sub">
                         Add your work, reviews, and contact buttons - then share one simple link.
                     </p>
@@ -59,15 +56,18 @@ export default function HowItWorks() {
                             <div className="hiw__cardTop">
                                 <span className="hiw__stepPill">{s.step}</span>
 
-                                {/* ✅ DESKTOP TITLE (20px) */}
                                 <h3 className="kc-title hiw__cardTitle">{s.title}</h3>
 
-                                {/* BODY */}
                                 <p className="body hiw__cardDesc">{s.desc}</p>
                             </div>
 
                             <div className="hiw__imgWrap">
-                                <img src={s.img} alt={s.alt} className="hiw__img" loading="lazy" />
+                                <img
+                                    src={s.img}
+                                    alt={s.alt}
+                                    className="hiw__img"
+                                    loading="lazy"
+                                />
                             </div>
                         </li>
                     ))}
