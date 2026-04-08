@@ -114,7 +114,10 @@ export default function Settings() {
             return;
         }
 
-        setSelectedSlug((prev) => prev || profilesForShare[0].slug);
+        setSelectedSlug((prev) => {
+            if (prev && profilesForShare.some((p) => p.slug === prev)) return prev;
+            return profilesForShare[0].slug;
+        });
     }, [profilesForShare]);
 
     const selectedProfile = useMemo(() => {
@@ -366,41 +369,12 @@ export default function Settings() {
 
     const displayPlanUpper = String(plan || "free").toUpperCase();
 
-    const headerRight = (
-        <div className="stg-headRight">
-            <span className="stg-pill stg-pill--dark">
-                Plan: <strong>{displayPlanUpper}</strong>
-            </span>
-
-            {hasError ? (
-                <button
-                    type="button"
-                    className="kx-btn kx-btn--black"
-                    onClick={retryAll}
-                    disabled={isBusy}
-                >
-                    Retry
-                </button>
-            ) : (
-                <button
-                    type="button"
-                    className="kx-btn kx-btn--black"
-                    onClick={openBillingPortal}
-                    disabled={isBusy}
-                >
-                    Manage Billing
-                </button>
-            )}
-        </div>
-    );
-
     return (
         <DashboardLayout hideDesktopHeader>
             <div className="stg-shell">
                 <PageHeader
                     title="Settings"
                     subtitle="Manage your account, billing, invoices and payment history."
-                    rightSlot={headerRight}
                     onShareClick={handleOpenShareProfile}
                     shareDisabled={!selectedProfile}
                 />
