@@ -1,11 +1,14 @@
 /* frontend/src/styling/fonts.css */
 /* =========================================================
    KONARCARD DESIGN SYSTEM
-   Global colours, typography & utilities
-   Responsive typography added (desktop → tablet → mobile)
+   Global colours, typography, utilities
+   Clean hierarchy / responsive scaling / readability-first
+   IMPORTANT: All Cal Sans usage stays regular (400) only
    ========================================================= */
 
-/* ---------- Browser Fix ---------- */
+/* =========================================================
+   BROWSER / GLOBAL FIXES
+   ========================================================= */
 img,
 video,
 canvas {
@@ -13,18 +16,19 @@ canvas {
   overflow-clip-margin: content-box;
 }
 
-/* ---------- Root ---------- */
 html,
 body {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
   font-family: "Inter", sans-serif;
   background-color: #ffffff;
   color: #0f172a;
-  padding: 0;
-  margin: 0;
-  box-sizing: border-box;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
-/* Ensure consistent box sizing everywhere */
 *,
 *::before,
 *::after {
@@ -32,9 +36,10 @@ body {
 }
 
 /* =========================================================
-   COLOUR TOKENS
+   TOKENS
    ========================================================= */
 :root {
+  /* ---------- Colours ---------- */
   --kc-bg-main: #ffffff;
   --kc-bg-soft: #fafafa;
 
@@ -46,91 +51,119 @@ body {
 
   --kc-border: #e5e7eb;
 
-  /* PAGE LAYOUT UTILITIES */
+  /* ---------- Layout ---------- */
   --kc-page-top-space: 160px;
   --kc-page-top-space-mobile: 120px;
 
-  /* Optional: reusable focus + accent shadow tokens */
+  /* ---------- Focus / shadows ---------- */
   --kc-focus-ring: rgba(249, 115, 22, 0.2);
   --kc-shadow-accent: 0 12px 28px rgba(249, 115, 22, 0.25);
   --kc-shadow-accent-hover: 0 16px 34px rgba(249, 115, 22, 0.32);
 
   /* =========================================================
-     RESPONSIVE TYPE SCALE TOKENS
-     Desktop values match Figma exactly.
+     TYPE SCALE — DESKTOP
+     Readability-first, premium hierarchy
      ========================================================= */
+
+  /* Display / hero */
   --kc-h1-size: 84px;
-  --kc-h1-line: 96px;
+  --kc-h1-line: 0.95;
+  --kc-h1-track: -0.035em;
 
-  --kc-h2-size: 48px;
-  --kc-h2-line: 62px;
+  /* Section heading */
+  --kc-h2-size: 52px;
+  --kc-h2-line: 1.04;
+  --kc-h2-track: -0.03em;
 
-  --kc-h3-size: 36px;
-  --kc-h3-line: 48px;
+  /* Block / section titles */
+  --kc-h3-size: 40px;
+  --kc-h3-line: 1.08;
+  --kc-h3-track: -0.025em;
 
-  --kc-h4-size: 24px;
-  --kc-h4-line: normal;
+  /* Smaller feature headings */
+  --kc-h4-size: 28px;
+  --kc-h4-line: 1.14;
+  --kc-h4-track: -0.02em;
 
-  --kc-title-size: 20px;
-  --kc-title-line: normal;
+  /* Card / component title */
+  --kc-title-size: 22px;
+  --kc-title-line: 1.2;
+  --kc-title-track: -0.015em;
 
-  --kc-sub-size: 16px;
-  --kc-sub-line: 24px;
+  /* Lead / subheading */
+  --kc-sub-size: 18px;
+  --kc-sub-line: 1.55;
 
+  /* Base body */
   --kc-body-size: 14px;
-  --kc-body-line: 21px;
+  --kc-body-line: 1.55;
 
+  /* Buttons */
   --kc-btn-size: 14px;
-  --kc-btn-line: normal;
+  --kc-btn-line: 1;
+
+  /* Pills / tabs / tiny labels */
+  --kc-pill-size: 12px;
+  --kc-pill-line: 1;
 }
 
-/* Tablet */
+/* =========================================================
+   TYPE SCALE — TABLET
+   Bigger than default web norms, but still clean
+   ========================================================= */
 @media (max-width: 1000px) {
   :root {
-    --kc-h1-size: 56px;
-    --kc-h1-line: 64px;
+    --kc-h1-size: 72px;
+    --kc-h1-line: 0.96;
 
-    --kc-h2-size: 40px;
-    --kc-h2-line: 52px;
+    --kc-h2-size: 44px;
+    --kc-h2-line: 1.06;
 
-    --kc-h3-size: 32px;
-    --kc-h3-line: 42px;
+    --kc-h3-size: 34px;
+    --kc-h3-line: 1.1;
 
-    --kc-h4-size: 22px;
+    --kc-h4-size: 24px;
+    --kc-h4-line: 1.16;
 
-    --kc-title-size: 18px;
+    --kc-title-size: 20px;
+    --kc-title-line: 1.2;
 
-    --kc-sub-size: 16px;
-    --kc-sub-line: 24px;
+    --kc-sub-size: 17px;
+    --kc-sub-line: 1.5;
 
     --kc-body-size: 14px;
-    --kc-body-line: 21px;
+    --kc-body-line: 1.55;
 
     --kc-btn-size: 14px;
   }
 }
 
-/* Mobile */
+/* =========================================================
+   TYPE SCALE — MOBILE
+   Strong but readable, not cramped
+   ========================================================= */
 @media (max-width: 520px) {
   :root {
-    --kc-h1-size: 36px;
-    --kc-h1-line: 44px;
+    --kc-h1-size: 52px;
+    --kc-h1-line: 0.98;
 
-    --kc-h2-size: 30px;
-    --kc-h2-line: 38px;
+    --kc-h2-size: 38px;
+    --kc-h2-line: 1.08;
 
-    --kc-h3-size: 26px;
-    --kc-h3-line: 34px;
+    --kc-h3-size: 30px;
+    --kc-h3-line: 1.12;
 
-    --kc-h4-size: 20px;
+    --kc-h4-size: 24px;
+    --kc-h4-line: 1.16;
 
-    --kc-title-size: 18px;
+    --kc-title-size: 19px;
+    --kc-title-line: 1.22;
 
-    --kc-sub-size: 15px;
-    --kc-sub-line: 22px;
+    --kc-sub-size: 16px;
+    --kc-sub-line: 1.5;
 
     --kc-body-size: 14px;
-    --kc-body-line: 21px;
+    --kc-body-line: 1.55;
 
     --kc-btn-size: 14px;
   }
@@ -150,59 +183,51 @@ body {
 }
 
 /* =========================================================
-   TYPOGRAPHY TOKENS (Match Figma styles)
-   Now responsive via CSS variables above.
+   TYPOGRAPHY
+   Cal Sans is ALWAYS regular / 400
    ========================================================= */
 
-/* Desktop H1 (responsive) */
-.h1 {
+.h1,
+.h2,
+.h3,
+.h4,
+.kc-title,
+.kc-sidebarBrand {
   font-family: "Cal Sans", sans-serif;
   font-weight: 400;
+  color: var(--kc-text-primary);
+}
+
+.h1 {
   font-size: var(--kc-h1-size);
   line-height: var(--kc-h1-line);
-  letter-spacing: -0.03em;
-  color: var(--kc-text-primary);
+  letter-spacing: var(--kc-h1-track);
 }
 
-/* Desktop H2 (responsive) */
 .h2 {
-  font-family: "Cal Sans", sans-serif;
-  font-weight: 400;
   font-size: var(--kc-h2-size);
   line-height: var(--kc-h2-line);
-  letter-spacing: -0.02em;
-  color: var(--kc-text-primary);
+  letter-spacing: var(--kc-h2-track);
 }
 
-/* Desktop H3 (responsive) */
 .h3 {
-  font-family: "Cal Sans", sans-serif;
-  font-weight: 400;
   font-size: var(--kc-h3-size);
   line-height: var(--kc-h3-line);
-  letter-spacing: -0.02em;
-  color: var(--kc-text-primary);
+  letter-spacing: var(--kc-h3-track);
 }
 
-/* Desktop H4 (responsive) */
 .h4 {
-  font-family: "Cal Sans", sans-serif;
-  font-weight: 400;
   font-size: var(--kc-h4-size);
   line-height: var(--kc-h4-line);
-  color: var(--kc-text-primary);
+  letter-spacing: var(--kc-h4-track);
 }
 
-/* Desktop Title (responsive) */
 .kc-title {
-  font-family: "Cal Sans", sans-serif;
-  font-weight: 400;
   font-size: var(--kc-title-size);
   line-height: var(--kc-title-line);
-  color: var(--kc-text-primary);
+  letter-spacing: var(--kc-title-track);
 }
 
-/* Desktop Subheading (responsive) */
 .kc-subheading {
   font-family: "Inter", sans-serif;
   font-weight: 400;
@@ -211,26 +236,16 @@ body {
   color: var(--kc-text-secondary);
 }
 
-/* Desktop Body (responsive) */
-.body,
-.kc-body {
+.kc-subheading-md {
   font-family: "Inter", sans-serif;
-  font-weight: 400;
-  font-size: var(--kc-body-size);
-  line-height: var(--kc-body-line);
+  font-weight: 500;
+  font-size: var(--kc-sub-size);
+  line-height: var(--kc-sub-line);
   color: var(--kc-text-secondary);
 }
 
-/* Button Text (responsive) */
-.button-text {
-  font-family: "Inter", sans-serif;
-  font-weight: 500;
-  font-size: var(--kc-btn-size);
-  line-height: var(--kc-btn-line);
-  letter-spacing: 0;
-}
-
-/* (Optional) small helpers used across components */
+.body,
+.kc-body,
 .body-s {
   font-family: "Inter", sans-serif;
   font-weight: 400;
@@ -239,65 +254,74 @@ body {
   color: var(--kc-text-secondary);
 }
 
+.button-text {
+  font-family: "Inter", sans-serif;
+  font-weight: 500;
+  font-size: var(--kc-btn-size);
+  line-height: var(--kc-btn-line);
+  letter-spacing: 0;
+}
+
+/* Optional small text helper */
+.kc-caption {
+  font-family: "Inter", sans-serif;
+  font-weight: 500;
+  font-size: 12px;
+  line-height: 1.4;
+  color: var(--kc-text-secondary);
+}
+
 /* =========================================================
-   REUSABLE PILL (Hero / Pricing-style)
-   Padding: 6px TB, 10px LR
-   Shadow: 0 0 2px rgba(15, 23, 42, 0.5)
+   REUSABLE PILL
    ========================================================= */
 .kc-pill {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-
   padding: 6px 10px;
   border-radius: 999px;
-
   background: #ffffff;
   font-family: "Inter", sans-serif;
-  font-size: 12px;
+  font-size: var(--kc-pill-size);
   font-weight: 600;
-  line-height: 1;
+  line-height: var(--kc-pill-line);
   color: rgba(15, 23, 42, 0.78);
-
   box-shadow: 0 0 2px rgba(15, 23, 42, 0.5);
 }
 
 /* =========================================================
-   BUTTONS — CTA System (kx-*)
-   Hug contents, padding 12/18
+   BUTTONS — CTA SYSTEM
    ========================================================= */
 .kx-btn {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-
   height: auto;
   padding: 12px 18px;
-
   border-radius: 12px;
   border: 1px solid rgba(15, 23, 42, 0.14);
-
   font-family: "Inter", sans-serif;
   font-size: var(--kc-btn-size);
   font-weight: 600;
   line-height: 1;
-
   text-decoration: none;
   cursor: pointer;
   user-select: none;
   -webkit-tap-highlight-color: transparent;
-
-  transition: transform 0.12s ease, background-color 0.15s ease,
-    border-color 0.15s ease, box-shadow 0.15s ease;
+  transition:
+    transform 0.12s ease,
+    background-color 0.15s ease,
+    border-color 0.15s ease,
+    box-shadow 0.15s ease;
 }
 
 .kx-btn:hover {
   transform: translateY(-1px);
-  box-shadow: 0 10px 26px rgba(15, 23, 42, 0.10);
+  box-shadow: 0 10px 26px rgba(15, 23, 42, 0.1);
 }
 
 .kx-btn:active {
-  transform: translateY(0px);
+  transform: translateY(0);
   box-shadow: none;
 }
 
@@ -306,7 +330,6 @@ body {
   box-shadow: 0 0 0 3px var(--kc-focus-ring);
 }
 
-/* Variants */
 .kx-btn--black {
   background: var(--kc-accent-secondary);
   color: #ffffff;
@@ -337,55 +360,33 @@ body {
   box-shadow: none;
 }
 
-/* Slightly smaller buttons on very small screens (keeps 12/18 padding) */
 @media (max-width: 420px) {
   .kx-btn {
     padding: 12px 16px;
   }
 }
 
-/* Desktop Subheading (responsive) */
-.kc-subheading {
-  font-family: "Inter", sans-serif;
-  font-weight: 400;
-  font-size: var(--kc-sub-size);
-  line-height: var(--kc-sub-line);
-  color: var(--kc-text-secondary);
-}
-
-/* ✅ Subheading (Medium) — same sizing as kc-subheading, but weight 500 */
-.kc-subheading-md {
-  font-family: "Inter", sans-serif;
-  font-weight: 500;
-  font-size: var(--kc-sub-size);
-  line-height: var(--kc-sub-line);
-  color: var(--kc-text-secondary);
-}
-
 /* =========================================================
-   REUSABLE TAB / FILTER PILL BUTTONS (NEW)
-   Use for: FAQ tabs, filters, segmented pills, etc.
+   TAB / FILTER PILL BUTTONS
    ========================================================= */
-
 .kc-tabPill {
   appearance: none;
   background: #ffffff;
   color: rgba(11, 18, 32, 0.86);
-
   border: 1px solid rgba(11, 18, 32, 0.14);
   border-radius: 12px;
-
   padding: 10px 16px;
   font-family: "Inter", sans-serif;
   font-size: 12px;
   font-weight: 600;
   line-height: 1;
-
   cursor: pointer;
   user-select: none;
   -webkit-tap-highlight-color: transparent;
-
-  transition: background-color 0.15s ease, border-color 0.15s ease, transform 0.12s ease;
+  transition:
+    background-color 0.15s ease,
+    border-color 0.15s ease,
+    transform 0.12s ease;
 }
 
 .kc-tabPill:hover {
@@ -395,7 +396,7 @@ body {
 }
 
 .kc-tabPill:active {
-  transform: translateY(0px);
+  transform: translateY(0);
 }
 
 .kc-tabPill:focus-visible {
@@ -411,21 +412,20 @@ body {
   transform: none;
 }
 
-/* ADD THESE to: frontend/src/styling/fonts.css */
-
-/* Sidebar brand typography */
+/* =========================================================
+   SIDEBAR BRAND TYPOGRAPHY
+   ========================================================= */
 .kc-sidebarBrand {
-  font-family: "Cal Sans", sans-serif;
   font-size: 16px;
-  font-weight: 400;
+  line-height: 1.1;
   letter-spacing: -0.01em;
-  color: var(--kc-text-primary);
 }
 
 .kc-sidebarTagline {
   font-family: "Inter", sans-serif;
   font-size: 12px;
   font-weight: 400;
+  line-height: 1.4;
   color: var(--kc-text-secondary);
   white-space: nowrap;
   overflow: hidden;
