@@ -1,12 +1,17 @@
 import React, { useEffect, useMemo, useState } from "react";
+import { toast } from "react-hot-toast";
+
 import DashboardLayout from "../../components/Dashboard/DashboardLayout";
 import PageHeader from "../../components/Dashboard/PageHeader";
+import ShareProfile from "../../components/ShareProfile";
 
 import "../../styling/fonts.css";
 import "../../styling/spacing.css";
 import "../../styling/dashboard/upgradeplan.css";
 
 import { BASE_URL } from "../../services/api";
+import { useAuthUser } from "../../hooks/useAuthUser";
+import { useMyProfiles } from "../../hooks/useBusinessCard";
 
 import FreePlanIcon from "../../assets/icons/FreePlan.svg";
 import PlusPlanIcon from "../../assets/icons/PlusPlan.svg";
@@ -97,6 +102,21 @@ function normalizePlanLabel(plan) {
     return "Free";
 }
 
+const centerTrim = (v) => (v ?? "").toString().trim();
+const safeLower = (v) => centerTrim(v).toLowerCase();
+
+const normalizeSlug = (raw) =>
+    safeLower(raw)
+        .replace(/[^a-z0-9-]/g, "")
+        .replace(/-+/g, "-")
+        .replace(/^-|-$/g, "");
+
+const buildPublicUrl = (profileSlug) => {
+    const s = normalizeSlug(profileSlug);
+    if (!s) return `${window.location.origin}/u/`;
+    return `${window.location.origin}/u/${encodeURIComponent(s)}`;
+};
+
 function PlanCard({ plan, currentPlan, loadingKey }) {
     const featured = !!plan.featured;
     const current = currentPlan === plan.key;
@@ -139,8 +159,7 @@ function PlanCard({ plan, currentPlan, loadingKey }) {
 
                 <div className="upg-planPriceRow">
                     <div
-                        className={`upg-planPrice ${featured ? "upg-planPrice--featured" : ""
-                            }`}
+                        className={`upg-planPrice ${featured ? "upg-planPrice--featured" : ""}`}
                     >
                         {plan.price}
                     </div>
@@ -162,9 +181,7 @@ function PlanCard({ plan, currentPlan, loadingKey }) {
                 ) : null}
             </div>
 
-            <div
-                className={`upg-planDivider ${featured ? "upg-planDivider--featured" : ""}`}
-            />
+            <div className={`upg-planDivider ${featured ? "upg-planDivider--featured" : ""}`} />
 
             <div className="upg-planBody">
                 <div
@@ -222,6 +239,9 @@ function PlanCard({ plan, currentPlan, loadingKey }) {
 }
 
 export default function UpgradePlan() {
+    const { data: authUser } = useAuthUser();
+    const { data: cards } = useMyProfiles();
+
     const [billing, setBilling] = useState("monthly");
     const [loadingKey, setLoadingKey] = useState(null);
 
@@ -229,7 +249,45 @@ export default function UpgradePlan() {
     const [subErr, setSubErr] = useState("");
     const [subState, setSubState] = useState(null);
 
+    const [shareOpen, setShareOpen] = useState(false);
+    const [selectedSlug, setSelectedSlug] = useState(null);
+
     const apiBase = BASE_URL;
+
+    const profilesForShare = useMemo(() => {
+        const xs = Array.isArray(cards) ? cards : [];
+        return xs
+            .map((c) => {
+                const slug = centerTrim(c?.profile_slug);
+                if (!slug) return null;
+
+                const name =
+                    centerTrim(c?.business_card_name) ||
+                    centerTrim(c?.business_name) ||
+                    centerTrim(c?.full_name) ||
+                    (slug === "main" ? "Main Profile" : "Profile");
+
+                return {
+                    slug,
+                    name,
+                    url: buildPublicUrl(slug),
+                };
+            })
+            .filter(Boolean);
+    }, [cards]);
+
+    useEffect(() => {
+        if (!profilesForShare.length) {
+            setSelectedSlug(null);
+            return;
+        }
+        setSelectedSlug((prev) => prev || profilesForShare[0].slug);
+    }, [profilesForShare]);
+
+    const selectedProfile = useMemo(() => {
+        if (!profilesForShare.length) return null;
+        return profilesForShare.find((p) => p.slug === selectedSlug) || profilesForShare[0];
+    }, [profilesForShare, selectedSlug]);
 
     const PRICES = useMemo(() => {
         const plusMonthly = 4.95;
@@ -688,12 +746,130 @@ export default function UpgradePlan() {
         PRICES,
     ]);
 
+    const handleOpenShareProfile = () => {
+        if (!selectedProfile) {
+            toast.error("Create a profile first.");
+            return;
+        }
+        setShareOpen(true);
+    };
+
+    const handleCloseShareProfile = () => {
+        setShareOpen(false);
+    };
+
+    const shareToFacebook = () => {
+        if (!selectedProfile?.url) {
+            toast.error("No profile link available yet.");
+            return;
+        }
+
+        const url = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(
+            selectedProfile.url
+        )}`;
+
+        window.open(url, "_blank", "noopener,noreferrer,width=680,height=720");
+    };
+
+    const shareToInstagram = async () => {
+        if (!selectedProfile?.url) {
+            toast.error("No profile link available yet.");
+            return;
+        }
+
+        try {
+            await navigator.clipboard.writeText(selectedProfile.url);
+            toast.success("Profile link copied for Instagram sharing.");
+        } catch {
+            toast.error("Could not copy the link.");
+        }
+
+        window.open("https://www.instagram.com/", "_blank", "noopener,noreferrer");
+    };
+
+    const shareToMessenger = async () => {
+        if (!selectedProfile?.url) {
+            toast.error("No profile link available yet.");
+            return;
+        }
+
+        const isMobile = /Android|iPhone|iPad|iPod|Mobile/i.test(
+            navigator.userAgent || ""
+        );
+
+        if (isMobile) {
+            try {
+                await navigator.clipboard.writeText(selectedProfile.url);
+                toast.success(
+                    "Messenger sharing is not supported on mobile browsers. Link copied instead."
+                );
+            } catch {
+                toast.error("Could not copy the link.");
+            }
+            return;
+        }
+
+        const url = `https://www.facebook.com/dialog/send?link=${encodeURIComponent(
+            selectedProfile.url
+        )}&app_id=291494419107518&redirect_uri=${encodeURIComponent(selectedProfile.url)}`;
+
+        window.open(url, "_blank", "noopener,noreferrer,width=680,height=720");
+    };
+
+    const shareToWhatsApp = () => {
+        if (!selectedProfile?.url) {
+            toast.error("No profile link available yet.");
+            return;
+        }
+
+        const text = `Check out my profile: ${selectedProfile.url}`;
+        const url = `https://wa.me/?text=${encodeURIComponent(text)}`;
+        window.open(url, "_blank", "noopener,noreferrer");
+    };
+
+    const shareByText = () => {
+        if (!selectedProfile?.url) {
+            toast.error("No profile link available yet.");
+            return;
+        }
+
+        const body = `Check out my profile: ${selectedProfile.url}`;
+        window.location.href = `sms:?&body=${encodeURIComponent(body)}`;
+    };
+
+    const handleAppleWallet = () => {
+        toast("Apple Wallet is coming soon.");
+    };
+
+    const handleGoogleWallet = () => {
+        toast("Google Wallet is coming soon.");
+    };
+
     return (
         <DashboardLayout hideDesktopHeader>
             <div className="upg-shell">
                 <PageHeader
                     title="Upgrade Plan"
                     subtitle="Upgrade, manage billing, and change plans without leaving your dashboard."
+                    onShareClick={handleOpenShareProfile}
+                    shareDisabled={!selectedProfile}
+                />
+
+                <ShareProfile
+                    isOpen={shareOpen}
+                    onClose={handleCloseShareProfile}
+                    profiles={profilesForShare}
+                    selectedSlug={selectedSlug}
+                    onSelectSlug={setSelectedSlug}
+                    username={authUser?.name || "konarcard"}
+                    profileUrl={selectedProfile?.url || ""}
+                    onFacebook={shareToFacebook}
+                    onInstagram={shareToInstagram}
+                    onMessenger={shareToMessenger}
+                    onWhatsApp={shareToWhatsApp}
+                    onText={shareByText}
+                    onAppleWallet={handleAppleWallet}
+                    onGoogleWallet={handleGoogleWallet}
                 />
 
                 <section className="upg-summaryGrid">
