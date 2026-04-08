@@ -1,25 +1,20 @@
 /* frontend/src/styling/home/customertrust.css */
 /* =========================================================
-   HOME — CUSTOMER TRUST (new photo cards)
+   HOME — CUSTOMER TRUST
    Typography comes ONLY from fonts.css
+   Uses spacing.css variables
    ========================================================= */
 
 .kht {
     background: var(--kc-bg-soft);
     color: var(--kc-text-primary);
-    padding: 96px 0;
-}
-
-@media (max-width: 600px) {
-    .kht {
-        padding: 64px 0;
-    }
+    padding: var(--sp-12) 0;
 }
 
 .kht__inner {
     max-width: 1100px;
     margin: 0 auto;
-    padding: 0 20px;
+    padding: 0 var(--sp-5);
 }
 
 /* =========================
@@ -34,11 +29,13 @@
 }
 
 .kht__kicker {
-    margin: 0 0 8px 0;
+    margin: 0 0 var(--sp-3) 0;
+    /* 12px */
 }
 
 .kht__title {
-    margin: 0 0 8px 0;
+    margin: 0 0 var(--sp-2) 0;
+    /* 8px */
     max-width: 860px;
 }
 
@@ -53,10 +50,12 @@
 
 /* header -> grid spacing */
 .kht__grid {
-    margin-top: 36px;
+    margin-top: var(--sp-9);
+    /* 40px */
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: 18px;
+    gap: var(--sp-5);
+    /* 20px */
     align-items: stretch;
 }
 
@@ -69,12 +68,11 @@
     background: #ffffff;
     border-radius: 18px;
     box-shadow: 0 10px 24px rgba(16, 24, 40, 0.06);
-
-    padding: 20px;
+    padding: var(--sp-5);
     display: flex;
     flex-direction: column;
-    gap: 14px;
-
+    gap: var(--sp-4);
+    /* 16px */
     transition: transform 0.12s ease, box-shadow 0.12s ease, border-color 0.12s ease;
 }
 
@@ -89,7 +87,8 @@
 }
 
 .kht__cardTitle {
-    margin: 0 0 6px 0;
+    margin: 0 0 var(--sp-2) 0;
+    /* 8px */
 }
 
 .kht__cardDesc {
@@ -116,18 +115,32 @@
    ========================= */
 
 @media (max-width: 980px) {
+    .kht {
+        padding: var(--sp-11) 0;
+    }
+
     .kht__grid {
         grid-template-columns: repeat(2, 1fr);
     }
 }
 
 @media (max-width: 640px) {
+    .kht {
+        padding: var(--sp-12) 0;
+    }
+
+    .kht__inner {
+        padding: 0 var(--sp-4);
+    }
+
     .kht__grid {
         grid-template-columns: 1fr;
+        gap: var(--sp-4);
+        margin-top: var(--sp-8);
     }
 
     .kht__card {
-        padding: 18px;
+        padding: var(--sp-5);
         border-radius: 16px;
     }
 

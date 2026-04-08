@@ -1,4 +1,3 @@
-// frontend/src/components/Home/CustomerTrust.jsx
 import React, { useMemo } from "react";
 import "../../styling/home/customertrust.css";
 
