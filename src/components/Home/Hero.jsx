@@ -230,8 +230,9 @@ export default function Hero() {
 
                         <h1 className="h1 kc-homeHero__title">
                             The Digital{" "}
-                            <span className="kc-homeHero__accent">Business Card</span> Built For
-                            Trades
+                            <span className="kc-homeHero__accent">Business Card</span>
+                            <br />
+                            Built For Trades
                         </h1>
 
                         <p className="kc-subheading kc-homeHero__sub">
