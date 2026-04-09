@@ -6,13 +6,17 @@ import "../../../styling/fonts.css";
 import "../../../styling/productspage/productspagehero.css";
 
 export default function ProductsPageHero({ products }) {
-    // ✅ enforce consistent CTA labels (even if product data changes)
     const getCtaLabel = (sku) => {
         const s = String(sku || "").toLowerCase();
-        if (s.includes("plastic")) return "View Plastic Card";
-        if (s.includes("metal")) return "View Metal Card";
-        if (s.includes("konartag") || s.includes("tag")) return "View KonarTag";
-        return "View Product";
+
+        if (s.includes("basic")) return "View Basic Card";
+        if (s.includes("signature")) return "View Signature Card";
+        if (s.includes("midnight")) return "View Midnight Card";
+        if (s.includes("graphite")) return "View Graphite Card";
+        if (s.includes("sand")) return "View Sand Card";
+        if (s.includes("slate")) return "View Slate Card";
+
+        return "View Plastic Card";
     };
 
     return (
@@ -22,16 +26,16 @@ export default function ProductsPageHero({ products }) {
                     <p className="kc-pill kph-topPill">NFC & Contactless Business Cards</p>
 
                     <h1 id="kph-title" className="h2 kph-title">
-                        Premium <span className="kph-accent">NFC Business Cards</span> That Help You{" "}
+                        Premium <span className="kph-accent">Plastic NFC Business Cards</span> That Help You{" "}
                         <span className="kph-accent">Win More Work</span>
                     </h1>
 
                     <p className="kc-subheading kph-sub">
-                        Browse durable plastic and metal contactless business cards designed for trades and service professionals.
+                        Browse durable plastic contactless business cards designed for trades and service professionals.
                     </p>
                 </header>
 
-                <div className="kph-grid" role="list" aria-label="KonarCard products">
+                <div className="kph-grid" role="list" aria-label="KonarCard plastic card products">
                     {products.map((item) => (
                         <article key={item.sku} className="kph-card" role="listitem">
                             <div className="kph-media">

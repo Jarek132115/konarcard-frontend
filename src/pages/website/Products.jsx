@@ -9,17 +9,13 @@ import "../../styling/fonts.css";
 /* Page CSS */
 import "../../styling/products.css";
 
-/* ✅ Product images */
+/* ✅ Product image (same image used for all 6 for now) */
 import PlasticCardImg from "../../assets/images/PlasticCard.jpg";
-import MetalCardImg from "../../assets/images/MetalCard.jpg";
-import KonarTagImg from "../../assets/images/KonarTag.jpg";
 
 /* ✅ Sections */
 import ProductsPageHero from "./productspage/ProductsPageHero";
-import ProductsPageBundles from "./productspage/ProductsPageBundles";
 import ProductsPageRealWorld from "./productspage/ProductsPageRealWorld";
-import ProductsPageBestChoice from "./productspage/ProductsPageBestChoice";
-import ProductsPageFAQ from "./productspage/ProductsPageFAQ"; // ✅ NEW
+import ProductsPageFAQ from "./productspage/ProductsPageFAQ";
 
 /* ✅ Real world icons */
 import OnSiteIcon from "../../assets/icons/OnSite.svg";
@@ -33,75 +29,70 @@ export default function Products() {
     const products = useMemo(
         () => [
             {
-                tag: "Best Value",
-                name: "KonarCard - Plastic NFC Business Card",
-                desc: "Durable, lightweight NFC business card for everyday networking and on-site use.",
+                tag: "Essential",
+                name: "KonarCard Basic",
+                desc: "Clean white plastic NFC business card with your logo and QR code.",
                 priceText: "£29.99",
-                to: "/products/plastic-card",
+                to: "/products/plastic-basic",
                 img: PlasticCardImg,
-                alt: "KonarCard Plastic Edition – plastic NFC business card with QR code",
-                sku: "konarcard-plastic",
-                cta: "View Plastic Card",
+                alt: "KonarCard Basic plastic NFC business card",
+                sku: "konarcard-plastic-basic",
+                cta: "View Basic Card",
             },
             {
-                tag: "Premium",
-                name: "KonarCard - Metal NFC Business Card",
-                desc: "Premium metal NFC business card designed to make a strong first impression.",
-                priceText: "£44.99",
-                to: "/products/metal-card",
-                img: MetalCardImg,
-                alt: "KonarCard Metal Edition – metal NFC business card with QR code",
-                sku: "konarcard-metal",
-                cta: "View Metal Card",
+                tag: "Popular",
+                name: "KonarCard Signature",
+                desc: "Plastic NFC business card with a premium branded background design.",
+                priceText: "£29.99",
+                to: "/products/plastic-signature",
+                img: PlasticCardImg,
+                alt: "KonarCard Signature plastic NFC business card",
+                sku: "konarcard-plastic-signature",
+                cta: "View Signature Card",
             },
             {
-                tag: "Accessory",
-                name: "KonarTag - NFC Key Tag",
-                desc: "Compact NFC key tag that shares your profile instantly with a tap or QR scan.",
-                priceText: "£9.99",
-                to: "/products/konartag",
-                img: KonarTagImg,
-                alt: "KonarTag – NFC key tag that opens your digital business card profile",
-                sku: "konartag",
-                cta: "View KonarTag",
-            },
-        ],
-        []
-    );
-
-    const bundles = useMemo(
-        () => [
-            {
-                sku: "bundle-plastic-starter",
-                tag: "Best value",
-                name: "Plastic NFC Starter Bundle",
-                desc: "Everything you need to start sharing your profile today.",
-                includes: ["1x Plastic NFC Business Card", "1x KonarTag NFC Key Tag", "12-Month Plus Plan Subscription"],
-                price: "£39.99",
-                was: "£49.97",
-                save: "Save £10",
-                to: "/products/plastic-bundle",
-                cta: "Get Starter Bundle",
-                imgCard: PlasticCardImg,
-                imgTag: KonarTagImg,
-                altCard: "Plastic NFC business card included in the starter bundle",
-                altTag: "KonarTag key tag included in the starter bundle",
+                tag: "Modern",
+                name: "KonarCard Midnight",
+                desc: "Dark premium-style plastic NFC business card with a bold modern look.",
+                priceText: "£29.99",
+                to: "/products/plastic-midnight",
+                img: PlasticCardImg,
+                alt: "KonarCard Midnight plastic NFC business card",
+                sku: "konarcard-plastic-midnight",
+                cta: "View Midnight Card",
             },
             {
-                sku: "bundle-metal-pro",
-                tag: "Premium bundle",
-                name: "Metal NFC Pro Bundle",
-                desc: "Premium setup for trades who want to stand out instantly.",
-                includes: ["1x Metal NFC Business Card", "1x KonarTag NFC Key Tag", "12-Month Plus Plan Subscription"],
-                price: "£54.99",
-                was: "£69.97",
-                save: "Save £15",
-                to: "/products/metal-bundle",
-                cta: "Get Pro Bundle",
-                imgCard: MetalCardImg,
-                imgTag: KonarTagImg,
-                altCard: "Metal NFC business card included in the pro bundle",
-                altTag: "KonarTag key tag included in the pro bundle",
+                tag: "Minimal",
+                name: "KonarCard Graphite",
+                desc: "Plastic NFC business card with a refined background built for clean branding.",
+                priceText: "£29.99",
+                to: "/products/plastic-graphite",
+                img: PlasticCardImg,
+                alt: "KonarCard Graphite plastic NFC business card",
+                sku: "konarcard-plastic-graphite",
+                cta: "View Graphite Card",
+            },
+            {
+                tag: "Warm",
+                name: "KonarCard Sand",
+                desc: "Plastic NFC business card with a softer premium design and logo-led finish.",
+                priceText: "£29.99",
+                to: "/products/plastic-sand",
+                img: PlasticCardImg,
+                alt: "KonarCard Sand plastic NFC business card",
+                sku: "konarcard-plastic-sand",
+                cta: "View Sand Card",
+            },
+            {
+                tag: "Professional",
+                name: "KonarCard Slate",
+                desc: "Plastic NFC business card with a polished background for a premium first impression.",
+                priceText: "£29.99",
+                to: "/products/plastic-slate",
+                img: PlasticCardImg,
+                alt: "KonarCard Slate plastic NFC business card",
+                sku: "konarcard-plastic-slate",
+                cta: "View Slate Card",
             },
         ],
         []
@@ -112,12 +103,20 @@ export default function Products() {
             {
                 pill: "Use it on-site",
                 title: "Tap to swap details on the spot",
-                points: ["Tap to open your profile instantly", "Works even when you’re busy on a job", "No app needed, just tap or scan"],
+                points: [
+                    "Tap to open your profile instantly",
+                    "Works even when you’re busy on a job",
+                    "No app needed, just tap or scan",
+                ],
             },
             {
                 pill: "Win more jobs",
                 title: "Turn taps into customers",
-                points: ["Create a clean, trustworthy profile", "Show photos, services, reviews and contact buttons", "Faster follow-ups and fewer missed calls"],
+                points: [
+                    "Create a clean, trustworthy profile",
+                    "Show photos, services, reviews and contact buttons",
+                    "Faster follow-ups and fewer missed calls",
+                ],
             },
         ],
         []
@@ -170,19 +169,15 @@ export default function Products() {
             <Navbar />
 
             <main className="kc-products kc-page kp-page">
-                {/* HERO (heading + 3 product cards) */}
                 <ProductsPageHero products={products} />
 
-                {/* BUNDLES */}
-                <ProductsPageBundles bundles={bundles} />
+                <ProductsPageRealWorld
+                    topCards={realWorldTop}
+                    gridCards={realWorldGrid}
+                />
 
-                {/* REAL WORLD */}
-                <ProductsPageRealWorld topCards={realWorldTop} gridCards={realWorldGrid} />
+                {/* ❌ Removed BestChoice section */}
 
-                {/* BEST CHOICE (Choose the right card) */}
-                <ProductsPageBestChoice />
-
-                {/* PRODUCT FAQ */}
                 <ProductsPageFAQ />
             </main>
 
