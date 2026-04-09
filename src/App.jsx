@@ -34,10 +34,11 @@ import Policies from "./pages/website/Policies.jsx";
 
 // Product detail pages
 import PlasticCard from "./pages/website/products/PlasticCard.jsx";
-import MetalCard from "./pages/website/products/MetalCard.jsx";
-import KonarTag from "./pages/website/products/KonarTag.jsx";
-import PlasticBundle from "./pages/website/products/PlasticBundle.jsx";
-import MetalBundle from "./pages/website/products/MetalBundle.jsx";
+import PlasticCard2 from "./pages/website/products/PlasticCard2.jsx";
+import PlasticCard3 from "./pages/website/products/PlasticCard3.jsx";
+import PlasticCard4 from "./pages/website/products/PlasticCard4.jsx";
+import PlasticCard5 from "./pages/website/products/PlasticCard5.jsx";
+import PlasticCard6 from "./pages/website/products/PlasticCard6.jsx";
 
 // Success pages
 import SuccessCard from "./pages/website/Success.jsx";
@@ -212,7 +213,7 @@ export default function App() {
 
           {/* Product pages */}
           <Route
-            path="/products/plastic-card"
+            path="/products/plastic-white"
             element={
               <PublicOnlyRoute
                 redirectAuthenticatedTo="/dashboard"
@@ -223,47 +224,73 @@ export default function App() {
             }
           />
           <Route
-            path="/products/metal-card"
+            path="/products/plastic-black"
             element={
               <PublicOnlyRoute
                 redirectAuthenticatedTo="/dashboard"
                 allowProductIntentRedirect
               >
-                <MetalCard />
+                <PlasticCard2 />
               </PublicOnlyRoute>
             }
           />
           <Route
-            path="/products/konartag"
+            path="/products/plastic-blue"
             element={
               <PublicOnlyRoute
                 redirectAuthenticatedTo="/dashboard"
                 allowProductIntentRedirect
               >
-                <KonarTag />
+                <PlasticCard3 />
               </PublicOnlyRoute>
             }
           />
           <Route
-            path="/products/plastic-bundle"
+            path="/products/plastic-green"
             element={
-              <PublicOnlyRoute redirectAuthenticatedTo="/dashboard">
-                <PlasticBundle />
+              <PublicOnlyRoute
+                redirectAuthenticatedTo="/dashboard"
+                allowProductIntentRedirect
+              >
+                <PlasticCard4 />
               </PublicOnlyRoute>
             }
           />
           <Route
-            path="/products/metal-bundle"
+            path="/products/plastic-magenta"
             element={
-              <PublicOnlyRoute redirectAuthenticatedTo="/dashboard">
-                <MetalBundle />
+              <PublicOnlyRoute
+                redirectAuthenticatedTo="/dashboard"
+                allowProductIntentRedirect
+              >
+                <PlasticCard5 />
+              </PublicOnlyRoute>
+            }
+          />
+          <Route
+            path="/products/plastic-orange"
+            element={
+              <PublicOnlyRoute
+                redirectAuthenticatedTo="/dashboard"
+                allowProductIntentRedirect
+              >
+                <PlasticCard6 />
               </PublicOnlyRoute>
             }
           />
 
-          {/* Old route redirect */}
-          <Route path="/products/plastic" element={<Navigate to="/products/plastic-card" replace />} />
-          <Route path="/products/metal" element={<Navigate to="/products/metal-card" replace />} />
+          {/* Legacy redirects */}
+          <Route path="/products/plastic-card" element={<Navigate to="/products/plastic-white" replace />} />
+          <Route path="/products/plastic" element={<Navigate to="/products/plastic-white" replace />} />
+          <Route path="/products/metal-card" element={<Navigate to="/products/plastic-black" replace />} />
+          <Route path="/products/metal" element={<Navigate to="/products/plastic-black" replace />} />
+          <Route path="/products/konartag" element={<Navigate to="/products/plastic-blue" replace />} />
+          <Route path="/products/plastic-basic" element={<Navigate to="/products/plastic-white" replace />} />
+          <Route path="/products/plastic-signature" element={<Navigate to="/products/plastic-black" replace />} />
+          <Route path="/products/plastic-midnight" element={<Navigate to="/products/plastic-blue" replace />} />
+          <Route path="/products/plastic-graphite" element={<Navigate to="/products/plastic-green" replace />} />
+          <Route path="/products/plastic-sand" element={<Navigate to="/products/plastic-magenta" replace />} />
+          <Route path="/products/plastic-slate" element={<Navigate to="/products/plastic-orange" replace />} />
 
           <Route
             path="/examples"

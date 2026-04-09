@@ -9,8 +9,13 @@ import "../../styling/fonts.css";
 /* Page CSS */
 import "../../styling/products.css";
 
-/* ✅ Product image (same image used for all 6 for now) */
-import PlasticCardImg from "../../assets/images/PlasticCard.jpg";
+/* ✅ Product images */
+import KonarCardWhiteImg from "../../assets/images/KonarCard-White.jpg";
+import KonarCardBlackImg from "../../assets/images/KonarCard-Black.jpg";
+import KonarCardBlueImg from "../../assets/images/KonarCard-Blue.jpg";
+import KonarCardGreenImg from "../../assets/images/KonarCard-Green.jpg";
+import KonarCardMagentaImg from "../../assets/images/KonarCard-Magenta.jpg";
+import KonarCardOrangeImg from "../../assets/images/KonarCard-Orange.jpg";
 
 /* ✅ Sections */
 import ProductsPageHero from "./productspage/ProductsPageHero";
@@ -30,69 +35,69 @@ export default function Products() {
         () => [
             {
                 tag: "Essential",
-                name: "KonarCard Basic",
+                name: "KonarCard White",
                 desc: "Clean white plastic NFC business card with your logo and QR code.",
-                priceText: "£29.99",
-                to: "/products/plastic-basic",
-                img: PlasticCardImg,
-                alt: "KonarCard Basic plastic NFC business card",
-                sku: "konarcard-plastic-basic",
-                cta: "View Basic Card",
+                priceText: "£19.99",
+                to: "/products/plastic-white",
+                img: KonarCardWhiteImg,
+                alt: "KonarCard White plastic NFC business card",
+                sku: "konarcard-plastic-white",
+                cta: "View White Card",
             },
             {
                 tag: "Popular",
-                name: "KonarCard Signature",
-                desc: "Plastic NFC business card with a premium branded background design.",
-                priceText: "£29.99",
-                to: "/products/plastic-signature",
-                img: PlasticCardImg,
-                alt: "KonarCard Signature plastic NFC business card",
-                sku: "konarcard-plastic-signature",
-                cta: "View Signature Card",
+                name: "KonarCard Black",
+                desc: "Bold black plastic NFC business card with a sleek premium finish.",
+                priceText: "£19.99",
+                to: "/products/plastic-black",
+                img: KonarCardBlackImg,
+                alt: "KonarCard Black plastic NFC business card",
+                sku: "konarcard-plastic-black",
+                cta: "View Black Card",
             },
             {
                 tag: "Modern",
-                name: "KonarCard Midnight",
-                desc: "Dark premium-style plastic NFC business card with a bold modern look.",
-                priceText: "£29.99",
-                to: "/products/plastic-midnight",
-                img: PlasticCardImg,
-                alt: "KonarCard Midnight plastic NFC business card",
-                sku: "konarcard-plastic-midnight",
-                cta: "View Midnight Card",
+                name: "KonarCard Blue",
+                desc: "Professional blue plastic NFC business card designed to stand out cleanly.",
+                priceText: "£19.99",
+                to: "/products/plastic-blue",
+                img: KonarCardBlueImg,
+                alt: "KonarCard Blue plastic NFC business card",
+                sku: "konarcard-plastic-blue",
+                cta: "View Blue Card",
             },
             {
-                tag: "Minimal",
-                name: "KonarCard Graphite",
-                desc: "Plastic NFC business card with a refined background built for clean branding.",
-                priceText: "£29.99",
-                to: "/products/plastic-graphite",
-                img: PlasticCardImg,
-                alt: "KonarCard Graphite plastic NFC business card",
-                sku: "konarcard-plastic-graphite",
-                cta: "View Graphite Card",
+                tag: "Fresh",
+                name: "KonarCard Green",
+                desc: "Modern green plastic NFC business card with a sharp branded look.",
+                priceText: "£19.99",
+                to: "/products/plastic-green",
+                img: KonarCardGreenImg,
+                alt: "KonarCard Green plastic NFC business card",
+                sku: "konarcard-plastic-green",
+                cta: "View Green Card",
+            },
+            {
+                tag: "Bold",
+                name: "KonarCard Magenta",
+                desc: "Strong magenta plastic NFC business card for a vibrant premium finish.",
+                priceText: "£19.99",
+                to: "/products/plastic-magenta",
+                img: KonarCardMagentaImg,
+                alt: "KonarCard Magenta plastic NFC business card",
+                sku: "konarcard-plastic-magenta",
+                cta: "View Magenta Card",
             },
             {
                 tag: "Warm",
-                name: "KonarCard Sand",
-                desc: "Plastic NFC business card with a softer premium design and logo-led finish.",
-                priceText: "£29.99",
-                to: "/products/plastic-sand",
-                img: PlasticCardImg,
-                alt: "KonarCard Sand plastic NFC business card",
-                sku: "konarcard-plastic-sand",
-                cta: "View Sand Card",
-            },
-            {
-                tag: "Professional",
-                name: "KonarCard Slate",
-                desc: "Plastic NFC business card with a polished background for a premium first impression.",
-                priceText: "£29.99",
-                to: "/products/plastic-slate",
-                img: PlasticCardImg,
-                alt: "KonarCard Slate plastic NFC business card",
-                sku: "konarcard-plastic-slate",
-                cta: "View Slate Card",
+                name: "KonarCard Orange",
+                desc: "High-impact orange plastic NFC business card with a confident branded style.",
+                priceText: "£19.99",
+                to: "/products/plastic-orange",
+                img: KonarCardOrangeImg,
+                alt: "KonarCard Orange plastic NFC business card",
+                sku: "konarcard-plastic-orange",
+                cta: "View Orange Card",
             },
         ],
         []
@@ -175,8 +180,6 @@ export default function Products() {
                     topCards={realWorldTop}
                     gridCards={realWorldGrid}
                 />
-
-                {/* ❌ Removed BestChoice section */}
 
                 <ProductsPageFAQ />
             </main>
