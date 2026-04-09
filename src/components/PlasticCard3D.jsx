@@ -14,10 +14,10 @@ const safeTexSrc = (src) => {
 };
 
 export default function PlasticCard3D({
-    logoSrc,
+    frontSrc,
+    backSrc,
     qrSrc,
-    logoSize = 50,
-    variant = "white",
+    edgeColor = "#ffffff",
     interactive = true,
     autoRotate = true,
     autoRotateSpeed = 0.68,
@@ -25,7 +25,8 @@ export default function PlasticCard3D({
     stageClassName = "",
     compact = false,
 }) {
-    const safeLogo = safeTexSrc(logoSrc);
+    const safeFront = safeTexSrc(frontSrc);
+    const safeBack = safeTexSrc(backSrc);
     const safeQr = safeTexSrc(qrSrc);
 
     return (
@@ -65,10 +66,10 @@ export default function PlasticCard3D({
                         >
                             <group position={[0, compact ? 0.025 : -0.01, 0]}>
                                 <CardMesh
-                                    logoSrc={safeLogo}
+                                    frontSrc={safeFront}
+                                    backSrc={safeBack}
                                     qrSrc={safeQr}
-                                    logoSize={logoSize}
-                                    variant={variant}
+                                    edgeColor={edgeColor}
                                 />
                             </group>
                         </CardRig>
@@ -233,14 +234,14 @@ function CardRig({
     );
 }
 
-function CardMesh({ logoSrc, qrSrc, logoSize, variant }) {
+function CardMesh({ frontSrc, backSrc, qrSrc, edgeColor }) {
     const w = 0.92;
     const h = w * (54 / 85.6);
     const t = 0.01;
-    const isBlack = variant === "black";
+    const cornerR = 0.06;
 
     const bodyGeo = useMemo(() => {
-        const shape = roundedRectShape(w, h, 0.06);
+        const shape = roundedRectShape(w, h, cornerR);
         const geo = new THREE.ExtrudeGeometry(shape, {
             depth: t,
             bevelEnabled: true,
@@ -254,7 +255,9 @@ function CardMesh({ logoSrc, qrSrc, logoSize, variant }) {
         return geo;
     }, [w, h, t]);
 
-    const [logoTex, qrTex] = useTexture([logoSrc, qrSrc]);
+    const faceGeo = useMemo(() => new THREE.PlaneGeometry(w, h), [w, h]);
+
+    const [frontTex, backTex, qrTex] = useTexture([frontSrc, backSrc, qrSrc]);
 
     useEffect(() => {
         const setupColorTexture = (tex) => {
@@ -269,77 +272,102 @@ function CardMesh({ logoSrc, qrSrc, logoSize, variant }) {
             tex.needsUpdate = true;
         };
 
-        setupColorTexture(logoTex);
+        setupColorTexture(frontTex);
+        setupColorTexture(backTex);
         setupColorTexture(qrTex);
-    }, [logoTex, qrTex]);
+    }, [frontTex, backTex, qrTex]);
 
-    const logoPlaneDims = useMemo(() => {
-        const percent = Math.max(10, Math.min(100, Number(logoSize || 75))) / 100;
-        let planeH = h * percent;
+    const roundedMaskTexture = useMemo(() => {
+        const canvas = document.createElement("canvas");
+        const ctx = canvas.getContext("2d");
+        if (!ctx) return null;
 
-        const img = logoTex?.image;
-        const aspect =
-            img && img.width && img.height ? img.width / img.height : 1;
+        const size = 1024;
+        canvas.width = size;
+        canvas.height = size;
 
-        let planeW = planeH * aspect;
-        const maxW = w * 0.82;
+        ctx.clearRect(0, 0, size, size);
+        ctx.fillStyle = "#ffffff";
 
-        if (planeW > maxW) {
-            planeW = maxW;
-            planeH = planeW / aspect;
+        const r = 72;
+        roundedRectPath(ctx, 0, 0, size, size, r);
+        ctx.fill();
+
+        const tex = new THREE.CanvasTexture(canvas);
+        tex.colorSpace = THREE.SRGBColorSpace;
+        tex.wrapS = THREE.ClampToEdgeWrapping;
+        tex.wrapT = THREE.ClampToEdgeWrapping;
+        tex.minFilter = THREE.LinearMipmapLinearFilter;
+        tex.magFilter = THREE.LinearFilter;
+        tex.generateMipmaps = true;
+        tex.needsUpdate = true;
+
+        return tex;
+    }, []);
+
+    const composedBackTexture = useMemo(() => {
+        const backImg = backTex?.image;
+        const qrImg = qrTex?.image;
+
+        if (!backImg) return null;
+
+        const canvas = document.createElement("canvas");
+        const ctx = canvas.getContext("2d");
+        if (!ctx) return null;
+
+        const width = backImg.width || 1200;
+        const height = backImg.height || 800;
+
+        canvas.width = width;
+        canvas.height = height;
+
+        ctx.clearRect(0, 0, width, height);
+        ctx.drawImage(backImg, 0, 0, width, height);
+
+        if (qrImg) {
+            const qrSize = height * 0.6; /* 60% of card height */
+            const x = (width - qrSize) / 2;
+            const y = (height - qrSize) / 2;
+
+            ctx.drawImage(qrImg, x, y, qrSize, qrSize);
         }
 
-        return { planeW, planeH };
-    }, [logoTex, w, h, logoSize]);
+        const tex = new THREE.CanvasTexture(canvas);
+        tex.colorSpace = THREE.SRGBColorSpace;
+        tex.anisotropy = 12;
+        tex.wrapS = THREE.ClampToEdgeWrapping;
+        tex.wrapT = THREE.ClampToEdgeWrapping;
+        tex.minFilter = THREE.LinearMipmapLinearFilter;
+        tex.magFilter = THREE.LinearFilter;
+        tex.generateMipmaps = true;
+        tex.needsUpdate = true;
 
-    const qrPlaneDims = useMemo(() => {
-        const desired = h * 0.45;
-        const plane = Math.min(h * 0.62, Math.max(h * 0.18, desired));
-        return { planeW: plane, planeH: plane };
-    }, [h]);
+        return tex;
+    }, [backTex, qrTex]);
 
-    const logoPlaneGeo = useMemo(
-        () => new THREE.PlaneGeometry(logoPlaneDims.planeW, logoPlaneDims.planeH),
-        [logoPlaneDims]
-    );
-    const qrPlaneGeo = useMemo(
-        () => new THREE.PlaneGeometry(qrPlaneDims.planeW, qrPlaneDims.planeH),
-        [qrPlaneDims]
-    );
+    useEffect(() => {
+        return () => {
+            if (roundedMaskTexture) roundedMaskTexture.dispose();
+            if (composedBackTexture) composedBackTexture.dispose();
+        };
+    }, [roundedMaskTexture, composedBackTexture]);
 
     const edgeMat = useMemo(() => {
         return new THREE.MeshPhysicalMaterial({
-            color: isBlack ? "#0b1220" : "#ffffff",
-            roughness: isBlack ? 0.48 : 0.42,
-            metalness: isBlack ? 0.06 : 0.0,
-            clearcoat: isBlack ? 0.62 : 0.55,
-            clearcoatRoughness: isBlack ? 0.26 : 0.28,
-            sheen: isBlack ? 0.1 : 0.08,
+            color: edgeColor,
+            roughness: 0.42,
+            metalness: 0,
+            clearcoat: 0.55,
+            clearcoatRoughness: 0.28,
+            sheen: 0.08,
             sheenRoughness: 0.75,
         });
-    }, [isBlack]);
+    }, [edgeColor]);
 
-    const logoMat = useMemo(() => {
-        if (isBlack) {
-            const m = new THREE.MeshBasicMaterial({
-                color: "#ffffff",
-                alphaMap: logoTex || null,
-                transparent: true,
-                opacity: 1,
-                toneMapped: false,
-                side: THREE.FrontSide,
-                depthTest: true,
-                depthWrite: false,
-            });
-            m.alphaTest = 0.02;
-            m.polygonOffset = true;
-            m.polygonOffsetFactor = -6;
-            m.polygonOffsetUnits = -6;
-            return m;
-        }
-
+    const frontMat = useMemo(() => {
         const m = new THREE.MeshBasicMaterial({
-            map: logoTex || null,
+            map: frontTex || null,
+            alphaMap: roundedMaskTexture || null,
             transparent: true,
             opacity: 1,
             toneMapped: false,
@@ -347,16 +375,17 @@ function CardMesh({ logoSrc, qrSrc, logoSize, variant }) {
             depthTest: true,
             depthWrite: false,
         });
-        m.alphaTest = 0.02;
+        m.alphaTest = 0.01;
         m.polygonOffset = true;
         m.polygonOffsetFactor = -6;
         m.polygonOffsetUnits = -6;
         return m;
-    }, [logoTex, isBlack]);
+    }, [frontTex, roundedMaskTexture]);
 
-    const qrMat = useMemo(() => {
+    const backMat = useMemo(() => {
         const m = new THREE.MeshBasicMaterial({
-            map: qrTex || null,
+            map: composedBackTexture || backTex || null,
+            alphaMap: roundedMaskTexture || null,
             transparent: true,
             opacity: 1,
             toneMapped: false,
@@ -364,30 +393,37 @@ function CardMesh({ logoSrc, qrSrc, logoSize, variant }) {
             depthTest: true,
             depthWrite: false,
         });
-        m.alphaTest = 0.02;
+        m.alphaTest = 0.01;
         m.polygonOffset = true;
         m.polygonOffsetFactor = -6;
         m.polygonOffsetUnits = -6;
         return m;
-    }, [qrTex]);
+    }, [composedBackTexture, backTex, roundedMaskTexture]);
 
     const halfT = t / 2;
-    const zFront = halfT + 0.004;
-    const zBack = -halfT - 0.004;
+    const zFront = halfT + 0.0045;
+    const zBack = -halfT - 0.0045;
 
     return (
         <group>
+            {/* Middle plastic card body */}
             <mesh geometry={bodyGeo} material={edgeMat} />
+
+            {/* Front artwork layer */}
             <mesh
-                geometry={logoPlaneGeo}
-                material={logoMat}
+                geometry={faceGeo}
+                material={frontMat}
                 position={[0, 0, zFront]}
+                renderOrder={2}
             />
+
+            {/* Back artwork layer */}
             <mesh
-                geometry={qrPlaneGeo}
-                material={qrMat}
+                geometry={faceGeo}
+                material={backMat}
                 position={[0, 0, zBack]}
                 rotation={[0, Math.PI, 0]}
+                renderOrder={2}
             />
         </group>
     );
@@ -409,4 +445,18 @@ function roundedRectShape(w, h, r) {
     shape.quadraticCurveTo(x, y, x + r, y);
 
     return shape;
+}
+
+function roundedRectPath(ctx, x, y, w, h, r) {
+    ctx.beginPath();
+    ctx.moveTo(x + r, y);
+    ctx.lineTo(x + w - r, y);
+    ctx.quadraticCurveTo(x + w, y, x + w, y + r);
+    ctx.lineTo(x + w, y + h - r);
+    ctx.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
+    ctx.lineTo(x + r, y + h);
+    ctx.quadraticCurveTo(x, y + h, x, y + h - r);
+    ctx.lineTo(x, y + r);
+    ctx.quadraticCurveTo(x, y, x + r, y);
+    ctx.closePath();
 }

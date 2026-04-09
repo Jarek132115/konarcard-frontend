@@ -1,4 +1,3 @@
-// frontend/src/pages/website/products/PlasticCard.jsx
 import React, { useEffect, useMemo, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 
@@ -10,9 +9,9 @@ import "../../../styling/fonts.css";
 import "../../../styling/products/konarcard.css";
 import "../../../styling/home/value.css";
 
-import LogoIcon from "../../../assets/icons/Logo-Icon.svg";
-import LogoIconWhite from "../../../assets/icons/Logo-Icon-White.svg";
 import CardQrCode from "../../../assets/images/CardQrCode.png";
+import WhiteFrontImg from "../../../assets/images/Products/WhiteFront.jpg";
+import WhiteBackImg from "../../../assets/images/Products/WhiteBack.jpg";
 
 import api from "../../../services/api";
 import { useMyProfiles } from "../../../hooks/useBusinessCard";
@@ -81,37 +80,14 @@ function buildCardsProductUrl(productKey) {
     return safe ? `/cards?product=${encodeURIComponent(safe)}` : "/cards";
 }
 
-function fileToDataUrl(file) {
-    return new Promise((resolve, reject) => {
-        const r = new FileReader();
-        r.onload = () => resolve(String(r.result || ""));
-        r.onerror = reject;
-        r.readAsDataURL(file);
-    });
-}
-
-const PRESET_TO_PERCENT = {
-    small: 60,
-    medium: 70,
-    large: 80,
-};
-
 export default function PlasticCard() {
     const navigate = useNavigate();
     const location = useLocation();
 
-    const PRODUCT_KEY = "plastic-card";
+    const PRODUCT_KEY = "plastic-white";
     const RETURN_TO = buildCardsProductUrl(PRODUCT_KEY);
 
     const [qty, setQty] = useState(1);
-    const [cardVariant, setCardVariant] = useState("white");
-
-    const [logoUrl, setLogoUrl] = useState("");
-    const [logoFile, setLogoFile] = useState(null);
-
-    const [logoPreset, setLogoPreset] = useState("medium");
-    const logoPercent = PRESET_TO_PERCENT[logoPreset] || 70;
-
     const [profileId, setProfileId] = useState("");
     const [errorMsg, setErrorMsg] = useState("");
     const [infoMsg, setInfoMsg] = useState("");
@@ -144,20 +120,10 @@ export default function PlasticCard() {
             productKey: PRODUCT_KEY,
             quantity: qty,
             profileId,
-            hadLogo: !!logoFile,
-            variant: cardVariant,
-            cardVariant,
-            logoPreset,
             returnTo: RETURN_TO,
             createdAt: existing?.createdAt || Date.now(),
         });
     };
-
-    useEffect(() => {
-        return () => {
-            if (logoUrl) URL.revokeObjectURL(logoUrl);
-        };
-    }, [logoUrl]);
 
     useEffect(() => {
         const sp = new URLSearchParams(location.search);
@@ -188,27 +154,6 @@ export default function PlasticCard() {
         if (typeof intent.profileId === "string") {
             setProfileId(intent.profileId);
         }
-
-        if (intent.variant === "black" || intent.variant === "white") {
-            setCardVariant(intent.variant);
-        }
-
-        if (intent.cardVariant === "black" || intent.cardVariant === "white") {
-            setCardVariant(intent.cardVariant);
-        }
-
-        if (
-            intent.logoPreset === "small" ||
-            intent.logoPreset === "medium" ||
-            intent.logoPreset === "large"
-        ) {
-            setLogoPreset(intent.logoPreset);
-        }
-
-        if (intent.hadLogo) {
-            setInfoMsg("Please re-upload your logo to continue checkout.");
-        }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     useEffect(() => {
@@ -226,27 +171,7 @@ export default function PlasticCard() {
         if (checkout === "success") return;
 
         persistIntent();
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [qty, profileId, logoFile, cardVariant, logoPreset, location.search]);
-
-    const onPickLogo = (e) => {
-        const file = e.target.files?.[0];
-        if (!file) return;
-        if (!file.type.startsWith("image/")) return;
-
-        if (logoUrl) URL.revokeObjectURL(logoUrl);
-
-        setLogoFile(file);
-        setLogoUrl(URL.createObjectURL(file));
-        setInfoMsg("");
-        setErrorMsg("");
-    };
-
-    const clearLogo = () => {
-        if (logoUrl) URL.revokeObjectURL(logoUrl);
-        setLogoUrl("");
-        setLogoFile(null);
-    };
+    }, [qty, profileId, location.search]);
 
     const features = useMemo(
         () => [
@@ -271,9 +196,6 @@ export default function PlasticCard() {
         ],
         []
     );
-
-    const defaultLogo = cardVariant === "black" ? LogoIconWhite : LogoIcon;
-    const displayedLogo = logoUrl || defaultLogo;
 
     const goLogin = () => {
         persistIntent();
@@ -308,38 +230,20 @@ export default function PlasticCard() {
 
         setBusy(true);
         try {
-            let savedLogoUrl = "";
-            if (logoFile) {
-                const dataUrl = await fileToDataUrl(logoFile);
-
-                const up = await api.post("/api/checkout/nfc/logo", {
-                    dataUrl,
-                    filename: logoFile?.name || "logo.png",
-                });
-
-                if (up?.status >= 400 || !up?.data?.logoUrl) {
-                    throw new Error(up?.data?.error || "Logo upload failed");
-                }
-
-                savedLogoUrl = up.data.logoUrl;
-            }
-
             persistIntent();
 
             const resp = await api.post("/api/checkout/nfc/session", {
                 productKey: PRODUCT_KEY,
-                variant: cardVariant,
                 quantity: qty,
                 profileId,
-                logoUrl: savedLogoUrl || "",
                 returnUrl: `${window.location.origin}${RETURN_TO}`,
                 preview: {
-                    logoPercent,
-                    logoPreset,
-                    usedCustomLogo: !!savedLogoUrl,
-                    variant: cardVariant,
-                    cardVariant,
+                    variant: "white",
                     edition: "plastic",
+                    styleKey: "white",
+                    frontTemplate: "WhiteFront",
+                    backTemplate: "WhiteBack",
+                    usesPresetArtwork: true,
                 },
             });
 
@@ -355,15 +259,12 @@ export default function PlasticCard() {
         }
     };
 
-    const logoLabel = logoFile?.name || "Upload logo";
-    const sizeLabel = (k) => (k === "small" ? "S" : k === "medium" ? "M" : "L");
-
     return (
         <>
             <Navbar />
 
             <main className="kc-konarcard kc-konarcard--premium kc-page">
-                <section className="kc-topHero" aria-label="Plastic KonarCard hero">
+                <section className="kc-topHero" aria-label="White KonarCard hero">
                     <div className="kc-konarcard__wrap">
                         <div className="kc-heroHeadWrap kc-heroHeadWrap--lg">
                             <div className="kc-topHero__head">
@@ -372,17 +273,17 @@ export default function PlasticCard() {
                                         Products
                                     </Link>
                                     <span className="kc-crumbPill__sep">/</span>
-                                    <span className="kc-crumbPill__here">KonarCard – Plastic</span>
+                                    <span className="kc-crumbPill__here">KonarCard – White</span>
                                 </div>
 
-                                <h1 className="h2 kc-premHero__title">Plastic NFC Business Card (UK)</h1>
+                                <h1 className="h2 kc-premHero__title">KonarCard White</h1>
 
                                 <p className="kc-premHero__sub">
-                                    Tap to share your profile in seconds — with a QR backup so it works on every phone.
+                                    A clean white NFC business card with QR backup — designed to look premium and work instantly.
                                 </p>
 
                                 <div className="kc-topHero__badges">
-                                    <span className="kc-badge kc-badge--orange">Best Value</span>
+                                    <span className="kc-badge kc-badge--orange">Most versatile</span>
                                     <span className="kc-badge">12 Month Warranty</span>
                                 </div>
 
@@ -395,77 +296,15 @@ export default function PlasticCard() {
                         <div className="kc-premStage">
                             <div className="kc-premStage__canvasPad">
                                 <PlasticCard3D
-                                    logoSrc={displayedLogo}
+                                    frontSrc={WhiteFrontImg}
+                                    backSrc={WhiteBackImg}
                                     qrSrc={CardQrCode}
-                                    logoSize={logoPercent}
-                                    variant={cardVariant}
+                                    edgeColor="#ffffff"
                                 />
                             </div>
 
                             <div className="kc-controls" aria-label="Configure your card">
                                 <div className="kc-configGrid">
-                                    <div className="kc-controlCell kc-cell--logo">
-                                        <div className="kc-controlK">Logo</div>
-
-                                        <div className="kc-inlineRow">
-                                            <label className="kc-textAction" title="Upload logo">
-                                                <input type="file" accept="image/*" onChange={onPickLogo} />
-                                                {logoLabel}
-                                            </label>
-
-                                            <button
-                                                type="button"
-                                                className="kc-textAction kc-textAction--muted"
-                                                onClick={clearLogo}
-                                                disabled={!logoUrl || busy}
-                                                title="Remove logo"
-                                            >
-                                                Remove
-                                            </button>
-                                        </div>
-                                    </div>
-
-                                    <div className="kc-controlCell kc-cell--size">
-                                        <div className="kc-controlK">Logo size</div>
-
-                                        <div className="kc-inlineRow" role="group" aria-label="Choose logo size">
-                                            {["small", "medium", "large"].map((k) => (
-                                                <button
-                                                    key={k}
-                                                    type="button"
-                                                    className={`kc-toggleText ${logoPreset === k ? "is-active" : ""}`}
-                                                    onClick={() => setLogoPreset(k)}
-                                                    disabled={busy}
-                                                >
-                                                    {sizeLabel(k)}
-                                                </button>
-                                            ))}
-                                        </div>
-                                    </div>
-
-                                    <div className="kc-controlCell kc-cell--colour">
-                                        <div className="kc-controlK">Colour</div>
-
-                                        <div className="kc-inlineRow" role="group" aria-label="Choose card colour">
-                                            <button
-                                                type="button"
-                                                className={`kc-toggleText ${cardVariant === "white" ? "is-active" : ""}`}
-                                                onClick={() => setCardVariant("white")}
-                                                disabled={busy}
-                                            >
-                                                White
-                                            </button>
-                                            <button
-                                                type="button"
-                                                className={`kc-toggleText ${cardVariant === "black" ? "is-active" : ""}`}
-                                                onClick={() => setCardVariant("black")}
-                                                disabled={busy}
-                                            >
-                                                Black
-                                            </button>
-                                        </div>
-                                    </div>
-
                                     <div className="kc-controlCell kc-cell--profile">
                                         <div className="kc-controlK">Link to profile</div>
 
@@ -517,7 +356,7 @@ export default function PlasticCard() {
 
                                     <div className="kc-buyArea kc-cell--buy" aria-label="Buy">
                                         <div className="kc-buyMeta">
-                                            <div className="kc-buyPrice">£29.99</div>
+                                            <div className="kc-buyPrice">£19.99</div>
                                         </div>
 
                                         <div className="kc-buyControls">
@@ -621,10 +460,10 @@ export default function PlasticCard() {
                     </div>
                 </section>
 
-                <section className="kc-section kc-section--soft" aria-label="Plastic NFC Business Card gallery">
+                <section className="kc-section kc-section--soft" aria-label="White KonarCard gallery">
                     <div className="kc-section__inner">
                         <div className="kc-section__head">
-                            <p className="kc-pill kc-section__pill">Plastic NFC Business Card Gallery</p>
+                            <p className="kc-pill kc-section__pill">White KonarCard Gallery</p>
                             <h2 className="kc-section__title">
                                 Made to look <span className="kc-accentWord">premium</span>
                             </h2>

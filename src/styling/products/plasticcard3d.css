@@ -23,7 +23,7 @@
     width: min(920px, 100%);
     max-width: 920px;
     height: clamp(520px, 60vh, 720px);
-    padding: 16px 0;
+    padding: 12px 0;
     box-sizing: border-box;
     overflow: visible !important;
 }
@@ -65,6 +65,7 @@
     .pc3d__stage {
         width: 84vw;
         max-width: 920px;
+        height: clamp(460px, 56vh, 620px);
     }
 
     .pc3d--compact .pc3d__stage {
@@ -81,8 +82,10 @@
 
 @media (max-width: 720px) {
     .pc3d__stage {
-        height: clamp(420px, 56vh, 560px);
-        padding: 12px 0;
+        width: 90vw;
+        max-width: 680px;
+        height: clamp(380px, 52vh, 520px);
+        padding: 8px 0;
     }
 
     .pc3d--compact .pc3d__stage {
@@ -95,8 +98,8 @@
     .pc3d__stage {
         width: 92vw;
         max-width: 420px;
-        height: clamp(340px, 48vh, 440px);
-        padding: 8px 0;
+        height: clamp(320px, 44vh, 420px);
+        padding: 4px 0;
     }
 
     .pc3d--compact .pc3d__stage {
