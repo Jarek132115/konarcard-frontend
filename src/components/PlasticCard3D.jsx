@@ -38,7 +38,7 @@ export default function PlasticCard3D({
             <div className="pc3d__stage">
                 <Canvas
                     dpr={[1, 2]}
-                    camera={{ position: [0, 0.14, 1.22], fov: 32 }}
+                    camera={{ position: [0, 0.03, 1.72], fov: 26 }}
                     gl={{
                         antialias: true,
                         alpha: true,
@@ -58,21 +58,23 @@ export default function PlasticCard3D({
                     <Environment preset="studio" />
 
                     <ResponsiveRig compact={compact}>
-                        <CardRig
-                            interactive={interactive}
-                            autoRotate={autoRotate}
-                            autoRotateSpeed={autoRotateSpeed}
-                            rotationOffset={rotationOffset}
-                        >
-                            <group position={[0, compact ? 0.025 : -0.01, 0]}>
-                                <CardMesh
-                                    frontSrc={safeFront}
-                                    backSrc={safeBack}
-                                    qrSrc={safeQr}
-                                    edgeColor={edgeColor}
-                                />
-                            </group>
-                        </CardRig>
+                        <CardFitWrapper compact={compact}>
+                            <CardRig
+                                interactive={interactive}
+                                autoRotate={autoRotate}
+                                autoRotateSpeed={autoRotateSpeed}
+                                rotationOffset={rotationOffset}
+                            >
+                                <group position={[0, 0, 0]}>
+                                    <CardMesh
+                                        frontSrc={safeFront}
+                                        backSrc={safeBack}
+                                        qrSrc={safeQr}
+                                        edgeColor={edgeColor}
+                                    />
+                                </group>
+                            </CardRig>
+                        </CardFitWrapper>
                     </ResponsiveRig>
                 </Canvas>
             </div>
@@ -86,6 +88,7 @@ function ResponsiveRig({ children, compact = false }) {
 
     useEffect(() => {
         if (!g.current) return;
+
         const w = size.width;
 
         let scale;
@@ -94,30 +97,75 @@ function ResponsiveRig({ children, compact = false }) {
                 w >= 1400
                     ? 0.98
                     : w >= 1200
-                        ? 0.95
+                        ? 0.96
                         : w >= 980
-                            ? 0.92
+                            ? 0.94
                             : w >= 720
-                                ? 0.89
+                                ? 0.92
                                 : w >= 520
-                                    ? 0.86
-                                    : 0.83;
+                                    ? 0.9
+                                    : 0.88;
         } else {
             scale =
                 w >= 1400
-                    ? 0.96
+                    ? 1
                     : w >= 1200
-                        ? 0.94
+                        ? 0.98
                         : w >= 980
-                            ? 0.92
+                            ? 0.96
                             : w >= 720
-                                ? 0.88
+                                ? 0.94
                                 : w >= 520
-                                    ? 0.84
-                                    : 0.8;
+                                    ? 0.92
+                                    : 0.9;
         }
 
         g.current.scale.setScalar(scale);
+    }, [size.width, compact]);
+
+    return <group ref={g}>{children}</group>;
+}
+
+function CardFitWrapper({ children, compact = false }) {
+    const g = useRef();
+    const { size } = useThree();
+
+    useEffect(() => {
+        if (!g.current) return;
+
+        const w = size.width;
+
+        let fitScale;
+
+        if (compact) {
+            fitScale =
+                w >= 1400
+                    ? 0.72
+                    : w >= 1200
+                        ? 0.7
+                        : w >= 980
+                            ? 0.68
+                            : w >= 720
+                                ? 0.66
+                                : w >= 520
+                                    ? 0.64
+                                    : 0.62;
+        } else {
+            fitScale =
+                w >= 1400
+                    ? 0.78
+                    : w >= 1200
+                        ? 0.76
+                        : w >= 980
+                            ? 0.74
+                            : w >= 720
+                                ? 0.72
+                                : w >= 520
+                                    ? 0.7
+                                    : 0.68;
+        }
+
+        g.current.scale.setScalar(fitScale);
     }, [size.width, compact]);
 
     return <group ref={g}>{children}</group>;
@@ -325,10 +373,9 @@ function CardMesh({ frontSrc, backSrc, qrSrc, edgeColor }) {
         ctx.drawImage(backImg, 0, 0, width, height);
 
         if (qrImg) {
-            const qrSize = height * 0.6; /* 60% of card height */
+            const qrSize = height * 0.6;
             const x = (width - qrSize) / 2;
             const y = (height - qrSize) / 2;
-
             ctx.drawImage(qrImg, x, y, qrSize, qrSize);
         }
 
@@ -406,10 +453,8 @@ function CardMesh({ frontSrc, backSrc, qrSrc, edgeColor }) {
 
     return (
         <group>
-            {/* Middle plastic card body */}
             <mesh geometry={bodyGeo} material={edgeMat} />
 
-            {/* Front artwork layer */}
             <mesh
                 geometry={faceGeo}
                 material={frontMat}
@@ -417,7 +462,6 @@ function CardMesh({ frontSrc, backSrc, qrSrc, edgeColor }) {
                 renderOrder={2}
             />
 
-            {/* Back artwork layer */}
             <mesh
                 geometry={faceGeo}
                 material={backMat}
