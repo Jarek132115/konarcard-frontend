@@ -55,7 +55,6 @@ export default function Products() {
         []
     );
 
-    // ✅ SEO: Product list schema (JSON-LD)
     const productSchema = useMemo(() => {
         const origin =
             typeof window !== "undefined" && window.location?.origin
@@ -92,13 +91,11 @@ export default function Products() {
         <section className="khp-products" aria-labelledby="khp-products-title">
             <div className="khp-container">
                 <header className="khp-head">
-                    <p className="kc-pill">Physical Cards</p>
+                    <p className="kc-pill khp-kicker">Physical Cards</p>
 
                     <h2 id="khp-products-title" className="h3 khp-title">
                         Tap-to-Share Cards for Your{" "}
-                        <span className="khp-accent">Digital</span>
-                        <br />
-                        <span className="khp-accent">Profile</span>
+                        <span className="khp-accent">Digital Profile</span>
                     </h2>
 
                     <p className="kc-subheading khp-sub">
@@ -121,7 +118,6 @@ export default function Products() {
                             <meta itemProp="image" content={item.img} />
 
                             <div className="khp-media">
-                                {/* ✅ pill style now white outlined (like screenshot 2) */}
                                 <span className="khp-tagPill" aria-label={item.tag}>
                                     {item.tag}
                                 </span>
@@ -139,7 +135,6 @@ export default function Products() {
 
                             <div className="khp-card__body">
                                 <div className="khp-topCopy">
-                                    {/* ✅ use global title class (no h6) */}
                                     <h3 className="kc-title khp-card__name">{item.name}</h3>
                                     <p className="body khp-desc">{item.desc}</p>
                                 </div>
@@ -151,7 +146,6 @@ export default function Products() {
                                         itemScope
                                         itemType="https://schema.org/Offer"
                                     >
-                                        {/* ✅ use global body class, keep price styling via a small utility class in CSS (no font-size) */}
                                         <p className="body khp-price">
                                             {item.priceText}
                                             <meta itemProp="priceCurrency" content={item.currency} />
@@ -176,7 +170,6 @@ export default function Products() {
                     ))}
                 </div>
 
-                {/* ✅ match screenshot copy */}
                 <p className="body khp-note">
                     One-time card purchase. Your digital profile is free to start.
                 </p>

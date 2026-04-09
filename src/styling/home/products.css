@@ -2,35 +2,41 @@
    HOME — PRODUCTS SECTION
    File: frontend/src/styling/home/products.css
    Typography comes ONLY from fonts.css
+   Uses spacing.css variables
    ========================================================= */
 
 .khp-products {
     background: var(--kc-bg-main);
     color: var(--kc-text-primary);
-    padding: 96px 0;
-}
-
-@media (max-width: 600px) {
-    .khp-products {
-        padding: 64px 0;
-    }
+    padding: var(--sp-12) 0;
 }
 
 .khp-container {
     max-width: 1100px;
     margin: 0 auto;
-    padding: 0 20px;
+    padding: 0 var(--sp-5);
 }
 
 /* =========================
-   HEADER (match other sections)
+   HEADER
    ========================= */
 .khp-head {
     text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.khp-kicker {
+    margin: 0 0 var(--sp-3);
+    /* 12px */
 }
 
 .khp-title {
-    margin: 8px 0 8px;
+    margin: 0 0 var(--sp-2);
+    /* 8px */
+    max-width: 860px;
+    text-wrap: balance;
 }
 
 .khp-accent {
@@ -46,10 +52,12 @@
    GRID + CARDS
    ========================= */
 .khp-grid {
-    margin-top: 36px;
+    margin-top: var(--sp-9);
+    /* 40px */
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 18px;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: var(--sp-5);
+    /* 20px */
     align-items: stretch;
 }
 
@@ -61,9 +69,12 @@
     box-shadow: 0 10px 24px rgba(16, 24, 40, 0.05);
     display: flex;
     flex-direction: column;
+    min-width: 0;
 }
 
-/* Media */
+/* =========================
+   MEDIA
+   ========================= */
 .khp-media {
     position: relative;
     width: 100%;
@@ -82,28 +93,26 @@
     display: block;
 }
 
-/* ✅ Card pill — white outline (matches screenshot 2) */
 .khp-tagPill {
     position: absolute;
     top: 14px;
     left: 14px;
     z-index: 2;
-
     display: inline-flex;
     align-items: center;
     justify-content: center;
-
     border-radius: 999px;
     padding: 7px 10px;
-
     background: rgba(255, 255, 255, 0.92);
     border: 1px solid rgba(15, 23, 42, 0.14);
     color: rgba(15, 23, 42, 0.85);
-
-    /* keep it visually consistent with the global pill sizing */
     font-size: 12px;
     font-weight: 600;
     line-height: 1;
+    max-width: calc(100% - 28px);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .khp-divider {
@@ -111,19 +120,27 @@
     background: rgba(15, 23, 42, 0.06);
 }
 
-/* Body spacing only */
+/* =========================
+   BODY
+   ========================= */
 .khp-card__body {
-    padding: 16px;
+    padding: var(--sp-4);
+    /* 16px */
     display: flex;
     flex-direction: column;
-    gap: 8px;
+    gap: var(--sp-2);
+    /* 8px */
     text-align: left;
+    min-width: 0;
+    flex: 1;
 }
 
 .khp-topCopy {
     display: flex;
     flex-direction: column;
-    gap: 4px;
+    gap: var(--sp-2);
+    /* 8px */
+    min-width: 0;
 }
 
 .khp-card__name,
@@ -133,19 +150,32 @@
     margin: 0;
 }
 
-.khp-buy {
-    margin-top: 8px;
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
+.khp-card__name {
+    text-wrap: balance;
+    overflow-wrap: anywhere;
 }
 
-/* ✅ Price: keep typography from .body, only adjust color emphasis */
+.khp-desc {
+    overflow-wrap: anywhere;
+}
+
+.khp-buy {
+    margin-top: var(--sp-2);
+    /* 8px */
+    display: flex;
+    flex-direction: column;
+    gap: var(--sp-3);
+    /* 12px */
+}
+
 .khp-price {
     color: var(--kc-text-primary);
 }
 
-/* CTA inside cards */
+.khp-actions {
+    display: flex;
+}
+
 .khp-btn {
     width: 100%;
 }
@@ -162,14 +192,17 @@
    NOTE + CTA
    ========================= */
 .khp-note {
-    margin: 22px auto 0;
+    margin: var(--sp-6) auto 0;
+    /* 24px */
     max-width: 760px;
     text-align: center;
     color: rgba(15, 23, 42, 0.62);
+    text-wrap: balance;
 }
 
 .khp-ctaRow {
-    margin-top: 14px;
+    margin-top: var(--sp-3);
+    /* 12px */
     display: flex;
     justify-content: center;
 }
@@ -178,10 +211,37 @@
    RESPONSIVE
    ========================= */
 @media (max-width: 980px) {
+    .khp-products {
+        padding: var(--sp-11) 0;
+    }
+
     .khp-grid {
         grid-template-columns: 1fr;
         max-width: 720px;
         margin-left: auto;
         margin-right: auto;
+    }
+}
+
+@media (max-width: 600px) {
+    .khp-products {
+        padding: var(--sp-12) 0;
+    }
+
+    .khp-container {
+        padding: 0 var(--sp-4);
+    }
+
+    .khp-grid {
+        margin-top: var(--sp-8);
+        gap: var(--sp-4);
+    }
+
+    .khp-card__body {
+        padding: var(--sp-4);
+    }
+
+    .khp-note {
+        margin-top: var(--sp-5);
     }
 }
