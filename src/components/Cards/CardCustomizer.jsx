@@ -1,4 +1,7 @@
 import React, { useEffect, useMemo, useState } from "react";
+import { Input } from "@base-ui/react/input";
+import { Slider } from "@base-ui/react/slider";
+
 import { useMyProfiles } from "../../hooks/useBusinessCard";
 import api from "../../services/api";
 
@@ -14,6 +17,19 @@ import LogoIcon from "../../assets/icons/Logo-Icon.svg";
 import LogoIconWhite from "../../assets/icons/Logo-Icon-White.svg";
 import CardQrCode from "../../assets/images/CardQrCode.png";
 
+import WhiteFrontImg from "../../assets/images/Products/WhiteFront.jpg";
+import WhiteBackImg from "../../assets/images/Products/WhiteBack.jpg";
+import BlackFrontImg from "../../assets/images/Products/BlackFront.jpg";
+import BlackBackImg from "../../assets/images/Products/BlackBack.jpg";
+import BlueFrontImg from "../../assets/images/Products/BlueFront.jpg";
+import BlueBackImg from "../../assets/images/Products/BlueBack.jpg";
+import GreenFrontImg from "../../assets/images/Products/GreenFront.jpg";
+import GreenBackImg from "../../assets/images/Products/GreenBack.jpg";
+import MagentaFrontImg from "../../assets/images/Products/MagentaFront.jpg";
+import MagentaBackImg from "../../assets/images/Products/MagentaBack.jpg";
+import OrangeFrontImg from "../../assets/images/Products/OrangeFront.jpg";
+import OrangeBackImg from "../../assets/images/Products/OrangeBack.jpg";
+
 const NFC_INTENT_KEY = "konar_nfc_intent_v1";
 
 const PRESET_TO_PERCENT = {
@@ -22,6 +38,16 @@ const PRESET_TO_PERCENT = {
     large: 80,
 };
 
+const MIN_FONT_SIZE = 18;
+const MAX_FONT_SIZE = 72;
+const MAX_FRONT_TEXT = 22;
+
+const WEIGHT_OPTIONS = [
+    { key: "regular", label: "Regular", value: 500 },
+    { key: "medium", label: "Medium", value: 600 },
+    { key: "bold", label: "Bold", value: 700 },
+];
+
 function fileToDataUrl(file) {
     return new Promise((resolve, reject) => {
         const r = new FileReader();
@@ -29,6 +55,14 @@ function fileToDataUrl(file) {
         r.onerror = reject;
         r.readAsDataURL(file);
     });
+}
+
+function clamp(n, min, max) {
+    return Math.max(min, Math.min(max, n));
+}
+
+function sanitizeFrontText(value) {
+    return String(value || "").slice(0, MAX_FRONT_TEXT);
 }
 
 function readNfcIntent() {
@@ -109,17 +143,15 @@ const PRODUCT_CONFIG = {
         family: "plastic",
         edition: "plastic",
         variant: "white",
+        styleKey: "white",
+        frontTemplate: "WhiteFront",
+        backTemplate: "WhiteBack",
+        frontSrc: WhiteFrontImg,
+        backSrc: WhiteBackImg,
+        edgeColor: "#ffffff",
+        frontTextColor: "#111111",
         allowLogoUpload: false,
-        render3D: () => (
-            <PlasticCard3D
-                frontText="KONAR"
-                frontFontSize={42}
-                frontFontWeight={700}
-                edgeColor="#ffffff"
-                qrSrc={CardQrCode}
-                variant="white"
-            />
-        ),
+        allowTextPersonalisation: true,
         specs: [
             { k: "Card size", v: "85.6 × 54 mm — standard wallet size" },
             { k: "Thickness", v: "0.76 mm — same thickness as a bank card" },
@@ -141,17 +173,15 @@ const PRODUCT_CONFIG = {
         family: "plastic",
         edition: "plastic",
         variant: "black",
+        styleKey: "black",
+        frontTemplate: "BlackFront",
+        backTemplate: "BlackBack",
+        frontSrc: BlackFrontImg,
+        backSrc: BlackBackImg,
+        edgeColor: "#111111",
+        frontTextColor: "#ffffff",
         allowLogoUpload: false,
-        render3D: () => (
-            <PlasticCard3D
-                frontText="KONAR"
-                frontFontSize={42}
-                frontFontWeight={700}
-                edgeColor="#111111"
-                qrSrc={CardQrCode}
-                variant="black"
-            />
-        ),
+        allowTextPersonalisation: true,
         specs: [
             { k: "Card size", v: "85.6 × 54 mm — standard wallet size" },
             { k: "Thickness", v: "0.76 mm — same thickness as a bank card" },
@@ -173,17 +203,15 @@ const PRODUCT_CONFIG = {
         family: "plastic",
         edition: "plastic",
         variant: "blue",
+        styleKey: "blue",
+        frontTemplate: "BlueFront",
+        backTemplate: "BlueBack",
+        frontSrc: BlueFrontImg,
+        backSrc: BlueBackImg,
+        edgeColor: "#0f52ff",
+        frontTextColor: "#ffffff",
         allowLogoUpload: false,
-        render3D: () => (
-            <PlasticCard3D
-                frontText="KONAR"
-                frontFontSize={42}
-                frontFontWeight={700}
-                edgeColor="#0f52ff"
-                qrSrc={CardQrCode}
-                variant="blue"
-            />
-        ),
+        allowTextPersonalisation: true,
         specs: [
             { k: "Card size", v: "85.6 × 54 mm — standard wallet size" },
             { k: "Thickness", v: "0.76 mm — same thickness as a bank card" },
@@ -205,17 +233,15 @@ const PRODUCT_CONFIG = {
         family: "plastic",
         edition: "plastic",
         variant: "green",
+        styleKey: "green",
+        frontTemplate: "GreenFront",
+        backTemplate: "GreenBack",
+        frontSrc: GreenFrontImg,
+        backSrc: GreenBackImg,
+        edgeColor: "#15a53a",
+        frontTextColor: "#ffffff",
         allowLogoUpload: false,
-        render3D: () => (
-            <PlasticCard3D
-                frontText="KONAR"
-                frontFontSize={42}
-                frontFontWeight={700}
-                edgeColor="#15a53a"
-                qrSrc={CardQrCode}
-                variant="green"
-            />
-        ),
+        allowTextPersonalisation: true,
         specs: [
             { k: "Card size", v: "85.6 × 54 mm — standard wallet size" },
             { k: "Thickness", v: "0.76 mm — same thickness as a bank card" },
@@ -237,17 +263,15 @@ const PRODUCT_CONFIG = {
         family: "plastic",
         edition: "plastic",
         variant: "magenta",
+        styleKey: "magenta",
+        frontTemplate: "MagentaFront",
+        backTemplate: "MagentaBack",
+        frontSrc: MagentaFrontImg,
+        backSrc: MagentaBackImg,
+        edgeColor: "#d1008f",
+        frontTextColor: "#ffffff",
         allowLogoUpload: false,
-        render3D: () => (
-            <PlasticCard3D
-                frontText="KONAR"
-                frontFontSize={42}
-                frontFontWeight={700}
-                edgeColor="#d1008f"
-                qrSrc={CardQrCode}
-                variant="magenta"
-            />
-        ),
+        allowTextPersonalisation: true,
         specs: [
             { k: "Card size", v: "85.6 × 54 mm — standard wallet size" },
             { k: "Thickness", v: "0.76 mm — same thickness as a bank card" },
@@ -269,17 +293,15 @@ const PRODUCT_CONFIG = {
         family: "plastic",
         edition: "plastic",
         variant: "orange",
+        styleKey: "orange",
+        frontTemplate: "OrangeFront",
+        backTemplate: "OrangeBack",
+        frontSrc: OrangeFrontImg,
+        backSrc: OrangeBackImg,
+        edgeColor: "#ff7b00",
+        frontTextColor: "#ffffff",
         allowLogoUpload: false,
-        render3D: () => (
-            <PlasticCard3D
-                frontText="KONAR"
-                frontFontSize={42}
-                frontFontWeight={700}
-                edgeColor="#ff7b00"
-                qrSrc={CardQrCode}
-                variant="orange"
-            />
-        ),
+        allowTextPersonalisation: true,
         specs: [
             { k: "Card size", v: "85.6 × 54 mm — standard wallet size" },
             { k: "Thickness", v: "0.76 mm — same thickness as a bank card" },
@@ -302,6 +324,7 @@ const PRODUCT_CONFIG = {
         edition: "metal",
         variant: "gold",
         allowLogoUpload: true,
+        allowTextPersonalisation: false,
         controlsLabel: "Finish",
         options: [
             { value: "black", label: "Black" },
@@ -338,6 +361,7 @@ const PRODUCT_CONFIG = {
         edition: "tag",
         variant: "black",
         allowLogoUpload: true,
+        allowTextPersonalisation: false,
         controlsLabel: "Finish",
         options: [
             { value: "black", label: "Black" },
@@ -383,6 +407,10 @@ export default function CardCustomizer({
     const logoPercent = PRESET_TO_PERCENT[logoPreset] || 70;
 
     const [profileId, setProfileId] = useState("");
+    const [frontText, setFrontText] = useState("KONAR");
+    const [frontFontWeight, setFrontFontWeight] = useState(700);
+    const [fontSize, setFontSize] = useState(42);
+
     const [errorMsg, setErrorMsg] = useState("");
     const [infoMsg, setInfoMsg] = useState("");
     const [busy, setBusy] = useState(false);
@@ -421,6 +449,22 @@ export default function CardCustomizer({
                 : "medium"
         );
         setProfileId(String(sourceIntent?.profileId || ""));
+        setFrontText(
+            typeof sourceIntent?.frontText === "string"
+                ? sanitizeFrontText(sourceIntent.frontText) || "KONAR"
+                : "KONAR"
+        );
+        setFrontFontWeight(
+            typeof sourceIntent?.frontFontWeight === "number"
+                ? clamp(sourceIntent.frontFontWeight, 400, 900)
+                : 700
+        );
+        setFontSize(
+            typeof sourceIntent?.fontSize === "number"
+                ? clamp(sourceIntent.fontSize, MIN_FONT_SIZE, MAX_FONT_SIZE)
+                : 42
+        );
+
         setLogoUrl("");
         setLogoFile(null);
         setErrorMsg("");
@@ -456,13 +500,28 @@ export default function CardCustomizer({
             hadLogo: !!logoFile,
             variant,
             logoPreset,
+            frontText,
+            frontFontWeight,
+            fontSize,
             family: config.family,
             edition: config.edition,
             returnTo: "/cards",
             createdAt,
             updatedAt: Date.now(),
         });
-    }, [productKey, qty, profileId, logoFile, variant, logoPreset, config.family, config.edition]);
+    }, [
+        productKey,
+        qty,
+        profileId,
+        logoFile,
+        variant,
+        logoPreset,
+        frontText,
+        frontFontWeight,
+        fontSize,
+        config.family,
+        config.edition,
+    ]);
 
     const displayedLogo = logoUrl || (config.getDefaultLogo ? config.getDefaultLogo(variant) : LogoIcon);
     const logoLabel = logoFile?.name || "Upload logo";
@@ -470,6 +529,15 @@ export default function CardCustomizer({
     const deliveryInfo = useMemo(() => getEstimatedDelivery(), []);
     const now = new Date();
     const cutOffText = `${pad2(now.getHours())}:${pad2(now.getMinutes())}`;
+
+    const handleFontSizeChange = (value) => {
+        if (Array.isArray(value)) {
+            setFontSize(clamp(Number(value[0] || MIN_FONT_SIZE), MIN_FONT_SIZE, MAX_FONT_SIZE));
+            return;
+        }
+
+        setFontSize(clamp(Number(value || MIN_FONT_SIZE), MIN_FONT_SIZE, MAX_FONT_SIZE));
+    };
 
     const onPickLogo = (e) => {
         const file = e.target.files?.[0];
@@ -504,6 +572,14 @@ export default function CardCustomizer({
             return;
         }
 
+        if (config.allowTextPersonalisation) {
+            const trimmedFrontText = String(frontText || "").trim();
+            if (!trimmedFrontText) {
+                setErrorMsg("Please add the text you want on the front of the card.");
+                return;
+            }
+        }
+
         setBusy(true);
 
         try {
@@ -524,7 +600,9 @@ export default function CardCustomizer({
                 savedLogoUrl = up.data.logoUrl;
             }
 
-            const resp = await api.post("/api/checkout/nfc/session", {
+            const trimmedFrontText = String(frontText || "").trim();
+
+            const payload = {
                 productKey,
                 variant,
                 quantity: qty,
@@ -539,7 +617,35 @@ export default function CardCustomizer({
                     edition: config.edition,
                 },
                 returnUrl: `${window.location.origin}/cards`,
-            });
+            };
+
+            if (config.allowTextPersonalisation) {
+                payload.customization = {
+                    frontText: trimmedFrontText,
+                    fontFamily: "Cal Sans",
+                    fontWeight: frontFontWeight,
+                    fontSize,
+                    orientation: "horizontal",
+                    textColor: config.frontTextColor,
+                };
+
+                payload.preview = {
+                    ...payload.preview,
+                    styleKey: config.styleKey,
+                    frontTemplate: config.frontTemplate,
+                    backTemplate: config.backTemplate,
+                    usesPresetArtwork: true,
+                    customization: {
+                        frontText: trimmedFrontText,
+                        fontFamily: "Cal Sans",
+                        fontWeight: frontFontWeight,
+                        fontSize,
+                        textColor: config.frontTextColor,
+                    },
+                };
+            }
+
+            const resp = await api.post("/api/checkout/nfc/session", payload);
 
             if (resp?.status >= 400 || !resp?.data?.url) {
                 throw new Error(resp?.data?.error || "Failed to start checkout");
@@ -588,20 +694,102 @@ export default function CardCustomizer({
                 <div className="ccz-mainGrid">
                     <div className="ccz-previewCard">
                         <div className="ccz-previewCanvas">
-                            {hasOptions || config.allowLogoUpload
-                                ? config.render3D({
+                            {config.allowTextPersonalisation ? (
+                                <PlasticCard3D
+                                    frontSrc={config.frontSrc}
+                                    backSrc={config.backSrc}
+                                    qrSrc={CardQrCode}
+                                    edgeColor={config.edgeColor}
+                                    frontText={frontText}
+                                    frontFontSize={fontSize}
+                                    frontFontWeight={frontFontWeight}
+                                    frontTextColor={config.frontTextColor}
+                                />
+                            ) : hasOptions || config.allowLogoUpload ? (
+                                config.render3D({
                                     logoSrc: displayedLogo,
                                     qrSrc: CardQrCode,
                                     logoPercent,
                                     variant,
                                 })
-                                : config.render3D()}
+                            ) : (
+                                config.render3D()
+                            )}
                         </div>
                     </div>
 
                     <div className="ccz-controlsCol">
                         <div className="ccz-controlsCard">
                             <div className="ccz-controlsGrid">
+                                {config.allowTextPersonalisation ? (
+                                    <>
+                                        <div className="ccz-field">
+                                            <div className="ccz-label">Front text</div>
+
+                                            <Input
+                                                className="ccz-textInput"
+                                                value={frontText}
+                                                onChange={(e) => setFrontText(sanitizeFrontText(e.target.value))}
+                                                placeholder="e.g. MichalPlumbing"
+                                                disabled={busy}
+                                                maxLength={MAX_FRONT_TEXT}
+                                            />
+                                        </div>
+
+                                        <div className="ccz-field">
+                                            <div className="ccz-label">Text weight</div>
+
+                                            <div className="ccz-toggleRow" role="group" aria-label="Choose text weight">
+                                                {WEIGHT_OPTIONS.map((option) => {
+                                                    const isActive = option.value === frontFontWeight;
+
+                                                    return (
+                                                        <button
+                                                            key={option.key}
+                                                            type="button"
+                                                            className={`ccz-toggle ${isActive ? "is-active" : ""}`}
+                                                            onClick={() => setFrontFontWeight(option.value)}
+                                                            disabled={busy}
+                                                        >
+                                                            {option.label}
+                                                        </button>
+                                                    );
+                                                })}
+                                            </div>
+                                        </div>
+
+                                        <div className="ccz-field">
+                                            <div className="ccz-label">Text size</div>
+
+                                            <div className="ccz-sliderMeta">
+                                                <span>{MIN_FONT_SIZE}px</span>
+                                                <strong>{fontSize}px</strong>
+                                                <span>{MAX_FONT_SIZE}px</span>
+                                            </div>
+
+                                            <div className="ccz-sliderWrap">
+                                                <Slider.Root
+                                                    className="ccz-sliderRoot"
+                                                    min={MIN_FONT_SIZE}
+                                                    max={MAX_FONT_SIZE}
+                                                    step={1}
+                                                    value={fontSize}
+                                                    onValueChange={handleFontSizeChange}
+                                                    disabled={busy}
+                                                    aria-label="Text size"
+                                                >
+                                                    <Slider.Control className="ccz-sliderControl">
+                                                        <Slider.Track className="ccz-sliderTrack">
+                                                            <Slider.Indicator className="ccz-sliderRange" />
+                                                            <Slider.Thumb className="ccz-sliderThumb" aria-label="Text size" />
+                                                        </Slider.Track>
+                                                    </Slider.Control>
+                                                </Slider.Root>
+                                            </div>
+                                        </div>
+                                    </>
+                                ) : null}
+
                                 {config.allowLogoUpload ? (
                                     <>
                                         <div className="ccz-field">

@@ -138,6 +138,112 @@
     flex-wrap: wrap;
 }
 
+.ccz-textInput {
+    width: 100%;
+    min-height: 48px;
+    border-radius: 14px;
+    border: 1px solid rgba(15, 23, 42, 0.14);
+    background: #ffffff;
+    color: #0f172a;
+    padding: 0 14px;
+    font-family: "Inter", sans-serif;
+    font-size: 14px;
+    font-weight: 500;
+    outline: none;
+    transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.ccz-textInput::placeholder {
+    color: rgba(71, 85, 105, 0.7);
+}
+
+.ccz-textInput:focus,
+.ccz-textInput:focus-visible {
+    border-color: rgba(249, 115, 22, 0.42);
+    box-shadow: 0 0 0 4px rgba(249, 115, 22, 0.1);
+}
+
+.ccz-textInput:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    background: rgba(15, 23, 42, 0.02);
+}
+
+.ccz-sliderMeta {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    font-family: "Inter", sans-serif;
+    font-size: 12px;
+    line-height: 1;
+    color: rgba(71, 85, 105, 0.92);
+}
+
+.ccz-sliderMeta strong {
+    font-size: 13px;
+    font-weight: 800;
+    color: #0f172a;
+}
+
+.ccz-sliderWrap {
+    width: 100%;
+    min-width: 0;
+}
+
+.ccz-sliderRoot {
+    position: relative;
+    display: flex;
+    align-items: center;
+    width: 100%;
+    min-height: 32px;
+    touch-action: none;
+    user-select: none;
+}
+
+.ccz-sliderControl {
+    width: 100%;
+    display: flex;
+    align-items: center;
+}
+
+.ccz-sliderTrack {
+    position: relative;
+    width: 100%;
+    height: 6px;
+    border-radius: 999px;
+    background: rgba(15, 23, 42, 0.1);
+}
+
+.ccz-sliderRange {
+    position: absolute;
+    height: 100%;
+    border-radius: 999px;
+    background: #f97316;
+}
+
+.ccz-sliderThumb {
+    width: 18px;
+    height: 18px;
+    border-radius: 999px;
+    background: #ffffff;
+    border: 2px solid #f97316;
+    box-shadow: 0 4px 14px rgba(15, 23, 42, 0.16);
+    cursor: grab;
+}
+
+.ccz-sliderThumb:focus,
+.ccz-sliderThumb:focus-visible {
+    outline: none;
+    box-shadow:
+        0 4px 14px rgba(15, 23, 42, 0.16),
+        0 0 0 4px rgba(249, 115, 22, 0.12);
+}
+
+.ccz-sliderThumb:active {
+    cursor: grabbing;
+}
+
 .ccz-uploadBtn {
     position: relative;
     min-height: 44px;
