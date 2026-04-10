@@ -10,16 +10,17 @@ export default function PlasticCard5() {
             productKey="plastic-magenta"
             productName="KonarCard Magenta"
             crumbName="KonarCard – Magenta"
-            heroSubtext="A strong magenta NFC business card with QR backup — designed to feel bold, vibrant and premium."
-            badgeText="Bold"
+            heroSubtext="A bold magenta NFC business card with QR backup — designed to stand out instantly and feel premium."
+            badgeText="Bold choice"
             frontSrc={MagentaFrontImg}
             backSrc={MagentaBackImg}
-            edgeColor="#c4007d"
+            edgeColor="#be185d"
             frontTextColor="#ffffff"
             variant="magenta"
             styleKey="magenta"
             frontTemplate="MagentaFront"
             backTemplate="MagentaBack"
+            buyButtonText="Buy Magenta Card"
         />
     );
 }

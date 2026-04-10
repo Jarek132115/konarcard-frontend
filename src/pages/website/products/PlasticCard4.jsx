@@ -10,16 +10,17 @@ export default function PlasticCard4() {
             productKey="plastic-green"
             productName="KonarCard Green"
             crumbName="KonarCard – Green"
-            heroSubtext="A modern green NFC business card with QR backup — designed to look sharp and work instantly."
-            badgeText="Fresh"
+            heroSubtext="A strong green NFC business card with QR backup — built to look professional and stand out in person."
+            badgeText="Bold choice"
             frontSrc={GreenFrontImg}
             backSrc={GreenBackImg}
-            edgeColor="#29a63b"
+            edgeColor="#166534"
             frontTextColor="#ffffff"
             variant="green"
             styleKey="green"
             frontTemplate="GreenFront"
             backTemplate="GreenBack"
+            buyButtonText="Buy Green Card"
         />
     );
 }

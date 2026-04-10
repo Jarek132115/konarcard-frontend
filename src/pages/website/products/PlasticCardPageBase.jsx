@@ -119,6 +119,8 @@ export default function PlasticCardPageBase({
     styleKey,
     frontTemplate,
     backTemplate,
+    buyButtonText,
+    buyReassureText = "Works with iPhone & Android. QR backup included. Profile is linked from your dashboard.",
 }) {
     const navigate = useNavigate();
     const location = useLocation();
@@ -218,6 +220,39 @@ export default function PlasticCardPageBase({
             createdAt: existing?.createdAt || Date.now(),
         });
     };
+
+    useEffect(() => {
+        if (
+            !productKey ||
+            !productName ||
+            !frontSrc ||
+            !backSrc ||
+            !variant ||
+            !styleKey ||
+            !frontTemplate ||
+            !backTemplate
+        ) {
+            console.error("PlasticCardPageBase missing required props", {
+                productKey,
+                productName,
+                frontSrc,
+                backSrc,
+                variant,
+                styleKey,
+                frontTemplate,
+                backTemplate,
+            });
+        }
+    }, [
+        productKey,
+        productName,
+        frontSrc,
+        backSrc,
+        variant,
+        styleKey,
+        frontTemplate,
+        backTemplate,
+    ]);
 
     useEffect(() => {
         const sp = new URLSearchParams(location.search);
@@ -341,7 +376,7 @@ export default function PlasticCardPageBase({
                     fontWeight: frontFontWeight,
                     fontSize,
                     orientation: "horizontal",
-                    ...(frontTextColor !== "#111111" ? { textColor: frontTextColor } : {}),
+                    textColor: frontTextColor,
                 },
                 preview: {
                     variant,
@@ -355,7 +390,7 @@ export default function PlasticCardPageBase({
                         fontFamily: "Cal Sans",
                         fontWeight: frontFontWeight,
                         fontSize,
-                        ...(frontTextColor !== "#111111" ? { textColor: frontTextColor } : {}),
+                        textColor: frontTextColor,
                     },
                 },
             });
@@ -546,11 +581,11 @@ export default function PlasticCardPageBase({
                                                     className="kx-btn kx-btn--black kc-buyBtnFit"
                                                     disabled={busy}
                                                 >
-                                                    {busy ? "Starting checkout..." : "Buy KonarCard"}
+                                                    {busy ? "Starting checkout..." : (buyButtonText || `Buy ${productName}`)}
                                                 </button>
 
                                                 <p className="kc-buyReassure">
-                                                    Works with iPhone & Android. QR backup included. Profile is linked from your dashboard.
+                                                    {buyReassureText}
                                                 </p>
                                             </div>
                                         </div>

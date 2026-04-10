@@ -20,6 +20,7 @@ export default function PlasticCard() {
             styleKey="white"
             frontTemplate="WhiteFront"
             backTemplate="WhiteBack"
+            buyButtonText="Buy White Card"
         />
     );
 }

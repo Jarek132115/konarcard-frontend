@@ -10,16 +10,17 @@ export default function PlasticCard6() {
             productKey="plastic-orange"
             productName="KonarCard Orange"
             crumbName="KonarCard – Orange"
-            heroSubtext="A high-impact orange NFC business card with QR backup — designed to feel confident and stand out instantly."
-            badgeText="Warm"
+            heroSubtext="A vibrant orange NFC business card with QR backup — built to grab attention instantly."
+            badgeText="High visibility"
             frontSrc={OrangeFrontImg}
             backSrc={OrangeBackImg}
-            edgeColor="#ff8a00"
+            edgeColor="#ea580c"
             frontTextColor="#ffffff"
             variant="orange"
             styleKey="orange"
             frontTemplate="OrangeFront"
             backTemplate="OrangeBack"
+            buyButtonText="Buy Orange Card"
         />
     );
 }
