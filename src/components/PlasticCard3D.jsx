@@ -92,6 +92,7 @@ export default function PlasticCard3D({
     frontText = "",
     frontFontSize = 30,
     frontFontWeight = 700,
+    frontTextColor = "#111111",
 }) {
     const safeFront = safeTexSrc(frontSrc);
     const safeBack = safeTexSrc(backSrc);
@@ -142,6 +143,7 @@ export default function PlasticCard3D({
                                         frontText={frontText}
                                         frontFontSize={frontFontSize}
                                         frontFontWeight={frontFontWeight}
+                                        frontTextColor={frontTextColor}
                                     />
                                 </group>
                             </CardRig>
@@ -361,6 +363,7 @@ function CardMesh({
     frontText,
     frontFontSize,
     frontFontWeight,
+    frontTextColor,
 }) {
     const w = 0.92;
     const h = w * (54 / 85.6);
@@ -463,7 +466,7 @@ function CardMesh({
 
             ctx.save();
             ctx.font = `${fontWeight} ${resolvedSize}px ${fontFamily}`;
-            ctx.fillStyle = "#111111";
+            ctx.fillStyle = frontTextColor || "#111111";
             ctx.textAlign = "center";
             ctx.textBaseline = "middle";
 
@@ -489,7 +492,7 @@ function CardMesh({
         setupColorTexture(tex);
 
         return tex;
-    }, [frontTex, frontText, frontFontSize, frontFontWeight]);
+    }, [frontTex, frontText, frontFontSize, frontFontWeight, frontTextColor]);
 
     const composedBackTexture = useMemo(() => {
         const backImg = backTex?.image;
