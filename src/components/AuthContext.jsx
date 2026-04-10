@@ -1,11 +1,27 @@
-// src/components/AuthContext.jsx
-import React, { createContext, useEffect, useMemo, useRef, useState, useCallback } from "react";
+import React, {
+    createContext,
+    useEffect,
+    useMemo,
+    useRef,
+    useState,
+    useCallback,
+} from "react";
 import api from "../services/api";
 
 export const AuthContext = createContext();
 
 const TOKEN_KEY = "token";
 const USER_KEY = "authUser";
+
+function normalizeUser(raw) {
+    if (!raw || typeof raw !== "object") return null;
+
+    return {
+        ...raw,
+        email: String(raw.email || "").trim().toLowerCase(),
+        role: String(raw.role || "user").trim().toLowerCase(),
+    };
+}
 
 export const AuthProvider = ({ children }) => {
     const [user, setUser] = useState(null);
@@ -23,7 +39,8 @@ export const AuthProvider = ({ children }) => {
 
     const readCachedUser = useCallback(() => {
         try {
-            return JSON.parse(localStorage.getItem(USER_KEY) || "null");
+            const parsed = JSON.parse(localStorage.getItem(USER_KEY) || "null");
+            return normalizeUser(parsed);
         } catch {
             return null;
         }
@@ -31,7 +48,8 @@ export const AuthProvider = ({ children }) => {
 
     const writeCachedUser = useCallback((fresh) => {
         try {
-            if (fresh) localStorage.setItem(USER_KEY, JSON.stringify(fresh));
+            const normalized = normalizeUser(fresh);
+            if (normalized) localStorage.setItem(USER_KEY, JSON.stringify(normalized));
             else localStorage.removeItem(USER_KEY);
         } catch {
             // ignore storage issues
@@ -45,12 +63,14 @@ export const AuthProvider = ({ children }) => {
         } catch {
             // ignore
         }
+
         attachAuthHeader(null);
         setUser(null);
     }, [attachAuthHeader]);
 
     const fetchUser = useCallback(async () => {
         let token = "";
+
         try {
             token = localStorage.getItem(TOKEN_KEY) || "";
         } catch {
@@ -78,7 +98,7 @@ export const AuthProvider = ({ children }) => {
                 return null;
             }
 
-            const fresh = res?.data?.data || null;
+            const fresh = normalizeUser(res?.data?.data || null);
 
             if (!fresh) {
                 return null;
@@ -112,16 +132,20 @@ export const AuthProvider = ({ children }) => {
 
         setInitialized(true);
 
-        if (token) void fetchUser();
+        if (token) {
+            void fetchUser();
+        }
     }, [attachAuthHeader, fetchUser, readCachedUser]);
 
     const login = useCallback(
         (token, userData) => {
+            const normalizedUser = normalizeUser(userData);
+
             try {
                 localStorage.setItem(TOKEN_KEY, token);
 
-                if (userData) {
-                    localStorage.setItem(USER_KEY, JSON.stringify(userData));
+                if (normalizedUser) {
+                    localStorage.setItem(USER_KEY, JSON.stringify(normalizedUser));
                 } else {
                     const cached = readCachedUser();
                     if (!cached) localStorage.removeItem(USER_KEY);
@@ -132,8 +156,8 @@ export const AuthProvider = ({ children }) => {
 
             attachAuthHeader(token);
 
-            if (userData) {
-                setUser(userData);
+            if (normalizedUser) {
+                setUser(normalizedUser);
             } else {
                 const cached = readCachedUser();
                 if (cached) setUser(cached);
@@ -148,6 +172,8 @@ export const AuthProvider = ({ children }) => {
         clearAuth();
     }, [clearAuth]);
 
+    const loading = !initialized || hydrating;
+
     const value = useMemo(
         () => ({
             user,
@@ -156,8 +182,9 @@ export const AuthProvider = ({ children }) => {
             fetchUser,
             initialized,
             hydrating,
+            loading,
         }),
-        [user, login, logout, fetchUser, initialized, hydrating]
+        [user, login, logout, fetchUser, initialized, hydrating, loading]
     );
 
     return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
