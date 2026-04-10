@@ -17,6 +17,7 @@ export const CARDS_PRODUCT_CATALOG = [
         cta: "Choose White Card",
         websitePath: "/products/plastic-white",
         image: KonarCardWhiteImg,
+        imageAlt: "KonarCard White plastic NFC business card",
     },
     {
         key: "plastic-black",
@@ -29,6 +30,7 @@ export const CARDS_PRODUCT_CATALOG = [
         cta: "Choose Black Card",
         websitePath: "/products/plastic-black",
         image: KonarCardBlackImg,
+        imageAlt: "KonarCard Black plastic NFC business card",
     },
     {
         key: "plastic-blue",
@@ -41,6 +43,7 @@ export const CARDS_PRODUCT_CATALOG = [
         cta: "Choose Blue Card",
         websitePath: "/products/plastic-blue",
         image: KonarCardBlueImg,
+        imageAlt: "KonarCard Blue plastic NFC business card",
     },
     {
         key: "plastic-green",
@@ -53,6 +56,7 @@ export const CARDS_PRODUCT_CATALOG = [
         cta: "Choose Green Card",
         websitePath: "/products/plastic-green",
         image: KonarCardGreenImg,
+        imageAlt: "KonarCard Green plastic NFC business card",
     },
     {
         key: "plastic-magenta",
@@ -65,6 +69,7 @@ export const CARDS_PRODUCT_CATALOG = [
         cta: "Choose Magenta Card",
         websitePath: "/products/plastic-magenta",
         image: KonarCardMagentaImg,
+        imageAlt: "KonarCard Magenta plastic NFC business card",
     },
     {
         key: "plastic-orange",
@@ -77,5 +82,6 @@ export const CARDS_PRODUCT_CATALOG = [
         cta: "Choose Orange Card",
         websitePath: "/products/plastic-orange",
         image: KonarCardOrangeImg,
+        imageAlt: "KonarCard Orange plastic NFC business card",
     },
 ];

@@ -1,6 +1,5 @@
 import React from "react";
 import { CARDS_PRODUCT_CATALOG } from "./cardsConfig";
-import ProductCardPreview3D from "./ProductCardPreview3D";
 
 export default function CardsCatalog({
     onChooseProduct,
@@ -32,8 +31,14 @@ export default function CardsCatalog({
                         <div className="cp-catalogMedia">
                             <span className="cp-catalogTag">{item.tag}</span>
 
-                            <div className="cp-catalogPreview3D">
-                                <ProductCardPreview3D productKey={item.key} />
+                            <div className="cp-catalogImageWrap" aria-hidden="true">
+                                <img
+                                    className="cp-catalogImage"
+                                    src={item.image}
+                                    alt={item.imageAlt || item.title}
+                                    loading="lazy"
+                                    decoding="async"
+                                />
                             </div>
                         </div>
 
