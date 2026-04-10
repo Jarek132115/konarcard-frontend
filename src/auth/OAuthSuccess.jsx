@@ -1,5 +1,4 @@
-// frontend/src/auth/OAuthSuccess.jsx
-import { useEffect, useContext, useRef } from "react";
+import { useEffect, useContext, useRef, useCallback } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { AuthContext } from "../components/AuthContext";
 import api from "../services/api";
@@ -122,7 +121,7 @@ export default function OAuthSuccess() {
     const { login, fetchUser } = useContext(AuthContext);
     const ranRef = useRef(false);
 
-    const resumeCheckout = async (intent) => {
+    const resumeCheckout = useCallback(async (intent) => {
         if (!intent?.planKey) return false;
 
         const returnUrl = intent.returnUrl || `${window.location.origin}/myprofile?subscribed=1`;
@@ -142,9 +141,9 @@ export default function OAuthSuccess() {
         } catch {
             return false;
         }
-    };
+    }, []);
 
-    const autoClaimIfPossible = async () => {
+    const autoClaimIfPossible = useCallback(async () => {
         const pending = getPendingClaim();
         if (!pending) return false;
 
@@ -159,7 +158,7 @@ export default function OAuthSuccess() {
         } catch {
             return false;
         }
-    };
+    }, [fetchUser]);
 
     useEffect(() => {
         if (ranRef.current) return;
@@ -190,7 +189,6 @@ export default function OAuthSuccess() {
                 const checkoutIntent = readCheckoutIntent();
                 const nfcIntent = readNfcIntent();
 
-                // 1) Subscription intent still takes priority, and still needs a claim first.
                 if (checkoutIntent) {
                     if (!userHasClaim(user)) {
                         const claimed = await autoClaimIfPossible();
@@ -205,13 +203,11 @@ export default function OAuthSuccess() {
                     const resumed = await resumeCheckout(checkoutIntent);
                     if (resumed) return;
 
-                    navigate("/myprofile", { replace: true });
+                    clearClaimKeys();
+                    navigate("/dashboard", { replace: true });
                     return;
                 }
 
-                // 2) NFC intent should resume straight into dashboard cards.
-                // Do not force claim here — NFC only needs a logged-in user,
-                // and profile selection happens inside /cards.
                 if (nfcIntent?.productKey) {
                     clearClaimKeys();
                     navigate(
@@ -220,17 +216,16 @@ export default function OAuthSuccess() {
                             replace: true,
                             state: {
                                 openProductFromIntent: true,
-                                source: "oauth_nfc_intent",
+                                source: "oauth_nfc_resume",
                             },
                         }
                     );
                     return;
                 }
 
-                // 3) Normal non-checkout OAuth flow.
                 if (userHasClaim(user)) {
                     clearClaimKeys();
-                    navigate("/myprofile", { replace: true });
+                    navigate("/dashboard", { replace: true });
                     return;
                 }
 
@@ -238,7 +233,8 @@ export default function OAuthSuccess() {
                 if (source === "register") {
                     const claimed = await autoClaimIfPossible();
                     if (claimed) {
-                        navigate("/myprofile", { replace: true });
+                        clearClaimKeys();
+                        navigate("/dashboard", { replace: true });
                         return;
                     }
                 }
@@ -249,7 +245,7 @@ export default function OAuthSuccess() {
                 navigate("/login?oauth=failed", { replace: true });
             }
         })();
-    }, [location.search, navigate, login, fetchUser]);
+    }, [location.search, navigate, login, fetchUser, autoClaimIfPossible, resumeCheckout]);
 
     return <p style={{ textAlign: "center", marginTop: "4rem" }}>Signing you in…</p>;
 }

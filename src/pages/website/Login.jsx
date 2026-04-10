@@ -1,4 +1,4 @@
-import React, { useState, useContext, useEffect } from "react";
+import React, { useState, useContext, useEffect, useCallback } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { toast } from "react-hot-toast";
 import { AuthContext } from "../../components/AuthContext";
@@ -52,7 +52,7 @@ export default function Login() {
         else navigate("/");
     };
 
-    const readCheckoutIntent = () => {
+    const readCheckoutIntent = useCallback(() => {
         try {
             const raw = localStorage.getItem(CHECKOUT_INTENT_KEY);
             if (!raw) return null;
@@ -70,17 +70,17 @@ export default function Login() {
         } catch {
             return null;
         }
-    };
+    }, []);
 
-    const clearCheckoutIntent = () => {
+    const clearCheckoutIntent = useCallback(() => {
         try {
             localStorage.removeItem(CHECKOUT_INTENT_KEY);
         } catch {
             // ignore
         }
-    };
+    }, []);
 
-    const readNfcIntent = () => {
+    const readNfcIntent = useCallback(() => {
         try {
             const raw = localStorage.getItem(NFC_INTENT_KEY);
             if (!raw) return null;
@@ -98,26 +98,64 @@ export default function Login() {
         } catch {
             return null;
         }
-    };
+    }, []);
 
-    const resolvePostAuthDestination = () => {
-        const nfc = readNfcIntent();
-
-        if (nfc?.returnTo && typeof nfc.returnTo === "string") {
-            return nfc.returnTo;
+    const clearPostAuthAction = useCallback(() => {
+        try {
+            localStorage.removeItem(POST_AUTH_KEY);
+        } catch {
+            // ignore
         }
+    }, []);
 
-        if (nfc?.productKey) {
-            return buildCardsProductUrl(nfc.productKey);
-        }
-
+    const resolveDefaultPostAuthDestination = useCallback(() => {
         const from = location.state?.from;
         if (typeof from === "string" && from.trim()) {
             return from;
         }
-
         return "/dashboard";
-    };
+    }, [location.state]);
+
+    const navigateAfterAuth = useCallback(async () => {
+        let action = null;
+
+        try {
+            const saved = localStorage.getItem(POST_AUTH_KEY);
+            if (saved) action = JSON.parse(saved);
+        } catch {
+            action = null;
+        }
+
+        const nfcIntent = readNfcIntent();
+
+        if (
+            action?.type === "buy_nfc" ||
+            action?.type === "buy_card" ||
+            nfcIntent?.productKey
+        ) {
+            clearPostAuthAction();
+
+            navigate(
+                nfcIntent?.returnTo || buildCardsProductUrl(nfcIntent?.productKey),
+                {
+                    replace: true,
+                    state: {
+                        openProductFromIntent: true,
+                        source: "login_nfc_resume",
+                    },
+                }
+            );
+            return;
+        }
+
+        clearPostAuthAction();
+        navigate(resolveDefaultPostAuthDestination(), { replace: true });
+    }, [
+        clearPostAuthAction,
+        navigate,
+        readNfcIntent,
+        resolveDefaultPostAuthDestination,
+    ]);
 
     const startOAuth = (provider) => {
         if (provider === "apple") {
@@ -145,61 +183,6 @@ export default function Login() {
         const t = setTimeout(() => setCooldown((s) => s - 1), 1000);
         return () => clearTimeout(t);
     }, [cooldown]);
-
-    const runPendingActionOrDefault = async () => {
-        let action = null;
-
-        try {
-            const saved = localStorage.getItem(POST_AUTH_KEY);
-            if (saved) action = JSON.parse(saved);
-        } catch {
-            action = null;
-        }
-
-        try {
-            localStorage.removeItem(POST_AUTH_KEY);
-        } catch {
-            // ignore
-        }
-
-        if (action?.type === "buy_nfc") {
-            const nfc = readNfcIntent();
-            navigate(nfc?.returnTo || buildCardsProductUrl(nfc?.productKey), {
-                replace: true,
-                state: {
-                    openProductFromIntent: true,
-                    source: "login_post_auth_action",
-                },
-            });
-            return;
-        }
-
-        if (action?.type === "buy_card") {
-            const nfc = readNfcIntent();
-            navigate(nfc?.returnTo || buildCardsProductUrl(nfc?.productKey), {
-                replace: true,
-                state: {
-                    openProductFromIntent: true,
-                    source: "login_buy_card",
-                },
-            });
-            return;
-        }
-
-        const nfc = readNfcIntent();
-        if (nfc?.productKey) {
-            navigate(nfc?.returnTo || buildCardsProductUrl(nfc.productKey), {
-                replace: true,
-                state: {
-                    openProductFromIntent: true,
-                    source: "login_nfc_intent",
-                },
-            });
-            return;
-        }
-
-        navigate(resolvePostAuthDestination(), { replace: true });
-    };
 
     const resumeCheckoutIfNeeded = async () => {
         const intent = readCheckoutIntent();
@@ -282,7 +265,7 @@ export default function Login() {
             const resumed = await resumeCheckoutIfNeeded();
             if (resumed) return;
 
-            await runPendingActionOrDefault();
+            await navigateAfterAuth();
         } catch (err) {
             toast.error(err?.response?.data?.error || "Login failed.");
         } finally {
@@ -334,10 +317,16 @@ export default function Login() {
 
             login(loginRes.data.token, loginRes.data.user);
 
+            const email = loginRes.data.user?.email || cleanEmail;
+            if (isAdminEmail(email)) {
+                navigate("/admin", { replace: true });
+                return;
+            }
+
             const resumed = await resumeCheckoutIfNeeded();
             if (resumed) return;
 
-            await runPendingActionOrDefault();
+            await navigateAfterAuth();
         } catch (err) {
             toast.error(err?.response?.data?.error || "Verification failed.");
         } finally {
@@ -537,7 +526,7 @@ export default function Login() {
                                             <Link
                                                 className="kc-link"
                                                 to="/register"
-                                                state={{ from: resolvePostAuthDestination() }}
+                                                state={{ from: resolveDefaultPostAuthDestination() }}
                                             >
                                                 Create an account
                                             </Link>

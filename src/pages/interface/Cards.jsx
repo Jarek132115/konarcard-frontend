@@ -480,24 +480,40 @@ export default function Cards() {
     }
 
     if (product && PRODUCT_META[product]) {
-      setSelectedOrderView(false);
-      setSelectedId(null);
-      setSelectedProductKey(product);
+      if (selectedProductKey !== product || selectedOrderView || selectedId) {
+        setSelectedOrderView(false);
+        setSelectedId(null);
+        setSelectedProductKey(product);
+      }
       return;
     }
 
-    if (location.search) return;
-    if (selectedOrderView) return;
-    if (selectedId) return;
+    if (selectedOrderView || selectedId) {
+      return;
+    }
 
     if (intent?.productKey && PRODUCT_META[intent.productKey]) {
-      setSelectedOrderView(false);
-      setSelectedProductKey(intent.productKey);
+      if (selectedProductKey !== intent.productKey) {
+        setSelectedOrderView(false);
+        setSelectedProductKey(intent.productKey);
+      }
       return;
     }
 
-    setSelectedProductKey("");
-  }, [location.search, navigate, selectedOrderView, selectedId]);
+    if (location.search) {
+      return;
+    }
+
+    if (selectedProductKey) {
+      setSelectedProductKey("");
+    }
+  }, [
+    location.search,
+    navigate,
+    selectedOrderView,
+    selectedId,
+    selectedProductKey,
+  ]);
 
   const openConfigurator = (productKey) => {
     const resolvedKey = resolveProductKey(productKey);

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useContext, useMemo } from "react";
+import React, { useState, useEffect, useRef, useContext, useMemo, useCallback } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { toast } from "react-hot-toast";
 import { AuthContext } from "../../components/AuthContext";
@@ -67,7 +67,7 @@ export default function Register() {
         setCooldown(30);
     };
 
-    const readCheckoutIntent = () => {
+    const readCheckoutIntent = useCallback(() => {
         try {
             const raw = localStorage.getItem(CHECKOUT_INTENT_KEY);
             if (!raw) return null;
@@ -85,17 +85,17 @@ export default function Register() {
         } catch {
             return null;
         }
-    };
+    }, []);
 
-    const clearCheckoutIntent = () => {
+    const clearCheckoutIntent = useCallback(() => {
         try {
             localStorage.removeItem(CHECKOUT_INTENT_KEY);
         } catch {
             // ignore
         }
-    };
+    }, []);
 
-    const readNfcIntent = () => {
+    const readNfcIntent = useCallback(() => {
         try {
             const raw = localStorage.getItem(NFC_INTENT_KEY);
             if (!raw) return null;
@@ -113,31 +113,20 @@ export default function Register() {
         } catch {
             return null;
         }
-    };
+    }, []);
 
-    const resolvePostAuthDestination = () => {
-        const nfc = readNfcIntent();
-
-        if (nfc?.returnTo && typeof nfc.returnTo === "string") {
-            return nfc.returnTo;
-        }
-
-        if (nfc?.productKey) {
-            return buildCardsProductUrl(nfc.productKey);
-        }
-
+    const resolveDefaultPostAuthDestination = useCallback(() => {
         const from = location.state?.from;
         if (typeof from === "string" && from.trim()) {
             return from;
         }
-
         return "/dashboard";
-    };
+    }, [location.state]);
 
-    const checkoutIntent = useMemo(() => readCheckoutIntent(), []);
+    const checkoutIntent = useMemo(() => readCheckoutIntent(), [readCheckoutIntent]);
     const hasCheckoutIntent = !!checkoutIntent;
 
-    const nfcIntent = useMemo(() => readNfcIntent(), []);
+    const nfcIntent = useMemo(() => readNfcIntent(), [readNfcIntent]);
     const hasNfcIntent = !!nfcIntent;
 
     useEffect(() => {
@@ -157,8 +146,7 @@ export default function Register() {
         } catch {
             if (hasCheckoutIntent || hasNfcIntent) setForceClaimStep(true);
         }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []);
+    }, [hasCheckoutIntent, hasNfcIntent, location.state]);
 
     useEffect(() => {
         if (cooldown <= 0) return;
@@ -208,7 +196,7 @@ export default function Register() {
         }
     };
 
-    const resumeNfcIfNeeded = () => {
+    const resumeNfcIfNeeded = useCallback(() => {
         const intent = readNfcIntent();
         if (!intent?.productKey) return false;
 
@@ -216,11 +204,28 @@ export default function Register() {
             replace: true,
             state: {
                 openProductFromIntent: true,
-                source: "register_nfc_intent",
+                source: "register_nfc_resume",
             },
         });
         return true;
-    };
+    }, [navigate, readNfcIntent]);
+
+    const finalizePostAuthNavigation = useCallback(async () => {
+        const resumed = await resumeCheckoutIfNeeded();
+        if (resumed) return true;
+
+        if (resumeNfcIfNeeded()) return true;
+
+        try {
+            localStorage.removeItem(PENDING_CLAIM_KEY);
+            localStorage.removeItem(OAUTH_SOURCE_KEY);
+        } catch {
+            // ignore
+        }
+
+        navigate(resolveDefaultPostAuthDestination(), { replace: true });
+        return true;
+    }, [navigate, resolveDefaultPostAuthDestination, resumeNfcIfNeeded]);
 
     const claimLinkContinue = async (e) => {
         e.preventDefault();
@@ -372,25 +377,7 @@ export default function Register() {
             }
 
             login(loginRes.data.token, loginRes.data.user);
-
-            try {
-                localStorage.removeItem(OAUTH_SOURCE_KEY);
-            } catch {
-                // ignore
-            }
-
-            const resumed = await resumeCheckoutIfNeeded();
-            if (resumed) return;
-
-            if (resumeNfcIfNeeded()) return;
-
-            try {
-                localStorage.removeItem(PENDING_CLAIM_KEY);
-            } catch {
-                // ignore
-            }
-
-            navigate(resolvePostAuthDestination(), { replace: true });
+            await finalizePostAuthNavigation();
         } catch (err) {
             toast.error(err?.response?.data?.error || "Verification failed");
         } finally {
@@ -579,7 +566,7 @@ export default function Register() {
                                                 <Link
                                                     className="kc-link"
                                                     to="/login"
-                                                    state={{ from: resolvePostAuthDestination() }}
+                                                    state={{ from: resolveDefaultPostAuthDestination() }}
                                                 >
                                                     Sign In
                                                 </Link>
@@ -667,7 +654,7 @@ export default function Register() {
                                                 <Link
                                                     className="kc-link"
                                                     to="/login"
-                                                    state={{ from: resolvePostAuthDestination() }}
+                                                    state={{ from: resolveDefaultPostAuthDestination() }}
                                                 >
                                                     Sign In
                                                 </Link>

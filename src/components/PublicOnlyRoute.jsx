@@ -1,5 +1,5 @@
 import React, { useContext } from "react";
-import { Navigate, useLocation } from "react-router-dom";
+import { Navigate } from "react-router-dom";
 import { AuthContext } from "./AuthContext";
 
 const NFC_INTENT_KEY = "konar_nfc_intent_v1";
@@ -35,7 +35,6 @@ export default function PublicOnlyRoute({
     allowProductIntentRedirect = false,
 }) {
     const { user, initialized, hydrating } = useContext(AuthContext);
-    const location = useLocation();
 
     const token =
         typeof window !== "undefined" ? localStorage.getItem("token") : null;
@@ -52,15 +51,12 @@ export default function PublicOnlyRoute({
 
     if (allowProductIntentRedirect) {
         const nfcIntent = readNfcIntent();
+
         if (nfcIntent?.productKey) {
             return (
                 <Navigate
                     to={nfcIntent.returnTo || buildCardsProductUrl(nfcIntent.productKey)}
                     replace
-                    state={{
-                        openProductFromIntent: true,
-                        from: location.pathname + location.search,
-                    }}
                 />
             );
         }
