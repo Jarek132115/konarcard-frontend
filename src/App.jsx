@@ -4,6 +4,7 @@ import { Toaster } from "react-hot-toast";
 
 import { AuthContext } from "./components/AuthContext";
 import ProtectedRoute from "./components/ProtectedRoute";
+import AdminRoute from "./components/AdminRoute";
 import PublicOnlyRoute from "./components/PublicOnlyRoute";
 import ScrollToTop from "./components/ScrollToTop";
 import TidioDelayedLoader from "./components/TidioDelayedLoader";
@@ -280,17 +281,50 @@ export default function App() {
           />
 
           {/* Legacy redirects */}
-          <Route path="/products/plastic-card" element={<Navigate to="/products/plastic-white" replace />} />
-          <Route path="/products/plastic" element={<Navigate to="/products/plastic-white" replace />} />
-          <Route path="/products/metal-card" element={<Navigate to="/products/plastic-black" replace />} />
-          <Route path="/products/metal" element={<Navigate to="/products/plastic-black" replace />} />
-          <Route path="/products/konartag" element={<Navigate to="/products/plastic-blue" replace />} />
-          <Route path="/products/plastic-basic" element={<Navigate to="/products/plastic-white" replace />} />
-          <Route path="/products/plastic-signature" element={<Navigate to="/products/plastic-black" replace />} />
-          <Route path="/products/plastic-midnight" element={<Navigate to="/products/plastic-blue" replace />} />
-          <Route path="/products/plastic-graphite" element={<Navigate to="/products/plastic-green" replace />} />
-          <Route path="/products/plastic-sand" element={<Navigate to="/products/plastic-magenta" replace />} />
-          <Route path="/products/plastic-slate" element={<Navigate to="/products/plastic-orange" replace />} />
+          <Route
+            path="/products/plastic-card"
+            element={<Navigate to="/products/plastic-white" replace />}
+          />
+          <Route
+            path="/products/plastic"
+            element={<Navigate to="/products/plastic-white" replace />}
+          />
+          <Route
+            path="/products/metal-card"
+            element={<Navigate to="/products/plastic-black" replace />}
+          />
+          <Route
+            path="/products/metal"
+            element={<Navigate to="/products/plastic-black" replace />}
+          />
+          <Route
+            path="/products/konartag"
+            element={<Navigate to="/products/plastic-blue" replace />}
+          />
+          <Route
+            path="/products/plastic-basic"
+            element={<Navigate to="/products/plastic-white" replace />}
+          />
+          <Route
+            path="/products/plastic-signature"
+            element={<Navigate to="/products/plastic-black" replace />}
+          />
+          <Route
+            path="/products/plastic-midnight"
+            element={<Navigate to="/products/plastic-blue" replace />}
+          />
+          <Route
+            path="/products/plastic-graphite"
+            element={<Navigate to="/products/plastic-green" replace />}
+          />
+          <Route
+            path="/products/plastic-sand"
+            element={<Navigate to="/products/plastic-magenta" replace />}
+          />
+          <Route
+            path="/products/plastic-slate"
+            element={<Navigate to="/products/plastic-orange" replace />}
+          />
 
           <Route
             path="/examples"
@@ -524,9 +558,9 @@ export default function App() {
           <Route
             path="/admin"
             element={
-              <ProtectedRoute>
+              <AdminRoute>
                 <AdminOrders />
-              </ProtectedRoute>
+              </AdminRoute>
             }
           />
 
