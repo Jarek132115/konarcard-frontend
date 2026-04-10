@@ -298,7 +298,6 @@ Cards Page
 
 /* =========================================================
    Product catalog
-   - styled closer to public products page
 ========================================================= */
 
 .cp-card--catalog {
@@ -350,12 +349,11 @@ Cards Page
     position: relative;
     background: #ffffff;
     border-bottom: 1px solid rgba(15, 23, 42, 0.06);
-    min-height: 310px;
-    padding: 18px 18px 16px;
+    padding: 14px;
     overflow: hidden;
     display: flex;
-    align-items: center;
-    justify-content: center;
+    align-items: stretch;
+    justify-content: stretch;
 }
 
 .cp-catalogTag {
@@ -381,22 +379,32 @@ Cards Page
 
 .cp-catalogImageWrap {
     width: 100%;
-    min-height: 260px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    aspect-ratio: 1 / 1;
     min-width: 0;
-    padding: 4px 6px 0;
+    overflow: hidden;
+    border-radius: 16px;
+    background: #ffffff;
+    display: flex;
+    align-items: stretch;
+    justify-content: stretch;
 }
 
 .cp-catalogImage {
     width: 100%;
-    max-width: 250px;
-    height: auto;
-    object-fit: contain;
+    height: 100%;
+    display: block;
+    object-fit: cover;
     object-position: center;
     user-select: none;
     pointer-events: none;
+}
+
+/* Make the public product images fill edge-to-edge */
+.cp-catalogImageWrap img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
 }
 
 .cp-catalogBody {
@@ -792,18 +800,6 @@ Cards Page
         grid-template-columns: 1fr;
     }
 
-    .cp-catalogMedia {
-        min-height: 330px;
-    }
-
-    .cp-catalogImageWrap {
-        min-height: 276px;
-    }
-
-    .cp-catalogImage {
-        max-width: 260px;
-    }
-
     .cp-ownedPreview3D {
         min-height: 240px;
     }
@@ -883,20 +879,6 @@ Cards Page
     .cp-previewCard {
         min-height: 340px;
         padding: 10px;
-    }
-
-    .cp-catalogMedia {
-        min-height: 296px;
-        padding: 16px 16px 14px;
-    }
-
-    .cp-catalogImageWrap {
-        min-height: 244px;
-        padding: 4px;
-    }
-
-    .cp-catalogImage {
-        max-width: 228px;
     }
 
     .cp-rowVal {
@@ -994,19 +976,6 @@ Cards Page
         justify-content: center;
     }
 
-    .cp-catalogMedia {
-        min-height: 280px;
-    }
-
-    .cp-catalogImageWrap {
-        min-height: 226px;
-        padding: 2px;
-    }
-
-    .cp-catalogImage {
-        max-width: 214px;
-    }
-
     .cp-pill {
         width: fit-content;
         max-width: 100%;
@@ -1064,17 +1033,5 @@ Cards Page
         width: 78%;
         height: 168px;
         min-height: 168px;
-    }
-
-    .cp-catalogMedia {
-        min-height: 252px;
-    }
-
-    .cp-catalogImageWrap {
-        min-height: 202px;
-    }
-
-    .cp-catalogImage {
-        max-width: 188px;
     }
 }
