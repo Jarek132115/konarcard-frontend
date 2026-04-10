@@ -76,7 +76,7 @@ export const CARDS_PRODUCT_CATALOG = [
         family: "plastic",
         variant: "orange",
         title: "KonarCard Orange",
-        desc: "High-impact orange plastic NFC business card with a confident branded style.",
+        desc: "High-impact orange NFC business card with a confident branded style.",
         priceText: "£19.99",
         tag: "Warm",
         cta: "Choose Orange Card",
