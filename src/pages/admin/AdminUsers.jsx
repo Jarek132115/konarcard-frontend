@@ -1,7 +1,9 @@
+// src/pages/admin/AdminUsers.jsx
 import React, { useEffect, useMemo, useState } from "react";
-import { useSearchParams } from "react-router-dom";
 import { toast } from "react-hot-toast";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import api from "../../services/api";
+import AdminLayout from "./AdminLayout";
 
 function cleanString(v) {
     return String(v || "").trim();
@@ -21,6 +23,11 @@ function formatDate(value) {
     });
 }
 
+function buildPublicProfileUrl(slug) {
+    const safe = cleanString(slug).toLowerCase();
+    return safe ? `https://www.konarcard.com/u/${encodeURIComponent(safe)}` : "";
+}
+
 function formatAmount(amount, currency = "gbp") {
     if (typeof amount !== "number" || !Number.isFinite(amount)) return "—";
 
@@ -32,9 +39,27 @@ function formatAmount(amount, currency = "gbp") {
     }).format(amount / 100);
 }
 
-function buildPublicProfileUrl(slug) {
-    const safe = cleanString(slug).toLowerCase();
-    return safe ? `https://www.konarcard.com/u/${encodeURIComponent(safe)}` : "";
+function getPlanTone(plan) {
+    const p = cleanString(plan).toLowerCase();
+    if (p === "teams") return "info";
+    if (p === "plus") return "success";
+    return "neutral";
+}
+
+function getSubscriptionTone(status) {
+    const s = cleanString(status).toLowerCase();
+    if (s === "active" || s === "trialing") return "success";
+    if (s === "past_due") return "warn";
+    if (s === "canceled" || s === "cancelled") return "danger";
+    return "neutral";
+}
+
+function getFulfillmentTone(status) {
+    const s = cleanString(status).toLowerCase();
+    if (s === "delivered") return "success";
+    if (s === "shipped") return "info";
+    if (s === "packaged" || s === "designing_card") return "warn";
+    return "neutral";
 }
 
 function SectionCard({ title, subtitle, right, children }) {
@@ -137,26 +162,6 @@ function Pill({ children, tone = "neutral" }) {
     );
 }
 
-function TextInput(props) {
-    return (
-        <input
-            {...props}
-            style={{
-                width: "100%",
-                minHeight: 44,
-                borderRadius: 14,
-                border: "1px solid rgba(15,23,42,0.10)",
-                background: "#fff",
-                padding: "0 14px",
-                fontSize: 14,
-                color: "#0f172a",
-                outline: "none",
-                ...(props.style || {}),
-            }}
-        />
-    );
-}
-
 function Btn({ children, tone = "primary", ...props }) {
     const styles = {
         primary: {
@@ -196,50 +201,84 @@ function Btn({ children, tone = "primary", ...props }) {
     );
 }
 
-function getPlanTone(plan) {
-    const p = cleanString(plan).toLowerCase();
-    if (p === "teams") return "info";
-    if (p === "plus") return "success";
-    return "neutral";
+function TextInput(props) {
+    return (
+        <input
+            {...props}
+            style={{
+                width: "100%",
+                minHeight: 44,
+                borderRadius: 14,
+                border: "1px solid rgba(15,23,42,0.10)",
+                background: "#fff",
+                padding: "0 14px",
+                fontSize: 14,
+                color: "#0f172a",
+                outline: "none",
+                ...(props.style || {}),
+            }}
+        />
+    );
 }
 
-function getSubscriptionTone(status) {
-    const s = cleanString(status).toLowerCase();
-    if (s === "active" || s === "trialing") return "success";
-    if (s === "past_due") return "warn";
-    if (s === "canceled" || s === "cancelled") return "danger";
-    return "neutral";
+function InfoGrid({ children }) {
+    return (
+        <div
+            style={{
+                display: "grid",
+                gridTemplateColumns: "repeat(2, minmax(0,1fr))",
+                gap: 12,
+                fontSize: 14,
+            }}
+        >
+            {children}
+        </div>
+    );
 }
 
-function getFulfillmentTone(status) {
-    const s = cleanString(status).toLowerCase();
-    if (s === "delivered") return "success";
-    if (s === "shipped") return "info";
-    if (s === "packaged" || s === "designing_card") return "warn";
-    return "neutral";
+function InfoRow({ label, value }) {
+    return (
+        <div>
+            <strong>{label}:</strong> {value || "—"}
+        </div>
+    );
 }
 
 export default function AdminUsers() {
+    const navigate = useNavigate();
     const [searchParams, setSearchParams] = useSearchParams();
 
-    const [userSearch, setUserSearch] = useState("");
     const [usersLoading, setUsersLoading] = useState(false);
+    const [selectedUserLoading, setSelectedUserLoading] = useState(false);
+
     const [usersError, setUsersError] = useState("");
     const [users, setUsers] = useState([]);
-
-    const [selectedUserId, setSelectedUserId] = useState(
-        searchParams.get("selected") || ""
-    );
-    const [selectedUserLoading, setSelectedUserLoading] = useState(false);
     const [selectedUserData, setSelectedUserData] = useState(null);
 
-    async function loadUsers(searchValue = userSearch) {
+    const [userSearch, setUserSearch] = useState("");
+
+    const selectedUserId = searchParams.get("selected") || "";
+
+    async function copyText(value, label = "Copied") {
+        if (!navigator?.clipboard || !value) return;
+        try {
+            await navigator.clipboard.writeText(value);
+            toast.success(label);
+        } catch {
+            toast.error("Could not copy");
+        }
+    }
+
+    async function loadUsers(searchOverride) {
         setUsersLoading(true);
         setUsersError("");
 
         try {
             const params = {};
-            if (cleanString(searchValue)) params.q = cleanString(searchValue);
+            const finalSearch =
+                typeof searchOverride === "string" ? searchOverride : userSearch;
+
+            if (cleanString(finalSearch)) params.q = cleanString(finalSearch);
 
             const res = await api.get("/api/admin/users", { params });
             const data = Array.isArray(res?.data?.data) ? res.data.data : [];
@@ -270,53 +309,33 @@ export default function AdminUsers() {
         }
     }
 
-    async function copyText(value, label = "Copied") {
-        if (!navigator?.clipboard || !value) return;
-
-        try {
-            await navigator.clipboard.writeText(value);
-            toast.success(label);
-        } catch {
-            toast.error("Could not copy");
-        }
-    }
-
     useEffect(() => {
-        loadUsers();
-        // eslint-disable-next-line react-hooks/exhaustive-deps
+        loadUsers("");
     }, []);
 
     useEffect(() => {
-        const selected = searchParams.get("selected") || "";
-        if (selected && selected !== selectedUserId) {
-            setSelectedUserId(selected);
+        if (!selectedUserId) {
+            setSelectedUserData(null);
+            return;
         }
-    }, [searchParams, selectedUserId]);
 
-    useEffect(() => {
-        if (!selectedUserId) return;
         loadUserDetails(selectedUserId);
     }, [selectedUserId]);
 
     const selectedUser = selectedUserData?.user || null;
+
     const selectedUserProfiles = useMemo(() => {
-        return Array.isArray(selectedUserData?.profiles) ? selectedUserData.profiles : [];
+        const rows = selectedUserData?.profiles;
+        return Array.isArray(rows) ? rows : [];
     }, [selectedUserData]);
 
     const selectedUserOrders = useMemo(() => {
-        return Array.isArray(selectedUserData?.orders) ? selectedUserData.orders : [];
+        const rows = selectedUserData?.orders;
+        return Array.isArray(rows) ? rows : [];
     }, [selectedUserData]);
 
-    function handleSelectUser(userId) {
-        setSelectedUserId(userId);
-
-        const next = new URLSearchParams(searchParams);
-        next.set("selected", userId);
-        setSearchParams(next, { replace: true });
-    }
-
     return (
-        <>
+        <AdminLayout>
             <header
                 style={{
                     display: "flex",
@@ -358,13 +377,16 @@ export default function AdminUsers() {
                             fontSize: 15,
                         }}
                     >
-                        Search users, inspect accounts, review profiles, subscriptions, and owned products.
+                        Search users, inspect accounts, view profiles, subscriptions, and all purchased products.
                     </p>
                 </div>
 
                 <div style={{ display: "flex", gap: 10, flexWrap: "wrap" }}>
                     <Btn tone="ghost" onClick={() => loadUsers()}>
-                        Refresh
+                        Refresh users
+                    </Btn>
+                    <Btn tone="orange" onClick={() => navigate("/admin/orders")}>
+                        Open orders
                     </Btn>
                 </div>
             </header>
@@ -379,6 +401,11 @@ export default function AdminUsers() {
                 <SectionCard
                     title="All users"
                     subtitle="Search by email, name, username, or slug."
+                    right={
+                        <Btn tone="ghost" onClick={() => loadUsers()}>
+                            Refresh
+                        </Btn>
+                    }
                 >
                     <div
                         style={{
@@ -392,15 +419,18 @@ export default function AdminUsers() {
                             value={userSearch}
                             onChange={(e) => setUserSearch(e.target.value)}
                             placeholder="Search by email, name, username or slug"
+                            onKeyDown={(e) => {
+                                if (e.key === "Enter") loadUsers();
+                            }}
                         />
-                        <Btn tone="primary" onClick={() => loadUsers(userSearch)}>
+                        <Btn tone="primary" onClick={() => loadUsers()}>
                             Search
                         </Btn>
                         <Btn
                             tone="ghost"
                             onClick={() => {
                                 setUserSearch("");
-                                setTimeout(() => loadUsers(""), 0);
+                                loadUsers("");
                             }}
                         >
                             Reset
@@ -430,7 +460,7 @@ export default function AdminUsers() {
                                     <button
                                         key={user._id}
                                         type="button"
-                                        onClick={() => handleSelectUser(user._id)}
+                                        onClick={() => setSearchParams({ selected: user._id })}
                                         style={{
                                             width: "100%",
                                             textAlign: "left",
@@ -483,7 +513,7 @@ export default function AdminUsers() {
 
                 <SectionCard
                     title="User details"
-                    subtitle="Profiles, subscription state, and orders for the selected user."
+                    subtitle="Inspect profile ownership, billing state, and order history."
                 >
                     {!selectedUserId ? (
                         <p style={{ color: "#64748b", margin: 0 }}>
@@ -492,9 +522,7 @@ export default function AdminUsers() {
                     ) : selectedUserLoading ? (
                         <p style={{ color: "#64748b", margin: 0 }}>Loading user details…</p>
                     ) : !selectedUser ? (
-                        <p style={{ color: "#64748b", margin: 0 }}>
-                            No user details available.
-                        </p>
+                        <p style={{ color: "#64748b", margin: 0 }}>No user details available.</p>
                     ) : (
                         <div style={{ display: "grid", gap: 20 }}>
                             <div
@@ -536,56 +564,90 @@ export default function AdminUsers() {
                                         <Pill tone={getPlanTone(selectedUser.plan)}>
                                             {selectedUser.plan || "free"}
                                         </Pill>
-                                        <Pill
-                                            tone={getSubscriptionTone(
-                                                selectedUser.subscriptionStatus
-                                            )}
-                                        >
+                                        <Pill tone={getSubscriptionTone(selectedUser.subscriptionStatus)}>
                                             {selectedUser.subscriptionStatus || "free"}
                                         </Pill>
                                         <Pill>{selectedUser.role || "user"}</Pill>
                                     </div>
                                 </div>
 
-                                <div
-                                    style={{
-                                        display: "grid",
-                                        gridTemplateColumns: "repeat(2, minmax(0,1fr))",
-                                        gap: 12,
-                                        marginTop: 18,
-                                        fontSize: 14,
-                                    }}
-                                >
-                                    <div>
-                                        <strong>Username:</strong> {selectedUser.username || "—"}
-                                    </div>
-                                    <div>
-                                        <strong>Slug:</strong> {selectedUser.slug || "—"}
-                                    </div>
-                                    <div>
-                                        <strong>Verified:</strong>{" "}
-                                        {selectedUser.isVerified ? "Yes" : "No"}
-                                    </div>
-                                    <div>
-                                        <strong>Joined:</strong>{" "}
-                                        {formatDate(selectedUser.createdAt)}
-                                    </div>
-                                    <div>
-                                        <strong>Plan interval:</strong>{" "}
-                                        {selectedUser.planInterval || "—"}
-                                    </div>
-                                    <div>
-                                        <strong>Current period end:</strong>{" "}
-                                        {formatDate(selectedUser.currentPeriodEnd)}
-                                    </div>
-                                    <div>
-                                        <strong>Team profiles allowed:</strong>{" "}
-                                        {selectedUser.teamsProfilesQty || 1}
-                                    </div>
-                                    <div>
-                                        <strong>Paid extra profiles:</strong>{" "}
-                                        {selectedUser.extraProfilesQty || 0}
-                                    </div>
+                                <div style={{ marginTop: 14, display: "flex", gap: 10, flexWrap: "wrap" }}>
+                                    <Btn
+                                        tone="ghost"
+                                        onClick={() =>
+                                            copyText(selectedUser._id, "User ID copied")
+                                        }
+                                    >
+                                        Copy user ID
+                                    </Btn>
+
+                                    <Btn
+                                        tone="ghost"
+                                        onClick={() =>
+                                            copyText(selectedUser.email, "User email copied")
+                                        }
+                                        disabled={!selectedUser.email}
+                                    >
+                                        Copy email
+                                    </Btn>
+
+                                    <Btn
+                                        tone="ghost"
+                                        onClick={() => {
+                                            const publicUrl =
+                                                selectedUser.profileUrl ||
+                                                buildPublicProfileUrl(selectedUser.slug || selectedUser.username);
+                                            if (publicUrl) {
+                                                window.open(publicUrl, "_blank", "noopener,noreferrer");
+                                            }
+                                        }}
+                                        disabled={
+                                            !selectedUser.profileUrl &&
+                                            !selectedUser.slug &&
+                                            !selectedUser.username
+                                        }
+                                    >
+                                        Open public link
+                                    </Btn>
+                                </div>
+
+                                <div style={{ marginTop: 18 }}>
+                                    <InfoGrid>
+                                        <InfoRow label="Username" value={selectedUser.username || "—"} />
+                                        <InfoRow label="Slug" value={selectedUser.slug || "—"} />
+                                        <InfoRow
+                                            label="Verified"
+                                            value={selectedUser.isVerified ? "Yes" : "No"}
+                                        />
+                                        <InfoRow
+                                            label="Joined"
+                                            value={formatDate(selectedUser.createdAt)}
+                                        />
+                                        <InfoRow
+                                            label="Plan interval"
+                                            value={selectedUser.planInterval || "—"}
+                                        />
+                                        <InfoRow
+                                            label="Current period end"
+                                            value={formatDate(selectedUser.currentPeriodEnd)}
+                                        />
+                                        <InfoRow
+                                            label="Team profiles allowed"
+                                            value={selectedUser.teamsProfilesQty || 1}
+                                        />
+                                        <InfoRow
+                                            label="Paid extra profiles"
+                                            value={selectedUser.extraProfilesQty || 0}
+                                        />
+                                        <InfoRow
+                                            label="Stripe customer"
+                                            value={selectedUser.stripeCustomerId || "—"}
+                                        />
+                                        <InfoRow
+                                            label="Stripe subscription"
+                                            value={selectedUser.stripeSubscriptionId || "—"}
+                                        />
+                                    </InfoGrid>
                                 </div>
                             </div>
 
@@ -601,9 +663,7 @@ export default function AdminUsers() {
 
                                 <div style={{ display: "grid", gap: 12, marginTop: 14 }}>
                                     {selectedUserProfiles.length === 0 ? (
-                                        <p style={{ color: "#64748b", margin: 0 }}>
-                                            No profiles found.
-                                        </p>
+                                        <p style={{ color: "#64748b", margin: 0 }}>No profiles found.</p>
                                     ) : (
                                         selectedUserProfiles.map((profile) => {
                                             const profileUrl =
@@ -656,6 +716,7 @@ export default function AdminUsers() {
                                                         >
                                                             Open profile
                                                         </Btn>
+
                                                         <Btn
                                                             tone="ghost"
                                                             onClick={() =>
@@ -663,6 +724,15 @@ export default function AdminUsers() {
                                                             }
                                                         >
                                                             Copy link
+                                                        </Btn>
+
+                                                        <Btn
+                                                            tone="ghost"
+                                                            onClick={() =>
+                                                                copyText(profile.profile_slug, "Profile slug copied")
+                                                            }
+                                                        >
+                                                            Copy slug
                                                         </Btn>
                                                     </div>
                                                 </div>
@@ -684,9 +754,7 @@ export default function AdminUsers() {
 
                                 <div style={{ display: "grid", gap: 12, marginTop: 14 }}>
                                     {selectedUserOrders.length === 0 ? (
-                                        <p style={{ color: "#64748b", margin: 0 }}>
-                                            No orders found.
-                                        </p>
+                                        <p style={{ color: "#64748b", margin: 0 }}>No orders found.</p>
                                     ) : (
                                         selectedUserOrders.map((order) => (
                                             <div
@@ -718,41 +786,34 @@ export default function AdminUsers() {
                                                                 marginTop: 6,
                                                             }}
                                                         >
-                                                            {formatAmount(
-                                                                order.amountTotal,
-                                                                order.currency
-                                                            )}{" "}
-                                                            • Qty {order.quantity || 1}
+                                                            {formatAmount(order.amountTotal, order.currency)} • Qty{" "}
+                                                            {order.quantity || 1}
                                                         </div>
                                                     </div>
 
-                                                    <div
-                                                        style={{
-                                                            display: "flex",
-                                                            gap: 8,
-                                                            flexWrap: "wrap",
-                                                        }}
-                                                    >
+                                                    <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
                                                         <Pill>{order.status || "pending"}</Pill>
-                                                        <Pill
-                                                            tone={getFulfillmentTone(
-                                                                order.fulfillmentStatus
-                                                            )}
-                                                        >
-                                                            {order.fulfillmentStatus ||
-                                                                "order_placed"}
+                                                        <Pill tone={getFulfillmentTone(order.fulfillmentStatus)}>
+                                                            {order.fulfillmentStatus || "order_placed"}
                                                         </Pill>
                                                     </div>
                                                 </div>
 
                                                 <div
                                                     style={{
-                                                        marginTop: 12,
                                                         display: "flex",
                                                         gap: 10,
+                                                        marginTop: 12,
                                                         flexWrap: "wrap",
                                                     }}
                                                 >
+                                                    <Btn
+                                                        tone="ghost"
+                                                        onClick={() => navigate(`/admin/orders?selected=${order._id}`)}
+                                                    >
+                                                        Open in orders
+                                                    </Btn>
+
                                                     <Btn
                                                         tone="ghost"
                                                         onClick={() =>
@@ -761,6 +822,21 @@ export default function AdminUsers() {
                                                     >
                                                         Copy order ID
                                                     </Btn>
+
+                                                    {order.profile?.profile_slug ? (
+                                                        <Btn
+                                                            tone="ghost"
+                                                            onClick={() =>
+                                                                window.open(
+                                                                    buildPublicProfileUrl(order.profile.profile_slug),
+                                                                    "_blank",
+                                                                    "noopener,noreferrer"
+                                                                )
+                                                            }
+                                                        >
+                                                            Open profile
+                                                        </Btn>
+                                                    ) : null}
                                                 </div>
                                             </div>
                                         ))
@@ -771,6 +847,6 @@ export default function AdminUsers() {
                     )}
                 </SectionCard>
             </div>
-        </>
+        </AdminLayout>
     );
 }

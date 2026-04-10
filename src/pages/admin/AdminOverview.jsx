@@ -1,6 +1,8 @@
+// src/pages/admin/AdminOverview.jsx
 import React, { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import api from "../../services/api";
+import AdminLayout from "./AdminLayout";
 
 function formatAmount(amount, currency = "gbp") {
     if (typeof amount !== "number" || !Number.isFinite(amount)) return "—";
@@ -315,7 +317,7 @@ export default function AdminOverview() {
     }, [orders]);
 
     return (
-        <>
+        <AdminLayout>
             <header
                 style={{
                     display: "flex",
@@ -592,6 +594,6 @@ export default function AdminOverview() {
                     )}
                 </SectionCard>
             </div>
-        </>
+        </AdminLayout>
     );
 }

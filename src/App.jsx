@@ -1,3 +1,4 @@
+// src/App.jsx
 import { Routes, Route, useLocation, Navigate } from "react-router-dom";
 import { useContext } from "react";
 import { Toaster } from "react-hot-toast";

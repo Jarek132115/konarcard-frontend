@@ -1,3 +1,4 @@
+// src/pages/admin/AdminAnalytics.jsx
 import React, { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
@@ -16,6 +17,7 @@ import {
     Legend,
 } from "recharts";
 import api from "../../services/api";
+import AdminLayout from "./AdminLayout";
 
 function cleanString(v) {
     return String(v || "").trim();
@@ -434,7 +436,8 @@ export default function AdminAnalytics() {
         const counts = {};
 
         orders.forEach((order) => {
-            const label = `${cleanString(order?.productKey) || "unknown"}${cleanString(order?.variant) ? ` • ${cleanString(order.variant)}` : ""}`;
+            const label = `${cleanString(order?.productKey) || "unknown"}${cleanString(order?.variant) ? ` • ${cleanString(order.variant)}` : ""
+                }`;
             counts[label] = Number(counts[label] || 0) + Number(order?.quantity || 1);
         });
 
@@ -499,7 +502,7 @@ export default function AdminAnalytics() {
     }, [orders, users, summary.totalUsers]);
 
     return (
-        <>
+        <AdminLayout>
             <header
                 style={{
                     display: "flex",
@@ -556,28 +559,19 @@ export default function AdminAnalytics() {
                     gap: 16,
                 }}
             >
-                <StatCard
-                    label="Total users"
-                    value={loading ? "…" : summary.totalUsers || 0}
-                />
+                <StatCard label="Total users" value={loading ? "…" : summary.totalUsers || 0} />
                 <StatCard
                     label="Active subscribers"
                     value={loading ? "…" : conversionStats.activeSubscribers}
                     subvalue={`${conversionStats.activeSubscriberRate}% of users`}
                 />
-                <StatCard
-                    label="Total orders"
-                    value={loading ? "…" : summary.totalOrders || 0}
-                />
+                <StatCard label="Total orders" value={loading ? "…" : summary.totalOrders || 0} />
                 <StatCard
                     label="Paid orders"
                     value={loading ? "…" : conversionStats.paidOrders}
                     subvalue={`${conversionStats.paidOrderRate}% of users`}
                 />
-                <StatCard
-                    label="Revenue"
-                    value={loading ? "…" : formatAmount(totalRevenueMinor)}
-                />
+                <StatCard label="Revenue" value={loading ? "…" : formatAmount(totalRevenueMinor)} />
                 <StatCard
                     label="Avg paid order"
                     value={loading ? "…" : formatAmount(averageOrderValueMinor)}
@@ -600,10 +594,7 @@ export default function AdminAnalytics() {
             ) : null}
 
             <div style={{ display: "grid", gridTemplateColumns: "1.2fr 0.8fr", gap: 20 }}>
-                <SectionCard
-                    title="User growth"
-                    subtitle="New users joining over the last 30 days."
-                >
+                <SectionCard title="User growth" subtitle="New users joining over the last 30 days.">
                     {usersJoinedTrend.length ? (
                         <div style={{ width: "100%", height: 320 }}>
                             <ResponsiveContainer>
@@ -627,10 +618,7 @@ export default function AdminAnalytics() {
                     )}
                 </SectionCard>
 
-                <SectionCard
-                    title="Plan split"
-                    subtitle="How your users are distributed across plans."
-                >
+                <SectionCard title="Plan split" subtitle="How your users are distributed across plans.">
                     {planSplit.length ? (
                         <div style={{ width: "100%", height: 320 }}>
                             <ResponsiveContainer>
@@ -674,8 +662,20 @@ export default function AdminAnalytics() {
                                     <YAxis yAxisId="right" orientation="right" />
                                     <Tooltip />
                                     <Legend />
-                                    <Bar yAxisId="left" dataKey="orders" name="Orders" fill="#0f172a" radius={[8, 8, 0, 0]} />
-                                    <Bar yAxisId="right" dataKey="revenue" name="Revenue (£)" fill="#f97316" radius={[8, 8, 0, 0]} />
+                                    <Bar
+                                        yAxisId="left"
+                                        dataKey="orders"
+                                        name="Orders"
+                                        fill="#0f172a"
+                                        radius={[8, 8, 0, 0]}
+                                    />
+                                    <Bar
+                                        yAxisId="right"
+                                        dataKey="revenue"
+                                        name="Revenue (£)"
+                                        fill="#f97316"
+                                        radius={[8, 8, 0, 0]}
+                                    />
                                 </BarChart>
                             </ResponsiveContainer>
                         </div>
@@ -771,10 +771,7 @@ export default function AdminAnalytics() {
             </div>
 
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 20 }}>
-                <SectionCard
-                    title="Top products"
-                    subtitle="Best selling products by ordered quantity."
-                >
+                <SectionCard title="Top products" subtitle="Best selling products by ordered quantity.">
                     {!topProducts.length ? (
                         <EmptyState text="No product sales data yet." />
                     ) : (
@@ -797,19 +794,14 @@ export default function AdminAnalytics() {
                                             {index + 1}. {item.name}
                                         </div>
                                     </div>
-                                    <div style={{ color: "#64748b", fontSize: 14 }}>
-                                        {item.value} units
-                                    </div>
+                                    <div style={{ color: "#64748b", fontSize: 14 }}>{item.value} units</div>
                                 </div>
                             ))}
                         </div>
                     )}
                 </SectionCard>
 
-                <SectionCard
-                    title="Top customers"
-                    subtitle="Users generating the most paid revenue."
-                >
+                <SectionCard title="Top customers" subtitle="Users generating the most paid revenue.">
                     {!topCustomers.length ? (
                         <EmptyState text="No customer revenue data yet." />
                     ) : (
@@ -849,6 +841,6 @@ export default function AdminAnalytics() {
                     )}
                 </SectionCard>
             </div>
-        </>
+        </AdminLayout>
     );
 }

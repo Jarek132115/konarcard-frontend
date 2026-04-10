@@ -1,44 +1,28 @@
+// src/pages/admin/AdminLayout.jsx
 import React from "react";
-import { NavLink, Outlet, useNavigate } from "react-router-dom";
-import api from "../../services/api";
+import { useLocation, useNavigate } from "react-router-dom";
 import LogoIcon from "../../assets/icons/Logo-Icon.svg";
+import "../../styling/admin/admin.css";
 
-function SidebarLink({ to, children, end = false }) {
-    return (
-        <NavLink to={to} end={end}>
-            {({ isActive }) => (
-                <span
-                    style={{
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "center",
-                        minHeight: 46,
-                        width: "100%",
-                        borderRadius: 14,
-                        border: isActive
-                            ? "1px solid #0f172a"
-                            : "1px solid rgba(15,23,42,0.08)",
-                        background: isActive ? "#0f172a" : "#ffffff",
-                        color: isActive ? "#ffffff" : "#0f172a",
-                        fontSize: 12,
-                        fontWeight: 700,
-                        textDecoration: "none",
-                        transition: "all 0.2s ease",
-                        boxSizing: "border-box",
-                    }}
-                >
-                    {children}
-                </span>
-            )}
-        </NavLink>
-    );
+const NAV_ITEMS = [
+    { key: "overview", label: "Overview", path: "/admin/overview" },
+    { key: "users", label: "Users", path: "/admin/users" },
+    { key: "orders", label: "Orders", path: "/admin/orders" },
+    { key: "analytics", label: "Analytics", path: "/admin/analytics" },
+];
+
+function isActivePath(pathname, itemPath) {
+    if (pathname === itemPath) return true;
+    return pathname.startsWith(`${itemPath}/`);
 }
 
-export default function AdminLayout() {
+export default function AdminLayout({ children }) {
     const navigate = useNavigate();
+    const location = useLocation();
 
-    async function handleLogout() {
+    async function logout() {
         try {
+            const { default: api } = await import("../../services/api");
             await api.post("/logout");
         } catch {
             // ignore
@@ -55,117 +39,111 @@ export default function AdminLayout() {
     }
 
     return (
-        <div
-            style={{
-                minHeight: "100vh",
-                background: "#f8fafc",
-                color: "#0f172a",
-                display: "grid",
-                gridTemplateColumns: "88px minmax(0,1fr)",
-            }}
-        >
-            <aside
-                style={{
-                    position: "sticky",
-                    top: 0,
-                    height: "100vh",
-                    background: "#ffffff",
-                    borderRight: "1px solid rgba(15,23,42,0.08)",
-                    display: "flex",
-                    flexDirection: "column",
-                    alignItems: "center",
-                    padding: "18px 12px",
-                    gap: 12,
-                    boxSizing: "border-box",
-                }}
-            >
-                <button
-                    type="button"
-                    onClick={() => navigate("/admin")}
-                    style={{
-                        width: 56,
-                        height: 56,
-                        borderRadius: 18,
-                        border: "1px solid rgba(15,23,42,0.08)",
-                        background: "#fff",
-                        display: "grid",
-                        placeItems: "center",
-                        cursor: "pointer",
-                        padding: 0,
-                    }}
-                    aria-label="Open admin dashboard"
-                >
-                    <img
-                        src={LogoIcon}
-                        alt="KonarCard"
-                        style={{ width: 28, height: 28, display: "block" }}
-                    />
-                </button>
+        <div className="admin-root admin-page">
+            <div className="admin-shell">
+                <aside className="admin-sidebar">
+                    <button
+                        type="button"
+                        className="admin-logo-button"
+                        onClick={() => navigate("/admin/overview")}
+                        aria-label="Open admin overview"
+                        title="Admin overview"
+                    >
+                        <img src={LogoIcon} alt="KonarCard" />
+                    </button>
 
-                <div
-                    style={{
-                        width: "100%",
-                        marginTop: 18,
-                        display: "grid",
-                        gap: 10,
-                    }}
-                >
-                    <SidebarLink to="/admin" end>
-                        Overview
-                    </SidebarLink>
+                    <div className="admin-sidebar-nav">
+                        {NAV_ITEMS.map((item) => (
+                            <button
+                                key={item.key}
+                                type="button"
+                                className={`admin-nav-button ${isActivePath(location.pathname, item.path) ? "is-active" : ""}`}
+                                onClick={() => navigate(item.path)}
+                            >
+                                {item.label}
+                            </button>
+                        ))}
+                    </div>
 
-                    <SidebarLink to="/admin/users">
-                        Users
-                    </SidebarLink>
+                    <div className="admin-sidebar-spacer" />
 
-                    <SidebarLink to="/admin/orders">
-                        Orders
-                    </SidebarLink>
+                    <button
+                        type="button"
+                        className="admin-nav-button"
+                        onClick={() => navigate("/dashboard")}
+                    >
+                        User app
+                    </button>
 
-                    <SidebarLink to="/admin/analytics">
-                        Analytics
-                    </SidebarLink>
+                    <button
+                        type="button"
+                        className="admin-nav-button"
+                        onClick={logout}
+                    >
+                        Logout
+                    </button>
+                </aside>
+
+                <div className="admin-mobile-topbar">
+                    <div className="admin-mobile-topbar-inner">
+                        <div className="admin-mobile-brand">
+                            <button
+                                type="button"
+                                className="admin-mobile-brand-button"
+                                onClick={() => navigate("/admin/overview")}
+                                aria-label="Open admin overview"
+                                title="Admin overview"
+                            >
+                                <img src={LogoIcon} alt="KonarCard" />
+                            </button>
+
+                            <div>
+                                <div className="admin-mobile-title">KonarCard Admin</div>
+                                <div className="admin-mobile-subtitle">
+                                    Manage users, orders and analytics
+                                </div>
+                            </div>
+                        </div>
+
+                        <div className="admin-mobile-nav">
+                            {NAV_ITEMS.map((item) => (
+                                <button
+                                    key={item.key}
+                                    type="button"
+                                    className={`admin-nav-button ${isActivePath(location.pathname, item.path) ? "is-active" : ""}`}
+                                    onClick={() => navigate(item.path)}
+                                >
+                                    {item.label}
+                                </button>
+                            ))}
+                        </div>
+
+                        <div className="admin-row">
+                            <button
+                                type="button"
+                                className="admin-btn admin-btn--ghost"
+                                onClick={() => navigate("/dashboard")}
+                            >
+                                User app
+                            </button>
+
+                            <button
+                                type="button"
+                                className="admin-btn admin-btn--ghost"
+                                onClick={logout}
+                            >
+                                Logout
+                            </button>
+                        </div>
+                    </div>
                 </div>
 
-                <div style={{ flex: 1 }} />
-
-                <button
-                    type="button"
-                    onClick={handleLogout}
-                    style={{
-                        width: "100%",
-                        minHeight: 44,
-                        borderRadius: 14,
-                        border: "1px solid rgba(15,23,42,0.08)",
-                        background: "#ffffff",
-                        color: "#0f172a",
-                        fontSize: 12,
-                        fontWeight: 700,
-                        cursor: "pointer",
-                    }}
-                >
-                    Logout
-                </button>
-            </aside>
-
-            <main
-                style={{
-                    minWidth: 0,
-                    padding: 28,
-                    boxSizing: "border-box",
-                }}
-            >
-                <div
-                    style={{
-                        maxWidth: 1480,
-                        margin: "0 auto",
-                        display: "grid",
-                        gap: 22,
-                    }}
-                >
-                    <Outlet />
-                </div>
-            </main>
+                <main className="admin-main">
+                    <div className="admin-main-inner">
+                        {children}
+                    </div>
+                </main>
+            </div>
         </div>
     );
 }

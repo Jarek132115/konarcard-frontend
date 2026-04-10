@@ -1,7 +1,9 @@
+// src/pages/admin/AdminOrders.jsx
 import React, { useEffect, useMemo, useState } from "react";
 import { toast } from "react-hot-toast";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import api from "../../services/api";
+import AdminLayout from "./AdminLayout";
 
 const STATUS_OPTIONS = [
     { value: "order_placed", label: "Order placed" },
@@ -325,55 +327,43 @@ function PreviewImageCard({ title, src, alt, onOpen, onDownload }) {
 }
 
 function extractFrontText(order) {
-    return cleanString(
-        order?.preview?.customization?.frontText ||
-        order?.preview?.frontText ||
-        ""
-    );
+    return cleanString(order?.preview?.customization?.frontText || order?.preview?.frontText || "");
 }
 
 function extractFontFamily(order) {
     return cleanString(
-        order?.preview?.customization?.fontFamily ||
-        order?.preview?.fontFamily ||
-        ""
+        order?.preview?.customization?.fontFamily || order?.preview?.fontFamily || ""
     );
 }
 
 function extractFontWeight(order) {
     return cleanString(
-        order?.preview?.customization?.fontWeight ||
-        order?.preview?.fontWeight ||
-        ""
+        order?.preview?.customization?.fontWeight || order?.preview?.fontWeight || ""
     );
 }
 
 function extractFontSize(order) {
     return cleanString(
-        order?.preview?.customization?.fontSize ||
-        order?.preview?.fontSize ||
-        ""
+        order?.preview?.customization?.fontSize || order?.preview?.fontSize || ""
     );
 }
 
 function extractTextColor(order) {
     return cleanString(
-        order?.preview?.customization?.textColor ||
-        order?.preview?.textColor ||
-        ""
+        order?.preview?.customization?.textColor || order?.preview?.textColor || ""
     );
 }
 
 function extractOrientation(order) {
     return cleanString(
-        order?.preview?.customization?.orientation ||
-        order?.preview?.orientation ||
-        ""
+        order?.preview?.customization?.orientation || order?.preview?.orientation || ""
     );
 }
 
 function extractQrUrl(order) {
     return cleanString(
+        order?.qrCodeUrl ||
+        order?.preview?.qrCodeUrl ||
         order?.preview?.publicProfileUrl ||
         (order?.profile?.profile_slug ? buildPublicProfileUrl(order.profile.profile_slug) : "")
     );
@@ -512,7 +502,7 @@ export default function AdminOrders() {
     }, [orders, selectedOrderId]);
 
     return (
-        <>
+        <AdminLayout>
             <header
                 style={{
                     display: "flex",
@@ -628,7 +618,15 @@ export default function AdminOrders() {
                             gap: 20,
                         }}
                     >
-                        <div style={{ display: "grid", gap: 14, maxHeight: "75vh", overflow: "auto", paddingRight: 4 }}>
+                        <div
+                            style={{
+                                display: "grid",
+                                gap: 14,
+                                maxHeight: "75vh",
+                                overflow: "auto",
+                                paddingRight: 4,
+                            }}
+                        >
                             {orders.map((order) => {
                                 const isSelected = selectedOrderId === order._id;
 
@@ -669,9 +667,7 @@ export default function AdminOrders() {
                                             </div>
 
                                             <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
-                                                <Pill tone={getStatusTone(order.status)}>
-                                                    {order.status || "pending"}
-                                                </Pill>
+                                                <Pill tone={getStatusTone(order.status)}>{order.status || "pending"}</Pill>
                                                 <Pill tone={getFulfillmentTone(order.fulfillmentStatus)}>
                                                     {order.fulfillmentStatus || "order_placed"}
                                                 </Pill>
@@ -717,7 +713,14 @@ export default function AdminOrders() {
                                         }}
                                     >
                                         <div>
-                                            <div style={{ display: "flex", gap: 8, flexWrap: "wrap", alignItems: "center" }}>
+                                            <div
+                                                style={{
+                                                    display: "flex",
+                                                    gap: 8,
+                                                    flexWrap: "wrap",
+                                                    alignItems: "center",
+                                                }}
+                                            >
                                                 <Pill tone={getStatusTone(selectedOrder.status)}>
                                                     {selectedOrder.status || "pending"}
                                                 </Pill>
@@ -730,7 +733,10 @@ export default function AdminOrders() {
                                             </div>
 
                                             <h3 style={{ margin: "12px 0 0", fontSize: 22 }}>
-                                                {selectedOrder.customerName || selectedOrder?.user?.name || selectedOrder.customerEmail || "Order"}
+                                                {selectedOrder.customerName ||
+                                                    selectedOrder?.user?.name ||
+                                                    selectedOrder.customerEmail ||
+                                                    "Order"}
                                             </h3>
 
                                             <div style={{ marginTop: 6, color: "#64748b", fontSize: 14 }}>
@@ -772,10 +778,7 @@ export default function AdminOrders() {
                                             fontSize: 14,
                                         }}
                                     >
-                                        <InfoRow
-                                            label="Product"
-                                            value={getProductLabel(selectedOrder.productKey)}
-                                        />
+                                        <InfoRow label="Product" value={getProductLabel(selectedOrder.productKey)} />
                                         <InfoRow label="Variant" value={selectedOrder.variant || "—"} />
                                         <InfoRow
                                             label="Amount"
@@ -783,26 +786,11 @@ export default function AdminOrders() {
                                         />
                                         <InfoRow label="Quantity" value={selectedOrder.quantity || 1} />
                                         <InfoRow label="Created" value={formatDate(selectedOrder.createdAt)} />
-                                        <InfoRow
-                                            label="Profile"
-                                            value={selectedOrder.profile?.profile_slug || "—"}
-                                        />
-                                        <InfoRow
-                                            label="Tracking URL"
-                                            value={selectedOrder.trackingUrl || "—"}
-                                        />
-                                        <InfoRow
-                                            label="Tracking code"
-                                            value={selectedOrder.trackingCode || "—"}
-                                        />
-                                        <InfoRow
-                                            label="ETA"
-                                            value={selectedOrder.deliveryWindow || "—"}
-                                        />
-                                        <InfoRow
-                                            label="QR target URL"
-                                            value={extractQrUrl(selectedOrder) || "—"}
-                                        />
+                                        <InfoRow label="Profile" value={selectedOrder.profile?.profile_slug || "—"} />
+                                        <InfoRow label="Tracking URL" value={selectedOrder.trackingUrl || "—"} />
+                                        <InfoRow label="Tracking code" value={selectedOrder.trackingCode || "—"} />
+                                        <InfoRow label="ETA" value={selectedOrder.deliveryWindow || "—"} />
+                                        <InfoRow label="QR target URL" value={extractQrUrl(selectedOrder) || "—"} />
                                         <div style={{ gridColumn: "1 / -1" }}>
                                             <strong>Address:</strong> {selectedOrder.deliveryAddress || "—"}
                                         </div>
@@ -882,10 +870,7 @@ export default function AdminOrders() {
                                                 fontSize: 14,
                                             }}
                                         >
-                                            <InfoRow
-                                                label="Front text"
-                                                value={extractFrontText(selectedOrder) || "—"}
-                                            />
+                                            <InfoRow label="Front text" value={extractFrontText(selectedOrder) || "—"} />
                                             <InfoRow
                                                 label="Orientation"
                                                 value={extractOrientation(selectedOrder) || "—"}
@@ -925,10 +910,7 @@ export default function AdminOrders() {
                                             <Btn
                                                 tone="ghost"
                                                 onClick={() =>
-                                                    copyText(
-                                                        extractQrUrl(selectedOrder),
-                                                        "QR target URL copied"
-                                                    )
+                                                    copyText(extractQrUrl(selectedOrder), "QR target URL copied")
                                                 }
                                                 disabled={!extractQrUrl(selectedOrder)}
                                             >
@@ -938,10 +920,7 @@ export default function AdminOrders() {
                                             <Btn
                                                 tone="ghost"
                                                 onClick={() =>
-                                                    copyText(
-                                                        extractFrontText(selectedOrder),
-                                                        "Front text copied"
-                                                    )
+                                                    copyText(extractFrontText(selectedOrder), "Front text copied")
                                                 }
                                                 disabled={!extractFrontText(selectedOrder)}
                                             >
@@ -1025,11 +1004,7 @@ export default function AdminOrders() {
                                                     type="checkbox"
                                                     checked={!!edit[selectedOrder._id]?.notifyTracking}
                                                     onChange={(e) =>
-                                                        setEditField(
-                                                            selectedOrder._id,
-                                                            "notifyTracking",
-                                                            e.target.checked
-                                                        )
+                                                        setEditField(selectedOrder._id, "notifyTracking", e.target.checked)
                                                     }
                                                 />
                                                 Email customer tracking update
@@ -1055,11 +1030,7 @@ export default function AdminOrders() {
                                             <SelectInput
                                                 value={edit[selectedOrder._id]?.fulfillmentStatus || "order_placed"}
                                                 onChange={(e) =>
-                                                    setEditField(
-                                                        selectedOrder._id,
-                                                        "fulfillmentStatus",
-                                                        e.target.value
-                                                    )
+                                                    setEditField(selectedOrder._id, "fulfillmentStatus", e.target.value)
                                                 }
                                             >
                                                 {STATUS_OPTIONS.map((opt) => (
@@ -1082,11 +1053,7 @@ export default function AdminOrders() {
                                                     type="checkbox"
                                                     checked={!!edit[selectedOrder._id]?.notifyStatus}
                                                     onChange={(e) =>
-                                                        setEditField(
-                                                            selectedOrder._id,
-                                                            "notifyStatus",
-                                                            e.target.checked
-                                                        )
+                                                        setEditField(selectedOrder._id, "notifyStatus", e.target.checked)
                                                     }
                                                 />
                                                 Email customer status update
@@ -1103,6 +1070,6 @@ export default function AdminOrders() {
                     </div>
                 )}
             </SectionCard>
-        </>
+        </AdminLayout>
     );
 }
