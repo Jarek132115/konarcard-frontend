@@ -98,26 +98,186 @@ function getEstimatedDelivery() {
 }
 
 const PRODUCT_CONFIG = {
-    "plastic-card": {
-        title: "Plastic NFC Business Card",
+    "plastic-white": {
+        title: "KonarCard White",
         subtitle:
-            "Tap to share your profile in seconds — with a QR backup so it works on every phone.",
-        priceText: "£29.99",
-        badge: "Best Value",
-        buyLabel: "Buy KonarCard",
+            "Clean white plastic NFC business card with QR backup — designed to look premium and work instantly.",
+        priceText: "£19.99",
+        badge: "Essential",
+        buyLabel: "Buy White Card",
         profileEmptyText: "You need at least 1 profile before buying a card.",
-        controlsLabel: "Colour",
-        options: [
-            { value: "white", label: "White" },
-            { value: "black", label: "Black" },
-        ],
-        getDefaultLogo: (variant) => (variant === "black" ? LogoIconWhite : LogoIcon),
-        render3D: ({ logoSrc, qrSrc, logoPercent, variant }) => (
+        family: "plastic",
+        edition: "plastic",
+        variant: "white",
+        allowLogoUpload: false,
+        render3D: () => (
             <PlasticCard3D
-                logoSrc={logoSrc}
-                qrSrc={qrSrc}
-                logoSize={logoPercent}
-                variant={variant}
+                frontText="KONAR"
+                frontFontSize={42}
+                frontFontWeight={700}
+                edgeColor="#ffffff"
+                qrSrc={CardQrCode}
+                variant="white"
+            />
+        ),
+        specs: [
+            { k: "Card size", v: "85.6 × 54 mm — standard wallet size" },
+            { k: "Thickness", v: "0.76 mm — same thickness as a bank card" },
+            { k: "Material", v: "Durable PVC plastic with a smooth matte finish" },
+            { k: "NFC", v: "NFC enabled — works with iPhone & Android" },
+            { k: "QR backup", v: "Printed QR code on the back for instant access" },
+            { k: "Setup", v: "Linked to your Konar profile — update anytime, no reprints" },
+        ],
+    },
+
+    "plastic-black": {
+        title: "KonarCard Black",
+        subtitle:
+            "Bold black plastic NFC business card with QR backup and a sleek premium finish.",
+        priceText: "£19.99",
+        badge: "Popular",
+        buyLabel: "Buy Black Card",
+        profileEmptyText: "You need at least 1 profile before buying a card.",
+        family: "plastic",
+        edition: "plastic",
+        variant: "black",
+        allowLogoUpload: false,
+        render3D: () => (
+            <PlasticCard3D
+                frontText="KONAR"
+                frontFontSize={42}
+                frontFontWeight={700}
+                edgeColor="#111111"
+                qrSrc={CardQrCode}
+                variant="black"
+            />
+        ),
+        specs: [
+            { k: "Card size", v: "85.6 × 54 mm — standard wallet size" },
+            { k: "Thickness", v: "0.76 mm — same thickness as a bank card" },
+            { k: "Material", v: "Durable PVC plastic with a smooth matte finish" },
+            { k: "NFC", v: "NFC enabled — works with iPhone & Android" },
+            { k: "QR backup", v: "Printed QR code on the back for instant access" },
+            { k: "Setup", v: "Linked to your Konar profile — update anytime, no reprints" },
+        ],
+    },
+
+    "plastic-blue": {
+        title: "KonarCard Blue",
+        subtitle:
+            "Professional blue plastic NFC business card designed to stand out cleanly and work instantly.",
+        priceText: "£19.99",
+        badge: "Modern",
+        buyLabel: "Buy Blue Card",
+        profileEmptyText: "You need at least 1 profile before buying a card.",
+        family: "plastic",
+        edition: "plastic",
+        variant: "blue",
+        allowLogoUpload: false,
+        render3D: () => (
+            <PlasticCard3D
+                frontText="KONAR"
+                frontFontSize={42}
+                frontFontWeight={700}
+                edgeColor="#0f52ff"
+                qrSrc={CardQrCode}
+                variant="blue"
+            />
+        ),
+        specs: [
+            { k: "Card size", v: "85.6 × 54 mm — standard wallet size" },
+            { k: "Thickness", v: "0.76 mm — same thickness as a bank card" },
+            { k: "Material", v: "Durable PVC plastic with a smooth matte finish" },
+            { k: "NFC", v: "NFC enabled — works with iPhone & Android" },
+            { k: "QR backup", v: "Printed QR code on the back for instant access" },
+            { k: "Setup", v: "Linked to your Konar profile — update anytime, no reprints" },
+        ],
+    },
+
+    "plastic-green": {
+        title: "KonarCard Green",
+        subtitle:
+            "Modern green plastic NFC business card with a sharp branded look and QR backup.",
+        priceText: "£19.99",
+        badge: "Fresh",
+        buyLabel: "Buy Green Card",
+        profileEmptyText: "You need at least 1 profile before buying a card.",
+        family: "plastic",
+        edition: "plastic",
+        variant: "green",
+        allowLogoUpload: false,
+        render3D: () => (
+            <PlasticCard3D
+                frontText="KONAR"
+                frontFontSize={42}
+                frontFontWeight={700}
+                edgeColor="#15a53a"
+                qrSrc={CardQrCode}
+                variant="green"
+            />
+        ),
+        specs: [
+            { k: "Card size", v: "85.6 × 54 mm — standard wallet size" },
+            { k: "Thickness", v: "0.76 mm — same thickness as a bank card" },
+            { k: "Material", v: "Durable PVC plastic with a smooth matte finish" },
+            { k: "NFC", v: "NFC enabled — works with iPhone & Android" },
+            { k: "QR backup", v: "Printed QR code on the back for instant access" },
+            { k: "Setup", v: "Linked to your Konar profile — update anytime, no reprints" },
+        ],
+    },
+
+    "plastic-magenta": {
+        title: "KonarCard Magenta",
+        subtitle:
+            "Strong magenta plastic NFC business card for a vibrant premium finish with QR backup.",
+        priceText: "£19.99",
+        badge: "Bold",
+        buyLabel: "Buy Magenta Card",
+        profileEmptyText: "You need at least 1 profile before buying a card.",
+        family: "plastic",
+        edition: "plastic",
+        variant: "magenta",
+        allowLogoUpload: false,
+        render3D: () => (
+            <PlasticCard3D
+                frontText="KONAR"
+                frontFontSize={42}
+                frontFontWeight={700}
+                edgeColor="#d1008f"
+                qrSrc={CardQrCode}
+                variant="magenta"
+            />
+        ),
+        specs: [
+            { k: "Card size", v: "85.6 × 54 mm — standard wallet size" },
+            { k: "Thickness", v: "0.76 mm — same thickness as a bank card" },
+            { k: "Material", v: "Durable PVC plastic with a smooth matte finish" },
+            { k: "NFC", v: "NFC enabled — works with iPhone & Android" },
+            { k: "QR backup", v: "Printed QR code on the back for instant access" },
+            { k: "Setup", v: "Linked to your Konar profile — update anytime, no reprints" },
+        ],
+    },
+
+    "plastic-orange": {
+        title: "KonarCard Orange",
+        subtitle:
+            "High-impact orange plastic NFC business card with a confident branded style and QR backup.",
+        priceText: "£19.99",
+        badge: "Warm",
+        buyLabel: "Buy Orange Card",
+        profileEmptyText: "You need at least 1 profile before buying a card.",
+        family: "plastic",
+        edition: "plastic",
+        variant: "orange",
+        allowLogoUpload: false,
+        render3D: () => (
+            <PlasticCard3D
+                frontText="KONAR"
+                frontFontSize={42}
+                frontFontWeight={700}
+                edgeColor="#ff7b00"
+                qrSrc={CardQrCode}
+                variant="orange"
             />
         ),
         specs: [
@@ -133,11 +293,15 @@ const PRODUCT_CONFIG = {
     "metal-card": {
         title: "Metal NFC Business Card",
         subtitle:
-            "Premium metal that stands out — tap to share your profile in seconds, with a QR backup so it works on every phone.",
+            "Premium metal that stands out — tap to share your profile in seconds, with QR backup so it works on every phone.",
         priceText: "£44.99",
         badge: "Premium",
-        buyLabel: "Buy KonarCard",
+        buyLabel: "Buy Metal Card",
         profileEmptyText: "You need at least 1 profile before buying a card.",
+        family: "metal",
+        edition: "metal",
+        variant: "gold",
+        allowLogoUpload: true,
         controlsLabel: "Finish",
         options: [
             { value: "black", label: "Black" },
@@ -170,6 +334,10 @@ const PRODUCT_CONFIG = {
         badge: "Accessory",
         buyLabel: "Buy KonarTag",
         profileEmptyText: "You need at least 1 profile before buying a KonarTag.",
+        family: "tag",
+        edition: "tag",
+        variant: "black",
+        allowLogoUpload: true,
         controlsLabel: "Finish",
         options: [
             { value: "black", label: "Black" },
@@ -201,10 +369,12 @@ export default function CardCustomizer({
     onBack,
     onCheckoutSuccess,
 }) {
-    const config = PRODUCT_CONFIG[productKey] || PRODUCT_CONFIG["plastic-card"];
+    const config = PRODUCT_CONFIG[productKey] || PRODUCT_CONFIG["plastic-white"];
+    const hasOptions = Array.isArray(config.options) && config.options.length > 0;
+    const defaultVariant = hasOptions ? config.options[0].value : config.variant;
 
     const [qty, setQty] = useState(1);
-    const [variant, setVariant] = useState(config.options?.[0]?.value || "white");
+    const [variant, setVariant] = useState(defaultVariant || "white");
 
     const [logoUrl, setLogoUrl] = useState("");
     const [logoFile, setLogoFile] = useState(null);
@@ -229,7 +399,6 @@ export default function CardCustomizer({
     })();
 
     useEffect(() => {
-        const fallbackVariant = config.options?.[0]?.value || "white";
         const liveIntent = readNfcIntent();
         const sourceIntent =
             initialIntent?.productKey === productKey
@@ -240,9 +409,11 @@ export default function CardCustomizer({
 
         setQty(Math.max(1, Math.min(20, Number(sourceIntent?.quantity || 1))));
         setVariant(
-            config.options.some((opt) => opt.value === sourceIntent?.variant)
-                ? sourceIntent.variant
-                : fallbackVariant
+            hasOptions
+                ? config.options.some((opt) => opt.value === sourceIntent?.variant)
+                    ? sourceIntent.variant
+                    : defaultVariant
+                : config.variant
         );
         setLogoPreset(
             ["small", "medium", "large"].includes(sourceIntent?.logoPreset)
@@ -254,7 +425,7 @@ export default function CardCustomizer({
         setLogoFile(null);
         setErrorMsg("");
         setInfoMsg(sourceIntent?.hadLogo ? "Please re-upload your logo to continue checkout." : "");
-    }, [productKey, config.options, initialIntent]);
+    }, [productKey, initialIntent, hasOptions, defaultVariant, config]);
 
     useEffect(() => {
         return () => {
@@ -285,13 +456,15 @@ export default function CardCustomizer({
             hadLogo: !!logoFile,
             variant,
             logoPreset,
+            family: config.family,
+            edition: config.edition,
             returnTo: "/cards",
             createdAt,
             updatedAt: Date.now(),
         });
-    }, [productKey, qty, profileId, logoFile, variant, logoPreset]);
+    }, [productKey, qty, profileId, logoFile, variant, logoPreset, config.family, config.edition]);
 
-    const displayedLogo = logoUrl || config.getDefaultLogo(variant);
+    const displayedLogo = logoUrl || (config.getDefaultLogo ? config.getDefaultLogo(variant) : LogoIcon);
     const logoLabel = logoFile?.name || "Upload logo";
     const sizeLabel = (k) => (k === "small" ? "S" : k === "medium" ? "M" : "L");
     const deliveryInfo = useMemo(() => getEstimatedDelivery(), []);
@@ -336,7 +509,7 @@ export default function CardCustomizer({
         try {
             let savedLogoUrl = "";
 
-            if (logoFile) {
+            if (config.allowLogoUpload && logoFile) {
                 const dataUrl = await fileToDataUrl(logoFile);
 
                 const up = await api.post("/api/checkout/nfc/logo", {
@@ -362,12 +535,8 @@ export default function CardCustomizer({
                     logoPreset,
                     usedCustomLogo: !!savedLogoUrl,
                     variant,
-                    edition:
-                        productKey === "metal-card"
-                            ? "metal"
-                            : productKey === "konartag"
-                                ? "tag"
-                                : "plastic",
+                    family: config.family,
+                    edition: config.edition,
                 },
                 returnUrl: `${window.location.origin}/cards`,
             });
@@ -382,7 +551,12 @@ export default function CardCustomizer({
 
             window.location.href = resp.data.url;
         } catch (e) {
-            setErrorMsg(e?.message || "Checkout failed. Please try again.");
+            setErrorMsg(
+                e?.response?.data?.error ||
+                e?.response?.data?.message ||
+                e?.message ||
+                "Checkout failed. Please try again."
+            );
         } finally {
             setBusy(false);
         }
@@ -414,73 +588,81 @@ export default function CardCustomizer({
                 <div className="ccz-mainGrid">
                     <div className="ccz-previewCard">
                         <div className="ccz-previewCanvas">
-                            {config.render3D({
-                                logoSrc: displayedLogo,
-                                qrSrc: CardQrCode,
-                                logoPercent,
-                                variant,
-                            })}
+                            {hasOptions || config.allowLogoUpload
+                                ? config.render3D({
+                                    logoSrc: displayedLogo,
+                                    qrSrc: CardQrCode,
+                                    logoPercent,
+                                    variant,
+                                })
+                                : config.render3D()}
                         </div>
                     </div>
 
                     <div className="ccz-controlsCol">
                         <div className="ccz-controlsCard">
                             <div className="ccz-controlsGrid">
-                                <div className="ccz-field">
-                                    <div className="ccz-label">Logo</div>
+                                {config.allowLogoUpload ? (
+                                    <>
+                                        <div className="ccz-field">
+                                            <div className="ccz-label">Logo</div>
 
-                                    <div className="ccz-uploadRow">
-                                        <label className="ccz-uploadBtn" title="Upload logo">
-                                            <input type="file" accept="image/*" onChange={onPickLogo} />
-                                            <span>{logoLabel}</span>
-                                        </label>
+                                            <div className="ccz-uploadRow">
+                                                <label className="ccz-uploadBtn" title="Upload logo">
+                                                    <input type="file" accept="image/*" onChange={onPickLogo} />
+                                                    <span>{logoLabel}</span>
+                                                </label>
 
-                                        <button
-                                            type="button"
-                                            className="ccz-textBtn"
-                                            onClick={clearLogo}
-                                            disabled={!logoUrl || busy}
-                                        >
-                                            Remove
-                                        </button>
+                                                <button
+                                                    type="button"
+                                                    className="ccz-textBtn"
+                                                    onClick={clearLogo}
+                                                    disabled={!logoUrl || busy}
+                                                >
+                                                    Remove
+                                                </button>
+                                            </div>
+                                        </div>
+
+                                        <div className="ccz-field">
+                                            <div className="ccz-label">Logo size</div>
+
+                                            <div className="ccz-toggleRow" role="group" aria-label="Choose logo size">
+                                                {["small", "medium", "large"].map((k) => (
+                                                    <button
+                                                        key={k}
+                                                        type="button"
+                                                        className={`ccz-toggle ${logoPreset === k ? "is-active" : ""}`}
+                                                        onClick={() => setLogoPreset(k)}
+                                                        disabled={busy}
+                                                    >
+                                                        {sizeLabel(k)}
+                                                    </button>
+                                                ))}
+                                            </div>
+                                        </div>
+                                    </>
+                                ) : null}
+
+                                {hasOptions ? (
+                                    <div className="ccz-field">
+                                        <div className="ccz-label">{config.controlsLabel}</div>
+
+                                        <div className="ccz-toggleRow" role="group" aria-label="Choose product option">
+                                            {config.options.map((opt) => (
+                                                <button
+                                                    key={opt.value}
+                                                    type="button"
+                                                    className={`ccz-toggle ${variant === opt.value ? "is-active" : ""}`}
+                                                    onClick={() => setVariant(opt.value)}
+                                                    disabled={busy}
+                                                >
+                                                    {opt.label}
+                                                </button>
+                                            ))}
+                                        </div>
                                     </div>
-                                </div>
-
-                                <div className="ccz-field">
-                                    <div className="ccz-label">Logo size</div>
-
-                                    <div className="ccz-toggleRow" role="group" aria-label="Choose logo size">
-                                        {["small", "medium", "large"].map((k) => (
-                                            <button
-                                                key={k}
-                                                type="button"
-                                                className={`ccz-toggle ${logoPreset === k ? "is-active" : ""}`}
-                                                onClick={() => setLogoPreset(k)}
-                                                disabled={busy}
-                                            >
-                                                {sizeLabel(k)}
-                                            </button>
-                                        ))}
-                                    </div>
-                                </div>
-
-                                <div className="ccz-field">
-                                    <div className="ccz-label">{config.controlsLabel}</div>
-
-                                    <div className="ccz-toggleRow" role="group" aria-label="Choose product option">
-                                        {config.options.map((opt) => (
-                                            <button
-                                                key={opt.value}
-                                                type="button"
-                                                className={`ccz-toggle ${variant === opt.value ? "is-active" : ""}`}
-                                                onClick={() => setVariant(opt.value)}
-                                                disabled={busy}
-                                            >
-                                                {opt.label}
-                                            </button>
-                                        ))}
-                                    </div>
-                                </div>
+                                ) : null}
 
                                 <div className="ccz-field">
                                     <div className="ccz-label">Link to profile</div>

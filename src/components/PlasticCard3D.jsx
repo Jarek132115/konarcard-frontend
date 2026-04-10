@@ -13,6 +13,71 @@ const safeTexSrc = (src) => {
     return s ? s : TRANSPARENT_1PX;
 };
 
+const clamp = (v, min, max) => Math.max(min, Math.min(max, v));
+
+function setupColorTexture(tex) {
+    if (!tex) return;
+    tex.colorSpace = THREE.SRGBColorSpace;
+    tex.anisotropy = 12;
+    tex.wrapS = THREE.ClampToEdgeWrapping;
+    tex.wrapT = THREE.ClampToEdgeWrapping;
+    tex.minFilter = THREE.LinearMipmapLinearFilter;
+    tex.magFilter = THREE.LinearFilter;
+    tex.generateMipmaps = true;
+    tex.needsUpdate = true;
+}
+
+function getCanvasFontFamily() {
+    return `"Cal Sans", "Inter", "Helvetica Neue", Arial, sans-serif`;
+}
+
+function resolveFrontTextSize({
+    ctx,
+    text,
+    requestedSize,
+    maxWidth,
+    minSize = 36,
+    maxSize = 320,
+    fontFamily,
+    fontWeight = 700,
+    letterSpacingPx = 0,
+}) {
+    if (!ctx || !text) return minSize;
+
+    let size = clamp(requestedSize, minSize, maxSize);
+
+    const measure = (fontSize) => {
+        ctx.font = `${fontWeight} ${fontSize}px ${fontFamily}`;
+        const metrics = ctx.measureText(text);
+        const extraSpacing = Math.max(0, text.length - 1) * letterSpacingPx;
+        return metrics.width + extraSpacing;
+    };
+
+    while (size > minSize && measure(size) > maxWidth) {
+        size -= 2;
+    }
+
+    return clamp(size, minSize, maxSize);
+}
+
+function drawTrackedText(ctx, text, x, y, letterSpacing = 0) {
+    if (!ctx || !text) return;
+
+    if (!letterSpacing) {
+        ctx.fillText(text, x, y);
+        return;
+    }
+
+    let cursorX = x;
+
+    for (let i = 0; i < text.length; i += 1) {
+        const char = text[i];
+        ctx.fillText(char, cursorX, y);
+        const metrics = ctx.measureText(char);
+        cursorX += metrics.width + letterSpacing;
+    }
+}
+
 export default function PlasticCard3D({
     frontSrc,
     backSrc,
@@ -24,6 +89,9 @@ export default function PlasticCard3D({
     rotationOffset = 0,
     stageClassName = "",
     compact = false,
+    frontText = "",
+    frontFontSize = 30,
+    frontFontWeight = 700,
 }) {
     const safeFront = safeTexSrc(frontSrc);
     const safeBack = safeTexSrc(backSrc);
@@ -71,6 +139,9 @@ export default function PlasticCard3D({
                                         backSrc={safeBack}
                                         qrSrc={safeQr}
                                         edgeColor={edgeColor}
+                                        frontText={frontText}
+                                        frontFontSize={frontFontSize}
+                                        frontFontWeight={frontFontWeight}
                                     />
                                 </group>
                             </CardRig>
@@ -182,6 +253,7 @@ function CardRig({
 
     const drag = useRef({
         isDown: false,
+        hasUserInteracted: false,
         startX: 0,
         startY: 0,
         baseRX: 0.08,
@@ -192,22 +264,19 @@ function CardRig({
         t: rotationOffset * 2,
     });
 
-    const clamp = (v, min, max) => Math.max(min, Math.min(max, v));
-
     useFrame((_, dt) => {
         if (!group.current) return;
 
         if (drag.current.idle) {
             drag.current.t += dt;
 
-            if (autoRotate) {
+            if (autoRotate && !drag.current.hasUserInteracted) {
                 drag.current.ry += autoRotateSpeed * dt;
+
+                const breathe = Math.sin(drag.current.t * 1.05) * 0.03;
+                const targetRx = clamp(drag.current.baseRX + breathe, -0.55, 0.55);
+                drag.current.rx = THREE.MathUtils.lerp(drag.current.rx, targetRx, 0.08);
             }
-
-            const breathe = Math.sin(drag.current.t * 1.05) * 0.03;
-            const targetRx = clamp(drag.current.baseRX + breathe, -0.55, 0.55);
-
-            drag.current.rx = THREE.MathUtils.lerp(drag.current.rx, targetRx, 0.08);
         }
 
         group.current.rotation.x = THREE.MathUtils.lerp(
@@ -233,6 +302,7 @@ function CardRig({
         e.stopPropagation();
         drag.current.isDown = true;
         drag.current.idle = false;
+        drag.current.hasUserInteracted = true;
 
         drag.current.startX = e.clientX;
         drag.current.startY = e.clientY;
@@ -276,13 +346,22 @@ function CardRig({
             onPointerMove={interactive ? onPointerMove : undefined}
             onPointerUp={interactive ? onPointerUp : undefined}
             onPointerCancel={interactive ? onPointerUp : undefined}
+            onPointerLeave={interactive ? onPointerUp : undefined}
         >
             {children}
         </group>
     );
 }
 
-function CardMesh({ frontSrc, backSrc, qrSrc, edgeColor }) {
+function CardMesh({
+    frontSrc,
+    backSrc,
+    qrSrc,
+    edgeColor,
+    frontText,
+    frontFontSize,
+    frontFontWeight,
+}) {
     const w = 0.92;
     const h = w * (54 / 85.6);
     const t = 0.01;
@@ -301,25 +380,13 @@ function CardMesh({ frontSrc, backSrc, qrSrc, edgeColor }) {
         });
         geo.center();
         return geo;
-    }, [w, h, t]);
+    }, [w, h, t, cornerR]);
 
     const faceGeo = useMemo(() => new THREE.PlaneGeometry(w, h), [w, h]);
 
     const [frontTex, backTex, qrTex] = useTexture([frontSrc, backSrc, qrSrc]);
 
     useEffect(() => {
-        const setupColorTexture = (tex) => {
-            if (!tex) return;
-            tex.colorSpace = THREE.SRGBColorSpace;
-            tex.anisotropy = 12;
-            tex.wrapS = THREE.ClampToEdgeWrapping;
-            tex.wrapT = THREE.ClampToEdgeWrapping;
-            tex.minFilter = THREE.LinearMipmapLinearFilter;
-            tex.magFilter = THREE.LinearFilter;
-            tex.generateMipmaps = true;
-            tex.needsUpdate = true;
-        };
-
         setupColorTexture(frontTex);
         setupColorTexture(backTex);
         setupColorTexture(qrTex);
@@ -342,16 +409,87 @@ function CardMesh({ frontSrc, backSrc, qrSrc, edgeColor }) {
         ctx.fill();
 
         const tex = new THREE.CanvasTexture(canvas);
-        tex.colorSpace = THREE.SRGBColorSpace;
-        tex.wrapS = THREE.ClampToEdgeWrapping;
-        tex.wrapT = THREE.ClampToEdgeWrapping;
-        tex.minFilter = THREE.LinearMipmapLinearFilter;
-        tex.magFilter = THREE.LinearFilter;
-        tex.generateMipmaps = true;
-        tex.needsUpdate = true;
+        setupColorTexture(tex);
 
         return tex;
     }, []);
+
+    const composedFrontTexture = useMemo(() => {
+        const frontImg = frontTex?.image;
+        if (!frontImg) return null;
+
+        const canvas = document.createElement("canvas");
+        const ctx = canvas.getContext("2d");
+        if (!ctx) return null;
+
+        const width = frontImg.width || 1200;
+        const height = frontImg.height || 800;
+
+        canvas.width = width;
+        canvas.height = height;
+
+        ctx.clearRect(0, 0, width, height);
+        ctx.drawImage(frontImg, 0, 0, width, height);
+
+        const safeText = String(frontText || "");
+        const trimmedText = safeText.trim();
+
+        if (trimmedText) {
+            const fontFamily = getCanvasFontFamily();
+            const fontWeight = clamp(Number(frontFontWeight || 700), 400, 900);
+
+            const requestedPx = clamp(
+                Number(frontFontSize || 30) * (height / 800) * 3.8,
+                36,
+                320
+            );
+
+            const maxWidth = width * 0.8;
+            const centerX = width / 2;
+            const centerY = height / 2;
+            const letterSpacing = 0;
+
+            const resolvedSize = resolveFrontTextSize({
+                ctx,
+                text: trimmedText,
+                requestedSize: requestedPx,
+                maxWidth,
+                minSize: 36,
+                maxSize: 320,
+                fontFamily,
+                fontWeight,
+                letterSpacingPx: letterSpacing,
+            });
+
+            ctx.save();
+            ctx.font = `${fontWeight} ${resolvedSize}px ${fontFamily}`;
+            ctx.fillStyle = "#111111";
+            ctx.textAlign = "center";
+            ctx.textBaseline = "middle";
+
+            if (letterSpacing) {
+                const totalWidth =
+                    ctx.measureText(trimmedText).width +
+                    Math.max(0, trimmedText.length - 1) * letterSpacing;
+                drawTrackedText(
+                    ctx,
+                    trimmedText,
+                    centerX - totalWidth / 2,
+                    centerY,
+                    letterSpacing
+                );
+            } else {
+                ctx.fillText(trimmedText, centerX, centerY);
+            }
+
+            ctx.restore();
+        }
+
+        const tex = new THREE.CanvasTexture(canvas);
+        setupColorTexture(tex);
+
+        return tex;
+    }, [frontTex, frontText, frontFontSize, frontFontWeight]);
 
     const composedBackTexture = useMemo(() => {
         const backImg = backTex?.image;
@@ -380,14 +518,7 @@ function CardMesh({ frontSrc, backSrc, qrSrc, edgeColor }) {
         }
 
         const tex = new THREE.CanvasTexture(canvas);
-        tex.colorSpace = THREE.SRGBColorSpace;
-        tex.anisotropy = 12;
-        tex.wrapS = THREE.ClampToEdgeWrapping;
-        tex.wrapT = THREE.ClampToEdgeWrapping;
-        tex.minFilter = THREE.LinearMipmapLinearFilter;
-        tex.magFilter = THREE.LinearFilter;
-        tex.generateMipmaps = true;
-        tex.needsUpdate = true;
+        setupColorTexture(tex);
 
         return tex;
     }, [backTex, qrTex]);
@@ -395,9 +526,10 @@ function CardMesh({ frontSrc, backSrc, qrSrc, edgeColor }) {
     useEffect(() => {
         return () => {
             if (roundedMaskTexture) roundedMaskTexture.dispose();
+            if (composedFrontTexture) composedFrontTexture.dispose();
             if (composedBackTexture) composedBackTexture.dispose();
         };
-    }, [roundedMaskTexture, composedBackTexture]);
+    }, [roundedMaskTexture, composedFrontTexture, composedBackTexture]);
 
     const edgeMat = useMemo(() => {
         return new THREE.MeshPhysicalMaterial({
@@ -413,7 +545,7 @@ function CardMesh({ frontSrc, backSrc, qrSrc, edgeColor }) {
 
     const frontMat = useMemo(() => {
         const m = new THREE.MeshBasicMaterial({
-            map: frontTex || null,
+            map: composedFrontTexture || frontTex || null,
             alphaMap: roundedMaskTexture || null,
             transparent: true,
             opacity: 1,
@@ -427,7 +559,7 @@ function CardMesh({ frontSrc, backSrc, qrSrc, edgeColor }) {
         m.polygonOffsetFactor = -6;
         m.polygonOffsetUnits = -6;
         return m;
-    }, [frontTex, roundedMaskTexture]);
+    }, [composedFrontTexture, frontTex, roundedMaskTexture]);
 
     const backMat = useMemo(() => {
         const m = new THREE.MeshBasicMaterial({

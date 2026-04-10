@@ -19,15 +19,25 @@ const LOGO_CHANGE_MS = 4000;
 const DEFAULT_LOGO_PERCENT = 75;
 
 const PRODUCT_PHASE_MAP = {
-    "plastic-card": 0,
-    "metal-card": 1,
-    konartag: 2,
+    "plastic-white": 0,
+    "plastic-black": 1,
+    "plastic-blue": 2,
+    "plastic-green": 3,
+    "plastic-magenta": 4,
+    "plastic-orange": 5,
+    "metal-card": 6,
+    konartag: 7,
 };
 
 const PRODUCT_ROTATION_OFFSET_MAP = {
-    "plastic-card": 0,
-    "metal-card": (Math.PI * 2) / 3,
-    konartag: (Math.PI * 4) / 3,
+    "plastic-white": 0,
+    "plastic-black": (Math.PI * 2) / 8,
+    "plastic-blue": (Math.PI * 4) / 8,
+    "plastic-green": (Math.PI * 6) / 8,
+    "plastic-magenta": (Math.PI * 8) / 8,
+    "plastic-orange": (Math.PI * 10) / 8,
+    "metal-card": (Math.PI * 12) / 8,
+    konartag: (Math.PI * 14) / 8,
 };
 
 const ALL_LOGOS = [
@@ -41,25 +51,40 @@ const ALL_LOGOS = [
     CardChangeLogo6,
 ];
 
-function getVariantSequence(productKey) {
-    if (productKey === "metal-card") return ["black", "gold"];
-    if (productKey === "konartag") return ["white", "black"];
-    return ["white", "black"];
+const PLASTIC_VARIANT_DEFAULT_LOGO = {
+    white: LogoIcon,
+    black: LogoIconWhite,
+    blue: LogoIconWhite,
+    green: LogoIconWhite,
+    magenta: LogoIconWhite,
+    orange: LogoIconWhite,
+};
+
+function getFixedVariant(productKey) {
+    if (productKey === "plastic-white") return "white";
+    if (productKey === "plastic-black") return "black";
+    if (productKey === "plastic-blue") return "blue";
+    if (productKey === "plastic-green") return "green";
+    if (productKey === "plastic-magenta") return "magenta";
+    if (productKey === "plastic-orange") return "orange";
+    if (productKey === "metal-card") return "gold";
+    if (productKey === "konartag") return "black";
+    return "white";
 }
 
 function getLogoSequence(productKey, variant) {
     if (productKey === "metal-card") {
-        return [LogoIconWhite];
-    }
-
-    if (productKey === "konartag") {
         return [variant === "black" ? LogoIconWhite : LogoIcon];
     }
 
-    const isDark = variant === "black";
+    if (productKey === "konartag") {
+        return [LogoIconWhite];
+    }
+
+    const baseLogo = PLASTIC_VARIANT_DEFAULT_LOGO[variant] || LogoIcon;
 
     return [
-        isDark ? LogoIconWhite : LogoIcon,
+        baseLogo,
         CardChangeLogo1,
         CardChangeLogo2,
         CardChangeLogo3,
@@ -67,27 +92,6 @@ function getLogoSequence(productKey, variant) {
         CardChangeLogo5,
         CardChangeLogo6,
     ];
-}
-
-function getFrameState(productKey, tick) {
-    const variants = getVariantSequence(productKey);
-
-    const frames = variants.flatMap((variant) => {
-        const logos = getLogoSequence(productKey, variant);
-        return logos.map((_, logoIndex) => ({
-            variant,
-            logoIndex,
-        }));
-    });
-
-    const totalFrames = frames.length || 1;
-    const safeTick = ((tick % totalFrames) + totalFrames) % totalFrames;
-    const frame = frames[safeTick] || {
-        variant: variants[0] || "white",
-        logoIndex: 0,
-    };
-
-    return frame;
 }
 
 function renderProduct3D({
@@ -128,6 +132,7 @@ export default function ProductCardPreview3D({
 }) {
     const phaseIndex = PRODUCT_PHASE_MAP[productKey] ?? 0;
     const rotationOffset = PRODUCT_ROTATION_OFFSET_MAP[productKey] ?? 0;
+    const variant = getFixedVariant(productKey);
 
     const [tick, setTick] = useState(phaseIndex);
 
@@ -139,7 +144,7 @@ export default function ProductCardPreview3D({
     useEffect(() => {
         setTick(phaseIndex);
 
-        const delay = Math.round((LOGO_CHANGE_MS / 3) * phaseIndex);
+        const delay = Math.round((LOGO_CHANGE_MS / 8) * phaseIndex);
         let intervalId;
 
         const timeoutId = window.setTimeout(() => {
@@ -154,17 +159,13 @@ export default function ProductCardPreview3D({
         };
     }, [phaseIndex, productKey]);
 
-    const { variant, logoIndex } = useMemo(
-        () => getFrameState(productKey, tick),
-        [productKey, tick]
-    );
-
     const logoSequence = useMemo(
         () => getLogoSequence(productKey, variant),
         [productKey, variant]
     );
 
-    const currentLogo = logoSequence[logoIndex] || logoSequence[0] || LogoIcon;
+    const currentLogo =
+        logoSequence[Math.abs(tick) % logoSequence.length] || logoSequence[0] || LogoIcon;
 
     return (
         <div className={`cp-preview3dWrap ${className}`.trim()} aria-hidden="true">

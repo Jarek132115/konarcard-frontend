@@ -1,5 +1,7 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
+import { Input } from "@base-ui/react/input";
+import { Slider } from "@base-ui/react/slider";
 
 import Navbar from "../../../components/Navbar";
 import Footer from "../../../components/Home/Footer";
@@ -24,6 +26,17 @@ import HammerIcon from "../../../assets/icons/Hammer.svg";
 import ProfessionalFastIcon from "../../../assets/icons/ProfessionalFast.svg";
 
 const INTENT_KEY = "konar_nfc_intent_v1";
+const PRODUCT_KEY = "plastic-white";
+const UNIT_PRICE = 19.99;
+const MIN_FONT_SIZE = 18;
+const MAX_FONT_SIZE = 72;
+const MAX_FRONT_TEXT = 22;
+
+const WEIGHT_OPTIONS = [
+    { key: "regular", label: "Regular", value: 500 },
+    { key: "medium", label: "Medium", value: 600 },
+    { key: "bold", label: "Bold", value: 700 },
+];
 
 function readIntent() {
     try {
@@ -80,15 +93,32 @@ function buildCardsProductUrl(productKey) {
     return safe ? `/cards?product=${encodeURIComponent(safe)}` : "/cards";
 }
 
+function clamp(n, min, max) {
+    return Math.max(min, Math.min(max, n));
+}
+
+function formatCurrency(value) {
+    return new Intl.NumberFormat("en-GB", {
+        style: "currency",
+        currency: "GBP",
+    }).format(Number(value || 0));
+}
+
+function sanitizeFrontText(value) {
+    return String(value || "").slice(0, MAX_FRONT_TEXT);
+}
+
 export default function PlasticCard() {
     const navigate = useNavigate();
     const location = useLocation();
 
-    const PRODUCT_KEY = "plastic-white";
     const RETURN_TO = buildCardsProductUrl(PRODUCT_KEY);
 
     const [qty, setQty] = useState(1);
     const [profileId, setProfileId] = useState("");
+    const [frontText, setFrontText] = useState("KONAR");
+    const [frontFontWeight, setFrontFontWeight] = useState(700);
+    const [fontSize, setFontSize] = useState(42);
     const [errorMsg, setErrorMsg] = useState("");
     const [infoMsg, setInfoMsg] = useState("");
     const [busy, setBusy] = useState(false);
@@ -112,6 +142,8 @@ export default function PlasticCard() {
         return [];
     })();
 
+    const totalPrice = useMemo(() => qty * UNIT_PRICE, [qty]);
+
     const persistIntent = () => {
         const existing = readIntent();
 
@@ -120,6 +152,9 @@ export default function PlasticCard() {
             productKey: PRODUCT_KEY,
             quantity: qty,
             profileId,
+            frontText,
+            frontFontWeight,
+            fontSize,
             returnTo: RETURN_TO,
             createdAt: existing?.createdAt || Date.now(),
         });
@@ -148,11 +183,23 @@ export default function PlasticCard() {
         if (intent.productKey !== PRODUCT_KEY) return;
 
         if (typeof intent.quantity === "number") {
-            setQty(Math.max(1, Math.min(20, intent.quantity)));
+            setQty(clamp(intent.quantity, 1, 20));
         }
 
         if (typeof intent.profileId === "string") {
             setProfileId(intent.profileId);
+        }
+
+        if (typeof intent.frontText === "string") {
+            setFrontText(sanitizeFrontText(intent.frontText) || "KONAR");
+        }
+
+        if (typeof intent.frontFontWeight === "number") {
+            setFrontFontWeight(clamp(intent.frontFontWeight, 400, 900));
+        }
+
+        if (typeof intent.fontSize === "number") {
+            setFontSize(clamp(intent.fontSize, MIN_FONT_SIZE, MAX_FONT_SIZE));
         }
     }, []);
 
@@ -171,16 +218,40 @@ export default function PlasticCard() {
         if (checkout === "success") return;
 
         persistIntent();
-    }, [qty, profileId, location.search]);
+    }, [qty, profileId, frontText, frontFontWeight, fontSize, location.search]);
 
     const features = useMemo(
         () => [
-            { icon: OneJobIcon, t: "One job pays for everything", s: "One extra job can easily cover the cost of your card." },
-            { icon: NoReprintsIcon, t: "No reprints, ever", s: "Update your details anytime — no reordering required." },
-            { icon: UpToDateIcon, t: "Always up to date", s: "Your latest work, reviews, and services stay live instantly." },
-            { icon: WorksEverywhereIcon, t: "Works everywhere", s: "In person, online, or on the phone — no apps needed." },
-            { icon: HammerIcon, t: "Built for real trades", s: "Designed for everyday work, not office desks." },
-            { icon: ProfessionalFastIcon, t: "Looks professional fast", s: "Make a strong first impression in seconds." },
+            {
+                icon: OneJobIcon,
+                t: "One job pays for everything",
+                s: "One extra job can easily cover the cost of your card.",
+            },
+            {
+                icon: NoReprintsIcon,
+                t: "No reprints, ever",
+                s: "Update your details anytime — no reordering required.",
+            },
+            {
+                icon: UpToDateIcon,
+                t: "Always up to date",
+                s: "Your latest work, reviews, and services stay live instantly.",
+            },
+            {
+                icon: WorksEverywhereIcon,
+                t: "Works everywhere",
+                s: "In person, online, or on the phone — no apps needed.",
+            },
+            {
+                icon: HammerIcon,
+                t: "Built for real trades",
+                s: "Designed for everyday work, not office desks.",
+            },
+            {
+                icon: ProfessionalFastIcon,
+                t: "Looks professional fast",
+                s: "Make a strong first impression in seconds.",
+            },
         ],
         []
     );
@@ -208,6 +279,15 @@ export default function PlasticCard() {
         });
     };
 
+    const handleFontSizeChange = (value) => {
+        if (Array.isArray(value)) {
+            setFontSize(clamp(Number(value[0] || MIN_FONT_SIZE), MIN_FONT_SIZE, MAX_FONT_SIZE));
+            return;
+        }
+
+        setFontSize(clamp(Number(value || MIN_FONT_SIZE), MIN_FONT_SIZE, MAX_FONT_SIZE));
+    };
+
     const handleBuy = async () => {
         setErrorMsg("");
         setInfoMsg("");
@@ -224,11 +304,18 @@ export default function PlasticCard() {
         }
 
         if (!profileId) {
-            setErrorMsg("Please choose which profile to link to this card before checkout.");
+            setErrorMsg("Please create or choose a profile in your dashboard before checkout.");
+            return;
+        }
+
+        const trimmedFrontText = String(frontText || "").trim();
+        if (!trimmedFrontText) {
+            setErrorMsg("Please add the text you want on the front of the card.");
             return;
         }
 
         setBusy(true);
+
         try {
             persistIntent();
 
@@ -237,6 +324,13 @@ export default function PlasticCard() {
                 quantity: qty,
                 profileId,
                 returnUrl: `${window.location.origin}${RETURN_TO}`,
+                customization: {
+                    frontText: trimmedFrontText,
+                    fontFamily: "Cal Sans",
+                    fontWeight: frontFontWeight,
+                    fontSize,
+                    orientation: "horizontal",
+                },
                 preview: {
                     variant: "white",
                     edition: "plastic",
@@ -244,6 +338,12 @@ export default function PlasticCard() {
                     frontTemplate: "WhiteFront",
                     backTemplate: "WhiteBack",
                     usesPresetArtwork: true,
+                    customization: {
+                        frontText: trimmedFrontText,
+                        fontFamily: "Cal Sans",
+                        fontWeight: frontFontWeight,
+                        fontSize,
+                    },
                 },
             });
 
@@ -300,96 +400,147 @@ export default function PlasticCard() {
                                     backSrc={WhiteBackImg}
                                     qrSrc={CardQrCode}
                                     edgeColor="#ffffff"
+                                    frontText={frontText}
+                                    frontFontSize={fontSize}
+                                    frontFontWeight={frontFontWeight}
                                 />
                             </div>
 
                             <div className="kc-controls" aria-label="Configure your card">
-                                <div className="kc-configGrid">
-                                    <div className="kc-controlCell kc-cell--profile">
-                                        <div className="kc-controlK">Link to profile</div>
+                                <div className="kc-controlsSplit">
+                                    <div className="kc-controlsLeft">
+                                        <div className="kc-controlK">Personalise your card</div>
 
-                                        <div className="kc-profileBox kc-profileBox--sm">
-                                            {!isLoggedIn ? (
-                                                <div className="kc-profileLoggedOut">
-                                                    <span>Please login</span>
-                                                    <button type="button" className="kc-loginInline" onClick={goLogin}>
-                                                        Login
-                                                    </button>
+                                        <div className="kc-fieldStack">
+                                            <div className="kc-field">
+                                                <label className="kc-fieldLabel" htmlFor="kc-front-text">
+                                                    Front text
+                                                </label>
+
+                                                <Input
+                                                    id="kc-front-text"
+                                                    className="kc-input"
+                                                    value={frontText}
+                                                    onChange={(e) => setFrontText(sanitizeFrontText(e.target.value))}
+                                                    placeholder="e.g. MichalPlumbing"
+                                                    disabled={busy}
+                                                    maxLength={MAX_FRONT_TEXT}
+                                                    aria-describedby="kc-front-text-help"
+                                                />
+
+                                                <p id="kc-front-text-help" className="kc-helpText">
+                                                    Displayed exactly as typed. Keep it short for the cleanest look.
+                                                </p>
+                                            </div>
+
+                                            <div className="kc-field">
+                                                <div className="kc-sliderMeta">
+                                                    <div className="kc-fieldLabel">Text weight</div>
+                                                    <div className="kc-sliderValue">{frontFontWeight}</div>
                                                 </div>
-                                            ) : (
-                                                <select
-                                                    className="kc-profileSelect kc-profileSelect--boxed"
-                                                    value={profileId}
-                                                    onChange={(e) => setProfileId(e.target.value)}
-                                                    disabled={busy || isProfilesLoading}
-                                                    aria-label="Choose profile"
-                                                >
-                                                    <option value="">
-                                                        {isProfilesLoading
-                                                            ? "Loading..."
-                                                            : myProfiles.length
-                                                                ? "Choose profile"
-                                                                : "No profiles"}
-                                                    </option>
 
-                                                    {myProfiles.map((p) => {
-                                                        const id = String(p?._id || "");
-                                                        if (!id) return null;
-
-                                                        const label =
-                                                            p?.business_card_name ||
-                                                            p?.full_name ||
-                                                            p?.main_heading ||
-                                                            p?.profile_slug ||
-                                                            "Profile";
+                                                <div className="kc-segmented" role="group" aria-label="Choose text weight">
+                                                    {WEIGHT_OPTIONS.map((option) => {
+                                                        const isActive = option.value === frontFontWeight;
 
                                                         return (
-                                                            <option key={id} value={id}>
-                                                                {label}
-                                                            </option>
+                                                            <button
+                                                                key={option.key}
+                                                                type="button"
+                                                                className={`kc-segmentedBtn ${isActive ? "is-active" : ""}`.trim()}
+                                                                onClick={() => setFrontFontWeight(option.value)}
+                                                                disabled={busy}
+                                                                aria-pressed={isActive}
+                                                            >
+                                                                {option.label}
+                                                            </button>
                                                         );
                                                     })}
-                                                </select>
-                                            )}
+                                                </div>
+                                            </div>
+
+                                            <div className="kc-field">
+                                                <div className="kc-sliderMeta">
+                                                    <div className="kc-fieldLabel">Text size</div>
+                                                    <div className="kc-sliderValue">{fontSize}px</div>
+                                                </div>
+
+                                                <div className="kc-sliderRow">
+                                                    <Slider.Root
+                                                        className="kc-sliderRoot"
+                                                        min={MIN_FONT_SIZE}
+                                                        max={MAX_FONT_SIZE}
+                                                        step={1}
+                                                        value={fontSize}
+                                                        onValueChange={handleFontSizeChange}
+                                                        disabled={busy}
+                                                        aria-label="Text size"
+                                                    >
+                                                        <Slider.Control className="kc-sliderControl">
+                                                            <Slider.Track className="kc-sliderTrack">
+                                                                <Slider.Indicator className="kc-sliderRange" />
+                                                                <Slider.Thumb
+                                                                    className="kc-sliderThumb"
+                                                                    aria-label="Text size"
+                                                                />
+                                                            </Slider.Track>
+                                                        </Slider.Control>
+                                                    </Slider.Root>
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
 
-                                    <div className="kc-buyArea kc-cell--buy" aria-label="Buy">
-                                        <div className="kc-buyMeta">
-                                            <div className="kc-buyPrice">£19.99</div>
-                                        </div>
+                                    <div className="kc-controlsRight" aria-label="Buy">
+                                        <div className="kc-controlK kc-controlK--left">Buy your card</div>
 
-                                        <div className="kc-buyControls">
-                                            <div className="kc-qtySm" aria-label="Quantity">
-                                                <button
-                                                    type="button"
-                                                    className="kc-qtySm__btn"
-                                                    onClick={() => setQty((q) => Math.max(1, q - 1))}
-                                                    disabled={busy}
-                                                    aria-label="Decrease quantity"
-                                                >
-                                                    −
-                                                </button>
-                                                <div className="kc-qtySm__val">{qty}</div>
-                                                <button
-                                                    type="button"
-                                                    className="kc-qtySm__btn"
-                                                    onClick={() => setQty((q) => Math.min(20, q + 1))}
-                                                    disabled={busy}
-                                                    aria-label="Increase quantity"
-                                                >
-                                                    +
-                                                </button>
+                                        <div className="kc-buyArea">
+                                            <div className="kc-buyMeta">
+                                                <div className="kc-buyPrice">{formatCurrency(totalPrice)}</div>
+                                                <div className="kc-buyUnit">{formatCurrency(UNIT_PRICE)} each</div>
+                                                <div className="kc-buyTotal">
+                                                    Total for {qty} {qty === 1 ? "card" : "cards"}
+                                                </div>
                                             </div>
 
-                                            <button
-                                                type="button"
-                                                onClick={handleBuy}
-                                                className="kx-btn kx-btn--black kc-buyBtnFit"
-                                                disabled={busy}
-                                            >
-                                                {busy ? "Starting checkout..." : "Buy KonarCard"}
-                                            </button>
+                                            <div className="kc-buyControls">
+                                                <div className="kc-qtySm" aria-label="Quantity">
+                                                    <button
+                                                        type="button"
+                                                        className="kc-qtySm__btn"
+                                                        onClick={() => setQty((q) => Math.max(1, q - 1))}
+                                                        disabled={busy}
+                                                        aria-label="Decrease quantity"
+                                                    >
+                                                        −
+                                                    </button>
+
+                                                    <div className="kc-qtySm__val">{qty}</div>
+
+                                                    <button
+                                                        type="button"
+                                                        className="kc-qtySm__btn"
+                                                        onClick={() => setQty((q) => Math.min(20, q + 1))}
+                                                        disabled={busy}
+                                                        aria-label="Increase quantity"
+                                                    >
+                                                        +
+                                                    </button>
+                                                </div>
+
+                                                <button
+                                                    type="button"
+                                                    onClick={handleBuy}
+                                                    className="kx-btn kx-btn--black kc-buyBtnFit"
+                                                    disabled={busy}
+                                                >
+                                                    {busy ? "Starting checkout..." : "Buy KonarCard"}
+                                                </button>
+
+                                                <p className="kc-buyReassure">
+                                                    Works with iPhone & Android. QR backup included. Profile is linked from your dashboard.
+                                                </p>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -455,26 +606,6 @@ export default function PlasticCard() {
                                     <h3 className="kc-title khv__cellTitle">{it.t}</h3>
                                     <p className="body khv__cellDesc">{it.s}</p>
                                 </article>
-                            ))}
-                        </div>
-                    </div>
-                </section>
-
-                <section className="kc-section kc-section--soft" aria-label="White KonarCard gallery">
-                    <div className="kc-section__inner">
-                        <div className="kc-section__head">
-                            <p className="kc-pill kc-section__pill">White KonarCard Gallery</p>
-                            <h2 className="kc-section__title">
-                                Made to look <span className="kc-accentWord">premium</span>
-                            </h2>
-                            <p className="kc-section__sub">
-                                Built for plumbers, electricians, builders and UK trades who need to share details fast on site.
-                            </p>
-                        </div>
-
-                        <div className="kc-premiumGrid" aria-label="Premium gallery placeholders">
-                            {Array.from({ length: 8 }).map((_, i) => (
-                                <div className="kc-premiumTile" key={i} aria-hidden="true" />
                             ))}
                         </div>
                     </div>

@@ -20,8 +20,8 @@ export default function CardsCatalog({
 
                     <p className="cp-muted">
                         {hasPurchasedCards
-                            ? "Order more NFC products for your business and customise each one before checkout."
-                            : "Choose your first NFC product, customise it, and check out in seconds."}
+                            ? "Order another KonarCard style for your business and customise it before checkout."
+                            : "Choose your first KonarCard style, customise it, and check out in seconds."}
                     </p>
                 </div>
             </div>

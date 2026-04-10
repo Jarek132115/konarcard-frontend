@@ -31,21 +31,64 @@ import KonarTag3D from "../../components/KonarTag3D";
 const NFC_INTENT_KEY = "konar_nfc_intent_v1";
 
 const PRODUCT_META = {
-  "plastic-card": {
-    key: "plastic-card",
-    title: "Plastic NFC Business Card",
+  "plastic-white": {
+    key: "plastic-white",
+    title: "KonarCard White",
     edition: "plastic",
+    family: "plastic",
+    variant: "white",
+  },
+  "plastic-black": {
+    key: "plastic-black",
+    title: "KonarCard Black",
+    edition: "plastic",
+    family: "plastic",
+    variant: "black",
+  },
+  "plastic-blue": {
+    key: "plastic-blue",
+    title: "KonarCard Blue",
+    edition: "plastic",
+    family: "plastic",
+    variant: "blue",
+  },
+  "plastic-green": {
+    key: "plastic-green",
+    title: "KonarCard Green",
+    edition: "plastic",
+    family: "plastic",
+    variant: "green",
+  },
+  "plastic-magenta": {
+    key: "plastic-magenta",
+    title: "KonarCard Magenta",
+    edition: "plastic",
+    family: "plastic",
+    variant: "magenta",
+  },
+  "plastic-orange": {
+    key: "plastic-orange",
+    title: "KonarCard Orange",
+    edition: "plastic",
+    family: "plastic",
+    variant: "orange",
   },
   "metal-card": {
     key: "metal-card",
     title: "Metal NFC Business Card",
     edition: "metal",
+    family: "metal",
   },
   konartag: {
     key: "konartag",
     title: "KonarTag NFC Key Tag",
     edition: "tag",
+    family: "tag",
   },
+};
+
+const LEGACY_PRODUCT_KEY_MAP = {
+  "plastic-card": "plastic-white",
 };
 
 const centerTrim = (v) => (v ?? "").toString().trim();
@@ -61,6 +104,12 @@ const buildPublicUrl = (profileSlug) => {
   const s = normalizeSlug(profileSlug);
   if (!s) return `${window.location.origin}/u/`;
   return `${window.location.origin}/u/${encodeURIComponent(s)}`;
+};
+
+const resolveProductKey = (rawKey) => {
+  const key = centerTrim(rawKey);
+  if (!key) return "";
+  return PRODUCT_META[key] ? key : LEGACY_PRODUCT_KEY_MAP[key] || "";
 };
 
 class CardPreviewErrorBoundary extends React.Component {
@@ -106,7 +155,25 @@ function readIntent() {
       return null;
     }
 
-    return parsed;
+    const resolvedProductKey = resolveProductKey(parsed.productKey);
+    if (!resolvedProductKey) return null;
+
+    return {
+      ...parsed,
+      productKey: resolvedProductKey,
+      family:
+        parsed?.family ||
+        PRODUCT_META[resolvedProductKey]?.family ||
+        "plastic",
+      edition:
+        parsed?.edition ||
+        PRODUCT_META[resolvedProductKey]?.edition ||
+        "plastic",
+      variant:
+        parsed?.variant ||
+        PRODUCT_META[resolvedProductKey]?.variant ||
+        "",
+    };
   } catch {
     return null;
   }
@@ -129,7 +196,9 @@ async function getMyOrders() {
 }
 
 function Card3DDetails({ productKey, logoSrc, qrSrc, logoPercent, variant }) {
-  if (productKey === "metal-card") {
+  const resolvedKey = resolveProductKey(productKey);
+
+  if (resolvedKey === "metal-card") {
     return (
       <MetalCard3D
         logoSrc={logoSrc}
@@ -140,7 +209,7 @@ function Card3DDetails({ productKey, logoSrc, qrSrc, logoPercent, variant }) {
     );
   }
 
-  if (productKey === "konartag") {
+  if (resolvedKey === "konartag") {
     return (
       <KonarTag3D
         logoSrc={logoSrc}
@@ -156,7 +225,7 @@ function Card3DDetails({ productKey, logoSrc, qrSrc, logoPercent, variant }) {
       logoSrc={logoSrc}
       qrSrc={qrSrc}
       logoSize={logoPercent}
-      variant={variant}
+      variant={variant || PRODUCT_META[resolvedKey]?.variant || "white"}
     />
   );
 }
@@ -279,7 +348,21 @@ export default function Cards() {
   }, []);
 
   const purchasedCards = useMemo(
-    () => (purchasedOrders || []).map(normalizeOrder),
+    () =>
+      (purchasedOrders || []).map((order) => {
+        const normalized = normalizeOrder(order);
+        const resolvedKey = resolveProductKey(
+          normalized?.productKey ||
+          normalized?.product?.key ||
+          order?.productKey ||
+          order?.product?.key
+        );
+
+        return {
+          ...normalized,
+          productKey: resolvedKey || normalized.productKey,
+        };
+      }),
     [purchasedOrders]
   );
 
@@ -291,7 +374,8 @@ export default function Cards() {
   useEffect(() => {
     const sp = new URLSearchParams(location.search);
     const checkout = sp.get("checkout");
-    const product = sp.get("product");
+    const rawProduct = sp.get("product");
+    const product = resolveProductKey(rawProduct);
     const intent = readIntent();
 
     if (checkout === "success") {
@@ -335,10 +419,13 @@ export default function Cards() {
   }, [location.search, navigate, selectedOrderView, selectedId]);
 
   const openConfigurator = (productKey) => {
+    const resolvedKey = resolveProductKey(productKey);
+    if (!resolvedKey || !PRODUCT_META[resolvedKey]) return;
+
     setSelectedOrderView(false);
     setSelectedId(null);
-    setSelectedProductKey(productKey);
-    navigate(`/cards?product=${encodeURIComponent(productKey)}`, { replace: true });
+    setSelectedProductKey(resolvedKey);
+    navigate(`/cards?product=${encodeURIComponent(resolvedKey)}`, { replace: true });
   };
 
   const openOrderDetails = (orderId) => {
