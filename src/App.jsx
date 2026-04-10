@@ -72,8 +72,12 @@ import Settings from "./pages/interface/Settings.jsx";
 // Dashboard pricing
 import UpgradePlan from "./pages/interface/UpgradePlan.jsx";
 
-// Admin
-import AdminOrders from "./pages/admin/AdminDashboard.jsx";
+// -------- Admin --------
+import AdminDashboard from "./pages/admin/AdminDashboard.jsx";
+import AdminOverview from "./pages/admin/AdminOverview.jsx";
+import AdminUsers from "./pages/admin/AdminUsers.jsx";
+import AdminOrders from "./pages/admin/AdminOrders.jsx";
+import AdminAnalytics from "./pages/admin/AdminAnalytics.jsx";
 
 /* --------------------------------------------------
    Tidio chat logic
@@ -554,12 +558,44 @@ export default function App() {
             }
           />
 
-          {/* Admin */}
+          {/* ---------------- ADMIN ---------------- */}
           <Route
             path="/admin"
             element={
               <AdminRoute>
+                <AdminDashboard />
+              </AdminRoute>
+            }
+          />
+          <Route
+            path="/admin/overview"
+            element={
+              <AdminRoute>
+                <AdminOverview />
+              </AdminRoute>
+            }
+          />
+          <Route
+            path="/admin/users"
+            element={
+              <AdminRoute>
+                <AdminUsers />
+              </AdminRoute>
+            }
+          />
+          <Route
+            path="/admin/orders"
+            element={
+              <AdminRoute>
                 <AdminOrders />
+              </AdminRoute>
+            }
+          />
+          <Route
+            path="/admin/analytics"
+            element={
+              <AdminRoute>
+                <AdminAnalytics />
               </AdminRoute>
             }
           />
