@@ -7,6 +7,7 @@ const PENDING_CLAIM_KEY = "pendingClaimUsername";
 const OAUTH_SOURCE_KEY = "oauthSource"; // 'register' | 'login'
 const CHECKOUT_INTENT_KEY = "konar_checkout_intent_v1";
 const NFC_INTENT_KEY = "konar_nfc_intent_v1";
+const ADMIN_EMAILS_UI = ["supportteam@konarcard.com"];
 
 function safeJsonParse(raw) {
     try {
@@ -115,6 +116,13 @@ function userHasClaim(user) {
     return !!(user?.username || user?.slug || user?.profileUrl);
 }
 
+function isAdminUser(userLike) {
+    const email = String(userLike?.email || "").trim().toLowerCase();
+    const role = String(userLike?.role || "").trim().toLowerCase();
+
+    return role === "admin" || ADMIN_EMAILS_UI.includes(email);
+}
+
 export default function OAuthSuccess() {
     const navigate = useNavigate();
     const location = useLocation();
@@ -183,6 +191,12 @@ export default function OAuthSuccess() {
                 if (!user) {
                     clearLocalAuth();
                     navigate("/login?oauth=invalid_user", { replace: true });
+                    return;
+                }
+
+                if (isAdminUser(user)) {
+                    clearClaimKeys();
+                    navigate("/admin", { replace: true });
                     return;
                 }
 

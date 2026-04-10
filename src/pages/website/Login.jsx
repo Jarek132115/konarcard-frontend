@@ -25,6 +25,13 @@ function buildCardsProductUrl(productKey) {
     return safe ? `/cards?product=${encodeURIComponent(safe)}` : "/cards";
 }
 
+function isAdminUser(userLike) {
+    const email = String(userLike?.email || "").trim().toLowerCase();
+    const role = String(userLike?.role || "").trim().toLowerCase();
+
+    return role === "admin" || ADMIN_EMAILS_UI.includes(email);
+}
+
 export default function Login() {
     const navigate = useNavigate();
     const location = useLocation();
@@ -43,8 +50,6 @@ export default function Login() {
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [isVerifying, setIsVerifying] = useState(false);
     const [isSendingReset, setIsSendingReset] = useState(false);
-
-    const isAdminEmail = (email) => ADMIN_EMAILS_UI.includes((email || "").toLowerCase());
 
     const closeAuth = () => {
         const from = location.state?.from;
@@ -116,46 +121,50 @@ export default function Login() {
         return "/dashboard";
     }, [location.state]);
 
-    const navigateAfterAuth = useCallback(async () => {
-        let action = null;
+    const navigateAfterAuth = useCallback(
+        async (userLike) => {
+            if (isAdminUser(userLike)) {
+                clearPostAuthAction();
+                navigate("/admin", { replace: true });
+                return;
+            }
 
-        try {
-            const saved = localStorage.getItem(POST_AUTH_KEY);
-            if (saved) action = JSON.parse(saved);
-        } catch {
-            action = null;
-        }
+            let action = null;
 
-        const nfcIntent = readNfcIntent();
+            try {
+                const saved = localStorage.getItem(POST_AUTH_KEY);
+                if (saved) action = JSON.parse(saved);
+            } catch {
+                action = null;
+            }
 
-        if (
-            action?.type === "buy_nfc" ||
-            action?.type === "buy_card" ||
-            nfcIntent?.productKey
-        ) {
+            const nfcIntent = readNfcIntent();
+
+            if (
+                action?.type === "buy_nfc" ||
+                action?.type === "buy_card" ||
+                nfcIntent?.productKey
+            ) {
+                clearPostAuthAction();
+
+                navigate(
+                    nfcIntent?.returnTo || buildCardsProductUrl(nfcIntent?.productKey),
+                    {
+                        replace: true,
+                        state: {
+                            openProductFromIntent: true,
+                            source: "login_nfc_resume",
+                        },
+                    }
+                );
+                return;
+            }
+
             clearPostAuthAction();
-
-            navigate(
-                nfcIntent?.returnTo || buildCardsProductUrl(nfcIntent?.productKey),
-                {
-                    replace: true,
-                    state: {
-                        openProductFromIntent: true,
-                        source: "login_nfc_resume",
-                    },
-                }
-            );
-            return;
-        }
-
-        clearPostAuthAction();
-        navigate(resolveDefaultPostAuthDestination(), { replace: true });
-    }, [
-        clearPostAuthAction,
-        navigate,
-        readNfcIntent,
-        resolveDefaultPostAuthDestination,
-    ]);
+            navigate(resolveDefaultPostAuthDestination(), { replace: true });
+        },
+        [clearPostAuthAction, navigate, readNfcIntent, resolveDefaultPostAuthDestination]
+    );
 
     const startOAuth = (provider) => {
         if (provider === "apple") {
@@ -184,7 +193,9 @@ export default function Login() {
         return () => clearTimeout(t);
     }, [cooldown]);
 
-    const resumeCheckoutIfNeeded = async () => {
+    const resumeCheckoutIfNeeded = async (userLike) => {
+        if (isAdminUser(userLike)) return false;
+
         const intent = readCheckoutIntent();
         if (!intent) return false;
 
@@ -253,19 +264,15 @@ export default function Login() {
                 return;
             }
 
+            const loggedInUser = res?.data?.user || null;
+
             toast.success("Login successful!");
-            login(res.data.token, res.data.user);
+            login(res.data.token, loggedInUser);
 
-            const email = res.data.user?.email || cleanEmail;
-            if (isAdminEmail(email)) {
-                navigate("/admin", { replace: true });
-                return;
-            }
-
-            const resumed = await resumeCheckoutIfNeeded();
+            const resumed = await resumeCheckoutIfNeeded(loggedInUser);
             if (resumed) return;
 
-            await navigateAfterAuth();
+            await navigateAfterAuth(loggedInUser);
         } catch (err) {
             toast.error(err?.response?.data?.error || "Login failed.");
         } finally {
@@ -315,18 +322,14 @@ export default function Login() {
                 return;
             }
 
-            login(loginRes.data.token, loginRes.data.user);
+            const loggedInUser = loginRes?.data?.user || null;
 
-            const email = loginRes.data.user?.email || cleanEmail;
-            if (isAdminEmail(email)) {
-                navigate("/admin", { replace: true });
-                return;
-            }
+            login(loginRes.data.token, loggedInUser);
 
-            const resumed = await resumeCheckoutIfNeeded();
+            const resumed = await resumeCheckoutIfNeeded(loggedInUser);
             if (resumed) return;
 
-            await navigateAfterAuth();
+            await navigateAfterAuth(loggedInUser);
         } catch (err) {
             toast.error(err?.response?.data?.error || "Verification failed.");
         } finally {
