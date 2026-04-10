@@ -78,5 +78,6 @@ export default function PublicOnlyRoute({
         return <Navigate to="/admin" replace />;
     }
 
+    
     return <Navigate to={redirectAuthenticatedTo} replace />;
 }
