@@ -5,8 +5,60 @@ import { Environment, useTexture } from "@react-three/drei";
 
 import "../styling/products/plasticcard3d.css";
 
+import WhiteFrontImg from "../assets/images/Products/WhiteFront.jpg";
+import WhiteBackImg from "../assets/images/Products/WhiteBack.jpg";
+import BlackFrontImg from "../assets/images/Products/BlackFront.jpg";
+import BlackBackImg from "../assets/images/Products/BlackBack.jpg";
+import BlueFrontImg from "../assets/images/Products/BlueFront.jpg";
+import BlueBackImg from "../assets/images/Products/BlueBack.jpg";
+import GreenFrontImg from "../assets/images/Products/GreenFront.jpg";
+import GreenBackImg from "../assets/images/Products/GreenBack.jpg";
+import MagentaFrontImg from "../assets/images/Products/MagentaFront.jpg";
+import MagentaBackImg from "../assets/images/Products/MagentaBack.jpg";
+import OrangeFrontImg from "../assets/images/Products/OrangeFront.jpg";
+import OrangeBackImg from "../assets/images/Products/OrangeBack.jpg";
+
 const TRANSPARENT_1PX =
     "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO9qWZkAAAAASUVORK5CYII=";
+
+const VARIANT_ARTWORK = {
+    white: {
+        front: WhiteFrontImg,
+        back: WhiteBackImg,
+        textColor: "#111111",
+        edgeColor: "#ffffff",
+    },
+    black: {
+        front: BlackFrontImg,
+        back: BlackBackImg,
+        textColor: "#ffffff",
+        edgeColor: "#111111",
+    },
+    blue: {
+        front: BlueFrontImg,
+        back: BlueBackImg,
+        textColor: "#ffffff",
+        edgeColor: "#0f52ff",
+    },
+    green: {
+        front: GreenFrontImg,
+        back: GreenBackImg,
+        textColor: "#ffffff",
+        edgeColor: "#15a53a",
+    },
+    magenta: {
+        front: MagentaFrontImg,
+        back: MagentaBackImg,
+        textColor: "#ffffff",
+        edgeColor: "#d1008f",
+    },
+    orange: {
+        front: OrangeFrontImg,
+        back: OrangeBackImg,
+        textColor: "#ffffff",
+        edgeColor: "#ff7b00",
+    },
+};
 
 const safeTexSrc = (src) => {
     const s = (src ?? "").toString().trim();
@@ -78,25 +130,34 @@ function drawTrackedText(ctx, text, x, y, letterSpacing = 0) {
     }
 }
 
+function resolveVariantAssets(variant) {
+    return VARIANT_ARTWORK[variant] || VARIANT_ARTWORK.white;
+}
+
 export default function PlasticCard3D({
     frontSrc,
     backSrc,
     qrSrc,
-    edgeColor = "#ffffff",
+    edgeColor,
     interactive = true,
     autoRotate = true,
     autoRotateSpeed = 0.68,
     rotationOffset = 0,
     stageClassName = "",
     compact = false,
+    variant = "white",
     frontText = "",
     frontFontSize = 30,
     frontFontWeight = 700,
-    frontTextColor = "#111111",
+    frontTextColor,
 }) {
-    const safeFront = safeTexSrc(frontSrc);
-    const safeBack = safeTexSrc(backSrc);
+    const variantAssets = resolveVariantAssets(variant);
+
+    const safeFront = safeTexSrc(frontSrc || variantAssets.front);
+    const safeBack = safeTexSrc(backSrc || variantAssets.back);
     const safeQr = safeTexSrc(qrSrc);
+    const resolvedEdgeColor = edgeColor || variantAssets.edgeColor;
+    const resolvedTextColor = frontTextColor || variantAssets.textColor;
 
     return (
         <div
@@ -139,11 +200,11 @@ export default function PlasticCard3D({
                                         frontSrc={safeFront}
                                         backSrc={safeBack}
                                         qrSrc={safeQr}
-                                        edgeColor={edgeColor}
+                                        edgeColor={resolvedEdgeColor}
                                         frontText={frontText}
                                         frontFontSize={frontFontSize}
                                         frontFontWeight={frontFontWeight}
-                                        frontTextColor={frontTextColor}
+                                        frontTextColor={resolvedTextColor}
                                     />
                                 </group>
                             </CardRig>
@@ -474,6 +535,7 @@ function CardMesh({
                 const totalWidth =
                     ctx.measureText(trimmedText).width +
                     Math.max(0, trimmedText.length - 1) * letterSpacing;
+
                 drawTrackedText(
                     ctx,
                     trimmedText,
