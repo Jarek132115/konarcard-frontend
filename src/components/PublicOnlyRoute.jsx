@@ -1,8 +1,9 @@
 import React, { useContext } from "react";
-import { Navigate } from "react-router-dom";
+import { Navigate, useLocation } from "react-router-dom";
 import { AuthContext } from "./AuthContext";
 
 const NFC_INTENT_KEY = "konar_nfc_intent_v1";
+const ADMIN_EMAILS = ["supportteam@konarcard.com"];
 
 function readNfcIntent() {
     try {
@@ -29,12 +30,20 @@ function buildCardsProductUrl(productKey) {
     return safe ? `/cards?product=${encodeURIComponent(safe)}` : "/cards";
 }
 
+function isAdminUser(user) {
+    const email = String(user?.email || "").trim().toLowerCase();
+    const role = String(user?.role || "").trim().toLowerCase();
+
+    return ADMIN_EMAILS.includes(email) || role === "admin";
+}
+
 export default function PublicOnlyRoute({
     children,
     redirectAuthenticatedTo = "/dashboard",
     allowProductIntentRedirect = false,
 }) {
     const { user, initialized, hydrating } = useContext(AuthContext);
+    const location = useLocation();
 
     const token =
         typeof window !== "undefined" ? localStorage.getItem("token") : null;
@@ -51,15 +60,22 @@ export default function PublicOnlyRoute({
 
     if (allowProductIntentRedirect) {
         const nfcIntent = readNfcIntent();
-
         if (nfcIntent?.productKey) {
             return (
                 <Navigate
                     to={nfcIntent.returnTo || buildCardsProductUrl(nfcIntent.productKey)}
                     replace
+                    state={{
+                        openProductFromIntent: true,
+                        from: location.pathname + location.search,
+                    }}
                 />
             );
         }
+    }
+
+    if (isAdminUser(user)) {
+        return <Navigate to="/admin" replace />;
     }
 
     return <Navigate to={redirectAuthenticatedTo} replace />;
