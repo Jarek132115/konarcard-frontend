@@ -16,6 +16,30 @@ function isActivePath(pathname, itemPath) {
     return pathname.startsWith(`${itemPath}/`);
 }
 
+function NavButton({ active = false, children, className = "", ...props }) {
+    return (
+        <button
+            {...props}
+            type="button"
+            className={`admin-nav-button ${active ? "is-active" : ""} ${className}`.trim()}
+        >
+            {children}
+        </button>
+    );
+}
+
+function ActionButton({ children, tone = "ghost", className = "", ...props }) {
+    return (
+        <button
+            {...props}
+            type="button"
+            className={`admin-btn admin-btn--${tone} ${className}`.trim()}
+        >
+            {children}
+        </button>
+    );
+}
+
 export default function AdminLayout({ children }) {
     const navigate = useNavigate();
     const location = useLocation();
@@ -54,34 +78,20 @@ export default function AdminLayout({ children }) {
 
                     <div className="admin-sidebar-nav">
                         {NAV_ITEMS.map((item) => (
-                            <button
+                            <NavButton
                                 key={item.key}
-                                type="button"
-                                className={`admin-nav-button ${isActivePath(location.pathname, item.path) ? "is-active" : ""}`}
+                                active={isActivePath(location.pathname, item.path)}
                                 onClick={() => navigate(item.path)}
                             >
                                 {item.label}
-                            </button>
+                            </NavButton>
                         ))}
                     </div>
 
                     <div className="admin-sidebar-spacer" />
 
-                    <button
-                        type="button"
-                        className="admin-nav-button"
-                        onClick={() => navigate("/dashboard")}
-                    >
-                        User app
-                    </button>
-
-                    <button
-                        type="button"
-                        className="admin-nav-button"
-                        onClick={logout}
-                    >
-                        Logout
-                    </button>
+                    <NavButton onClick={() => navigate("/dashboard")}>User app</NavButton>
+                    <NavButton onClick={logout}>Logout</NavButton>
                 </aside>
 
                 <div className="admin-mobile-topbar">
@@ -107,41 +117,28 @@ export default function AdminLayout({ children }) {
 
                         <div className="admin-mobile-nav">
                             {NAV_ITEMS.map((item) => (
-                                <button
+                                <NavButton
                                     key={item.key}
-                                    type="button"
-                                    className={`admin-nav-button ${isActivePath(location.pathname, item.path) ? "is-active" : ""}`}
+                                    active={isActivePath(location.pathname, item.path)}
                                     onClick={() => navigate(item.path)}
                                 >
                                     {item.label}
-                                </button>
+                                </NavButton>
                             ))}
                         </div>
 
                         <div className="admin-row">
-                            <button
-                                type="button"
-                                className="admin-btn admin-btn--ghost"
-                                onClick={() => navigate("/dashboard")}
-                            >
+                            <ActionButton onClick={() => navigate("/dashboard")}>
                                 User app
-                            </button>
+                            </ActionButton>
 
-                            <button
-                                type="button"
-                                className="admin-btn admin-btn--ghost"
-                                onClick={logout}
-                            >
-                                Logout
-                            </button>
+                            <ActionButton onClick={logout}>Logout</ActionButton>
                         </div>
                     </div>
                 </div>
 
                 <main className="admin-main">
-                    <div className="admin-main-inner">
-                        {children}
-                    </div>
+                    <div className="admin-main-inner">{children}</div>
                 </main>
             </div>
         </div>

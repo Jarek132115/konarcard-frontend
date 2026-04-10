@@ -92,72 +92,23 @@ function getFulfillmentLabel(status) {
 
 function StatCard({ label, value, subvalue }) {
     return (
-        <div
-            style={{
-                background: "#fff",
-                border: "1px solid rgba(15,23,42,0.08)",
-                borderRadius: 20,
-                padding: 20,
-                boxShadow: "0 8px 24px rgba(15,23,42,0.04)",
-                minHeight: 110,
-            }}
-        >
-            <div style={{ fontSize: 13, color: "#64748b", marginBottom: 10 }}>{label}</div>
-            <div style={{ fontSize: 30, fontWeight: 700, color: "#0f172a", lineHeight: 1.1 }}>
-                {value}
-            </div>
-            {subvalue ? (
-                <div style={{ fontSize: 13, color: "#94a3b8", marginTop: 8 }}>{subvalue}</div>
-            ) : null}
+        <div className="admin-stat-card">
+            <div className="admin-stat-label">{label}</div>
+            <div className="admin-stat-value">{value}</div>
+            {subvalue ? <div className="admin-stat-subvalue">{subvalue}</div> : null}
         </div>
     );
 }
 
 function SectionCard({ title, subtitle, right, children }) {
     return (
-        <section
-            style={{
-                background: "#fff",
-                border: "1px solid rgba(15,23,42,0.08)",
-                borderRadius: 24,
-                padding: 24,
-                boxShadow: "0 8px 24px rgba(15,23,42,0.04)",
-            }}
-        >
-            <div
-                style={{
-                    display: "flex",
-                    gap: 16,
-                    justifyContent: "space-between",
-                    alignItems: "flex-start",
-                    marginBottom: 18,
-                    flexWrap: "wrap",
-                }}
-            >
+        <section className="admin-section-card">
+            <div className="admin-section-head">
                 <div>
-                    <h2
-                        style={{
-                            margin: 0,
-                            fontSize: 22,
-                            lineHeight: 1.15,
-                            color: "#0f172a",
-                        }}
-                    >
-                        {title}
-                    </h2>
-                    {subtitle ? (
-                        <p
-                            style={{
-                                margin: "8px 0 0",
-                                color: "#64748b",
-                                fontSize: 14,
-                            }}
-                        >
-                            {subtitle}
-                        </p>
-                    ) : null}
+                    <h2 className="admin-section-title">{title}</h2>
+                    {subtitle ? <p className="admin-section-subtitle">{subtitle}</p> : null}
                 </div>
-                {right ? <div>{right}</div> : null}
+                {right ? <div className="admin-section-right">{right}</div> : null}
             </div>
 
             {children}
@@ -165,39 +116,11 @@ function SectionCard({ title, subtitle, right, children }) {
     );
 }
 
-function Btn({ children, tone = "primary", ...props }) {
-    const styles = {
-        primary: {
-            background: "#0f172a",
-            color: "#fff",
-            border: "1px solid #0f172a",
-        },
-        ghost: {
-            background: "#fff",
-            color: "#0f172a",
-            border: "1px solid rgba(15,23,42,0.10)",
-        },
-        orange: {
-            background: "#f97316",
-            color: "#fff",
-            border: "1px solid #f97316",
-        },
-    };
-
+function Btn({ children, tone = "primary", className = "", ...props }) {
     return (
         <button
             {...props}
-            style={{
-                minHeight: 42,
-                padding: "0 14px",
-                borderRadius: 14,
-                fontSize: 14,
-                fontWeight: 600,
-                cursor: props.disabled ? "not-allowed" : "pointer",
-                opacity: props.disabled ? 0.6 : 1,
-                ...styles[tone],
-                ...(props.style || {}),
-            }}
+            className={`admin-btn admin-btn--${tone} ${className}`.trim()}
         >
             {children}
         </button>
@@ -205,21 +128,7 @@ function Btn({ children, tone = "primary", ...props }) {
 }
 
 function EmptyState({ text }) {
-    return (
-        <div
-            style={{
-                minHeight: 260,
-                borderRadius: 18,
-                border: "1px dashed rgba(15,23,42,0.12)",
-                display: "grid",
-                placeItems: "center",
-                color: "#64748b",
-                fontSize: 14,
-            }}
-        >
-            {text}
-        </div>
-    );
+    return <div className="admin-empty-state">{text}</div>;
 }
 
 const PIE_COLORS = ["#0f172a", "#f97316", "#0ea5e9", "#22c55e", "#e11d48", "#a855f7"];
@@ -503,46 +412,17 @@ export default function AdminAnalytics() {
 
     return (
         <AdminLayout>
-            <header
-                style={{
-                    display: "flex",
-                    justifyContent: "space-between",
-                    alignItems: "flex-start",
-                    gap: 16,
-                    flexWrap: "wrap",
-                }}
-            >
-                <div>
-                    <p
-                        style={{
-                            margin: 0,
-                            color: "#f97316",
-                            fontWeight: 700,
-                            fontSize: 13,
-                            letterSpacing: "0.02em",
-                            textTransform: "uppercase",
-                        }}
-                    >
-                        KonarCard Admin
-                    </p>
-
-                    <h1
-                        style={{
-                            margin: "8px 0 0",
-                            fontSize: 34,
-                            lineHeight: 1.05,
-                            color: "#0f172a",
-                        }}
-                    >
-                        Business analytics
-                    </h1>
-
-                    <p style={{ margin: "10px 0 0", color: "#64748b", fontSize: 15 }}>
-                        Track growth, revenue, subscriptions, order performance, and product demand across the whole business.
+            <header className="admin-page-header">
+                <div className="admin-page-header-copy">
+                    <p className="admin-page-kicker">KonarCard Admin</p>
+                    <h1 className="admin-page-title">Business analytics</h1>
+                    <p className="admin-page-subtitle">
+                        Track growth, revenue, subscriptions, order performance,
+                        and product demand across the whole business.
                     </p>
                 </div>
 
-                <div style={{ display: "flex", gap: 10, flexWrap: "wrap" }}>
+                <div className="admin-page-actions">
                     <Btn tone="ghost" onClick={loadAll}>
                         Refresh analytics
                     </Btn>
@@ -552,13 +432,7 @@ export default function AdminAnalytics() {
                 </div>
             </header>
 
-            <div
-                style={{
-                    display: "grid",
-                    gridTemplateColumns: "repeat(6, minmax(0,1fr))",
-                    gap: 16,
-                }}
-            >
+            <div className="admin-stats-grid admin-stats-grid--six">
                 <StatCard label="Total users" value={loading ? "…" : summary.totalUsers || 0} />
                 <StatCard
                     label="Active subscribers"
@@ -578,25 +452,12 @@ export default function AdminAnalytics() {
                 />
             </div>
 
-            {error ? (
-                <div
-                    style={{
-                        padding: 14,
-                        borderRadius: 16,
-                        background: "#fef2f2",
-                        border: "1px solid #fecaca",
-                        color: "#991b1b",
-                        fontSize: 14,
-                    }}
-                >
-                    {error}
-                </div>
-            ) : null}
+            {error ? <div className="admin-error-banner">{error}</div> : null}
 
-            <div style={{ display: "grid", gridTemplateColumns: "1.2fr 0.8fr", gap: 20 }}>
+            <div className="admin-grid-2-wider">
                 <SectionCard title="User growth" subtitle="New users joining over the last 30 days.">
                     {usersJoinedTrend.length ? (
-                        <div style={{ width: "100%", height: 320 }}>
+                        <div className="admin-chart-wrap">
                             <ResponsiveContainer>
                                 <AreaChart data={usersJoinedTrend}>
                                     <CartesianGrid strokeDasharray="3 3" />
@@ -620,7 +481,7 @@ export default function AdminAnalytics() {
 
                 <SectionCard title="Plan split" subtitle="How your users are distributed across plans.">
                     {planSplit.length ? (
-                        <div style={{ width: "100%", height: 320 }}>
+                        <div className="admin-chart-wrap">
                             <ResponsiveContainer>
                                 <PieChart>
                                     <Pie
@@ -633,7 +494,10 @@ export default function AdminAnalytics() {
                                         label
                                     >
                                         {planSplit.map((entry, index) => (
-                                            <Cell key={entry.name} fill={PIE_COLORS[index % PIE_COLORS.length]} />
+                                            <Cell
+                                                key={entry.name}
+                                                fill={PIE_COLORS[index % PIE_COLORS.length]}
+                                            />
                                         ))}
                                     </Pie>
                                     <Tooltip />
@@ -647,13 +511,13 @@ export default function AdminAnalytics() {
                 </SectionCard>
             </div>
 
-            <div style={{ display: "grid", gridTemplateColumns: "1.15fr 0.85fr", gap: 20 }}>
+            <div className="admin-grid-2-wide">
                 <SectionCard
                     title="Orders and revenue trend"
                     subtitle="Order volume and paid revenue over the last 30 days."
                 >
                     {ordersTrend.length ? (
-                        <div style={{ width: "100%", height: 340 }}>
+                        <div className="admin-chart-wrap admin-chart-wrap--lg">
                             <ResponsiveContainer>
                                 <BarChart data={ordersTrend}>
                                     <CartesianGrid strokeDasharray="3 3" />
@@ -689,7 +553,7 @@ export default function AdminAnalytics() {
                     subtitle="Snapshot of billing state across all users."
                 >
                     {subscriptionSplit.length ? (
-                        <div style={{ width: "100%", height: 340 }}>
+                        <div className="admin-chart-wrap admin-chart-wrap--lg">
                             <ResponsiveContainer>
                                 <PieChart>
                                     <Pie
@@ -702,7 +566,10 @@ export default function AdminAnalytics() {
                                         label
                                     >
                                         {subscriptionSplit.map((entry, index) => (
-                                            <Cell key={entry.name} fill={PIE_COLORS[index % PIE_COLORS.length]} />
+                                            <Cell
+                                                key={entry.name}
+                                                fill={PIE_COLORS[index % PIE_COLORS.length]}
+                                            />
                                         ))}
                                     </Pie>
                                     <Tooltip />
@@ -716,13 +583,13 @@ export default function AdminAnalytics() {
                 </SectionCard>
             </div>
 
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 20 }}>
+            <div className="admin-grid-2">
                 <SectionCard
                     title="Order payment state"
                     subtitle="Paid vs pending vs failed vs cancelled."
                 >
                     {orderStatusSplit.length ? (
-                        <div style={{ width: "100%", height: 320 }}>
+                        <div className="admin-chart-wrap">
                             <ResponsiveContainer>
                                 <PieChart>
                                     <Pie
@@ -735,7 +602,10 @@ export default function AdminAnalytics() {
                                         label
                                     >
                                         {orderStatusSplit.map((entry, index) => (
-                                            <Cell key={entry.name} fill={PIE_COLORS[index % PIE_COLORS.length]} />
+                                            <Cell
+                                                key={entry.name}
+                                                fill={PIE_COLORS[index % PIE_COLORS.length]}
+                                            />
                                         ))}
                                     </Pie>
                                     <Tooltip />
@@ -753,14 +623,19 @@ export default function AdminAnalytics() {
                     subtitle="Where physical orders currently sit in the fulfilment flow."
                 >
                     {fulfillmentSplit.length ? (
-                        <div style={{ width: "100%", height: 320 }}>
+                        <div className="admin-chart-wrap">
                             <ResponsiveContainer>
                                 <BarChart data={fulfillmentSplit}>
                                     <CartesianGrid strokeDasharray="3 3" />
                                     <XAxis dataKey="name" />
                                     <YAxis allowDecimals={false} />
                                     <Tooltip />
-                                    <Bar dataKey="value" name="Orders" fill="#f97316" radius={[8, 8, 0, 0]} />
+                                    <Bar
+                                        dataKey="value"
+                                        name="Orders"
+                                        fill="#f97316"
+                                        radius={[8, 8, 0, 0]}
+                                    />
                                 </BarChart>
                             </ResponsiveContainer>
                         </div>
@@ -770,31 +645,22 @@ export default function AdminAnalytics() {
                 </SectionCard>
             </div>
 
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 20 }}>
+            <div className="admin-grid-2">
                 <SectionCard title="Top products" subtitle="Best selling products by ordered quantity.">
                     {!topProducts.length ? (
                         <EmptyState text="No product sales data yet." />
                     ) : (
-                        <div style={{ display: "grid", gap: 12 }}>
+                        <div className="admin-analytics-list">
                             {topProducts.map((item, index) => (
-                                <div
-                                    key={item.name}
-                                    style={{
-                                        borderRadius: 16,
-                                        border: "1px solid rgba(15,23,42,0.08)",
-                                        padding: 14,
-                                        display: "flex",
-                                        justifyContent: "space-between",
-                                        gap: 16,
-                                        alignItems: "center",
-                                    }}
-                                >
+                                <div key={item.name} className="admin-analytics-row">
                                     <div>
-                                        <div style={{ fontWeight: 700, fontSize: 15 }}>
+                                        <div className="admin-analytics-row-title">
                                             {index + 1}. {item.name}
                                         </div>
                                     </div>
-                                    <div style={{ color: "#64748b", fontSize: 14 }}>{item.value} units</div>
+                                    <div className="admin-analytics-row-value">
+                                        <strong>{item.value} units</strong>
+                                    </div>
                                 </div>
                             ))}
                         </div>
@@ -805,35 +671,23 @@ export default function AdminAnalytics() {
                     {!topCustomers.length ? (
                         <EmptyState text="No customer revenue data yet." />
                     ) : (
-                        <div style={{ display: "grid", gap: 12 }}>
+                        <div className="admin-analytics-list">
                             {topCustomers.map((customer, index) => (
                                 <div
                                     key={`${customer.email}-${index}`}
-                                    style={{
-                                        borderRadius: 16,
-                                        border: "1px solid rgba(15,23,42,0.08)",
-                                        padding: 14,
-                                        display: "flex",
-                                        justifyContent: "space-between",
-                                        gap: 16,
-                                        alignItems: "center",
-                                    }}
+                                    className="admin-analytics-row"
                                 >
                                     <div>
-                                        <div style={{ fontWeight: 700, fontSize: 15 }}>
+                                        <div className="admin-analytics-row-title">
                                             {index + 1}. {customer.name}
                                         </div>
-                                        <div style={{ color: "#64748b", fontSize: 13, marginTop: 4 }}>
+                                        <div className="admin-analytics-row-subtitle">
                                             {customer.email || "No email"}
                                         </div>
                                     </div>
-                                    <div style={{ textAlign: "right" }}>
-                                        <div style={{ fontWeight: 700, fontSize: 15 }}>
-                                            {formatAmount(customer.spent)}
-                                        </div>
-                                        <div style={{ color: "#64748b", fontSize: 13, marginTop: 4 }}>
-                                            {customer.orders} orders
-                                        </div>
+                                    <div className="admin-analytics-row-value">
+                                        <strong>{formatAmount(customer.spent)}</strong>
+                                        <span>{customer.orders} orders</span>
                                     </div>
                                 </div>
                             ))}

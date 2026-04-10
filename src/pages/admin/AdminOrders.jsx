@@ -87,49 +87,13 @@ function getProductLabel(productKey) {
 
 function SectionCard({ title, subtitle, right, children }) {
     return (
-        <section
-            style={{
-                background: "#fff",
-                border: "1px solid rgba(15,23,42,0.08)",
-                borderRadius: 24,
-                padding: 24,
-                boxShadow: "0 8px 24px rgba(15,23,42,0.04)",
-            }}
-        >
-            <div
-                style={{
-                    display: "flex",
-                    gap: 16,
-                    justifyContent: "space-between",
-                    alignItems: "flex-start",
-                    marginBottom: 18,
-                    flexWrap: "wrap",
-                }}
-            >
+        <section className="admin-section-card">
+            <div className="admin-section-head">
                 <div>
-                    <h2
-                        style={{
-                            margin: 0,
-                            fontSize: 22,
-                            lineHeight: 1.15,
-                            color: "#0f172a",
-                        }}
-                    >
-                        {title}
-                    </h2>
-                    {subtitle ? (
-                        <p
-                            style={{
-                                margin: "8px 0 0",
-                                color: "#64748b",
-                                fontSize: 14,
-                            }}
-                        >
-                            {subtitle}
-                        </p>
-                    ) : null}
+                    <h2 className="admin-section-title">{title}</h2>
+                    {subtitle ? <p className="admin-section-subtitle">{subtitle}</p> : null}
                 </div>
-                {right ? <div>{right}</div> : null}
+                {right ? <div className="admin-section-right">{right}</div> : null}
             </div>
 
             {children}
@@ -138,183 +102,51 @@ function SectionCard({ title, subtitle, right, children }) {
 }
 
 function Pill({ children, tone = "neutral" }) {
-    const styles = {
-        neutral: {
-            background: "#f8fafc",
-            border: "1px solid rgba(15,23,42,0.08)",
-            color: "#334155",
-        },
-        success: {
-            background: "#ecfdf5",
-            border: "1px solid #a7f3d0",
-            color: "#065f46",
-        },
-        warn: {
-            background: "#fff7ed",
-            border: "1px solid #fdba74",
-            color: "#9a3412",
-        },
-        danger: {
-            background: "#fef2f2",
-            border: "1px solid #fecaca",
-            color: "#991b1b",
-        },
-        info: {
-            background: "#eff6ff",
-            border: "1px solid #bfdbfe",
-            color: "#1d4ed8",
-        },
-    };
-
-    return (
-        <span
-            style={{
-                display: "inline-flex",
-                alignItems: "center",
-                gap: 6,
-                borderRadius: 999,
-                padding: "6px 10px",
-                fontSize: 12,
-                fontWeight: 600,
-                whiteSpace: "nowrap",
-                ...styles[tone],
-            }}
-        >
-            {children}
-        </span>
-    );
+    return <span className={`admin-pill admin-pill--${tone}`}>{children}</span>;
 }
 
-function Btn({ children, tone = "primary", ...props }) {
-    const styles = {
-        primary: {
-            background: "#0f172a",
-            color: "#fff",
-            border: "1px solid #0f172a",
-        },
-        ghost: {
-            background: "#fff",
-            color: "#0f172a",
-            border: "1px solid rgba(15,23,42,0.10)",
-        },
-        orange: {
-            background: "#f97316",
-            color: "#fff",
-            border: "1px solid #f97316",
-        },
-    };
-
+function Btn({ children, tone = "primary", className = "", ...props }) {
     return (
         <button
             {...props}
-            style={{
-                minHeight: 42,
-                padding: "0 14px",
-                borderRadius: 14,
-                fontSize: 14,
-                fontWeight: 600,
-                cursor: props.disabled ? "not-allowed" : "pointer",
-                opacity: props.disabled ? 0.6 : 1,
-                ...styles[tone],
-                ...(props.style || {}),
-            }}
+            className={`admin-btn admin-btn--${tone} ${className}`.trim()}
         >
             {children}
         </button>
     );
 }
 
-function TextInput(props) {
-    return (
-        <input
-            {...props}
-            style={{
-                width: "100%",
-                minHeight: 44,
-                borderRadius: 14,
-                border: "1px solid rgba(15,23,42,0.10)",
-                background: "#fff",
-                padding: "0 14px",
-                fontSize: 14,
-                color: "#0f172a",
-                outline: "none",
-                ...(props.style || {}),
-            }}
-        />
-    );
+function TextInput({ className = "", ...props }) {
+    return <input {...props} className={`admin-input ${className}`.trim()} />;
 }
 
-function SelectInput(props) {
-    return (
-        <select
-            {...props}
-            style={{
-                width: "100%",
-                minHeight: 44,
-                borderRadius: 14,
-                border: "1px solid rgba(15,23,42,0.10)",
-                background: "#fff",
-                padding: "0 14px",
-                fontSize: 14,
-                color: "#0f172a",
-                outline: "none",
-                ...(props.style || {}),
-            }}
-        />
-    );
+function SelectInput({ className = "", ...props }) {
+    return <select {...props} className={`admin-select ${className}`.trim()} />;
 }
 
-function InfoRow({ label, value }) {
+function InfoRow({ label, value, full = false, mono = false }) {
     return (
-        <div>
-            <strong>{label}:</strong> {value || "—"}
+        <div className={`admin-info-row ${full ? "admin-info-row--full" : ""}`.trim()}>
+            <strong>{label}:</strong>{" "}
+            <span className={mono ? "admin-mono" : ""}>{value || "—"}</span>
         </div>
     );
 }
 
 function PreviewImageCard({ title, src, alt, onOpen, onDownload }) {
     return (
-        <div
-            style={{
-                borderRadius: 18,
-                border: "1px solid rgba(15,23,42,0.08)",
-                background: "#fff",
-                padding: 14,
-                display: "grid",
-                gap: 12,
-            }}
-        >
-            <div style={{ fontWeight: 700, fontSize: 15 }}>{title}</div>
+        <div className="admin-preview-card">
+            <div className="admin-preview-title">{title}</div>
 
-            <div
-                style={{
-                    borderRadius: 16,
-                    border: "1px solid rgba(15,23,42,0.08)",
-                    background: "#f8fafc",
-                    minHeight: 220,
-                    display: "grid",
-                    placeItems: "center",
-                    overflow: "hidden",
-                }}
-            >
+            <div className="admin-preview-frame">
                 {src ? (
-                    <img
-                        src={src}
-                        alt={alt}
-                        style={{
-                            width: "100%",
-                            height: "100%",
-                            objectFit: "contain",
-                            maxHeight: 360,
-                            display: "block",
-                        }}
-                    />
+                    <img src={src} alt={alt} />
                 ) : (
-                    <div style={{ color: "#94a3b8", fontSize: 14 }}>No image available</div>
+                    <div className="admin-preview-empty">No image available</div>
                 )}
             </div>
 
-            <div style={{ display: "flex", gap: 10, flexWrap: "wrap" }}>
+            <div className="admin-preview-actions">
                 <Btn tone="ghost" onClick={onOpen} disabled={!src}>
                     Open
                 </Btn>
@@ -365,7 +197,9 @@ function extractQrUrl(order) {
         order?.qrCodeUrl ||
         order?.preview?.qrCodeUrl ||
         order?.preview?.publicProfileUrl ||
-        (order?.profile?.profile_slug ? buildPublicProfileUrl(order.profile.profile_slug) : "")
+        (order?.profile?.profile_slug
+            ? buildPublicProfileUrl(order.profile.profile_slug)
+            : "")
     );
 }
 
@@ -503,52 +337,17 @@ export default function AdminOrders() {
 
     return (
         <AdminLayout>
-            <header
-                style={{
-                    display: "flex",
-                    justifyContent: "space-between",
-                    alignItems: "flex-start",
-                    gap: 16,
-                    flexWrap: "wrap",
-                }}
-            >
-                <div>
-                    <p
-                        style={{
-                            margin: 0,
-                            color: "#f97316",
-                            fontWeight: 700,
-                            fontSize: 13,
-                            letterSpacing: "0.02em",
-                            textTransform: "uppercase",
-                        }}
-                    >
-                        KonarCard Admin
-                    </p>
-
-                    <h1
-                        style={{
-                            margin: "8px 0 0",
-                            fontSize: 34,
-                            lineHeight: 1.05,
-                            color: "#0f172a",
-                        }}
-                    >
-                        Orders
-                    </h1>
-
-                    <p
-                        style={{
-                            margin: "10px 0 0",
-                            color: "#64748b",
-                            fontSize: 15,
-                        }}
-                    >
-                        Manage fulfilment, tracking, preview assets, QR targets, and customer-ready order details.
+            <header className="admin-page-header">
+                <div className="admin-page-header-copy">
+                    <p className="admin-page-kicker">KonarCard Admin</p>
+                    <h1 className="admin-page-title">Orders</h1>
+                    <p className="admin-page-subtitle">
+                        Manage fulfilment, tracking, preview assets, QR targets,
+                        and customer-ready order details.
                     </p>
                 </div>
 
-                <div style={{ display: "flex", gap: 10, flexWrap: "wrap" }}>
+                <div className="admin-page-actions">
                     <Btn tone="ghost" onClick={() => loadOrders()}>
                         Refresh orders
                     </Btn>
@@ -562,14 +361,7 @@ export default function AdminOrders() {
                 title="Order fulfilment"
                 subtitle="Search orders, update shipping progress, open print assets, and view customer customisation."
             >
-                <div
-                    style={{
-                        display: "grid",
-                        gridTemplateColumns: "minmax(0,1fr) 220px auto auto",
-                        gap: 10,
-                        marginBottom: 18,
-                    }}
-                >
+                <div className="admin-toolbar">
                     <TextInput
                         value={orderSearch}
                         onChange={(e) => setOrderSearch(e.target.value)}
@@ -605,28 +397,19 @@ export default function AdminOrders() {
                 </div>
 
                 {ordersLoading ? (
-                    <p style={{ color: "#64748b", margin: 0 }}>Loading orders…</p>
+                    <p className="admin-muted" style={{ margin: 0 }}>
+                        Loading orders…
+                    </p>
                 ) : ordersError ? (
-                    <p style={{ color: "#991b1b", margin: 0 }}>{ordersError}</p>
+                    <div className="admin-error-banner">{ordersError}</div>
                 ) : orders.length === 0 ? (
-                    <p style={{ color: "#64748b", margin: 0 }}>No orders found.</p>
+                    <div className="admin-empty-state">No orders found.</div>
                 ) : (
                     <div
-                        style={{
-                            display: "grid",
-                            gridTemplateColumns: selectedOrder ? "0.78fr 1.22fr" : "1fr",
-                            gap: 20,
-                        }}
+                        className={selectedOrder ? "admin-grid-orders" : ""}
+                        style={!selectedOrder ? { display: "grid", gap: 20 } : undefined}
                     >
-                        <div
-                            style={{
-                                display: "grid",
-                                gap: 14,
-                                maxHeight: "75vh",
-                                overflow: "auto",
-                                paddingRight: 4,
-                            }}
-                        >
+                        <div className="admin-list-scroll" style={{ maxHeight: "75vh" }}>
                             {orders.map((order) => {
                                 const isSelected = selectedOrderId === order._id;
 
@@ -634,56 +417,34 @@ export default function AdminOrders() {
                                     <button
                                         key={order._id}
                                         type="button"
+                                        className={`admin-order-card ${isSelected ? "is-selected" : ""}`.trim()}
                                         onClick={() => setSearchParams({ selected: order._id })}
-                                        style={{
-                                            width: "100%",
-                                            textAlign: "left",
-                                            borderRadius: 18,
-                                            border: isSelected
-                                                ? "1px solid #f97316"
-                                                : "1px solid rgba(15,23,42,0.08)",
-                                            background: isSelected ? "#fff7ed" : "#fff",
-                                            padding: 16,
-                                            cursor: "pointer",
-                                        }}
                                     >
-                                        <div
-                                            style={{
-                                                display: "flex",
-                                                justifyContent: "space-between",
-                                                gap: 12,
-                                                alignItems: "flex-start",
-                                                flexWrap: "wrap",
-                                            }}
-                                        >
+                                        <div className="admin-item-head">
                                             <div>
-                                                <div style={{ fontWeight: 700, fontSize: 15 }}>
-                                                    {order.customerName || order?.user?.name || order.customerEmail || "Order"}
+                                                <div className="admin-item-title">
+                                                    {order.customerName ||
+                                                        order?.user?.name ||
+                                                        order.customerEmail ||
+                                                        "Order"}
                                                 </div>
-                                                <div style={{ marginTop: 4, color: "#64748b", fontSize: 13 }}>
+                                                <div className="admin-item-subtitle">
                                                     {getProductLabel(order.productKey)}
                                                     {order.variant ? ` • ${order.variant}` : ""}
                                                 </div>
                                             </div>
 
-                                            <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
-                                                <Pill tone={getStatusTone(order.status)}>{order.status || "pending"}</Pill>
+                                            <div className="admin-row">
+                                                <Pill tone={getStatusTone(order.status)}>
+                                                    {order.status || "pending"}
+                                                </Pill>
                                                 <Pill tone={getFulfillmentTone(order.fulfillmentStatus)}>
                                                     {order.fulfillmentStatus || "order_placed"}
                                                 </Pill>
                                             </div>
                                         </div>
 
-                                        <div
-                                            style={{
-                                                display: "flex",
-                                                gap: 12,
-                                                marginTop: 12,
-                                                flexWrap: "wrap",
-                                                fontSize: 13,
-                                                color: "#64748b",
-                                            }}
-                                        >
+                                        <div className="admin-item-meta">
                                             <span>{formatAmount(order.amountTotal, order.currency)}</span>
                                             <span>Qty {order.quantity || 1}</span>
                                             <span>{formatDate(order.createdAt)}</span>
@@ -694,60 +455,50 @@ export default function AdminOrders() {
                         </div>
 
                         {selectedOrder ? (
-                            <div style={{ display: "grid", gap: 18 }}>
-                                <div
-                                    style={{
-                                        borderRadius: 20,
-                                        border: "1px solid rgba(15,23,42,0.08)",
-                                        background: "#fff",
-                                        padding: 18,
-                                    }}
-                                >
-                                    <div
-                                        style={{
-                                            display: "flex",
-                                            justifyContent: "space-between",
-                                            gap: 14,
-                                            alignItems: "flex-start",
-                                            flexWrap: "wrap",
-                                        }}
-                                    >
+                            <div className="admin-stack-lg">
+                                <div className="admin-detail-card">
+                                    <div className="admin-detail-head">
                                         <div>
-                                            <div
-                                                style={{
-                                                    display: "flex",
-                                                    gap: 8,
-                                                    flexWrap: "wrap",
-                                                    alignItems: "center",
-                                                }}
-                                            >
+                                            <div className="admin-row">
                                                 <Pill tone={getStatusTone(selectedOrder.status)}>
                                                     {selectedOrder.status || "pending"}
                                                 </Pill>
-                                                <Pill tone={getFulfillmentTone(selectedOrder.fulfillmentStatus)}>
-                                                    {selectedOrder.fulfillmentStatus || "order_placed"}
+                                                <Pill
+                                                    tone={getFulfillmentTone(
+                                                        selectedOrder.fulfillmentStatus
+                                                    )}
+                                                >
+                                                    {selectedOrder.fulfillmentStatus ||
+                                                        "order_placed"}
                                                 </Pill>
                                                 <Pill tone={getPlanTone(selectedOrder?.user?.plan)}>
                                                     {selectedOrder?.user?.plan || "free"}
                                                 </Pill>
                                             </div>
 
-                                            <h3 style={{ margin: "12px 0 0", fontSize: 22 }}>
+                                            <div
+                                                className="admin-detail-title admin-detail-title--lg"
+                                                style={{ marginTop: 12 }}
+                                            >
                                                 {selectedOrder.customerName ||
                                                     selectedOrder?.user?.name ||
                                                     selectedOrder.customerEmail ||
                                                     "Order"}
-                                            </h3>
+                                            </div>
 
-                                            <div style={{ marginTop: 6, color: "#64748b", fontSize: 14 }}>
-                                                {selectedOrder.customerEmail || selectedOrder?.user?.email || "—"}
+                                            <div className="admin-detail-subtitle">
+                                                {selectedOrder.customerEmail ||
+                                                    selectedOrder?.user?.email ||
+                                                    "—"}
                                             </div>
                                         </div>
 
-                                        <div style={{ display: "flex", gap: 10, flexWrap: "wrap" }}>
+                                        <div className="admin-detail-actions">
                                             <Btn
                                                 tone="ghost"
-                                                onClick={() => copyText(selectedOrder._id, "Order ID copied")}
+                                                onClick={() =>
+                                                    copyText(selectedOrder._id, "Order ID copied")
+                                                }
                                             >
                                                 Copy order ID
                                             </Btn>
@@ -757,7 +508,9 @@ export default function AdminOrders() {
                                                     tone="ghost"
                                                     onClick={() =>
                                                         window.open(
-                                                            buildPublicProfileUrl(selectedOrder.profile.profile_slug),
+                                                            buildPublicProfileUrl(
+                                                                selectedOrder.profile.profile_slug
+                                                            ),
                                                             "_blank",
                                                             "noopener,noreferrer"
                                                         )
@@ -769,48 +522,72 @@ export default function AdminOrders() {
                                         </div>
                                     </div>
 
-                                    <div
-                                        style={{
-                                            display: "grid",
-                                            gridTemplateColumns: "repeat(2, minmax(0,1fr))",
-                                            gap: 12,
-                                            marginTop: 18,
-                                            fontSize: 14,
-                                        }}
-                                    >
-                                        <InfoRow label="Product" value={getProductLabel(selectedOrder.productKey)} />
-                                        <InfoRow label="Variant" value={selectedOrder.variant || "—"} />
+                                    <div className="admin-info-grid">
+                                        <InfoRow
+                                            label="Product"
+                                            value={getProductLabel(selectedOrder.productKey)}
+                                        />
+                                        <InfoRow
+                                            label="Variant"
+                                            value={selectedOrder.variant || "—"}
+                                        />
                                         <InfoRow
                                             label="Amount"
-                                            value={formatAmount(selectedOrder.amountTotal, selectedOrder.currency)}
+                                            value={formatAmount(
+                                                selectedOrder.amountTotal,
+                                                selectedOrder.currency
+                                            )}
                                         />
-                                        <InfoRow label="Quantity" value={selectedOrder.quantity || 1} />
-                                        <InfoRow label="Created" value={formatDate(selectedOrder.createdAt)} />
-                                        <InfoRow label="Profile" value={selectedOrder.profile?.profile_slug || "—"} />
-                                        <InfoRow label="Tracking URL" value={selectedOrder.trackingUrl || "—"} />
-                                        <InfoRow label="Tracking code" value={selectedOrder.trackingCode || "—"} />
-                                        <InfoRow label="ETA" value={selectedOrder.deliveryWindow || "—"} />
-                                        <InfoRow label="QR target URL" value={extractQrUrl(selectedOrder) || "—"} />
-                                        <div style={{ gridColumn: "1 / -1" }}>
-                                            <strong>Address:</strong> {selectedOrder.deliveryAddress || "—"}
-                                        </div>
+                                        <InfoRow
+                                            label="Quantity"
+                                            value={selectedOrder.quantity || 1}
+                                        />
+                                        <InfoRow
+                                            label="Created"
+                                            value={formatDate(selectedOrder.createdAt)}
+                                        />
+                                        <InfoRow
+                                            label="Profile"
+                                            value={selectedOrder.profile?.profile_slug || "—"}
+                                        />
+                                        <InfoRow
+                                            label="Tracking URL"
+                                            value={selectedOrder.trackingUrl || "—"}
+                                            mono
+                                        />
+                                        <InfoRow
+                                            label="Tracking code"
+                                            value={selectedOrder.trackingCode || "—"}
+                                        />
+                                        <InfoRow
+                                            label="ETA"
+                                            value={selectedOrder.deliveryWindow || "—"}
+                                        />
+                                        <InfoRow
+                                            label="QR target URL"
+                                            value={extractQrUrl(selectedOrder) || "—"}
+                                            mono
+                                        />
+                                        <InfoRow
+                                            label="Address"
+                                            value={selectedOrder.deliveryAddress || "—"}
+                                            full
+                                        />
                                     </div>
                                 </div>
 
-                                <div
-                                    style={{
-                                        display: "grid",
-                                        gridTemplateColumns: "repeat(2, minmax(0,1fr))",
-                                        gap: 16,
-                                    }}
-                                >
+                                <div className="admin-grid-preview">
                                     <PreviewImageCard
                                         title="Flat order preview"
                                         src={selectedOrder.previewImageUrl}
                                         alt="Order preview"
                                         onOpen={() => {
                                             if (selectedOrder.previewImageUrl) {
-                                                window.open(selectedOrder.previewImageUrl, "_blank", "noopener,noreferrer");
+                                                window.open(
+                                                    selectedOrder.previewImageUrl,
+                                                    "_blank",
+                                                    "noopener,noreferrer"
+                                                );
                                             }
                                         }}
                                         onDownload={async () => {
@@ -833,7 +610,11 @@ export default function AdminOrders() {
                                         alt="Uploaded logo"
                                         onOpen={() => {
                                             if (selectedOrder.logoUrl) {
-                                                window.open(selectedOrder.logoUrl, "_blank", "noopener,noreferrer");
+                                                window.open(
+                                                    selectedOrder.logoUrl,
+                                                    "_blank",
+                                                    "noopener,noreferrer"
+                                                );
                                             }
                                         }}
                                         onDownload={async () => {
@@ -851,26 +632,16 @@ export default function AdminOrders() {
                                     />
                                 </div>
 
-                                <div
-                                    style={{
-                                        display: "grid",
-                                        gridTemplateColumns: "repeat(2, minmax(0,1fr))",
-                                        gap: 16,
-                                    }}
-                                >
+                                <div className="admin-grid-split">
                                     <SectionCard
                                         title="Customisation"
                                         subtitle="Use this when checking what should be printed on the card."
                                     >
-                                        <div
-                                            style={{
-                                                display: "grid",
-                                                gridTemplateColumns: "repeat(2, minmax(0,1fr))",
-                                                gap: 12,
-                                                fontSize: 14,
-                                            }}
-                                        >
-                                            <InfoRow label="Front text" value={extractFrontText(selectedOrder) || "—"} />
+                                        <div className="admin-info-grid">
+                                            <InfoRow
+                                                label="Front text"
+                                                value={extractFrontText(selectedOrder) || "—"}
+                                            />
                                             <InfoRow
                                                 label="Orientation"
                                                 value={extractOrientation(selectedOrder) || "—"}
@@ -893,11 +664,18 @@ export default function AdminOrders() {
                                             />
                                             <InfoRow
                                                 label="Style key"
-                                                value={cleanString(selectedOrder?.preview?.styleKey) || "—"}
+                                                value={
+                                                    cleanString(selectedOrder?.preview?.styleKey) ||
+                                                    "—"
+                                                }
                                             />
                                             <InfoRow
                                                 label="Uses preset artwork"
-                                                value={selectedOrder?.preview?.usesPresetArtwork ? "Yes" : "No"}
+                                                value={
+                                                    selectedOrder?.preview?.usesPresetArtwork
+                                                        ? "Yes"
+                                                        : "No"
+                                                }
                                             />
                                         </div>
                                     </SectionCard>
@@ -906,11 +684,14 @@ export default function AdminOrders() {
                                         title="Quick actions"
                                         subtitle="Useful admin shortcuts for printing and support."
                                     >
-                                        <div style={{ display: "grid", gap: 10 }}>
+                                        <div className="admin-stack">
                                             <Btn
                                                 tone="ghost"
                                                 onClick={() =>
-                                                    copyText(extractQrUrl(selectedOrder), "QR target URL copied")
+                                                    copyText(
+                                                        extractQrUrl(selectedOrder),
+                                                        "QR target URL copied"
+                                                    )
                                                 }
                                                 disabled={!extractQrUrl(selectedOrder)}
                                             >
@@ -920,7 +701,10 @@ export default function AdminOrders() {
                                             <Btn
                                                 tone="ghost"
                                                 onClick={() =>
-                                                    copyText(extractFrontText(selectedOrder), "Front text copied")
+                                                    copyText(
+                                                        extractFrontText(selectedOrder),
+                                                        "Front text copied"
+                                                    )
                                                 }
                                                 disabled={!extractFrontText(selectedOrder)}
                                             >
@@ -931,18 +715,26 @@ export default function AdminOrders() {
                                                 tone="ghost"
                                                 onClick={() =>
                                                     copyText(
-                                                        selectedOrder.customerEmail || selectedOrder?.user?.email,
+                                                        selectedOrder.customerEmail ||
+                                                        selectedOrder?.user?.email,
                                                         "Customer email copied"
                                                     )
                                                 }
-                                                disabled={!selectedOrder.customerEmail && !selectedOrder?.user?.email}
+                                                disabled={
+                                                    !selectedOrder.customerEmail &&
+                                                    !selectedOrder?.user?.email
+                                                }
                                             >
                                                 Copy customer email
                                             </Btn>
 
                                             <Btn
                                                 tone="ghost"
-                                                onClick={() => navigate(`/admin/users?selected=${selectedOrder.userId}`)}
+                                                onClick={() =>
+                                                    navigate(
+                                                        `/admin/users?selected=${selectedOrder.userId}`
+                                                    )
+                                                }
                                                 disabled={!selectedOrder.userId}
                                             >
                                                 Open customer
@@ -951,86 +743,90 @@ export default function AdminOrders() {
                                     </SectionCard>
                                 </div>
 
-                                <div
-                                    style={{
-                                        display: "grid",
-                                        gridTemplateColumns: "repeat(2, minmax(0,1fr))",
-                                        gap: 16,
-                                    }}
-                                >
-                                    <div
-                                        style={{
-                                            borderRadius: 16,
-                                            border: "1px solid rgba(15,23,42,0.08)",
-                                            padding: 16,
-                                            background: "#fff",
-                                        }}
-                                    >
-                                        <h4 style={{ margin: 0, fontSize: 16 }}>Tracking & shipping</h4>
+                                <div className="admin-grid-order-actions">
+                                    <div className="admin-detail-card">
+                                        <div className="admin-detail-title" style={{ fontSize: 16 }}>
+                                            Tracking & shipping
+                                        </div>
 
-                                        <div style={{ display: "grid", gap: 10, marginTop: 14 }}>
+                                        <div className="admin-stack" style={{ marginTop: 14 }}>
                                             <TextInput
                                                 placeholder="Tracking URL"
                                                 value={edit[selectedOrder._id]?.trackingUrl || ""}
                                                 onChange={(e) =>
-                                                    setEditField(selectedOrder._id, "trackingUrl", e.target.value)
+                                                    setEditField(
+                                                        selectedOrder._id,
+                                                        "trackingUrl",
+                                                        e.target.value
+                                                    )
                                                 }
                                             />
                                             <TextInput
                                                 placeholder="Tracking code"
                                                 value={edit[selectedOrder._id]?.trackingCode || ""}
                                                 onChange={(e) =>
-                                                    setEditField(selectedOrder._id, "trackingCode", e.target.value)
+                                                    setEditField(
+                                                        selectedOrder._id,
+                                                        "trackingCode",
+                                                        e.target.value
+                                                    )
                                                 }
                                             />
                                             <TextInput
                                                 placeholder="Estimated delivery window"
                                                 value={edit[selectedOrder._id]?.deliveryWindow || ""}
                                                 onChange={(e) =>
-                                                    setEditField(selectedOrder._id, "deliveryWindow", e.target.value)
+                                                    setEditField(
+                                                        selectedOrder._id,
+                                                        "deliveryWindow",
+                                                        e.target.value
+                                                    )
                                                 }
                                             />
 
-                                            <label
-                                                style={{
-                                                    display: "flex",
-                                                    gap: 10,
-                                                    alignItems: "center",
-                                                    fontSize: 14,
-                                                    color: "#475569",
-                                                }}
-                                            >
+                                            <label className="admin-check-row">
                                                 <input
                                                     type="checkbox"
-                                                    checked={!!edit[selectedOrder._id]?.notifyTracking}
+                                                    checked={
+                                                        !!edit[selectedOrder._id]?.notifyTracking
+                                                    }
                                                     onChange={(e) =>
-                                                        setEditField(selectedOrder._id, "notifyTracking", e.target.checked)
+                                                        setEditField(
+                                                            selectedOrder._id,
+                                                            "notifyTracking",
+                                                            e.target.checked
+                                                        )
                                                     }
                                                 />
                                                 Email customer tracking update
                                             </label>
 
-                                            <Btn tone="primary" onClick={() => saveTracking(selectedOrder)}>
+                                            <Btn
+                                                tone="primary"
+                                                onClick={() => saveTracking(selectedOrder)}
+                                            >
                                                 Save tracking
                                             </Btn>
                                         </div>
                                     </div>
 
-                                    <div
-                                        style={{
-                                            borderRadius: 16,
-                                            border: "1px solid rgba(15,23,42,0.08)",
-                                            padding: 16,
-                                            background: "#fff",
-                                        }}
-                                    >
-                                        <h4 style={{ margin: 0, fontSize: 16 }}>Fulfilment status</h4>
+                                    <div className="admin-detail-card">
+                                        <div className="admin-detail-title" style={{ fontSize: 16 }}>
+                                            Fulfilment status
+                                        </div>
 
-                                        <div style={{ display: "grid", gap: 10, marginTop: 14 }}>
+                                        <div className="admin-stack" style={{ marginTop: 14 }}>
                                             <SelectInput
-                                                value={edit[selectedOrder._id]?.fulfillmentStatus || "order_placed"}
+                                                value={
+                                                    edit[selectedOrder._id]?.fulfillmentStatus ||
+                                                    "order_placed"
+                                                }
                                                 onChange={(e) =>
-                                                    setEditField(selectedOrder._id, "fulfillmentStatus", e.target.value)
+                                                    setEditField(
+                                                        selectedOrder._id,
+                                                        "fulfillmentStatus",
+                                                        e.target.value
+                                                    )
                                                 }
                                             >
                                                 {STATUS_OPTIONS.map((opt) => (
@@ -1040,26 +836,25 @@ export default function AdminOrders() {
                                                 ))}
                                             </SelectInput>
 
-                                            <label
-                                                style={{
-                                                    display: "flex",
-                                                    gap: 10,
-                                                    alignItems: "center",
-                                                    fontSize: 14,
-                                                    color: "#475569",
-                                                }}
-                                            >
+                                            <label className="admin-check-row">
                                                 <input
                                                     type="checkbox"
                                                     checked={!!edit[selectedOrder._id]?.notifyStatus}
                                                     onChange={(e) =>
-                                                        setEditField(selectedOrder._id, "notifyStatus", e.target.checked)
+                                                        setEditField(
+                                                            selectedOrder._id,
+                                                            "notifyStatus",
+                                                            e.target.checked
+                                                        )
                                                     }
                                                 />
                                                 Email customer status update
                                             </label>
 
-                                            <Btn tone="orange" onClick={() => saveStatus(selectedOrder)}>
+                                            <Btn
+                                                tone="orange"
+                                                onClick={() => saveStatus(selectedOrder)}
+                                            >
                                                 Save status
                                             </Btn>
                                         </div>
