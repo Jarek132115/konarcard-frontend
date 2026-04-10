@@ -1023,3 +1023,23 @@ button.admin-profile-card:hover {
         padding: 14px;
     }
 }
+
+.admin-mt-10 {
+    margin-top: 10px;
+}
+
+.admin-mt-12 {
+    margin-top: 12px;
+}
+
+.admin-mt-14 {
+    margin-top: 14px;
+}
+
+.admin-mt-18 {
+    margin-top: 18px;
+}
+
+.admin-no-margin {
+    margin: 0;
+}
