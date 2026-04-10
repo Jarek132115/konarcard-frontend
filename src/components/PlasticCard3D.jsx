@@ -131,7 +131,7 @@ function drawTrackedText(ctx, text, x, y, letterSpacing = 0) {
 }
 
 function resolveVariantAssets(variant) {
-    return VARIANT_ARTWORK[variant] || VARIANT_ARTWORK.white;
+    return VARIANT_ARTWORK[String(variant || "").toLowerCase()] || VARIANT_ARTWORK.white;
 }
 
 export default function PlasticCard3D({
@@ -161,14 +161,13 @@ export default function PlasticCard3D({
 
     return (
         <div
-            className={`pc3d ${compact ? "pc3d--compact" : ""} ${interactive ? "pc3d--interactive" : "pc3d--locked"
-                } ${stageClassName}`.trim()}
+            className={`pc3d ${compact ? "pc3d--compact" : ""} ${interactive ? "pc3d--interactive" : "pc3d--locked"} ${stageClassName}`.trim()}
             aria-label="3D KonarCard preview"
         >
             <div className="pc3d__stage">
                 <Canvas
                     dpr={[1, 2]}
-                    camera={{ position: [0, 0.03, 1.72], fov: 26 }}
+                    camera={{ position: [0, 0.015, 1.68], fov: 25 }}
                     gl={{
                         antialias: true,
                         alpha: true,
@@ -181,9 +180,10 @@ export default function PlasticCard3D({
                         gl.domElement.style.touchAction = interactive ? "none" : "auto";
                     }}
                 >
-                    <ambientLight intensity={0.78} />
+                    <ambientLight intensity={0.8} />
                     <directionalLight position={[2.3, 3.3, 2.3]} intensity={1.12} />
                     <directionalLight position={[-2, 1.2, -2]} intensity={0.6} />
+                    <directionalLight position={[0, -1.5, 1.5]} intensity={0.18} />
 
                     <Environment preset="studio" />
 
@@ -194,8 +194,9 @@ export default function PlasticCard3D({
                                 autoRotate={autoRotate}
                                 autoRotateSpeed={autoRotateSpeed}
                                 rotationOffset={rotationOffset}
+                                compact={compact}
                             >
-                                <group position={[0, 0, 0]}>
+                                <group position={[0, compact ? -0.004 : -0.008, 0]}>
                                     <CardMesh
                                         frontSrc={safeFront}
                                         backSrc={safeBack}
@@ -229,29 +230,29 @@ function ResponsiveRig({ children, compact = false }) {
         if (compact) {
             scale =
                 w >= 1400
-                    ? 0.98
+                    ? 1.02
                     : w >= 1200
-                        ? 0.96
+                        ? 1
                         : w >= 980
-                            ? 0.94
+                            ? 0.985
                             : w >= 720
-                                ? 0.92
+                                ? 0.97
                                 : w >= 520
-                                    ? 0.9
-                                    : 0.88;
+                                    ? 0.955
+                                    : 0.94;
         } else {
             scale =
                 w >= 1400
-                    ? 1
+                    ? 1.03
                     : w >= 1200
-                        ? 0.98
+                        ? 1.01
                         : w >= 980
-                            ? 0.96
+                            ? 0.99
                             : w >= 720
-                                ? 0.94
+                                ? 0.97
                                 : w >= 520
-                                    ? 0.92
-                                    : 0.9;
+                                    ? 0.95
+                                    : 0.93;
         }
 
         g.current.scale.setScalar(scale);
@@ -274,29 +275,29 @@ function CardFitWrapper({ children, compact = false }) {
         if (compact) {
             fitScale =
                 w >= 1400
-                    ? 0.72
+                    ? 0.78
                     : w >= 1200
-                        ? 0.7
+                        ? 0.765
                         : w >= 980
-                            ? 0.68
+                            ? 0.75
                             : w >= 720
-                                ? 0.66
+                                ? 0.735
                                 : w >= 520
-                                    ? 0.64
-                                    : 0.62;
+                                    ? 0.715
+                                    : 0.69;
         } else {
             fitScale =
                 w >= 1400
-                    ? 0.78
+                    ? 0.82
                     : w >= 1200
-                        ? 0.76
+                        ? 0.8
                         : w >= 980
-                            ? 0.74
+                            ? 0.78
                             : w >= 720
-                                ? 0.72
+                                ? 0.755
                                 : w >= 520
-                                    ? 0.7
-                                    : 0.68;
+                                    ? 0.73
+                                    : 0.705;
         }
 
         g.current.scale.setScalar(fitScale);
@@ -311,21 +312,35 @@ function CardRig({
     autoRotate = true,
     autoRotateSpeed = 0.68,
     rotationOffset = 0,
+    compact = false,
 }) {
     const group = useRef();
+
+    const baseRX = compact ? 0.11 : 0.085;
+    const baseRY = 0.64 + rotationOffset;
 
     const drag = useRef({
         isDown: false,
         hasUserInteracted: false,
         startX: 0,
         startY: 0,
-        baseRX: 0.08,
-        baseRY: 0.7 + rotationOffset,
-        rx: 0.08,
-        ry: 0.7 + rotationOffset,
+        baseRX,
+        baseRY,
+        rx: baseRX,
+        ry: baseRY,
         idle: true,
         t: rotationOffset * 2,
     });
+
+    useEffect(() => {
+        drag.current.baseRX = baseRX;
+        drag.current.baseRY = baseRY;
+        drag.current.rx = baseRX;
+        drag.current.ry = baseRY;
+        drag.current.idle = true;
+        drag.current.isDown = false;
+        drag.current.hasUserInteracted = false;
+    }, [baseRX, baseRY]);
 
     useFrame((_, dt) => {
         if (!group.current) return;
@@ -336,7 +351,7 @@ function CardRig({
             if (autoRotate && !drag.current.hasUserInteracted) {
                 drag.current.ry += autoRotateSpeed * dt;
 
-                const breathe = Math.sin(drag.current.t * 1.05) * 0.03;
+                const breathe = Math.sin(drag.current.t * 1.05) * (compact ? 0.02 : 0.03);
                 const targetRx = clamp(drag.current.baseRX + breathe, -0.55, 0.55);
                 drag.current.rx = THREE.MathUtils.lerp(drag.current.rx, targetRx, 0.08);
             }
@@ -354,7 +369,7 @@ function CardRig({
         );
         group.current.rotation.z = THREE.MathUtils.lerp(
             group.current.rotation.z,
-            0.02,
+            0.015,
             0.08
         );
     });

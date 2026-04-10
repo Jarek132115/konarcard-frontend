@@ -1,40 +1,121 @@
-import React from "react";
-import "../../styling/dashboard/order-details-view.css";
+import React, { useMemo } from "react";
 
-function prettyLabel(value) {
-    const v = String(value || "").trim();
-    if (!v) return "—";
-
-    return v
-        .split("-")
-        .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
-        .join(" ");
+function safeTrim(v) {
+    return String(v || "").trim();
 }
 
-function prettyStatus(value) {
-    const v = String(value || "").trim().toLowerCase();
-    if (!v) return "—";
+function formatOrderDate(value) {
+    const raw = safeTrim(value);
+    if (!raw) return "—";
 
-    if (v === "paid") return "Paid";
-    if (v === "pending") return "Pending";
-    if (v === "fulfilled") return "Fulfilled";
-    if (v === "processing") return "Processing";
-    if (v === "shipped") return "Shipped";
-    if (v === "cancelled") return "Cancelled";
-    if (v === "failed") return "Failed";
+    const parsed = new Date(raw);
+    if (Number.isNaN(parsed.getTime())) return raw;
 
-    return v.charAt(0).toUpperCase() + v.slice(1);
+    return parsed.toLocaleString("en-GB", {
+        day: "2-digit",
+        month: "2-digit",
+        year: "numeric",
+        hour: "2-digit",
+        minute: "2-digit",
+    });
 }
 
-function prettyLogoSize(value) {
-    const v = String(value || "").trim().toLowerCase();
-    if (!v) return "Medium";
+function titleFromOrder(selectedOrder, productMeta) {
+    const productKey = safeTrim(selectedOrder?.productKey);
+    const metaTitle = productMeta?.[productKey]?.title;
+    return metaTitle || safeTrim(selectedOrder?.title) || "KonarCard";
+}
 
-    if (v === "small") return "Small";
-    if (v === "medium") return "Medium";
-    if (v === "large") return "Large";
+function assignedProfileLabel(selectedOrder) {
+    return (
+        safeTrim(selectedOrder?.assignedProfile) ||
+        safeTrim(selectedOrder?.profileSlug) ||
+        "Not assigned"
+    );
+}
 
-    return prettyLabel(v);
+function variantLabel(selectedOrder) {
+    const value =
+        safeTrim(selectedOrder?.variantRaw) ||
+        safeTrim(selectedOrder?.preview?.variant);
+
+    if (!value) return "—";
+
+    return value.charAt(0).toUpperCase() + value.slice(1);
+}
+
+function quantityLabel(selectedOrder) {
+    const qty = Number(selectedOrder?.quantity || 1);
+    return Number.isFinite(qty) && qty > 0 ? String(qty) : "1";
+}
+
+function orderStatusLabel(selectedOrder) {
+    const status = safeTrim(selectedOrder?.status);
+    if (!status) return "—";
+    return status.charAt(0).toUpperCase() + status.slice(1);
+}
+
+function resolvedLogoSrc(selectedOrder, defaultLogoDataUrl) {
+    const raw = safeTrim(selectedOrder?.logoUrl);
+    if (raw) return raw;
+    return defaultLogoDataUrl || "";
+}
+
+function resolvedQrSrc(selectedOrder, qrSrcFromLink) {
+    const explicitQr =
+        safeTrim(selectedOrder?._raw?.preview?.qrCodeUrl) ||
+        safeTrim(selectedOrder?._raw?.profile?.qr_code_url);
+
+    if (explicitQr) return explicitQr;
+
+    const nfcTrackedUrl =
+        safeTrim(selectedOrder?._raw?.preview?.nfcProfileUrl) ||
+        safeTrim(selectedOrder?._raw?.preview?.publicProfileUrl) ||
+        safeTrim(selectedOrder?.link);
+
+    if (!nfcTrackedUrl) return "";
+
+    return typeof qrSrcFromLink === "function" ? qrSrcFromLink(nfcTrackedUrl) : "";
+}
+
+function resolvedLogoPercent(selectedOrder) {
+    const value = Number(selectedOrder?.preview?.logoPercent || 70);
+    if (!Number.isFinite(value)) return 70;
+    return Math.max(40, Math.min(90, value));
+}
+
+function plasticTextProps(selectedOrder) {
+    const previewCustomization = selectedOrder?._raw?.preview?.customization || {};
+    const topLevelCustomization = selectedOrder?._raw?.customization || {};
+
+    const frontText =
+        safeTrim(previewCustomization?.frontText) ||
+        safeTrim(topLevelCustomization?.frontText) ||
+        "KONAR";
+
+    const frontFontWeight = Number(
+        previewCustomization?.fontWeight ||
+        topLevelCustomization?.fontWeight ||
+        700
+    );
+
+    const frontFontSize = Number(
+        previewCustomization?.fontSize ||
+        topLevelCustomization?.fontSize ||
+        42
+    );
+
+    const frontTextColor =
+        safeTrim(previewCustomization?.textColor) ||
+        safeTrim(topLevelCustomization?.textColor) ||
+        "";
+
+    return {
+        frontText,
+        frontFontWeight: Number.isFinite(frontFontWeight) ? frontFontWeight : 700,
+        frontFontSize: Number.isFinite(frontFontSize) ? frontFontSize : 42,
+        frontTextColor,
+    };
 }
 
 export default function OrderDetailsView({
@@ -47,194 +128,174 @@ export default function OrderDetailsView({
     formatMoneyMinor,
     onBack,
 }) {
+    const previewProps = useMemo(() => {
+        if (!selectedOrder) return null;
+
+        const productKey = safeTrim(selectedOrder?.productKey);
+        const meta = productMeta?.[productKey] || {};
+        const edition = safeTrim(meta?.edition || selectedOrder?.preview?.edition || "plastic");
+        const variant =
+            safeTrim(selectedOrder?.variantRaw) ||
+            safeTrim(selectedOrder?.preview?.variant) ||
+            safeTrim(meta?.variant) ||
+            "white";
+
+        const common = {
+            productKey,
+            variant,
+            logoSrc: resolvedLogoSrc(selectedOrder, defaultLogoDataUrl),
+            qrSrc: resolvedQrSrc(selectedOrder, qrSrcFromLink),
+            logoPercent: resolvedLogoPercent(selectedOrder),
+        };
+
+        if (edition === "plastic") {
+            return {
+                ...common,
+                ...plasticTextProps(selectedOrder),
+            };
+        }
+
+        return common;
+    }, [selectedOrder, productMeta, defaultLogoDataUrl, qrSrcFromLink]);
+
     if (!selectedOrder) {
-        return <div className="cp-alert danger">This order could not be found.</div>;
+        return (
+            <>
+                <div className="ccz-backRow">
+                    <button type="button" className="kx-btn kx-btn--white" onClick={onBack}>
+                        Back to cards
+                    </button>
+                </div>
+
+                <section className="cp-card">
+                    <div className="cp-emptyState">
+                        <div className="cp-emptyStateCard">
+                            <div className="cp-emptyStateTitle">Order not found</div>
+                            <p className="cp-emptyStateText">
+                                We could not find that order. Please go back to your cards list.
+                            </p>
+                        </div>
+                    </div>
+                </section>
+            </>
+        );
     }
 
-    const productKey = String(selectedOrder?.productKey || "");
-    const meta = productMeta?.[productKey] || {};
+    const productTitle = titleFromOrder(selectedOrder, productMeta);
+    const amountFormatted =
+        safeTrim(selectedOrder?.amountTotalFormatted) ||
+        (typeof formatMoneyMinor === "function"
+            ? formatMoneyMinor(selectedOrder?.amountTotal, selectedOrder?.currency)
+            : "—");
 
-    const variant =
-        selectedOrder?.variantRaw ||
-        selectedOrder?.preview?.variant ||
-        meta?.defaultVariant ||
-        "white";
-
-    const logoPercent = Number(selectedOrder?.preview?.logoPercent || 70);
-    const logoSrc = selectedOrder?.logoUrl || defaultLogoDataUrl;
-    const qrSrc = selectedOrder?.link ? qrSrcFromLink(selectedOrder.link) : "";
-
-    const orderTotal = formatMoneyMinor(
-        selectedOrder?.amountTotal,
-        selectedOrder?.currency
-    );
-
-    const profileName =
-        selectedOrder?.assignedProfile ||
-        selectedOrder?.profileSlug ||
-        "—";
-
-    const profileLink = selectedOrder?.link || "";
+    const profileLabel = assignedProfileLabel(selectedOrder);
+    const createdAt = formatOrderDate(selectedOrder?._raw?.createdAt || selectedOrder?.createdAt);
+    const variant = variantLabel(selectedOrder);
+    const status = orderStatusLabel(selectedOrder);
+    const quantity = quantityLabel(selectedOrder);
+    const profileSlug = safeTrim(selectedOrder?.profileSlug) || "—";
 
     return (
-        <div className="odv-shell">
-            <div className="odv-topActions">
-                <button type="button" className="odv-backBtn" onClick={onBack}>
+        <>
+            <div className="ccz-backRow">
+                <button type="button" className="kx-btn kx-btn--white" onClick={onBack}>
                     Back to cards
                 </button>
             </div>
 
-            <section className="cp-card odv-heroCard">
-                <div className="cp-cardHead odv-heroHead">
+            <section className="cp-card">
+                <div className="cp-cardHead">
                     <div className="cp-cardHeadCopy">
                         <div className="cp-eyebrow">Order details</div>
-                        <h2 className="cp-cardTitle">
-                            {selectedOrder?.title || "Order details"}
-                        </h2>
+                        <h2 className="cp-cardTitle">{productTitle}</h2>
                         <p className="cp-muted">
-                            View your purchased product, saved configuration, and current order information.
+                            View the exact product configuration saved for this order.
                         </p>
                     </div>
                 </div>
 
-                <div className="odv-heroGrid">
-                    <div className="cp-previewCard odv-previewCard">
+                <div className="cp-detailsGrid">
+                    <div className="cp-previewCard">
                         <CardPreviewErrorBoundary
-                            resetKey={`${selectedOrder?.id}-${selectedOrder?.productKey}-${selectedOrder?.variantRaw}-${selectedOrder?.logoUrl}`}
+                            resetKey={`${selectedOrder?.id || "order"}-${previewProps?.productKey || "product"}-${previewProps?.variant || "variant"}-${previewProps?.frontText || "text"}`}
                             fallback={
                                 <div className="cp-previewFallback">
-                                    3D preview unavailable
+                                    Preview unavailable
                                 </div>
                             }
                         >
-                            <Card3DDetails
-                                productKey={selectedOrder?.productKey}
-                                logoSrc={logoSrc}
-                                qrSrc={qrSrc}
-                                logoPercent={logoPercent}
-                                variant={variant}
-                            />
+                            <div className="cp-preview3dWrap">
+                                <Card3DDetails {...previewProps} />
+                            </div>
                         </CardPreviewErrorBoundary>
                     </div>
 
-                    <div className="odv-sideStack">
-                        <div className="cp-innerCard odv-infoCard">
-                            <div className="cp-innerTitle">Order summary</div>
+                    <div className="cp-innerCard">
+                        <h3 className="cp-innerTitle">Order summary</h3>
 
-                            <div className="cp-row">
-                                <span className="cp-rowKey">Product</span>
-                                <span className="cp-rowVal">
-                                    {selectedOrder?.title || "—"}
-                                </span>
-                            </div>
-
-                            <div className="cp-row">
-                                <span className="cp-rowKey">Status</span>
-                                <span className="cp-rowVal">
-                                    {prettyStatus(selectedOrder?.status)}
-                                </span>
-                            </div>
-
-                            <div className="cp-row">
-                                <span className="cp-rowKey">Assigned profile</span>
-                                <span className="cp-rowVal">{profileName}</span>
-                            </div>
-
-                            <div className="cp-row">
-                                <span className="cp-rowKey">Variant</span>
-                                <span className="cp-rowVal">{prettyLabel(variant)}</span>
-                            </div>
-
-                            <div className="cp-row">
-                                <span className="cp-rowKey">Quantity</span>
-                                <span className="cp-rowVal">
-                                    {selectedOrder?.quantity || 1}
-                                </span>
-                            </div>
-
-                            <div className="cp-row">
-                                <span className="cp-rowKey">Total</span>
-                                <span className="cp-rowVal">{orderTotal}</span>
-                            </div>
-
-                            <div className="cp-row">
-                                <span className="cp-rowKey">Ordered</span>
-                                <span className="cp-rowVal">
-                                    {selectedOrder?.createdAt || "—"}
-                                </span>
-                            </div>
+                        <div className="cp-row">
+                            <div className="cp-rowKey">Product</div>
+                            <div className="cp-rowVal">{productTitle}</div>
                         </div>
 
-                        <div className="cp-innerCard odv-infoCard">
-                            <div className="cp-innerTitle">Saved configuration</div>
-
-                            <div className="cp-row">
-                                <span className="cp-rowKey">Edition</span>
-                                <span className="cp-rowVal">
-                                    {prettyLabel(
-                                        selectedOrder?.preview?.edition ||
-                                        meta?.edition ||
-                                        ""
-                                    )}
-                                </span>
-                            </div>
-
-                            <div className="cp-row">
-                                <span className="cp-rowKey">Logo size</span>
-                                <span className="cp-rowVal">
-                                    {prettyLogoSize(selectedOrder?.preview?.logoPreset)}
-                                </span>
-                            </div>
-
-                            <div className="cp-row">
-                                <span className="cp-rowKey">Custom logo</span>
-                                <span className="cp-rowVal">
-                                    {selectedOrder?.logoUrl ? "Yes" : "No"}
-                                </span>
-                            </div>
-
-                            <div className="cp-row cp-row--link">
-                                <span className="cp-rowKey">Profile link</span>
-                                <span className="cp-rowVal cp-rowVal--link">
-                                    {profileLink ? (
-                                        <a
-                                            href={profileLink}
-                                            target="_blank"
-                                            rel="noreferrer"
-                                            className="odv-link"
-                                        >
-                                            {profileLink}
-                                        </a>
-                                    ) : (
-                                        "—"
-                                    )}
-                                </span>
-                            </div>
+                        <div className="cp-row">
+                            <div className="cp-rowKey">Assigned profile</div>
+                            <div className="cp-rowVal">{profileLabel}</div>
                         </div>
 
-                        <div className="cp-innerCard odv-infoCard">
-                            <div className="cp-innerTitle">Delivery</div>
-
-                            <div className="cp-row">
-                                <span className="cp-rowKey">Current status</span>
-                                <span className="cp-rowVal">
-                                    {prettyStatus(selectedOrder?.status)}
-                                </span>
-                            </div>
-
-                            <div className="cp-row">
-                                <span className="cp-rowKey">Tracking</span>
-                                <span className="cp-rowVal">Not available yet</span>
-                            </div>
-
-                            <div className="cp-row">
-                                <span className="cp-rowKey">Dispatch</span>
-                                <span className="cp-rowVal">Managed by admin panel later</span>
-                            </div>
+                        <div className="cp-row">
+                            <div className="cp-rowKey">Profile slug</div>
+                            <div className="cp-rowVal">{profileSlug}</div>
                         </div>
+
+                        <div className="cp-row">
+                            <div className="cp-rowKey">Variant</div>
+                            <div className="cp-rowVal">{variant}</div>
+                        </div>
+
+                        <div className="cp-row">
+                            <div className="cp-rowKey">Quantity</div>
+                            <div className="cp-rowVal">{quantity}</div>
+                        </div>
+
+                        <div className="cp-row">
+                            <div className="cp-rowKey">Total</div>
+                            <div className="cp-rowVal">{amountFormatted}</div>
+                        </div>
+
+                        <div className="cp-row">
+                            <div className="cp-rowKey">Status</div>
+                            <div className="cp-rowVal">{status}</div>
+                        </div>
+
+                        <div className="cp-row">
+                            <div className="cp-rowKey">Ordered on</div>
+                            <div className="cp-rowVal">{createdAt}</div>
+                        </div>
+
+                        {previewProps?.frontText ? (
+                            <div className="cp-row">
+                                <div className="cp-rowKey">Front text</div>
+                                <div className="cp-rowVal">{previewProps.frontText}</div>
+                            </div>
+                        ) : null}
+
+                        {previewProps?.frontFontWeight ? (
+                            <div className="cp-row">
+                                <div className="cp-rowKey">Text weight</div>
+                                <div className="cp-rowVal">{previewProps.frontFontWeight}</div>
+                            </div>
+                        ) : null}
+
+                        {previewProps?.frontFontSize ? (
+                            <div className="cp-row">
+                                <div className="cp-rowKey">Text size</div>
+                                <div className="cp-rowVal">{previewProps.frontFontSize}px</div>
+                            </div>
+                        ) : null}
                     </div>
                 </div>
             </section>
-        </div>
+        </>
     );
 }

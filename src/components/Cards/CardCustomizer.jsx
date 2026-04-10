@@ -285,7 +285,7 @@ const PRODUCT_CONFIG = {
     "plastic-orange": {
         title: "KonarCard Orange",
         subtitle:
-            "High-impact orange plastic NFC business card with a confident branded style and QR backup.",
+            "High-impact orange NFC business card with a confident branded style and QR backup.",
         priceText: "£19.99",
         badge: "Warm",
         buyLabel: "Buy Orange Card",

@@ -402,7 +402,6 @@ Cards Page
     pointer-events: none;
 }
 
-/* Make the public product images fill edge-to-edge */
 .cp-catalogImageWrap img {
     width: 100%;
     height: 100%;
@@ -488,18 +487,34 @@ Cards Page
 }
 
 .cp-ownedMedia {
-    min-height: 250px;
-    padding: 16px 16px 0;
+    min-height: 270px;
+    padding: 18px 18px 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .cp-ownedPreview3D {
-    min-height: 250px;
+    width: 100%;
+    min-height: 252px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+}
+
+.cp-ownedPreview3D .pc3d {
+    width: 100%;
+    height: 100%;
 }
 
 .cp-ownedPreview3D .pc3d__stage {
-    width: 72%;
-    height: 208px;
-    min-height: 208px;
+    width: 100%;
+    max-width: none;
+    height: 232px;
+    min-height: 232px;
+    padding: 0;
+    margin: 0 auto;
 }
 
 .cp-ownedBody {
@@ -560,12 +575,12 @@ Cards Page
     background: #fff;
     border: 1px solid rgba(15, 23, 42, 0.1);
     border-radius: 20px;
-    min-height: 420px;
+    min-height: 520px;
     overflow: hidden;
     display: grid;
     place-items: center;
     position: relative;
-    padding: 16px;
+    padding: 20px;
     min-width: 0;
 }
 
@@ -631,6 +646,12 @@ Cards Page
     line-height: 1.3;
 }
 
+.cp-link {
+    color: rgba(15, 23, 42, 0.92);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+}
+
 /* =========================================================
    Empty states
 ========================================================= */
@@ -673,11 +694,25 @@ Cards Page
 .cp-preview3dWrap {
     width: 100%;
     height: 100%;
-    min-height: 220px;
+    min-height: 420px;
     display: flex;
     align-items: center;
     justify-content: center;
     overflow: hidden;
+}
+
+.cp-preview3dWrap .pc3d {
+    width: 100%;
+    height: 100%;
+}
+
+.cp-preview3dWrap .pc3d__stage {
+    width: 100%;
+    max-width: none;
+    height: 440px;
+    min-height: 440px;
+    padding: 0;
+    margin: 0 auto;
 }
 
 .cp-ownedLoadingGrid {
@@ -805,13 +840,25 @@ Cards Page
     }
 
     .cp-ownedPreview3D {
-        min-height: 240px;
+        min-height: 236px;
     }
 
     .cp-ownedPreview3D .pc3d__stage {
-        width: 70%;
-        height: 196px;
-        min-height: 196px;
+        height: 212px;
+        min-height: 212px;
+    }
+
+    .cp-previewCard {
+        min-height: 460px;
+    }
+
+    .cp-preview3dWrap {
+        min-height: 360px;
+    }
+
+    .cp-preview3dWrap .pc3d__stage {
+        height: 380px;
+        min-height: 380px;
     }
 }
 
@@ -881,8 +928,17 @@ Cards Page
     }
 
     .cp-previewCard {
-        min-height: 340px;
-        padding: 10px;
+        min-height: 360px;
+        padding: 12px;
+    }
+
+    .cp-preview3dWrap {
+        min-height: 300px;
+    }
+
+    .cp-preview3dWrap .pc3d__stage {
+        height: 310px;
+        min-height: 310px;
     }
 
     .cp-rowVal {
@@ -895,17 +951,17 @@ Cards Page
     }
 
     .cp-ownedMedia {
-        min-height: 228px;
+        min-height: 232px;
+        padding: 16px 16px 0;
     }
 
     .cp-ownedPreview3D {
-        min-height: 228px;
+        min-height: 220px;
     }
 
     .cp-ownedPreview3D .pc3d__stage {
-        width: 74%;
-        height: 180px;
-        min-height: 180px;
+        height: 188px;
+        min-height: 188px;
     }
 }
 
@@ -994,6 +1050,20 @@ Cards Page
         width: 100%;
         justify-content: center;
     }
+
+    .cp-previewCard {
+        min-height: 330px;
+        padding: 10px;
+    }
+
+    .cp-preview3dWrap {
+        min-height: 270px;
+    }
+
+    .cp-preview3dWrap .pc3d__stage {
+        height: 280px;
+        min-height: 280px;
+    }
 }
 
 @media (max-width: 420px) {
@@ -1026,16 +1096,28 @@ Cards Page
     }
 
     .cp-ownedMedia {
-        min-height: 212px;
+        min-height: 216px;
     }
 
     .cp-ownedPreview3D {
-        min-height: 212px;
+        min-height: 204px;
     }
 
     .cp-ownedPreview3D .pc3d__stage {
-        width: 78%;
-        height: 168px;
-        min-height: 168px;
+        height: 172px;
+        min-height: 172px;
+    }
+
+    .cp-previewCard {
+        min-height: 300px;
+    }
+
+    .cp-preview3dWrap {
+        min-height: 240px;
+    }
+
+    .cp-preview3dWrap .pc3d__stage {
+        height: 248px;
+        min-height: 248px;
     }
 }

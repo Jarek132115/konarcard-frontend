@@ -28,6 +28,19 @@ import PlasticCard3D from "../../components/PlasticCard3D";
 import MetalCard3D from "../../components/MetalCard3D";
 import KonarTag3D from "../../components/KonarTag3D";
 
+import WhiteFrontImg from "../../assets/images/Products/WhiteFront.jpg";
+import WhiteBackImg from "../../assets/images/Products/WhiteBack.jpg";
+import BlackFrontImg from "../../assets/images/Products/BlackFront.jpg";
+import BlackBackImg from "../../assets/images/Products/BlackBack.jpg";
+import BlueFrontImg from "../../assets/images/Products/BlueFront.jpg";
+import BlueBackImg from "../../assets/images/Products/BlueBack.jpg";
+import GreenFrontImg from "../../assets/images/Products/GreenFront.jpg";
+import GreenBackImg from "../../assets/images/Products/GreenBack.jpg";
+import MagentaFrontImg from "../../assets/images/Products/MagentaFront.jpg";
+import MagentaBackImg from "../../assets/images/Products/MagentaBack.jpg";
+import OrangeFrontImg from "../../assets/images/Products/OrangeFront.jpg";
+import OrangeBackImg from "../../assets/images/Products/OrangeBack.jpg";
+
 const NFC_INTENT_KEY = "konar_nfc_intent_v1";
 
 const PRODUCT_META = {
@@ -112,6 +125,45 @@ const resolveProductKey = (rawKey) => {
   return PRODUCT_META[key] ? key : LEGACY_PRODUCT_KEY_MAP[key] || "";
 };
 
+const PLASTIC_ARTWORK = {
+  "plastic-white": {
+    frontSrc: WhiteFrontImg,
+    backSrc: WhiteBackImg,
+    edgeColor: "#ffffff",
+    textColor: "#111111",
+  },
+  "plastic-black": {
+    frontSrc: BlackFrontImg,
+    backSrc: BlackBackImg,
+    edgeColor: "#111111",
+    textColor: "#ffffff",
+  },
+  "plastic-blue": {
+    frontSrc: BlueFrontImg,
+    backSrc: BlueBackImg,
+    edgeColor: "#0f52ff",
+    textColor: "#ffffff",
+  },
+  "plastic-green": {
+    frontSrc: GreenFrontImg,
+    backSrc: GreenBackImg,
+    edgeColor: "#15a53a",
+    textColor: "#ffffff",
+  },
+  "plastic-magenta": {
+    frontSrc: MagentaFrontImg,
+    backSrc: MagentaBackImg,
+    edgeColor: "#d1008f",
+    textColor: "#ffffff",
+  },
+  "plastic-orange": {
+    frontSrc: OrangeFrontImg,
+    backSrc: OrangeBackImg,
+    edgeColor: "#ff7b00",
+    textColor: "#ffffff",
+  },
+};
+
 class CardPreviewErrorBoundary extends React.Component {
   constructor(props) {
     super(props);
@@ -162,17 +214,11 @@ function readIntent() {
       ...parsed,
       productKey: resolvedProductKey,
       family:
-        parsed?.family ||
-        PRODUCT_META[resolvedProductKey]?.family ||
-        "plastic",
+        parsed?.family || PRODUCT_META[resolvedProductKey]?.family || "plastic",
       edition:
-        parsed?.edition ||
-        PRODUCT_META[resolvedProductKey]?.edition ||
-        "plastic",
+        parsed?.edition || PRODUCT_META[resolvedProductKey]?.edition || "plastic",
       variant:
-        parsed?.variant ||
-        PRODUCT_META[resolvedProductKey]?.variant ||
-        "",
+        parsed?.variant || PRODUCT_META[resolvedProductKey]?.variant || "",
     };
   } catch {
     return null;
@@ -195,7 +241,21 @@ async function getMyOrders() {
   return r.data;
 }
 
-function Card3DDetails({ productKey, logoSrc, qrSrc, logoPercent, variant }) {
+function Card3DDetails({
+  productKey,
+  logoSrc,
+  qrSrc,
+  logoPercent,
+  variant,
+  frontText,
+  frontFontSize,
+  frontFontWeight,
+  frontTextColor,
+  interactive = false,
+  autoRotate = true,
+  autoRotateSpeed = 0.68,
+  compact = false,
+}) {
   const resolvedKey = resolveProductKey(productKey);
 
   if (resolvedKey === "metal-card") {
@@ -205,6 +265,10 @@ function Card3DDetails({ productKey, logoSrc, qrSrc, logoPercent, variant }) {
         qrSrc={qrSrc}
         logoSize={logoPercent}
         finish={variant}
+        interactive={interactive}
+        autoRotate={autoRotate}
+        autoRotateSpeed={autoRotateSpeed}
+        compact={compact}
       />
     );
   }
@@ -216,16 +280,31 @@ function Card3DDetails({ productKey, logoSrc, qrSrc, logoPercent, variant }) {
         qrSrc={qrSrc}
         logoSize={logoPercent}
         finish={variant}
+        interactive={interactive}
+        autoRotate={autoRotate}
+        autoRotateSpeed={autoRotateSpeed}
+        compact={compact}
       />
     );
   }
 
+  const artwork =
+    PLASTIC_ARTWORK[resolvedKey] || PLASTIC_ARTWORK["plastic-white"];
+
   return (
     <PlasticCard3D
-      logoSrc={logoSrc}
+      frontSrc={artwork.frontSrc}
+      backSrc={artwork.backSrc}
       qrSrc={qrSrc}
-      logoSize={logoPercent}
-      variant={variant || PRODUCT_META[resolvedKey]?.variant || "white"}
+      edgeColor={artwork.edgeColor}
+      frontText={String(frontText || "").trim() || "KONAR"}
+      frontFontSize={Number(frontFontSize || 42)}
+      frontFontWeight={Number(frontFontWeight || 700)}
+      frontTextColor={String(frontTextColor || "").trim() || artwork.textColor}
+      interactive={interactive}
+      autoRotate={autoRotate}
+      autoRotateSpeed={autoRotateSpeed}
+      compact={compact}
     />
   );
 }
@@ -281,7 +360,9 @@ export default function Cards() {
 
   const selectedProfile = useMemo(() => {
     if (!profilesForShare.length) return null;
-    return profilesForShare.find((p) => p.slug === selectedSlug) || profilesForShare[0];
+    return (
+      profilesForShare.find((p) => p.slug === selectedSlug) || profilesForShare[0]
+    );
   }, [profilesForShare, selectedSlug]);
 
   useEffect(() => {
@@ -425,7 +506,9 @@ export default function Cards() {
     setSelectedOrderView(false);
     setSelectedId(null);
     setSelectedProductKey(resolvedKey);
-    navigate(`/cards?product=${encodeURIComponent(resolvedKey)}`, { replace: true });
+    navigate(`/cards?product=${encodeURIComponent(resolvedKey)}`, {
+      replace: true,
+    });
   };
 
   const openOrderDetails = (orderId) => {
@@ -509,7 +592,9 @@ export default function Cards() {
 
     const url = `https://www.facebook.com/dialog/send?link=${encodeURIComponent(
       selectedProfile.url
-    )}&app_id=291494419107518&redirect_uri=${encodeURIComponent(selectedProfile.url)}`;
+    )}&app_id=291494419107518&redirect_uri=${encodeURIComponent(
+      selectedProfile.url
+    )}`;
 
     window.open(url, "_blank", "noopener,noreferrer,width=680,height=720");
   };

@@ -5,9 +5,19 @@ const trim = (v) => (v ?? "").toString().trim();
 ========================================================= */
 
 export function prettyProduct(productKey) {
-    if (productKey === "plastic-card") return "Plastic Card";
-    if (productKey === "metal-card") return "Metal Card";
-    if (productKey === "konartag") return "KonarTag";
+    const key = String(productKey || "").trim().toLowerCase();
+
+    if (key === "plastic-white") return "KonarCard White";
+    if (key === "plastic-black") return "KonarCard Black";
+    if (key === "plastic-blue") return "KonarCard Blue";
+    if (key === "plastic-green") return "KonarCard Green";
+    if (key === "plastic-magenta") return "KonarCard Magenta";
+    if (key === "plastic-orange") return "KonarCard Orange";
+
+    if (key === "plastic-card") return "Plastic Card";
+    if (key === "metal-card") return "Metal Card";
+    if (key === "konartag") return "KonarTag";
+
     return "KonarCard";
 }
 
@@ -30,11 +40,18 @@ export function profileSlugFromOrder(order) {
         order?.profile?.profile_slug ||
         order?.profile?.slug ||
         order?.profile?.username ||
+        order?.preview?.profileSlug ||
         ""
     );
 }
 
 export function profileLinkFromOrder(order) {
+    const explicit =
+        trim(order?.preview?.nfcProfileUrl) ||
+        trim(order?.preview?.publicProfileUrl);
+
+    if (explicit) return explicit;
+
     const slug = profileSlugFromOrder(order);
     if (!slug) return "";
     return `${window.location.origin}/u/${slug}`;
@@ -106,8 +123,17 @@ export const DEFAULT_LOGO_DATAURL = `data:image/svg+xml;charset=utf-8,${KONAR_LO
 
 export function normalizeOrder(order) {
     const id = String(order?._id || order?.id || "");
-    const productKey = String(order?.productKey || "");
+    const productKey = String(order?.productKey || "").trim();
     const link = profileLinkFromOrder(order);
+
+    const preview = order?.preview && typeof order.preview === "object"
+        ? order.preview
+        : {};
+
+    const customization =
+        preview?.customization && typeof preview.customization === "object"
+            ? preview.customization
+            : {};
 
     return {
         id,
@@ -136,12 +162,26 @@ export function normalizeOrder(order) {
         logoUrl: String(order?.logoUrl || ""),
         previewImageUrl: String(order?.previewImageUrl || ""),
 
-        /* preview config (important for 3D reuse later) */
+        /* saved text customisation for plastic cards */
+        frontText: String(customization?.frontText || ""),
+        frontFontSize: Number(customization?.fontSize || 42),
+        frontFontWeight: Number(customization?.fontWeight || 700),
+        frontTextColor: String(customization?.textColor || ""),
+
+        /* preview config */
         preview: {
-            logoPercent: Number(order?.preview?.logoPercent || 70),
-            logoPreset: String(order?.preview?.logoPreset || "medium"),
-            variant: String(order?.preview?.variant || ""),
-            edition: String(order?.preview?.edition || ""),
+            logoPercent: Number(preview?.logoPercent || 70),
+            logoPreset: String(preview?.logoPreset || "medium"),
+            variant: String(preview?.variant || ""),
+            edition: String(preview?.edition || ""),
+            family: String(preview?.family || ""),
+            styleKey: String(preview?.styleKey || ""),
+            frontTemplate: String(preview?.frontTemplate || ""),
+            backTemplate: String(preview?.backTemplate || ""),
+            publicProfileUrl: String(preview?.publicProfileUrl || ""),
+            nfcProfileUrl: String(preview?.nfcProfileUrl || ""),
+            profileSlug: String(preview?.profileSlug || ""),
+            customization,
         },
 
         /* raw fallback */
