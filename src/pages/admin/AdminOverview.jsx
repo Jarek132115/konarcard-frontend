@@ -35,83 +35,24 @@ function cleanString(v) {
 
 function StatCard({ label, value, subvalue }) {
     return (
-        <div
-            style={{
-                background: "#fff",
-                border: "1px solid rgba(15,23,42,0.08)",
-                borderRadius: 20,
-                padding: 20,
-                boxShadow: "0 8px 24px rgba(15,23,42,0.04)",
-                minHeight: 110,
-            }}
-        >
-            <div style={{ fontSize: 13, color: "#64748b", marginBottom: 10 }}>
-                {label}
-            </div>
-            <div
-                style={{
-                    fontSize: 30,
-                    fontWeight: 700,
-                    color: "#0f172a",
-                    lineHeight: 1.1,
-                }}
-            >
-                {value}
-            </div>
-            {subvalue ? (
-                <div style={{ fontSize: 13, color: "#94a3b8", marginTop: 8 }}>
-                    {subvalue}
-                </div>
-            ) : null}
+        <div className="admin-stat-card">
+            <div className="admin-stat-label">{label}</div>
+            <div className="admin-stat-value">{value}</div>
+            {subvalue ? <div className="admin-stat-subvalue">{subvalue}</div> : null}
         </div>
     );
 }
 
 function SectionCard({ title, subtitle, right, children }) {
     return (
-        <section
-            style={{
-                background: "#fff",
-                border: "1px solid rgba(15,23,42,0.08)",
-                borderRadius: 24,
-                padding: 24,
-                boxShadow: "0 8px 24px rgba(15,23,42,0.04)",
-            }}
-        >
-            <div
-                style={{
-                    display: "flex",
-                    gap: 16,
-                    justifyContent: "space-between",
-                    alignItems: "flex-start",
-                    marginBottom: 18,
-                    flexWrap: "wrap",
-                }}
-            >
+        <section className="admin-section-card">
+            <div className="admin-section-head">
                 <div>
-                    <h2
-                        style={{
-                            margin: 0,
-                            fontSize: 22,
-                            lineHeight: 1.15,
-                            color: "#0f172a",
-                        }}
-                    >
-                        {title}
-                    </h2>
-                    {subtitle ? (
-                        <p
-                            style={{
-                                margin: "8px 0 0",
-                                color: "#64748b",
-                                fontSize: 14,
-                            }}
-                        >
-                            {subtitle}
-                        </p>
-                    ) : null}
+                    <h2 className="admin-section-title">{title}</h2>
+                    {subtitle ? <p className="admin-section-subtitle">{subtitle}</p> : null}
                 </div>
-                {right ? <div>{right}</div> : null}
+
+                {right ? <div className="admin-section-right">{right}</div> : null}
             </div>
 
             {children}
@@ -120,86 +61,14 @@ function SectionCard({ title, subtitle, right, children }) {
 }
 
 function Pill({ children, tone = "neutral" }) {
-    const styles = {
-        neutral: {
-            background: "#f8fafc",
-            border: "1px solid rgba(15,23,42,0.08)",
-            color: "#334155",
-        },
-        success: {
-            background: "#ecfdf5",
-            border: "1px solid #a7f3d0",
-            color: "#065f46",
-        },
-        warn: {
-            background: "#fff7ed",
-            border: "1px solid #fdba74",
-            color: "#9a3412",
-        },
-        danger: {
-            background: "#fef2f2",
-            border: "1px solid #fecaca",
-            color: "#991b1b",
-        },
-        info: {
-            background: "#eff6ff",
-            border: "1px solid #bfdbfe",
-            color: "#1d4ed8",
-        },
-    };
-
-    return (
-        <span
-            style={{
-                display: "inline-flex",
-                alignItems: "center",
-                gap: 6,
-                borderRadius: 999,
-                padding: "6px 10px",
-                fontSize: 12,
-                fontWeight: 600,
-                whiteSpace: "nowrap",
-                ...styles[tone],
-            }}
-        >
-            {children}
-        </span>
-    );
+    return <span className={`admin-pill admin-pill--${tone}`}>{children}</span>;
 }
 
-function Btn({ children, tone = "primary", ...props }) {
-    const styles = {
-        primary: {
-            background: "#0f172a",
-            color: "#fff",
-            border: "1px solid #0f172a",
-        },
-        ghost: {
-            background: "#fff",
-            color: "#0f172a",
-            border: "1px solid rgba(15,23,42,0.10)",
-        },
-        orange: {
-            background: "#f97316",
-            color: "#fff",
-            border: "1px solid #f97316",
-        },
-    };
-
+function Btn({ children, tone = "primary", className = "", ...props }) {
     return (
         <button
             {...props}
-            style={{
-                minHeight: 42,
-                padding: "0 14px",
-                borderRadius: 14,
-                fontSize: 14,
-                fontWeight: 600,
-                cursor: props.disabled ? "not-allowed" : "pointer",
-                opacity: props.disabled ? 0.6 : 1,
-                ...styles[tone],
-                ...(props.style || {}),
-            }}
+            className={`admin-btn admin-btn--${tone} ${className}`.trim()}
         >
             {children}
         </button>
@@ -305,65 +174,32 @@ export default function AdminOverview() {
 
     const totalRevenue = useMemo(() => {
         return orders.reduce((sum, order) => {
-            const amount = typeof order?.amountTotal === "number" ? order.amountTotal : 0;
+            const amount =
+                typeof order?.amountTotal === "number" ? order.amountTotal : 0;
             return sum + amount;
         }, 0);
     }, [orders]);
 
     const deliveredCount = useMemo(() => {
         return orders.filter(
-            (order) => cleanString(order?.fulfillmentStatus).toLowerCase() === "delivered"
+            (order) =>
+                cleanString(order?.fulfillmentStatus).toLowerCase() === "delivered"
         ).length;
     }, [orders]);
 
     return (
         <AdminLayout>
-            <header
-                style={{
-                    display: "flex",
-                    justifyContent: "space-between",
-                    alignItems: "flex-start",
-                    gap: 16,
-                    flexWrap: "wrap",
-                }}
-            >
-                <div>
-                    <p
-                        style={{
-                            margin: 0,
-                            color: "#f97316",
-                            fontWeight: 700,
-                            fontSize: 13,
-                            letterSpacing: "0.02em",
-                            textTransform: "uppercase",
-                        }}
-                    >
-                        KonarCard Admin
-                    </p>
-
-                    <h1
-                        style={{
-                            margin: "8px 0 0",
-                            fontSize: 34,
-                            lineHeight: 1.05,
-                            color: "#0f172a",
-                        }}
-                    >
-                        Overview
-                    </h1>
-
-                    <p
-                        style={{
-                            margin: "10px 0 0",
-                            color: "#64748b",
-                            fontSize: 15,
-                        }}
-                    >
-                        Your business snapshot across users, subscriptions, profiles, and card orders.
+            <header className="admin-page-header">
+                <div className="admin-page-header-copy">
+                    <p className="admin-page-kicker">KonarCard Admin</p>
+                    <h1 className="admin-page-title">Overview</h1>
+                    <p className="admin-page-subtitle">
+                        Your business snapshot across users, subscriptions, profiles,
+                        and card orders.
                     </p>
                 </div>
 
-                <div style={{ display: "flex", gap: 10, flexWrap: "wrap" }}>
+                <div className="admin-page-actions">
                     <Btn tone="ghost" onClick={refreshAll}>
                         Refresh all
                     </Btn>
@@ -373,13 +209,7 @@ export default function AdminOverview() {
                 </div>
             </header>
 
-            <div
-                style={{
-                    display: "grid",
-                    gridTemplateColumns: "repeat(5, minmax(0,1fr))",
-                    gap: 16,
-                }}
-            >
+            <div className="admin-stats-grid">
                 <StatCard
                     label="Total users"
                     value={summaryLoading ? "…" : summary.totalUsers || 0}
@@ -404,27 +234,10 @@ export default function AdminOverview() {
             </div>
 
             {summaryError ? (
-                <div
-                    style={{
-                        padding: 14,
-                        borderRadius: 16,
-                        background: "#fef2f2",
-                        border: "1px solid #fecaca",
-                        color: "#991b1b",
-                        fontSize: 14,
-                    }}
-                >
-                    {summaryError}
-                </div>
+                <div className="admin-error-banner">{summaryError}</div>
             ) : null}
 
-            <div
-                style={{
-                    display: "grid",
-                    gridTemplateColumns: "1.15fr 1fr",
-                    gap: 20,
-                }}
-            >
+            <div className="admin-grid-2-wide">
                 <SectionCard
                     title="Recent users"
                     subtitle="Newest accounts on KonarCard."
@@ -435,72 +248,54 @@ export default function AdminOverview() {
                     }
                 >
                     {usersLoading ? (
-                        <p style={{ color: "#64748b", margin: 0 }}>Loading users…</p>
+                        <p className="admin-muted" style={{ margin: 0 }}>
+                            Loading users…
+                        </p>
                     ) : usersError ? (
-                        <p style={{ color: "#991b1b", margin: 0 }}>{usersError}</p>
+                        <p className="admin-error-banner" style={{ margin: 0 }}>
+                            {usersError}
+                        </p>
                     ) : users.length === 0 ? (
-                        <p style={{ color: "#64748b", margin: 0 }}>No users found.</p>
+                        <div className="admin-empty-state">No users found.</div>
                     ) : (
-                        <div style={{ display: "grid", gap: 12 }}>
+                        <div className="admin-list">
                             {users.slice(0, 6).map((user) => (
                                 <button
                                     key={user._id}
                                     type="button"
-                                    onClick={() => navigate(`/admin/users?selected=${user._id}`)}
-                                    style={{
-                                        width: "100%",
-                                        textAlign: "left",
-                                        borderRadius: 18,
-                                        border: "1px solid rgba(15,23,42,0.08)",
-                                        background: "#fff",
-                                        padding: 16,
-                                        cursor: "pointer",
-                                    }}
+                                    className="admin-user-card"
+                                    onClick={() =>
+                                        navigate(`/admin/users?selected=${user._id}`)
+                                    }
                                 >
-                                    <div
-                                        style={{
-                                            display: "flex",
-                                            justifyContent: "space-between",
-                                            gap: 12,
-                                            alignItems: "center",
-                                            flexWrap: "wrap",
-                                        }}
-                                    >
+                                    <div className="admin-item-head">
                                         <div>
-                                            <div style={{ fontWeight: 700, fontSize: 15 }}>
-                                                {user.name || user.username || user.email || "User"}
+                                            <div className="admin-item-title">
+                                                {user.name ||
+                                                    user.username ||
+                                                    user.email ||
+                                                    "User"}
                                             </div>
-                                            <div
-                                                style={{
-                                                    marginTop: 4,
-                                                    color: "#64748b",
-                                                    fontSize: 13,
-                                                }}
-                                            >
+                                            <div className="admin-item-subtitle">
                                                 {user.email || "—"}
                                             </div>
                                         </div>
 
-                                        <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+                                        <div className="admin-row">
                                             <Pill tone={getPlanTone(user.plan)}>
                                                 {user.plan || "free"}
                                             </Pill>
-                                            <Pill tone={getSubscriptionTone(user.subscriptionStatus)}>
+                                            <Pill
+                                                tone={getSubscriptionTone(
+                                                    user.subscriptionStatus
+                                                )}
+                                            >
                                                 {user.subscriptionStatus || "free"}
                                             </Pill>
                                         </div>
                                     </div>
 
-                                    <div
-                                        style={{
-                                            display: "flex",
-                                            gap: 16,
-                                            marginTop: 12,
-                                            flexWrap: "wrap",
-                                            color: "#64748b",
-                                            fontSize: 13,
-                                        }}
-                                    >
+                                    <div className="admin-item-meta">
                                         <span>{user.profileCount || 0} profiles</span>
                                         <span>{user.orderCount || 0} orders</span>
                                         <span>Joined {formatDate(user.createdAt)}</span>
@@ -521,72 +316,57 @@ export default function AdminOverview() {
                     }
                 >
                     {ordersLoading ? (
-                        <p style={{ color: "#64748b", margin: 0 }}>Loading orders…</p>
+                        <p className="admin-muted" style={{ margin: 0 }}>
+                            Loading orders…
+                        </p>
                     ) : ordersError ? (
-                        <p style={{ color: "#991b1b", margin: 0 }}>{ordersError}</p>
+                        <p className="admin-error-banner" style={{ margin: 0 }}>
+                            {ordersError}
+                        </p>
                     ) : orders.length === 0 ? (
-                        <p style={{ color: "#64748b", margin: 0 }}>No orders found.</p>
+                        <div className="admin-empty-state">No orders found.</div>
                     ) : (
-                        <div style={{ display: "grid", gap: 12 }}>
+                        <div className="admin-list">
                             {orders.slice(0, 6).map((order) => (
-                                <div
-                                    key={order._id}
-                                    style={{
-                                        borderRadius: 18,
-                                        border: "1px solid rgba(15,23,42,0.08)",
-                                        background: "#fff",
-                                        padding: 16,
-                                    }}
-                                >
-                                    <div
-                                        style={{
-                                            display: "flex",
-                                            justifyContent: "space-between",
-                                            gap: 12,
-                                            alignItems: "center",
-                                            flexWrap: "wrap",
-                                        }}
-                                    >
+                                <div key={order._id} className="admin-order-card">
+                                    <div className="admin-item-head">
                                         <div>
-                                            <div style={{ fontWeight: 700, fontSize: 15 }}>
+                                            <div className="admin-item-title">
                                                 {order.user?.name ||
                                                     order.customerName ||
                                                     order.customerEmail ||
                                                     "Order"}
                                             </div>
-                                            <div
-                                                style={{
-                                                    marginTop: 4,
-                                                    color: "#64748b",
-                                                    fontSize: 13,
-                                                }}
-                                            >
-                                                {order.productKey || "Product"}{" "}
-                                                {order.variant ? `• ${order.variant}` : ""}
+                                            <div className="admin-item-subtitle">
+                                                {order.productKey || "Product"}
+                                                {order.variant ? ` • ${order.variant}` : ""}
                                             </div>
                                         </div>
 
-                                        <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
-                                            <Pill tone={getFulfillmentTone(order.fulfillmentStatus)}>
-                                                {order.fulfillmentStatus || "order_placed"}
+                                        <div className="admin-row">
+                                            <Pill
+                                                tone={getFulfillmentTone(
+                                                    order.fulfillmentStatus
+                                                )}
+                                            >
+                                                {order.fulfillmentStatus ||
+                                                    "order_placed"}
                                             </Pill>
-                                            <Pill>{formatAmount(order.amountTotal, order.currency)}</Pill>
+                                            <Pill>
+                                                {formatAmount(
+                                                    order.amountTotal,
+                                                    order.currency
+                                                )}
+                                            </Pill>
                                         </div>
                                     </div>
 
-                                    <div
-                                        style={{
-                                            display: "flex",
-                                            gap: 16,
-                                            marginTop: 12,
-                                            flexWrap: "wrap",
-                                            color: "#64748b",
-                                            fontSize: 13,
-                                        }}
-                                    >
+                                    <div className="admin-item-meta">
                                         <span>Qty {order.quantity || 1}</span>
                                         <span>{formatDate(order.createdAt)}</span>
-                                        <span>{order.profile?.profile_slug || "No profile"}</span>
+                                        <span>
+                                            {order.profile?.profile_slug || "No profile"}
+                                        </span>
                                     </div>
                                 </div>
                             ))}
