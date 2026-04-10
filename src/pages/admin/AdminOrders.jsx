@@ -732,10 +732,10 @@ export default function AdminOrders() {
                                                 tone="ghost"
                                                 onClick={() =>
                                                     navigate(
-                                                        `/admin/users?selected=${selectedOrder.userId}`
+                                                        `/admin/users?selected=${selectedOrder.userId || selectedOrder.user?._id}`
                                                     )
                                                 }
-                                                disabled={!selectedOrder.userId}
+                                                disabled={!selectedOrder.userId && !selectedOrder.user?._id}
                                             >
                                                 Open customer
                                             </Btn>
