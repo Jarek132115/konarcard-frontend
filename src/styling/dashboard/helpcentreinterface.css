@@ -31,7 +31,7 @@
 
 .hc5-heroCard {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) 320px;
+  grid-template-columns: minmax(0, 1fr) 360px;
   gap: 32px;
   align-items: stretch;
   padding: var(--sp-6);
@@ -161,7 +161,7 @@
 .hc5-supportCard {
   width: 100%;
   min-height: 100%;
-  padding: 24px;
+  padding: 26px;
   border-radius: 22px;
   border: 0;
   background: var(--hc5-orange);
@@ -274,9 +274,9 @@
   min-width: 0;
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(0, 0.96fr);
-  gap: 20px;
+  gap: 24px;
   align-items: stretch;
-  padding: 16px;
+  padding: 22px;
   background: var(--hc5-surface);
   border: 1px solid var(--hc5-border);
   border-radius: var(--hc5-radius-lg);
@@ -371,7 +371,7 @@
   flex-direction: column;
   justify-content: space-between;
   gap: 18px;
-  padding: 4px 0;
+  padding: 6px 2px;
 }
 
 .hc5-cardTop {
@@ -616,8 +616,8 @@
   }
 
   .hc5-card {
-    padding: 14px;
-    gap: 16px;
+    padding: 18px;
+    gap: 18px;
   }
 
   .hc5-cardMedia {
@@ -672,7 +672,7 @@
 
   .hc5-card {
     grid-template-columns: 1fr;
-    padding: 14px;
+    padding: 18px;
     border-radius: 22px;
   }
 
@@ -733,7 +733,7 @@
   }
 
   .hc5-card {
-    padding: 12px;
+    padding: 16px;
   }
 
   .hc5-cardMedia {
