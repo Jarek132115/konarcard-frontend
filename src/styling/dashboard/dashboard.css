@@ -4,15 +4,18 @@
     --db-shadow: 0 1px 0 rgba(15, 23, 42, 0.04), 0 10px 22px rgba(15, 23, 42, 0.04);
     --db-shadow-lg: 0 18px 48px rgba(15, 23, 42, 0.12);
     --db-card: #ffffff;
-    --db-card-soft: #fcfcfd;
-    --db-ink: #0f172a;
-    --db-muted: #475569;
+    --db-ink: var(--kc-text-primary, #0f172a);
+    --db-muted: var(--kc-text-secondary, #475569);
     --db-orange: #f97316;
     --db-orange-dark: #ea580c;
     --db-orange-soft: rgba(249, 115, 22, 0.1);
     --db-orange-gradient: linear-gradient(135deg, #f97316 0%, #fb923c 100%);
     --db-green: #5fb464;
     --db-navy: #0b1635;
+}
+
+.db-shell .ph2-wrap {
+    margin-bottom: 0;
 }
 
 .db-shell {
@@ -43,13 +46,13 @@
 /* HERO */
 
 .db-heroCard {
-    background: linear-gradient(135deg, rgba(249, 115, 22, 0.08) 0%, rgba(255, 255, 255, 1) 58%);
+    background: linear-gradient(135deg, rgba(249, 115, 22, 0.08) 0%, #ffffff 60%);
     border: 1px solid var(--db-border);
     border-radius: 28px;
     box-shadow: var(--db-shadow);
     padding: 28px;
     display: grid;
-    grid-template-columns: minmax(0, 1.4fr) minmax(260px, 0.7fr);
+    grid-template-columns: minmax(0, 1.45fr) minmax(250px, 0.75fr);
     gap: 22px;
     min-width: 0;
     overflow: hidden;
@@ -79,7 +82,7 @@
     line-height: 0.98;
     letter-spacing: -0.04em;
     color: var(--db-ink);
-    max-width: 760px;
+    max-width: 780px;
 }
 
 .db-heroText {
@@ -100,17 +103,29 @@
     flex-wrap: wrap;
 }
 
+.db-actionIcon {
+    display: inline-flex;
+    margin-right: 8px;
+    flex: 0 0 auto;
+}
+
+.db-actionIconSvg {
+    width: 18px;
+    height: 18px;
+    display: block;
+}
+
 .db-heroSide {
     display: grid;
     gap: 14px;
     align-content: start;
 }
 
-.db-heroMiniStat {
+.db-heroMiniCard {
     background: #ffffff;
     border: 1px solid var(--db-border);
     border-radius: 22px;
-    padding: 18px 18px 16px;
+    padding: 18px;
     min-width: 0;
 }
 
@@ -136,7 +151,7 @@
     color: var(--db-ink);
 }
 
-/* STATS */
+/* METRICS */
 
 .db-statsRow {
     grid-column: span 12;
@@ -147,7 +162,7 @@
 }
 
 .db-statCard {
-    background: #fff;
+    background: #ffffff;
     border: 1px solid var(--db-border);
     border-radius: 24px;
     box-shadow: var(--db-shadow);
@@ -166,8 +181,8 @@
 
 .db-statTop {
     display: flex;
-    align-items: flex-start;
     justify-content: space-between;
+    align-items: flex-start;
     gap: 14px;
 }
 
@@ -182,7 +197,7 @@
 .db-statCard--featured .db-statLabel,
 .db-statCard--featured .db-statValue,
 .db-statCard--featured .db-statHelper {
-    color: #fff;
+    color: #ffffff;
 }
 
 .db-statIconWrap {
@@ -191,7 +206,7 @@
     border-radius: 10px;
     display: grid;
     place-items: center;
-    color: #0f172a;
+    color: var(--db-ink);
     background: rgba(15, 23, 42, 0.04);
     flex: 0 0 auto;
 }
@@ -230,7 +245,7 @@
 /* GENERAL CARD */
 
 .db-card {
-    background: #fff;
+    background: #ffffff;
     border: 1px solid var(--db-border);
     border-radius: 24px;
     box-shadow: var(--db-shadow);
@@ -259,24 +274,14 @@
     flex: 1 1 auto;
 }
 
-.db-cardEyebrowWrap {
+.db-panelKickerRow {
     display: inline-flex;
     align-items: center;
     gap: 10px;
     margin-bottom: 10px;
 }
 
-.db-cardEyebrow {
-    font-family: "Inter", sans-serif;
-    font-size: 12px;
-    font-weight: 800;
-    line-height: 1;
-    text-transform: uppercase;
-    letter-spacing: 0.06em;
-    color: #64748b;
-}
-
-.db-cardHeadIconWrap {
+.db-panelIconWrap {
     width: 32px;
     height: 32px;
     border-radius: 10px;
@@ -287,10 +292,20 @@
     flex: 0 0 auto;
 }
 
-.db-cardHeadIcon {
+.db-panelIconSvg {
     width: 18px;
     height: 18px;
     display: block;
+}
+
+.db-panelKicker {
+    font-family: "Inter", sans-serif;
+    font-size: 12px;
+    font-weight: 800;
+    line-height: 1;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: #64748b;
 }
 
 .db-cardTitle {
@@ -360,13 +375,7 @@
     flex: 0 0 auto;
 }
 
-.db-btnIco {
-    display: inline-flex;
-    margin-right: 8px;
-    flex: 0 0 auto;
-}
-
-/* SCROLL AREAS */
+/* SCROLL */
 
 .db-scrollPanel {
     margin-top: var(--sp-5);
@@ -553,6 +562,8 @@
     color: #2f7d32;
 }
 
+/* EMPTY */
+
 .db-emptyState {
     border: 1px dashed rgba(15, 23, 42, 0.12);
     border-radius: 20px;
@@ -566,11 +577,10 @@
 
 .db-bottomCta {
     margin-top: var(--sp-5);
-    padding-top: 0;
     flex: 0 0 auto;
 }
 
-/* DESKTOP LOCKED HEIGHT */
+/* DESKTOP PANEL HEIGHT */
 
 @media (min-width: 1101px) {
     .db-card--equal {

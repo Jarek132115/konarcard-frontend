@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
+import { motion } from "framer-motion";
 
 import "../../styling/spacing.css";
 import "../../styling/dashboard/dashboard.css";
@@ -31,112 +32,6 @@ const buildPublicUrl = (profileSlug) => {
     if (!s) return `${window.location.origin}/u/`;
     return `${window.location.origin}/u/${encodeURIComponent(s)}`;
 };
-
-function ShareIcon() {
-    return (
-        <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true">
-            <path
-                d="M16 5a3 3 0 1 0 2.83 4H19a1 1 0 0 0-1-1h-.17A3 3 0 0 0 16 5zM6 14a3 3 0 1 0 2.83 4H9a1 1 0 0 0-1-1h-.17A3 3 0 0 0 6 14zM16 14a3 3 0 1 0 2.83 4H19a1 1 0 0 0-1-1h-.17A3 3 0 0 0 16 14z"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinejoin="round"
-            />
-            <path
-                d="M8.6 15.3l6.8-3.6M8.6 8.7l6.8 3.6"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinejoin="round"
-            />
-        </svg>
-    );
-}
-
-function SparkIcon() {
-    return (
-        <svg viewBox="0 0 24 24" aria-hidden="true" className="db-statIcon">
-            <path
-                d="M12 3l1.9 4.6L18.5 9.5l-4.6 1.9L12 16l-1.9-4.6L5.5 9.5l4.6-1.9L12 3z"
-                fill="currentColor"
-            />
-        </svg>
-    );
-}
-
-function TapIcon() {
-    return (
-        <svg viewBox="0 0 24 24" aria-hidden="true" className="db-statIcon">
-            <path
-                d="M8.5 8.5a5 5 0 0 1 7.1 0M6 6a8.5 8.5 0 0 1 12 0M3.5 3.5a12 12 0 0 1 17 0M12 10.8v7.7"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-            />
-        </svg>
-    );
-}
-
-function QrIcon() {
-    return (
-        <svg viewBox="0 0 24 24" aria-hidden="true" className="db-statIcon">
-            <path
-                d="M4 4h6v6H4zM14 4h6v6h-6zM4 14h6v6H4zM14 14h2v2h-2zM18 14h2v2h-2zM14 18h2v2h-2zM18 18h2v2h-2z"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinejoin="round"
-            />
-        </svg>
-    );
-}
-
-function LinkIcon() {
-    return (
-        <svg viewBox="0 0 24 24" aria-hidden="true" className="db-statIcon">
-            <path
-                d="M10 14l4-4M8.5 17.5l-2 2a3.5 3.5 0 1 1-5-5l4-4a3.5 3.5 0 0 1 5 0M15.5 6.5l2-2a3.5 3.5 0 1 1 5 5l-4 4a3.5 3.5 0 0 1-5 0"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-            />
-        </svg>
-    );
-}
-
-function CompletionIcon() {
-    return (
-        <svg viewBox="0 0 24 24" aria-hidden="true" className="db-cardHeadIcon">
-            <path
-                d="M4 12a8 8 0 1 0 3-6.2M4 4v4h4M8.5 12.5l2.2 2.2 4.8-5.2"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-            />
-        </svg>
-    );
-}
-
-function ActivityIcon() {
-    return (
-        <svg viewBox="0 0 24 24" aria-hidden="true" className="db-cardHeadIcon">
-            <path
-                d="M3 12h4l2-5 4 10 2-5h6"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-            />
-        </svg>
-    );
-}
 
 function numberFormat(value) {
     return new Intl.NumberFormat("en-GB").format(Number(value) || 0);
@@ -331,7 +226,7 @@ function extractOrders(data) {
 }
 
 function ownsPhysicalProduct(orders) {
-    const xs = extractOrders(orders);
+    const xs = extractOrders(dataOrEmpty(orders));
 
     return xs.some((order) => {
         const status = safeLower(order?.status);
@@ -346,16 +241,131 @@ function ownsPhysicalProduct(orders) {
     });
 }
 
-function MetricCard({ label, value, helper, featured = false, icon = null }) {
+function dataOrEmpty(v) {
+    return v ?? [];
+}
+
+function ShareIcon() {
     return (
-        <div className={`db-statCard ${featured ? "db-statCard--featured" : ""}`}>
+        <svg viewBox="0 0 24 24" aria-hidden="true" className="db-actionIconSvg">
+            <path
+                d="M16 5a3 3 0 1 0 2.83 4H19a1 1 0 0 0-1-1h-.17A3 3 0 0 0 16 5zM6 14a3 3 0 1 0 2.83 4H9a1 1 0 0 0-1-1h-.17A3 3 0 0 0 6 14zM16 14a3 3 0 1 0 2.83 4H19a1 1 0 0 0-1-1h-.17A3 3 0 0 0 16 14z"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinejoin="round"
+            />
+            <path
+                d="M8.6 15.3l6.8-3.6M8.6 8.7l6.8 3.6"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinejoin="round"
+            />
+        </svg>
+    );
+}
+
+function ViewsIcon() {
+    return (
+        <svg viewBox="0 0 24 24" aria-hidden="true" className="db-statIcon">
+            <path
+                d="M12 5c5.5 0 9.5 5.2 10.5 6.6a.7.7 0 0 1 0 .8C21.5 13.8 17.5 19 12 19S2.5 13.8 1.5 12.4a.7.7 0 0 1 0-.8C2.5 10.2 6.5 5 12 5Zm0 3.2A3.8 3.8 0 1 0 12 15.8A3.8 3.8 0 0 0 12 8.2Z"
+                fill="currentColor"
+            />
+        </svg>
+    );
+}
+
+function NfcIcon() {
+    return (
+        <svg viewBox="0 0 24 24" aria-hidden="true" className="db-statIcon">
+            <path
+                d="M8.5 8.5a5 5 0 0 1 7.1 0M6 6a8.5 8.5 0 0 1 12 0M3.5 3.5a12 12 0 0 1 17 0M12 10.8v7.7"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+            />
+        </svg>
+    );
+}
+
+function QrIcon() {
+    return (
+        <svg viewBox="0 0 24 24" aria-hidden="true" className="db-statIcon">
+            <path
+                d="M4 4h6v6H4zM14 4h6v6h-6zM4 14h6v6H4zM14 14h2v2h-2zM18 14h2v2h-2zM14 18h2v2h-2zM18 18h2v2h-2z"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinejoin="round"
+            />
+        </svg>
+    );
+}
+
+function LinkIcon() {
+    return (
+        <svg viewBox="0 0 24 24" aria-hidden="true" className="db-statIcon">
+            <path
+                d="M10 14l4-4M8.5 17.5l-2 2a3.5 3.5 0 1 1-5-5l4-4a3.5 3.5 0 0 1 5 0M15.5 6.5l2-2a3.5 3.5 0 1 1 5 5l-4 4a3.5 3.5 0 0 1-5 0"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+            />
+        </svg>
+    );
+}
+
+function ActivityPanelIcon() {
+    return (
+        <svg viewBox="0 0 24 24" aria-hidden="true" className="db-panelIconSvg">
+            <path
+                d="M3 12h4l2-5 4 10 2-5h6"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+            />
+        </svg>
+    );
+}
+
+function CompletionPanelIcon() {
+    return (
+        <svg viewBox="0 0 24 24" aria-hidden="true" className="db-panelIconSvg">
+            <path
+                d="M4 12a8 8 0 1 0 3-6.2M4 4v4h4M8.5 12.5l2.2 2.2 4.8-5.2"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+            />
+        </svg>
+    );
+}
+
+function MetricCard({ label, value, helper, featured = false, icon = null, delay = 0 }) {
+    return (
+        <motion.div
+            className={`db-statCard ${featured ? "db-statCard--featured" : ""}`}
+            initial={{ opacity: 0, y: 18 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.35, delay }}
+        >
             <div className="db-statTop">
                 <div className="db-statLabel">{label}</div>
                 <div className={`db-statIconWrap ${featured ? "is-featured" : ""}`}>{icon}</div>
             </div>
             <div className="db-statValue">{numberFormat(value)}</div>
             <div className="db-statHelper">{helper}</div>
-        </div>
+        </motion.div>
     );
 }
 
@@ -363,7 +373,6 @@ export default function Dashboard() {
     const { data: authUser } = useAuthUser();
     const { data: cards } = useMyProfiles();
 
-    const plan = safeLower(authUser?.plan || "free");
     const displayName = authUser?.name?.split(" ")?.[0] || "there";
 
     const profilesForShare = useMemo(() => {
@@ -439,13 +448,11 @@ export default function Dashboard() {
     const recentActivityRaw =
         analyticsQuery.data?.recentActivity || analyticsQuery.data?.recentEvents || [];
 
-    const recentActivity = recentActivityRaw
-        .slice(0, 10)
-        .map((item, index) => ({
-            id: item?.id || item?._id || `activity-${index}`,
-            message: item?.message || getActivityMessage(item),
-            timeLabel: formatActivityTime(item?.createdAt || item?.timestamp || item?.date),
-        }));
+    const recentActivity = recentActivityRaw.slice(0, 10).map((item, index) => ({
+        id: item?.id || item?._id || `activity-${index}`,
+        message: item?.message || getActivityMessage(item),
+        timeLabel: formatActivityTime(item?.createdAt || item?.timestamp || item?.date),
+    }));
 
     const hasPhysicalCard = useMemo(
         () => ownsPhysicalProduct(ordersQuery.data),
@@ -473,15 +480,22 @@ export default function Dashboard() {
                 />
 
                 <div className="db-grid">
-                    <section className="db-heroCard db-span-12">
+                    <motion.section
+                        className="db-heroCard db-span-12"
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.4 }}
+                    >
                         <div className="db-heroMain">
                             <div className="db-heroBadge">Performance snapshot</div>
+
                             <h2 className="db-heroTitle">
-                                Keep building momentum with KonarCard.
+                                Turn profile attention into stronger trust and more real contact action.
                             </h2>
+
                             <p className="db-heroText">
-                                Track visibility, grow engagement, and finish your profile so every
-                                share feels more professional.
+                                Share your profile more, finish the missing sections, and keep an eye on
+                                how people interact with your KonarCard across taps, scans and links.
                             </p>
 
                             <div className="db-heroActions">
@@ -491,27 +505,30 @@ export default function Dashboard() {
                                     onClick={() => setShareOpen(true)}
                                     disabled={!selectedProfile}
                                 >
+                                    <span className="db-actionIcon" aria-hidden="true">
+                                        <ShareIcon />
+                                    </span>
                                     Share Profile
                                 </button>
 
-                                <Link to="/profiles" className="kx-btn kx-btn--white">
-                                    Manage Profiles
+                                <Link to="/analytics" className="kx-btn kx-btn--white">
+                                    View Analytics
                                 </Link>
                             </div>
                         </div>
 
                         <div className="db-heroSide">
-                            <div className="db-heroMiniStat">
+                            <div className="db-heroMiniCard">
                                 <span className="db-heroMiniLabel">Profile Completion</span>
                                 <span className="db-heroMiniValue">{completion.percent}%</span>
                             </div>
 
-                            <div className="db-heroMiniStat">
+                            <div className="db-heroMiniCard">
                                 <span className="db-heroMiniLabel">Last 7 Days Views</span>
                                 <span className="db-heroMiniValue">{numberFormat(metrics.profileViews)}</span>
                             </div>
                         </div>
-                    </section>
+                    </motion.section>
 
                     <section className="db-statsRow db-span-12">
                         <MetricCard
@@ -523,7 +540,8 @@ export default function Dashboard() {
                                     : "Share more to start getting views."
                             }
                             featured
-                            icon={<SparkIcon />}
+                            icon={<ViewsIcon />}
+                            delay={0.02}
                         />
 
                         <MetricCard
@@ -536,7 +554,8 @@ export default function Dashboard() {
                                         : "Start tapping your card to drive traffic."
                                     : "Order a physical card to unlock taps."
                             }
-                            icon={<TapIcon />}
+                            icon={<NfcIcon />}
+                            delay={0.06}
                         />
 
                         <MetricCard
@@ -548,6 +567,7 @@ export default function Dashboard() {
                                     : "Share more to start getting scans."
                             }
                             icon={<QrIcon />}
+                            delay={0.1}
                         />
 
                         <MetricCard
@@ -559,10 +579,16 @@ export default function Dashboard() {
                                     : "Share more to start getting clicks."
                             }
                             icon={<LinkIcon />}
+                            delay={0.14}
                         />
                     </section>
 
-                    <section className="db-card db-card--share db-span-12">
+                    <motion.section
+                        className="db-card db-card--share db-span-12"
+                        initial={{ opacity: 0, y: 18 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.35, delay: 0.08 }}
+                    >
                         <div className="db-shareLeft">
                             <span className="db-shareIcon" aria-hidden="true">
                                 <img src={GrowYourReachIcon} alt="" />
@@ -571,8 +597,8 @@ export default function Dashboard() {
                             <div className="db-shareCopy">
                                 <h2 className="db-cardTitle">Grow your reach</h2>
                                 <p className="db-muted">
-                                    Share your profile more often to increase views, taps, scans and
-                                    saved contacts.
+                                    Share your profile more often to increase views, taps, scans and saved
+                                    contacts.
                                 </p>
                             </div>
                         </div>
@@ -584,7 +610,7 @@ export default function Dashboard() {
                                 onClick={() => setShareOpen(true)}
                                 disabled={!selectedProfile}
                             >
-                                <span className="db-btnIco" aria-hidden="true">
+                                <span className="db-actionIcon" aria-hidden="true">
                                     <ShareIcon />
                                 </span>
                                 Share Profile
@@ -594,16 +620,21 @@ export default function Dashboard() {
                                 View Analytics
                             </Link>
                         </div>
-                    </section>
+                    </motion.section>
 
-                    <section className="db-card db-card--equal db-span-6">
+                    <motion.section
+                        className="db-card db-card--equal db-span-6"
+                        initial={{ opacity: 0, y: 18 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.35, delay: 0.12 }}
+                    >
                         <div className="db-cardHead">
                             <div className="db-cardHeadLeft">
-                                <div className="db-cardEyebrowWrap">
-                                    <span className="db-cardHeadIconWrap">
-                                        <ActivityIcon />
+                                <div className="db-panelKickerRow">
+                                    <span className="db-panelIconWrap">
+                                        <ActivityPanelIcon />
                                     </span>
-                                    <span className="db-cardEyebrow">Live updates</span>
+                                    <span className="db-panelKicker">Live activity</span>
                                 </div>
 
                                 <h2 className="db-cardTitle">Recent Activity</h2>
@@ -621,7 +652,7 @@ export default function Dashboard() {
                                             className={`db-activityAvatar db-activityAvatar--${index % 5}`}
                                             aria-hidden="true"
                                         >
-                                            {(item.message || "A").slice(0, 2).toUpperCase()}
+                                            {(item.message || "AA").slice(0, 2).toUpperCase()}
                                         </span>
 
                                         <div className="db-activityMain">
@@ -642,16 +673,21 @@ export default function Dashboard() {
                                 View Recent Activity
                             </Link>
                         </div>
-                    </section>
+                    </motion.section>
 
-                    <section className="db-card db-card--equal db-span-6">
+                    <motion.section
+                        className="db-card db-card--equal db-span-6"
+                        initial={{ opacity: 0, y: 18 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.35, delay: 0.16 }}
+                    >
                         <div className="db-cardHead">
                             <div className="db-cardHeadLeft">
-                                <div className="db-cardEyebrowWrap">
-                                    <span className="db-cardHeadIconWrap">
-                                        <CompletionIcon />
+                                <div className="db-panelKickerRow">
+                                    <span className="db-panelIconWrap">
+                                        <CompletionPanelIcon />
                                     </span>
-                                    <span className="db-cardEyebrow">Profile quality</span>
+                                    <span className="db-panelKicker">Profile quality</span>
                                 </div>
 
                                 <h2 className="db-cardTitle">Profile Completion</h2>
@@ -681,9 +717,8 @@ export default function Dashboard() {
                                         <span className={`db-completionText ${item.done ? "done" : ""}`}>
                                             {item.label}
                                         </span>
-                                        <span
-                                            className={`db-completionStatus ${item.done ? "done" : ""}`}
-                                        >
+
+                                        <span className={`db-completionStatus ${item.done ? "done" : ""}`}>
                                             {item.done ? "Done" : "Pending"}
                                         </span>
                                     </div>
@@ -700,7 +735,7 @@ export default function Dashboard() {
                                 Complete Your Profile
                             </Link>
                         </div>
-                    </section>
+                    </motion.section>
                 </div>
             </div>
         </DashboardLayout>
