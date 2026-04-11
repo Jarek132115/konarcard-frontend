@@ -94,16 +94,28 @@
     flex-wrap: wrap;
 }
 
-.db-actionIcon {
+.db-ctaIcon {
+    width: 16px;
+    height: 16px;
     display: inline-flex;
+    align-items: center;
+    justify-content: center;
     margin-right: 8px;
-    flex: 0 0 auto;
+    flex: 0 0 16px;
 }
 
-.db-actionIconSvg {
-    width: 18px;
-    height: 18px;
+.db-ctaIcon img {
+    width: 16px;
+    height: 16px;
     display: block;
+}
+
+.db-ctaIcon--white img {
+    filter: brightness(0) invert(1);
+}
+
+.db-ctaIcon--dark img {
+    filter: none;
 }
 
 .db-heroSide {
@@ -246,17 +258,11 @@
     overflow: hidden;
 }
 
-.db-panel--share {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: var(--sp-4);
-}
-
 .db-panel--equal {
     display: flex;
     flex-direction: column;
     min-height: 640px;
+    height: 640px;
 }
 
 .db-panelHead {
@@ -334,47 +340,6 @@
     color: #64748b;
 }
 
-/* SHARE PANEL */
-
-.db-shareLeft {
-    display: flex;
-    align-items: center;
-    gap: var(--sp-4);
-    min-width: 0;
-    flex: 1 1 auto;
-}
-
-.db-shareCopy {
-    min-width: 0;
-}
-
-.db-shareIcon {
-    width: 52px;
-    height: 52px;
-    border-radius: 16px;
-    display: grid;
-    place-items: center;
-    background: rgba(249, 115, 22, 0.08);
-    color: #f97316;
-    flex: 0 0 auto;
-    overflow: hidden;
-}
-
-.db-shareIcon img {
-    width: 26px;
-    height: 26px;
-    display: block;
-}
-
-.db-shareActions {
-    display: inline-flex;
-    align-items: center;
-    gap: var(--sp-3);
-    flex-wrap: wrap;
-    justify-content: flex-end;
-    flex: 0 0 auto;
-}
-
 /* RECENT ACTIVITY */
 
 .db-activityFeedList {
@@ -387,7 +352,7 @@
 }
 
 .db-activityFeedList--light {
-    max-height: 420px;
+    max-height: 100%;
     overflow-y: auto;
     padding-right: 4px;
 }
@@ -518,7 +483,7 @@
 .db-breakdownList--completion {
     flex: 1 1 auto;
     min-height: 0;
-    max-height: 420px;
+    max-height: 100%;
     overflow-y: auto;
     padding-right: 4px;
 }
@@ -622,6 +587,11 @@
         align-items: flex-start;
     }
 
+    .db-panel--equal {
+        min-height: 0;
+        height: auto;
+    }
+
     .db-activityFeedList--light,
     .db-breakdownList--completion {
         max-height: none;
@@ -640,29 +610,6 @@
     }
 }
 
-@media (max-width: 920px) {
-    .db-panel--share {
-        flex-direction: column;
-        align-items: flex-start;
-    }
-
-    .db-shareActions {
-        width: 100%;
-        justify-content: flex-start;
-    }
-
-    .db-panel--equal {
-        min-height: 0;
-    }
-
-    .db-activityFeedList--light,
-    .db-breakdownList--completion {
-        max-height: none;
-        overflow: visible;
-        padding-right: 0;
-    }
-}
-
 @media (max-width: 700px) {
     .db-metricsGrid {
         grid-template-columns: 1fr;
@@ -674,6 +621,7 @@
 }
 
 @media (max-width: 640px) {
+
     .db-panel,
     .db-metric,
     .db-heroCard {
@@ -693,13 +641,6 @@
         font-size: 34px;
     }
 
-    .db-shareActions {
-        width: 100%;
-        flex-direction: column;
-        align-items: stretch;
-    }
-
-    .db-shareActions .kx-btn,
     .db-panelFooter .kx-btn {
         width: 100%;
         justify-content: center;
@@ -708,13 +649,6 @@
     .db-breakdownRow {
         grid-template-columns: minmax(0, 1fr) auto;
         align-items: center;
-    }
-
-    .db-activityFeedList--light,
-    .db-breakdownList--completion {
-        max-height: none;
-        overflow: visible;
-        padding-right: 0;
     }
 }
 
@@ -732,12 +666,20 @@
         align-items: flex-start;
     }
 
-    .db-shareLeft {
-        align-items: flex-start;
+    .db-heroActions {
+        width: 100%;
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .db-heroActions .kx-btn {
+        width: 100%;
+        justify-content: center;
     }
 }
 
 @media (max-width: 420px) {
+
     .db-panel,
     .db-metric,
     .db-heroCard {
@@ -750,16 +692,5 @@
 
     .db-metric-value {
         font-size: 32px;
-    }
-
-    .db-shareIcon {
-        width: 46px;
-        height: 46px;
-        border-radius: 14px;
-    }
-
-    .db-shareIcon img {
-        width: 24px;
-        height: 24px;
     }
 }

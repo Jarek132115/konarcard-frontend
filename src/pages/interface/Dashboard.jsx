@@ -14,11 +14,12 @@ import { useAuthUser } from "../../hooks/useAuthUser";
 import { useMyProfiles } from "../../hooks/useBusinessCard";
 import api from "../../services/api";
 
-import GrowYourReachIcon from "../../assets/icons/GrowYourReach.svg";
 import TotalVisitsIcon from "../../assets/icons/TotalVisits.svg";
 import NFCTapsIcon from "../../assets/icons/NFCTaps.svg";
 import QRScansIcon from "../../assets/icons/QRScans.svg";
 import LinkVisitsIcon from "../../assets/icons/LinkVisits.svg";
+import SharePageIcon from "../../assets/icons/SharePage.svg";
+import SidebarLinkAnalyticsIcon from "../../assets/icons/SidebarLinkAnalytics.svg";
 
 const centerTrim = (v) => (v ?? "").toString().trim();
 const safeLower = (v) => centerTrim(v).toLowerCase();
@@ -293,27 +294,6 @@ function ownsPhysicalProduct(orders) {
             status === "delivered"
         );
     });
-}
-
-function ShareIcon() {
-    return (
-        <svg viewBox="0 0 24 24" aria-hidden="true" className="db-actionIconSvg">
-            <path
-                d="M16 5a3 3 0 1 0 2.83 4H19a1 1 0 0 0-1-1h-.17A3 3 0 0 0 16 5zM6 14a3 3 0 1 0 2.83 4H9a1 1 0 0 0-1-1h-.17A3 3 0 0 0 6 14zM16 14a3 3 0 1 0 2.83 4H19a1 1 0 0 0-1-1h-.17A3 3 0 0 0 16 14z"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinejoin="round"
-            />
-            <path
-                d="M8.6 15.3l6.8-3.6M8.6 8.7l6.8 3.6"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinejoin="round"
-            />
-        </svg>
-    );
 }
 
 function ActivityPanelIcon() {
@@ -645,13 +625,16 @@ export default function Dashboard() {
                                     onClick={() => setShareOpen(true)}
                                     disabled={!selectedProfile}
                                 >
-                                    <span className="db-actionIcon" aria-hidden="true">
-                                        <ShareIcon />
+                                    <span className="db-ctaIcon db-ctaIcon--white" aria-hidden="true">
+                                        <img src={SharePageIcon} alt="" />
                                     </span>
                                     Share Profile
                                 </button>
 
                                 <Link to="/analytics" className="kx-btn kx-btn--white">
+                                    <span className="db-ctaIcon db-ctaIcon--dark" aria-hidden="true">
+                                        <img src={SidebarLinkAnalyticsIcon} alt="" />
+                                    </span>
                                     View Analytics
                                 </Link>
                             </div>
@@ -733,44 +716,6 @@ export default function Dashboard() {
                         </div>
                     )}
                 </section>
-
-                <motion.section
-                    className="db-panel db-panel--share"
-                    initial={{ opacity: 0, y: 18 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.32, delay: 0.08, ease: "easeOut" }}
-                >
-                    <div className="db-shareLeft">
-                        <span className="db-shareIcon" aria-hidden="true">
-                            <img src={GrowYourReachIcon} alt="" />
-                        </span>
-
-                        <div className="db-shareCopy">
-                            <h3 className="db-panelTitle">Grow your reach</h3>
-                            <p className="db-panelMuted">
-                                Share your profile more often to increase views, taps, scans and saved contacts.
-                            </p>
-                        </div>
-                    </div>
-
-                    <div className="db-shareActions">
-                        <button
-                            type="button"
-                            className="kx-btn kx-btn--orange"
-                            onClick={() => setShareOpen(true)}
-                            disabled={!selectedProfile}
-                        >
-                            <span className="db-actionIcon" aria-hidden="true">
-                                <ShareIcon />
-                            </span>
-                            Share Profile
-                        </button>
-
-                        <Link to="/analytics" className="kx-btn kx-btn--black">
-                            View Analytics
-                        </Link>
-                    </div>
-                </motion.section>
 
                 <section className="db-grid db-grid--panels">
                     <motion.div
