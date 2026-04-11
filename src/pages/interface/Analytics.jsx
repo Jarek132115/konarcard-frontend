@@ -3,6 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { toast } from "react-hot-toast";
 import { motion } from "motion/react";
 import { Tabs } from "@base-ui/react/tabs";
+import { Select } from "@base-ui/react/select";
 import {
     ResponsiveContainer,
     AreaChart,
@@ -24,6 +25,14 @@ import { useMyProfiles } from "../../hooks/useBusinessCard";
 
 import "../../styling/spacing.css";
 import "../../styling/dashboard/analytics.css";
+
+import TotalVisitsIcon from "../../assets/icons/TotalVisits.svg";
+import NFCTapsIcon from "../../assets/icons/NFCTaps.svg";
+import QRScansIcon from "../../assets/icons/QRScans.svg";
+import LinkVisitsIcon from "../../assets/icons/LinkVisits.svg";
+import SavedContactsIcon from "../../assets/icons/SavedContacts.svg";
+import ExchangeContactsIcon from "../../assets/icons/ExchangeContacts.svg";
+import ConversionRateIcon from "../../assets/icons/ConversionRate.svg";
 
 const RANGE_OPTIONS = [
     { value: "1", label: "Today" },
@@ -169,22 +178,20 @@ function getActivityMessage(item) {
     }
 }
 
+function getInitials(name = "") {
+    const parts = String(name || "")
+        .trim()
+        .split(/\s+/)
+        .filter(Boolean);
+
+    if (!parts.length) return "KC";
+    if (parts.length === 1) return parts[0].slice(0, 2).toUpperCase();
+    return `${parts[0][0] || ""}${parts[1][0] || ""}`.toUpperCase();
+}
+
 function getPeriodLabel(range) {
     if (String(range) === "1") return "vs previous day";
     return `vs previous ${range} days`;
-}
-
-function formatTrendLabel(delta, range, isPercentage = false) {
-    const periodLabel = getPeriodLabel(range);
-
-    if (delta > 0) {
-        return `↑ ${isPercentage ? percentageFormat(delta) : numberFormat(delta)} ${periodLabel}`;
-    }
-    if (delta < 0) {
-        const absolute = Math.abs(delta);
-        return `↓ ${isPercentage ? percentageFormat(absolute) : numberFormat(absolute)} ${periodLabel}`;
-    }
-    return `No change ${periodLabel}`;
 }
 
 function getTrendClass(delta) {
@@ -226,15 +233,52 @@ function getMetricDelta(current, previous, key) {
     return (Number(current?.[key]) || 0) - (Number(previous?.[key]) || 0);
 }
 
+function formatTrendLabel(delta, range, isPercentage = false) {
+    const periodLabel = getPeriodLabel(range);
+
+    if (delta > 0) {
+        return `↑ ${isPercentage ? percentageFormat(delta) : numberFormat(delta)} ${periodLabel}`;
+    }
+    if (delta < 0) {
+        const absolute = Math.abs(delta);
+        return `↓ ${isPercentage ? percentageFormat(absolute) : numberFormat(absolute)} ${periodLabel}`;
+    }
+    return `No change ${periodLabel}`;
+}
+
+function TrendText({ delta, range, featured = false, isPercentage = false }) {
+    const trend = getTrendClass(delta);
+    const arrow = delta > 0 ? "↑" : delta < 0 ? "↓" : "•";
+    const amount =
+        delta === 0
+            ? `No change ${getPeriodLabel(range)}`
+            : `${isPercentage ? percentageFormat(Math.abs(delta)) : numberFormat(Math.abs(delta))} ${getPeriodLabel(range)}`;
+
+    if (featured) {
+        return (
+            <div className="an-metric-delta an-metric-delta--featured">
+                <span className={`an-metric-deltaArrow ${trend}`}>{arrow}</span>
+                <span className="an-metric-deltaText">{amount}</span>
+            </div>
+        );
+    }
+
+    return (
+        <div className={`an-metric-delta ${trend}`}>
+            {formatTrendLabel(delta, range, isPercentage)}
+        </div>
+    );
+}
+
 function MetricCard({
     label,
     value,
     delta,
     range,
-    isPercentage = false,
+    icon,
     featured = false,
+    isPercentage = false,
     locked = false,
-    helper = "",
 }) {
     return (
         <motion.div
@@ -243,25 +287,32 @@ function MetricCard({
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.28, ease: "easeOut" }}
         >
-            <div className="an-metricTop">
+            <div className="an-metric-top">
                 <div className="an-metric-label">{label}</div>
+                {icon ? (
+                    <img
+                        src={icon}
+                        alt=""
+                        aria-hidden="true"
+                        className={`an-metric-icon ${featured ? "an-metric-icon--featured" : ""}`}
+                    />
+                ) : null}
             </div>
 
-            <div className="an-metric-num">
+            <div className="an-metric-value">
                 {locked ? "•••" : isPercentage ? percentageFormat(value) : numberFormat(value)}
             </div>
 
-            <div className={`an-metric-change ${locked ? "neutral" : getTrendClass(delta)}`}>
-                {locked ? "Upgrade to unlock" : formatTrendLabel(delta, range, isPercentage)}
-            </div>
-
-            {helper ? <div className="an-metric-helper">{helper}</div> : null}
-
             {locked ? (
-                <div className="an-lockOverlay">
-                    <span className="an-lockBadge">Plus</span>
-                </div>
-            ) : null}
+                <div className="an-metric-delta neutral">Upgrade to unlock</div>
+            ) : (
+                <TrendText
+                    delta={delta}
+                    range={range}
+                    featured={featured}
+                    isPercentage={isPercentage}
+                />
+            )}
         </motion.div>
     );
 }
@@ -294,37 +345,46 @@ function LockedAnalyticsCard({
 
 function RecentActivityCard({ items = [] }) {
     return (
-        <div className="an-panel">
+        <div className="an-panel an-panel--activityFeed">
             <div className="an-panelHead">
                 <div>
-                    <h3 className="an-panelTitle">Recent Activity</h3>
-                    <p className="an-panelMuted">
-                        The latest actions people have taken on your profile.
-                    </p>
+                    <h3 className="an-panelTitle an-panelTitle--inverse">Activity Feed</h3>
+                    <p className="an-panelMuted an-panelMuted--inverse">Latest team & client activity</p>
                 </div>
             </div>
 
-            <div className="an-activityList">
+            <div className="an-activityFeedList">
                 {items.length ? (
-                    items.map((item, index) => (
-                        <div
-                            key={item.id || item._id || `${item.message}-${index}`}
-                            className="an-activityRow"
-                        >
-                            <span className="an-activityDot" />
-                            <div className="an-activityMain">
-                                <span className="an-activityText">
-                                    {item.message || getActivityMessage(item)}
-                                </span>
-                                <span className="an-activityMeta">
-                                    {item.timeLabel ||
-                                        formatActivityTime(item.createdAt || item.timestamp || item.date)}
-                                </span>
+                    items.map((item, index) => {
+                        const name =
+                            item?.contact_name ||
+                            item?.contactName ||
+                            item?.name ||
+                            "Someone";
+
+                        return (
+                            <div
+                                key={item.id || item._id || `${item.message}-${index}`}
+                                className="an-activityFeedItem"
+                            >
+                                <div className={`an-activityAvatar an-activityAvatar--${index % 5}`}>
+                                    {getInitials(name)}
+                                </div>
+
+                                <div className="an-activityFeedContent">
+                                    <div className="an-activityFeedText">
+                                        {item.message || getActivityMessage(item)}
+                                    </div>
+                                    <div className="an-activityFeedTime">
+                                        {item.timeLabel ||
+                                            formatActivityTime(item.createdAt || item.timestamp || item.date)}
+                                    </div>
+                                </div>
                             </div>
-                        </div>
-                    ))
+                        );
+                    })
                 ) : (
-                    <div className="an-emptyState">No recent activity yet</div>
+                    <div className="an-emptyState an-emptyState--dark">No recent activity yet</div>
                 )}
             </div>
         </div>
@@ -371,7 +431,7 @@ function EngagementChart({
         <div className="an-panel an-panel--chart">
             <div className="an-panelHead">
                 <div>
-                    <h3 className="an-panelTitle">{title}</h3>
+                    <h3 className="an-panelTitle">Engagement Over Time</h3>
                     <p className="an-panelMuted">{subtitle}</p>
                 </div>
                 <div className="an-panelBadge">Peak: {numberFormat(peak)}</div>
@@ -401,8 +461,8 @@ function EngagementChart({
                         <AreaChart data={normalizedData} margin={{ top: 12, right: 8, left: -18, bottom: 0 }}>
                             <defs>
                                 <linearGradient id="anAreaFill" x1="0" y1="0" x2="0" y2="1">
-                                    <stop offset="0%" stopColor="#f97316" stopOpacity={0.28} />
-                                    <stop offset="100%" stopColor="#f97316" stopOpacity={0.03} />
+                                    <stop offset="0%" stopColor="#f97316" stopOpacity={0.24} />
+                                    <stop offset="100%" stopColor="#f97316" stopOpacity={0.02} />
                                 </linearGradient>
                             </defs>
 
@@ -457,7 +517,7 @@ function SocialBarChartCard({ items = [] }) {
             </div>
 
             <div className="an-chartCanvas an-chartCanvas--bar">
-                <ResponsiveContainer width="100%" height={280}>
+                <ResponsiveContainer width="100%" height={260}>
                     <BarChart data={chartData} margin={{ top: 10, right: 0, left: -20, bottom: 0 }}>
                         <CartesianGrid stroke="rgba(15,23,42,0.08)" vertical={false} />
                         <XAxis
@@ -544,119 +604,33 @@ function ContactActionDetailsCard({ metrics }) {
     );
 }
 
-function FunnelCard({ metrics, locked }) {
-    if (locked) {
-        return (
-            <LockedAnalyticsCard
-                title="Visitor Funnel"
-                subtitle="See how visits turn into contact actions."
-                body="Upgrade to Plus to understand how attention turns into action."
-            />
-        );
-    }
-
-    const visits = Number(metrics.profileViews) || 0;
-    const interactions =
-        (Number(metrics.linkOpens) || 0) +
-        (Number(metrics.qrScans) || 0) +
-        (Number(metrics.cardTaps) || 0);
-    const contactIntent =
-        (Number(metrics.contactExchangeOpens) || 0) +
-        (Number(metrics.emailClicks) || 0) +
-        (Number(metrics.phoneClicks) || 0);
-    const conversions =
-        (Number(metrics.contactExchangeSubmits) || 0) +
-        (Number(metrics.contactsSaved) || 0);
-
-    const rows = [
-        { key: "visits", label: "Visits", value: visits },
-        { key: "interactions", label: "Engaged actions", value: interactions },
-        { key: "intent", label: "Contact intent", value: contactIntent },
-        { key: "conversions", label: "Conversions", value: conversions },
-    ];
-
-    const max = Math.max(...rows.map((r) => r.value), 1);
+function AnalyticsSelect({ value, onChange, options, placeholder = "" }) {
+    const currentLabel =
+        options.find((item) => String(item.value) === String(value))?.label || placeholder;
 
     return (
-        <div className="an-panel">
-            <div className="an-panelHead">
-                <div>
-                    <h3 className="an-panelTitle">Visitor Funnel</h3>
-                    <p className="an-panelMuted">
-                        Follow the path from visits to contact actions and conversions.
-                    </p>
-                </div>
-            </div>
+        <Select.Root value={value} onValueChange={onChange}>
+            <Select.Trigger className="an-selectBase" aria-label={placeholder || currentLabel}>
+                <span className="an-selectValue">{currentLabel}</span>
+                <span className="an-selectChevron" aria-hidden="true" />
+            </Select.Trigger>
 
-            <div className="an-funnelList">
-                {rows.map((row, index) => (
-                    <div key={row.key} className="an-funnelRow">
-                        <div className="an-funnelTop">
-                            <span className="an-funnelIndex">0{index + 1}</span>
-                            <span className="an-funnelLabel">{row.label}</span>
-                            <span className="an-funnelValue">{numberFormat(row.value)}</span>
-                        </div>
-                        <div className="an-funnelTrack">
-                            <div
-                                className="an-funnelFill"
-                                style={{ width: `${Math.max((row.value / max) * 100, row.value > 0 ? 10 : 0)}%` }}
-                            />
-                        </div>
-                    </div>
-                ))}
-            </div>
-        </div>
-    );
-}
-
-function HeroInsightCard({ metrics, previousMetrics, range, locked }) {
-    const visitsDelta = getMetricDelta(metrics, previousMetrics, "profileViews");
-    const exchangesDelta = getMetricDelta(metrics, previousMetrics, "contactExchangeSubmits");
-    const bestStatement =
-        Number(metrics.contactExchangeSubmits) > 0
-            ? `${numberFormat(metrics.contactExchangeSubmits)} contact exchanges were completed in this period.`
-            : Number(metrics.linkOpens) > 0
-                ? `${numberFormat(metrics.linkOpens)} people clicked through from your card or profile link.`
-                : "Your analytics are ready to show what actions your card is driving.";
-
-    return (
-        <motion.section
-            className="an-heroInsight"
-            initial={{ opacity: 0, y: 14 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.32, ease: "easeOut" }}
-        >
-            <div className="an-heroInsightMain">
-                <div className="an-heroInsightEyebrow">Performance snapshot</div>
-                <h2 className="an-heroInsightTitle">
-                    See how your KonarCard is turning profile attention into real contact action.
-                </h2>
-                <p className="an-heroInsightText">{bestStatement}</p>
-
-                <div className="an-heroInsightPills">
-                    <span className={`an-heroPill ${getTrendClass(visitsDelta)}`}>
-                        {formatTrendLabel(visitsDelta, range)}
-                    </span>
-                    <span className={`an-heroPill ${getTrendClass(exchangesDelta)}`}>
-                        {formatTrendLabel(exchangesDelta, range)}
-                    </span>
-                    {locked ? <span className="an-heroPill an-heroPill--locked">Plus unlocks deeper conversion insight</span> : null}
-                </div>
-            </div>
-
-            <div className="an-heroInsightSide">
-                <div className="an-heroMiniStat">
-                    <div className="an-heroMiniLabel">Total visits</div>
-                    <div className="an-heroMiniValue">{numberFormat(metrics.profileViews)}</div>
-                </div>
-                <div className="an-heroMiniStat">
-                    <div className="an-heroMiniLabel">Conversion rate</div>
-                    <div className="an-heroMiniValue">
-                        {locked ? "Locked" : percentageFormat(metrics.conversionRate)}
-                    </div>
-                </div>
-            </div>
-        </motion.section>
+            <Select.Portal>
+                <Select.Positioner className="an-selectPositioner" sideOffset={8}>
+                    <Select.Popup className="an-selectPopup">
+                        {options.map((item) => (
+                            <Select.Item
+                                key={item.value}
+                                value={item.value}
+                                className="an-selectItem"
+                            >
+                                {item.label}
+                            </Select.Item>
+                        ))}
+                    </Select.Popup>
+                </Select.Positioner>
+            </Select.Portal>
+        </Select.Root>
     );
 }
 
@@ -756,6 +730,19 @@ export default function Analytics() {
         () => (profilesQuery.data || []).find((p) => p.value === profile),
         [profilesQuery.data, profile]
     );
+
+    const profileOptions = useMemo(() => {
+        return [
+            {
+                value: "all",
+                label: profilesQuery.isLoading ? "Loading profiles..." : "All profiles",
+            },
+            ...((profilesQuery.data || []).map((item) => ({
+                value: item.value,
+                label: item.name,
+            })) || []),
+        ];
+    }, [profilesQuery.data, profilesQuery.isLoading]);
 
     const summaryQuery = useQuery({
         queryKey: ["analytics-summary", range, profile, profilesQuery.data?.length || 0],
@@ -861,7 +848,7 @@ export default function Analytics() {
         };
     });
 
-    const recentActivity = recentActivityRaw.slice(0, 12).map((item, index) => ({
+    const recentActivity = recentActivityRaw.slice(0, 10).map((item, index) => ({
         id: item?.id || item?._id || `activity-${index}`,
         message: item?.message || getActivityMessage(item),
         timeLabel: formatActivityTime(item?.createdAt || item?.timestamp || item?.date),
@@ -1058,48 +1045,25 @@ export default function Analytics() {
                     onGoogleWallet={handleGoogleWallet}
                 />
 
-                <HeroInsightCard
-                    metrics={metrics}
-                    previousMetrics={previousMetrics}
-                    range={range}
-                    locked={!isPaidPlan}
-                />
-
                 <section className="an-toolbar">
                     <div className="an-toolbarTop an-toolbarTop--split">
                         <div className="an-rangePicker">
-                            <select
-                                className="an-select an-select--range"
+                            <AnalyticsSelect
                                 value={range}
-                                onChange={(e) => setRange(e.target.value)}
-                                aria-label="Choose date range"
-                            >
-                                {RANGE_OPTIONS.map((item) => (
-                                    <option key={item.value} value={item.value}>
-                                        {item.label}
-                                    </option>
-                                ))}
-                            </select>
+                                onChange={setRange}
+                                options={RANGE_OPTIONS}
+                                placeholder="Select range"
+                            />
                         </div>
 
                         <div className="an-toolbarActions">
                             <div className="an-profilePick">
-                                <select
-                                    className="an-select"
+                                <AnalyticsSelect
                                     value={profile}
-                                    onChange={(e) => setProfile(e.target.value)}
-                                    aria-label="Choose profile"
-                                >
-                                    <option value="all">
-                                        {profilesQuery.isLoading ? "Loading profiles..." : "All profiles"}
-                                    </option>
-
-                                    {(profilesQuery.data || []).map((item) => (
-                                        <option key={item.value} value={item.value}>
-                                            {item.name}
-                                        </option>
-                                    ))}
-                                </select>
+                                    onChange={setProfile}
+                                    options={profileOptions}
+                                    placeholder="Select profile"
+                                />
                             </div>
 
                             <button
@@ -1129,7 +1093,7 @@ export default function Analytics() {
                                 delta={getMetricDelta(metrics, previousMetrics, "profileViews")}
                                 range={range}
                                 featured
-                                helper="The total number of times people landed on your profile."
+                                icon={TotalVisitsIcon}
                             />
 
                             <MetricCard
@@ -1137,6 +1101,7 @@ export default function Analytics() {
                                 value={metrics.cardTaps}
                                 delta={getMetricDelta(metrics, previousMetrics, "cardTaps")}
                                 range={range}
+                                icon={NFCTapsIcon}
                             />
 
                             <MetricCard
@@ -1144,6 +1109,7 @@ export default function Analytics() {
                                 value={metrics.qrScans}
                                 delta={getMetricDelta(metrics, previousMetrics, "qrScans")}
                                 range={range}
+                                icon={QRScansIcon}
                             />
 
                             <MetricCard
@@ -1151,6 +1117,7 @@ export default function Analytics() {
                                 value={metrics.linkOpens}
                                 delta={getMetricDelta(metrics, previousMetrics, "linkOpens")}
                                 range={range}
+                                icon={LinkVisitsIcon}
                             />
 
                             <MetricCard
@@ -1158,6 +1125,7 @@ export default function Analytics() {
                                 value={metrics.contactsSaved}
                                 delta={getMetricDelta(metrics, previousMetrics, "contactsSaved")}
                                 range={range}
+                                icon={SavedContactsIcon}
                             />
 
                             <MetricCard
@@ -1165,6 +1133,7 @@ export default function Analytics() {
                                 value={metrics.contactExchangeSubmits}
                                 delta={getMetricDelta(metrics, previousMetrics, "contactExchangeSubmits")}
                                 range={range}
+                                icon={ExchangeContactsIcon}
                             />
 
                             <MetricCard
@@ -1174,7 +1143,7 @@ export default function Analytics() {
                                 range={range}
                                 isPercentage
                                 locked={!isPaidPlan}
-                                helper="How efficiently visits turned into meaningful contact action."
+                                icon={ConversionRateIcon}
                             />
                         </div>
                     )}
@@ -1201,16 +1170,14 @@ export default function Analytics() {
                         <RecentActivityCard items={recentActivity} />
                     ) : (
                         <LockedAnalyticsCard
-                            title="Recent Activity"
-                            subtitle="The latest actions people have taken on your profile."
-                            body="Upgrade to Plus to see recent activity and deeper engagement insights."
+                            title="Activity Feed"
+                            subtitle="Latest team & client activity"
+                            body="Upgrade to Plus to see the full activity feed and recent engagement."
                         />
                     )}
                 </section>
 
                 <section className="an-grid an-grid--secondary">
-                    <FunnelCard metrics={metrics} locked={!isPaidPlan} />
-
                     {isPaidPlan ? (
                         <SocialBarChartCard items={socialBreakdown} />
                     ) : (
