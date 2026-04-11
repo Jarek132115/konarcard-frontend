@@ -1121,3 +1121,72 @@ Cards Page
         min-height: 248px;
     }
 }
+
+.cp-ownedTopRow {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 12px;
+    min-width: 0;
+}
+
+.cp-orderPill {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 28px;
+    padding: 0 10px;
+    border-radius: 999px;
+    font-family: "Inter", sans-serif;
+    font-size: 12px;
+    font-weight: 800;
+    line-height: 1;
+    white-space: nowrap;
+    flex: 0 0 auto;
+}
+
+.cp-orderPill--success {
+    background: rgba(34, 197, 94, 0.1);
+    color: #15803d;
+    border: 1px solid rgba(34, 197, 94, 0.18);
+}
+
+.cp-orderPill--warn {
+    background: rgba(249, 115, 22, 0.1);
+    color: #c2410c;
+    border: 1px solid rgba(249, 115, 22, 0.18);
+}
+
+.cp-orderPill--danger {
+    background: rgba(220, 38, 38, 0.08);
+    color: #b91c1c;
+    border: 1px solid rgba(220, 38, 38, 0.16);
+}
+
+.cp-orderPill--neutral {
+    background: rgba(15, 23, 42, 0.06);
+    color: rgba(15, 23, 42, 0.8);
+    border: 1px solid rgba(15, 23, 42, 0.08);
+}
+
+.cp-ownedMetaLine {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    margin-top: 2px;
+    font-family: "Inter", sans-serif;
+    font-size: 13px;
+    line-height: 1.45;
+    min-width: 0;
+}
+
+.cp-ownedMetaLabel {
+    color: rgba(71, 85, 105, 0.9);
+    font-weight: 650;
+}
+
+.cp-ownedMetaValue {
+    color: rgba(15, 23, 42, 0.92);
+    font-weight: 750;
+    word-break: break-word;
+}
