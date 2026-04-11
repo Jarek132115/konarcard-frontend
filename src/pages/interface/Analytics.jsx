@@ -74,32 +74,6 @@ function percentageFormat(value) {
     return `${num.toFixed(num % 1 === 0 ? 0 : 1)}%`;
 }
 
-function downloadCsv(filename, rows) {
-    const csv = rows
-        .map((row) =>
-            row
-                .map((cell) => {
-                    const value = String(cell ?? "");
-                    if (value.includes(",") || value.includes('"') || value.includes("\n")) {
-                        return `"${value.replace(/"/g, '""')}"`;
-                    }
-                    return value;
-                })
-                .join(",")
-        )
-        .join("\n");
-
-    const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = filename;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
-}
-
 function formatDateLabel(value) {
     if (!value) return "";
     const date = new Date(value);
@@ -131,13 +105,50 @@ function formatActivityTime(dateValue) {
 function humanizeSocialTarget(target = "") {
     const clean = String(target || "").trim().toLowerCase();
 
-    if (clean === "facebook_url" || clean === "facebook") return "Facebook";
-    if (clean === "instagram_url" || clean === "instagram") return "Instagram";
-    if (clean === "linkedin_url" || clean === "linkedin") return "LinkedIn";
-    if (clean === "x_url" || clean === "twitter_url" || clean === "x" || clean === "twitter") {
+    if (
+        clean === "facebook_url" ||
+        clean === "facebook" ||
+        clean === "fb" ||
+        clean.includes("facebook")
+    ) {
+        return "Facebook";
+    }
+
+    if (
+        clean === "instagram_url" ||
+        clean === "instagram" ||
+        clean === "ig" ||
+        clean.includes("instagram")
+    ) {
+        return "Instagram";
+    }
+
+    if (
+        clean === "linkedin_url" ||
+        clean === "linkedin" ||
+        clean.includes("linkedin")
+    ) {
+        return "LinkedIn";
+    }
+
+    if (
+        clean === "x_url" ||
+        clean === "twitter_url" ||
+        clean === "x" ||
+        clean === "twitter" ||
+        clean.includes("twitter") ||
+        clean.includes("x.com")
+    ) {
         return "X";
     }
-    if (clean === "tiktok_url" || clean === "tiktok") return "TikTok";
+
+    if (
+        clean === "tiktok_url" ||
+        clean === "tiktok" ||
+        clean.includes("tiktok")
+    ) {
+        return "TikTok";
+    }
 
     return "";
 }
@@ -145,7 +156,14 @@ function humanizeSocialTarget(target = "") {
 function getActivityMessage(item) {
     const type = item?.event_type || item?.eventType || "";
     const name = item?.contact_name || item?.contactName || item?.name || "";
-    const target = item?.action_target || item?.actionTarget || "";
+    const target =
+        item?.action_target ||
+        item?.actionTarget ||
+        item?.target ||
+        item?.social_target ||
+        item?.socialTarget ||
+        item?.platform ||
+        "";
 
     switch (type) {
         case "qr_scan":
@@ -345,15 +363,15 @@ function LockedAnalyticsCard({
 
 function RecentActivityCard({ items = [] }) {
     return (
-        <div className="an-panel an-panel--activityFeed">
+        <div className="an-panel">
             <div className="an-panelHead">
                 <div>
-                    <h3 className="an-panelTitle an-panelTitle--inverse">Activity Feed</h3>
-                    <p className="an-panelMuted an-panelMuted--inverse">Latest team & client activity</p>
+                    <h3 className="an-panelTitle">Recent Activity</h3>
+                    <p className="an-panelMuted">Latest team & client activity</p>
                 </div>
             </div>
 
-            <div className="an-activityFeedList">
+            <div className="an-activityFeedList an-activityFeedList--light">
                 {items.length ? (
                     items.map((item, index) => {
                         const name =
@@ -367,15 +385,15 @@ function RecentActivityCard({ items = [] }) {
                                 key={item.id || item._id || `${item.message}-${index}`}
                                 className="an-activityFeedItem"
                             >
-                                <div className={`an-activityAvatar an-activityAvatar--${index % 5}`}>
+                                <div className={`an-activityAvatar an-activityAvatar--light an-activityAvatar--${index % 5}`}>
                                     {getInitials(name)}
                                 </div>
 
                                 <div className="an-activityFeedContent">
-                                    <div className="an-activityFeedText">
+                                    <div className="an-activityFeedText an-activityFeedText--light">
                                         {item.message || getActivityMessage(item)}
                                     </div>
-                                    <div className="an-activityFeedTime">
+                                    <div className="an-activityFeedTime an-activityFeedTime--light">
                                         {item.timeLabel ||
                                             formatActivityTime(item.createdAt || item.timestamp || item.date)}
                                     </div>
@@ -384,7 +402,7 @@ function RecentActivityCard({ items = [] }) {
                         );
                     })
                 ) : (
-                    <div className="an-emptyState an-emptyState--dark">No recent activity yet</div>
+                    <div className="an-emptyState">No recent activity yet</div>
                 )}
             </div>
         </div>
@@ -405,7 +423,6 @@ function ChartTooltip({ active, payload, label }) {
 function EngagementChart({
     data = [],
     seriesKey = "profileViews",
-    title = "Engagement Over Time",
     subtitle = "Tracked activity over time.",
     onChangeSeries,
 }) {
@@ -486,7 +503,7 @@ function EngagementChart({
                                 stroke="#f97316"
                                 strokeWidth={2.4}
                                 fill="url(#anAreaFill)"
-                                dot={{ r: 3.2, strokeWidth: 2, fill: "#f97316", stroke: "#ffffff" }}
+                                dot={{ r: 3.6, strokeWidth: 2, fill: "#f97316", stroke: "#ffffff" }}
                                 activeDot={{ r: 5 }}
                             />
                         </AreaChart>
@@ -848,78 +865,27 @@ export default function Analytics() {
         };
     });
 
-    const recentActivity = recentActivityRaw.slice(0, 10).map((item, index) => ({
-        id: item?.id || item?._id || `activity-${index}`,
-        message: item?.message || getActivityMessage(item),
-        timeLabel: formatActivityTime(item?.createdAt || item?.timestamp || item?.date),
-        ...item,
-    }));
+    const recentActivity = recentActivityRaw.slice(0, 10).map((item, index) => {
+        const message =
+            item?.message ||
+            getActivityMessage({
+                ...item,
+                action_target:
+                    item?.action_target ||
+                    item?.actionTarget ||
+                    item?.target ||
+                    item?.social_target ||
+                    item?.socialTarget ||
+                    item?.platform,
+            });
 
-    const exportData = () => {
-        const selectedProfileLabel =
-            profile === "all"
-                ? "all-profiles"
-                : selectedProfile?.slug || selectedProfile?.name || profile;
-
-        const rows = [
-            ["Analytics Export"],
-            ["Range", RANGE_OPTIONS.find((r) => r.value === range)?.label || `${range} days`],
-            ["Profile", selectedProfileLabel],
-            [],
-            ["Metric", "Value"],
-            ["Total Visits", metrics.profileViews ?? 0],
-            ["Link Visits", metrics.linkOpens ?? 0],
-            ["NFC Taps", metrics.cardTaps ?? 0],
-            ["QR Scans", metrics.qrScans ?? 0],
-            ["Saved Contacts", metrics.contactsSaved ?? 0],
-            ["Exchange Contacts", metrics.contactExchangeSubmits ?? 0],
-            ["Conversion Rate", isPaidPlan ? `${metrics.conversionRate ?? 0}%` : "Locked"],
-            [],
-            ["Timeline"],
-            ["Date", "Total Visits", "Link Visits", "QR Scans", "NFC Taps"],
-            ...chartTimeline.map((item) => [
-                item.date ?? "",
-                item.profileViews ?? 0,
-                item.linkOpens ?? 0,
-                item.qrScans ?? 0,
-                item.cardTaps ?? 0,
-            ]),
-        ];
-
-        if (isPaidPlan) {
-            rows.push(
-                [],
-                ["Recent Activity"],
-                ["Message", "When"],
-                ...recentActivity.map((item) => [item.message ?? "", item.timeLabel ?? ""]),
-                [],
-                ["Social Breakdown"],
-                ["Platform", "Count"],
-                ...socialBreakdown.map((item) => [item.label ?? "", item.value ?? 0])
-            );
-        }
-
-        downloadCsv(`konarcard-analytics-${selectedProfileLabel}-${range}d.csv`, rows);
-    };
-
-    const chartMeta = {
-        profileViews: {
-            title: "Engagement Over Time",
-            subtitle: "All tracked visits and interactions across this period.",
-        },
-        linkOpens: {
-            title: "Link Engagement Over Time",
-            subtitle: "How often people clicked through from your profile link.",
-        },
-        cardTaps: {
-            title: "NFC Engagement Over Time",
-            subtitle: "How many visits came from NFC card taps.",
-        },
-        qrScans: {
-            title: "QR Engagement Over Time",
-            subtitle: "How many visits came from QR scans.",
-        },
-    };
+        return {
+            id: item?.id || item?._id || `activity-${index}`,
+            message,
+            timeLabel: formatActivityTime(item?.createdAt || item?.timestamp || item?.date),
+            ...item,
+        };
+    });
 
     const handleOpenShareProfile = () => {
         if (!selectedShareProfile) {
@@ -1046,17 +1012,17 @@ export default function Analytics() {
                 />
 
                 <section className="an-toolbar">
-                    <div className="an-toolbarTop an-toolbarTop--split">
-                        <div className="an-rangePicker">
-                            <AnalyticsSelect
-                                value={range}
-                                onChange={setRange}
-                                options={RANGE_OPTIONS}
-                                placeholder="Select range"
-                            />
-                        </div>
+                    <div className="an-toolbarTop an-toolbarTop--grouped">
+                        <div className="an-toolbarDropdowns">
+                            <div className="an-rangePicker">
+                                <AnalyticsSelect
+                                    value={range}
+                                    onChange={setRange}
+                                    options={RANGE_OPTIONS}
+                                    placeholder="Select range"
+                                />
+                            </div>
 
-                        <div className="an-toolbarActions">
                             <div className="an-profilePick">
                                 <AnalyticsSelect
                                     value={profile}
@@ -1065,15 +1031,6 @@ export default function Analytics() {
                                     placeholder="Select profile"
                                 />
                             </div>
-
-                            <button
-                                type="button"
-                                className="kx-btn kx-btn--black an-exportBtn"
-                                onClick={exportData}
-                                disabled={summaryQuery.isLoading}
-                            >
-                                Export
-                            </button>
                         </div>
                     </div>
                 </section>
@@ -1154,8 +1111,7 @@ export default function Analytics() {
                         <EngagementChart
                             data={chartTimeline}
                             seriesKey={chartSeries}
-                            title={chartMeta[chartSeries]?.title}
-                            subtitle={chartMeta[chartSeries]?.subtitle}
+                            subtitle="Tracked activity over time."
                             onChangeSeries={setChartSeries}
                         />
                     ) : (
@@ -1170,7 +1126,7 @@ export default function Analytics() {
                         <RecentActivityCard items={recentActivity} />
                     ) : (
                         <LockedAnalyticsCard
-                            title="Activity Feed"
+                            title="Recent Activity"
                             subtitle="Latest team & client activity"
                             body="Upgrade to Plus to see the full activity feed and recent engagement."
                         />
