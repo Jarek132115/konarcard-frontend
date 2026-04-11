@@ -212,8 +212,6 @@ function inferAnalyticsSource() {
         if (via === "qr") return "qr";
         if (via === "nfc") return "nfc";
 
-        // Product rule:
-        // Plain /u/slug should be treated as the normal shared profile link.
         return "link";
     } catch {
         return "link";
@@ -567,7 +565,9 @@ export default function UserPage() {
     const goEditProfile = () => {
         try {
             localStorage.setItem("scrollToEditorOnLoad", "1");
-        } catch { }
+        } catch {
+            // ignore
+        }
         if (!isValidSlug) return (window.location.href = "/login");
         window.location.href = `/profiles/edit?slug=${encodeURIComponent(publicSlug)}`;
     };
@@ -575,7 +575,9 @@ export default function UserPage() {
     const goContactSupportSmart = () => {
         try {
             localStorage.setItem("openChatOnLoad", "1");
-        } catch { }
+        } catch {
+            // ignore
+        }
         window.location.href = authUser ? "/contact-support" : "/contactus";
     };
 
@@ -881,16 +883,19 @@ export default function UserPage() {
             tiktok_url: "tiktok",
         };
 
+        const platform = platformMap[platformKey] || "other";
+
         await trackProfileEvent({
             profileSlug: publicSlug,
             eventType: "social_clicked",
             source: inferAnalyticsSource(),
-            platform: platformMap[platformKey] || "other",
+            platform,
             meta: {
                 pageUrl: window.location.href,
                 referrer: document.referrer || "",
                 targetUrl: url || "",
-                actionTarget: platformKey,
+                actionTarget: platform,
+                socialTarget: platform,
             },
         });
     };
