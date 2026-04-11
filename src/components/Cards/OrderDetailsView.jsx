@@ -20,7 +20,7 @@ function formatOrderDate(value) {
     });
 }
 
-function formatShortDate(value) {
+function formatDeliveryDate(value) {
     const raw = safeTrim(value);
     if (!raw) return "—";
 
@@ -32,46 +32,6 @@ function formatShortDate(value) {
         month: "2-digit",
         year: "numeric",
     });
-}
-
-function addBusinessDays(date, daysToAdd) {
-    const result = new Date(date);
-    let added = 0;
-
-    while (added < daysToAdd) {
-        result.setDate(result.getDate() + 1);
-        const day = result.getDay();
-        if (day !== 0 && day !== 6) {
-            added += 1;
-        }
-    }
-
-    return result;
-}
-
-function fallbackEstimatedDelivery(orderDateValue) {
-    const raw = safeTrim(orderDateValue);
-    if (!raw) return "—";
-
-    const orderDate = new Date(raw);
-    if (Number.isNaN(orderDate.getTime())) return "—";
-
-    /*
-      Fallback ETA logic:
-      - before 2pm: 2–4 business days
-      - after 2pm: 3–5 business days
-
-      If you already have a stricter business rule elsewhere, you can
-      swap just this helper and everything else below will still work.
-    */
-    const hour = orderDate.getHours();
-    const minDays = hour < 14 ? 2 : 3;
-    const maxDays = hour < 14 ? 4 : 5;
-
-    const minDate = addBusinessDays(orderDate, minDays);
-    const maxDate = addBusinessDays(orderDate, maxDays);
-
-    return `${formatShortDate(minDate)} – ${formatShortDate(maxDate)}`;
 }
 
 function titleFromOrder(selectedOrder, productMeta) {
@@ -104,39 +64,25 @@ function quantityLabel(selectedOrder) {
 }
 
 function orderStatusLabel(selectedOrder) {
-    const raw =
-        safeTrim(selectedOrder?.status) ||
-        safeTrim(selectedOrder?._raw?.status);
-
-    if (!raw) return "—";
-
-    const normalized = raw.toLowerCase();
-
-    if (normalized === "paid") return "Paid";
-    if (normalized === "pending") return "Pending";
-    if (normalized === "failed") return "Failed";
-    if (normalized === "cancelled" || normalized === "canceled") return "Cancelled";
-    if (normalized === "fulfilled") return "Fulfilled";
-
-    return normalized.charAt(0).toUpperCase() + normalized.slice(1);
+    const status = safeTrim(selectedOrder?.status);
+    if (!status) return "—";
+    return status.charAt(0).toUpperCase() + status.slice(1);
 }
 
 function fulfillmentStatusLabel(selectedOrder) {
-    const raw =
-        safeTrim(selectedOrder?._raw?.fulfillmentStatus) ||
-        safeTrim(selectedOrder?.fulfillmentStatus);
+    const raw = safeTrim(
+        selectedOrder?.fulfillmentStatus ||
+        selectedOrder?._raw?.fulfillmentStatus
+    ).toLowerCase();
 
     if (!raw) return "—";
+    if (raw === "order_placed") return "Order placed";
+    if (raw === "designing_card") return "Card is being prepared";
+    if (raw === "packaged") return "Packaged";
+    if (raw === "shipped") return "Shipment is on the way";
+    if (raw === "delivered") return "Delivered";
 
-    const normalized = raw.toLowerCase();
-
-    if (normalized === "order_placed") return "Order placed";
-    if (normalized === "designing_card") return "Card is being prepared";
-    if (normalized === "packaged") return "Packaged";
-    if (normalized === "shipped") return "Shipment is on the way";
-    if (normalized === "delivered") return "Delivered";
-
-    return normalized.replace(/_/g, " ").replace(/\b\w/g, (m) => m.toUpperCase());
+    return raw.charAt(0).toUpperCase() + raw.slice(1);
 }
 
 function resolvedLogoSrc(selectedOrder, defaultLogoDataUrl) {
@@ -146,23 +92,33 @@ function resolvedLogoSrc(selectedOrder, defaultLogoDataUrl) {
 }
 
 function resolvedQrSrc(selectedOrder, qrSrcFromLink) {
-    const explicitQr =
-        safeTrim(selectedOrder?._raw?.preview?.qrCodeUrl) ||
+    const explicitQrImage =
+        safeTrim(selectedOrder?.qrCodeUrl) ||
+        safeTrim(selectedOrder?._raw?.qrCodeUrl) ||
         safeTrim(selectedOrder?._raw?.profile?.qr_code_url) ||
-        safeTrim(selectedOrder?._raw?.qrCodeUrl);
+        safeTrim(selectedOrder?._raw?.preview?.qrCodeUrl);
 
-    if (explicitQr) return explicitQr;
+    if (explicitQrImage) return explicitQrImage;
 
-    const nfcTrackedUrl =
-        safeTrim(selectedOrder?._raw?.preview?.nfcTargetUrl) ||
-        safeTrim(selectedOrder?._raw?.preview?.nfcProfileUrl) ||
+    const qrTargetUrl =
+        safeTrim(selectedOrder?.qrTargetUrl) ||
+        safeTrim(selectedOrder?._raw?.qrTargetUrl) ||
+        safeTrim(selectedOrder?._raw?.preview?.qrTargetUrl);
+
+    if (qrTargetUrl) {
+        return typeof qrSrcFromLink === "function" ? qrSrcFromLink(qrTargetUrl) : "";
+    }
+
+    const publicUrl =
+        safeTrim(selectedOrder?.publicProfileUrl) ||
+        safeTrim(selectedOrder?._raw?.publicProfileUrl) ||
         safeTrim(selectedOrder?._raw?.preview?.publicProfileUrl) ||
-        safeTrim(selectedOrder?.nfcTargetUrl) ||
         safeTrim(selectedOrder?.link);
 
-    if (!nfcTrackedUrl) return "";
+    if (!publicUrl) return "";
 
-    return typeof qrSrcFromLink === "function" ? qrSrcFromLink(nfcTrackedUrl) : "";
+    const fallbackQrUrl = `${publicUrl}${publicUrl.includes("?") ? "&" : "?"}via=qr`;
+    return typeof qrSrcFromLink === "function" ? qrSrcFromLink(fallbackQrUrl) : "";
 }
 
 function resolvedLogoPercent(selectedOrder) {
@@ -178,23 +134,27 @@ function plasticTextProps(selectedOrder) {
     const frontText =
         safeTrim(previewCustomization?.frontText) ||
         safeTrim(topLevelCustomization?.frontText) ||
+        safeTrim(selectedOrder?.frontText) ||
         "KONAR";
 
     const frontFontWeight = Number(
         previewCustomization?.fontWeight ||
         topLevelCustomization?.fontWeight ||
+        selectedOrder?.frontFontWeight ||
         700
     );
 
     const frontFontSize = Number(
         previewCustomization?.fontSize ||
         topLevelCustomization?.fontSize ||
+        selectedOrder?.frontFontSize ||
         42
     );
 
     const frontTextColor =
         safeTrim(previewCustomization?.textColor) ||
         safeTrim(topLevelCustomization?.textColor) ||
+        safeTrim(selectedOrder?.frontTextColor) ||
         "";
 
     return {
@@ -207,29 +167,27 @@ function plasticTextProps(selectedOrder) {
 
 function trackingCodeLabel(selectedOrder) {
     return (
-        safeTrim(selectedOrder?._raw?.trackingCode) ||
         safeTrim(selectedOrder?.trackingCode) ||
+        safeTrim(selectedOrder?._raw?.trackingCode) ||
         "—"
     );
 }
 
-function trackingLinkLabel(selectedOrder) {
+function trackingUrlLabel(selectedOrder) {
     return (
-        safeTrim(selectedOrder?._raw?.trackingUrl) ||
         safeTrim(selectedOrder?.trackingUrl) ||
+        safeTrim(selectedOrder?._raw?.trackingUrl) ||
         "—"
     );
 }
 
 function estimatedDeliveryLabel(selectedOrder) {
-    const saved =
-        safeTrim(selectedOrder?._raw?.deliveryWindow) ||
-        safeTrim(selectedOrder?.deliveryWindow);
+    const raw =
+        safeTrim(selectedOrder?.deliveryWindow) ||
+        safeTrim(selectedOrder?._raw?.deliveryWindow);
 
-    if (saved) return saved;
-
-    const createdAt = selectedOrder?._raw?.createdAt || selectedOrder?.createdAt;
-    return fallbackEstimatedDelivery(createdAt);
+    if (!raw) return "—";
+    return formatDeliveryDate(raw);
 }
 
 export default function OrderDetailsView({
@@ -247,10 +205,17 @@ export default function OrderDetailsView({
 
         const productKey = safeTrim(selectedOrder?.productKey);
         const meta = productMeta?.[productKey] || {};
-        const edition = safeTrim(meta?.edition || selectedOrder?.preview?.edition || "plastic");
+        const edition = safeTrim(
+            meta?.edition ||
+            selectedOrder?.preview?.edition ||
+            selectedOrder?._raw?.preview?.edition ||
+            "plastic"
+        );
+
         const variant =
             safeTrim(selectedOrder?.variantRaw) ||
             safeTrim(selectedOrder?.preview?.variant) ||
+            safeTrim(selectedOrder?._raw?.preview?.variant) ||
             safeTrim(meta?.variant) ||
             "white";
 
@@ -305,12 +270,12 @@ export default function OrderDetailsView({
     const profileLabel = assignedProfileLabel(selectedOrder);
     const createdAt = formatOrderDate(selectedOrder?._raw?.createdAt || selectedOrder?.createdAt);
     const variant = variantLabel(selectedOrder);
-    const paymentStatus = orderStatusLabel(selectedOrder);
+    const status = orderStatusLabel(selectedOrder);
     const fulfillmentStatus = fulfillmentStatusLabel(selectedOrder);
     const quantity = quantityLabel(selectedOrder);
     const profileSlug = safeTrim(selectedOrder?.profileSlug) || "—";
     const trackingCode = trackingCodeLabel(selectedOrder);
-    const trackingLink = trackingLinkLabel(selectedOrder);
+    const trackingUrl = trackingUrlLabel(selectedOrder);
     const estimatedDelivery = estimatedDeliveryLabel(selectedOrder);
 
     return (
@@ -336,7 +301,11 @@ export default function OrderDetailsView({
                     <div className="cp-previewCard">
                         <CardPreviewErrorBoundary
                             resetKey={`${selectedOrder?.id || "order"}-${previewProps?.productKey || "product"}-${previewProps?.variant || "variant"}-${previewProps?.frontText || "text"}`}
-                            fallback={<div className="cp-previewFallback">Preview unavailable</div>}
+                            fallback={
+                                <div className="cp-previewFallback">
+                                    Preview unavailable
+                                </div>
+                            }
                         >
                             <div className="cp-preview3dWrap">
                                 <Card3DDetails {...previewProps} />
@@ -378,23 +347,18 @@ export default function OrderDetailsView({
                         </div>
 
                         <div className="cp-row">
-                            <div className="cp-rowKey">Payment status</div>
-                            <div className="cp-rowVal">{paymentStatus}</div>
+                            <div className="cp-rowKey">Order status</div>
+                            <div className="cp-rowVal">{status}</div>
                         </div>
 
                         <div className="cp-row">
-                            <div className="cp-rowKey">Order status</div>
+                            <div className="cp-rowKey">Fulfilment status</div>
                             <div className="cp-rowVal">{fulfillmentStatus}</div>
                         </div>
 
                         <div className="cp-row">
                             <div className="cp-rowKey">Ordered on</div>
                             <div className="cp-rowVal">{createdAt}</div>
-                        </div>
-
-                        <div className="cp-row">
-                            <div className="cp-rowKey">Estimated delivery</div>
-                            <div className="cp-rowVal">{estimatedDelivery}</div>
                         </div>
 
                         <div className="cp-row">
@@ -405,19 +369,24 @@ export default function OrderDetailsView({
                         <div className="cp-row cp-row--link">
                             <div className="cp-rowKey">Tracking link</div>
                             <div className="cp-rowVal cp-rowVal--link">
-                                {trackingLink !== "—" ? (
+                                {trackingUrl !== "—" ? (
                                     <a
-                                        href={trackingLink}
+                                        className="cp-link"
+                                        href={trackingUrl}
                                         target="_blank"
                                         rel="noreferrer"
-                                        className="odv-link"
                                     >
-                                        {trackingLink}
+                                        {trackingUrl}
                                     </a>
                                 ) : (
                                     "—"
                                 )}
                             </div>
+                        </div>
+
+                        <div className="cp-row">
+                            <div className="cp-rowKey">Estimated delivery</div>
+                            <div className="cp-rowVal">{estimatedDelivery}</div>
                         </div>
 
                         {previewProps?.frontText ? (

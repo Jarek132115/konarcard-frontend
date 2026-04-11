@@ -110,7 +110,7 @@ function getStatusTone(card) {
 }
 
 function getFulfillmentStatus(card) {
-    return safeTrim(card?._raw?.fulfillmentStatus || card?.fulfillmentStatus).toLowerCase();
+    return safeTrim(card?.fulfillmentStatus || card?._raw?.fulfillmentStatus).toLowerCase();
 }
 
 function getEstimatedDelivery(card) {
