@@ -76,8 +76,8 @@
 
 .hc5-heroCard {
   display: grid;
-  grid-template-columns: minmax(0, 1.45fr) minmax(320px, 0.72fr);
-  gap: 20px;
+  grid-template-columns: minmax(0, 1fr) minmax(320px, 360px);
+  gap: 24px;
   padding: clamp(22px, 2vw, 30px);
   border-radius: var(--hc5-radius-xl);
   border: 1px solid var(--hc5-line);
@@ -86,10 +86,12 @@
     linear-gradient(180deg, rgba(255, 255, 255, 0.96) 0%, rgba(255, 255, 255, 0.9) 100%);
   box-shadow: var(--hc5-shadow);
   backdrop-filter: blur(10px);
+  align-items: stretch;
 }
 
 .hc5-heroMain {
   min-width: 0;
+  width: 100%;
   display: flex;
   flex-direction: column;
 }
@@ -104,18 +106,21 @@
 
 .hc5-heroTitle {
   margin: 0;
-  max-width: 20ch;
+  max-width: none;
+  width: 100%;
   font-family: "Cal Sans", sans-serif;
   font-size: clamp(28px, 3vw, 38px);
   font-weight: 400;
   line-height: 1.02;
   letter-spacing: -0.03em;
   color: var(--hc5-ink);
+  text-wrap: balance;
 }
 
 .hc5-heroText {
   margin: 14px 0 0;
-  max-width: 72ch;
+  max-width: none;
+  width: 100%;
   font-family: "Inter", sans-serif;
   font-size: 14px;
   line-height: 1.7;
@@ -125,6 +130,7 @@
 
 .hc5-heroToolbar {
   margin-top: 22px;
+  width: 100%;
 }
 
 .hc5-searchWrap {
@@ -279,32 +285,47 @@
 
 .hc5-grid {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-columns: 1fr;
   gap: var(--sp-3);
   align-items: stretch;
 }
 
 .hc5-card {
   min-width: 0;
-  display: flex;
-  flex-direction: column;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 24px;
+  align-items: stretch;
   border-radius: var(--hc5-radius-xl);
   border: 1px solid var(--hc5-line);
   background:
     linear-gradient(180deg, rgba(255, 255, 255, 0.96) 0%, rgba(255, 255, 255, 0.9) 100%);
   box-shadow: var(--hc5-shadow);
   overflow: hidden;
+  padding: 22px;
+}
+
+.hc5-card:nth-child(even) .hc5-cardMedia {
+  order: 2;
+}
+
+.hc5-card:nth-child(even) .hc5-cardBody {
+  order: 1;
 }
 
 .hc5-cardMedia {
   position: relative;
   width: 100%;
-  aspect-ratio: 16 / 9;
+  min-width: 0;
+  aspect-ratio: 4 / 3;
   border: 0;
   padding: 0;
   background: #0f172a;
   cursor: pointer;
   overflow: hidden;
+  border-radius: 18px;
+  order: 1;
+  align-self: stretch;
 }
 
 .hc5-cardImg {
@@ -375,9 +396,9 @@
   flex-direction: column;
   justify-content: space-between;
   gap: 18px;
-  padding: 20px;
   min-width: 0;
   flex: 1;
+  order: 2;
 }
 
 .hc5-cardTop {
@@ -552,17 +573,27 @@
 
 @media (max-width: 1180px) {
   .hc5-heroCard {
-    grid-template-columns: 1fr;
-  }
-
-  .hc5-heroTitle {
-    max-width: none;
+    grid-template-columns: minmax(0, 1fr) minmax(300px, 340px);
+    gap: 24px;
   }
 }
 
 @media (max-width: 980px) {
-  .hc5-grid {
+  .hc5-heroCard {
     grid-template-columns: 1fr;
+  }
+
+  .hc5-card {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: 20px;
+  }
+
+  .hc5-card:nth-child(even) .hc5-cardMedia {
+    order: 2;
+  }
+
+  .hc5-card:nth-child(even) .hc5-cardBody {
+    order: 1;
   }
 }
 
@@ -578,8 +609,17 @@
     padding: 20px;
   }
 
-  .hc5-cardBody {
-    padding: 18px;
+  .hc5-card {
+    padding: 20px;
+    grid-template-columns: 1fr;
+    gap: 18px;
+  }
+
+  .hc5-cardMedia,
+  .hc5-cardBody,
+  .hc5-card:nth-child(even) .hc5-cardMedia,
+  .hc5-card:nth-child(even) .hc5-cardBody {
+    order: initial;
   }
 
   .hc5-heroTitle {
@@ -640,7 +680,7 @@
     padding: 18px;
   }
 
-  .hc5-cardBody {
+  .hc5-card {
     padding: 16px;
   }
 
