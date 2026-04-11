@@ -52,19 +52,22 @@
     display: flex;
     align-items: center;
     gap: 16px;
-    flex-wrap: wrap;
+    flex-wrap: nowrap;
+    width: 100%;
+    min-width: 0;
 }
 
 .an-profilePick,
 .an-rangePicker {
-    flex: 0 0 auto;
+    flex: 1 1 0;
+    min-width: 0;
 }
 
 /* BASE UI SELECT */
 
 .an-selectBase {
-    width: auto;
-    min-width: 168px;
+    width: 100%;
+    min-width: 0;
     max-width: 100%;
     min-height: 40px;
     padding: 0 34px 0 14px;
@@ -85,7 +88,7 @@
 }
 
 .an-rangePicker .an-selectBase {
-    min-width: 138px;
+    min-width: 0;
 }
 
 .an-selectBase:hover {
@@ -102,6 +105,9 @@
     display: block;
     min-width: 0;
     text-align: left;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
 .an-selectChevron {
@@ -591,6 +597,9 @@
     line-height: 1;
     letter-spacing: -0.03em;
     color: var(--an-ink);
+    justify-self: end;
+    text-align: right;
+    white-space: nowrap;
 }
 
 /* LOCKED */
@@ -706,11 +715,23 @@
     .an-inlineStats {
         grid-template-columns: repeat(3, minmax(0, 1fr));
     }
+
+    .an-activityFeedList--light {
+        max-height: none;
+        overflow: visible;
+        padding-right: 0;
+    }
 }
 
 @media (max-width: 920px) {
     .an-inlineStats {
         grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .an-activityFeedList--light {
+        max-height: none;
+        overflow: visible;
+        padding-right: 0;
     }
 }
 
@@ -743,25 +764,43 @@
     }
 
     .an-breakdownRow {
-        grid-template-columns: 1fr;
-        align-items: start;
+        grid-template-columns: minmax(0, 1fr) auto;
+        align-items: center;
     }
 
     .an-breakdownRowValue {
         font-size: 22px;
+        justify-self: end;
+        text-align: right;
+        white-space: nowrap;
+    }
+
+    .an-activityFeedList--light {
+        max-height: none;
+        overflow: visible;
+        padding-right: 0;
+    }
+
+    .an-chartCanvas--bar .recharts-cartesian-axis-tick-value tspan,
+    .an-chartCanvas--bar .recharts-layer.recharts-cartesian-axis-tick text {
+        font-size: 10px !important;
     }
 }
 
 @media (max-width: 500px) {
     .an-toolbarDropdowns {
         width: 100%;
-        flex-direction: column;
+        flex-direction: row;
         align-items: stretch;
+        gap: 16px;
+        flex-wrap: nowrap;
     }
 
     .an-profilePick,
     .an-rangePicker {
-        width: 100%;
+        flex: 1 1 0;
+        width: auto;
+        min-width: 0;
     }
 
     .an-selectBase {
@@ -775,5 +814,16 @@
 
     .an-activityFeedItem {
         align-items: flex-start;
+    }
+
+    .an-activityFeedList--light {
+        max-height: none;
+        overflow: visible;
+        padding-right: 0;
+    }
+
+    .an-chartCanvas--bar .recharts-cartesian-axis-tick-value tspan,
+    .an-chartCanvas--bar .recharts-layer.recharts-cartesian-axis-tick text {
+        font-size: 10px !important;
     }
 }
