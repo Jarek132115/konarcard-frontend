@@ -485,7 +485,7 @@ export default function Settings() {
                                 <div className="stg-heroAccountLeft">
                                     <div className="stg-avatar">
                                         {accountAvatar && !isBusy ? (
-                                            <img src={accountAvatar} alt="Avatar" />
+                                            <img src={accountAvatar} alt="Profile" />
                                         ) : (
                                             <div
                                                 className={`stg-avatarFallback ${isBusy ? "stg-skelBlock" : ""}`}
@@ -506,12 +506,6 @@ export default function Settings() {
                                             {isBusy ? <span className="stg-skelText w72" /> : accountEmail}
                                         </div>
                                     </div>
-                                </div>
-
-                                <div className="stg-heroAccountRight">
-                                    <span className={`stg-chip stg-chip--plan stg-chip--${planTone(plan)}`}>
-                                        {isBusy ? "…" : displayPlanLabel}
-                                    </span>
                                 </div>
                             </div>
 
@@ -633,7 +627,7 @@ export default function Settings() {
                                 <div className="stg-actions stg-actions--billing">
                                     <button
                                         type="button"
-                                        className="kx-btn kx-btn--black"
+                                        className="kx-btn kx-btn--white stg-btnWhiteOnOrange"
                                         onClick={openBillingPortal}
                                         disabled={isBusy || hasError}
                                     >
@@ -642,8 +636,8 @@ export default function Settings() {
 
                                     <button
                                         type="button"
-                                        className="kx-btn kx-btn--white"
-                                        onClick={() => (window.location.href = "/pricing")}
+                                        className="kx-btn kx-btn--white stg-btnGhostOnOrange"
+                                        onClick={() => (window.location.href = "/upgrade-plan")}
                                         disabled={isBusy}
                                     >
                                         View Plans
