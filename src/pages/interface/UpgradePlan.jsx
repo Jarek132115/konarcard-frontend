@@ -91,13 +91,7 @@ function planRank(plan) {
 function fmtGBP(n) {
     const num = Number(n);
     if (!Number.isFinite(num)) return "—";
-    return `£${num.toFixed(2)}`;
-}
-
-function savingsLabel(fromPerMonth, toPerMonth) {
-    const diff = Number(fromPerMonth) - Number(toPerMonth);
-    if (!Number.isFinite(diff) || diff <= 0) return "";
-    return `Save ${fmtGBP(diff)}/mo`;
+    return `£${num.toFixed(0)}`;
 }
 
 function normalizePlanLabel(plan) {
@@ -120,6 +114,53 @@ const buildPublicUrl = (profileSlug) => {
     if (!s) return `${window.location.origin}/u/`;
     return `${window.location.origin}/u/${encodeURIComponent(s)}`;
 };
+
+function showUpgradeToast(kind, message) {
+    const config = {
+        success: {
+            label: "Success",
+            icon: "✓",
+        },
+        error: {
+            label: "Something went wrong",
+            icon: "!",
+        },
+        info: {
+            label: "Heads up",
+            icon: "i",
+        },
+    };
+
+    const tone = config[kind] || config.info;
+
+    toast.custom(
+        (t) => (
+            <div
+                className={`upg-toast upg-toast--${kind} ${t.visible ? "is-visible" : "is-hidden"}`}
+            >
+                <div className="upg-toastIcon" aria-hidden="true">
+                    {tone.icon}
+                </div>
+                <div className="upg-toastCopy">
+                    <div className="upg-toastTitle">{tone.label}</div>
+                    <div className="upg-toastText">{message}</div>
+                </div>
+                <button
+                    type="button"
+                    className="upg-toastClose"
+                    onClick={() => toast.dismiss(t.id)}
+                    aria-label="Close notification"
+                >
+                    ×
+                </button>
+            </div>
+        ),
+        {
+            duration: kind === "error" ? 4200 : 3200,
+            position: "top-right",
+        }
+    );
+}
 
 function CheckIcon({ featured = false }) {
     return (
@@ -239,9 +280,7 @@ function PlanCard({ plan, currentPlan, loadingKey }) {
                         <h3 className={`upg-planName ${featured ? "upg-planName--featured" : ""}`}>
                             {plan.title}
                         </h3>
-                        <p
-                            className={`upg-planDesc ${featured ? "upg-planDesc--featured" : ""}`}
-                        >
+                        <p className={`upg-planDesc ${featured ? "upg-planDesc--featured" : ""}`}>
                             {plan.description}
                         </p>
                     </div>
@@ -270,9 +309,7 @@ function PlanCard({ plan, currentPlan, loadingKey }) {
             <div className={`upg-planDivider ${featured ? "upg-planDivider--featured" : ""}`} />
 
             <div className="upg-planBody">
-                <div
-                    className={`upg-planIncluded ${featured ? "upg-planIncluded--featured" : ""}`}
-                >
+                <div className={`upg-planIncluded ${featured ? "upg-planIncluded--featured" : ""}`}>
                     Included in this plan
                 </div>
 
@@ -280,8 +317,7 @@ function PlanCard({ plan, currentPlan, loadingKey }) {
                     {plan.highlights.map((item, index) => (
                         <li
                             key={`${plan.key}-${index}`}
-                            className={`upg-planListItem ${featured ? "upg-planListItem--featured" : ""
-                                }`}
+                            className={`upg-planListItem ${featured ? "upg-planListItem--featured" : ""}`}
                         >
                             <span className="upg-planCheckWrap">
                                 <CheckIcon featured={featured} />
@@ -295,16 +331,15 @@ function PlanCard({ plan, currentPlan, loadingKey }) {
                     {plan.button.type === "link" ? (
                         <a
                             href={plan.button.to}
-                            className={`upg-btn ${featured ? "upg-btn--featured" : "upg-btn--primary"
-                                }`}
+                            className={`upg-btn ${featured ? "upg-btn--featured" : "upg-btn--primary"}`}
                         >
                             {plan.button.label}
                         </a>
                     ) : (
                         <button
                             type="button"
-                            className={`upg-btn ${featured ? "upg-btn--featured" : "upg-btn--primary"
-                                } ${plan.button.disabled ? "is-disabled" : ""}`}
+                            className={`upg-btn ${featured ? "upg-btn--featured" : "upg-btn--primary"} ${plan.button.disabled ? "is-disabled" : ""
+                                }`}
                             onClick={plan.button.onClick || undefined}
                             disabled={!!plan.button.disabled}
                         >
@@ -314,8 +349,7 @@ function PlanCard({ plan, currentPlan, loadingKey }) {
 
                     {plan.button.helper ? (
                         <div
-                            className={`upg-planHelper ${featured ? "upg-planHelper--featured" : ""
-                                }`}
+                            className={`upg-planHelper ${featured ? "upg-planHelper--featured" : ""}`}
                         >
                             {plan.button.helper}
                         </div>
@@ -369,6 +403,7 @@ export default function UpgradePlan() {
             setSelectedSlug(null);
             return;
         }
+
         setSelectedSlug((prev) => {
             if (prev && profilesForShare.some((p) => p.slug === prev)) return prev;
             return profilesForShare[0].slug;
@@ -381,62 +416,39 @@ export default function UpgradePlan() {
     }, [profilesForShare, selectedSlug]);
 
     const PRICES = useMemo(() => {
-        const plusMonthly = 4.95;
-        const plusQuarterlyPerMonth = 4.45;
-        const plusYearlyPerMonth = 3.95;
-        const addOnPerExtraProfilePerMonth = 1.95;
-
-        const quarterMonths = 3;
-        const yearMonths = 12;
-
-        const plusQuarterTotal = plusQuarterlyPerMonth * quarterMonths;
-        const plusYearTotal = plusYearlyPerMonth * yearMonths;
+        const plusMonthly = 5;
+        const plusYearlyTotal = 50;
+        const addOnPerExtraProfilePerMonth = 2;
 
         return {
             addOnPerExtraProfilePerMonth,
             plus: {
                 monthly: {
                     perMonth: plusMonthly,
-                    billedLabel: `${fmtGBP(plusMonthly)} / month`,
-                },
-                quarterly: {
-                    perMonth: plusQuarterlyPerMonth,
-                    billedTotal: plusQuarterTotal,
-                    billedLabel: `${fmtGBP(plusQuarterTotal)} / quarter`,
+                    billedLabel: "£5 / month",
                 },
                 yearly: {
-                    perMonth: plusYearlyPerMonth,
-                    billedTotal: plusYearTotal,
-                    billedLabel: `${fmtGBP(plusYearTotal)} / year`,
+                    perMonth: plusYearlyTotal / 12,
+                    billedTotal: plusYearlyTotal,
+                    billedLabel: "£50 / year",
                 },
             },
         };
     }, []);
 
-    const plusMonthly = PRICES.plus.monthly.perMonth;
+    const plusDisplayPrice = billing === "monthly" ? PRICES.plus.monthly.perMonth : PRICES.plus.yearly.billedTotal;
 
-    const plusPerMonth =
-        billing === "monthly"
-            ? PRICES.plus.monthly.perMonth
-            : billing === "quarterly"
-                ? PRICES.plus.quarterly.perMonth
-                : PRICES.plus.yearly.perMonth;
+    const plusDisplayCadence = billing === "monthly" ? "per month" : "per year";
 
     const plusBilledLabel =
         billing === "monthly"
             ? PRICES.plus.monthly.billedLabel
-            : billing === "quarterly"
-                ? PRICES.plus.quarterly.billedLabel
-                : PRICES.plus.yearly.billedLabel;
-
-    const plusSavings = billing === "monthly" ? "" : savingsLabel(plusMonthly, plusPerMonth);
+            : PRICES.plus.yearly.billedLabel;
 
     const billingNote =
         billing === "monthly"
-            ? "Billed monthly. Cancel anytime."
-            : billing === "quarterly"
-                ? "Billed every 3 months. Cancel anytime."
-                : "Best value. Billed yearly.";
+            ? "Simple monthly billing. Cancel anytime."
+            : "Pay yearly and keep your plan sorted for the full year.";
 
     useEffect(() => {
         let mounted = true;
@@ -506,9 +518,7 @@ export default function UpgradePlan() {
 
     const currentPlan = subState?.plan || "free";
     const isActive = !!subState?.active;
-    const currentPeriodEnd = subState?.currentPeriodEnd
-        ? new Date(subState.currentPeriodEnd)
-        : null;
+    const currentPeriodEnd = subState?.currentPeriodEnd ? new Date(subState.currentPeriodEnd) : null;
 
     const hasFutureAccess =
         !!currentPeriodEnd &&
@@ -547,12 +557,13 @@ export default function UpgradePlan() {
     const startSubscription = async (planKey) => {
         if (!isLoggedIn()) {
             saveCheckoutIntent(planKey);
+            showUpgradeToast("info", "Please log in first so we can start your subscription.");
             window.location.href = "/login";
             return;
         }
 
-        if (isActive && currentPlan === planKey.split("-")[0]) {
-            toast("You’re already on this plan.");
+        if (isActive && currentPlan === String(planKey).split("-")[0]) {
+            showUpgradeToast("info", "You’re already on this plan.");
             return;
         }
 
@@ -580,7 +591,7 @@ export default function UpgradePlan() {
                 /user not found/i.test(String(data?.error || ""))
             ) {
                 clearLocalAuth();
-                toast.error("Your session expired. Please log in again.");
+                showUpgradeToast("error", "Your session expired. Please log in again.");
                 window.location.href = "/login";
                 return;
             }
@@ -590,7 +601,7 @@ export default function UpgradePlan() {
             }
 
             if (!data?.url) {
-                throw new Error("Stripe session URL missing");
+                throw new Error("Stripe checkout URL is missing");
             }
 
             try {
@@ -601,7 +612,7 @@ export default function UpgradePlan() {
 
             window.location.href = data.url;
         } catch (err) {
-            toast.error(err?.message || "Subscription failed");
+            showUpgradeToast("error", err?.message || "Subscription could not be started.");
         } finally {
             setLoadingKey(null);
         }
@@ -609,6 +620,7 @@ export default function UpgradePlan() {
 
     const openBillingPortal = async () => {
         if (!isLoggedIn()) {
+            showUpgradeToast("info", "Log in to manage your billing and subscription.");
             window.location.href = "/login";
             return;
         }
@@ -630,6 +642,7 @@ export default function UpgradePlan() {
 
             if (res.status === 401 || res.status === 404) {
                 clearLocalAuth();
+                showUpgradeToast("error", "Your session expired. Please log in again.");
                 window.location.href = "/login";
                 return;
             }
@@ -639,12 +652,12 @@ export default function UpgradePlan() {
             }
 
             if (!data?.url) {
-                throw new Error("Billing portal URL missing");
+                throw new Error("Billing portal URL is missing");
             }
 
             window.location.href = data.url;
         } catch (e) {
-            toast.error(e?.message || "Billing portal is not available yet.");
+            showUpgradeToast("error", e?.message || "Billing portal is not available right now.");
         }
     };
 
@@ -664,7 +677,7 @@ export default function UpgradePlan() {
 
             return {
                 type: "button",
-                label: `Upgrade to ${planName === "plus" ? "Plus" : "Teams"}`,
+                label: planName === "plus" ? "Upgrade to Plus" : "Start Teams",
                 onClick: () => startSubscription(planKeyForPaid),
                 disabled: !!loadingKey,
                 helper: "",
@@ -749,28 +762,29 @@ export default function UpgradePlan() {
     };
 
     const planCards = useMemo(() => {
-        const plusKey = `plus-${billing}`;
-        const teamsKey = `teams-${billing}`;
-        const teamsExample3Profiles = plusPerMonth + PRICES.addOnPerExtraProfilePerMonth * 2;
+        const plusKey = billing === "monthly" ? "plus-monthly" : "plus-yearly";
+        const teamsKey = "teams-monthly";
+        const teamsExample3Profiles = 5 + 2 + 2;
 
         return [
             {
                 key: "free",
-                title: "Individual",
-                description: "A clean free plan for getting started and sharing your KonarCard.",
+                title: "Free",
+                description:
+                    "A simple way to get started and share a professional KonarCard profile.",
                 icon: FreePlanIcon,
-                tag: "Best for starting out",
+                tag: "Start here",
                 featured: false,
                 price: "£0",
                 cadence: "No monthly fees",
-                meta: ["Perfect for solo use", "Upgrade any time when you need more polish"],
+                meta: ["Perfect for trying KonarCard", "Upgrade later when you need more control"],
                 highlights: [
-                    "Your KonarCard link",
-                    "Contact buttons",
-                    "QR sharing",
-                    "Works on any phone",
-                    "Unlimited updates",
-                    "Tap or scan share",
+                    "1 profile",
+                    "1 template design",
+                    "Up to 6 work images",
+                    "Up to 3 services",
+                    "Up to 3 reviews",
+                    "Basic analytics only",
                 ],
                 button: getPlanButton("free"),
                 loadingMatch: "free",
@@ -778,26 +792,24 @@ export default function UpgradePlan() {
             {
                 key: "plus",
                 title: "Plus",
-                description: "More control, stronger branding, and a more premium customer-facing profile.",
+                description:
+                    "Best for professionals who want a stronger profile, more content, and full analytics.",
                 icon: PlusPlanIcon,
                 tag: "Most popular",
                 featured: true,
-                price: fmtGBP(plusPerMonth),
-                cadence: "per month",
+                price: fmtGBP(plusDisplayPrice),
+                cadence: plusDisplayCadence,
                 meta: [
-                    billing === "monthly"
-                        ? "Cancel anytime. No contracts."
-                        : `Billed ${plusBilledLabel}. Cancel anytime.`,
-                    plusSavings || null,
+                    billing === "monthly" ? "Billed monthly. Cancel anytime." : `Billed ${plusBilledLabel}.`,
+                    billing === "yearly" ? "Save with yearly billing and keep things simple." : null,
                 ].filter(Boolean),
                 highlights: [
-                    "Full customisation",
-                    "More photos",
-                    "Services & pricing",
-                    "Reviews & ratings",
-                    "Unlimited edits",
-                    "Remove branding",
-                    "Deeper analytics",
+                    "1 profile",
+                    "All 5 template designs",
+                    "Up to 12 work images",
+                    "Up to 12 services",
+                    "Up to 12 reviews",
+                    "Full analytics dashboard",
                 ],
                 button: getPlanButton("plus", plusKey),
                 loadingMatch: plusKey,
@@ -805,25 +817,24 @@ export default function UpgradePlan() {
             {
                 key: "teams",
                 title: "Teams",
-                description: "Built for small businesses managing multiple staff profiles from one place.",
+                description:
+                    "For businesses managing multiple staff profiles under one account.",
                 icon: TeamsPlanIcon,
                 tag: "For growing teams",
                 featured: false,
-                price: fmtGBP(plusPerMonth),
-                cadence: "+ £1.95 per extra profile",
+                price: "£5",
+                cadence: "/ month + £2 per extra profile",
                 meta: [
-                    billing === "monthly"
-                        ? "Billed monthly. Cancel anytime."
-                        : `Base billed ${plusBilledLabel}.`,
+                    "Monthly billing only",
                     `Example: 3 profiles = ${fmtGBP(teamsExample3Profiles)} / month`,
                 ],
                 highlights: [
                     "Everything in Plus",
-                    "Add staff profiles",
-                    "Centralised controls",
-                    "Shared branding",
-                    "Team analytics",
-                    "Manage in one place",
+                    "Multiple staff profiles",
+                    "£2 for each extra profile",
+                    "Manage profiles in one place",
+                    "Shared business setup",
+                    "Better team visibility as you grow",
                 ],
                 button: getPlanButton("teams", teamsKey),
                 loadingMatch: teamsKey,
@@ -832,28 +843,27 @@ export default function UpgradePlan() {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [
         billing,
-        plusPerMonth,
+        plusDisplayPrice,
+        plusDisplayCadence,
         plusBilledLabel,
-        plusSavings,
         currentPlan,
         isActive,
         hasFutureAccess,
         activeUntilLabel,
         loadingKey,
         subLoading,
-        PRICES,
     ]);
 
     const currentPlanSummary =
         currentPlan === "teams"
-            ? "Built for small teams managing multiple profiles and shared branding."
+            ? "Built for teams managing multiple profiles from one account."
             : currentPlan === "plus"
-                ? "More customisation, branding control, and deeper analytics."
-                : "A simple starting plan for sharing your KonarCard and contact details.";
+                ? "Full templates, expanded limits, and the complete analytics view."
+                : "A free starter plan with limited profile content and limited analytics.";
 
     const handleOpenShareProfile = () => {
         if (!selectedProfile) {
-            toast.error("Create a profile first.");
+            showUpgradeToast("error", "Create a profile first before sharing.");
             return;
         }
         setShareOpen(true);
@@ -865,7 +875,7 @@ export default function UpgradePlan() {
 
     const shareToFacebook = () => {
         if (!selectedProfile?.url) {
-            toast.error("No profile link available yet.");
+            showUpgradeToast("error", "No profile link is available yet.");
             return;
         }
 
@@ -878,15 +888,15 @@ export default function UpgradePlan() {
 
     const shareToInstagram = async () => {
         if (!selectedProfile?.url) {
-            toast.error("No profile link available yet.");
+            showUpgradeToast("error", "No profile link is available yet.");
             return;
         }
 
         try {
             await navigator.clipboard.writeText(selectedProfile.url);
-            toast.success("Profile link copied for Instagram sharing.");
+            showUpgradeToast("success", "Profile link copied for Instagram sharing.");
         } catch {
-            toast.error("Could not copy the link.");
+            showUpgradeToast("error", "Could not copy the profile link.");
         }
 
         window.open("https://www.instagram.com/", "_blank", "noopener,noreferrer");
@@ -894,22 +904,21 @@ export default function UpgradePlan() {
 
     const shareToMessenger = async () => {
         if (!selectedProfile?.url) {
-            toast.error("No profile link available yet.");
+            showUpgradeToast("error", "No profile link is available yet.");
             return;
         }
 
-        const isMobile = /Android|iPhone|iPad|iPod|Mobile/i.test(
-            navigator.userAgent || ""
-        );
+        const isMobile = /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent || "");
 
         if (isMobile) {
             try {
                 await navigator.clipboard.writeText(selectedProfile.url);
-                toast.success(
-                    "Messenger sharing is not supported on mobile browsers. Link copied instead."
+                showUpgradeToast(
+                    "info",
+                    "Messenger sharing is not supported in mobile browsers, so the link was copied instead."
                 );
             } catch {
-                toast.error("Could not copy the link.");
+                showUpgradeToast("error", "Could not copy the profile link.");
             }
             return;
         }
@@ -923,7 +932,7 @@ export default function UpgradePlan() {
 
     const shareToWhatsApp = () => {
         if (!selectedProfile?.url) {
-            toast.error("No profile link available yet.");
+            showUpgradeToast("error", "No profile link is available yet.");
             return;
         }
 
@@ -934,7 +943,7 @@ export default function UpgradePlan() {
 
     const shareByText = () => {
         if (!selectedProfile?.url) {
-            toast.error("No profile link available yet.");
+            showUpgradeToast("error", "No profile link is available yet.");
             return;
         }
 
@@ -943,11 +952,11 @@ export default function UpgradePlan() {
     };
 
     const handleAppleWallet = () => {
-        toast("Apple Wallet is coming soon.");
+        showUpgradeToast("info", "Apple Wallet support is coming soon.");
     };
 
     const handleGoogleWallet = () => {
-        toast("Google Wallet is coming soon.");
+        showUpgradeToast("info", "Google Wallet support is coming soon.");
     };
 
     return (
@@ -955,7 +964,7 @@ export default function UpgradePlan() {
             <div className="upg-shell">
                 <PageHeader
                     title="Upgrade Plan"
-                    subtitle="Upgrade, manage billing, and change plans without leaving your dashboard."
+                    subtitle="Choose the right plan for your profile, your business, and the way you want to grow."
                     onShareClick={handleOpenShareProfile}
                     shareDisabled={!selectedProfile}
                 />
@@ -995,31 +1004,28 @@ export default function UpgradePlan() {
                             </span>
                             <span className="upg-pill upg-pill--neutral">
                                 <BillingIcon />
-                                {billing === "monthly"
-                                    ? "Monthly billing"
-                                    : billing === "quarterly"
-                                        ? "Quarterly billing"
-                                        : "Yearly billing"}
+                                {billing === "monthly" ? "Monthly billing" : "Yearly billing"}
                             </span>
                         </div>
 
                         <h2 className="upg-heroTitle">
-                            Choose the plan that fits how you share, sell, and grow with KonarCard
+                            Upgrade when you want more control, more trust signals, and better visibility
                         </h2>
 
                         <p className="upg-heroText">
-                            Start free, unlock more branding and profile control with Plus, or manage
-                            multiple people with Teams. Your billing and subscription settings stay in one
-                            place.
+                            Start with a free profile, unlock the full professional experience with Plus,
+                            or move to Teams when you need multiple staff profiles under one setup.
                         </p>
 
                         <div className="upg-heroStats">
-                            <FeatureStat label="Current plan" value={normalizePlanLabel(currentPlan)} tone="accent" />
+                            <FeatureStat
+                                label="Current plan"
+                                value={normalizePlanLabel(currentPlan)}
+                                tone="accent"
+                            />
                             <FeatureStat
                                 label="Status"
-                                value={
-                                    subLoading ? "Checking…" : isActive || hasFutureAccess ? "Active" : "Free"
-                                }
+                                value={subLoading ? "Checking…" : isActive || hasFutureAccess ? "Active" : "Free"}
                             />
                             <FeatureStat
                                 label="Renews / access"
@@ -1067,7 +1073,7 @@ export default function UpgradePlan() {
                         <div className="upg-mainHeadCopy">
                             <h2 className="upg-mainTitle">Compare your options</h2>
                             <p className="upg-mainSub">
-                                Billing stays flexible, and your plan can change whenever your business does.
+                                Keep it simple with free, unlock more with Plus, or add profiles as your team grows.
                             </p>
                         </div>
 
@@ -1075,27 +1081,18 @@ export default function UpgradePlan() {
                             <Tabs.Root
                                 value={billing}
                                 onValueChange={(value) => {
-                                    if (value === "monthly" || value === "quarterly" || value === "yearly") {
+                                    if (value === "monthly" || value === "yearly") {
                                         setBilling(value);
                                     }
                                 }}
                                 className="upg-tabsRoot"
                             >
-                                <Tabs.List
-                                    aria-label="Billing interval"
-                                    className="upg-billingTabs"
-                                >
+                                <Tabs.List aria-label="Billing interval" className="upg-billingTabs">
                                     <Tabs.Tab
                                         value="monthly"
                                         className={`upg-tab ${billing === "monthly" ? "is-active" : ""}`}
                                     >
                                         Monthly
-                                    </Tabs.Tab>
-                                    <Tabs.Tab
-                                        value="quarterly"
-                                        className={`upg-tab ${billing === "quarterly" ? "is-active" : ""}`}
-                                    >
-                                        Quarterly
                                     </Tabs.Tab>
                                     <Tabs.Tab
                                         value="yearly"
@@ -1106,7 +1103,9 @@ export default function UpgradePlan() {
                                 </Tabs.List>
                             </Tabs.Root>
 
-                            <div className="upg-billingNote">{billingNote}</div>
+                            <div className="upg-billingNote">
+                                {billingNote} Teams always bills monthly by active profile count.
+                            </div>
                         </div>
                     </div>
 

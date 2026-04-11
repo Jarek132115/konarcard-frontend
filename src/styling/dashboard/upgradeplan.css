@@ -29,6 +29,100 @@
     min-width: 0;
 }
 
+/* TOAST */
+
+.upg-toast {
+    width: min(420px, calc(100vw - 24px));
+    display: grid;
+    grid-template-columns: 40px minmax(0, 1fr) 28px;
+    align-items: start;
+    gap: 12px;
+    padding: 14px;
+    border-radius: 18px;
+    background: #ffffff;
+    border: 1px solid rgba(15, 23, 42, 0.08);
+    box-shadow: 0 20px 48px rgba(15, 23, 42, 0.14);
+    transition: all 0.18s ease;
+}
+
+.upg-toast.is-hidden {
+    opacity: 0;
+    transform: translateY(-8px) scale(0.98);
+}
+
+.upg-toast.is-visible {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+}
+
+.upg-toast--success .upg-toastIcon {
+    background: rgba(34, 197, 94, 0.12);
+    color: #15803d;
+}
+
+.upg-toast--error .upg-toastIcon {
+    background: rgba(239, 68, 68, 0.12);
+    color: #b91c1c;
+}
+
+.upg-toast--info .upg-toastIcon {
+    background: rgba(249, 115, 22, 0.12);
+    color: #c2410c;
+}
+
+.upg-toastIcon {
+    width: 40px;
+    height: 40px;
+    border-radius: 12px;
+    display: grid;
+    place-items: center;
+    font-family: "Inter", sans-serif;
+    font-size: 16px;
+    font-weight: 900;
+    line-height: 1;
+}
+
+.upg-toastCopy {
+    min-width: 0;
+}
+
+.upg-toastTitle {
+    font-family: "Inter", sans-serif;
+    font-size: 13px;
+    line-height: 1.2;
+    font-weight: 800;
+    color: var(--upg-ink);
+}
+
+.upg-toastText {
+    margin-top: 4px;
+    font-family: "Inter", sans-serif;
+    font-size: 13px;
+    line-height: 1.5;
+    font-weight: 500;
+    color: #475569;
+}
+
+.upg-toastClose {
+    appearance: none;
+    border: 0;
+    background: transparent;
+    color: #94a3b8;
+    width: 28px;
+    height: 28px;
+    border-radius: 10px;
+    display: grid;
+    place-items: center;
+    cursor: pointer;
+    font-size: 18px;
+    line-height: 1;
+}
+
+.upg-toastClose:hover {
+    background: rgba(15, 23, 42, 0.05);
+    color: var(--upg-ink);
+}
+
 /* HERO */
 
 .upg-heroCard {
@@ -319,6 +413,7 @@
 }
 
 .upg-billingNote {
+    max-width: 360px;
     font-family: "Inter", sans-serif;
     font-size: 14px;
     line-height: 1.5;
@@ -755,6 +850,7 @@
 
     .upg-billingNote {
         text-align: left;
+        max-width: none;
     }
 
     .upg-plansGrid {
@@ -812,7 +908,7 @@
     .upg-billingTabs {
         width: 100%;
         display: grid;
-        grid-template-columns: repeat(3, minmax(0, 1fr));
+        grid-template-columns: repeat(2, minmax(0, 1fr));
     }
 
     .upg-tab {
@@ -834,6 +930,10 @@
 
     .upg-planPrice {
         font-size: 44px;
+    }
+
+    .upg-toast {
+        width: min(100vw - 16px, 420px);
     }
 }
 
@@ -877,5 +977,19 @@
     .upg-heroText,
     .upg-billingCardText {
         font-size: 13px;
+    }
+
+    .upg-toast {
+        grid-template-columns: 36px minmax(0, 1fr) 24px;
+        gap: 10px;
+        padding: 12px;
+        border-radius: 16px;
+    }
+
+    .upg-toastIcon {
+        width: 36px;
+        height: 36px;
+        border-radius: 10px;
+        font-size: 15px;
     }
 }
