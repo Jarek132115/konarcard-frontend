@@ -159,6 +159,8 @@ export default function PlasticCard3D({
     const resolvedEdgeColor = edgeColor || variantAssets.edgeColor;
     const resolvedTextColor = frontTextColor || variantAssets.textColor;
 
+    const isAnimated = interactive || autoRotate;
+
     return (
         <div
             className={`pc3d ${compact ? "pc3d--compact" : ""} ${interactive ? "pc3d--interactive" : "pc3d--locked"} ${stageClassName}`.trim()}
@@ -166,6 +168,7 @@ export default function PlasticCard3D({
         >
             <div className="pc3d__stage">
                 <Canvas
+                    frameloop={isAnimated ? "always" : "demand"}
                     dpr={1}
                     camera={{ position: [0, 0.015, 1.68], fov: 25 }}
                     gl={{
@@ -321,6 +324,7 @@ function CardRig({
     compact = false,
 }) {
     const group = useRef();
+    const { invalidate } = useThree();
 
     const baseRX = compact ? 0.11 : 0.085;
     const baseRY = 0.64 + rotationOffset;
@@ -346,7 +350,15 @@ function CardRig({
         drag.current.idle = true;
         drag.current.isDown = false;
         drag.current.hasUserInteracted = false;
-    }, [baseRX, baseRY]);
+
+        if (group.current) {
+            group.current.rotation.x = baseRX;
+            group.current.rotation.y = baseRY;
+            group.current.rotation.z = 0.015;
+        }
+
+        invalidate();
+    }, [baseRX, baseRY, invalidate]);
 
     useFrame((_, dt) => {
         if (!group.current) return;
@@ -378,6 +390,10 @@ function CardRig({
             0.015,
             0.08
         );
+
+        if (interactive || autoRotate) {
+            invalidate();
+        }
     });
 
     const onPointerDown = (e) => {
@@ -393,6 +409,8 @@ function CardRig({
 
         drag.current.baseRX = drag.current.rx;
         drag.current.baseRY = drag.current.ry;
+
+        invalidate();
 
         try {
             e.target.setPointerCapture(e.pointerId);
@@ -412,6 +430,7 @@ function CardRig({
 
         drag.current.ry = drag.current.baseRY + dx * gainX;
         drag.current.rx = clamp(drag.current.baseRX - dy * gainY, -0.55, 0.55);
+        invalidate();
     };
 
     const onPointerUp = () => {
@@ -421,6 +440,7 @@ function CardRig({
         drag.current.baseRX = drag.current.rx;
         drag.current.baseRY = drag.current.ry;
         drag.current.idle = true;
+        invalidate();
     };
 
     return (

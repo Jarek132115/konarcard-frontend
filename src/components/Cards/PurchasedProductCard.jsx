@@ -38,25 +38,6 @@ function isUsableTextureSrc(src) {
     );
 }
 
-function shouldUse3DPreview() {
-    if (typeof window === "undefined") return false;
-
-    const isTouchDevice =
-        "ontouchstart" in window ||
-        navigator.maxTouchPoints > 0 ||
-        /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent || "");
-
-    const isSmallScreen = window.innerWidth < 1024;
-    const prefersReducedMotion =
-        window.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches;
-
-    if (prefersReducedMotion) return false;
-    if (isTouchDevice) return false;
-    if (isSmallScreen) return false;
-
-    return true;
-}
-
 function formatShortDate(value) {
     const raw = safeTrim(value);
     if (!raw) return "—";
@@ -225,18 +206,12 @@ function getPlasticArtwork(productKey) {
     }
 }
 
-function useVisible3DMount(enabled = true) {
+function useVisible3DMount() {
     const rootRef = useRef(null);
     const [isVisible, setIsVisible] = useState(false);
     const [shouldMount3D, setShouldMount3D] = useState(false);
 
     useEffect(() => {
-        if (!enabled) {
-            setIsVisible(false);
-            setShouldMount3D(false);
-            return undefined;
-        }
-
         const node = rootRef.current;
         if (!node || typeof IntersectionObserver === "undefined") {
             setIsVisible(true);
@@ -258,10 +233,10 @@ function useVisible3DMount(enabled = true) {
         observer.observe(node);
 
         return () => observer.disconnect();
-    }, [enabled]);
+    }, []);
 
     useEffect(() => {
-        if (!enabled || !isVisible) return undefined;
+        if (!isVisible) return undefined;
 
         let cancelled = false;
         const timer = window.setTimeout(() => {
@@ -274,11 +249,11 @@ function useVisible3DMount(enabled = true) {
             cancelled = true;
             window.clearTimeout(timer);
         };
-    }, [enabled, isVisible]);
+    }, [isVisible]);
 
     return {
         rootRef,
-        shouldMount3D: enabled && isVisible && shouldMount3D,
+        shouldMount3D: isVisible && shouldMount3D,
     };
 }
 
@@ -386,8 +361,7 @@ function formatOwnedTitle(card) {
 }
 
 export default function PurchasedProductCard({ card, onOpenDetails }) {
-    const allow3D = useMemo(() => shouldUse3DPreview(), []);
-    const { rootRef, shouldMount3D } = useVisible3DMount(allow3D);
+    const { rootRef, shouldMount3D } = useVisible3DMount();
 
     const productKey = safeTrim(card?.productKey).toLowerCase();
     const variant = safeTrim(card?.variantRaw || card?.preview?.variant || "white").toLowerCase();
@@ -431,7 +405,7 @@ export default function PurchasedProductCard({ card, onOpenDetails }) {
                 </span>
 
                 <div className="cp-catalogPreview3D cp-ownedPreview3D">
-                    {allow3D && shouldMount3D ? (
+                    {shouldMount3D ? (
                         <Owned3DPreview
                             productKey={productKey}
                             variant={variant}
