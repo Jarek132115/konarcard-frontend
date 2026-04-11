@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import PlasticCard3D from "../PlasticCard3D";
 import MetalCard3D from "../MetalCard3D";
 import KonarTag3D from "../KonarTag3D";
@@ -22,6 +22,35 @@ import OrangeBackImg from "../../assets/images/Products/OrangeBack.jpg";
 
 function safeTrim(v) {
     return String(v || "").trim();
+}
+
+function useCompactPreviewMode() {
+    const [isCompact, setIsCompact] = useState(false);
+
+    useEffect(() => {
+        if (typeof window === "undefined" || typeof window.matchMedia !== "function") {
+            return undefined;
+        }
+
+        const mediaQuery = window.matchMedia("(max-width: 1024px), (pointer: coarse)");
+        const update = () => setIsCompact(!!mediaQuery.matches);
+
+        update();
+
+        if (typeof mediaQuery.addEventListener === "function") {
+            mediaQuery.addEventListener("change", update);
+            return () => mediaQuery.removeEventListener("change", update);
+        }
+
+        if (typeof mediaQuery.addListener === "function") {
+            mediaQuery.addListener(update);
+            return () => mediaQuery.removeListener(update);
+        }
+
+        return undefined;
+    }, []);
+
+    return isCompact;
 }
 
 function isUsableTextureSrc(src) {
@@ -215,8 +244,7 @@ function renderOwnedPreview({
                 logoSize={Number(card?.preview?.logoPercent || 70)}
                 finish={variant || "gold"}
                 interactive={false}
-                autoRotate={true}
-                autoRotateSpeed={0.68}
+                autoRotate={false}
                 compact={true}
                 stageClassName="cp-preview3dScene"
             />
@@ -231,8 +259,7 @@ function renderOwnedPreview({
                 logoSize={Number(card?.preview?.logoPercent || 70)}
                 finish={variant || "black"}
                 interactive={false}
-                autoRotate={true}
-                autoRotateSpeed={0.68}
+                autoRotate={false}
                 compact={true}
                 stageClassName="cp-preview3dScene"
             />
@@ -254,11 +281,38 @@ function renderOwnedPreview({
                 safeTrim(card?.frontTextColor) || artwork.fallbackTextColor
             }
             interactive={false}
-            autoRotate={true}
-            autoRotateSpeed={0.68}
+            autoRotate={false}
             compact={true}
             stageClassName="cp-preview3dScene"
         />
+    );
+}
+
+function StaticOwnedPreview({ card, productKey, statusLabel }) {
+    const artwork = getPlasticArtwork(productKey);
+    const previewImageUrl =
+        safeTrim(card?.previewImageUrl) ||
+        safeTrim(card?._raw?.previewImageUrl);
+
+    const fallbackImg =
+        productKey === "metal-card" || productKey === "konartag"
+            ? ""
+            : artwork.frontSrc;
+
+    const imageSrc = previewImageUrl || fallbackImg;
+
+    return (
+        <div className="cp-ownedStaticPreview" aria-hidden="true">
+            {imageSrc ? (
+                <img
+                    src={imageSrc}
+                    alt=""
+                    className="cp-ownedStaticPreviewImg"
+                />
+            ) : (
+                <div className="cp-ownedStaticPreviewFallback">{statusLabel}</div>
+            )}
+        </div>
     );
 }
 
@@ -279,6 +333,8 @@ function formatOwnedTitle(card) {
 }
 
 export default function PurchasedProductCard({ card, onOpenDetails }) {
+    const isCompactPreviewMode = useCompactPreviewMode();
+
     const productKey = safeTrim(card?.productKey).toLowerCase();
     const variant = safeTrim(card?.variantRaw || card?.preview?.variant || "white").toLowerCase();
 
@@ -318,13 +374,21 @@ export default function PurchasedProductCard({ card, onOpenDetails }) {
                 </span>
 
                 <div className="cp-catalogPreview3D cp-ownedPreview3D">
-                    {renderOwnedPreview({
-                        productKey,
-                        variant,
-                        card,
-                        resolvedLogoSrc,
-                        resolvedQrSrc,
-                    })}
+                    {isCompactPreviewMode ? (
+                        <StaticOwnedPreview
+                            card={card}
+                            productKey={productKey}
+                            statusLabel={statusLabel}
+                        />
+                    ) : (
+                        renderOwnedPreview({
+                            productKey,
+                            variant,
+                            card,
+                            resolvedLogoSrc,
+                            resolvedQrSrc,
+                        })
+                    )}
                 </div>
             </div>
 
