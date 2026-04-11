@@ -12,7 +12,7 @@
     --upg-navy-soft: #111c42;
     --upg-shadow: 0 1px 0 rgba(15, 23, 42, 0.04), 0 10px 22px rgba(15, 23, 42, 0.04);
     --upg-shadow-lg: 0 20px 48px rgba(15, 23, 42, 0.12);
-    --upg-shadow-accent: 0 16px 34px rgba(249, 115, 22, 0.22);
+    --upg-shadow-accent: 0 18px 40px rgba(249, 115, 22, 0.22);
     --upg-radius-xl: 28px;
     --upg-radius-lg: 24px;
     --upg-radius-md: 18px;
@@ -127,7 +127,7 @@
 
 .upg-heroCard {
     display: grid;
-    grid-template-columns: minmax(0, 1.2fr) minmax(320px, 420px);
+    grid-template-columns: minmax(0, 1.22fr) minmax(320px, 420px);
     gap: 32px;
     align-items: stretch;
     padding: var(--sp-6);
@@ -203,7 +203,7 @@
 }
 
 .upg-heroText {
-    margin: var(--sp-4) 0 0;
+    margin: 12px 0 0;
     width: 100%;
     max-width: 72ch;
     font-family: "Inter", sans-serif;
@@ -260,9 +260,9 @@
     min-height: 100%;
     padding: 26px;
     border-radius: 22px;
-    border: 1px solid rgba(15, 23, 42, 0.08);
-    background: linear-gradient(180deg, #fff8f3 0%, #ffffff 100%);
-    box-shadow: var(--upg-shadow);
+    border: 1px solid rgba(249, 115, 22, 0.24);
+    background: linear-gradient(135deg, #f97316 0%, #fb923c 100%);
+    box-shadow: var(--upg-shadow-accent);
     display: flex;
     flex-direction: column;
     justify-content: space-between;
@@ -279,12 +279,13 @@
     min-height: 28px;
     padding: 0 10px;
     border-radius: 999px;
-    background: rgba(249, 115, 22, 0.1);
-    color: #c2410c;
+    background: rgba(255, 255, 255, 0.18);
+    color: #ffffff;
     font-family: "Inter", sans-serif;
     font-size: 12px;
     line-height: 1;
     font-weight: 800;
+    border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
 .upg-billingCardTitle {
@@ -294,7 +295,7 @@
     line-height: 1.06;
     font-weight: 400;
     letter-spacing: -0.02em;
-    color: var(--upg-ink);
+    color: #ffffff;
 }
 
 .upg-billingCardText {
@@ -302,8 +303,8 @@
     font-family: "Inter", sans-serif;
     font-size: 14px;
     line-height: 1.65;
-    font-weight: 500;
-    color: var(--upg-muted);
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.94);
 }
 
 .upg-billingCardActions {
@@ -345,7 +346,7 @@
 }
 
 .upg-mainSub {
-    margin: var(--sp-2) 0 0;
+    margin: 12px 0 0;
     font-family: "Inter", sans-serif;
     font-size: 14px;
     line-height: 1.65;
@@ -481,6 +482,11 @@
     display: flex;
     flex-direction: column;
     overflow: hidden;
+}
+
+.upg-planCard--basic,
+.upg-planCard--extra {
+    background: linear-gradient(180deg, #ffffff 0%, #fcfdff 100%);
 }
 
 .upg-planCard--featured {
@@ -815,14 +821,14 @@
 }
 
 .upg-btn--dark {
-    border: 1px solid transparent;
-    background: var(--upg-navy);
+    border: 1px solid rgba(255, 255, 255, 0.22);
+    background: rgba(11, 22, 53, 0.9);
     color: #ffffff;
-    box-shadow: 0 12px 24px rgba(11, 22, 53, 0.14);
+    box-shadow: 0 12px 24px rgba(11, 22, 53, 0.18);
 }
 
 .upg-btn--dark:hover {
-    background: var(--upg-navy-soft);
+    background: #07122c;
 }
 
 .upg-miniIcon {

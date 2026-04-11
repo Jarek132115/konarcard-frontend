@@ -82,12 +82,6 @@ function formatDate(d) {
     });
 }
 
-function planRank(plan) {
-    if (plan === "teams") return 2;
-    if (plan === "plus") return 1;
-    return 0;
-}
-
 function fmtGBP(n) {
     const num = Number(n);
     if (!Number.isFinite(num)) return "—";
@@ -95,9 +89,9 @@ function fmtGBP(n) {
 }
 
 function normalizePlanLabel(plan) {
-    if (plan === "teams") return "Teams";
     if (plan === "plus") return "Plus";
-    return "Free";
+    if (plan === "teams") return "Extra Profile";
+    return "Basic Plan";
 }
 
 const centerTrim = (v) => (v ?? "").toString().trim();
@@ -244,6 +238,8 @@ function PlanCard({ plan, currentPlan, loadingKey }) {
                 "upg-planCard",
                 featured ? "upg-planCard--featured" : "",
                 current ? "upg-planCard--current" : "",
+                plan.key === "free" ? "upg-planCard--basic" : "",
+                plan.key === "teams" ? "upg-planCard--extra" : "",
             ]
                 .filter(Boolean)
                 .join(" ")}
@@ -261,8 +257,7 @@ function PlanCard({ plan, currentPlan, loadingKey }) {
 
                     {current ? (
                         <div
-                            className={`upg-planCurrentBadge ${featured ? "upg-planCurrentBadge--featured" : ""
-                                }`}
+                            className={`upg-planCurrentBadge ${featured ? "upg-planCurrentBadge--featured" : ""}`}
                         >
                             Current plan
                         </div>
@@ -436,7 +431,10 @@ export default function UpgradePlan() {
         };
     }, []);
 
-    const plusDisplayPrice = billing === "monthly" ? PRICES.plus.monthly.perMonth : PRICES.plus.yearly.billedTotal;
+    const plusDisplayPrice =
+        billing === "monthly"
+            ? PRICES.plus.monthly.perMonth
+            : PRICES.plus.yearly.billedTotal;
 
     const plusDisplayCadence = billing === "monthly" ? "per month" : "per year";
 
@@ -520,23 +518,25 @@ export default function UpgradePlan() {
     const isActive = !!subState?.active;
     const currentPeriodEnd = subState?.currentPeriodEnd ? new Date(subState.currentPeriodEnd) : null;
 
-    const hasFutureAccess =
-        !!currentPeriodEnd &&
-        !Number.isNaN(currentPeriodEnd.getTime()) &&
-        currentPeriodEnd.getTime() > Date.now();
+    const hasCurrentPeriodDate =
+        !!currentPeriodEnd && !Number.isNaN(currentPeriodEnd.getTime());
 
-    const activeUntilLabel = hasFutureAccess ? formatDate(currentPeriodEnd) : "";
+    const hasFutureAccess =
+        hasCurrentPeriodDate && currentPeriodEnd.getTime() > Date.now();
+
+    const renewalDateLabel = hasCurrentPeriodDate ? formatDate(currentPeriodEnd) : "";
+    const activeUntilLabel = renewalDateLabel;
 
     const planStatusLine = useMemo(() => {
         if (!isLoggedIn()) return "";
         if (!subState) return "";
-        if (currentPlan === "free" && !isActive) return "You’re currently on the Free plan.";
-        if (hasFutureAccess) {
-            return `Your ${normalizePlanLabel(currentPlan)} plan is active until ${activeUntilLabel}.`;
+        if (currentPlan === "free" && !isActive) return "You’re currently on the Basic Plan.";
+        if (renewalDateLabel) {
+            return `Your ${normalizePlanLabel(currentPlan)} is active until ${renewalDateLabel}.`;
         }
-        if (isActive) return `Your ${normalizePlanLabel(currentPlan)} plan is active.`;
+        if (isActive) return `Your ${normalizePlanLabel(currentPlan)} is active.`;
         return "No active paid subscription found.";
-    }, [subState, currentPlan, isActive, hasFutureAccess, activeUntilLabel]);
+    }, [subState, currentPlan, isActive, renewalDateLabel]);
 
     const saveCheckoutIntent = (planKey) => {
         try {
@@ -661,14 +661,28 @@ export default function UpgradePlan() {
         }
     };
 
+    const goToProfilesPage = () => {
+        window.location.href = "/profiles";
+    };
+
     const getPlanButton = (planName, planKeyForPaid) => {
         const logged = isLoggedIn();
+
+        if (planName === "teams") {
+            return {
+                type: "button",
+                label: "+ Add extra profile",
+                onClick: goToProfilesPage,
+                disabled: false,
+                helper: "You’ll be taken to Profiles to claim another public link.",
+            };
+        }
 
         if (!logged) {
             if (planName === "free") {
                 return {
                     type: "link",
-                    label: "Start free",
+                    label: "Start basic plan",
                     to: "/register",
                     disabled: false,
                     helper: "",
@@ -677,7 +691,7 @@ export default function UpgradePlan() {
 
             return {
                 type: "button",
-                label: planName === "plus" ? "Upgrade to Plus" : "Start Teams",
+                label: "Upgrade to Plus",
                 onClick: () => startSubscription(planKeyForPaid),
                 disabled: !!loadingKey,
                 helper: "",
@@ -685,7 +699,7 @@ export default function UpgradePlan() {
         }
 
         const current = currentPlan;
-        const stillHasPaidAccess = current !== "free" && (isActive || hasFutureAccess);
+        const stillHasPaidAccess = current !== "free" && (isActive || hasFutureAccess || hasCurrentPeriodDate);
 
         if (planName === current && stillHasPaidAccess) {
             return {
@@ -693,7 +707,7 @@ export default function UpgradePlan() {
                 label: "Active",
                 onClick: null,
                 disabled: true,
-                helper: hasFutureAccess ? `Active until ${activeUntilLabel}` : "",
+                helper: renewalDateLabel ? `Active until ${renewalDateLabel}` : "",
             };
         }
 
@@ -704,8 +718,8 @@ export default function UpgradePlan() {
                     label: "Downgrade",
                     onClick: openBillingPortal,
                     disabled: !!loadingKey || subLoading,
-                    helper: hasFutureAccess
-                        ? `Paid access remains until ${activeUntilLabel}`
+                    helper: renewalDateLabel
+                        ? `Paid access remains until ${renewalDateLabel}`
                         : "Manage downgrade in billing",
                 };
             }
@@ -722,32 +736,9 @@ export default function UpgradePlan() {
 
             return {
                 type: "button",
-                label: "Choose Free",
+                label: "Choose basic plan",
                 onClick: openBillingPortal,
                 disabled: false,
-                helper: "",
-            };
-        }
-
-        const isUpgrade = planRank(planName) > planRank(current);
-        const isDowngrade = planRank(planName) < planRank(current);
-
-        if (isDowngrade) {
-            return {
-                type: "button",
-                label: "Downgrade",
-                onClick: openBillingPortal,
-                disabled: !!loadingKey || subLoading,
-                helper: hasFutureAccess ? `Current plan active until ${activeUntilLabel}` : "",
-            };
-        }
-
-        if (isUpgrade && current !== "free" && stillHasPaidAccess) {
-            return {
-                type: "button",
-                label: "Upgrade",
-                onClick: openBillingPortal,
-                disabled: !!loadingKey || subLoading,
                 helper: "",
             };
         }
@@ -763,21 +754,23 @@ export default function UpgradePlan() {
 
     const planCards = useMemo(() => {
         const plusKey = billing === "monthly" ? "plus-monthly" : "plus-yearly";
-        const teamsKey = "teams-monthly";
-        const teamsExample3Profiles = 5 + 2 + 2;
+        const extraProfileExample3 = 5 + 2 + 2;
 
         return [
             {
                 key: "free",
-                title: "Free",
+                title: "Basic Plan",
                 description:
-                    "A simple way to get started and share a professional KonarCard profile.",
+                    "A clean starter option for getting online, looking professional, and sharing your profile.",
                 icon: FreePlanIcon,
                 tag: "Start here",
                 featured: false,
                 price: "£0",
                 cadence: "No monthly fees",
-                meta: ["Perfect for trying KonarCard", "Upgrade later when you need more control"],
+                meta: [
+                    "Perfect for getting started",
+                    "Upgrade later when you want more design and analytics",
+                ],
                 highlights: [
                     "1 profile",
                     "1 template design",
@@ -793,15 +786,19 @@ export default function UpgradePlan() {
                 key: "plus",
                 title: "Plus",
                 description:
-                    "Best for professionals who want a stronger profile, more content, and full analytics.",
+                    "The full professional setup with stronger branding, more profile content, and full analytics.",
                 icon: PlusPlanIcon,
                 tag: "Most popular",
                 featured: true,
                 price: fmtGBP(plusDisplayPrice),
                 cadence: plusDisplayCadence,
                 meta: [
-                    billing === "monthly" ? "Billed monthly. Cancel anytime." : `Billed ${plusBilledLabel}.`,
-                    billing === "yearly" ? "Save with yearly billing and keep things simple." : null,
+                    billing === "monthly"
+                        ? "Billed monthly. Cancel anytime."
+                        : `Billed ${plusBilledLabel}.`,
+                    billing === "yearly"
+                        ? "Best value if you already know you want the full setup."
+                        : null,
                 ].filter(Boolean),
                 highlights: [
                     "1 profile",
@@ -816,28 +813,28 @@ export default function UpgradePlan() {
             },
             {
                 key: "teams",
-                title: "Teams",
+                title: "Extra Profile",
                 description:
-                    "For businesses managing multiple staff profiles under one account.",
+                    "Add another public profile when you want a separate service, person, brand, or location.",
                 icon: TeamsPlanIcon,
-                tag: "For growing teams",
+                tag: "Grow as needed",
                 featured: false,
-                price: "£5",
-                cadence: "/ month + £2 per extra profile",
+                price: "£2",
+                cadence: "per extra profile / month",
                 meta: [
-                    "Monthly billing only",
-                    `Example: 3 profiles = ${fmtGBP(teamsExample3Profiles)} / month`,
+                    "Only available with Plus",
+                    `Example: 3 profiles total = ${fmtGBP(extraProfileExample3)} / month`,
                 ],
                 highlights: [
-                    "Everything in Plus",
-                    "Multiple staff profiles",
-                    "£2 for each extra profile",
-                    "Manage profiles in one place",
-                    "Shared business setup",
-                    "Better team visibility as you grow",
+                    "Adds 1 more profile",
+                    "Separate public link",
+                    "Separate QR code",
+                    "Separate profile analytics",
+                    "Ideal for staff or extra services",
+                    "Managed from your Profiles page",
                 ],
-                button: getPlanButton("teams", teamsKey),
-                loadingMatch: teamsKey,
+                button: getPlanButton("teams"),
+                loadingMatch: "teams-extra-profile",
             },
         ];
         // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -849,17 +846,18 @@ export default function UpgradePlan() {
         currentPlan,
         isActive,
         hasFutureAccess,
-        activeUntilLabel,
+        hasCurrentPeriodDate,
+        renewalDateLabel,
         loadingKey,
         subLoading,
     ]);
 
     const currentPlanSummary =
         currentPlan === "teams"
-            ? "Built for teams managing multiple profiles from one account."
+            ? "You have Plus with extra profile access for managing more than one public profile."
             : currentPlan === "plus"
-                ? "Full templates, expanded limits, and the complete analytics view."
-                : "A free starter plan with limited profile content and limited analytics.";
+                ? "Full templates, expanded profile limits, and your full analytics dashboard."
+                : "A starter setup with limited profile content, one template, and basic analytics.";
 
     const handleOpenShareProfile = () => {
         if (!selectedProfile) {
@@ -1013,8 +1011,8 @@ export default function UpgradePlan() {
                         </h2>
 
                         <p className="upg-heroText">
-                            Start with a free profile, unlock the full professional experience with Plus,
-                            or move to Teams when you need multiple staff profiles under one setup.
+                            Start on the Basic Plan, unlock the full professional experience with Plus,
+                            and add extra profiles when you want separate links for people, services, or locations.
                         </p>
 
                         <div className="upg-heroStats">
@@ -1029,7 +1027,7 @@ export default function UpgradePlan() {
                             />
                             <FeatureStat
                                 label="Renews / access"
-                                value={activeUntilLabel || "No renewal date"}
+                                value={renewalDateLabel || "No renewal date"}
                             />
                         </div>
                     </div>
@@ -1073,7 +1071,7 @@ export default function UpgradePlan() {
                         <div className="upg-mainHeadCopy">
                             <h2 className="upg-mainTitle">Compare your options</h2>
                             <p className="upg-mainSub">
-                                Keep it simple with free, unlock more with Plus, or add profiles as your team grows.
+                                Keep it simple with the Basic Plan, unlock more with Plus, or add another profile when you need one.
                             </p>
                         </div>
 
@@ -1104,7 +1102,7 @@ export default function UpgradePlan() {
                             </Tabs.Root>
 
                             <div className="upg-billingNote">
-                                {billingNote} Teams always bills monthly by active profile count.
+                                {billingNote} Extra Profile always bills monthly as a £2 add-on per extra profile.
                             </div>
                         </div>
                     </div>
