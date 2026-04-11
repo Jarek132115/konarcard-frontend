@@ -511,6 +511,8 @@ export default function AdminOrders() {
     const [orderSearch, setOrderSearch] = useState("");
     const [fulfillmentStatus, setFulfillmentStatus] = useState("");
     const [edit, setEdit] = useState({});
+    const [savingTrackingId, setSavingTrackingId] = useState("");
+    const [savingStatusId, setSavingStatusId] = useState("");
 
     const selectedOrderId = searchParams.get("selected") || "";
 
@@ -569,10 +571,15 @@ export default function AdminOrders() {
     }
 
     async function saveTracking(order) {
-        const buffer = edit[order._id] || {};
+        const orderId = cleanString(order?._id);
+        if (!orderId) return;
+
+        const buffer = edit[orderId] || {};
 
         try {
-            await api.patch(`/api/admin/orders/${order._id}/tracking`, {
+            setSavingTrackingId(orderId);
+
+            await api.patch(`/api/admin/orders/${orderId}/tracking`, {
                 trackingUrl: buffer.trackingUrl || "",
                 trackingCode: buffer.trackingCode || "",
                 deliveryWindow: buffer.deliveryWindow || "",
@@ -583,14 +590,21 @@ export default function AdminOrders() {
             await loadOrders();
         } catch (e) {
             toast.error(e?.response?.data?.error || "Failed to update tracking");
+        } finally {
+            setSavingTrackingId("");
         }
     }
 
     async function saveStatus(order) {
-        const buffer = edit[order._id] || {};
+        const orderId = cleanString(order?._id);
+        if (!orderId) return;
+
+        const buffer = edit[orderId] || {};
 
         try {
-            await api.patch(`/api/admin/orders/${order._id}/status`, {
+            setSavingStatusId(orderId);
+
+            await api.patch(`/api/admin/orders/${orderId}/status`, {
                 fulfillmentStatus: buffer.fulfillmentStatus || "order_placed",
                 notify: !!buffer.notifyStatus,
             });
@@ -599,6 +613,8 @@ export default function AdminOrders() {
             await loadOrders();
         } catch (e) {
             toast.error(e?.response?.data?.error || "Failed to update status");
+        } finally {
+            setSavingStatusId("");
         }
     }
 
@@ -847,6 +863,10 @@ export default function AdminOrders() {
                                             value={selectedOrder.deliveryWindow || "—"}
                                         />
                                         <InfoRow
+                                            label="Delivery name"
+                                            value={selectedOrder.deliveryName || "—"}
+                                        />
+                                        <InfoRow
                                             label="Address"
                                             value={selectedOrder.deliveryAddress || "—"}
                                             full
@@ -1030,6 +1050,32 @@ export default function AdminOrders() {
                                             <Btn
                                                 tone="ghost"
                                                 onClick={() =>
+                                                    copyText(
+                                                        selectedOrder.deliveryAddress,
+                                                        "Delivery address copied"
+                                                    )
+                                                }
+                                                disabled={!selectedOrder.deliveryAddress}
+                                            >
+                                                Copy address
+                                            </Btn>
+
+                                            <Btn
+                                                tone="ghost"
+                                                onClick={() =>
+                                                    copyText(
+                                                        selectedOrder.trackingCode,
+                                                        "Tracking code copied"
+                                                    )
+                                                }
+                                                disabled={!selectedOrder.trackingCode}
+                                            >
+                                                Copy tracking code
+                                            </Btn>
+
+                                            <Btn
+                                                tone="ghost"
+                                                onClick={() =>
                                                     navigate(
                                                         `/admin/users?selected=${selectedOrder.userId ||
                                                         selectedOrder.user?._id
@@ -1106,8 +1152,11 @@ export default function AdminOrders() {
                                             <Btn
                                                 tone="primary"
                                                 onClick={() => saveTracking(selectedOrder)}
+                                                disabled={savingTrackingId === selectedOrder._id}
                                             >
-                                                Save tracking
+                                                {savingTrackingId === selectedOrder._id
+                                                    ? "Saving..."
+                                                    : "Save tracking"}
                                             </Btn>
                                         </div>
                                     </div>
@@ -1156,8 +1205,11 @@ export default function AdminOrders() {
                                             <Btn
                                                 tone="orange"
                                                 onClick={() => saveStatus(selectedOrder)}
+                                                disabled={savingStatusId === selectedOrder._id}
                                             >
-                                                Save status
+                                                {savingStatusId === selectedOrder._id
+                                                    ? "Saving..."
+                                                    : "Save status"}
                                             </Btn>
                                         </div>
                                     </div>
