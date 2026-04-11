@@ -5,7 +5,6 @@
   --hc5-border-strong: rgba(15, 23, 42, 0.14);
   --hc5-surface: #ffffff;
   --hc5-surface-soft: #f8fafc;
-  --hc5-surface-tint: linear-gradient(135deg, rgba(249, 115, 22, 0.06), rgba(15, 23, 42, 0.02));
   --hc5-orange: #f97316;
   --hc5-orange-dark: #ea580c;
   --hc5-orange-soft: rgba(249, 115, 22, 0.1);
@@ -36,8 +35,8 @@
   gap: 32px;
   align-items: stretch;
   padding: var(--sp-6);
-  background: var(--hc5-surface-tint), var(--hc5-surface);
-  border: 1px solid rgba(249, 115, 22, 0.12);
+  background: #ffffff;
+  border: 1px solid var(--hc5-border);
   border-radius: var(--hc5-radius-xl);
   box-shadow: var(--hc5-shadow);
   min-width: 0;
@@ -90,7 +89,8 @@
 
 .hc5-heroTitle {
   margin: 0;
-  max-width: 14ch;
+  max-width: none;
+  width: 100%;
   font-family: "Cal Sans", sans-serif;
   font-size: 28px;
   font-weight: 400;
@@ -103,6 +103,7 @@
 .hc5-heroText {
   margin: var(--sp-4) 0 0;
   max-width: none;
+  width: 100%;
   font-family: "Inter", sans-serif;
   font-size: 14px;
   line-height: 1.65;
@@ -162,8 +163,8 @@
   min-height: 100%;
   padding: 24px;
   border-radius: 22px;
-  border: 1px solid var(--hc5-border);
-  background: rgba(255, 255, 255, 0.92);
+  border: 0;
+  background: var(--hc5-orange);
   box-shadow: var(--hc5-shadow-lg);
   display: flex;
   flex-direction: column;
@@ -177,9 +178,9 @@
   border-radius: 16px;
   display: grid;
   place-items: center;
-  background: var(--hc5-surface-soft);
-  border: 1px solid var(--hc5-border);
-  color: var(--hc5-ink);
+  background: rgba(255, 255, 255, 0.16);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  color: #ffffff;
 }
 
 .hc5-liveBtnIconSvg {
@@ -191,10 +192,11 @@
 .hc5-supportCopy h3 {
   margin: 0;
   font-family: "Cal Sans", sans-serif;
-  font-size: 18px;
+  font-size: 28px;
   font-weight: 400;
   letter-spacing: -0.02em;
-  color: var(--hc5-ink);
+  line-height: 1.04;
+  color: #ffffff;
 }
 
 .hc5-supportCopy p {
@@ -203,14 +205,14 @@
   font-size: 14px;
   font-weight: 500;
   line-height: 1.6;
-  color: var(--hc5-muted);
+  color: rgba(255, 255, 255, 0.92);
 }
 
 .hc5-liveBtn {
   appearance: none;
-  border: 0;
-  background: var(--hc5-navy);
-  color: #ffffff;
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  background: #ffffff;
+  color: var(--hc5-orange-dark);
   min-height: 46px;
   border-radius: 14px;
   padding: 0 18px;
@@ -220,7 +222,7 @@
   gap: 10px;
   font-family: "Inter", sans-serif;
   font-size: 14px;
-  font-weight: 700;
+  font-weight: 800;
   line-height: 1;
   cursor: pointer;
   transition: transform 0.12s ease, box-shadow 0.16s ease, background-color 0.16s ease;
@@ -228,7 +230,7 @@
 
 .hc5-liveBtn:hover {
   transform: translateY(-1px);
-  box-shadow: 0 12px 24px rgba(11, 22, 53, 0.18);
+  box-shadow: 0 12px 24px rgba(15, 23, 42, 0.12);
 }
 
 .hc5-liveBtn:active {
@@ -239,7 +241,7 @@
   width: 16px;
   height: 16px;
   display: block;
-  filter: brightness(0) saturate(100%) invert(100%) sepia(1%) saturate(0%) hue-rotate(294deg) brightness(104%) contrast(100%);
+  filter: brightness(0) saturate(100%) invert(47%) sepia(86%) saturate(1273%) hue-rotate(353deg) brightness(100%) contrast(96%);
 }
 
 /* RESULTS */
@@ -387,9 +389,9 @@
 .hc5-cardTitle {
   margin: 0;
   font-family: "Cal Sans", sans-serif;
-  font-size: 17px;
+  font-size: 24px;
   font-weight: 400;
-  line-height: 1.08;
+  line-height: 1.04;
   letter-spacing: -0.02em;
   color: var(--hc5-ink);
   text-wrap: balance;
@@ -448,11 +450,8 @@
   margin-left: 1px;
 }
 
-/* DESKTOP ALTERNATING LAYOUT
-   First row both images left
-   Second row both images right
-   Third row both images left
-*/
+/* DESKTOP ALTERNATING LAYOUT */
+
 @media (min-width: 1025px) {
 
   .hc5-card:nth-child(4n + 1) .hc5-cardMedia,
@@ -560,11 +559,8 @@
   background: #000000;
 }
 
-/* TABLET
-   One per row
-   Alternate each card individually
-   Keep tablet layout down to iPad mini width
-*/
+/* TABLET */
+
 @media (max-width: 1024px) {
   .hc5-heroCard {
     grid-template-columns: 1fr;
@@ -609,6 +605,7 @@
 }
 
 /* SMALL TABLET / IPAD MINI PORTRAIT */
+
 @media (max-width: 768px) {
   .hc5-shell {
     gap: var(--sp-3);
@@ -631,6 +628,14 @@
     padding: 20px;
   }
 
+  .hc5-supportCopy h3 {
+    font-size: 24px;
+  }
+
+  .hc5-cardTitle {
+    font-size: 21px;
+  }
+
   .hc5-searchWrap {
     max-width: none;
   }
@@ -640,10 +645,8 @@
   }
 }
 
-/* MOBILE
-   Cards become column
-   Image always on top
-*/
+/* MOBILE */
+
 @media (max-width: 640px) {
   .hc5-heroCard {
     padding: var(--sp-5);
@@ -689,7 +692,7 @@
   }
 
   .hc5-cardTitle {
-    font-size: 18px;
+    font-size: 20px;
   }
 
   .hc5-watchBtn {
@@ -725,11 +728,19 @@
     padding: 18px;
   }
 
+  .hc5-supportCopy h3 {
+    font-size: 22px;
+  }
+
   .hc5-card {
     padding: 12px;
   }
 
   .hc5-cardMedia {
     border-radius: 16px;
+  }
+
+  .hc5-cardTitle {
+    font-size: 18px;
   }
 }
