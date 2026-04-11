@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { toast } from "react-hot-toast";
-import { motion, AnimatePresence } from "motion/react";
+import { motion } from "motion/react";
 
 import DashboardLayout from "../../components/Dashboard/DashboardLayout";
 import PageHeader from "../../components/Dashboard/PageHeader";
@@ -68,58 +68,47 @@ const fmtMoneyFromMinor = (minorAmount, currency) => {
 
 const pick = (v, fallback = "—") => (v == null || v === "" ? fallback : String(v));
 
-const pageReveal = {
-    initial: { opacity: 0, y: 10 },
-    animate: { opacity: 1, y: 0 },
-    transition: { duration: 0.28, ease: "easeOut" },
-};
+function initialsFromName(name, email) {
+    const raw = centerTrim(name) || centerTrim(email) || "U";
+    const parts = raw.split(/\s+/).filter(Boolean);
+    if (parts.length >= 2) {
+        return `${parts[0][0] || ""}${parts[1][0] || ""}`.toUpperCase();
+    }
+    return (parts[0]?.slice(0, 2) || "U").toUpperCase();
+}
 
-const cardReveal = {
-    initial: { opacity: 0, y: 14 },
-    animate: { opacity: 1, y: 0 },
-    transition: { duration: 0.28, ease: "easeOut" },
-};
+function statusTone(status) {
+    const value = safeLower(status);
+    if (["active", "paid", "succeeded"].includes(value)) return "success";
+    if (["trialing", "processing"].includes(value)) return "info";
+    if (["past_due", "requires_payment_method"].includes(value)) return "warn";
+    if (["failed", "canceled", "cancelled", "uncollectible", "void"].includes(value)) return "danger";
+    return "neutral";
+}
 
-function SectionCard({ className = "", children }) {
+function planTone(plan) {
+    const value = safeLower(plan);
+    if (value === "plus") return "plus";
+    if (value === "teams") return "teams";
+    return "free";
+}
+
+function getPlanLabel(plan) {
+    const value = centerTrim(plan);
+    if (!value) return "Free";
+    return value.charAt(0).toUpperCase() + value.slice(1).toLowerCase();
+}
+
+function SectionShell({ children, delay = 0 }) {
     return (
         <motion.section
-            {...cardReveal}
-            className={`stg-card ${className}`.trim()}
+            className="stg-card"
+            initial={{ opacity: 0, y: 16 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.32, ease: "easeOut", delay }}
         >
             {children}
         </motion.section>
-    );
-}
-
-function CardHead({ title, text, pill }) {
-    return (
-        <div className="stg-cardHead">
-            <div className="stg-cardHeadLeft">
-                <h2 className="stg-cardTitle">{title}</h2>
-                {text ? <p className="stg-cardText">{text}</p> : null}
-            </div>
-            {pill ? pill : null}
-        </div>
-    );
-}
-
-function StatBox({ label, value, loading = false }) {
-    return (
-        <div className="stg-stat">
-            <div className="stg-statK">{label}</div>
-            <div className="stg-statV">
-                {loading ? <span className="stg-skelText w64" /> : value}
-            </div>
-        </div>
-    );
-}
-
-function EmptyState({ title, text }) {
-    return (
-        <div className="stg-emptyRow">
-            <div className="stg-sectionTitle">{title}</div>
-            <div className="stg-sectionText">{text}</div>
-        </div>
     );
 }
 
@@ -277,6 +266,7 @@ export default function Settings() {
     const subscriptionStatus = summary?.subscriptionStatus || "free";
     const currentPeriodEnd = summary?.currentPeriodEnd || null;
 
+    const displayPlanLabel = getPlanLabel(plan);
     const isBusy = authLoading || loading;
     const hasError = Boolean(loadErr);
 
@@ -423,14 +413,12 @@ export default function Settings() {
         toast("Google Wallet is coming soon.");
     };
 
-    const displayPlanUpper = String(plan || "free").toUpperCase();
-
     return (
         <DashboardLayout hideDesktopHeader>
-            <motion.div className="stg-shell" {...pageReveal}>
+            <div className="stg-shell">
                 <PageHeader
                     title="Settings"
-                    subtitle="Manage your account, billing, invoices and payment history."
+                    subtitle="Manage your account, subscription, invoices, and payment history."
                     onShareClick={handleOpenShareProfile}
                     shareDisabled={!selectedProfile}
                 />
@@ -452,50 +440,49 @@ export default function Settings() {
                     onGoogleWallet={handleGoogleWallet}
                 />
 
-                <AnimatePresence initial={false}>
-                    {hasError ? (
-                        <motion.div
-                            key="settings-error"
-                            initial={{ opacity: 0, y: -8 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            exit={{ opacity: 0, y: -8 }}
-                            transition={{ duration: 0.2 }}
-                            className="stg-banner stg-banner--danger"
-                        >
-                            <div className="stg-bannerCopy">
-                                <div className="stg-sectionTitle">Couldn’t load your settings</div>
-                                <div className="stg-sectionText">
-                                    {pick(loadErr, "Please try again.")}
-                                </div>
+                {hasError ? (
+                    <motion.div
+                        className="stg-banner stg-banner--danger"
+                        initial={{ opacity: 0, y: 12 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.25, ease: "easeOut" }}
+                    >
+                        <div className="stg-bannerCopy">
+                            <div className="stg-sectionTitle">Couldn’t load your settings</div>
+                            <div className="stg-sectionText">
+                                {pick(loadErr, "Please try again.")}
                             </div>
+                        </div>
 
-                            <button
-                                type="button"
-                                className="kx-btn kx-btn--black"
-                                onClick={retryAll}
-                                disabled={isBusy}
-                            >
-                                Retry
-                            </button>
-                        </motion.div>
-                    ) : null}
-                </AnimatePresence>
+                        <button
+                            type="button"
+                            className="kx-btn kx-btn--black"
+                            onClick={retryAll}
+                            disabled={isBusy}
+                        >
+                            Retry
+                        </button>
+                    </motion.div>
+                ) : null}
 
                 <div className="stg-grid">
-                    <SectionCard>
-                        <CardHead
-                            title="Account"
-                            text="Your login method determines which account details can be edited."
-                            pill={
-                                <span className="stg-pill">
-                                    Login: <strong>{isBusy ? "…" : isGoogle ? "GOOGLE" : "EMAIL"}</strong>
-                                </span>
-                            }
-                        />
+                    <SectionShell delay={0.02}>
+                        <div className="stg-cardHead">
+                            <div className="stg-cardHeadLeft">
+                                <h2 className="stg-cardTitle">Account</h2>
+                                <p className="stg-cardText">
+                                    Your identity, sign-in provider, and account information.
+                                </p>
+                            </div>
+
+                            <span className="stg-chip stg-chip--soft">
+                                {isBusy ? "Loading" : `Login: ${isGoogle ? "Google" : "Email"}`}
+                            </span>
+                        </div>
 
                         <div className="stg-cardBody">
-                            <div className="stg-accountHero">
-                                <div className="stg-accountRow">
+                            <div className="stg-heroAccount">
+                                <div className="stg-heroAccountLeft">
                                     <div className="stg-avatar">
                                         {accountAvatar && !isBusy ? (
                                             <img src={accountAvatar} alt="Avatar" />
@@ -503,39 +490,43 @@ export default function Settings() {
                                             <div
                                                 className={`stg-avatarFallback ${isBusy ? "stg-skelBlock" : ""}`}
                                             >
-                                                {!isBusy
-                                                    ? (accountName || "U").trim().charAt(0).toUpperCase()
-                                                    : ""}
+                                                {!isBusy ? initialsFromName(accountName, accountEmail) : ""}
                                             </div>
                                         )}
                                     </div>
 
-                                    <div className="stg-accountMeta">
-                                        <div className="stg-accountName">
+                                    <div className="stg-heroIdentity">
+                                        <div className="stg-heroName">
                                             {isBusy ? <span className="stg-skelText w52" /> : accountName}
                                         </div>
                                         <div
-                                            className="stg-accountEmail"
+                                            className="stg-heroEmail"
                                             title={!isBusy ? accountEmail : undefined}
                                         >
                                             {isBusy ? <span className="stg-skelText w72" /> : accountEmail}
                                         </div>
                                     </div>
                                 </div>
+
+                                <div className="stg-heroAccountRight">
+                                    <span className={`stg-chip stg-chip--plan stg-chip--${planTone(plan)}`}>
+                                        {isBusy ? "…" : displayPlanLabel}
+                                    </span>
+                                </div>
                             </div>
 
-                            <div className="stg-fields2">
-                                <div className="stg-field">
-                                    <div className="stg-k">Name</div>
-                                    <div className={`stg-vBox ${isBusy ? "stg-skelLine" : ""}`}>
+                            <div className="stg-infoGrid">
+                                <div className="stg-infoCard">
+                                    <div className="stg-infoLabel">Full name</div>
+                                    <div className={`stg-infoValue ${isBusy ? "stg-skelLine" : ""}`}>
                                         {isBusy ? "" : accountName}
                                     </div>
                                 </div>
 
-                                <div className="stg-field">
-                                    <div className="stg-k">Email</div>
+                                <div className="stg-infoCard">
+                                    <div className="stg-infoLabel">Email address</div>
                                     <div
-                                        className={`stg-vBox stg-vBox--singleLine ${isBusy ? "stg-skelLine" : ""}`}
+                                        className={`stg-infoValue stg-infoValue--single ${isBusy ? "stg-skelLine" : ""}`}
                                         title={!isBusy ? accountEmail : undefined}
                                     >
                                         {isBusy ? "" : accountEmail}
@@ -543,12 +534,19 @@ export default function Settings() {
                                 </div>
                             </div>
 
-                            {isGoogle && !isBusy ? (
-                                <div className="stg-hint stg-hint--info">
-                                    This account is managed by Google. Profile and password changes
-                                    should be made through your Google account.
-                                </div>
-                            ) : null}
+                            <div className="stg-inlineNote">
+                                {isGoogle && !isBusy ? (
+                                    <>
+                                        This account is connected through <strong>Google</strong>. Profile and password
+                                        changes should be managed through your Google account.
+                                    </>
+                                ) : (
+                                    <>
+                                        Keep your account information up to date so billing and support communications
+                                        always reach you correctly.
+                                    </>
+                                )}
+                            </div>
 
                             {!isGoogle ? (
                                 <div className="stg-actions">
@@ -567,48 +565,68 @@ export default function Settings() {
                                         disabled={isBusy}
                                         onClick={handleDeleteAccount}
                                     >
-                                        Delete My Account
+                                        Delete Account
                                     </button>
                                 </div>
                             ) : null}
                         </div>
-                    </SectionCard>
+                    </SectionShell>
 
-                    <SectionCard>
-                        <CardHead
-                            title="Billing"
-                            text="Subscription status, plan interval and renewal information."
-                            pill={
-                                <span className="stg-pill">
-                                    Plan: <strong>{displayPlanUpper}</strong>
-                                </span>
-                            }
-                        />
+                    <SectionShell delay={0.06}>
+                        <div className="stg-cardHead">
+                            <div className="stg-cardHeadLeft">
+                                <h2 className="stg-cardTitle">Billing</h2>
+                                <p className="stg-cardText">
+                                    Subscription state, billing cadence, and renewal information.
+                                </p>
+                            </div>
+
+                            <span className={`stg-chip stg-chip--plan stg-chip--${planTone(plan)}`}>
+                                {isBusy ? "…" : `Plan: ${displayPlanLabel}`}
+                            </span>
+                        </div>
 
                         <div className="stg-cardBody">
                             <div className="stg-stats3">
-                                <StatBox
-                                    label="Status"
-                                    value={pick(subscriptionStatus)}
-                                    loading={isBusy}
-                                />
-                                <StatBox
-                                    label="Interval"
-                                    value={pick(planInterval)}
-                                    loading={isBusy}
-                                />
-                                <StatBox
-                                    label="Renews"
-                                    value={currentPeriodEnd ? fmtDate(currentPeriodEnd) : "—"}
-                                    loading={isBusy}
-                                />
+                                <div className="stg-stat">
+                                    <div className="stg-statK">Status</div>
+                                    <div className="stg-statV">
+                                        {isBusy ? (
+                                            <span className="stg-skelText w70" />
+                                        ) : (
+                                            <span className={`stg-statBadge stg-statBadge--${statusTone(subscriptionStatus)}`}>
+                                                {pick(subscriptionStatus)}
+                                            </span>
+                                        )}
+                                    </div>
+                                </div>
+
+                                <div className="stg-stat">
+                                    <div className="stg-statK">Interval</div>
+                                    <div className="stg-statV">
+                                        {isBusy ? <span className="stg-skelText w60" /> : pick(planInterval)}
+                                    </div>
+                                </div>
+
+                                <div className="stg-stat">
+                                    <div className="stg-statK">Renews</div>
+                                    <div className="stg-statV">
+                                        {isBusy ? (
+                                            <span className="stg-skelText w64" />
+                                        ) : currentPeriodEnd ? (
+                                            fmtDate(currentPeriodEnd)
+                                        ) : (
+                                            "—"
+                                        )}
+                                    </div>
+                                </div>
                             </div>
 
-                            <div className="stg-billingBox">
-                                <div className="stg-billingBoxCopy">
+                            <div className="stg-billingHero">
+                                <div className="stg-billingHeroCopy">
                                     <h3 className="stg-subTitle">Manage your subscription</h3>
                                     <p className="stg-subText">
-                                        Update your card, review invoices, change plans, or cancel from the billing portal.
+                                        Update your card, view invoices, change plans, or cancel anytime through the Stripe billing portal.
                                     </p>
                                 </div>
 
@@ -633,166 +651,182 @@ export default function Settings() {
                                 </div>
                             </div>
 
-                            <div className="stg-hint">
-                                Use <strong>Manage Billing</strong> to update payment method, view invoices, or cancel your subscription.
+                            <div className="stg-minorText">
+                                Your payment method, invoices, and subscription controls are handled securely through Stripe.
                             </div>
                         </div>
-                    </SectionCard>
+                    </SectionShell>
 
-                    <SectionCard>
-                        <CardHead
-                            title="Invoices"
-                            text="Subscription invoices and receipts."
-                        />
+                    <SectionShell delay={0.1}>
+                        <div className="stg-cardHead">
+                            <div className="stg-cardHeadLeft">
+                                <h2 className="stg-cardTitle">Invoices</h2>
+                                <p className="stg-cardText">
+                                    Finalized invoices and downloadable receipts for your account.
+                                </p>
+                            </div>
+                        </div>
 
                         <div className="stg-cardBody stg-scrollArea">
-                            <div className="stg-table stg-table--invoices">
-                                <div className="stg-row stg-rowHead stg-row4">
-                                    <div>Date</div>
-                                    <div>Amount</div>
-                                    <div>Status</div>
-                                    <div>PDF</div>
+                            <div className="stg-tableWrap">
+                                <div className="stg-table stg-table--invoices">
+                                    <div className="stg-row stg-rowHead stg-row4">
+                                        <div>Date</div>
+                                        <div>Amount</div>
+                                        <div>Status</div>
+                                        <div>Receipt</div>
+                                    </div>
+
+                                    {isBusy ? (
+                                        <>
+                                            {[0, 1, 2].map((k) => (
+                                                <div className="stg-row stg-row4" key={`inv-skel-${k}`}>
+                                                    <div><span className="stg-skelText w70" /></div>
+                                                    <div><span className="stg-skelText w60" /></div>
+                                                    <div><span className="stg-skelBadge" /></div>
+                                                    <div><span className="stg-skelText w55" /></div>
+                                                </div>
+                                            ))}
+                                        </>
+                                    ) : invoices.length ? (
+                                        invoices.map((inv, idx) => {
+                                            const id = inv?.id || idx;
+                                            const date = inv?.created;
+                                            const amountMinor = inv?.total ?? inv?.amount_paid ?? inv?.amount_due;
+                                            const currency = inv?.currency;
+                                            const status = inv?.status || "—";
+                                            const pdf = inv?.invoice_pdf || inv?.hosted_invoice_url;
+
+                                            return (
+                                                <div className="stg-row stg-row4" key={id}>
+                                                    <div>
+                                                        <span className="stg-mobileLabel">Date</span>
+                                                        {fmtDate(date)}
+                                                    </div>
+
+                                                    <div>
+                                                        <span className="stg-mobileLabel">Amount</span>
+                                                        {fmtMoneyFromMinor(amountMinor, currency)}
+                                                    </div>
+
+                                                    <div>
+                                                        <span className="stg-mobileLabel">Status</span>
+                                                        <span className={`stg-badge ${safeLower(status)}`}>
+                                                            {String(status)}
+                                                        </span>
+                                                    </div>
+
+                                                    <div>
+                                                        <span className="stg-mobileLabel">Receipt</span>
+                                                        {pdf ? (
+                                                            <a
+                                                                className="stg-link"
+                                                                href={pdf}
+                                                                target="_blank"
+                                                                rel="noreferrer"
+                                                            >
+                                                                Download
+                                                            </a>
+                                                        ) : (
+                                                            "—"
+                                                        )}
+                                                    </div>
+                                                </div>
+                                            );
+                                        })
+                                    ) : (
+                                        <div className="stg-emptyRow">
+                                            <div className="stg-sectionTitle">No invoices yet</div>
+                                            <div className="stg-sectionText">
+                                                Finalized invoices will appear here once they are generated.
+                                            </div>
+                                        </div>
+                                    )}
                                 </div>
-
-                                {isBusy ? (
-                                    <>
-                                        {[0, 1, 2].map((k) => (
-                                            <div className="stg-row stg-row4" key={`inv-skel-${k}`}>
-                                                <div><span className="stg-skelText w70" /></div>
-                                                <div><span className="stg-skelText w60" /></div>
-                                                <div><span className="stg-skelBadge" /></div>
-                                                <div><span className="stg-skelText w55" /></div>
-                                            </div>
-                                        ))}
-                                    </>
-                                ) : invoices.length ? (
-                                    invoices.map((inv, idx) => {
-                                        const id = inv?.id || idx;
-                                        const date = inv?.created;
-                                        const amountMinor = inv?.total ?? inv?.amount_paid ?? inv?.amount_due;
-                                        const currency = inv?.currency;
-                                        const status = inv?.status || "—";
-                                        const pdf = inv?.invoice_pdf || inv?.hosted_invoice_url;
-
-                                        return (
-                                            <div className="stg-row stg-row4" key={id}>
-                                                <div>
-                                                    <span className="stg-mobileLabel">Date</span>
-                                                    {fmtDate(date)}
-                                                </div>
-
-                                                <div>
-                                                    <span className="stg-mobileLabel">Amount</span>
-                                                    {fmtMoneyFromMinor(amountMinor, currency)}
-                                                </div>
-
-                                                <div>
-                                                    <span className="stg-mobileLabel">Status</span>
-                                                    <span className={`stg-badge ${safeLower(status)}`}>
-                                                        {String(status)}
-                                                    </span>
-                                                </div>
-
-                                                <div>
-                                                    <span className="stg-mobileLabel">PDF</span>
-                                                    {pdf ? (
-                                                        <a
-                                                            className="stg-link"
-                                                            href={pdf}
-                                                            target="_blank"
-                                                            rel="noreferrer"
-                                                        >
-                                                            Download
-                                                        </a>
-                                                    ) : (
-                                                        "—"
-                                                    )}
-                                                </div>
-                                            </div>
-                                        );
-                                    })
-                                ) : (
-                                    <EmptyState
-                                        title="No invoices yet"
-                                        text="Invoices will appear here once Stripe generates them."
-                                    />
-                                )}
                             </div>
                         </div>
-                    </SectionCard>
+                    </SectionShell>
 
-                    <SectionCard>
-                        <CardHead
-                            title="Payments"
-                            text="Your recent payment activity."
-                        />
+                    <SectionShell delay={0.14}>
+                        <div className="stg-cardHead">
+                            <div className="stg-cardHeadLeft">
+                                <h2 className="stg-cardTitle">Payments</h2>
+                                <p className="stg-cardText">
+                                    Completed payments successfully processed on your account.
+                                </p>
+                            </div>
+                        </div>
 
                         <div className="stg-cardBody stg-scrollArea">
-                            <div className="stg-table stg-table--payments">
-                                <div className="stg-row stg-rowHead stg-row4p">
-                                    <div>Date</div>
-                                    <div>Amount</div>
-                                    <div>Status</div>
-                                    <div>Description</div>
+                            <div className="stg-tableWrap">
+                                <div className="stg-table stg-table--payments">
+                                    <div className="stg-row stg-rowHead stg-row4p">
+                                        <div>Date</div>
+                                        <div>Amount</div>
+                                        <div>Status</div>
+                                        <div>Description</div>
+                                    </div>
+
+                                    {isBusy ? (
+                                        <>
+                                            {[0, 1, 2].map((k) => (
+                                                <div className="stg-row stg-row4p" key={`pay-skel-${k}`}>
+                                                    <div><span className="stg-skelText w70" /></div>
+                                                    <div><span className="stg-skelText w60" /></div>
+                                                    <div><span className="stg-skelBadge" /></div>
+                                                    <div><span className="stg-skelText w92" /></div>
+                                                </div>
+                                            ))}
+                                        </>
+                                    ) : payments.length ? (
+                                        payments.map((p, idx) => {
+                                            const id = p?.id || idx;
+                                            const date = p?.created;
+                                            const amountMinor = p?.amount;
+                                            const currency = p?.currency;
+                                            const status = p?.status || "—";
+                                            const desc = p?.description || p?.receipt_email || "Payment";
+
+                                            return (
+                                                <div className="stg-row stg-row4p" key={id}>
+                                                    <div>
+                                                        <span className="stg-mobileLabel">Date</span>
+                                                        {fmtDate(date)}
+                                                    </div>
+
+                                                    <div>
+                                                        <span className="stg-mobileLabel">Amount</span>
+                                                        {fmtMoneyFromMinor(amountMinor, currency)}
+                                                    </div>
+
+                                                    <div>
+                                                        <span className="stg-mobileLabel">Status</span>
+                                                        <span className={`stg-badge ${safeLower(status)}`}>
+                                                            {String(status)}
+                                                        </span>
+                                                    </div>
+
+                                                    <div className="stg-ellipsis" title={String(desc)}>
+                                                        <span className="stg-mobileLabel">Description</span>
+                                                        {String(desc)}
+                                                    </div>
+                                                </div>
+                                            );
+                                        })
+                                    ) : (
+                                        <div className="stg-emptyRow">
+                                            <div className="stg-sectionTitle">No completed payments yet</div>
+                                            <div className="stg-sectionText">
+                                                Successful charges will appear here once they are processed.
+                                            </div>
+                                        </div>
+                                    )}
                                 </div>
-
-                                {isBusy ? (
-                                    <>
-                                        {[0, 1, 2].map((k) => (
-                                            <div className="stg-row stg-row4p" key={`pay-skel-${k}`}>
-                                                <div><span className="stg-skelText w70" /></div>
-                                                <div><span className="stg-skelText w60" /></div>
-                                                <div><span className="stg-skelBadge" /></div>
-                                                <div><span className="stg-skelText w92" /></div>
-                                            </div>
-                                        ))}
-                                    </>
-                                ) : payments.length ? (
-                                    payments.map((p, idx) => {
-                                        const id = p?.id || idx;
-                                        const date = p?.created;
-                                        const amountMinor = p?.amount;
-                                        const currency = p?.currency;
-                                        const status = p?.status || "—";
-                                        const desc = p?.description || p?.receipt_email || "—";
-
-                                        return (
-                                            <div className="stg-row stg-row4p" key={id}>
-                                                <div>
-                                                    <span className="stg-mobileLabel">Date</span>
-                                                    {fmtDate(date)}
-                                                </div>
-
-                                                <div>
-                                                    <span className="stg-mobileLabel">Amount</span>
-                                                    {fmtMoneyFromMinor(amountMinor, currency)}
-                                                </div>
-
-                                                <div>
-                                                    <span className="stg-mobileLabel">Status</span>
-                                                    <span className={`stg-badge ${safeLower(status)}`}>
-                                                        {String(status)}
-                                                    </span>
-                                                </div>
-
-                                                <div className="stg-ellipsis" title={String(desc)}>
-                                                    <span className="stg-mobileLabel">Description</span>
-                                                    {String(desc)}
-                                                </div>
-                                            </div>
-                                        );
-                                    })
-                                ) : (
-                                    <EmptyState
-                                        title="No payments yet"
-                                        text="Payments will appear here after successful charges."
-                                    />
-                                )}
                             </div>
                         </div>
-                    </SectionCard>
+                    </SectionShell>
                 </div>
-            </motion.div>
+            </div>
         </DashboardLayout>
     );
 }
