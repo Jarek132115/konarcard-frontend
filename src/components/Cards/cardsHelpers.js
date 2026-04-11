@@ -45,9 +45,9 @@ export function profileSlugFromOrder(order) {
     );
 }
 
-export function profileLinkFromOrder(order) {
+export function publicProfileLinkFromOrder(order) {
     const explicit =
-        trim(order?.preview?.nfcProfileUrl) ||
+        trim(order?.publicProfileUrl) ||
         trim(order?.preview?.publicProfileUrl);
 
     if (explicit) return explicit;
@@ -55,6 +55,39 @@ export function profileLinkFromOrder(order) {
     const slug = profileSlugFromOrder(order);
     if (!slug) return "";
     return `${window.location.origin}/u/${slug}`;
+}
+
+export function qrTargetLinkFromOrder(order) {
+    const explicit =
+        trim(order?.qrTargetUrl) ||
+        trim(order?.preview?.qrTargetUrl);
+
+    if (explicit) return explicit;
+
+    const base = publicProfileLinkFromOrder(order);
+    if (!base) return "";
+    return `${base}?via=qr`;
+}
+
+export function nfcTargetLinkFromOrder(order) {
+    const explicit =
+        trim(order?.nfcTargetUrl) ||
+        trim(order?.preview?.nfcTargetUrl);
+
+    if (explicit) return explicit;
+
+    const base = publicProfileLinkFromOrder(order);
+    if (!base) return "";
+    return `${base}?via=nfc`;
+}
+
+/**
+ * Legacy compatibility:
+ * keep "profileLinkFromOrder" returning the normal public profile link,
+ * not the NFC link.
+ */
+export function profileLinkFromOrder(order) {
+    return publicProfileLinkFromOrder(order);
 }
 
 /* =========================================================
@@ -124,16 +157,20 @@ export const DEFAULT_LOGO_DATAURL = `data:image/svg+xml;charset=utf-8,${KONAR_LO
 export function normalizeOrder(order) {
     const id = String(order?._id || order?.id || "");
     const productKey = String(order?.productKey || "").trim();
-    const link = profileLinkFromOrder(order);
 
-    const preview = order?.preview && typeof order.preview === "object"
-        ? order.preview
-        : {};
+    const preview =
+        order?.preview && typeof order.preview === "object"
+            ? order.preview
+            : {};
 
     const customization =
         preview?.customization && typeof preview.customization === "object"
             ? preview.customization
             : {};
+
+    const publicProfileUrl = publicProfileLinkFromOrder(order);
+    const qrTargetUrl = qrTargetLinkFromOrder(order);
+    const nfcTargetUrl = nfcTargetLinkFromOrder(order);
 
     return {
         id,
@@ -143,7 +180,10 @@ export function normalizeOrder(order) {
         /* profile */
         assignedProfile: assignedProfileFromOrder(order),
         profileSlug: profileSlugFromOrder(order),
-        link,
+        link: publicProfileUrl,
+        publicProfileUrl,
+        qrTargetUrl,
+        nfcTargetUrl,
 
         /* variant */
         variantRaw: String(variantRaw(order) || ""),
@@ -161,6 +201,7 @@ export function normalizeOrder(order) {
         /* visuals */
         logoUrl: String(order?.logoUrl || ""),
         previewImageUrl: String(order?.previewImageUrl || ""),
+        qrCodeUrl: String(order?.qrCodeUrl || ""),
 
         /* saved text customisation for plastic cards */
         frontText: String(customization?.frontText || ""),
@@ -178,8 +219,9 @@ export function normalizeOrder(order) {
             styleKey: String(preview?.styleKey || ""),
             frontTemplate: String(preview?.frontTemplate || ""),
             backTemplate: String(preview?.backTemplate || ""),
-            publicProfileUrl: String(preview?.publicProfileUrl || ""),
-            nfcProfileUrl: String(preview?.nfcProfileUrl || ""),
+            publicProfileUrl: String(preview?.publicProfileUrl || publicProfileUrl || ""),
+            qrTargetUrl: String(preview?.qrTargetUrl || qrTargetUrl || ""),
+            nfcTargetUrl: String(preview?.nfcTargetUrl || nfcTargetUrl || ""),
             profileSlug: String(preview?.profileSlug || ""),
             customization,
         },

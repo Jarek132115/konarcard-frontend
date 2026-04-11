@@ -1,4 +1,3 @@
-// src/pages/admin/AdminOrders.jsx
 import React, { useEffect, useMemo, useState } from "react";
 import { toast } from "react-hot-toast";
 import { useNavigate, useSearchParams } from "react-router-dom";
@@ -45,6 +44,22 @@ function formatAmount(amount, currency = "gbp") {
 function buildPublicProfileUrl(slug) {
     const safe = cleanString(slug).toLowerCase();
     return safe ? `https://www.konarcard.com/u/${encodeURIComponent(safe)}` : "";
+}
+
+function appendVia(url, via) {
+    const base = cleanString(url);
+    const safeVia = cleanString(via).toLowerCase();
+
+    if (!base || !safeVia) return base;
+
+    try {
+        const u = new URL(base);
+        u.searchParams.set("via", safeVia);
+        return u.toString();
+    } catch {
+        const joiner = base.includes("?") ? "&" : "?";
+        return `${base}${joiner}via=${encodeURIComponent(safeVia)}`;
+    }
 }
 
 function getPlanTone(plan) {
@@ -198,7 +213,6 @@ function SectionCard({ title, subtitle, right, children }) {
                 </div>
                 {right ? <div className="admin-section-right">{right}</div> : null}
             </div>
-
             {children}
         </section>
     );
@@ -261,7 +275,7 @@ function PreviewImageCard({ title, src, alt, onOpen, onDownload }) {
     );
 }
 
-function FrontCardPreview({ order }) {
+function FrontCardPreview({ order, onCopyText }) {
     const frontText = extractFrontText(order) || "No front text saved";
     const fontFamily = extractFontFamily(order) || "inherit";
     const fontWeight = normalizeFontWeight(extractFontWeight(order));
@@ -366,8 +380,8 @@ function FrontCardPreview({ order }) {
             <div className="admin-preview-actions">
                 <Btn
                     tone="ghost"
-                    onClick={() => copyToClipboardHelper(frontText, "Front text copied")}
-                    disabled={!frontText}
+                    onClick={onCopyText}
+                    disabled={!extractFrontText(order)}
                 >
                     Copy text
                 </Btn>
@@ -430,27 +444,31 @@ function extractOrientation(order) {
     );
 }
 
+function extractPublicUrl(order) {
+    return cleanString(
+        order?.publicProfileUrl ||
+        order?.preview?.publicProfileUrl ||
+        (order?.profileSlug
+            ? buildPublicProfileUrl(order.profileSlug)
+            : order?.profile?.profile_slug
+                ? buildPublicProfileUrl(order.profile.profile_slug)
+                : "")
+    );
+}
+
 function extractQrUrl(order) {
     return cleanString(
         order?.qrTargetUrl ||
-        order?.qrCodeUrl ||
         order?.preview?.qrTargetUrl ||
-        order?.preview?.qrCodeUrl ||
-        order?.publicProfileUrl ||
-        order?.preview?.publicProfileUrl ||
-        (order?.profile?.profile_slug ? buildPublicProfileUrl(order.profile.profile_slug) : "")
+        appendVia(extractPublicUrl(order), "qr")
     );
 }
 
 function extractNfcUrl(order) {
     return cleanString(
         order?.nfcTargetUrl ||
-        order?.nfcUrl ||
         order?.preview?.nfcTargetUrl ||
-        order?.preview?.nfcUrl ||
-        order?.publicProfileUrl ||
-        order?.preview?.publicProfileUrl ||
-        (order?.profile?.profile_slug ? buildPublicProfileUrl(order.profile.profile_slug) : "")
+        appendVia(extractPublicUrl(order), "nfc")
     );
 }
 
@@ -617,7 +635,7 @@ export default function AdminOrders() {
 
             <SectionCard
                 title="Order fulfilment"
-                subtitle="Search orders, update shipping progress, check card front styling, and view QR/NFC target links."
+                subtitle="Search orders, update shipping progress, check card front styling, and view public, QR, and NFC target links."
             >
                 <div className="admin-toolbar">
                     <TextInput
@@ -719,22 +737,15 @@ export default function AdminOrders() {
                                                 <Pill tone={getStatusTone(selectedOrder.status)}>
                                                     {selectedOrder.status || "pending"}
                                                 </Pill>
-                                                <Pill
-                                                    tone={getFulfillmentTone(
-                                                        selectedOrder.fulfillmentStatus
-                                                    )}
-                                                >
-                                                    {selectedOrder.fulfillmentStatus ||
-                                                        "order_placed"}
+                                                <Pill tone={getFulfillmentTone(selectedOrder.fulfillmentStatus)}>
+                                                    {selectedOrder.fulfillmentStatus || "order_placed"}
                                                 </Pill>
                                                 <Pill tone={getPlanTone(selectedOrder?.user?.plan)}>
                                                     {selectedOrder?.user?.plan || "free"}
                                                 </Pill>
                                             </div>
 
-                                            <div
-                                                className="admin-detail-title admin-detail-title--lg admin-mt-12"
-                                            >
+                                            <div className="admin-detail-title admin-detail-title--lg admin-mt-12">
                                                 {selectedOrder.customerName ||
                                                     selectedOrder?.user?.name ||
                                                     selectedOrder.customerEmail ||
@@ -758,17 +769,12 @@ export default function AdminOrders() {
                                                 Copy order ID
                                             </Btn>
 
-                                            {(selectedOrder.profileSlug ||
-                                                selectedOrder.profile?.profile_slug) ? (
+                                            {extractPublicUrl(selectedOrder) ? (
                                                 <Btn
                                                     tone="ghost"
                                                     onClick={() =>
                                                         window.open(
-                                                            selectedOrder.publicProfileUrl ||
-                                                            buildPublicProfileUrl(
-                                                                selectedOrder.profileSlug ||
-                                                                selectedOrder.profile?.profile_slug
-                                                            ),
+                                                            extractPublicUrl(selectedOrder),
                                                             "_blank",
                                                             "noopener,noreferrer"
                                                         )
@@ -813,6 +819,21 @@ export default function AdminOrders() {
                                             }
                                         />
                                         <InfoRow
+                                            label="Public URL"
+                                            value={extractPublicUrl(selectedOrder) || "—"}
+                                            mono
+                                        />
+                                        <InfoRow
+                                            label="QR target URL"
+                                            value={extractQrUrl(selectedOrder) || "—"}
+                                            mono
+                                        />
+                                        <InfoRow
+                                            label="NFC target URL"
+                                            value={extractNfcUrl(selectedOrder) || "—"}
+                                            mono
+                                        />
+                                        <InfoRow
                                             label="Tracking URL"
                                             value={selectedOrder.trackingUrl || "—"}
                                             mono
@@ -826,16 +847,6 @@ export default function AdminOrders() {
                                             value={selectedOrder.deliveryWindow || "—"}
                                         />
                                         <InfoRow
-                                            label="QR target URL"
-                                            value={extractQrUrl(selectedOrder) || "—"}
-                                            mono
-                                        />
-                                        <InfoRow
-                                            label="NFC target URL"
-                                            value={extractNfcUrl(selectedOrder) || "—"}
-                                            mono
-                                        />
-                                        <InfoRow
                                             label="Address"
                                             value={selectedOrder.deliveryAddress || "—"}
                                             full
@@ -843,35 +854,52 @@ export default function AdminOrders() {
                                     </div>
                                 </div>
 
-                                <div className="admin-grid-preview">
-                                    <FrontCardPreview order={selectedOrder} />
-
-                                    <PreviewImageCard
-                                        title="Saved flat preview"
-                                        src={selectedOrder.previewImageUrl}
-                                        alt="Saved order preview"
-                                        onOpen={() => {
-                                            if (selectedOrder.previewImageUrl) {
-                                                window.open(
-                                                    selectedOrder.previewImageUrl,
-                                                    "_blank",
-                                                    "noopener,noreferrer"
-                                                );
-                                            }
-                                        }}
-                                        onDownload={async () => {
-                                            if (!selectedOrder.previewImageUrl) return;
-                                            try {
-                                                await downloadImageFromUrl(
-                                                    selectedOrder.previewImageUrl,
-                                                    `${selectedOrder._id}-preview.png`
-                                                );
-                                                toast.success("Preview downloaded");
-                                            } catch {
-                                                toast.error("Could not download preview");
-                                            }
-                                        }}
+                                <div
+                                    className="admin-grid-preview"
+                                    style={
+                                        selectedOrder.previewImageUrl
+                                            ? undefined
+                                            : { gridTemplateColumns: "1fr" }
+                                    }
+                                >
+                                    <FrontCardPreview
+                                        order={selectedOrder}
+                                        onCopyText={() =>
+                                            copyText(
+                                                extractFrontText(selectedOrder),
+                                                "Front text copied"
+                                            )
+                                        }
                                     />
+
+                                    {selectedOrder.previewImageUrl ? (
+                                        <PreviewImageCard
+                                            title="Saved flat preview"
+                                            src={selectedOrder.previewImageUrl}
+                                            alt="Saved order preview"
+                                            onOpen={() => {
+                                                if (selectedOrder.previewImageUrl) {
+                                                    window.open(
+                                                        selectedOrder.previewImageUrl,
+                                                        "_blank",
+                                                        "noopener,noreferrer"
+                                                    );
+                                                }
+                                            }}
+                                            onDownload={async () => {
+                                                if (!selectedOrder.previewImageUrl) return;
+                                                try {
+                                                    await downloadImageFromUrl(
+                                                        selectedOrder.previewImageUrl,
+                                                        `${selectedOrder._id}-preview.png`
+                                                    );
+                                                    toast.success("Preview downloaded");
+                                                } catch {
+                                                    toast.error("Could not download preview");
+                                                }
+                                            }}
+                                        />
+                                    ) : null}
                                 </div>
 
                                 <div className="admin-grid-split">
@@ -930,6 +958,19 @@ export default function AdminOrders() {
                                         subtitle="Useful admin shortcuts for printing and support."
                                     >
                                         <div className="admin-stack">
+                                            <Btn
+                                                tone="ghost"
+                                                onClick={() =>
+                                                    copyText(
+                                                        extractPublicUrl(selectedOrder),
+                                                        "Public URL copied"
+                                                    )
+                                                }
+                                                disabled={!extractPublicUrl(selectedOrder)}
+                                            >
+                                                Copy public URL
+                                            </Btn>
+
                                             <Btn
                                                 tone="ghost"
                                                 onClick={() =>
@@ -1050,9 +1091,7 @@ export default function AdminOrders() {
                                             <label className="admin-check-row">
                                                 <input
                                                     type="checkbox"
-                                                    checked={
-                                                        !!edit[selectedOrder._id]?.notifyTracking
-                                                    }
+                                                    checked={!!edit[selectedOrder._id]?.notifyTracking}
                                                     onChange={(e) =>
                                                         setEditField(
                                                             selectedOrder._id,
