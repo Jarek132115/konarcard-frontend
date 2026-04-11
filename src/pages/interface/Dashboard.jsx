@@ -53,6 +53,91 @@ function ShareIcon() {
     );
 }
 
+function SparkIcon() {
+    return (
+        <svg viewBox="0 0 24 24" aria-hidden="true" className="db-statIcon">
+            <path
+                d="M12 3l1.9 4.6L18.5 9.5l-4.6 1.9L12 16l-1.9-4.6L5.5 9.5l4.6-1.9L12 3z"
+                fill="currentColor"
+            />
+        </svg>
+    );
+}
+
+function TapIcon() {
+    return (
+        <svg viewBox="0 0 24 24" aria-hidden="true" className="db-statIcon">
+            <path
+                d="M8.5 8.5a5 5 0 0 1 7.1 0M6 6a8.5 8.5 0 0 1 12 0M3.5 3.5a12 12 0 0 1 17 0M12 10.8v7.7"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+            />
+        </svg>
+    );
+}
+
+function QrIcon() {
+    return (
+        <svg viewBox="0 0 24 24" aria-hidden="true" className="db-statIcon">
+            <path
+                d="M4 4h6v6H4zM14 4h6v6h-6zM4 14h6v6H4zM14 14h2v2h-2zM18 14h2v2h-2zM14 18h2v2h-2zM18 18h2v2h-2z"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinejoin="round"
+            />
+        </svg>
+    );
+}
+
+function LinkIcon() {
+    return (
+        <svg viewBox="0 0 24 24" aria-hidden="true" className="db-statIcon">
+            <path
+                d="M10 14l4-4M8.5 17.5l-2 2a3.5 3.5 0 1 1-5-5l4-4a3.5 3.5 0 0 1 5 0M15.5 6.5l2-2a3.5 3.5 0 1 1 5 5l-4 4a3.5 3.5 0 0 1-5 0"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+            />
+        </svg>
+    );
+}
+
+function CompletionIcon() {
+    return (
+        <svg viewBox="0 0 24 24" aria-hidden="true" className="db-cardHeadIcon">
+            <path
+                d="M4 12a8 8 0 1 0 3-6.2M4 4v4h4M8.5 12.5l2.2 2.2 4.8-5.2"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+            />
+        </svg>
+    );
+}
+
+function ActivityIcon() {
+    return (
+        <svg viewBox="0 0 24 24" aria-hidden="true" className="db-cardHeadIcon">
+            <path
+                d="M3 12h4l2-5 4 10 2-5h6"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+            />
+        </svg>
+    );
+}
+
 function numberFormat(value) {
     return new Intl.NumberFormat("en-GB").format(Number(value) || 0);
 }
@@ -261,10 +346,13 @@ function ownsPhysicalProduct(orders) {
     });
 }
 
-function MetricCard({ label, value, helper, featured = false }) {
+function MetricCard({ label, value, helper, featured = false, icon = null }) {
     return (
         <div className={`db-statCard ${featured ? "db-statCard--featured" : ""}`}>
-            <div className="db-statLabel">{label}</div>
+            <div className="db-statTop">
+                <div className="db-statLabel">{label}</div>
+                <div className={`db-statIconWrap ${featured ? "is-featured" : ""}`}>{icon}</div>
+            </div>
             <div className="db-statValue">{numberFormat(value)}</div>
             <div className="db-statHelper">{helper}</div>
         </div>
@@ -276,7 +364,6 @@ export default function Dashboard() {
     const { data: cards } = useMyProfiles();
 
     const plan = safeLower(authUser?.plan || "free");
-    const displayPlan = `Plan: ${plan.charAt(0).toUpperCase()}${plan.slice(1)}`;
     const displayName = authUser?.name?.split(" ")?.[0] || "there";
 
     const profilesForShare = useMemo(() => {
@@ -365,25 +452,6 @@ export default function Dashboard() {
         [ordersQuery.data]
     );
 
-    const headerRight = (
-        <div className="db-headRight">
-            <span className="db-pill">{displayPlan}</span>
-
-            <button
-                type="button"
-                className="kx-btn kx-btn--black"
-                onClick={() => setShareOpen(true)}
-                disabled={!selectedProfile}
-                title={!selectedProfile ? "Create a profile first" : "Share your profile"}
-            >
-                <span className="db-btnIco" aria-hidden="true">
-                    <ShareIcon />
-                </span>
-                Share Your Profile
-            </button>
-        </div>
-    );
-
     return (
         <DashboardLayout hideDesktopHeader>
             <div className="db-shell">
@@ -405,6 +473,46 @@ export default function Dashboard() {
                 />
 
                 <div className="db-grid">
+                    <section className="db-heroCard db-span-12">
+                        <div className="db-heroMain">
+                            <div className="db-heroBadge">Performance snapshot</div>
+                            <h2 className="db-heroTitle">
+                                Keep building momentum with KonarCard.
+                            </h2>
+                            <p className="db-heroText">
+                                Track visibility, grow engagement, and finish your profile so every
+                                share feels more professional.
+                            </p>
+
+                            <div className="db-heroActions">
+                                <button
+                                    type="button"
+                                    className="kx-btn kx-btn--orange"
+                                    onClick={() => setShareOpen(true)}
+                                    disabled={!selectedProfile}
+                                >
+                                    Share Profile
+                                </button>
+
+                                <Link to="/profiles" className="kx-btn kx-btn--white">
+                                    Manage Profiles
+                                </Link>
+                            </div>
+                        </div>
+
+                        <div className="db-heroSide">
+                            <div className="db-heroMiniStat">
+                                <span className="db-heroMiniLabel">Profile Completion</span>
+                                <span className="db-heroMiniValue">{completion.percent}%</span>
+                            </div>
+
+                            <div className="db-heroMiniStat">
+                                <span className="db-heroMiniLabel">Last 7 Days Views</span>
+                                <span className="db-heroMiniValue">{numberFormat(metrics.profileViews)}</span>
+                            </div>
+                        </div>
+                    </section>
+
                     <section className="db-statsRow db-span-12">
                         <MetricCard
                             label="Total Views"
@@ -415,6 +523,7 @@ export default function Dashboard() {
                                     : "Share more to start getting views."
                             }
                             featured
+                            icon={<SparkIcon />}
                         />
 
                         <MetricCard
@@ -427,6 +536,7 @@ export default function Dashboard() {
                                         : "Start tapping your card to drive traffic."
                                     : "Order a physical card to unlock taps."
                             }
+                            icon={<TapIcon />}
                         />
 
                         <MetricCard
@@ -437,6 +547,7 @@ export default function Dashboard() {
                                     ? "Your QR code is being scanned."
                                     : "Share more to start getting scans."
                             }
+                            icon={<QrIcon />}
                         />
 
                         <MetricCard
@@ -447,6 +558,7 @@ export default function Dashboard() {
                                     ? "Your link is driving visits."
                                     : "Share more to start getting clicks."
                             }
+                            icon={<LinkIcon />}
                         />
                     </section>
 
@@ -457,9 +569,10 @@ export default function Dashboard() {
                             </span>
 
                             <div className="db-shareCopy">
-                                <h2 className="db-cardTitle">Share More</h2>
+                                <h2 className="db-cardTitle">Grow your reach</h2>
                                 <p className="db-muted">
-                                    Share your profile to get more views, taps, scans and saved contacts.
+                                    Share your profile more often to increase views, taps, scans and
+                                    saved contacts.
                                 </p>
                             </div>
                         </div>
@@ -471,10 +584,13 @@ export default function Dashboard() {
                                 onClick={() => setShareOpen(true)}
                                 disabled={!selectedProfile}
                             >
+                                <span className="db-btnIco" aria-hidden="true">
+                                    <ShareIcon />
+                                </span>
                                 Share Profile
                             </button>
 
-                            <Link to="/analytics" className="kx-btn kx-btn--white">
+                            <Link to="/analytics" className="kx-btn kx-btn--black">
                                 View Analytics
                             </Link>
                         </div>
@@ -483,16 +599,31 @@ export default function Dashboard() {
                     <section className="db-card db-card--equal db-span-6">
                         <div className="db-cardHead">
                             <div className="db-cardHeadLeft">
+                                <div className="db-cardEyebrowWrap">
+                                    <span className="db-cardHeadIconWrap">
+                                        <ActivityIcon />
+                                    </span>
+                                    <span className="db-cardEyebrow">Live updates</span>
+                                </div>
+
                                 <h2 className="db-cardTitle">Recent Activity</h2>
-                                <p className="db-muted">See what’s been happening on your profile recently.</p>
+                                <p className="db-muted">
+                                    See what’s been happening on your profile recently.
+                                </p>
                             </div>
                         </div>
 
                         <div className="db-scrollPanel db-scrollPanel--activity">
                             {recentActivity.length ? (
-                                recentActivity.map((item) => (
+                                recentActivity.map((item, index) => (
                                     <div key={item.id} className="db-activityRow">
-                                        <span className="db-activityDot" />
+                                        <span
+                                            className={`db-activityAvatar db-activityAvatar--${index % 5}`}
+                                            aria-hidden="true"
+                                        >
+                                            {(item.message || "A").slice(0, 2).toUpperCase()}
+                                        </span>
+
                                         <div className="db-activityMain">
                                             <span className="db-activityText">{item.message}</span>
                                             <span className="db-activityMeta">{item.timeLabel}</span>
@@ -516,6 +647,13 @@ export default function Dashboard() {
                     <section className="db-card db-card--equal db-span-6">
                         <div className="db-cardHead">
                             <div className="db-cardHeadLeft">
+                                <div className="db-cardEyebrowWrap">
+                                    <span className="db-cardHeadIconWrap">
+                                        <CompletionIcon />
+                                    </span>
+                                    <span className="db-cardEyebrow">Profile quality</span>
+                                </div>
+
                                 <h2 className="db-cardTitle">Profile Completion</h2>
                                 <p className="db-muted">
                                     Finish your profile to look more professional and get more jobs.
@@ -539,16 +677,15 @@ export default function Dashboard() {
                         <div className="db-scrollPanel db-scrollPanel--completion">
                             {completion.items.length ? (
                                 completion.items.map((item) => (
-                                    <div key={item.key} className="db-activityRow">
-                                        <div className="db-activityMain">
-                                            <span className={`db-activityText ${item.done ? "done" : ""}`}>
-                                                {item.label}
-                                            </span>
-                                            <span
-                                                className={`db-activityDot db-activityDot--right ${item.done ? "done" : ""}`}
-                                                aria-hidden="true"
-                                            />
-                                        </div>
+                                    <div key={item.key} className="db-completionRow">
+                                        <span className={`db-completionText ${item.done ? "done" : ""}`}>
+                                            {item.label}
+                                        </span>
+                                        <span
+                                            className={`db-completionStatus ${item.done ? "done" : ""}`}
+                                        >
+                                            {item.done ? "Done" : "Pending"}
+                                        </span>
                                     </div>
                                 ))
                             ) : (
