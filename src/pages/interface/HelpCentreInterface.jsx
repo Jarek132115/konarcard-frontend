@@ -520,11 +520,6 @@ export default function HelpCentreInterface() {
                     className="hc5-cardImg"
                   />
                   <div className="hc5-cardMediaOverlay" />
-                  <span className="hc5-cardPlay">
-                    <span className="hc5-cardPlayCircle">
-                      <PlayIcon className="hc5-cardPlayIcon" />
-                    </span>
-                  </span>
                   <span className="hc5-cardDuration">
                     {formatVideoLength(video.lengthSeconds)}
                   </span>
