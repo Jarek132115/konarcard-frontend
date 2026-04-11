@@ -242,7 +242,8 @@ function PlanCard({ plan, currentPlan, loadingKey }) {
 
                     {current ? (
                         <div
-                            className={`upg-planCurrentBadge ${featured ? "upg-planCurrentBadge--featured" : ""}`}
+                            className={`upg-planCurrentBadge ${featured ? "upg-planCurrentBadge--featured" : ""
+                                }`}
                         >
                             Current plan
                         </div>
@@ -251,7 +252,8 @@ function PlanCard({ plan, currentPlan, loadingKey }) {
 
                 <div className="upg-planNameRow">
                     <span
-                        className={`upg-planIconWrap ${featured ? "upg-planIconWrap--featured" : ""}`}
+                        className={`upg-planIconWrap ${featured ? "upg-planIconWrap--featured" : ""
+                            }`}
                     >
                         <img src={plan.icon} alt="" className="upg-planIcon" />
                     </span>
@@ -267,14 +269,27 @@ function PlanCard({ plan, currentPlan, loadingKey }) {
                 </div>
 
                 <div className="upg-planPriceWrap">
-                    <div className={`upg-planPrice ${featured ? "upg-planPrice--featured" : ""}`}>
-                        {plan.price}
+                    <div className="upg-planPriceLine">
+                        <div
+                            className={`upg-planPrice ${featured ? "upg-planPrice--featured" : ""}`}
+                        >
+                            {plan.price}
+                        </div>
+                        <div
+                            className={`upg-planCadence ${featured ? "upg-planCadence--featured" : ""}`}
+                        >
+                            {plan.cadence}
+                        </div>
                     </div>
-                    <div
-                        className={`upg-planCadence ${featured ? "upg-planCadence--featured" : ""}`}
-                    >
-                        {plan.cadence}
-                    </div>
+
+                    {plan.note ? (
+                        <div
+                            className={`upg-planBillingNote ${featured ? "upg-planBillingNote--featured" : ""
+                                }`}
+                        >
+                            {plan.note}
+                        </div>
+                    ) : null}
                 </div>
 
                 {plan.meta?.length ? (
@@ -297,7 +312,8 @@ function PlanCard({ plan, currentPlan, loadingKey }) {
                     {plan.highlights.map((item, index) => (
                         <li
                             key={`${plan.key}-${index}`}
-                            className={`upg-planListItem ${featured ? "upg-planListItem--featured" : ""}`}
+                            className={`upg-planListItem ${featured ? "upg-planListItem--featured" : ""
+                                }`}
                         >
                             <span className="upg-planCheckWrap">
                                 <CheckIcon featured={featured} />
@@ -318,7 +334,8 @@ function PlanCard({ plan, currentPlan, loadingKey }) {
                     ) : (
                         <button
                             type="button"
-                            className={`upg-btn ${featured ? "upg-btn--featured" : "upg-btn--primary"} ${plan.button.disabled ? "is-disabled" : ""}`}
+                            className={`upg-btn ${featured ? "upg-btn--featured" : "upg-btn--primary"
+                                } ${plan.button.disabled ? "is-disabled" : ""}`}
                             onClick={plan.button.onClick || undefined}
                             disabled={!!plan.button.disabled}
                         >
@@ -328,7 +345,8 @@ function PlanCard({ plan, currentPlan, loadingKey }) {
 
                     {plan.button.helper ? (
                         <div
-                            className={`upg-planHelper ${featured ? "upg-planHelper--featured" : ""}`}
+                            className={`upg-planHelper ${featured ? "upg-planHelper--featured" : ""
+                                }`}
                         >
                             {plan.button.helper}
                         </div>
@@ -397,19 +415,17 @@ export default function UpgradePlan() {
     const PRICES = useMemo(() => {
         const plusMonthly = 5;
         const plusYearlyTotal = 50;
-        const addOnPerExtraProfilePerMonth = 2;
 
         return {
-            addOnPerExtraProfilePerMonth,
             plus: {
                 monthly: {
                     perMonth: plusMonthly,
-                    billedLabel: "£5 / month",
+                    billedLabel: "Billed monthly. Cancel anytime.",
                 },
                 yearly: {
                     perMonth: plusYearlyTotal / 12,
                     billedTotal: plusYearlyTotal,
-                    billedLabel: "£50 / year",
+                    billedLabel: "Billed yearly. Best value if you already know you want the full setup.",
                 },
             },
         };
@@ -422,7 +438,7 @@ export default function UpgradePlan() {
 
     const plusDisplayCadence = billing === "monthly" ? "per month" : "per year";
 
-    const plusBilledLabel =
+    const plusBillingNote =
         billing === "monthly"
             ? PRICES.plus.monthly.billedLabel
             : PRICES.plus.yearly.billedLabel;
@@ -756,7 +772,8 @@ export default function UpgradePlan() {
 
     const planCards = useMemo(() => {
         const plusKey = billing === "monthly" ? "plus-monthly" : "plus-yearly";
-        const extraProfileExample3 = 5 + 2 + 2;
+        const extraProfileExample3 =
+            billing === "monthly" ? 5 + 2 + 2 : Math.round((50 / 12) + 2 + 2);
 
         return [
             {
@@ -769,10 +786,8 @@ export default function UpgradePlan() {
                 featured: false,
                 price: "£0",
                 cadence: "No monthly fees",
-                meta: [
-                    "Perfect for getting started",
-                    "Upgrade later when you want more design and analytics",
-                ],
+                note: "Free to use. Upgrade any time.",
+                meta: [],
                 highlights: [
                     "1 profile",
                     "1 template design",
@@ -794,14 +809,8 @@ export default function UpgradePlan() {
                 featured: true,
                 price: fmtGBP(plusDisplayPrice),
                 cadence: plusDisplayCadence,
-                meta: [
-                    billing === "monthly"
-                        ? "Billed monthly. Cancel anytime."
-                        : `Billed ${plusBilledLabel}.`,
-                    billing === "yearly"
-                        ? "Best value if you already know you want the full setup."
-                        : null,
-                ].filter(Boolean),
+                note: plusBillingNote,
+                meta: [],
                 highlights: [
                     "1 profile",
                     "All 5 template designs",
@@ -823,6 +832,7 @@ export default function UpgradePlan() {
                 featured: false,
                 price: "£2",
                 cadence: "per extra profile / month",
+                note: "Billed monthly as an add-on to Plus.",
                 meta: [
                     "Only available with Plus",
                     `Example: 3 profiles total = ${fmtGBP(extraProfileExample3)} / month`,
@@ -842,9 +852,6 @@ export default function UpgradePlan() {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [
         billing,
-        plusDisplayPrice,
-        plusDisplayCadence,
-        plusBilledLabel,
         currentPlan,
         isActive,
         hasFutureAccess,
@@ -852,6 +859,9 @@ export default function UpgradePlan() {
         renewalDateLabel,
         loadingKey,
         subLoading,
+        plusDisplayPrice,
+        plusDisplayCadence,
+        plusBillingNote,
     ]);
 
     const handleOpenShareProfile = () => {
