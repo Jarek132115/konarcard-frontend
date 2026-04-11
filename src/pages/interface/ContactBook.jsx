@@ -147,7 +147,7 @@ export default function ContactBook() {
     const [selectedId, setSelectedId] = useState(null);
     const [visibleCount, setVisibleCount] = useState(10);
     const [isCompact, setIsCompact] = useState(() =>
-        typeof window !== "undefined" ? window.innerWidth <= 1200 : false
+        typeof window !== "undefined" ? window.innerWidth <= 1240 : false
     );
     const [confirmDeleteId, setConfirmDeleteId] = useState(null);
     const [isDeleting, setIsDeleting] = useState(false);
@@ -182,7 +182,10 @@ export default function ContactBook() {
             setSelectedSlug(null);
             return;
         }
-        setSelectedSlug((prev) => prev || profilesForShare[0].slug);
+        setSelectedSlug((prev) => {
+            if (prev && profilesForShare.some((p) => p.slug === prev)) return prev;
+            return profilesForShare[0].slug;
+        });
     }, [profilesForShare]);
 
     const selectedShareProfile = useMemo(() => {
@@ -191,7 +194,7 @@ export default function ContactBook() {
     }, [profilesForShare, selectedSlug]);
 
     useEffect(() => {
-        const onResize = () => setIsCompact(window.innerWidth <= 1200);
+        const onResize = () => setIsCompact(window.innerWidth <= 1240);
         window.addEventListener("resize", onResize);
         return () => window.removeEventListener("resize", onResize);
     }, []);
@@ -566,8 +569,13 @@ export default function ContactBook() {
                                                             setConfirmDeleteId(null);
                                                         }}
                                                     >
-                                                        <div className="cb-contactCard-title">
-                                                            {c.name || "Unknown"}
+                                                        <div className="cb-contactCardTop">
+                                                            <div className="cb-contactCard-title">
+                                                                {c.name || "Unknown"}
+                                                            </div>
+                                                            <div className="cb-contactDate">
+                                                                Received: {c.received || "—"}
+                                                            </div>
                                                         </div>
 
                                                         <div className="cb-contactMetaGroup">
@@ -579,9 +587,7 @@ export default function ContactBook() {
                                                                     className="cb-contactMetaIcon"
                                                                 />
                                                                 <span>
-                                                                    {nonEmpty(c.phone)
-                                                                        ? c.phone
-                                                                        : "No phone"}
+                                                                    {nonEmpty(c.phone) ? c.phone : "No phone"}
                                                                 </span>
                                                             </div>
 
@@ -593,15 +599,9 @@ export default function ContactBook() {
                                                                     className="cb-contactMetaIcon"
                                                                 />
                                                                 <span>
-                                                                    {nonEmpty(c.email)
-                                                                        ? c.email
-                                                                        : "No email"}
+                                                                    {nonEmpty(c.email) ? c.email : "No email"}
                                                                 </span>
                                                             </div>
-                                                        </div>
-
-                                                        <div className="cb-contactDate">
-                                                            Received: {c.received || "—"}
                                                         </div>
                                                     </button>
                                                 ))}
@@ -674,9 +674,11 @@ export default function ContactBook() {
                         ) : (
                             <div className="cb-detailBody">
                                 <div className="cb-detailPanel">
-                                    <div className="cb-detailName">{selected.name || "Unknown"}</div>
-                                    <div className="cb-detailReceived">
-                                        Received: {selected.received || "—"}
+                                    <div className="cb-detailHeader">
+                                        <div className="cb-detailName">{selected.name || "Unknown"}</div>
+                                        <div className="cb-detailReceived">
+                                            Received: {selected.received || "—"}
+                                        </div>
                                     </div>
 
                                     <div className="cb-detailRows">
