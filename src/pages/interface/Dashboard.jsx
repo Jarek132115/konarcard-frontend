@@ -15,6 +15,10 @@ import { useMyProfiles } from "../../hooks/useBusinessCard";
 import api from "../../services/api";
 
 import GrowYourReachIcon from "../../assets/icons/GrowYourReach.svg";
+import TotalVisitsIcon from "../../assets/icons/TotalVisits.svg";
+import NFCTapsIcon from "../../assets/icons/NFCTaps.svg";
+import QRScansIcon from "../../assets/icons/QRScans.svg";
+import LinkVisitsIcon from "../../assets/icons/LinkVisits.svg";
 
 const centerTrim = (v) => (v ?? "").toString().trim();
 const safeLower = (v) => centerTrim(v).toLowerCase();
@@ -57,11 +61,50 @@ function formatActivityTime(dateValue) {
 function humanizeSocialTarget(target = "") {
     const clean = String(target || "").trim().toLowerCase();
 
-    if (clean === "facebook_url" || clean === "facebook") return "Facebook";
-    if (clean === "instagram_url" || clean === "instagram") return "Instagram";
-    if (clean === "linkedin_url" || clean === "linkedin") return "LinkedIn";
-    if (clean === "x_url" || clean === "twitter_url" || clean === "x" || clean === "twitter") return "X";
-    if (clean === "tiktok_url" || clean === "tiktok") return "TikTok";
+    if (
+        clean === "facebook_url" ||
+        clean === "facebook" ||
+        clean === "fb" ||
+        clean.includes("facebook")
+    ) {
+        return "Facebook";
+    }
+
+    if (
+        clean === "instagram_url" ||
+        clean === "instagram" ||
+        clean === "ig" ||
+        clean.includes("instagram")
+    ) {
+        return "Instagram";
+    }
+
+    if (
+        clean === "linkedin_url" ||
+        clean === "linkedin" ||
+        clean.includes("linkedin")
+    ) {
+        return "LinkedIn";
+    }
+
+    if (
+        clean === "x_url" ||
+        clean === "twitter_url" ||
+        clean === "x" ||
+        clean === "twitter" ||
+        clean.includes("twitter") ||
+        clean.includes("x.com")
+    ) {
+        return "X";
+    }
+
+    if (
+        clean === "tiktok_url" ||
+        clean === "tiktok" ||
+        clean.includes("tiktok")
+    ) {
+        return "TikTok";
+    }
 
     return "";
 }
@@ -69,7 +112,14 @@ function humanizeSocialTarget(target = "") {
 function getActivityMessage(item) {
     const type = item?.event_type || item?.eventType || "";
     const name = item?.contact_name || item?.contactName || item?.name || "";
-    const target = item?.action_target || item?.actionTarget || "";
+    const target =
+        item?.action_target ||
+        item?.actionTarget ||
+        item?.target ||
+        item?.social_target ||
+        item?.socialTarget ||
+        item?.platform ||
+        "";
 
     switch (type) {
         case "qr_scan":
@@ -225,6 +275,10 @@ function extractOrders(data) {
     return [];
 }
 
+function dataOrEmpty(v) {
+    return v ?? [];
+}
+
 function ownsPhysicalProduct(orders) {
     const xs = extractOrders(dataOrEmpty(orders));
 
@@ -239,10 +293,6 @@ function ownsPhysicalProduct(orders) {
             status === "delivered"
         );
     });
-}
-
-function dataOrEmpty(v) {
-    return v ?? [];
 }
 
 function ShareIcon() {
@@ -260,61 +310,6 @@ function ShareIcon() {
                 fill="none"
                 stroke="currentColor"
                 strokeWidth="2"
-                strokeLinejoin="round"
-            />
-        </svg>
-    );
-}
-
-function ViewsIcon() {
-    return (
-        <svg viewBox="0 0 24 24" aria-hidden="true" className="db-statIcon">
-            <path
-                d="M12 5c5.5 0 9.5 5.2 10.5 6.6a.7.7 0 0 1 0 .8C21.5 13.8 17.5 19 12 19S2.5 13.8 1.5 12.4a.7.7 0 0 1 0-.8C2.5 10.2 6.5 5 12 5Zm0 3.2A3.8 3.8 0 1 0 12 15.8A3.8 3.8 0 0 0 12 8.2Z"
-                fill="currentColor"
-            />
-        </svg>
-    );
-}
-
-function NfcIcon() {
-    return (
-        <svg viewBox="0 0 24 24" aria-hidden="true" className="db-statIcon">
-            <path
-                d="M8.5 8.5a5 5 0 0 1 7.1 0M6 6a8.5 8.5 0 0 1 12 0M3.5 3.5a12 12 0 0 1 17 0M12 10.8v7.7"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-            />
-        </svg>
-    );
-}
-
-function QrIcon() {
-    return (
-        <svg viewBox="0 0 24 24" aria-hidden="true" className="db-statIcon">
-            <path
-                d="M4 4h6v6H4zM14 4h6v6h-6zM4 14h6v6H4zM14 14h2v2h-2zM18 14h2v2h-2zM14 18h2v2h-2zM18 18h2v2h-2z"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinejoin="round"
-            />
-        </svg>
-    );
-}
-
-function LinkIcon() {
-    return (
-        <svg viewBox="0 0 24 24" aria-hidden="true" className="db-statIcon">
-            <path
-                d="M10 14l4-4M8.5 17.5l-2 2a3.5 3.5 0 1 1-5-5l4-4a3.5 3.5 0 0 1 5 0M15.5 6.5l2-2a3.5 3.5 0 1 1 5 5l-4 4a3.5 3.5 0 0 1-5 0"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
                 strokeLinejoin="round"
             />
         </svg>
@@ -351,21 +346,163 @@ function CompletionPanelIcon() {
     );
 }
 
+function getInitials(name = "") {
+    const parts = String(name || "")
+        .trim()
+        .split(/\s+/)
+        .filter(Boolean);
+
+    if (!parts.length) return "KC";
+    if (parts.length === 1) return parts[0].slice(0, 2).toUpperCase();
+    return `${parts[0][0] || ""}${parts[1][0] || ""}`.toUpperCase();
+}
+
 function MetricCard({ label, value, helper, featured = false, icon = null, delay = 0 }) {
     return (
         <motion.div
-            className={`db-statCard ${featured ? "db-statCard--featured" : ""}`}
-            initial={{ opacity: 0, y: 18 }}
+            className={`db-metric ${featured ? "db-metric--featured" : ""}`}
+            initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.35, delay }}
+            transition={{ duration: 0.28, delay, ease: "easeOut" }}
         >
-            <div className="db-statTop">
-                <div className="db-statLabel">{label}</div>
-                <div className={`db-statIconWrap ${featured ? "is-featured" : ""}`}>{icon}</div>
+            <div className="db-metric-top">
+                <div className="db-metric-label">{label}</div>
+                {icon ? (
+                    <img
+                        src={icon}
+                        alt=""
+                        aria-hidden="true"
+                        className={`db-metric-icon ${featured ? "db-metric-icon--featured" : ""}`}
+                    />
+                ) : null}
             </div>
-            <div className="db-statValue">{numberFormat(value)}</div>
-            <div className="db-statHelper">{helper}</div>
+
+            <div className="db-metric-value">{numberFormat(value)}</div>
+            <div className={`db-metric-helper ${featured ? "db-metric-helper--featured" : ""}`}>
+                {helper}
+            </div>
         </motion.div>
+    );
+}
+
+function RecentActivityCard({ items = [] }) {
+    return (
+        <div className="db-panel db-panel--equal">
+            <div className="db-panelHead">
+                <div>
+                    <div className="db-panelKickerRow">
+                        <span className="db-panelIconWrap">
+                            <ActivityPanelIcon />
+                        </span>
+                        <span className="db-panelKicker">Live activity</span>
+                    </div>
+
+                    <h3 className="db-panelTitle">Recent Activity</h3>
+                    <p className="db-panelMuted">See what’s been happening on your profile recently.</p>
+                </div>
+            </div>
+
+            <div className="db-activityFeedList db-activityFeedList--light">
+                {items.length ? (
+                    items.map((item, index) => {
+                        const name =
+                            item?.contact_name ||
+                            item?.contactName ||
+                            item?.name ||
+                            "Someone";
+
+                        return (
+                            <div key={item.id || item._id || `${item.message}-${index}`} className="db-activityFeedItem">
+                                <div className={`db-activityAvatar db-activityAvatar--light db-activityAvatar--${index % 5}`}>
+                                    {getInitials(name)}
+                                </div>
+
+                                <div className="db-activityFeedContent">
+                                    <div className="db-activityFeedText db-activityFeedText--light">
+                                        {item.message}
+                                    </div>
+                                    <div className="db-activityFeedTime db-activityFeedTime--light">
+                                        {item.timeLabel}
+                                    </div>
+                                </div>
+                            </div>
+                        );
+                    })
+                ) : (
+                    <div className="db-emptyState">No recent activity yet. Share your profile to start seeing engagement.</div>
+                )}
+            </div>
+
+            <div className="db-panelFooter">
+                <Link to="/analytics" className="kx-btn kx-btn--black">
+                    View Recent Activity
+                </Link>
+            </div>
+        </div>
+    );
+}
+
+function ProfileCompletionCard({ completion }) {
+    return (
+        <div className="db-panel db-panel--equal">
+            <div className="db-panelHead">
+                <div>
+                    <div className="db-panelKickerRow">
+                        <span className="db-panelIconWrap">
+                            <CompletionPanelIcon />
+                        </span>
+                        <span className="db-panelKicker">Profile quality</span>
+                    </div>
+
+                    <h3 className="db-panelTitle">Profile Completion</h3>
+                    <p className="db-panelMuted">
+                        Finish your profile to look more professional and get more jobs.
+                    </p>
+                </div>
+            </div>
+
+            <div className="db-progressMeta">
+                <span>{completion.percent}% complete</span>
+                <span>
+                    {completion.doneCount} of {completion.total} steps finished
+                </span>
+            </div>
+
+            <div className="db-progressBar">
+                <span className="db-progressFill" style={{ width: `${completion.percent}%` }} />
+            </div>
+
+            <div className="db-completeLabel">Still to do:</div>
+
+            <div className="db-breakdownList db-breakdownList--completion">
+                {completion.items.length ? (
+                    completion.items.map((item) => (
+                        <div key={item.key} className="db-breakdownRow">
+                            <div className="db-breakdownRowMain">
+                                <div className={`db-breakdownRowTitle ${item.done ? "is-done" : ""}`}>{item.label}</div>
+                                <div className="db-breakdownRowMeta">
+                                    {item.done ? "Completed on your profile" : "Still missing from your profile"}
+                                </div>
+                            </div>
+
+                            <div className={`db-completionStatus ${item.done ? "done" : ""}`}>
+                                {item.done ? "Done" : "Pending"}
+                            </div>
+                        </div>
+                    ))
+                ) : (
+                    <div className="db-emptyState">
+                        Start building your profile to unlock more value from KonarCard.
+                    </div>
+                )}
+            </div>
+
+            <div className="db-panelFooter">
+                <Link to="/profiles" className="kx-btn kx-btn--black">
+                    Complete Your Profile
+                </Link>
+            </div>
+        </div>
     );
 }
 
@@ -379,12 +516,13 @@ export default function Dashboard() {
         const xs = Array.isArray(cards) ? cards : [];
         return xs
             .map((c) => {
-                const slug = centerTrim(c.profile_slug);
+                const slug = centerTrim(c?.profile_slug);
                 if (!slug) return null;
 
                 const name =
-                    centerTrim(c.business_card_name) ||
-                    centerTrim(c.full_name) ||
+                    centerTrim(c?.business_card_name) ||
+                    centerTrim(c?.business_name) ||
+                    centerTrim(c?.full_name) ||
                     (slug === "main" ? "Main Profile" : "Profile");
 
                 return { slug, name, url: buildPublicUrl(slug) };
@@ -400,6 +538,7 @@ export default function Dashboard() {
             setSelectedSlug(null);
             return;
         }
+
         setSelectedSlug((prev) => prev || profilesForShare[0].slug);
     }, [profilesForShare]);
 
@@ -452,6 +591,7 @@ export default function Dashboard() {
         id: item?.id || item?._id || `activity-${index}`,
         message: item?.message || getActivityMessage(item),
         timeLabel: formatActivityTime(item?.createdAt || item?.timestamp || item?.date),
+        ...item,
     }));
 
     const hasPhysicalCard = useMemo(
@@ -479,13 +619,13 @@ export default function Dashboard() {
                     profileUrl={selectedProfile?.url || ""}
                 />
 
-                <div className="db-grid">
-                    <motion.section
-                        className="db-heroCard db-span-12"
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.4 }}
-                    >
+                <motion.section
+                    className="db-hero"
+                    initial={{ opacity: 0, y: 18 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.32, ease: "easeOut" }}
+                >
+                    <div className="db-heroCard">
                         <div className="db-heroMain">
                             <div className="db-heroBadge">Performance snapshot</div>
 
@@ -528,215 +668,127 @@ export default function Dashboard() {
                                 <span className="db-heroMiniValue">{numberFormat(metrics.profileViews)}</span>
                             </div>
                         </div>
-                    </motion.section>
+                    </div>
+                </motion.section>
 
-                    <section className="db-statsRow db-span-12">
-                        <MetricCard
-                            label="Total Views"
-                            value={metrics.profileViews}
-                            helper={
-                                Number(metrics.profileViews) > 0
-                                    ? "Your profile is getting attention."
-                                    : "Share more to start getting views."
-                            }
-                            featured
-                            icon={<ViewsIcon />}
-                            delay={0.02}
-                        />
+                <section className="db-overview">
+                    {analyticsQuery.isLoading ? (
+                        <div className="db-emptyState db-emptyState--full">Loading dashboard…</div>
+                    ) : analyticsQuery.isError ? (
+                        <div className="db-emptyState db-emptyState--error">
+                            Couldn’t load dashboard data right now.
+                        </div>
+                    ) : (
+                        <div className="db-metricsGrid">
+                            <MetricCard
+                                label="Total Views"
+                                value={metrics.profileViews}
+                                helper={
+                                    Number(metrics.profileViews) > 0
+                                        ? "Your profile is getting attention."
+                                        : "Share more to start getting views."
+                                }
+                                featured
+                                icon={TotalVisitsIcon}
+                                delay={0.02}
+                            />
 
-                        <MetricCard
-                            label="NFC Taps"
-                            value={metrics.cardTaps}
-                            helper={
-                                hasPhysicalCard
-                                    ? Number(metrics.cardTaps) > 0
-                                        ? "People are tapping your card."
-                                        : "Start tapping your card to drive traffic."
-                                    : "Order a physical card to unlock taps."
-                            }
-                            icon={<NfcIcon />}
-                            delay={0.06}
-                        />
+                            <MetricCard
+                                label="NFC Taps"
+                                value={metrics.cardTaps}
+                                helper={
+                                    hasPhysicalCard
+                                        ? Number(metrics.cardTaps) > 0
+                                            ? "People are tapping your card."
+                                            : "Start tapping your card to drive traffic."
+                                        : "Order a physical card to unlock taps."
+                                }
+                                icon={NFCTapsIcon}
+                                delay={0.06}
+                            />
 
-                        <MetricCard
-                            label="QR Scans"
-                            value={metrics.qrScans}
-                            helper={
-                                Number(metrics.qrScans) > 0
-                                    ? "Your QR code is being scanned."
-                                    : "Share more to start getting scans."
-                            }
-                            icon={<QrIcon />}
-                            delay={0.1}
-                        />
+                            <MetricCard
+                                label="QR Scans"
+                                value={metrics.qrScans}
+                                helper={
+                                    Number(metrics.qrScans) > 0
+                                        ? "Your QR code is being scanned."
+                                        : "Share more to start getting scans."
+                                }
+                                icon={QRScansIcon}
+                                delay={0.1}
+                            />
 
-                        <MetricCard
-                            label="Link Clicks"
-                            value={metrics.linkOpens}
-                            helper={
-                                Number(metrics.linkOpens) > 0
-                                    ? "Your link is driving visits."
-                                    : "Share more to start getting clicks."
-                            }
-                            icon={<LinkIcon />}
-                            delay={0.14}
-                        />
-                    </section>
+                            <MetricCard
+                                label="Link Clicks"
+                                value={metrics.linkOpens}
+                                helper={
+                                    Number(metrics.linkOpens) > 0
+                                        ? "Your link is driving visits."
+                                        : "Share more to start getting clicks."
+                                }
+                                icon={LinkVisitsIcon}
+                                delay={0.14}
+                            />
+                        </div>
+                    )}
+                </section>
 
-                    <motion.section
-                        className="db-card db-card--share db-span-12"
-                        initial={{ opacity: 0, y: 18 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.35, delay: 0.08 }}
-                    >
-                        <div className="db-shareLeft">
-                            <span className="db-shareIcon" aria-hidden="true">
-                                <img src={GrowYourReachIcon} alt="" />
+                <motion.section
+                    className="db-panel db-panel--share"
+                    initial={{ opacity: 0, y: 18 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.32, delay: 0.08, ease: "easeOut" }}
+                >
+                    <div className="db-shareLeft">
+                        <span className="db-shareIcon" aria-hidden="true">
+                            <img src={GrowYourReachIcon} alt="" />
+                        </span>
+
+                        <div className="db-shareCopy">
+                            <h3 className="db-panelTitle">Grow your reach</h3>
+                            <p className="db-panelMuted">
+                                Share your profile more often to increase views, taps, scans and saved contacts.
+                            </p>
+                        </div>
+                    </div>
+
+                    <div className="db-shareActions">
+                        <button
+                            type="button"
+                            className="kx-btn kx-btn--orange"
+                            onClick={() => setShareOpen(true)}
+                            disabled={!selectedProfile}
+                        >
+                            <span className="db-actionIcon" aria-hidden="true">
+                                <ShareIcon />
                             </span>
+                            Share Profile
+                        </button>
 
-                            <div className="db-shareCopy">
-                                <h2 className="db-cardTitle">Grow your reach</h2>
-                                <p className="db-muted">
-                                    Share your profile more often to increase views, taps, scans and saved
-                                    contacts.
-                                </p>
-                            </div>
-                        </div>
+                        <Link to="/analytics" className="kx-btn kx-btn--black">
+                            View Analytics
+                        </Link>
+                    </div>
+                </motion.section>
 
-                        <div className="db-shareActions">
-                            <button
-                                type="button"
-                                className="kx-btn kx-btn--orange"
-                                onClick={() => setShareOpen(true)}
-                                disabled={!selectedProfile}
-                            >
-                                <span className="db-actionIcon" aria-hidden="true">
-                                    <ShareIcon />
-                                </span>
-                                Share Profile
-                            </button>
-
-                            <Link to="/analytics" className="kx-btn kx-btn--black">
-                                View Analytics
-                            </Link>
-                        </div>
-                    </motion.section>
-
-                    <motion.section
-                        className="db-card db-card--equal db-span-6"
+                <section className="db-grid db-grid--panels">
+                    <motion.div
                         initial={{ opacity: 0, y: 18 }}
                         animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.35, delay: 0.12 }}
+                        transition={{ duration: 0.32, delay: 0.12, ease: "easeOut" }}
                     >
-                        <div className="db-cardHead">
-                            <div className="db-cardHeadLeft">
-                                <div className="db-panelKickerRow">
-                                    <span className="db-panelIconWrap">
-                                        <ActivityPanelIcon />
-                                    </span>
-                                    <span className="db-panelKicker">Live activity</span>
-                                </div>
+                        <RecentActivityCard items={recentActivity} />
+                    </motion.div>
 
-                                <h2 className="db-cardTitle">Recent Activity</h2>
-                                <p className="db-muted">
-                                    See what’s been happening on your profile recently.
-                                </p>
-                            </div>
-                        </div>
-
-                        <div className="db-scrollPanel db-scrollPanel--activity">
-                            {recentActivity.length ? (
-                                recentActivity.map((item, index) => (
-                                    <div key={item.id} className="db-activityRow">
-                                        <span
-                                            className={`db-activityAvatar db-activityAvatar--${index % 5}`}
-                                            aria-hidden="true"
-                                        >
-                                            {(item.message || "AA").slice(0, 2).toUpperCase()}
-                                        </span>
-
-                                        <div className="db-activityMain">
-                                            <span className="db-activityText">{item.message}</span>
-                                            <span className="db-activityMeta">{item.timeLabel}</span>
-                                        </div>
-                                    </div>
-                                ))
-                            ) : (
-                                <div className="db-emptyState">
-                                    No recent activity yet. Share your profile to start seeing engagement.
-                                </div>
-                            )}
-                        </div>
-
-                        <div className="db-bottomCta">
-                            <Link to="/analytics" className="kx-btn kx-btn--black">
-                                View Recent Activity
-                            </Link>
-                        </div>
-                    </motion.section>
-
-                    <motion.section
-                        className="db-card db-card--equal db-span-6"
+                    <motion.div
                         initial={{ opacity: 0, y: 18 }}
                         animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.35, delay: 0.16 }}
+                        transition={{ duration: 0.32, delay: 0.16, ease: "easeOut" }}
                     >
-                        <div className="db-cardHead">
-                            <div className="db-cardHeadLeft">
-                                <div className="db-panelKickerRow">
-                                    <span className="db-panelIconWrap">
-                                        <CompletionPanelIcon />
-                                    </span>
-                                    <span className="db-panelKicker">Profile quality</span>
-                                </div>
-
-                                <h2 className="db-cardTitle">Profile Completion</h2>
-                                <p className="db-muted">
-                                    Finish your profile to look more professional and get more jobs.
-                                </p>
-                            </div>
-                        </div>
-
-                        <div className="db-progressMeta">
-                            <span>{completion.percent}% complete</span>
-                            <span>
-                                {completion.doneCount} of {completion.total} steps finished
-                            </span>
-                        </div>
-
-                        <div className="db-progressBar">
-                            <span className="db-progressFill" style={{ width: `${completion.percent}%` }} />
-                        </div>
-
-                        <div className="db-completeLabel">Still to do:</div>
-
-                        <div className="db-scrollPanel db-scrollPanel--completion">
-                            {completion.items.length ? (
-                                completion.items.map((item) => (
-                                    <div key={item.key} className="db-completionRow">
-                                        <span className={`db-completionText ${item.done ? "done" : ""}`}>
-                                            {item.label}
-                                        </span>
-
-                                        <span className={`db-completionStatus ${item.done ? "done" : ""}`}>
-                                            {item.done ? "Done" : "Pending"}
-                                        </span>
-                                    </div>
-                                ))
-                            ) : (
-                                <div className="db-emptyState">
-                                    Start building your profile to unlock more value from KonarCard.
-                                </div>
-                            )}
-                        </div>
-
-                        <div className="db-bottomCta">
-                            <Link to="/profiles" className="kx-btn kx-btn--black">
-                                Complete Your Profile
-                            </Link>
-                        </div>
-                    </motion.section>
-                </div>
+                        <ProfileCompletionCard completion={completion} />
+                    </motion.div>
+                </section>
             </div>
         </DashboardLayout>
     );
