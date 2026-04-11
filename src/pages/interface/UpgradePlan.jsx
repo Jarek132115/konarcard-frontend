@@ -1,5 +1,7 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { toast } from "react-hot-toast";
+import { motion } from "motion/react";
+import { Tabs } from "@base-ui/react/tabs";
 
 import DashboardLayout from "../../components/Dashboard/DashboardLayout";
 import PageHeader from "../../components/Dashboard/PageHeader";
@@ -32,7 +34,9 @@ function clearLocalAuth() {
         localStorage.removeItem("token");
         localStorage.removeItem("authUser");
         localStorage.removeItem(CHECKOUT_INTENT_KEY);
-    } catch { }
+    } catch {
+        // ignore
+    }
 }
 
 function isTokenExpired(token) {
@@ -117,15 +121,97 @@ const buildPublicUrl = (profileSlug) => {
     return `${window.location.origin}/u/${encodeURIComponent(s)}`;
 };
 
+function CheckIcon({ featured = false }) {
+    return (
+        <svg
+            viewBox="0 0 20 20"
+            className={`upg-checkIcon ${featured ? "upg-checkIcon--featured" : ""}`}
+            aria-hidden="true"
+        >
+            <path
+                d="M5 10.5 8.25 13.75 15 7"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2.1"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+            />
+        </svg>
+    );
+}
+
+function CrownIcon() {
+    return (
+        <svg viewBox="0 0 20 20" className="upg-miniIcon" aria-hidden="true">
+            <path
+                d="M3 14.5 4.7 6.8l4 3.4L10 5l1.3 5.2 4-3.4 1.7 7.7H3Z"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="1.8"
+                strokeLinejoin="round"
+            />
+        </svg>
+    );
+}
+
+function BillingIcon() {
+    return (
+        <svg viewBox="0 0 20 20" className="upg-miniIcon" aria-hidden="true">
+            <path
+                d="M3.5 6.5h13M5.5 3.5h9a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2h-9a2 2 0 0 1-2-2v-9a2 2 0 0 1 2-2Z"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="1.8"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+            />
+        </svg>
+    );
+}
+
+function SparklesIcon() {
+    return (
+        <svg viewBox="0 0 20 20" className="upg-miniIcon" aria-hidden="true">
+            <path
+                d="M10 2.8 11.6 7l4.2 1.6-4.2 1.6L10 14.4l-1.6-4.2L4.2 8.6 8.4 7 10 2.8Zm5.2 9.4.7 1.8 1.8.7-1.8.7-.7 1.8-.7-1.8-1.8-.7 1.8-.7.7-1.8ZM4.4 11.8l.9 2.3 2.3.9-2.3.9-.9 2.3-.9-2.3-2.3-.9 2.3-.9.9-2.3Z"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="1.4"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+            />
+        </svg>
+    );
+}
+
+function FeatureStat({ label, value, tone = "default" }) {
+    return (
+        <div className={`upg-statCard ${tone === "accent" ? "upg-statCard--accent" : ""}`}>
+            <div className="upg-statLabel">{label}</div>
+            <div className="upg-statValue">{value}</div>
+        </div>
+    );
+}
+
 function PlanCard({ plan, currentPlan, loadingKey }) {
     const featured = !!plan.featured;
     const current = currentPlan === plan.key;
 
     return (
-        <article
-            className={`upg-planCard ${featured ? "upg-planCard--featured" : ""} ${current ? "upg-planCard--current" : ""
-                }`}
+        <motion.article
+            className={[
+                "upg-planCard",
+                featured ? "upg-planCard--featured" : "",
+                current ? "upg-planCard--current" : "",
+            ]
+                .filter(Boolean)
+                .join(" ")}
+            initial={{ opacity: 0, y: 18 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.28, ease: "easeOut" }}
         >
+            <div className="upg-planGlow" aria-hidden="true" />
+
             <div className="upg-planTop">
                 <div className="upg-planTopRow">
                     <div className={`upg-planTag ${featured ? "upg-planTag--featured" : ""}`}>
@@ -137,15 +223,14 @@ function PlanCard({ plan, currentPlan, loadingKey }) {
                             className={`upg-planCurrentBadge ${featured ? "upg-planCurrentBadge--featured" : ""
                                 }`}
                         >
-                            Current Plan
+                            Current plan
                         </div>
                     ) : null}
                 </div>
 
                 <div className="upg-planNameRow">
                     <span
-                        className={`upg-planIconWrap ${featured ? "upg-planIconWrap--featured" : ""
-                            }`}
+                        className={`upg-planIconWrap ${featured ? "upg-planIconWrap--featured" : ""}`}
                     >
                         <img src={plan.icon} alt="" className="upg-planIcon" />
                     </span>
@@ -154,19 +239,20 @@ function PlanCard({ plan, currentPlan, loadingKey }) {
                         <h3 className={`upg-planName ${featured ? "upg-planName--featured" : ""}`}>
                             {plan.title}
                         </h3>
+                        <p
+                            className={`upg-planDesc ${featured ? "upg-planDesc--featured" : ""}`}
+                        >
+                            {plan.description}
+                        </p>
                     </div>
                 </div>
 
-                <div className="upg-planPriceRow">
-                    <div
-                        className={`upg-planPrice ${featured ? "upg-planPrice--featured" : ""}`}
-                    >
+                <div className="upg-planPriceWrap">
+                    <div className={`upg-planPrice ${featured ? "upg-planPrice--featured" : ""}`}>
                         {plan.price}
                     </div>
-
                     <div
-                        className={`upg-planCadence ${featured ? "upg-planCadence--featured" : ""
-                            }`}
+                        className={`upg-planCadence ${featured ? "upg-planCadence--featured" : ""}`}
                     >
                         {plan.cadence}
                     </div>
@@ -175,7 +261,7 @@ function PlanCard({ plan, currentPlan, loadingKey }) {
                 {plan.meta?.length ? (
                     <div className={`upg-planMeta ${featured ? "upg-planMeta--featured" : ""}`}>
                         {plan.meta.map((m, i) => (
-                            <div key={i}>{m}</div>
+                            <div key={`${plan.key}-meta-${i}`}>{m}</div>
                         ))}
                     </div>
                 ) : null}
@@ -185,10 +271,9 @@ function PlanCard({ plan, currentPlan, loadingKey }) {
 
             <div className="upg-planBody">
                 <div
-                    className={`upg-planIncluded ${featured ? "upg-planIncluded--featured" : ""
-                        }`}
+                    className={`upg-planIncluded ${featured ? "upg-planIncluded--featured" : ""}`}
                 >
-                    What’s included
+                    Included in this plan
                 </div>
 
                 <ul className="upg-planList">
@@ -198,7 +283,10 @@ function PlanCard({ plan, currentPlan, loadingKey }) {
                             className={`upg-planListItem ${featured ? "upg-planListItem--featured" : ""
                                 }`}
                         >
-                            {item}
+                            <span className="upg-planCheckWrap">
+                                <CheckIcon featured={featured} />
+                            </span>
+                            <span>{item}</span>
                         </li>
                     ))}
                 </ul>
@@ -207,16 +295,16 @@ function PlanCard({ plan, currentPlan, loadingKey }) {
                     {plan.button.type === "link" ? (
                         <a
                             href={plan.button.to}
-                            className={`kx-btn ${featured ? "upg-btn-featured" : "kx-btn--black"
-                                } upg-btn`}
+                            className={`upg-btn ${featured ? "upg-btn--featured" : "upg-btn--primary"
+                                }`}
                         >
                             {plan.button.label}
                         </a>
                     ) : (
                         <button
                             type="button"
-                            className={`kx-btn ${featured ? "upg-btn-featured" : "kx-btn--black"
-                                } upg-btn`}
+                            className={`upg-btn ${featured ? "upg-btn--featured" : "upg-btn--primary"
+                                } ${plan.button.disabled ? "is-disabled" : ""}`}
                             onClick={plan.button.onClick || undefined}
                             disabled={!!plan.button.disabled}
                         >
@@ -234,7 +322,7 @@ function PlanCard({ plan, currentPlan, loadingKey }) {
                     ) : null}
                 </div>
             </div>
-        </article>
+        </motion.article>
     );
 }
 
@@ -281,7 +369,10 @@ export default function UpgradePlan() {
             setSelectedSlug(null);
             return;
         }
-        setSelectedSlug((prev) => prev || profilesForShare[0].slug);
+        setSelectedSlug((prev) => {
+            if (prev && profilesForShare.some((p) => p.slug === prev)) return prev;
+            return profilesForShare[0].slug;
+        });
     }, [profilesForShare]);
 
     const selectedProfile = useMemo(() => {
@@ -448,7 +539,9 @@ export default function UpgradePlan() {
                 cancelReturn: `${window.location.origin}/upgrade-plan`,
             };
             localStorage.setItem(CHECKOUT_INTENT_KEY, JSON.stringify(intent));
-        } catch { }
+        } catch {
+            // ignore
+        }
     };
 
     const startSubscription = async (planKey) => {
@@ -459,7 +552,7 @@ export default function UpgradePlan() {
         }
 
         if (isActive && currentPlan === planKey.split("-")[0]) {
-            alert("You’re already subscribed to this plan.");
+            toast("You’re already on this plan.");
             return;
         }
 
@@ -487,7 +580,7 @@ export default function UpgradePlan() {
                 /user not found/i.test(String(data?.error || ""))
             ) {
                 clearLocalAuth();
-                alert("Your session is no longer valid. Please log in again.");
+                toast.error("Your session expired. Please log in again.");
                 window.location.href = "/login";
                 return;
             }
@@ -502,11 +595,13 @@ export default function UpgradePlan() {
 
             try {
                 localStorage.removeItem(CHECKOUT_INTENT_KEY);
-            } catch { }
+            } catch {
+                // ignore
+            }
 
             window.location.href = data.url;
         } catch (err) {
-            alert(err?.message || "Subscription failed");
+            toast.error(err?.message || "Subscription failed");
         } finally {
             setLoadingKey(null);
         }
@@ -549,7 +644,7 @@ export default function UpgradePlan() {
 
             window.location.href = data.url;
         } catch (e) {
-            alert(e?.message || "Billing portal is not available yet.");
+            toast.error(e?.message || "Billing portal is not available yet.");
         }
     };
 
@@ -560,7 +655,7 @@ export default function UpgradePlan() {
             if (planName === "free") {
                 return {
                     type: "link",
-                    label: "Start Free",
+                    label: "Start free",
                     to: "/register",
                     disabled: false,
                     helper: "",
@@ -662,12 +757,13 @@ export default function UpgradePlan() {
             {
                 key: "free",
                 title: "Individual",
+                description: "A clean free plan for getting started and sharing your KonarCard.",
                 icon: FreePlanIcon,
                 tag: "Best for starting out",
                 featured: false,
                 price: "£0",
                 cadence: "No monthly fees",
-                meta: [],
+                meta: ["Perfect for solo use", "Upgrade any time when you need more polish"],
                 highlights: [
                     "Your KonarCard link",
                     "Contact buttons",
@@ -682,6 +778,7 @@ export default function UpgradePlan() {
             {
                 key: "plus",
                 title: "Plus",
+                description: "More control, stronger branding, and a more premium customer-facing profile.",
                 icon: PlusPlanIcon,
                 tag: "Most popular",
                 featured: true,
@@ -708,8 +805,9 @@ export default function UpgradePlan() {
             {
                 key: "teams",
                 title: "Teams",
+                description: "Built for small businesses managing multiple staff profiles from one place.",
                 icon: TeamsPlanIcon,
-                tag: "For small teams",
+                tag: "For growing teams",
                 featured: false,
                 price: fmtGBP(plusPerMonth),
                 cadence: "+ £1.95 per extra profile",
@@ -745,6 +843,13 @@ export default function UpgradePlan() {
         subLoading,
         PRICES,
     ]);
+
+    const currentPlanSummary =
+        currentPlan === "teams"
+            ? "Built for small teams managing multiple profiles and shared branding."
+            : currentPlan === "plus"
+                ? "More customisation, branding control, and deeper analytics."
+                : "A simple starting plan for sharing your KonarCard and contact details.";
 
     const handleOpenShareProfile = () => {
         if (!selectedProfile) {
@@ -872,95 +977,162 @@ export default function UpgradePlan() {
                     onGoogleWallet={handleGoogleWallet}
                 />
 
-                <section className="upg-summaryGrid">
-                    <div className="upg-summaryCard upg-summaryCard--featured">
-                        <div className="upg-summaryLabel">Current Plan</div>
-                        <div className="upg-summaryHeading upg-summaryHeading--featured">
-                            {normalizePlanLabel(currentPlan)}
+                <motion.section
+                    className="upg-heroCard"
+                    initial={{ opacity: 0, y: 14 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.32, ease: "easeOut" }}
+                >
+                    <div className="upg-heroMain">
+                        <div className="upg-heroPills">
+                            <span className="upg-pill upg-pill--accent">
+                                <SparklesIcon />
+                                Plans
+                            </span>
+                            <span className="upg-pill upg-pill--neutral">
+                                <CrownIcon />
+                                {normalizePlanLabel(currentPlan)}
+                            </span>
+                            <span className="upg-pill upg-pill--neutral">
+                                <BillingIcon />
+                                {billing === "monthly"
+                                    ? "Monthly billing"
+                                    : billing === "quarterly"
+                                        ? "Quarterly billing"
+                                        : "Yearly billing"}
+                            </span>
                         </div>
-                        <p className="upg-summaryText upg-summaryText--featured">
-                            {currentPlan === "teams"
-                                ? "Best for small teams managing multiple profiles."
-                                : currentPlan === "plus"
-                                    ? "More customisation, branding control, and analytics."
-                                    : "A simple starting plan for sharing your KonarCard and contact details."}
+
+                        <h2 className="upg-heroTitle">
+                            Choose the plan that fits how you share, sell, and grow with KonarCard
+                        </h2>
+
+                        <p className="upg-heroText">
+                            Start free, unlock more branding and profile control with Plus, or manage
+                            multiple people with Teams. Your billing and subscription settings stay in one
+                            place.
                         </p>
+
+                        <div className="upg-heroStats">
+                            <FeatureStat label="Current plan" value={normalizePlanLabel(currentPlan)} tone="accent" />
+                            <FeatureStat
+                                label="Status"
+                                value={
+                                    subLoading ? "Checking…" : isActive || hasFutureAccess ? "Active" : "Free"
+                                }
+                            />
+                            <FeatureStat
+                                label="Renews / access"
+                                value={activeUntilLabel || "No renewal date"}
+                            />
+                        </div>
                     </div>
 
-                    <div className="upg-summaryCard">
-                        <div className="upg-summaryLabel">Billing & subscription</div>
-                        <div className="upg-summaryHeading">Manage your billing</div>
-                        <p className="upg-summaryText">
-                            {subLoading
-                                ? "Checking your billing status..."
-                                : subErr
-                                    ? subErr
-                                    : isLoggedIn()
-                                        ? planStatusLine || "No billing status available."
-                                        : "Log in to manage your subscription, billing details, and renewals."}
-                        </p>
+                    <div className="upg-heroAside">
+                        <div className="upg-billingCard">
+                            <div className="upg-billingCardTop">
+                                <div className="upg-billingCardEyebrow">Manage billing</div>
+                                <h3 className="upg-billingCardTitle">Subscription & renewals</h3>
+                                <p className="upg-billingCardText">
+                                    {subLoading
+                                        ? "Checking your current billing status..."
+                                        : subErr
+                                            ? subErr
+                                            : isLoggedIn()
+                                                ? planStatusLine || "No billing status available."
+                                                : "Log in to manage your subscription, billing details, and renewals."}
+                                </p>
+                            </div>
 
-                        <div className="upg-summaryActions">
-                            <button
-                                type="button"
-                                className="kx-btn kx-btn--black"
-                                onClick={openBillingPortal}
-                            >
-                                Open Billing Portal
-                            </button>
+                            <div className="upg-billingCardActions">
+                                <button
+                                    type="button"
+                                    className="upg-btn upg-btn--dark"
+                                    onClick={openBillingPortal}
+                                >
+                                    Open billing portal
+                                </button>
+                            </div>
                         </div>
                     </div>
-                </section>
+                </motion.section>
 
-                <section className="upg-mainCard">
+                <motion.section
+                    className="upg-mainCard"
+                    initial={{ opacity: 0, y: 16 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.32, delay: 0.04, ease: "easeOut" }}
+                >
                     <div className="upg-mainHead">
                         <div className="upg-mainHeadCopy">
-                            <h2 className="upg-mainTitle">Choose the plan that fits your business</h2>
+                            <h2 className="upg-mainTitle">Compare your options</h2>
                             <p className="upg-mainSub">
-                                Start free, upgrade anytime, and manage everything from your dashboard.
+                                Billing stays flexible, and your plan can change whenever your business does.
                             </p>
                         </div>
 
                         <div className="upg-mainHeadControls">
-                            <div className="upg-billingTabs" role="tablist" aria-label="Billing interval">
-                                <button
-                                    type="button"
-                                    className={`upg-tab ${billing === "monthly" ? "is-active" : ""}`}
-                                    onClick={() => setBilling("monthly")}
+                            <Tabs.Root
+                                value={billing}
+                                onValueChange={(value) => {
+                                    if (value === "monthly" || value === "quarterly" || value === "yearly") {
+                                        setBilling(value);
+                                    }
+                                }}
+                                className="upg-tabsRoot"
+                            >
+                                <Tabs.List
+                                    aria-label="Billing interval"
+                                    className="upg-billingTabs"
                                 >
-                                    Monthly
-                                </button>
-                                <button
-                                    type="button"
-                                    className={`upg-tab ${billing === "quarterly" ? "is-active" : ""}`}
-                                    onClick={() => setBilling("quarterly")}
-                                >
-                                    Quarterly
-                                </button>
-                                <button
-                                    type="button"
-                                    className={`upg-tab ${billing === "yearly" ? "is-active" : ""}`}
-                                    onClick={() => setBilling("yearly")}
-                                >
-                                    Yearly
-                                </button>
-                            </div>
+                                    <Tabs.Tab
+                                        value="monthly"
+                                        className={`upg-tab ${billing === "monthly" ? "is-active" : ""}`}
+                                    >
+                                        Monthly
+                                    </Tabs.Tab>
+                                    <Tabs.Tab
+                                        value="quarterly"
+                                        className={`upg-tab ${billing === "quarterly" ? "is-active" : ""}`}
+                                    >
+                                        Quarterly
+                                    </Tabs.Tab>
+                                    <Tabs.Tab
+                                        value="yearly"
+                                        className={`upg-tab ${billing === "yearly" ? "is-active" : ""}`}
+                                    >
+                                        Yearly
+                                    </Tabs.Tab>
+                                </Tabs.List>
+                            </Tabs.Root>
 
                             <div className="upg-billingNote">{billingNote}</div>
                         </div>
                     </div>
 
+                    <div className="upg-currentInfo">
+                        <div className="upg-currentInfoLabel">Your current setup</div>
+                        <div className="upg-currentInfoTitle">{normalizePlanLabel(currentPlan)}</div>
+                        <p className="upg-currentInfoText">{currentPlanSummary}</p>
+                    </div>
+
                     <div className="upg-plansGrid">
-                        {planCards.map((plan) => (
-                            <PlanCard
+                        {planCards.map((plan, index) => (
+                            <motion.div
                                 key={plan.key}
-                                plan={plan}
-                                currentPlan={currentPlan}
-                                loadingKey={loadingKey}
-                            />
+                                initial={{ opacity: 0, y: 18 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                transition={{ duration: 0.28, delay: index * 0.05, ease: "easeOut" }}
+                            >
+                                <PlanCard
+                                    plan={plan}
+                                    currentPlan={currentPlan}
+                                    loadingKey={loadingKey}
+                                />
+                            </motion.div>
                         ))}
                     </div>
-                </section>
+                </motion.section>
             </div>
         </DashboardLayout>
     );
