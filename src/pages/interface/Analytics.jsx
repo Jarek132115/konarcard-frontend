@@ -1,6 +1,19 @@
 import React, { useMemo, useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { toast } from "react-hot-toast";
+import { motion } from "motion/react";
+import { Tabs } from "@base-ui/react/tabs";
+import {
+    ResponsiveContainer,
+    AreaChart,
+    Area,
+    CartesianGrid,
+    XAxis,
+    YAxis,
+    Tooltip,
+    BarChart,
+    Bar,
+} from "recharts";
 
 import DashboardLayout from "../../components/Dashboard/DashboardLayout";
 import PageHeader from "../../components/Dashboard/PageHeader";
@@ -89,38 +102,6 @@ function formatDateLabel(value) {
     });
 }
 
-function getXAxisTickStep(days, pointCount) {
-    if (days <= 7) return 1;
-    if (days <= 30) return 3;
-    if (days <= 90) return Math.max(1, Math.ceil(pointCount / 10));
-    if (days <= 365) return Math.max(1, Math.ceil(pointCount / 10));
-    return Math.max(1, Math.ceil(pointCount / 10));
-}
-
-function buildYAxisTicks(maxValue) {
-    const safeMax = Math.max(Number(maxValue) || 0, 1);
-
-    if (safeMax <= 3) return [safeMax, Math.max(1, safeMax - 1), 1, 0];
-    if (safeMax <= 10) {
-        return [safeMax, Math.round((safeMax * 2) / 3), Math.round(safeMax / 3), 0];
-    }
-
-    const roughStep = safeMax / 3;
-    const magnitude = Math.pow(10, Math.floor(Math.log10(roughStep)));
-    const normalized = roughStep / magnitude;
-
-    let niceStep = 1;
-    if (normalized <= 1) niceStep = 1;
-    else if (normalized <= 2) niceStep = 2;
-    else if (normalized <= 5) niceStep = 5;
-    else niceStep = 10;
-
-    const step = niceStep * magnitude;
-    const top = Math.ceil(safeMax / step) * step;
-
-    return [top, top - step, top - step * 2, 0].map((value) => Math.max(0, value));
-}
-
 function formatActivityTime(dateValue) {
     if (!dateValue) return "";
     const now = Date.now();
@@ -193,11 +174,16 @@ function getPeriodLabel(range) {
     return `vs previous ${range} days`;
 }
 
-function formatTrendLabel(delta, range) {
+function formatTrendLabel(delta, range, isPercentage = false) {
     const periodLabel = getPeriodLabel(range);
 
-    if (delta > 0) return `↑ ${numberFormat(delta)} ${periodLabel}`;
-    if (delta < 0) return `↓ ${numberFormat(Math.abs(delta))} ${periodLabel}`;
+    if (delta > 0) {
+        return `↑ ${isPercentage ? percentageFormat(delta) : numberFormat(delta)} ${periodLabel}`;
+    }
+    if (delta < 0) {
+        const absolute = Math.abs(delta);
+        return `↓ ${isPercentage ? percentageFormat(absolute) : numberFormat(absolute)} ${periodLabel}`;
+    }
     return `No change ${periodLabel}`;
 }
 
@@ -248,25 +234,35 @@ function MetricCard({
     isPercentage = false,
     featured = false,
     locked = false,
+    helper = "",
 }) {
     return (
-        <div
-            className={`an-metric ${featured ? "an-metric--featured" : ""} ${locked ? "an-metric--locked" : ""
-                }`}
+        <motion.div
+            className={`an-metric ${featured ? "an-metric--featured" : ""} ${locked ? "an-metric--locked" : ""}`}
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.28, ease: "easeOut" }}
         >
-            <div className="an-metric-label">{label}</div>
+            <div className="an-metricTop">
+                <div className="an-metric-label">{label}</div>
+            </div>
+
             <div className="an-metric-num">
                 {locked ? "•••" : isPercentage ? percentageFormat(value) : numberFormat(value)}
             </div>
+
             <div className={`an-metric-change ${locked ? "neutral" : getTrendClass(delta)}`}>
-                {locked ? "Upgrade to unlock" : formatTrendLabel(delta, range)}
+                {locked ? "Upgrade to unlock" : formatTrendLabel(delta, range, isPercentage)}
             </div>
+
+            {helper ? <div className="an-metric-helper">{helper}</div> : null}
+
             {locked ? (
                 <div className="an-lockOverlay">
                     <span className="an-lockBadge">Plus</span>
                 </div>
             ) : null}
-        </div>
+        </motion.div>
     );
 }
 
@@ -276,11 +272,11 @@ function LockedAnalyticsCard({
     body = "Upgrade to Plus to unlock this analytics section.",
 }) {
     return (
-        <div className="an-chartCard an-chartCard--locked">
-            <div className="an-chartHead">
+        <div className="an-panel an-panel--locked">
+            <div className="an-panelHead">
                 <div>
-                    <h3 className="an-chartTitle">{title}</h3>
-                    <p className="an-chartMuted">{subtitle}</p>
+                    <h3 className="an-panelTitle">{title}</h3>
+                    <p className="an-panelMuted">{subtitle}</p>
                 </div>
             </div>
 
@@ -298,29 +294,29 @@ function LockedAnalyticsCard({
 
 function RecentActivityCard({ items = [] }) {
     return (
-        <div className="an-chartCard">
-            <div className="an-chartHead">
+        <div className="an-panel">
+            <div className="an-panelHead">
                 <div>
-                    <h3 className="an-chartTitle">Recent Activity</h3>
-                    <p className="an-chartMuted">
+                    <h3 className="an-panelTitle">Recent Activity</h3>
+                    <p className="an-panelMuted">
                         The latest actions people have taken on your profile.
                     </p>
                 </div>
             </div>
 
-            <div className="an-scrollList an-scrollList--activity">
+            <div className="an-activityList">
                 {items.length ? (
                     items.map((item, index) => (
                         <div
                             key={item.id || item._id || `${item.message}-${index}`}
-                            className="an-listRow"
+                            className="an-activityRow"
                         >
-                            <span className="an-listDot" />
-                            <div className="an-listMain">
-                                <span className="an-listText">
+                            <span className="an-activityDot" />
+                            <div className="an-activityMain">
+                                <span className="an-activityText">
                                     {item.message || getActivityMessage(item)}
                                 </span>
-                                <span className="an-listMeta">
+                                <span className="an-activityMeta">
                                     {item.timeLabel ||
                                         formatActivityTime(item.createdAt || item.timestamp || item.date)}
                                 </span>
@@ -328,203 +324,167 @@ function RecentActivityCard({ items = [] }) {
                         </div>
                     ))
                 ) : (
-                    <div className="an-state an-state--compact">No recent activity yet</div>
+                    <div className="an-emptyState">No recent activity yet</div>
                 )}
             </div>
         </div>
     );
 }
 
-function itemKey(item, index) {
-    return item?.date || item?.id || item?._id || `point-${index}`;
+function ChartTooltip({ active, payload, label }) {
+    if (!active || !payload?.length) return null;
+
+    return (
+        <div className="an-chartTooltip">
+            <div className="an-chartTooltipLabel">{label}</div>
+            <div className="an-chartTooltipValue">{numberFormat(payload[0]?.value)}</div>
+        </div>
+    );
 }
 
-function MiniLineChart({
+function EngagementChart({
     data = [],
     seriesKey = "profileViews",
     title = "Engagement Over Time",
-    subtitle = "Tracked profile visits over time.",
+    subtitle = "Tracked activity over time.",
     onChangeSeries,
-    rangeDays = 7,
 }) {
-    const values = useMemo(
-        () => data.map((item) => Number(item?.[seriesKey]) || 0),
-        [data, seriesKey]
+    const normalizedData = useMemo(
+        () =>
+            (data || []).map((item) => ({
+                ...item,
+                label: formatDateLabel(item?.date),
+                profileViews: Number(item?.profileViews) || 0,
+                linkOpens: Number(item?.linkOpens) || 0,
+                cardTaps: Number(item?.cardTaps) || 0,
+                qrScans: Number(item?.qrScans) || 0,
+            })),
+        [data]
     );
 
-    const maxValue = values.length ? Math.max(...values, 0) : 0;
-    const yTicks = buildYAxisTicks(maxValue);
-    const safeMax = Math.max(yTicks[0] || maxValue, 1);
-
-    const chartPoints = useMemo(() => {
-        if (!data.length) return [];
-
-        return values.map((value, index) => {
-            const x = data.length <= 1 ? 0 : (index / (data.length - 1)) * 100;
-            const y = 100 - (value / safeMax) * 100;
-            return {
-                id: itemKey(data[index], index),
-                x,
-                y,
-                rawValue: value,
-                label: formatDateLabel(data[index]?.date),
-            };
-        });
-    }, [data, values, safeMax]);
-
-    const polylinePoints = chartPoints.map((point) => `${point.x},${point.y}`).join(" ");
-
-    const tickStep = getXAxisTickStep(Number(rangeDays) || data.length, data.length);
-    const xAxisLabels = data
-        .map((item, index) => {
-            const isLast = index === data.length - 1;
-            const shouldShow = index % tickStep === 0 || isLast;
-
-            if (!shouldShow) return null;
-
-            return {
-                key: itemKey(item, index),
-                label: formatDateLabel(item.date),
-                left: data.length <= 1 ? 0 : (index / (data.length - 1)) * 100,
-            };
-        })
-        .filter(Boolean);
-
-    if (!data.length) {
-        return (
-            <div className="an-chartCard an-chartCard--graph">
-                <div className="an-chartHead">
-                    <div>
-                        <h3 className="an-chartTitle">{title}</h3>
-                        <p className="an-chartMuted">{subtitle}</p>
-                    </div>
-                    <div className="an-chartBadge">Peak: 0</div>
-                </div>
-
-                <div className="an-miniFilters">
-                    {CHART_OPTIONS.map((item) => (
-                        <button
-                            key={item.value}
-                            type="button"
-                            className={`an-miniFilterBtn ${seriesKey === item.value ? "active" : ""}`}
-                            onClick={() => onChangeSeries?.(item.value)}
-                        >
-                            {item.label}
-                        </button>
-                    ))}
-                </div>
-
-                <div className="an-state an-state--chart">No data yet</div>
-            </div>
-        );
-    }
+    const peak = useMemo(
+        () => Math.max(...normalizedData.map((item) => Number(item?.[seriesKey]) || 0), 0),
+        [normalizedData, seriesKey]
+    );
 
     return (
-        <div className="an-chartCard an-chartCard--graph">
-            <div className="an-chartHead">
+        <div className="an-panel an-panel--chart">
+            <div className="an-panelHead">
                 <div>
-                    <h3 className="an-chartTitle">{title}</h3>
-                    <p className="an-chartMuted">{subtitle}</p>
+                    <h3 className="an-panelTitle">{title}</h3>
+                    <p className="an-panelMuted">{subtitle}</p>
                 </div>
-                <div className="an-chartBadge">Peak: {numberFormat(maxValue)}</div>
+                <div className="an-panelBadge">Peak: {numberFormat(peak)}</div>
             </div>
 
-            <div className="an-miniFilters">
-                {CHART_OPTIONS.map((item) => (
-                    <button
-                        key={item.value}
-                        type="button"
-                        className={`an-miniFilterBtn ${seriesKey === item.value ? "active" : ""}`}
-                        onClick={() => onChangeSeries?.(item.value)}
-                    >
-                        {item.label}
-                    </button>
-                ))}
-            </div>
-
-            <div className="an-lineChartWrap">
-                <div className="an-yAxis">
-                    {yTicks.map((tick, index) => (
-                        <span key={`${tick}-${index}`} className="an-yAxisLabel">
-                            {numberFormat(tick)}
-                        </span>
-                    ))}
-                </div>
-
-                <div className="an-lineChartMain">
-                    <div className="an-lineChart">
-                        <svg
-                            viewBox="0 0 100 100"
-                            className="an-lineChartSvg"
-                            preserveAspectRatio="none"
-                            aria-hidden="true"
+            <Tabs.Root
+                value={seriesKey}
+                onValueChange={(value) => onChangeSeries?.(value)}
+                className="an-tabsRoot"
+            >
+                <Tabs.List className="an-miniFilters" aria-label="Analytics series">
+                    {CHART_OPTIONS.map((item) => (
+                        <Tabs.Tab
+                            key={item.value}
+                            value={item.value}
+                            className={`an-miniFilterBtn ${seriesKey === item.value ? "active" : ""}`}
                         >
-                            <line className="an-lineChartGrid" x1="0" y1="100" x2="100" y2="100" />
-                            <line className="an-lineChartGrid" x1="0" y1="66.66" x2="100" y2="66.66" />
-                            <line className="an-lineChartGrid" x1="0" y1="33.33" x2="100" y2="33.33" />
-                            <line className="an-lineChartGrid" x1="0" y1="0" x2="100" y2="0" />
+                            {item.label}
+                        </Tabs.Tab>
+                    ))}
+                </Tabs.List>
+            </Tabs.Root>
 
-                            <polyline className="an-lineChartPath" points={polylinePoints} />
+            <div className="an-chartCanvas">
+                {normalizedData.length ? (
+                    <ResponsiveContainer width="100%" height={320}>
+                        <AreaChart data={normalizedData} margin={{ top: 12, right: 8, left: -18, bottom: 0 }}>
+                            <defs>
+                                <linearGradient id="anAreaFill" x1="0" y1="0" x2="0" y2="1">
+                                    <stop offset="0%" stopColor="#f97316" stopOpacity={0.28} />
+                                    <stop offset="100%" stopColor="#f97316" stopOpacity={0.03} />
+                                </linearGradient>
+                            </defs>
 
-                            {chartPoints.map((point) => (
-                                <circle
-                                    key={point.id}
-                                    className="an-lineChartDot"
-                                    cx={point.x}
-                                    cy={point.y}
-                                    r="1.35"
-                                />
-                            ))}
-                        </svg>
-                    </div>
-
-                    <div className="an-lineLabels">
-                        {xAxisLabels.map((item) => (
-                            <span
-                                key={item.key}
-                                className="an-lineLabel an-lineLabel--absolute"
-                                style={{ left: `${item.left}%` }}
-                            >
-                                {item.label}
-                            </span>
-                        ))}
-                    </div>
-                </div>
+                            <CartesianGrid stroke="rgba(15,23,42,0.08)" vertical={false} />
+                            <XAxis
+                                dataKey="label"
+                                tickLine={false}
+                                axisLine={false}
+                                tick={{ fontSize: 12, fill: "#64748b", fontWeight: 600 }}
+                            />
+                            <YAxis
+                                tickLine={false}
+                                axisLine={false}
+                                allowDecimals={false}
+                                tick={{ fontSize: 12, fill: "#64748b", fontWeight: 600 }}
+                            />
+                            <Tooltip content={<ChartTooltip />} cursor={{ stroke: "rgba(249,115,22,0.18)" }} />
+                            <Area
+                                type="monotone"
+                                dataKey={seriesKey}
+                                stroke="#f97316"
+                                strokeWidth={2.4}
+                                fill="url(#anAreaFill)"
+                                dot={{ r: 3.2, strokeWidth: 2, fill: "#f97316", stroke: "#ffffff" }}
+                                activeDot={{ r: 5 }}
+                            />
+                        </AreaChart>
+                    </ResponsiveContainer>
+                ) : (
+                    <div className="an-emptyState an-emptyState--chart">No data yet</div>
+                )}
             </div>
         </div>
     );
 }
 
-function HorizontalBarBreakdown({ title, subtitle, items = [] }) {
-    const normalizedItems = items.filter(Boolean);
-    const max = Math.max(...normalizedItems.map((item) => Number(item?.value) || 0), 1);
+function SocialBarChartCard({ items = [] }) {
+    const chartData = items.map((item) => ({
+        ...item,
+        value: Number(item?.value) || 0,
+    }));
 
     return (
-        <div className="an-chartCard">
-            <div className="an-chartHead">
+        <div className="an-panel">
+            <div className="an-panelHead">
                 <div>
-                    <h3 className="an-chartTitle">{title}</h3>
-                    <p className="an-chartMuted">{subtitle}</p>
+                    <h3 className="an-panelTitle">Social Click Breakdown</h3>
+                    <p className="an-panelMuted">
+                        See which social links get the most attention from your profile.
+                    </p>
                 </div>
             </div>
 
-            <div className="an-hBarList">
-                {normalizedItems.map((item) => {
-                    const value = Number(item?.value) || 0;
-                    const width = `${Math.max((value / max) * 100, value > 0 ? 8 : 0)}%`;
+            <div className="an-chartCanvas an-chartCanvas--bar">
+                <ResponsiveContainer width="100%" height={280}>
+                    <BarChart data={chartData} margin={{ top: 10, right: 0, left: -20, bottom: 0 }}>
+                        <CartesianGrid stroke="rgba(15,23,42,0.08)" vertical={false} />
+                        <XAxis
+                            dataKey="label"
+                            tickLine={false}
+                            axisLine={false}
+                            tick={{ fontSize: 12, fill: "#64748b", fontWeight: 600 }}
+                        />
+                        <YAxis
+                            tickLine={false}
+                            axisLine={false}
+                            allowDecimals={false}
+                            tick={{ fontSize: 12, fill: "#64748b", fontWeight: 600 }}
+                        />
+                        <Tooltip content={<ChartTooltip />} cursor={{ fill: "rgba(15,23,42,0.03)" }} />
+                        <Bar dataKey="value" radius={[10, 10, 0, 0]} fill="#f97316" />
+                    </BarChart>
+                </ResponsiveContainer>
+            </div>
 
-                    return (
-                        <div key={item.key} className="an-hBarRow">
-                            <div className="an-hBarTop">
-                                <span className="an-hBarLabel">{item.label}</span>
-                                <span className="an-hBarValue">{numberFormat(value)}</span>
-                            </div>
-                            <div className="an-hBarTrack">
-                                <div className="an-hBarFill" style={{ width }} />
-                            </div>
-                        </div>
-                    );
-                })}
+            <div className="an-inlineStats">
+                {chartData.map((item) => (
+                    <div key={item.key} className="an-inlineStat">
+                        <span className="an-inlineStatLabel">{item.label}</span>
+                        <span className="an-inlineStatValue">{numberFormat(item.value)}</span>
+                    </div>
+                ))}
             </div>
         </div>
     );
@@ -535,48 +495,168 @@ function ContactActionDetailsCard({ metrics }) {
         {
             key: "exchange-opens",
             title: "Exchange Opens",
-            meta: `${numberFormat(metrics.contactExchangeOpens)} opened the exchange contact form`,
+            value: Number(metrics.contactExchangeOpens) || 0,
+            meta: "People opened your exchange contact form",
         },
         {
             key: "exchange-submits",
             title: "Exchange Submits",
-            meta: `${numberFormat(metrics.contactExchangeSubmits)} submitted the exchange form`,
+            value: Number(metrics.contactExchangeSubmits) || 0,
+            meta: "People completed the exchange form",
         },
         {
             key: "email-clicks",
             title: "Email Clicks",
-            meta: `${numberFormat(metrics.emailClicks)} clicked your email contact action`,
+            value: Number(metrics.emailClicks) || 0,
+            meta: "People clicked your email contact action",
         },
         {
             key: "phone-clicks",
             title: "Phone Clicks",
-            meta: `${numberFormat(metrics.phoneClicks)} clicked your phone number`,
+            value: Number(metrics.phoneClicks) || 0,
+            meta: "People clicked your phone number",
         },
     ];
 
     return (
-        <div className="an-chartCard">
-            <div className="an-chartHead">
+        <div className="an-panel">
+            <div className="an-panelHead">
                 <div>
-                    <h3 className="an-chartTitle">Contact Action Details</h3>
-                    <p className="an-chartMuted">
-                        The actions people took after landing on your profile.
+                    <h3 className="an-panelTitle">Contact Action Details</h3>
+                    <p className="an-panelMuted">
+                        A clearer view of what people did after landing on your profile.
                     </p>
                 </div>
             </div>
 
-            <div className="an-scrollList an-scrollList--static">
+            <div className="an-breakdownList">
                 {rows.map((row) => (
-                    <div key={row.key} className="an-listRow">
-                        <span className="an-listDot" />
-                        <div className="an-listMain">
-                            <span className="an-listText">{row.title}</span>
-                            <span className="an-listMeta">{row.meta}</span>
+                    <div key={row.key} className="an-breakdownRow">
+                        <div className="an-breakdownRowMain">
+                            <div className="an-breakdownRowTitle">{row.title}</div>
+                            <div className="an-breakdownRowMeta">{row.meta}</div>
+                        </div>
+                        <div className="an-breakdownRowValue">{numberFormat(row.value)}</div>
+                    </div>
+                ))}
+            </div>
+        </div>
+    );
+}
+
+function FunnelCard({ metrics, locked }) {
+    if (locked) {
+        return (
+            <LockedAnalyticsCard
+                title="Visitor Funnel"
+                subtitle="See how visits turn into contact actions."
+                body="Upgrade to Plus to understand how attention turns into action."
+            />
+        );
+    }
+
+    const visits = Number(metrics.profileViews) || 0;
+    const interactions =
+        (Number(metrics.linkOpens) || 0) +
+        (Number(metrics.qrScans) || 0) +
+        (Number(metrics.cardTaps) || 0);
+    const contactIntent =
+        (Number(metrics.contactExchangeOpens) || 0) +
+        (Number(metrics.emailClicks) || 0) +
+        (Number(metrics.phoneClicks) || 0);
+    const conversions =
+        (Number(metrics.contactExchangeSubmits) || 0) +
+        (Number(metrics.contactsSaved) || 0);
+
+    const rows = [
+        { key: "visits", label: "Visits", value: visits },
+        { key: "interactions", label: "Engaged actions", value: interactions },
+        { key: "intent", label: "Contact intent", value: contactIntent },
+        { key: "conversions", label: "Conversions", value: conversions },
+    ];
+
+    const max = Math.max(...rows.map((r) => r.value), 1);
+
+    return (
+        <div className="an-panel">
+            <div className="an-panelHead">
+                <div>
+                    <h3 className="an-panelTitle">Visitor Funnel</h3>
+                    <p className="an-panelMuted">
+                        Follow the path from visits to contact actions and conversions.
+                    </p>
+                </div>
+            </div>
+
+            <div className="an-funnelList">
+                {rows.map((row, index) => (
+                    <div key={row.key} className="an-funnelRow">
+                        <div className="an-funnelTop">
+                            <span className="an-funnelIndex">0{index + 1}</span>
+                            <span className="an-funnelLabel">{row.label}</span>
+                            <span className="an-funnelValue">{numberFormat(row.value)}</span>
+                        </div>
+                        <div className="an-funnelTrack">
+                            <div
+                                className="an-funnelFill"
+                                style={{ width: `${Math.max((row.value / max) * 100, row.value > 0 ? 10 : 0)}%` }}
+                            />
                         </div>
                     </div>
                 ))}
             </div>
         </div>
+    );
+}
+
+function HeroInsightCard({ metrics, previousMetrics, range, locked }) {
+    const visitsDelta = getMetricDelta(metrics, previousMetrics, "profileViews");
+    const exchangesDelta = getMetricDelta(metrics, previousMetrics, "contactExchangeSubmits");
+    const bestStatement =
+        Number(metrics.contactExchangeSubmits) > 0
+            ? `${numberFormat(metrics.contactExchangeSubmits)} contact exchanges were completed in this period.`
+            : Number(metrics.linkOpens) > 0
+                ? `${numberFormat(metrics.linkOpens)} people clicked through from your card or profile link.`
+                : "Your analytics are ready to show what actions your card is driving.";
+
+    return (
+        <motion.section
+            className="an-heroInsight"
+            initial={{ opacity: 0, y: 14 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.32, ease: "easeOut" }}
+        >
+            <div className="an-heroInsightMain">
+                <div className="an-heroInsightEyebrow">Performance snapshot</div>
+                <h2 className="an-heroInsightTitle">
+                    See how your KonarCard is turning profile attention into real contact action.
+                </h2>
+                <p className="an-heroInsightText">{bestStatement}</p>
+
+                <div className="an-heroInsightPills">
+                    <span className={`an-heroPill ${getTrendClass(visitsDelta)}`}>
+                        {formatTrendLabel(visitsDelta, range)}
+                    </span>
+                    <span className={`an-heroPill ${getTrendClass(exchangesDelta)}`}>
+                        {formatTrendLabel(exchangesDelta, range)}
+                    </span>
+                    {locked ? <span className="an-heroPill an-heroPill--locked">Plus unlocks deeper conversion insight</span> : null}
+                </div>
+            </div>
+
+            <div className="an-heroInsightSide">
+                <div className="an-heroMiniStat">
+                    <div className="an-heroMiniLabel">Total visits</div>
+                    <div className="an-heroMiniValue">{numberFormat(metrics.profileViews)}</div>
+                </div>
+                <div className="an-heroMiniStat">
+                    <div className="an-heroMiniLabel">Conversion rate</div>
+                    <div className="an-heroMiniValue">
+                        {locked ? "Locked" : percentageFormat(metrics.conversionRate)}
+                    </div>
+                </div>
+            </div>
+        </motion.section>
     );
 }
 
@@ -758,6 +838,7 @@ export default function Analytics() {
                 acc.qrScans += Number(item?.qrScans) || 0;
                 acc.contactsSaved += Number(item?.contactsSaved) || 0;
                 acc.contactExchangeSubmits += Number(item?.contactExchangeSubmits) || 0;
+                acc.contactExchangeOpens += Number(item?.contactExchangeOpens) || 0;
                 acc.emailClicks += Number(item?.emailClicks) || 0;
                 acc.phoneClicks += Number(item?.phoneClicks) || 0;
                 acc.socialClicks += Number(item?.socialClicks) || 0;
@@ -780,7 +861,7 @@ export default function Analytics() {
         };
     });
 
-    const recentActivity = recentActivityRaw.slice(0, 20).map((item, index) => ({
+    const recentActivity = recentActivityRaw.slice(0, 12).map((item, index) => ({
         id: item?.id || item?._id || `activity-${index}`,
         message: item?.message || getActivityMessage(item),
         timeLabel: formatActivityTime(item?.createdAt || item?.timestamp || item?.date),
@@ -837,19 +918,19 @@ export default function Analytics() {
     const chartMeta = {
         profileViews: {
             title: "Engagement Over Time",
-            subtitle: "All tracked visits over time.",
+            subtitle: "All tracked visits and interactions across this period.",
         },
         linkOpens: {
             title: "Link Engagement Over Time",
-            subtitle: "Visits from your normal profile link.",
+            subtitle: "How often people clicked through from your profile link.",
         },
         cardTaps: {
             title: "NFC Engagement Over Time",
-            subtitle: "Visits that came from NFC taps.",
+            subtitle: "How many visits came from NFC card taps.",
         },
         qrScans: {
             title: "QR Engagement Over Time",
-            subtitle: "Visits that came from QR scans.",
+            subtitle: "How many visits came from QR scans.",
         },
     };
 
@@ -977,6 +1058,13 @@ export default function Analytics() {
                     onGoogleWallet={handleGoogleWallet}
                 />
 
+                <HeroInsightCard
+                    metrics={metrics}
+                    previousMetrics={previousMetrics}
+                    range={range}
+                    locked={!isPaidPlan}
+                />
+
                 <section className="an-toolbar">
                     <div className="an-toolbarTop an-toolbarTop--split">
                         <div className="an-rangePicker">
@@ -1028,17 +1116,20 @@ export default function Analytics() {
 
                 <section className="an-overview">
                     {summaryQuery.isLoading ? (
-                        <div className="an-state">Loading analytics…</div>
+                        <div className="an-emptyState an-emptyState--full">Loading analytics…</div>
                     ) : summaryQuery.isError ? (
-                        <div className="an-state an-state--error">Couldn’t load analytics right now.</div>
+                        <div className="an-emptyState an-emptyState--error">
+                            Couldn’t load analytics right now.
+                        </div>
                     ) : (
-                        <div className="an-metrics7">
+                        <div className="an-metricsGrid">
                             <MetricCard
                                 label="Total Visits"
                                 value={metrics.profileViews}
                                 delta={getMetricDelta(metrics, previousMetrics, "profileViews")}
                                 range={range}
                                 featured
+                                helper="The total number of times people landed on your profile."
                             />
 
                             <MetricCard
@@ -1083,12 +1174,29 @@ export default function Analytics() {
                                 range={range}
                                 isPercentage
                                 locked={!isPaidPlan}
+                                helper="How efficiently visits turned into meaningful contact action."
                             />
                         </div>
                     )}
                 </section>
 
-                <section className="an-chartGrid">
+                <section className="an-grid an-grid--primary">
+                    {isPaidPlan ? (
+                        <EngagementChart
+                            data={chartTimeline}
+                            seriesKey={chartSeries}
+                            title={chartMeta[chartSeries]?.title}
+                            subtitle={chartMeta[chartSeries]?.subtitle}
+                            onChangeSeries={setChartSeries}
+                        />
+                    ) : (
+                        <LockedAnalyticsCard
+                            title="Engagement Over Time"
+                            subtitle="See how profile visits, link visits, QR scans and NFC taps trend over time."
+                            body="Upgrade to Plus to unlock the full engagement trend view."
+                        />
+                    )}
+
                     {isPaidPlan ? (
                         <RecentActivityCard items={recentActivity} />
                     ) : (
@@ -1098,32 +1206,13 @@ export default function Analytics() {
                             body="Upgrade to Plus to see recent activity and deeper engagement insights."
                         />
                     )}
-
-                    {isPaidPlan ? (
-                        <MiniLineChart
-                            data={chartTimeline}
-                            seriesKey={chartSeries}
-                            title={chartMeta[chartSeries]?.title}
-                            subtitle={chartMeta[chartSeries]?.subtitle}
-                            onChangeSeries={setChartSeries}
-                            rangeDays={chartDays}
-                        />
-                    ) : (
-                        <LockedAnalyticsCard
-                            title="Activity Breakdown"
-                            subtitle="See how profile visits, link visits, QR scans and NFC taps trend over time."
-                            body="Upgrade to Plus to unlock your activity breakdown and engagement trends."
-                        />
-                    )}
                 </section>
 
-                <section className="an-chartGrid an-chartGrid--socialFirst">
+                <section className="an-grid an-grid--secondary">
+                    <FunnelCard metrics={metrics} locked={!isPaidPlan} />
+
                     {isPaidPlan ? (
-                        <HorizontalBarBreakdown
-                            title="Social Click Breakdown"
-                            subtitle="How many clicks each added social profile received."
-                            items={socialBreakdown}
-                        />
+                        <SocialBarChartCard items={socialBreakdown} />
                     ) : (
                         <LockedAnalyticsCard
                             title="Social Click Breakdown"
