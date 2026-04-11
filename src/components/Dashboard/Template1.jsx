@@ -143,10 +143,22 @@ export default function Template1(props) {
         }
     };
 
-    const handleSocialClick = (platformKey, url) => {
+    const handleSocialClick = async (platformKey, url) => {
         if (typeof v.onSocialClick === "function") {
-            v.onSocialClick(platformKey, url);
+            await v.onSocialClick(platformKey, url);
         }
+    };
+
+    const handleSocialLinkOpen = async (e, platformKey, url) => {
+        e.preventDefault();
+
+        try {
+            await handleSocialClick(platformKey, url);
+        } catch {
+            // ignore tracking errors so link still opens
+        }
+
+        window.open(url, "_blank", "noopener,noreferrer");
     };
 
     return (
@@ -366,7 +378,7 @@ export default function Template1(props) {
                                                 rel="noreferrer"
                                                 aria-label={meta.label}
                                                 title={meta.label}
-                                                onClick={() => handleSocialClick(meta.analyticsKey, url)}
+                                                onClick={(e) => handleSocialLinkOpen(e, meta.analyticsKey, url)}
                                             >
                                                 {meta.icon}
                                             </a>
