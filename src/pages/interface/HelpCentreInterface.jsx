@@ -1,5 +1,6 @@
 import React, { useContext, useEffect, useMemo, useRef, useState } from "react";
 import { toast } from "react-hot-toast";
+import { motion, AnimatePresence } from "motion/react";
 
 import DashboardLayout from "../../components/Dashboard/DashboardLayout";
 import PageHeader from "../../components/Dashboard/PageHeader";
@@ -15,6 +16,8 @@ import { useMyProfiles } from "../../hooks/useBusinessCard";
 
 import UpgradeToPlusImage from "../../assets/images/UpgradeToPlus.png";
 import LiveChatIcon from "../../assets/icons/LiveChatIcon.svg";
+
+const PLACEHOLDER_VIDEO_URL = "https://www.w3schools.com/html/mov_bbb.mp4";
 
 const centerTrim = (v) => (v ?? "").toString().trim();
 const safeLower = (v) => centerTrim(v).toLowerCase();
@@ -36,10 +39,7 @@ function PlayIcon({ className = "" }) {
     <svg viewBox="0 0 24 24" className={className} aria-hidden="true">
       <path
         d="M8 6.5v11l9-5.5-9-5.5Z"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="1.8"
-        strokeLinejoin="round"
+        fill="currentColor"
       />
     </svg>
   );
@@ -47,7 +47,7 @@ function PlayIcon({ className = "" }) {
 
 function CloseIcon() {
   return (
-    <svg viewBox="0 0 24 24" className="hc4-modalCloseIcon" aria-hidden="true">
+    <svg viewBox="0 0 24 24" className="hc5-modalCloseIcon" aria-hidden="true">
       <path
         d="M6 6l12 12M18 6L6 18"
         fill="none"
@@ -59,16 +59,107 @@ function CloseIcon() {
   );
 }
 
+function SearchIcon() {
+  return (
+    <svg viewBox="0 0 24 24" className="hc5-searchIcon" aria-hidden="true">
+      <circle
+        cx="11"
+        cy="11"
+        r="6.5"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.8"
+      />
+      <path
+        d="M16 16l4 4"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.8"
+        strokeLinecap="round"
+      />
+    </svg>
+  );
+}
+
+function ChatIcon() {
+  return (
+    <svg viewBox="0 0 24 24" className="hc5-liveBtnIconSvg" aria-hidden="true">
+      <path
+        d="M6 7.5A3.5 3.5 0 0 1 9.5 4h5A3.5 3.5 0 0 1 18 7.5v4A3.5 3.5 0 0 1 14.5 15H11l-4 3v-3.4A3.48 3.48 0 0 1 6 11.5v-4Z"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.8"
+        strokeLinejoin="round"
+      />
+    </svg>
+  );
+}
+
 function formatVideoLength(totalSeconds) {
   const seconds = Number(totalSeconds) || 0;
   const mins = Math.floor(seconds / 60);
   const secs = seconds % 60;
 
-  if (mins <= 0) {
-    return `${secs} sec`;
-  }
-
+  if (mins <= 0) return `${secs} sec`;
   return `${mins} min ${secs} sec`;
+}
+
+function HelpCard({ video, onOpen, index }) {
+  return (
+    <motion.article
+      className="hc5-card"
+      initial={{ opacity: 0, y: 18 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.34, ease: "easeOut", delay: 0.03 * index }}
+    >
+      <button
+        type="button"
+        className="hc5-cardMedia"
+        onClick={() => onOpen(video)}
+        aria-label={`Watch ${video.title}`}
+      >
+        <img
+          src={video.thumbnail}
+          alt=""
+          aria-hidden="true"
+          className="hc5-cardImg"
+        />
+
+        <div className="hc5-cardMediaOverlay" />
+
+        <span className="hc5-cardPlay">
+          <span className="hc5-cardPlayCircle">
+            <PlayIcon className="hc5-cardPlayIcon" />
+          </span>
+        </span>
+
+        <span className="hc5-cardDuration">{formatVideoLength(video.lengthSeconds)}</span>
+      </button>
+
+      <div className="hc5-cardBody">
+        <div className="hc5-cardTop">
+          <div className="hc5-cardPills">
+            <span className="hc5-pill hc5-pill--soft">Tutorial</span>
+            <span className="hc5-pill hc5-pill--neutral">{video.category}</span>
+          </div>
+
+          <h3 className="hc5-cardTitle">{video.title}</h3>
+          <p className="hc5-cardDesc">{video.desc}</p>
+        </div>
+
+        <div className="hc5-cardBottom">
+          <button
+            type="button"
+            className="hc5-watchBtn"
+            onClick={() => onOpen(video)}
+          >
+            <PlayIcon className="hc5-watchBtnIcon" />
+            <span>Watch video</span>
+          </button>
+        </div>
+      </div>
+    </motion.article>
+  );
 }
 
 export default function HelpCentreInterface() {
@@ -83,6 +174,8 @@ export default function HelpCentreInterface() {
 
   const [shareOpen, setShareOpen] = useState(false);
   const [selectedSlug, setSelectedSlug] = useState(null);
+
+  const [search, setSearch] = useState("");
 
   const profilesForShare = useMemo(() => {
     const xs = Array.isArray(cards) ? cards : [];
@@ -125,7 +218,7 @@ export default function HelpCentreInterface() {
     try {
       window.tidioChatApi?.open?.();
     } catch {
-      // ignore
+      toast("Live chat is not available right now.");
     }
   };
 
@@ -133,71 +226,103 @@ export default function HelpCentreInterface() {
     () => [
       {
         id: "1",
-        title: "Getting Started with Your Digital Business Card",
-        desc: "Learn how to create your first profile, organise your key information properly, and get your KonarCard ready to share with potential clients.",
+        category: "Setup",
+        title: "Getting started with your digital business card",
+        desc: "Create your first profile, organise your information properly, and get your KonarCard ready to share confidently.",
         lengthSeconds: 86,
         thumbnail: UpgradeToPlusImage,
-        videoUrl: "",
+        videoUrl: PLACEHOLDER_VIDEO_URL,
       },
       {
         id: "2",
-        title: "Editing and Optimising Your Profile for More Conversions",
-        desc: "Update your details, improve how your profile looks, and make sure customers instantly understand your service and trust your business.",
+        category: "Profile",
+        title: "Editing and optimising your profile for more conversions",
+        desc: "Improve your layout, content, and overall trust signals so customers instantly understand who you are and what you offer.",
         lengthSeconds: 94,
         thumbnail: UpgradeToPlusImage,
-        videoUrl: "",
+        videoUrl: PLACEHOLDER_VIDEO_URL,
       },
       {
         id: "3",
-        title: "Adding Photos That Actually Help You Win More Work",
-        desc: "Upload strong, high-quality images that build trust, showcase your work clearly, and help customers feel confident choosing you.",
+        category: "Photos",
+        title: "Adding photos that actually help you win more work",
+        desc: "Upload stronger images that build trust, show your work clearly, and make your profile feel more professional.",
         lengthSeconds: 73,
         thumbnail: UpgradeToPlusImage,
-        videoUrl: "",
+        videoUrl: PLACEHOLDER_VIDEO_URL,
       },
       {
         id: "4",
-        title: "Collecting Reviews to Build Stronger Social Proof",
-        desc: "Learn how to gather customer reviews and display them effectively so new visitors quickly see that other people trust your work.",
+        category: "Reviews",
+        title: "Collecting reviews to build stronger social proof",
+        desc: "Learn how to gather customer reviews and display them in a way that helps future visitors trust you faster.",
         lengthSeconds: 102,
         thumbnail: UpgradeToPlusImage,
-        videoUrl: "",
+        videoUrl: PLACEHOLDER_VIDEO_URL,
       },
       {
         id: "5",
-        title: "Sharing Your Profile the Right Way",
-        desc: "Send your KonarCard link strategically so customers can quickly view your details, save your information, and contact you without friction.",
+        category: "Sharing",
+        title: "Sharing your profile the right way",
+        desc: "Send your KonarCard link strategically so customers can instantly view your details, save your info, and contact you.",
         lengthSeconds: 68,
         thumbnail: UpgradeToPlusImage,
-        videoUrl: "",
+        videoUrl: PLACEHOLDER_VIDEO_URL,
       },
       {
         id: "6",
-        title: "Using Your NFC Card in Real Customer Situations",
-        desc: "Understand how tap-to-share works in practice and how customers interact with your card in real life when you hand it over or tap it.",
+        category: "NFC",
+        title: "Using your NFC card in real customer situations",
+        desc: "See how tap-to-share works in practice and understand what customers experience when you hand over your card.",
         lengthSeconds: 91,
         thumbnail: UpgradeToPlusImage,
-        videoUrl: "",
+        videoUrl: PLACEHOLDER_VIDEO_URL,
       },
       {
         id: "7",
-        title: "Branding and Themes That Make You Look More Professional",
-        desc: "Keep your profile clean, consistent, and visually strong so it represents your business properly and leaves a better first impression.",
+        category: "Branding",
+        title: "Branding and themes that make you look more professional",
+        desc: "Keep your profile clean, consistent, and visually strong so it represents your business properly every time.",
         lengthSeconds: 88,
         thumbnail: UpgradeToPlusImage,
-        videoUrl: "",
+        videoUrl: PLACEHOLDER_VIDEO_URL,
       },
       {
         id: "8",
-        title: "Understanding Your Analytics and Improving Results",
-        desc: "Learn how to read your analytics properly and use the data to improve profile performance, visibility, and lead generation over time.",
+        category: "Analytics",
+        title: "Understanding your analytics and improving results",
+        desc: "Read your analytics properly and use the data to improve profile performance, visibility, and lead generation.",
         lengthSeconds: 97,
         thumbnail: UpgradeToPlusImage,
-        videoUrl: "",
+        videoUrl: PLACEHOLDER_VIDEO_URL,
       },
     ],
     []
   );
+
+  const filteredVideos = useMemo(() => {
+    const q = safeLower(search);
+    if (!q) return videos;
+
+    return videos.filter((video) => {
+      return (
+        safeLower(video.title).includes(q) ||
+        safeLower(video.desc).includes(q) ||
+        safeLower(video.category).includes(q)
+      );
+    });
+  }, [videos, search]);
+
+  const quickStats = useMemo(() => {
+    const totalVideos = videos.length;
+    const totalMinutes = videos.reduce((sum, item) => sum + Number(item.lengthSeconds || 0), 0);
+    const roundedMinutes = Math.max(1, Math.round(totalMinutes / 60));
+
+    return {
+      totalVideos,
+      roundedMinutes,
+    };
+  }, [videos]);
 
   const handleOpenVideo = (video) => {
     setActiveVideo(video);
@@ -352,10 +477,10 @@ export default function HelpCentreInterface() {
 
   return (
     <DashboardLayout hideDesktopHeader>
-      <div className="hc4-shell">
+      <div className="hc5-shell">
         <PageHeader
           title="Help Center"
-          subtitle="Find quick answers, tutorials, and best practices."
+          subtitle="Tutorials, walkthroughs, and practical best practices for getting the most from KonarCard."
           onShareClick={handleOpenShareProfile}
           shareDisabled={!selectedProfile}
         />
@@ -377,166 +502,149 @@ export default function HelpCentreInterface() {
           onGoogleWallet={handleGoogleWallet}
         />
 
-        <section className="hc4-heroCard">
-          <div className="hc4-heroMain">
-            <div className="hc4-heroEyebrow">Here is your guide</div>
+        <motion.section
+          className="hc5-heroCard"
+          initial={{ opacity: 0, y: 18 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.34, ease: "easeOut" }}
+        >
+          <div className="hc5-heroMain">
+            <div className="hc5-heroPills">
+              <span className="hc5-pill hc5-pill--accent">Help Center</span>
+              <span className="hc5-pill hc5-pill--neutral">
+                {quickStats.totalVideos} videos
+              </span>
+              <span className="hc5-pill hc5-pill--neutral">
+                {quickStats.roundedMinutes} min total
+              </span>
+            </div>
 
-            <h2 className="hc4-heroTitle">
-              8 quick videos to help you set up, improve, and share your KonarCard
+            <h2 className="hc5-heroTitle">
+              Learn how to set up, improve, and use your KonarCard like a pro
             </h2>
 
-            <p className="hc4-heroText">
-              Work through the tutorials below to learn everything step by step. If
-              you get stuck at any point and need help from someone on our team, live
-              chat with us now.
+            <p className="hc5-heroText">
+              Browse quick step-by-step tutorials covering profile setup, reviews,
+              photos, branding, NFC usage, sharing, and analytics. Everything is designed
+              to help you get value faster and look more professional.
             </p>
+
+            <div className="hc5-heroToolbar">
+              <label className="hc5-searchWrap" aria-label="Search help videos">
+                <SearchIcon />
+                <input
+                  type="text"
+                  className="hc5-searchInput"
+                  placeholder="Search tutorials, topics, or keywords"
+                  value={search}
+                  onChange={(e) => setSearch(e.target.value)}
+                />
+              </label>
+            </div>
           </div>
 
-          <div className="hc4-heroActions">
-            <button type="button" className="hc4-liveBtn" onClick={openChat}>
-              <img src={LiveChatIcon} alt="" aria-hidden="true" />
-              <span>Start Live Chat</span>
-            </button>
+          <div className="hc5-heroAside">
+            <div className="hc5-supportCard">
+              <div className="hc5-supportIcon">
+                <ChatIcon />
+              </div>
+
+              <div className="hc5-supportCopy">
+                <h3>Need direct help?</h3>
+                <p>
+                  Chat with our team if you need support with your profile, NFC card,
+                  orders, or setup.
+                </p>
+              </div>
+
+              <button type="button" className="hc5-liveBtn" onClick={openChat}>
+                <img src={LiveChatIcon} alt="" aria-hidden="true" />
+                <span>Start live chat</span>
+              </button>
+            </div>
+          </div>
+        </motion.section>
+
+        <section className="hc5-resultsBar" aria-label="Help results summary">
+          <div className="hc5-resultsText">
+            {filteredVideos.length === videos.length
+              ? `Showing all ${videos.length} tutorials`
+              : `Showing ${filteredVideos.length} result${filteredVideos.length === 1 ? "" : "s"}`}
           </div>
         </section>
 
-        <section className="hc4-grid" aria-label="Help videos">
-          {videos.map((video) => {
-            return (
-              <article key={video.id} className="hc4-card">
-                <button
-                  type="button"
-                  className="hc4-cardMedia"
-                  onClick={() => handleOpenVideo(video)}
-                  aria-label={`Watch ${video.title}`}
-                >
-                  <img
-                    src={video.thumbnail}
-                    alt=""
-                    aria-hidden="true"
-                    className="hc4-cardImg"
-                  />
-                  <span className="hc4-cardPlay">
-                    <span className="hc4-cardPlayCircle">
-                      <PlayIcon className="hc4-cardPlayIcon" />
-                    </span>
-                  </span>
-                </button>
-
-                <div className="hc4-cardBody">
-                  <div className="hc4-cardTop">
-                    <div className="hc4-cardTag">Tutorial</div>
-                    <h3 className="hc4-cardTitle">{video.title}</h3>
-                    <p className="hc4-cardDesc">{video.desc}</p>
-                  </div>
-
-                  <div className="hc4-cardBottom">
-                    <div className="hc4-cardLength">
-                      {formatVideoLength(video.lengthSeconds)}
-                    </div>
-
-                    <button
-                      type="button"
-                      className="hc4-watchBtn"
-                      onClick={() => handleOpenVideo(video)}
-                    >
-                      <PlayIcon className="hc4-watchBtnIcon" />
-                      <span>Watch Video</span>
-                    </button>
-                  </div>
-                </div>
-              </article>
-            );
-          })}
-        </section>
-
-        {activeVideo ? (
-          <div
-            className="hc4-modalOverlay"
-            onClick={handleCloseVideo}
-            role="presentation"
-          >
-            <div
-              className="hc4-modal"
-              role="dialog"
-              aria-modal="true"
-              aria-labelledby="hc4-video-title"
-              onClick={(e) => e.stopPropagation()}
+        <section className="hc5-grid" aria-label="Help videos">
+          {filteredVideos.length ? (
+            filteredVideos.map((video, index) => (
+              <HelpCard
+                key={video.id}
+                video={video}
+                index={index}
+                onOpen={handleOpenVideo}
+              />
+            ))
+          ) : (
+            <motion.div
+              className="hc5-emptyState"
+              initial={{ opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.25, ease: "easeOut" }}
             >
-              <div className="hc4-modalHead">
-                <div className="hc4-modalHeadCopy">
-                  <div className="hc4-modalEyebrow">Help Video</div>
-                  <h3 id="hc4-video-title" className="hc4-modalTitle">
-                    {activeVideo.title}
-                  </h3>
-                  <p className="hc4-modalText">{activeVideo.desc}</p>
-                </div>
+              <div className="hc5-emptyStateInner">
+                <h3>No tutorials found</h3>
+                <p>Try a different keyword or clear your search to see all videos again.</p>
+              </div>
+            </motion.div>
+          )}
+        </section>
 
+        <AnimatePresence>
+          {activeVideo ? (
+            <motion.div
+              className="hc5-modalOverlay"
+              onClick={handleCloseVideo}
+              role="presentation"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.2, ease: "easeOut" }}
+            >
+              <motion.div
+                className="hc5-modal"
+                role="dialog"
+                aria-modal="true"
+                aria-label={activeVideo.title}
+                onClick={(e) => e.stopPropagation()}
+                initial={{ opacity: 0, y: 18, scale: 0.985 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                exit={{ opacity: 0, y: 12, scale: 0.985 }}
+                transition={{ duration: 0.22, ease: "easeOut" }}
+              >
                 <button
                   type="button"
-                  className="hc4-modalClose"
+                  className="hc5-modalClose"
                   onClick={handleCloseVideo}
                   aria-label="Close video"
                 >
                   <CloseIcon />
                 </button>
-              </div>
 
-              <div className="hc4-modalPlayer">
-                {activeVideo.videoUrl ? (
+                <div className="hc5-modalPlayer">
                   <video
                     ref={videoRef}
-                    className="hc4-video"
-                    src={activeVideo.videoUrl}
+                    className="hc5-video"
+                    src={activeVideo.videoUrl || PLACEHOLDER_VIDEO_URL}
                     poster={activeVideo.thumbnail}
                     controls
                     autoPlay
                     playsInline
                     preload="metadata"
                   />
-                ) : (
-                  <div className="hc4-videoPlaceholder">
-                    <img
-                      src={activeVideo.thumbnail}
-                      alt=""
-                      aria-hidden="true"
-                      className="hc4-videoPlaceholderImg"
-                    />
-                    <div className="hc4-videoPlaceholderOverlay">
-                      <div className="hc4-videoPlaceholderBadge">
-                        Video coming soon
-                      </div>
-                      <h4 className="hc4-videoPlaceholderTitle">
-                        {activeVideo.title}
-                      </h4>
-                      <p className="hc4-videoPlaceholderText">
-                        This popup is fully wired up and ready. Once you add
-                        a real video file URL to this tutorial, it will play
-                        here automatically with full video controls.
-                      </p>
-                    </div>
-                  </div>
-                )}
-              </div>
-
-              <div className="hc4-modalFoot">
-                <div className="hc4-modalHint">
-                  {activeVideo.videoUrl
-                    ? "Use the player controls to pause, skip, replay, or go fullscreen."
-                    : "Add a real video URL later and this player will work automatically."}
                 </div>
-
-                <button
-                  type="button"
-                  className="hc4-modalDoneBtn"
-                  onClick={handleCloseVideo}
-                >
-                  Close
-                </button>
-              </div>
-            </div>
-          </div>
-        ) : null}
+              </motion.div>
+            </motion.div>
+          ) : null}
+        </AnimatePresence>
       </div>
     </DashboardLayout>
   );
