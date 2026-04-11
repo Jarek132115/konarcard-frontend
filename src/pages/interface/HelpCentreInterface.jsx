@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useMemo, useRef, useState } from "react";
 import { toast } from "react-hot-toast";
-import { motion, AnimatePresence } from "motion/react";
+import { AnimatePresence, motion } from "motion/react";
 
 import DashboardLayout from "../../components/Dashboard/DashboardLayout";
 import PageHeader from "../../components/Dashboard/PageHeader";
@@ -16,8 +16,6 @@ import { useMyProfiles } from "../../hooks/useBusinessCard";
 
 import UpgradeToPlusImage from "../../assets/images/UpgradeToPlus.png";
 import LiveChatIcon from "../../assets/icons/LiveChatIcon.svg";
-
-const PLACEHOLDER_VIDEO_URL = "https://www.w3schools.com/html/mov_bbb.mp4";
 
 const centerTrim = (v) => (v ?? "").toString().trim();
 const safeLower = (v) => centerTrim(v).toLowerCase();
@@ -37,9 +35,21 @@ const buildPublicUrl = (profileSlug) => {
 function PlayIcon({ className = "" }) {
   return (
     <svg viewBox="0 0 24 24" className={className} aria-hidden="true">
+      <path d="M8 6.5v11l9-5.5-9-5.5Z" fill="currentColor" />
+    </svg>
+  );
+}
+
+function SearchIcon({ className = "" }) {
+  return (
+    <svg viewBox="0 0 24 24" className={className} aria-hidden="true">
       <path
-        d="M8 6.5v11l9-5.5-9-5.5Z"
-        fill="currentColor"
+        d="M10.5 18a7.5 7.5 0 1 1 5.303-2.197L21 21"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.8"
+        strokeLinecap="round"
+        strokeLinejoin="round"
       />
     </svg>
   );
@@ -59,37 +69,16 @@ function CloseIcon() {
   );
 }
 
-function SearchIcon() {
+function ChatIcon({ className = "" }) {
   return (
-    <svg viewBox="0 0 24 24" className="hc5-searchIcon" aria-hidden="true">
-      <circle
-        cx="11"
-        cy="11"
-        r="6.5"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="1.8"
-      />
+    <svg viewBox="0 0 24 24" className={className} aria-hidden="true">
       <path
-        d="M16 16l4 4"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="1.8"
-        strokeLinecap="round"
-      />
-    </svg>
-  );
-}
-
-function ChatIcon() {
-  return (
-    <svg viewBox="0 0 24 24" className="hc5-liveBtnIconSvg" aria-hidden="true">
-      <path
-        d="M6 7.5A3.5 3.5 0 0 1 9.5 4h5A3.5 3.5 0 0 1 18 7.5v4A3.5 3.5 0 0 1 14.5 15H11l-4 3v-3.4A3.48 3.48 0 0 1 6 11.5v-4Z"
+        d="M7 18.5 3.5 20V6.5A2.5 2.5 0 0 1 6 4h12a2.5 2.5 0 0 1 2.5 2.5v7A2.5 2.5 0 0 1 18 16H9.2L7 18.5Z"
         fill="none"
         stroke="currentColor"
         strokeWidth="1.8"
         strokeLinejoin="round"
+        strokeLinecap="round"
       />
     </svg>
   );
@@ -104,63 +93,8 @@ function formatVideoLength(totalSeconds) {
   return `${mins} min ${secs} sec`;
 }
 
-function HelpCard({ video, onOpen, index }) {
-  return (
-    <motion.article
-      className="hc5-card"
-      initial={{ opacity: 0, y: 18 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.34, ease: "easeOut", delay: 0.03 * index }}
-    >
-      <button
-        type="button"
-        className="hc5-cardMedia"
-        onClick={() => onOpen(video)}
-        aria-label={`Watch ${video.title}`}
-      >
-        <img
-          src={video.thumbnail}
-          alt=""
-          aria-hidden="true"
-          className="hc5-cardImg"
-        />
-
-        <div className="hc5-cardMediaOverlay" />
-
-        <span className="hc5-cardPlay">
-          <span className="hc5-cardPlayCircle">
-            <PlayIcon className="hc5-cardPlayIcon" />
-          </span>
-        </span>
-
-        <span className="hc5-cardDuration">{formatVideoLength(video.lengthSeconds)}</span>
-      </button>
-
-      <div className="hc5-cardBody">
-        <div className="hc5-cardTop">
-          <div className="hc5-cardPills">
-            <span className="hc5-pill hc5-pill--soft">Tutorial</span>
-            <span className="hc5-pill hc5-pill--neutral">{video.category}</span>
-          </div>
-
-          <h3 className="hc5-cardTitle">{video.title}</h3>
-          <p className="hc5-cardDesc">{video.desc}</p>
-        </div>
-
-        <div className="hc5-cardBottom">
-          <button
-            type="button"
-            className="hc5-watchBtn"
-            onClick={() => onOpen(video)}
-          >
-            <PlayIcon className="hc5-watchBtnIcon" />
-            <span>Watch video</span>
-          </button>
-        </div>
-      </div>
-    </motion.article>
-  );
-}
+const PLACEHOLDER_VIDEO =
+  "https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4";
 
 export default function HelpCentreInterface() {
   const { user } = useContext(AuthContext);
@@ -170,12 +104,11 @@ export default function HelpCentreInterface() {
   const { data: cards } = useMyProfiles();
 
   const [activeVideo, setActiveVideo] = useState(null);
+  const [searchValue, setSearchValue] = useState("");
   const videoRef = useRef(null);
 
   const [shareOpen, setShareOpen] = useState(false);
   const [selectedSlug, setSelectedSlug] = useState(null);
-
-  const [search, setSearch] = useState("");
 
   const profilesForShare = useMemo(() => {
     const xs = Array.isArray(cards) ? cards : [];
@@ -206,7 +139,10 @@ export default function HelpCentreInterface() {
       return;
     }
 
-    setSelectedSlug((prev) => prev || profilesForShare[0].slug);
+    setSelectedSlug((prev) => {
+      if (prev && profilesForShare.some((p) => p.slug === prev)) return prev;
+      return profilesForShare[0].slug;
+    });
   }, [profilesForShare]);
 
   const selectedProfile = useMemo(() => {
@@ -218,7 +154,7 @@ export default function HelpCentreInterface() {
     try {
       window.tidioChatApi?.open?.();
     } catch {
-      toast("Live chat is not available right now.");
+      // ignore
     }
   };
 
@@ -226,102 +162,96 @@ export default function HelpCentreInterface() {
     () => [
       {
         id: "1",
-        category: "Setup",
         title: "Getting started with your digital business card",
         desc: "Create your first profile, organise your information properly, and get your KonarCard ready to share confidently.",
         lengthSeconds: 86,
         thumbnail: UpgradeToPlusImage,
-        videoUrl: PLACEHOLDER_VIDEO_URL,
+        videoUrl: PLACEHOLDER_VIDEO,
+        topic: "Setup",
       },
       {
         id: "2",
-        category: "Profile",
         title: "Editing and optimising your profile for more conversions",
         desc: "Improve your layout, content, and overall trust signals so customers instantly understand who you are and what you offer.",
         lengthSeconds: 94,
         thumbnail: UpgradeToPlusImage,
-        videoUrl: PLACEHOLDER_VIDEO_URL,
+        videoUrl: PLACEHOLDER_VIDEO,
+        topic: "Profile",
       },
       {
         id: "3",
-        category: "Photos",
         title: "Adding photos that actually help you win more work",
         desc: "Upload stronger images that build trust, show your work clearly, and make your profile feel more professional.",
         lengthSeconds: 73,
         thumbnail: UpgradeToPlusImage,
-        videoUrl: PLACEHOLDER_VIDEO_URL,
+        videoUrl: PLACEHOLDER_VIDEO,
+        topic: "Photos",
       },
       {
         id: "4",
-        category: "Reviews",
         title: "Collecting reviews to build stronger social proof",
         desc: "Learn how to gather customer reviews and display them in a way that helps future visitors trust you faster.",
         lengthSeconds: 102,
         thumbnail: UpgradeToPlusImage,
-        videoUrl: PLACEHOLDER_VIDEO_URL,
+        videoUrl: PLACEHOLDER_VIDEO,
+        topic: "Reviews",
       },
       {
         id: "5",
-        category: "Sharing",
         title: "Sharing your profile the right way",
         desc: "Send your KonarCard link strategically so customers can instantly view your details, save your info, and contact you.",
         lengthSeconds: 68,
         thumbnail: UpgradeToPlusImage,
-        videoUrl: PLACEHOLDER_VIDEO_URL,
+        videoUrl: PLACEHOLDER_VIDEO,
+        topic: "Sharing",
       },
       {
         id: "6",
-        category: "NFC",
         title: "Using your NFC card in real customer situations",
         desc: "See how tap-to-share works in practice and understand what customers experience when you hand over your card.",
         lengthSeconds: 91,
         thumbnail: UpgradeToPlusImage,
-        videoUrl: PLACEHOLDER_VIDEO_URL,
+        videoUrl: PLACEHOLDER_VIDEO,
+        topic: "NFC",
       },
       {
         id: "7",
-        category: "Branding",
         title: "Branding and themes that make you look more professional",
         desc: "Keep your profile clean, consistent, and visually strong so it represents your business properly every time.",
         lengthSeconds: 88,
         thumbnail: UpgradeToPlusImage,
-        videoUrl: PLACEHOLDER_VIDEO_URL,
+        videoUrl: PLACEHOLDER_VIDEO,
+        topic: "Branding",
       },
       {
         id: "8",
-        category: "Analytics",
         title: "Understanding your analytics and improving results",
         desc: "Read your analytics properly and use the data to improve profile performance, visibility, and lead generation.",
         lengthSeconds: 97,
         thumbnail: UpgradeToPlusImage,
-        videoUrl: PLACEHOLDER_VIDEO_URL,
+        videoUrl: PLACEHOLDER_VIDEO,
+        topic: "Analytics",
       },
     ],
     []
   );
 
   const filteredVideos = useMemo(() => {
-    const q = safeLower(search);
+    const q = centerTrim(searchValue).toLowerCase();
     if (!q) return videos;
 
     return videos.filter((video) => {
-      return (
-        safeLower(video.title).includes(q) ||
-        safeLower(video.desc).includes(q) ||
-        safeLower(video.category).includes(q)
-      );
+      const haystack = [video.title, video.desc, video.topic].join(" ").toLowerCase();
+      return haystack.includes(q);
     });
-  }, [videos, search]);
+  }, [videos, searchValue]);
 
-  const quickStats = useMemo(() => {
-    const totalVideos = videos.length;
-    const totalMinutes = videos.reduce((sum, item) => sum + Number(item.lengthSeconds || 0), 0);
-    const roundedMinutes = Math.max(1, Math.round(totalMinutes / 60));
-
-    return {
-      totalVideos,
-      roundedMinutes,
-    };
+  const totalMinutes = useMemo(() => {
+    const totalSeconds = videos.reduce(
+      (sum, item) => sum + (Number(item.lengthSeconds) || 0),
+      0
+    );
+    return `${Math.ceil(totalSeconds / 60)} min total`;
   }, [videos]);
 
   const handleOpenVideo = (video) => {
@@ -369,7 +299,7 @@ export default function HelpCentreInterface() {
       try {
         await player.play();
       } catch {
-        // ignore autoplay failures
+        // ignore
       }
     };
 
@@ -479,7 +409,7 @@ export default function HelpCentreInterface() {
     <DashboardLayout hideDesktopHeader>
       <div className="hc5-shell">
         <PageHeader
-          title="Help Center"
+          title="HelpCenter"
           subtitle="Tutorials, walkthroughs, and practical best practices for getting the most from KonarCard."
           onShareClick={handleOpenShareProfile}
           shareDisabled={!selectedProfile}
@@ -504,19 +434,15 @@ export default function HelpCentreInterface() {
 
         <motion.section
           className="hc5-heroCard"
-          initial={{ opacity: 0, y: 18 }}
+          initial={{ opacity: 0, y: 14 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.34, ease: "easeOut" }}
+          transition={{ duration: 0.32, ease: "easeOut" }}
         >
           <div className="hc5-heroMain">
             <div className="hc5-heroPills">
               <span className="hc5-pill hc5-pill--accent">Help Center</span>
-              <span className="hc5-pill hc5-pill--neutral">
-                {quickStats.totalVideos} videos
-              </span>
-              <span className="hc5-pill hc5-pill--neutral">
-                {quickStats.roundedMinutes} min total
-              </span>
+              <span className="hc5-pill hc5-pill--neutral">{videos.length} videos</span>
+              <span className="hc5-pill hc5-pill--neutral">{totalMinutes}</span>
             </div>
 
             <h2 className="hc5-heroTitle">
@@ -524,29 +450,29 @@ export default function HelpCentreInterface() {
             </h2>
 
             <p className="hc5-heroText">
-              Browse quick step-by-step tutorials covering profile setup, reviews,
-              photos, branding, NFC usage, sharing, and analytics. Everything is designed
-              to help you get value faster and look more professional.
+              Browse quick step-by-step tutorials covering profile setup, reviews, photos,
+              branding, NFC usage, sharing, and analytics. Everything is designed to help you
+              get value faster and look more professional.
             </p>
 
             <div className="hc5-heroToolbar">
-              <label className="hc5-searchWrap" aria-label="Search help videos">
-                <SearchIcon />
+              <div className="hc5-searchWrap">
+                <SearchIcon className="hc5-searchIcon" />
                 <input
                   type="text"
                   className="hc5-searchInput"
                   placeholder="Search tutorials, topics, or keywords"
-                  value={search}
-                  onChange={(e) => setSearch(e.target.value)}
+                  value={searchValue}
+                  onChange={(e) => setSearchValue(e.target.value)}
                 />
-              </label>
+              </div>
             </div>
           </div>
 
           <div className="hc5-heroAside">
             <div className="hc5-supportCard">
               <div className="hc5-supportIcon">
-                <ChatIcon />
+                <ChatIcon className="hc5-liveBtnIconSvg" />
               </div>
 
               <div className="hc5-supportCopy">
@@ -565,36 +491,76 @@ export default function HelpCentreInterface() {
           </div>
         </motion.section>
 
-        <section className="hc5-resultsBar" aria-label="Help results summary">
+        <div className="hc5-resultsBar">
           <div className="hc5-resultsText">
-            {filteredVideos.length === videos.length
-              ? `Showing all ${videos.length} tutorials`
-              : `Showing ${filteredVideos.length} result${filteredVideos.length === 1 ? "" : "s"}`}
+            Showing all {filteredVideos.length} tutorials
           </div>
-        </section>
+        </div>
 
         <section className="hc5-grid" aria-label="Help videos">
           {filteredVideos.length ? (
             filteredVideos.map((video, index) => (
-              <HelpCard
+              <motion.article
                 key={video.id}
-                video={video}
-                index={index}
-                onOpen={handleOpenVideo}
-              />
+                className="hc5-card"
+                initial={{ opacity: 0, y: 18 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.26, delay: index * 0.03, ease: "easeOut" }}
+              >
+                <button
+                  type="button"
+                  className="hc5-cardMedia"
+                  onClick={() => handleOpenVideo(video)}
+                  aria-label={`Watch ${video.title}`}
+                >
+                  <img
+                    src={video.thumbnail}
+                    alt=""
+                    aria-hidden="true"
+                    className="hc5-cardImg"
+                  />
+                  <div className="hc5-cardMediaOverlay" />
+                  <span className="hc5-cardPlay">
+                    <span className="hc5-cardPlayCircle">
+                      <PlayIcon className="hc5-cardPlayIcon" />
+                    </span>
+                  </span>
+                  <span className="hc5-cardDuration">
+                    {formatVideoLength(video.lengthSeconds)}
+                  </span>
+                </button>
+
+                <div className="hc5-cardBody">
+                  <div className="hc5-cardTop">
+                    <div className="hc5-cardPills">
+                      <span className="hc5-pill hc5-pill--neutral">Tutorial</span>
+                      <span className="hc5-pill hc5-pill--neutral">{video.topic}</span>
+                    </div>
+
+                    <h3 className="hc5-cardTitle">{video.title}</h3>
+                    <p className="hc5-cardDesc">{video.desc}</p>
+                  </div>
+
+                  <div className="hc5-cardBottom">
+                    <button
+                      type="button"
+                      className="hc5-watchBtn"
+                      onClick={() => handleOpenVideo(video)}
+                    >
+                      <PlayIcon className="hc5-watchBtnIcon" />
+                      <span>Watch video</span>
+                    </button>
+                  </div>
+                </div>
+              </motion.article>
             ))
           ) : (
-            <motion.div
-              className="hc5-emptyState"
-              initial={{ opacity: 0, y: 12 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.25, ease: "easeOut" }}
-            >
+            <div className="hc5-emptyState">
               <div className="hc5-emptyStateInner">
                 <h3>No tutorials found</h3>
-                <p>Try a different keyword or clear your search to see all videos again.</p>
+                <p>Try a different search term or clear your search.</p>
               </div>
-            </motion.div>
+            </div>
           )}
         </section>
 
@@ -607,7 +573,6 @@ export default function HelpCentreInterface() {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              transition={{ duration: 0.2, ease: "easeOut" }}
             >
               <motion.div
                 className="hc5-modal"
@@ -615,10 +580,10 @@ export default function HelpCentreInterface() {
                 aria-modal="true"
                 aria-label={activeVideo.title}
                 onClick={(e) => e.stopPropagation()}
-                initial={{ opacity: 0, y: 18, scale: 0.985 }}
-                animate={{ opacity: 1, y: 0, scale: 1 }}
-                exit={{ opacity: 0, y: 12, scale: 0.985 }}
-                transition={{ duration: 0.22, ease: "easeOut" }}
+                initial={{ opacity: 0, scale: 0.97, y: 16 }}
+                animate={{ opacity: 1, scale: 1, y: 0 }}
+                exit={{ opacity: 0, scale: 0.98, y: 10 }}
+                transition={{ duration: 0.2, ease: "easeOut" }}
               >
                 <button
                   type="button"
@@ -633,7 +598,7 @@ export default function HelpCentreInterface() {
                   <video
                     ref={videoRef}
                     className="hc5-video"
-                    src={activeVideo.videoUrl || PLACEHOLDER_VIDEO_URL}
+                    src={activeVideo.videoUrl || PLACEHOLDER_VIDEO}
                     poster={activeVideo.thumbnail}
                     controls
                     autoPlay
