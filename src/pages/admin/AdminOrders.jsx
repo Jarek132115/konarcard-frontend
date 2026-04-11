@@ -85,6 +85,109 @@ function getProductLabel(productKey) {
     return productKey || "Product";
 }
 
+function getCardTheme(productKey, styleKey) {
+    const key = cleanString(productKey).toLowerCase();
+    const style = cleanString(styleKey).toLowerCase();
+
+    if (key === "plastic-black") {
+        return {
+            background: "#111827",
+            border: "1px solid rgba(255,255,255,0.08)",
+            accent: "rgba(255,255,255,0.08)",
+            defaultText: "#ffffff",
+        };
+    }
+
+    if (key === "plastic-white") {
+        return {
+            background: "#ffffff",
+            border: "1px solid rgba(15,23,42,0.12)",
+            accent: "rgba(15,23,42,0.05)",
+            defaultText: "#0f172a",
+        };
+    }
+
+    if (key === "plastic-blue" || style === "blue") {
+        return {
+            background: "#2563eb",
+            border: "1px solid rgba(255,255,255,0.12)",
+            accent: "rgba(255,255,255,0.12)",
+            defaultText: "#ffffff",
+        };
+    }
+
+    if (key === "plastic-green" || style === "green") {
+        return {
+            background: "#16a34a",
+            border: "1px solid rgba(255,255,255,0.12)",
+            accent: "rgba(255,255,255,0.12)",
+            defaultText: "#ffffff",
+        };
+    }
+
+    if (key === "plastic-magenta" || style === "magenta") {
+        return {
+            background: "#db2777",
+            border: "1px solid rgba(255,255,255,0.12)",
+            accent: "rgba(255,255,255,0.12)",
+            defaultText: "#ffffff",
+        };
+    }
+
+    if (key === "plastic-orange" || style === "orange") {
+        return {
+            background: "#f97316",
+            border: "1px solid rgba(255,255,255,0.12)",
+            accent: "rgba(255,255,255,0.12)",
+            defaultText: "#ffffff",
+        };
+    }
+
+    if (key === "metal-card") {
+        return {
+            background: "linear-gradient(135deg, #1f2937 0%, #6b7280 50%, #111827 100%)",
+            border: "1px solid rgba(255,255,255,0.10)",
+            accent: "rgba(255,255,255,0.14)",
+            defaultText: "#ffffff",
+        };
+    }
+
+    if (key === "konartag") {
+        return {
+            background: "#0f172a",
+            border: "1px solid rgba(255,255,255,0.08)",
+            accent: "rgba(255,255,255,0.08)",
+            defaultText: "#ffffff",
+        };
+    }
+
+    return {
+        background: "#0f172a",
+        border: "1px solid rgba(255,255,255,0.08)",
+        accent: "rgba(255,255,255,0.08)",
+        defaultText: "#ffffff",
+    };
+}
+
+function normalizeFontWeight(value) {
+    const raw = cleanString(value);
+    const asNumber = Number(raw);
+    if (Number.isFinite(asNumber) && asNumber > 0) return asNumber;
+    return 700;
+}
+
+function normalizeFontSize(value) {
+    const raw = cleanString(value);
+    const asNumber = Number(raw);
+    if (Number.isFinite(asNumber) && asNumber > 0) return asNumber;
+    return 24;
+}
+
+function normalizeOrientation(value) {
+    const raw = cleanString(value).toLowerCase();
+    return raw === "vertical" ? "vertical" : "horizontal";
+}
+
 function SectionCard({ title, subtitle, right, children }) {
     return (
         <section className="admin-section-card">
@@ -158,48 +261,196 @@ function PreviewImageCard({ title, src, alt, onOpen, onDownload }) {
     );
 }
 
+function FrontCardPreview({ order }) {
+    const frontText = extractFrontText(order) || "No front text saved";
+    const fontFamily = extractFontFamily(order) || "inherit";
+    const fontWeight = normalizeFontWeight(extractFontWeight(order));
+    const fontSize = normalizeFontSize(extractFontSize(order));
+    const orientation = normalizeOrientation(extractOrientation(order));
+    const styleKey = cleanString(order?.previewMeta?.styleKey || order?.preview?.styleKey);
+    const theme = getCardTheme(order?.productKey, styleKey);
+
+    const textColor = cleanString(extractTextColor(order)) || theme.defaultText;
+    const isTag = cleanString(order?.productKey).toLowerCase() === "konartag";
+
+    const shellStyle = {
+        width: "100%",
+        maxWidth: isTag ? 280 : 520,
+        aspectRatio: isTag ? "1 / 1" : "1.75 / 1",
+        borderRadius: isTag ? 28 : 24,
+        border: theme.border,
+        background: theme.background,
+        boxShadow: "0 16px 40px rgba(15,23,42,0.18)",
+        position: "relative",
+        overflow: "hidden",
+        padding: isTag ? 24 : 28,
+        display: "flex",
+        flexDirection: "column",
+        justifyContent: "space-between",
+        margin: "0 auto",
+    };
+
+    const stripeStyle = {
+        position: "absolute",
+        inset: 0,
+        background:
+            orientation === "vertical"
+                ? `linear-gradient(90deg, transparent 0%, ${theme.accent} 50%, transparent 100%)`
+                : `linear-gradient(180deg, transparent 0%, ${theme.accent} 50%, transparent 100%)`,
+        opacity: 0.55,
+        pointerEvents: "none",
+    };
+
+    const textWrapStyle = {
+        position: "relative",
+        zIndex: 1,
+        display: "flex",
+        alignItems: orientation === "vertical" ? "center" : "flex-start",
+        justifyContent: orientation === "vertical" ? "center" : "flex-start",
+        height: "100%",
+    };
+
+    const textStyle = {
+        color: textColor,
+        fontFamily,
+        fontWeight,
+        fontSize: `${Math.max(14, Math.min(fontSize, 38))}px`,
+        lineHeight: 1.08,
+        letterSpacing: "-0.02em",
+        wordBreak: "break-word",
+        maxWidth: orientation === "vertical" ? "80%" : "100%",
+        textAlign: orientation === "vertical" ? "center" : "left",
+        transform: orientation === "vertical" ? "rotate(-90deg)" : "none",
+        transformOrigin: "center",
+        whiteSpace: "pre-wrap",
+    };
+
+    const footerStyle = {
+        position: "relative",
+        zIndex: 1,
+        display: "flex",
+        justifyContent: "space-between",
+        alignItems: "flex-end",
+        gap: 12,
+        marginTop: 16,
+        color: textColor,
+        opacity: 0.92,
+        fontSize: 12,
+        fontWeight: 600,
+    };
+
+    return (
+        <div className="admin-preview-card">
+            <div className="admin-preview-title">Card front preview</div>
+
+            <div
+                className="admin-preview-frame"
+                style={{
+                    padding: 20,
+                    background: "var(--admin-surface-soft)",
+                }}
+            >
+                <div style={shellStyle}>
+                    <div style={stripeStyle} />
+                    <div style={textWrapStyle}>
+                        <div style={textStyle}>{frontText}</div>
+                    </div>
+
+                    <div style={footerStyle}>
+                        <span>{getProductLabel(order?.productKey)}</span>
+                        <span>{styleKey || cleanString(order?.variant) || "standard"}</span>
+                    </div>
+                </div>
+            </div>
+
+            <div className="admin-preview-actions">
+                <Btn
+                    tone="ghost"
+                    onClick={() => copyToClipboardHelper(frontText, "Front text copied")}
+                    disabled={!frontText}
+                >
+                    Copy text
+                </Btn>
+            </div>
+        </div>
+    );
+}
+
 function extractFrontText(order) {
-    return cleanString(order?.preview?.customization?.frontText || order?.preview?.frontText || "");
+    return cleanString(
+        order?.customization?.frontText ||
+        order?.preview?.customization?.frontText ||
+        order?.preview?.frontText ||
+        ""
+    );
 }
 
 function extractFontFamily(order) {
     return cleanString(
-        order?.preview?.customization?.fontFamily || order?.preview?.fontFamily || ""
+        order?.customization?.fontFamily ||
+        order?.preview?.customization?.fontFamily ||
+        order?.preview?.fontFamily ||
+        ""
     );
 }
 
 function extractFontWeight(order) {
     return cleanString(
-        order?.preview?.customization?.fontWeight || order?.preview?.fontWeight || ""
+        order?.customization?.fontWeight ||
+        order?.preview?.customization?.fontWeight ||
+        order?.preview?.fontWeight ||
+        ""
     );
 }
 
 function extractFontSize(order) {
     return cleanString(
-        order?.preview?.customization?.fontSize || order?.preview?.fontSize || ""
+        order?.customization?.fontSize ||
+        order?.preview?.customization?.fontSize ||
+        order?.preview?.fontSize ||
+        ""
     );
 }
 
 function extractTextColor(order) {
     return cleanString(
-        order?.preview?.customization?.textColor || order?.preview?.textColor || ""
+        order?.customization?.textColor ||
+        order?.preview?.customization?.textColor ||
+        order?.preview?.textColor ||
+        ""
     );
 }
 
 function extractOrientation(order) {
     return cleanString(
-        order?.preview?.customization?.orientation || order?.preview?.orientation || ""
+        order?.customization?.orientation ||
+        order?.preview?.customization?.orientation ||
+        order?.preview?.orientation ||
+        ""
     );
 }
 
 function extractQrUrl(order) {
     return cleanString(
+        order?.qrTargetUrl ||
         order?.qrCodeUrl ||
+        order?.preview?.qrTargetUrl ||
         order?.preview?.qrCodeUrl ||
+        order?.publicProfileUrl ||
         order?.preview?.publicProfileUrl ||
-        (order?.profile?.profile_slug
-            ? buildPublicProfileUrl(order.profile.profile_slug)
-            : "")
+        (order?.profile?.profile_slug ? buildPublicProfileUrl(order.profile.profile_slug) : "")
+    );
+}
+
+function extractNfcUrl(order) {
+    return cleanString(
+        order?.nfcTargetUrl ||
+        order?.nfcUrl ||
+        order?.preview?.nfcTargetUrl ||
+        order?.preview?.nfcUrl ||
+        order?.publicProfileUrl ||
+        order?.preview?.publicProfileUrl ||
+        (order?.profile?.profile_slug ? buildPublicProfileUrl(order.profile.profile_slug) : "")
     );
 }
 
@@ -216,6 +467,19 @@ async function downloadImageFromUrl(url, filename) {
     a.remove();
 
     window.URL.revokeObjectURL(blobUrl);
+}
+
+async function copyToClipboardHelper(value, label = "Copied") {
+    if (!navigator?.clipboard || !value) return false;
+
+    try {
+        await navigator.clipboard.writeText(value);
+        toast.success(label);
+        return true;
+    } catch {
+        toast.error("Could not copy");
+        return false;
+    }
 }
 
 export default function AdminOrders() {
@@ -258,13 +522,7 @@ export default function AdminOrders() {
     }
 
     async function copyText(value, label = "Copied") {
-        if (!navigator?.clipboard || !value) return;
-        try {
-            await navigator.clipboard.writeText(value);
-            toast.success(label);
-        } catch {
-            toast.error("Could not copy");
-        }
+        await copyToClipboardHelper(value, label);
     }
 
     async function loadOrders(queryOverride, statusOverride) {
@@ -359,7 +617,7 @@ export default function AdminOrders() {
 
             <SectionCard
                 title="Order fulfilment"
-                subtitle="Search orders, update shipping progress, open print assets, and view customer customisation."
+                subtitle="Search orders, update shipping progress, check card front styling, and view QR/NFC target links."
             >
                 <div className="admin-toolbar">
                     <TextInput
@@ -397,9 +655,7 @@ export default function AdminOrders() {
                 </div>
 
                 {ordersLoading ? (
-                    <p className="admin-muted" style={{ margin: 0 }}>
-                        Loading orders…
-                    </p>
+                    <p className="admin-muted admin-no-margin">Loading orders…</p>
                 ) : ordersError ? (
                     <div className="admin-error-banner">{ordersError}</div>
                 ) : orders.length === 0 ? (
@@ -477,8 +733,7 @@ export default function AdminOrders() {
                                             </div>
 
                                             <div
-                                                className="admin-detail-title admin-detail-title--lg"
-                                                style={{ marginTop: 12 }}
+                                                className="admin-detail-title admin-detail-title--lg admin-mt-12"
                                             >
                                                 {selectedOrder.customerName ||
                                                     selectedOrder?.user?.name ||
@@ -503,13 +758,16 @@ export default function AdminOrders() {
                                                 Copy order ID
                                             </Btn>
 
-                                            {selectedOrder.profile?.profile_slug ? (
+                                            {(selectedOrder.profileSlug ||
+                                                selectedOrder.profile?.profile_slug) ? (
                                                 <Btn
                                                     tone="ghost"
                                                     onClick={() =>
                                                         window.open(
+                                                            selectedOrder.publicProfileUrl ||
                                                             buildPublicProfileUrl(
-                                                                selectedOrder.profile.profile_slug
+                                                                selectedOrder.profileSlug ||
+                                                                selectedOrder.profile?.profile_slug
                                                             ),
                                                             "_blank",
                                                             "noopener,noreferrer"
@@ -548,7 +806,11 @@ export default function AdminOrders() {
                                         />
                                         <InfoRow
                                             label="Profile"
-                                            value={selectedOrder.profile?.profile_slug || "—"}
+                                            value={
+                                                selectedOrder.profileSlug ||
+                                                selectedOrder.profile?.profile_slug ||
+                                                "—"
+                                            }
                                         />
                                         <InfoRow
                                             label="Tracking URL"
@@ -569,6 +831,11 @@ export default function AdminOrders() {
                                             mono
                                         />
                                         <InfoRow
+                                            label="NFC target URL"
+                                            value={extractNfcUrl(selectedOrder) || "—"}
+                                            mono
+                                        />
+                                        <InfoRow
                                             label="Address"
                                             value={selectedOrder.deliveryAddress || "—"}
                                             full
@@ -577,10 +844,12 @@ export default function AdminOrders() {
                                 </div>
 
                                 <div className="admin-grid-preview">
+                                    <FrontCardPreview order={selectedOrder} />
+
                                     <PreviewImageCard
-                                        title="Flat order preview"
+                                        title="Saved flat preview"
                                         src={selectedOrder.previewImageUrl}
-                                        alt="Order preview"
+                                        alt="Saved order preview"
                                         onOpen={() => {
                                             if (selectedOrder.previewImageUrl) {
                                                 window.open(
@@ -600,33 +869,6 @@ export default function AdminOrders() {
                                                 toast.success("Preview downloaded");
                                             } catch {
                                                 toast.error("Could not download preview");
-                                            }
-                                        }}
-                                    />
-
-                                    <PreviewImageCard
-                                        title="Uploaded logo"
-                                        src={selectedOrder.logoUrl}
-                                        alt="Uploaded logo"
-                                        onOpen={() => {
-                                            if (selectedOrder.logoUrl) {
-                                                window.open(
-                                                    selectedOrder.logoUrl,
-                                                    "_blank",
-                                                    "noopener,noreferrer"
-                                                );
-                                            }
-                                        }}
-                                        onDownload={async () => {
-                                            if (!selectedOrder.logoUrl) return;
-                                            try {
-                                                await downloadImageFromUrl(
-                                                    selectedOrder.logoUrl,
-                                                    `${selectedOrder._id}-logo.png`
-                                                );
-                                                toast.success("Logo downloaded");
-                                            } catch {
-                                                toast.error("Could not download logo");
                                             }
                                         }}
                                     />
@@ -665,14 +907,17 @@ export default function AdminOrders() {
                                             <InfoRow
                                                 label="Style key"
                                                 value={
-                                                    cleanString(selectedOrder?.preview?.styleKey) ||
-                                                    "—"
+                                                    cleanString(
+                                                        selectedOrder?.previewMeta?.styleKey ||
+                                                        selectedOrder?.preview?.styleKey
+                                                    ) || "—"
                                                 }
                                             />
                                             <InfoRow
                                                 label="Uses preset artwork"
                                                 value={
-                                                    selectedOrder?.preview?.usesPresetArtwork
+                                                    selectedOrder?.previewMeta?.usesPresetArtwork ||
+                                                        selectedOrder?.preview?.usesPresetArtwork
                                                         ? "Yes"
                                                         : "No"
                                                 }
@@ -696,6 +941,19 @@ export default function AdminOrders() {
                                                 disabled={!extractQrUrl(selectedOrder)}
                                             >
                                                 Copy QR target URL
+                                            </Btn>
+
+                                            <Btn
+                                                tone="ghost"
+                                                onClick={() =>
+                                                    copyText(
+                                                        extractNfcUrl(selectedOrder),
+                                                        "NFC target URL copied"
+                                                    )
+                                                }
+                                                disabled={!extractNfcUrl(selectedOrder)}
+                                            >
+                                                Copy NFC target URL
                                             </Btn>
 
                                             <Btn
@@ -732,10 +990,15 @@ export default function AdminOrders() {
                                                 tone="ghost"
                                                 onClick={() =>
                                                     navigate(
-                                                        `/admin/users?selected=${selectedOrder.userId || selectedOrder.user?._id}`
+                                                        `/admin/users?selected=${selectedOrder.userId ||
+                                                        selectedOrder.user?._id
+                                                        }`
                                                     )
                                                 }
-                                                disabled={!selectedOrder.userId && !selectedOrder.user?._id}
+                                                disabled={
+                                                    !selectedOrder.userId &&
+                                                    !selectedOrder.user?._id
+                                                }
                                             >
                                                 Open customer
                                             </Btn>
@@ -749,7 +1012,7 @@ export default function AdminOrders() {
                                             Tracking & shipping
                                         </div>
 
-                                        <div className="admin-stack" style={{ marginTop: 14 }}>
+                                        <div className="admin-stack admin-mt-14">
                                             <TextInput
                                                 placeholder="Tracking URL"
                                                 value={edit[selectedOrder._id]?.trackingUrl || ""}
@@ -815,7 +1078,7 @@ export default function AdminOrders() {
                                             Fulfilment status
                                         </div>
 
-                                        <div className="admin-stack" style={{ marginTop: 14 }}>
+                                        <div className="admin-stack admin-mt-14">
                                             <SelectInput
                                                 value={
                                                     edit[selectedOrder._id]?.fulfillmentStatus ||
