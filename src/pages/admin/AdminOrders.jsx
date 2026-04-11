@@ -4,6 +4,26 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 import api from "../../services/api";
 import AdminLayout from "./AdminLayout";
 
+import PlasticCard3D from "../../components/PlasticCard3D";
+import MetalCard3D from "../../components/MetalCard3D";
+import KonarTag3D from "../../components/KonarTag3D";
+
+import LogoIcon from "../../assets/icons/Logo-Icon.svg";
+import LogoIconWhite from "../../assets/icons/Logo-Icon-White.svg";
+
+import WhiteFrontImg from "../../assets/images/Products/WhiteFront.jpg";
+import WhiteBackImg from "../../assets/images/Products/WhiteBack.jpg";
+import BlackFrontImg from "../../assets/images/Products/BlackFront.jpg";
+import BlackBackImg from "../../assets/images/Products/BlackBack.jpg";
+import BlueFrontImg from "../../assets/images/Products/BlueFront.jpg";
+import BlueBackImg from "../../assets/images/Products/BlueBack.jpg";
+import GreenFrontImg from "../../assets/images/Products/GreenFront.jpg";
+import GreenBackImg from "../../assets/images/Products/GreenBack.jpg";
+import MagentaFrontImg from "../../assets/images/Products/MagentaFront.jpg";
+import MagentaBackImg from "../../assets/images/Products/MagentaBack.jpg";
+import OrangeFrontImg from "../../assets/images/Products/OrangeFront.jpg";
+import OrangeBackImg from "../../assets/images/Products/OrangeBack.jpg";
+
 const STATUS_OPTIONS = [
     { value: "order_placed", label: "Order placed" },
     { value: "designing_card", label: "Card is being prepared" },
@@ -216,6 +236,68 @@ function normalizeOrientation(value) {
     return raw === "vertical" ? "vertical" : "horizontal";
 }
 
+function isUsableTextureSrc(src) {
+    const value = cleanString(src);
+    return (
+        !!value &&
+        (
+            value.startsWith("data:") ||
+            value.startsWith("blob:") ||
+            value.startsWith("/") ||
+            value.startsWith("http://") ||
+            value.startsWith("https://")
+        )
+    );
+}
+
+function getPlasticArtwork(productKey) {
+    switch (cleanString(productKey).toLowerCase()) {
+        case "plastic-black":
+            return {
+                frontSrc: BlackFrontImg,
+                backSrc: BlackBackImg,
+                edgeColor: "#111111",
+                fallbackTextColor: "#ffffff",
+            };
+        case "plastic-blue":
+            return {
+                frontSrc: BlueFrontImg,
+                backSrc: BlueBackImg,
+                edgeColor: "#0f52ff",
+                fallbackTextColor: "#ffffff",
+            };
+        case "plastic-green":
+            return {
+                frontSrc: GreenFrontImg,
+                backSrc: GreenBackImg,
+                edgeColor: "#15a53a",
+                fallbackTextColor: "#ffffff",
+            };
+        case "plastic-magenta":
+            return {
+                frontSrc: MagentaFrontImg,
+                backSrc: MagentaBackImg,
+                edgeColor: "#d1008f",
+                fallbackTextColor: "#ffffff",
+            };
+        case "plastic-orange":
+            return {
+                frontSrc: OrangeFrontImg,
+                backSrc: OrangeBackImg,
+                edgeColor: "#ff7b00",
+                fallbackTextColor: "#ffffff",
+            };
+        case "plastic-white":
+        default:
+            return {
+                frontSrc: WhiteFrontImg,
+                backSrc: WhiteBackImg,
+                edgeColor: "#ffffff",
+                fallbackTextColor: "#111111",
+            };
+    }
+}
+
 function SectionCard({ title, subtitle, right, children }) {
     return (
         <section className="admin-section-card">
@@ -288,106 +370,139 @@ function PreviewImageCard({ title, src, alt, onOpen, onDownload }) {
     );
 }
 
-function FrontCardPreview({ order, onCopyText }) {
-    const frontText = extractFrontText(order) || "No front text saved";
-    const fontFamily = extractFontFamily(order) || "inherit";
-    const fontWeight = normalizeFontWeight(extractFontWeight(order));
-    const fontSize = normalizeFontSize(extractFontSize(order));
-    const orientation = normalizeOrientation(extractOrientation(order));
-    const styleKey = cleanString(order?.previewMeta?.styleKey || order?.preview?.styleKey);
-    const theme = getCardTheme(order?.productKey, styleKey);
-
-    const textColor = cleanString(extractTextColor(order)) || theme.defaultText;
-    const isTag = cleanString(order?.productKey).toLowerCase() === "konartag";
-
-    const shellStyle = {
-        width: "100%",
-        maxWidth: isTag ? 280 : 520,
-        aspectRatio: isTag ? "1 / 1" : "1.75 / 1",
-        borderRadius: isTag ? 28 : 24,
-        border: theme.border,
-        background: theme.background,
-        boxShadow: "0 16px 40px rgba(15,23,42,0.18)",
-        position: "relative",
-        overflow: "hidden",
-        padding: isTag ? 24 : 28,
-        display: "flex",
-        flexDirection: "column",
-        justifyContent: "space-between",
-        margin: "0 auto",
-    };
-
-    const stripeStyle = {
-        position: "absolute",
-        inset: 0,
-        background:
-            orientation === "vertical"
-                ? `linear-gradient(90deg, transparent 0%, ${theme.accent} 50%, transparent 100%)`
-                : `linear-gradient(180deg, transparent 0%, ${theme.accent} 50%, transparent 100%)`,
-        opacity: 0.55,
-        pointerEvents: "none",
-    };
-
-    const textWrapStyle = {
-        position: "relative",
-        zIndex: 1,
-        display: "flex",
-        alignItems: orientation === "vertical" ? "center" : "flex-start",
-        justifyContent: orientation === "vertical" ? "center" : "flex-start",
-        height: "100%",
-    };
-
-    const textStyle = {
-        color: textColor,
-        fontFamily,
-        fontWeight,
-        fontSize: `${Math.max(14, Math.min(fontSize, 38))}px`,
-        lineHeight: 1.08,
-        letterSpacing: "-0.02em",
-        wordBreak: "break-word",
-        maxWidth: orientation === "vertical" ? "80%" : "100%",
-        textAlign: orientation === "vertical" ? "center" : "left",
-        transform: orientation === "vertical" ? "rotate(-90deg)" : "none",
-        transformOrigin: "center",
-        whiteSpace: "pre-wrap",
-    };
-
-    const footerStyle = {
-        position: "relative",
-        zIndex: 1,
-        display: "flex",
-        justifyContent: "space-between",
-        alignItems: "flex-end",
-        gap: 12,
-        marginTop: 16,
-        color: textColor,
-        opacity: 0.92,
-        fontSize: 12,
-        fontWeight: 600,
-    };
-
+function QrCodeCard({ src, alt, onOpen, onDownload }) {
     return (
         <div className="admin-preview-card">
-            <div className="admin-preview-title">Card front preview</div>
+            <div className="admin-preview-title">QR code for print</div>
 
             <div
                 className="admin-preview-frame"
                 style={{
                     padding: 20,
                     background: "var(--admin-surface-soft)",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
                 }}
             >
-                <div style={shellStyle}>
-                    <div style={stripeStyle} />
-                    <div style={textWrapStyle}>
-                        <div style={textStyle}>{frontText}</div>
-                    </div>
+                {src ? (
+                    <img
+                        src={src}
+                        alt={alt}
+                        style={{
+                            maxWidth: 240,
+                            width: "100%",
+                            height: "auto",
+                            objectFit: "contain",
+                            borderRadius: 12,
+                            background: "#fff",
+                            padding: 12,
+                        }}
+                    />
+                ) : (
+                    <div className="admin-preview-empty">QR not available</div>
+                )}
+            </div>
 
-                    <div style={footerStyle}>
-                        <span>{getProductLabel(order?.productKey)}</span>
-                        <span>{styleKey || cleanString(order?.variant) || "standard"}</span>
-                    </div>
-                </div>
+            <div className="admin-preview-actions">
+                <Btn tone="ghost" onClick={onOpen} disabled={!src}>
+                    Open
+                </Btn>
+                <Btn tone="ghost" onClick={onDownload} disabled={!src}>
+                    Download QR code
+                </Btn>
+            </div>
+        </div>
+    );
+}
+
+function PurchasedCardPreview({ order, onCopyText }) {
+    const productKey = cleanString(order?.productKey).toLowerCase();
+    const variant = cleanString(order?.variant || order?.preview?.variant || "white").toLowerCase();
+
+    const frontText = extractFrontText(order) || "KONAR";
+    const fontSize = normalizeFontSize(extractFontSize(order) || 42);
+    const fontWeight = normalizeFontWeight(extractFontWeight(order) || 700);
+    const textColor = cleanString(extractTextColor(order));
+    const qrSrc = cleanString(order?.qrCodeUrl);
+    const logoUrl = cleanString(order?.logoUrl);
+
+    const isDark =
+        variant === "black" ||
+        variant === "blue" ||
+        variant === "green" ||
+        variant === "magenta" ||
+        variant === "orange" ||
+        (productKey === "metal-card" && variant === "black") ||
+        (productKey === "konartag" && variant === "black");
+
+    const resolvedLogoSrc = isUsableTextureSrc(logoUrl)
+        ? logoUrl
+        : isDark
+            ? LogoIconWhite
+            : LogoIcon;
+
+    let previewNode = null;
+
+    if (productKey === "metal-card") {
+        previewNode = (
+            <MetalCard3D
+                logoSrc={resolvedLogoSrc}
+                qrSrc={qrSrc}
+                logoSize={Number(order?.preview?.logoPercent || 70)}
+                finish={variant || "gold"}
+                interactive={false}
+                autoRotate={false}
+                compact={true}
+                stageClassName="cp-preview3dScene"
+            />
+        );
+    } else if (productKey === "konartag") {
+        previewNode = (
+            <KonarTag3D
+                logoSrc={resolvedLogoSrc}
+                qrSrc={qrSrc}
+                logoSize={Number(order?.preview?.logoPercent || 70)}
+                finish={variant || "black"}
+                interactive={false}
+                autoRotate={false}
+                compact={true}
+                stageClassName="cp-preview3dScene"
+            />
+        );
+    } else {
+        const artwork = getPlasticArtwork(productKey);
+        previewNode = (
+            <PlasticCard3D
+                frontSrc={artwork.frontSrc}
+                backSrc={artwork.backSrc}
+                qrSrc={qrSrc}
+                edgeColor={artwork.edgeColor}
+                frontText={frontText}
+                frontFontSize={fontSize}
+                frontFontWeight={fontWeight}
+                frontTextColor={textColor || artwork.fallbackTextColor}
+                interactive={false}
+                autoRotate={false}
+                compact={true}
+                stageClassName="cp-preview3dScene"
+            />
+        );
+    }
+
+    return (
+        <div className="admin-preview-card">
+            <div className="admin-preview-title">Purchased card preview</div>
+
+            <div
+                className="admin-preview-frame"
+                style={{
+                    padding: 20,
+                    background: "var(--admin-surface-soft)",
+                    minHeight: 320,
+                }}
+            >
+                {previewNode}
             </div>
 
             <div className="admin-preview-actions">
@@ -670,7 +785,7 @@ export default function AdminOrders() {
 
             <SectionCard
                 title="Paid orders only"
-                subtitle="Search real paid orders, update shipping progress, check card front styling, and view public, QR, and NFC target links."
+                subtitle="Search real paid orders, update shipping progress, check the exact purchased card, and download the QR code for print."
             >
                 <div className="admin-toolbar">
                     <TextInput
@@ -893,15 +1008,8 @@ export default function AdminOrders() {
                                     </div>
                                 </div>
 
-                                <div
-                                    className="admin-grid-preview"
-                                    style={
-                                        selectedOrder.previewImageUrl
-                                            ? undefined
-                                            : { gridTemplateColumns: "1fr" }
-                                    }
-                                >
-                                    <FrontCardPreview
+                                <div className="admin-grid-preview">
+                                    <PurchasedCardPreview
                                         order={selectedOrder}
                                         onCopyText={() =>
                                             copyText(
@@ -909,6 +1017,33 @@ export default function AdminOrders() {
                                                 "Front text copied"
                                             )
                                         }
+                                    />
+
+                                    <QrCodeCard
+                                        title="QR code for print"
+                                        src={cleanString(selectedOrder.qrCodeUrl)}
+                                        alt={`${cleanString(selectedOrder.profileSlug || selectedOrder.profile?.profile_slug || "profile")} QR code`}
+                                        onOpen={() => {
+                                            if (selectedOrder.qrCodeUrl) {
+                                                window.open(
+                                                    selectedOrder.qrCodeUrl,
+                                                    "_blank",
+                                                    "noopener,noreferrer"
+                                                );
+                                            }
+                                        }}
+                                        onDownload={async () => {
+                                            if (!selectedOrder.qrCodeUrl) return;
+                                            try {
+                                                await downloadImageFromUrl(
+                                                    selectedOrder.qrCodeUrl,
+                                                    `${cleanString(selectedOrder.profileSlug || "profile")}-qr.png`
+                                                );
+                                                toast.success("QR code downloaded");
+                                            } catch {
+                                                toast.error("Could not download QR code");
+                                            }
+                                        }}
                                     />
 
                                     {selectedOrder.previewImageUrl ? (
@@ -1034,6 +1169,19 @@ export default function AdminOrders() {
                                                 disabled={!extractNfcUrl(selectedOrder)}
                                             >
                                                 Copy NFC target URL
+                                            </Btn>
+
+                                            <Btn
+                                                tone="ghost"
+                                                onClick={() =>
+                                                    copyText(
+                                                        selectedOrder.qrCodeUrl,
+                                                        "QR image URL copied"
+                                                    )
+                                                }
+                                                disabled={!selectedOrder.qrCodeUrl}
+                                            >
+                                                Copy QR image URL
                                             </Btn>
 
                                             <Btn
