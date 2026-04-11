@@ -96,6 +96,9 @@ function getStatusLabel(card) {
     if (raw === "failed") return "Failed";
     if (raw === "cancelled" || raw === "canceled") return "Cancelled";
     if (raw === "fulfilled") return "Fulfilled";
+    if (raw === "processing") return "Processing";
+    if (raw === "complete" || raw === "completed") return "Completed";
+    if (raw === "shipped") return "Shipped";
 
     return raw.charAt(0).toUpperCase() + raw.slice(1);
 }
@@ -103,7 +106,9 @@ function getStatusLabel(card) {
 function getStatusTone(card) {
     const raw = safeTrim(card?.status || card?._raw?.status).toLowerCase();
 
-    if (raw === "paid" || raw === "fulfilled") return "success";
+    if (["paid", "fulfilled", "processing", "complete", "completed", "shipped"].includes(raw)) {
+        return "success";
+    }
     if (raw === "pending") return "warn";
     if (raw === "failed" || raw === "cancelled" || raw === "canceled") return "danger";
     return "neutral";
@@ -123,13 +128,24 @@ function getEstimatedDelivery(card) {
     return fallbackEstimatedDelivery(card?._raw?.createdAt || card?.createdAt);
 }
 
+function getDeliveredDate(card) {
+    const deliveredAt =
+        safeTrim(card?.deliveredAt) ||
+        safeTrim(card?._raw?.deliveredAt) ||
+        safeTrim(card?._raw?.updatedAt) ||
+        safeTrim(card?.updatedAt);
+
+    if (!deliveredAt) return "—";
+    return formatShortDate(deliveredAt);
+}
+
 function getMetaLine(card) {
     const fulfillment = getFulfillmentStatus(card);
 
     if (fulfillment === "delivered") {
         return {
-            label: "Ordered on",
-            value: formatShortDateTime(card?._raw?.createdAt || card?.createdAt),
+            label: "Delivered on",
+            value: getDeliveredDate(card),
         };
     }
 

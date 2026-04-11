@@ -64,9 +64,19 @@ function quantityLabel(selectedOrder) {
 }
 
 function orderStatusLabel(selectedOrder) {
-    const status = safeTrim(selectedOrder?.status);
-    if (!status) return "—";
-    return status.charAt(0).toUpperCase() + status.slice(1);
+    const raw = safeTrim(selectedOrder?.status || selectedOrder?._raw?.status).toLowerCase();
+    if (!raw) return "—";
+
+    if (raw === "paid") return "Paid";
+    if (raw === "pending") return "Pending";
+    if (raw === "failed") return "Failed";
+    if (raw === "cancelled" || raw === "canceled") return "Cancelled";
+    if (raw === "fulfilled") return "Fulfilled";
+    if (raw === "processing") return "Processing";
+    if (raw === "complete" || raw === "completed") return "Completed";
+    if (raw === "shipped") return "Shipped";
+
+    return raw.charAt(0).toUpperCase() + raw.slice(1);
 }
 
 function fulfillmentStatusLabel(selectedOrder) {
@@ -181,6 +191,33 @@ function trackingUrlLabel(selectedOrder) {
     );
 }
 
+function deliveryNameLabel(selectedOrder) {
+    return (
+        safeTrim(selectedOrder?.deliveryName) ||
+        safeTrim(selectedOrder?._raw?.deliveryName) ||
+        "—"
+    );
+}
+
+function deliveryAddressLabel(selectedOrder) {
+    return (
+        safeTrim(selectedOrder?.deliveryAddress) ||
+        safeTrim(selectedOrder?._raw?.deliveryAddress) ||
+        "—"
+    );
+}
+
+function deliveredDateLabel(selectedOrder) {
+    const deliveredAt =
+        safeTrim(selectedOrder?.deliveredAt) ||
+        safeTrim(selectedOrder?._raw?.deliveredAt) ||
+        safeTrim(selectedOrder?._raw?.updatedAt) ||
+        safeTrim(selectedOrder?.updatedAt);
+
+    if (!deliveredAt) return "—";
+    return formatDeliveryDate(deliveredAt);
+}
+
 function estimatedDeliveryLabel(selectedOrder) {
     const raw =
         safeTrim(selectedOrder?.deliveryWindow) ||
@@ -188,6 +225,15 @@ function estimatedDeliveryLabel(selectedOrder) {
 
     if (!raw) return "—";
     return formatDeliveryDate(raw);
+}
+
+function isDelivered(selectedOrder) {
+    const raw = safeTrim(
+        selectedOrder?.fulfillmentStatus ||
+        selectedOrder?._raw?.fulfillmentStatus
+    ).toLowerCase();
+
+    return raw === "delivered";
 }
 
 export default function OrderDetailsView({
@@ -276,7 +322,16 @@ export default function OrderDetailsView({
     const profileSlug = safeTrim(selectedOrder?.profileSlug) || "—";
     const trackingCode = trackingCodeLabel(selectedOrder);
     const trackingUrl = trackingUrlLabel(selectedOrder);
-    const estimatedDelivery = estimatedDeliveryLabel(selectedOrder);
+    const deliveryName = deliveryNameLabel(selectedOrder);
+    const deliveryAddress = deliveryAddressLabel(selectedOrder);
+
+    const deliveryInfoLabel = isDelivered(selectedOrder)
+        ? "Delivered on"
+        : "Estimated delivery";
+
+    const deliveryInfoValue = isDelivered(selectedOrder)
+        ? deliveredDateLabel(selectedOrder)
+        : estimatedDeliveryLabel(selectedOrder);
 
     return (
         <>
@@ -292,7 +347,7 @@ export default function OrderDetailsView({
                         <div className="cp-eyebrow">Order details</div>
                         <h2 className="cp-cardTitle">{productTitle}</h2>
                         <p className="cp-muted">
-                            View the exact product configuration saved for this order.
+                            View your product details, delivery progress, and shipping information.
                         </p>
                     </div>
                 </div>
@@ -352,13 +407,18 @@ export default function OrderDetailsView({
                         </div>
 
                         <div className="cp-row">
-                            <div className="cp-rowKey">Fulfilment status</div>
+                            <div className="cp-rowKey">Delivery status</div>
                             <div className="cp-rowVal">{fulfillmentStatus}</div>
                         </div>
 
                         <div className="cp-row">
                             <div className="cp-rowKey">Ordered on</div>
                             <div className="cp-rowVal">{createdAt}</div>
+                        </div>
+
+                        <div className="cp-row">
+                            <div className="cp-rowKey">{deliveryInfoLabel}</div>
+                            <div className="cp-rowVal">{deliveryInfoValue}</div>
                         </div>
 
                         <div className="cp-row">
@@ -385,28 +445,19 @@ export default function OrderDetailsView({
                         </div>
 
                         <div className="cp-row">
-                            <div className="cp-rowKey">Estimated delivery</div>
-                            <div className="cp-rowVal">{estimatedDelivery}</div>
+                            <div className="cp-rowKey">Delivery name</div>
+                            <div className="cp-rowVal">{deliveryName}</div>
+                        </div>
+
+                        <div className="cp-row">
+                            <div className="cp-rowKey">Delivery address</div>
+                            <div className="cp-rowVal">{deliveryAddress}</div>
                         </div>
 
                         {previewProps?.frontText ? (
                             <div className="cp-row">
                                 <div className="cp-rowKey">Front text</div>
                                 <div className="cp-rowVal">{previewProps.frontText}</div>
-                            </div>
-                        ) : null}
-
-                        {previewProps?.frontFontWeight ? (
-                            <div className="cp-row">
-                                <div className="cp-rowKey">Text weight</div>
-                                <div className="cp-rowVal">{previewProps.frontFontWeight}</div>
-                            </div>
-                        ) : null}
-
-                        {previewProps?.frontFontSize ? (
-                            <div className="cp-row">
-                                <div className="cp-rowKey">Text size</div>
-                                <div className="cp-rowVal">{previewProps.frontFontSize}px</div>
                             </div>
                         ) : null}
                     </div>
