@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import PlasticCard3D from "../PlasticCard3D";
 import MetalCard3D from "../MetalCard3D";
 import KonarTag3D from "../KonarTag3D";
@@ -22,35 +22,6 @@ import OrangeBackImg from "../../assets/images/Products/OrangeBack.jpg";
 
 function safeTrim(v) {
     return String(v || "").trim();
-}
-
-function useCompactPreviewMode() {
-    const [isCompact, setIsCompact] = useState(false);
-
-    useEffect(() => {
-        if (typeof window === "undefined" || typeof window.matchMedia !== "function") {
-            return undefined;
-        }
-
-        const mediaQuery = window.matchMedia("(max-width: 1024px), (pointer: coarse)");
-        const update = () => setIsCompact(!!mediaQuery.matches);
-
-        update();
-
-        if (typeof mediaQuery.addEventListener === "function") {
-            mediaQuery.addEventListener("change", update);
-            return () => mediaQuery.removeEventListener("change", update);
-        }
-
-        if (typeof mediaQuery.addListener === "function") {
-            mediaQuery.addListener(update);
-            return () => mediaQuery.removeListener(update);
-        }
-
-        return undefined;
-    }, []);
-
-    return isCompact;
 }
 
 function isUsableTextureSrc(src) {
@@ -189,6 +160,7 @@ function getPlasticArtwork(productKey) {
                 backSrc: BlackBackImg,
                 edgeColor: "#111111",
                 fallbackTextColor: "#ffffff",
+                fallbackImage: BlackFrontImg,
             };
         case "plastic-blue":
             return {
@@ -196,6 +168,7 @@ function getPlasticArtwork(productKey) {
                 backSrc: BlueBackImg,
                 edgeColor: "#0f52ff",
                 fallbackTextColor: "#ffffff",
+                fallbackImage: BlueFrontImg,
             };
         case "plastic-green":
             return {
@@ -203,6 +176,7 @@ function getPlasticArtwork(productKey) {
                 backSrc: GreenBackImg,
                 edgeColor: "#15a53a",
                 fallbackTextColor: "#ffffff",
+                fallbackImage: GreenFrontImg,
             };
         case "plastic-magenta":
             return {
@@ -210,6 +184,7 @@ function getPlasticArtwork(productKey) {
                 backSrc: MagentaBackImg,
                 edgeColor: "#d1008f",
                 fallbackTextColor: "#ffffff",
+                fallbackImage: MagentaFrontImg,
             };
         case "plastic-orange":
             return {
@@ -217,6 +192,7 @@ function getPlasticArtwork(productKey) {
                 backSrc: OrangeBackImg,
                 edgeColor: "#ff7b00",
                 fallbackTextColor: "#ffffff",
+                fallbackImage: OrangeFrontImg,
             };
         case "plastic-white":
         default:
@@ -225,11 +201,91 @@ function getPlasticArtwork(productKey) {
                 backSrc: WhiteBackImg,
                 edgeColor: "#ffffff",
                 fallbackTextColor: "#111111",
+                fallbackImage: WhiteFrontImg,
             };
     }
 }
 
-function renderOwnedPreview({
+function useVisible3DMount() {
+    const rootRef = useRef(null);
+    const [isVisible, setIsVisible] = useState(false);
+    const [shouldMount3D, setShouldMount3D] = useState(false);
+
+    useEffect(() => {
+        const node = rootRef.current;
+        if (!node || typeof IntersectionObserver === "undefined") {
+            setIsVisible(true);
+            return undefined;
+        }
+
+        const observer = new IntersectionObserver(
+            (entries) => {
+                const entry = entries?.[0];
+                setIsVisible(!!entry?.isIntersecting);
+            },
+            {
+                root: null,
+                rootMargin: "220px 0px",
+                threshold: 0.01,
+            }
+        );
+
+        observer.observe(node);
+
+        return () => observer.disconnect();
+    }, []);
+
+    useEffect(() => {
+        if (!isVisible) return undefined;
+
+        let cancelled = false;
+        const timer = window.setTimeout(() => {
+            if (!cancelled) {
+                setShouldMount3D(true);
+            }
+        }, 80);
+
+        return () => {
+            cancelled = true;
+            window.clearTimeout(timer);
+        };
+    }, [isVisible]);
+
+    return {
+        rootRef,
+        shouldMount3D: isVisible && shouldMount3D,
+    };
+}
+
+function StaticOwnedPreview({ card, productKey }) {
+    const artwork = getPlasticArtwork(productKey);
+    const previewImageUrl =
+        safeTrim(card?.previewImageUrl) ||
+        safeTrim(card?._raw?.previewImageUrl);
+
+    const fallbackImg =
+        productKey === "metal-card" || productKey === "konartag"
+            ? ""
+            : artwork.fallbackImage;
+
+    const imageSrc = previewImageUrl || fallbackImg;
+
+    return (
+        <div className="cp-ownedStaticPreview" aria-hidden="true">
+            {imageSrc ? (
+                <img
+                    src={imageSrc}
+                    alt=""
+                    className="cp-ownedStaticPreviewImg"
+                />
+            ) : (
+                <div className="cp-ownedStaticPreviewFallback">Preview</div>
+            )}
+        </div>
+    );
+}
+
+function Owned3DPreview({
     productKey,
     variant,
     card,
@@ -288,34 +344,6 @@ function renderOwnedPreview({
     );
 }
 
-function StaticOwnedPreview({ card, productKey, statusLabel }) {
-    const artwork = getPlasticArtwork(productKey);
-    const previewImageUrl =
-        safeTrim(card?.previewImageUrl) ||
-        safeTrim(card?._raw?.previewImageUrl);
-
-    const fallbackImg =
-        productKey === "metal-card" || productKey === "konartag"
-            ? ""
-            : artwork.frontSrc;
-
-    const imageSrc = previewImageUrl || fallbackImg;
-
-    return (
-        <div className="cp-ownedStaticPreview" aria-hidden="true">
-            {imageSrc ? (
-                <img
-                    src={imageSrc}
-                    alt=""
-                    className="cp-ownedStaticPreviewImg"
-                />
-            ) : (
-                <div className="cp-ownedStaticPreviewFallback">{statusLabel}</div>
-            )}
-        </div>
-    );
-}
-
 function formatOwnedTitle(card) {
     const slugName =
         safeTrim(card?.assignedProfile) ||
@@ -333,7 +361,7 @@ function formatOwnedTitle(card) {
 }
 
 export default function PurchasedProductCard({ card, onOpenDetails }) {
-    const isCompactPreviewMode = useCompactPreviewMode();
+    const { rootRef, shouldMount3D } = useVisible3DMount();
 
     const productKey = safeTrim(card?.productKey).toLowerCase();
     const variant = safeTrim(card?.variantRaw || card?.preview?.variant || "white").toLowerCase();
@@ -359,7 +387,10 @@ export default function PurchasedProductCard({ card, onOpenDetails }) {
         safeTrim(card?._raw?.profile?.qr_code_url) ||
         "";
 
-    const resolvedQrSrc = explicitQrSrc || (card?.link ? qrSrcFromLink(card.link) : "");
+    const resolvedQrSrc = useMemo(() => {
+        if (explicitQrSrc) return explicitQrSrc;
+        return card?.link ? qrSrcFromLink(card.link) : "";
+    }, [explicitQrSrc, card?.link]);
 
     const ownedTitle = formatOwnedTitle(card);
     const statusLabel = getStatusLabel(card);
@@ -367,27 +398,26 @@ export default function PurchasedProductCard({ card, onOpenDetails }) {
     const meta = getMetaLine(card);
 
     return (
-        <article className="cp-catalogCard cp-ownedCard">
+        <article className="cp-catalogCard cp-ownedCard" ref={rootRef}>
             <div className="cp-catalogMedia cp-ownedMedia">
                 <span className={`cp-catalogTag cp-orderPill cp-orderPill--${statusTone}`}>
                     {statusLabel}
                 </span>
 
                 <div className="cp-catalogPreview3D cp-ownedPreview3D">
-                    {isCompactPreviewMode ? (
+                    {shouldMount3D ? (
+                        <Owned3DPreview
+                            productKey={productKey}
+                            variant={variant}
+                            card={card}
+                            resolvedLogoSrc={resolvedLogoSrc}
+                            resolvedQrSrc={resolvedQrSrc}
+                        />
+                    ) : (
                         <StaticOwnedPreview
                             card={card}
                             productKey={productKey}
-                            statusLabel={statusLabel}
                         />
-                    ) : (
-                        renderOwnedPreview({
-                            productKey,
-                            variant,
-                            card,
-                            resolvedLogoSrc,
-                            resolvedQrSrc,
-                        })
                     )}
                 </div>
             </div>
