@@ -240,15 +240,57 @@ function getMetricDelta(current, previous, key) {
     return (Number(current?.[key]) || 0) - (Number(previous?.[key]) || 0);
 }
 
-function MetricCard({ label, value, delta, range, isPercentage = false, featured = false }) {
+function MetricCard({
+    label,
+    value,
+    delta,
+    range,
+    isPercentage = false,
+    featured = false,
+    locked = false,
+}) {
     return (
-        <div className={`an-metric ${featured ? "an-metric--featured" : ""}`}>
+        <div
+            className={`an-metric ${featured ? "an-metric--featured" : ""} ${locked ? "an-metric--locked" : ""
+                }`}
+        >
             <div className="an-metric-label">{label}</div>
             <div className="an-metric-num">
-                {isPercentage ? percentageFormat(value) : numberFormat(value)}
+                {locked ? "•••" : isPercentage ? percentageFormat(value) : numberFormat(value)}
             </div>
-            <div className={`an-metric-change ${getTrendClass(delta)}`}>
-                {formatTrendLabel(delta, range)}
+            <div className={`an-metric-change ${locked ? "neutral" : getTrendClass(delta)}`}>
+                {locked ? "Upgrade to unlock" : formatTrendLabel(delta, range)}
+            </div>
+            {locked ? (
+                <div className="an-lockOverlay">
+                    <span className="an-lockBadge">Plus</span>
+                </div>
+            ) : null}
+        </div>
+    );
+}
+
+function LockedAnalyticsCard({
+    title,
+    subtitle,
+    body = "Upgrade to Plus to unlock this analytics section.",
+}) {
+    return (
+        <div className="an-chartCard an-chartCard--locked">
+            <div className="an-chartHead">
+                <div>
+                    <h3 className="an-chartTitle">{title}</h3>
+                    <p className="an-chartMuted">{subtitle}</p>
+                </div>
+            </div>
+
+            <div className="an-lockedInner">
+                <div className="an-lockedBlur" />
+                <div className="an-lockedContent">
+                    <div className="an-lockedBadge">Plus</div>
+                    <div className="an-lockedTitle">Locked analytics</div>
+                    <p className="an-lockedText">{body}</p>
+                </div>
             </div>
         </div>
     );
@@ -280,9 +322,7 @@ function RecentActivityCard({ items = [] }) {
                                 </span>
                                 <span className="an-listMeta">
                                     {item.timeLabel ||
-                                        formatActivityTime(
-                                            item.createdAt || item.timestamp || item.date
-                                        )}
+                                        formatActivityTime(item.createdAt || item.timestamp || item.date)}
                                 </span>
                             </div>
                         </div>
@@ -551,6 +591,9 @@ export default function Analytics() {
     const [shareOpen, setShareOpen] = useState(false);
     const [selectedSlug, setSelectedSlug] = useState(null);
 
+    const currentPlan = String(authUser?.plan || "free").toLowerCase();
+    const isPaidPlan = currentPlan === "plus" || currentPlan === "teams" || !!authUser?.isSubscribed;
+
     const profilesForShare = useMemo(() => {
         const xs = Array.isArray(cards) ? cards : [];
         return xs
@@ -762,7 +805,7 @@ export default function Analytics() {
             ["QR Scans", metrics.qrScans ?? 0],
             ["Saved Contacts", metrics.contactsSaved ?? 0],
             ["Exchange Contacts", metrics.contactExchangeSubmits ?? 0],
-            ["Conversion Rate", `${metrics.conversionRate ?? 0}%`],
+            ["Conversion Rate", isPaidPlan ? `${metrics.conversionRate ?? 0}%` : "Locked"],
             [],
             ["Timeline"],
             ["Date", "Total Visits", "Link Visits", "QR Scans", "NFC Taps"],
@@ -773,15 +816,20 @@ export default function Analytics() {
                 item.qrScans ?? 0,
                 item.cardTaps ?? 0,
             ]),
-            [],
-            ["Recent Activity"],
-            ["Message", "When"],
-            ...recentActivity.map((item) => [item.message ?? "", item.timeLabel ?? ""]),
-            [],
-            ["Social Breakdown"],
-            ["Platform", "Count"],
-            ...socialBreakdown.map((item) => [item.label ?? "", item.value ?? 0]),
         ];
+
+        if (isPaidPlan) {
+            rows.push(
+                [],
+                ["Recent Activity"],
+                ["Message", "When"],
+                ...recentActivity.map((item) => [item.message ?? "", item.timeLabel ?? ""]),
+                [],
+                ["Social Breakdown"],
+                ["Platform", "Count"],
+                ...socialBreakdown.map((item) => [item.label ?? "", item.value ?? 0])
+            );
+        }
 
         downloadCsv(`konarcard-analytics-${selectedProfileLabel}-${range}d.csv`, rows);
     };
@@ -852,9 +900,7 @@ export default function Analytics() {
             return;
         }
 
-        const isMobile = /Android|iPhone|iPad|iPod|Mobile/i.test(
-            navigator.userAgent || ""
-        );
+        const isMobile = /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent || "");
 
         if (isMobile) {
             try {
@@ -909,7 +955,7 @@ export default function Analytics() {
             <div className="an-shell">
                 <PageHeader
                     title="Analytics"
-                    subtitle="Track total visits, QR scans, NFC taps, link visits, saved contacts and exchange contact performance."
+                    subtitle="Track profile visits, QR scans, NFC taps, link visits, saved contacts and exchange contact performance."
                     onShareClick={handleOpenShareProfile}
                     shareDisabled={!selectedShareProfile}
                 />
@@ -984,9 +1030,7 @@ export default function Analytics() {
                     {summaryQuery.isLoading ? (
                         <div className="an-state">Loading analytics…</div>
                     ) : summaryQuery.isError ? (
-                        <div className="an-state an-state--error">
-                            Couldn’t load analytics right now.
-                        </div>
+                        <div className="an-state an-state--error">Couldn’t load analytics right now.</div>
                     ) : (
                         <div className="an-metrics7">
                             <MetricCard
@@ -1028,11 +1072,7 @@ export default function Analytics() {
                             <MetricCard
                                 label="Exchange Contacts"
                                 value={metrics.contactExchangeSubmits}
-                                delta={getMetricDelta(
-                                    metrics,
-                                    previousMetrics,
-                                    "contactExchangeSubmits"
-                                )}
+                                delta={getMetricDelta(metrics, previousMetrics, "contactExchangeSubmits")}
                                 range={range}
                             />
 
@@ -1042,32 +1082,65 @@ export default function Analytics() {
                                 delta={conversionRateDelta}
                                 range={range}
                                 isPercentage
+                                locked={!isPaidPlan}
                             />
                         </div>
                     )}
                 </section>
 
                 <section className="an-chartGrid">
-                    <RecentActivityCard items={recentActivity} />
+                    {isPaidPlan ? (
+                        <RecentActivityCard items={recentActivity} />
+                    ) : (
+                        <LockedAnalyticsCard
+                            title="Recent Activity"
+                            subtitle="The latest actions people have taken on your profile."
+                            body="Upgrade to Plus to see recent activity and deeper engagement insights."
+                        />
+                    )}
 
-                    <MiniLineChart
-                        data={chartTimeline}
-                        seriesKey={chartSeries}
-                        title={chartMeta[chartSeries]?.title}
-                        subtitle={chartMeta[chartSeries]?.subtitle}
-                        onChangeSeries={setChartSeries}
-                        rangeDays={chartDays}
-                    />
+                    {isPaidPlan ? (
+                        <MiniLineChart
+                            data={chartTimeline}
+                            seriesKey={chartSeries}
+                            title={chartMeta[chartSeries]?.title}
+                            subtitle={chartMeta[chartSeries]?.subtitle}
+                            onChangeSeries={setChartSeries}
+                            rangeDays={chartDays}
+                        />
+                    ) : (
+                        <LockedAnalyticsCard
+                            title="Activity Breakdown"
+                            subtitle="See how profile visits, link visits, QR scans and NFC taps trend over time."
+                            body="Upgrade to Plus to unlock your activity breakdown and engagement trends."
+                        />
+                    )}
                 </section>
 
                 <section className="an-chartGrid an-chartGrid--socialFirst">
-                    <HorizontalBarBreakdown
-                        title="Social Click Breakdown"
-                        subtitle="How many clicks each added social profile received."
-                        items={socialBreakdown}
-                    />
+                    {isPaidPlan ? (
+                        <HorizontalBarBreakdown
+                            title="Social Click Breakdown"
+                            subtitle="How many clicks each added social profile received."
+                            items={socialBreakdown}
+                        />
+                    ) : (
+                        <LockedAnalyticsCard
+                            title="Social Click Breakdown"
+                            subtitle="See how each social profile performs."
+                            body="Upgrade to Plus to unlock social click tracking across your profile."
+                        />
+                    )}
 
-                    <ContactActionDetailsCard metrics={metrics} />
+                    {isPaidPlan ? (
+                        <ContactActionDetailsCard metrics={metrics} />
+                    ) : (
+                        <LockedAnalyticsCard
+                            title="Contact Action Details"
+                            subtitle="See which contact actions people take after landing on your profile."
+                            body="Upgrade to Plus to unlock deeper contact action analytics."
+                        />
+                    )}
                 </section>
             </div>
         </DashboardLayout>
