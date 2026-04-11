@@ -1,5 +1,6 @@
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { toast } from "react-hot-toast";
+import { motion, AnimatePresence } from "motion/react";
 
 import DashboardLayout from "../../components/Dashboard/DashboardLayout";
 import PageHeader from "../../components/Dashboard/PageHeader";
@@ -66,6 +67,61 @@ const fmtMoneyFromMinor = (minorAmount, currency) => {
 };
 
 const pick = (v, fallback = "—") => (v == null || v === "" ? fallback : String(v));
+
+const pageReveal = {
+    initial: { opacity: 0, y: 10 },
+    animate: { opacity: 1, y: 0 },
+    transition: { duration: 0.28, ease: "easeOut" },
+};
+
+const cardReveal = {
+    initial: { opacity: 0, y: 14 },
+    animate: { opacity: 1, y: 0 },
+    transition: { duration: 0.28, ease: "easeOut" },
+};
+
+function SectionCard({ className = "", children }) {
+    return (
+        <motion.section
+            {...cardReveal}
+            className={`stg-card ${className}`.trim()}
+        >
+            {children}
+        </motion.section>
+    );
+}
+
+function CardHead({ title, text, pill }) {
+    return (
+        <div className="stg-cardHead">
+            <div className="stg-cardHeadLeft">
+                <h2 className="stg-cardTitle">{title}</h2>
+                {text ? <p className="stg-cardText">{text}</p> : null}
+            </div>
+            {pill ? pill : null}
+        </div>
+    );
+}
+
+function StatBox({ label, value, loading = false }) {
+    return (
+        <div className="stg-stat">
+            <div className="stg-statK">{label}</div>
+            <div className="stg-statV">
+                {loading ? <span className="stg-skelText w64" /> : value}
+            </div>
+        </div>
+    );
+}
+
+function EmptyState({ title, text }) {
+    return (
+        <div className="stg-emptyRow">
+            <div className="stg-sectionTitle">{title}</div>
+            <div className="stg-sectionText">{text}</div>
+        </div>
+    );
+}
 
 export default function Settings() {
     const {
@@ -371,7 +427,7 @@ export default function Settings() {
 
     return (
         <DashboardLayout hideDesktopHeader>
-            <div className="stg-shell">
+            <motion.div className="stg-shell" {...pageReveal}>
                 <PageHeader
                     title="Settings"
                     subtitle="Manage your account, billing, invoices and payment history."
@@ -396,66 +452,74 @@ export default function Settings() {
                     onGoogleWallet={handleGoogleWallet}
                 />
 
-                {hasError ? (
-                    <div className="stg-banner stg-banner--danger">
-                        <div className="stg-bannerCopy">
-                            <div className="stg-sectionTitle">Couldn’t load your settings</div>
-                            <div className="stg-sectionText">
-                                {pick(loadErr, "Please try again.")}
-                            </div>
-                        </div>
-
-                        <button
-                            type="button"
-                            className="kx-btn kx-btn--black"
-                            onClick={retryAll}
-                            disabled={isBusy}
+                <AnimatePresence initial={false}>
+                    {hasError ? (
+                        <motion.div
+                            key="settings-error"
+                            initial={{ opacity: 0, y: -8 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            exit={{ opacity: 0, y: -8 }}
+                            transition={{ duration: 0.2 }}
+                            className="stg-banner stg-banner--danger"
                         >
-                            Retry
-                        </button>
-                    </div>
-                ) : null}
+                            <div className="stg-bannerCopy">
+                                <div className="stg-sectionTitle">Couldn’t load your settings</div>
+                                <div className="stg-sectionText">
+                                    {pick(loadErr, "Please try again.")}
+                                </div>
+                            </div>
+
+                            <button
+                                type="button"
+                                className="kx-btn kx-btn--black"
+                                onClick={retryAll}
+                                disabled={isBusy}
+                            >
+                                Retry
+                            </button>
+                        </motion.div>
+                    ) : null}
+                </AnimatePresence>
 
                 <div className="stg-grid">
-                    <section className="stg-card">
-                        <div className="stg-cardHead">
-                            <div className="stg-cardHeadLeft">
-                                <h2 className="stg-cardTitle">Account</h2>
-                                <p className="stg-cardText">
-                                    Your login method determines which account details can be edited.
-                                </p>
-                            </div>
-
-                            <span className="stg-pill">
-                                Login: <strong>{isBusy ? "…" : isGoogle ? "GOOGLE" : "EMAIL"}</strong>
-                            </span>
-                        </div>
+                    <SectionCard>
+                        <CardHead
+                            title="Account"
+                            text="Your login method determines which account details can be edited."
+                            pill={
+                                <span className="stg-pill">
+                                    Login: <strong>{isBusy ? "…" : isGoogle ? "GOOGLE" : "EMAIL"}</strong>
+                                </span>
+                            }
+                        />
 
                         <div className="stg-cardBody">
-                            <div className="stg-accountRow">
-                                <div className="stg-avatar">
-                                    {accountAvatar && !isBusy ? (
-                                        <img src={accountAvatar} alt="Avatar" />
-                                    ) : (
-                                        <div
-                                            className={`stg-avatarFallback ${isBusy ? "stg-skelBlock" : ""}`}
-                                        >
-                                            {!isBusy
-                                                ? (accountName || "U").trim().charAt(0).toUpperCase()
-                                                : ""}
-                                        </div>
-                                    )}
-                                </div>
-
-                                <div className="stg-accountMeta">
-                                    <div className="stg-accountName">
-                                        {isBusy ? <span className="stg-skelText w52" /> : accountName}
+                            <div className="stg-accountHero">
+                                <div className="stg-accountRow">
+                                    <div className="stg-avatar">
+                                        {accountAvatar && !isBusy ? (
+                                            <img src={accountAvatar} alt="Avatar" />
+                                        ) : (
+                                            <div
+                                                className={`stg-avatarFallback ${isBusy ? "stg-skelBlock" : ""}`}
+                                            >
+                                                {!isBusy
+                                                    ? (accountName || "U").trim().charAt(0).toUpperCase()
+                                                    : ""}
+                                            </div>
+                                        )}
                                     </div>
-                                    <div
-                                        className="stg-accountEmail"
-                                        title={!isBusy ? accountEmail : undefined}
-                                    >
-                                        {isBusy ? <span className="stg-skelText w72" /> : accountEmail}
+
+                                    <div className="stg-accountMeta">
+                                        <div className="stg-accountName">
+                                            {isBusy ? <span className="stg-skelText w52" /> : accountName}
+                                        </div>
+                                        <div
+                                            className="stg-accountEmail"
+                                            title={!isBusy ? accountEmail : undefined}
+                                        >
+                                            {isBusy ? <span className="stg-skelText w72" /> : accountEmail}
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -471,8 +535,7 @@ export default function Settings() {
                                 <div className="stg-field">
                                     <div className="stg-k">Email</div>
                                     <div
-                                        className={`stg-vBox stg-vBox--singleLine ${isBusy ? "stg-skelLine" : ""
-                                            }`}
+                                        className={`stg-vBox stg-vBox--singleLine ${isBusy ? "stg-skelLine" : ""}`}
                                         title={!isBusy ? accountEmail : undefined}
                                     >
                                         {isBusy ? "" : accountEmail}
@@ -509,58 +572,36 @@ export default function Settings() {
                                 </div>
                             ) : null}
                         </div>
-                    </section>
+                    </SectionCard>
 
-                    <section className="stg-card">
-                        <div className="stg-cardHead">
-                            <div className="stg-cardHeadLeft">
-                                <h2 className="stg-cardTitle">Billing</h2>
-                                <p className="stg-cardText">
-                                    Subscription status, plan interval and renewal information.
-                                </p>
-                            </div>
-
-                            <span className="stg-pill">
-                                Plan: <strong>{displayPlanUpper}</strong>
-                            </span>
-                        </div>
+                    <SectionCard>
+                        <CardHead
+                            title="Billing"
+                            text="Subscription status, plan interval and renewal information."
+                            pill={
+                                <span className="stg-pill">
+                                    Plan: <strong>{displayPlanUpper}</strong>
+                                </span>
+                            }
+                        />
 
                         <div className="stg-cardBody">
                             <div className="stg-stats3">
-                                <div className="stg-stat">
-                                    <div className="stg-statK">Status</div>
-                                    <div className="stg-statV">
-                                        {isBusy ? (
-                                            <span className="stg-skelText w70" />
-                                        ) : (
-                                            pick(subscriptionStatus)
-                                        )}
-                                    </div>
-                                </div>
-
-                                <div className="stg-stat">
-                                    <div className="stg-statK">Interval</div>
-                                    <div className="stg-statV">
-                                        {isBusy ? (
-                                            <span className="stg-skelText w60" />
-                                        ) : (
-                                            pick(planInterval)
-                                        )}
-                                    </div>
-                                </div>
-
-                                <div className="stg-stat">
-                                    <div className="stg-statK">Renews</div>
-                                    <div className="stg-statV">
-                                        {isBusy ? (
-                                            <span className="stg-skelText w64" />
-                                        ) : currentPeriodEnd ? (
-                                            fmtDate(currentPeriodEnd)
-                                        ) : (
-                                            "—"
-                                        )}
-                                    </div>
-                                </div>
+                                <StatBox
+                                    label="Status"
+                                    value={pick(subscriptionStatus)}
+                                    loading={isBusy}
+                                />
+                                <StatBox
+                                    label="Interval"
+                                    value={pick(planInterval)}
+                                    loading={isBusy}
+                                />
+                                <StatBox
+                                    label="Renews"
+                                    value={currentPeriodEnd ? fmtDate(currentPeriodEnd) : "—"}
+                                    loading={isBusy}
+                                />
                             </div>
 
                             <div className="stg-billingBox">
@@ -596,15 +637,13 @@ export default function Settings() {
                                 Use <strong>Manage Billing</strong> to update payment method, view invoices, or cancel your subscription.
                             </div>
                         </div>
-                    </section>
+                    </SectionCard>
 
-                    <section className="stg-card">
-                        <div className="stg-cardHead">
-                            <div className="stg-cardHeadLeft">
-                                <h2 className="stg-cardTitle">Invoices</h2>
-                                <p className="stg-cardText">Subscription invoices and receipts.</p>
-                            </div>
-                        </div>
+                    <SectionCard>
+                        <CardHead
+                            title="Invoices"
+                            text="Subscription invoices and receipts."
+                        />
 
                         <div className="stg-cardBody stg-scrollArea">
                             <div className="stg-table stg-table--invoices">
@@ -673,24 +712,20 @@ export default function Settings() {
                                         );
                                     })
                                 ) : (
-                                    <div className="stg-emptyRow">
-                                        <div className="stg-sectionTitle">No invoices yet</div>
-                                        <div className="stg-sectionText">
-                                            Invoices will appear here once Stripe generates them.
-                                        </div>
-                                    </div>
+                                    <EmptyState
+                                        title="No invoices yet"
+                                        text="Invoices will appear here once Stripe generates them."
+                                    />
                                 )}
                             </div>
                         </div>
-                    </section>
+                    </SectionCard>
 
-                    <section className="stg-card">
-                        <div className="stg-cardHead">
-                            <div className="stg-cardHeadLeft">
-                                <h2 className="stg-cardTitle">Payments</h2>
-                                <p className="stg-cardText">Your recent payment activity.</p>
-                            </div>
-                        </div>
+                    <SectionCard>
+                        <CardHead
+                            title="Payments"
+                            text="Your recent payment activity."
+                        />
 
                         <div className="stg-cardBody stg-scrollArea">
                             <div className="stg-table stg-table--payments">
@@ -748,18 +783,16 @@ export default function Settings() {
                                         );
                                     })
                                 ) : (
-                                    <div className="stg-emptyRow">
-                                        <div className="stg-sectionTitle">No payments yet</div>
-                                        <div className="stg-sectionText">
-                                            Payments will appear here after successful charges.
-                                        </div>
-                                    </div>
+                                    <EmptyState
+                                        title="No payments yet"
+                                        text="Payments will appear here after successful charges."
+                                    />
                                 )}
                             </div>
                         </div>
-                    </section>
+                    </SectionCard>
                 </div>
-            </div>
+            </motion.div>
         </DashboardLayout>
     );
 }

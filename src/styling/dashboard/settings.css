@@ -1,10 +1,12 @@
 :root {
     --stg-ink: var(--kc-text-primary, #0f172a);
     --stg-muted: var(--kc-text-secondary, #475569);
-    --stg-border: rgba(15, 23, 42, 0.1);
-    --stg-softLine: rgba(15, 23, 42, 0.08);
+    --stg-border: rgba(15, 23, 42, 0.08);
+    --stg-softLine: rgba(15, 23, 42, 0.06);
     --stg-radius: 24px;
-    --stg-shadow: 0 1px 0 rgba(15, 23, 42, 0.04), 0 10px 22px rgba(15, 23, 42, 0.04);
+    --stg-shadow:
+        0 1px 0 rgba(15, 23, 42, 0.03),
+        0 12px 28px rgba(15, 23, 42, 0.05);
 
     --stg-card-bg: #ffffff;
     --stg-orange: #f97316;
@@ -12,9 +14,11 @@
     --stg-orange-soft: rgba(249, 115, 22, 0.1);
     --stg-green: #16a34a;
     --stg-red: #dc2626;
-    --stg-red-border: rgba(220, 38, 38, 0.22);
+    --stg-red-border: rgba(220, 38, 38, 0.18);
     --stg-navy: #0b1635;
-    --stg-mobile-row-shadow: 0 1px 0 rgba(15, 23, 42, 0.03), 0 8px 20px rgba(15, 23, 42, 0.04);
+    --stg-mobile-row-shadow:
+        0 1px 0 rgba(15, 23, 42, 0.03),
+        0 10px 24px rgba(15, 23, 42, 0.05);
 }
 
 .stg-shell {
@@ -29,19 +33,6 @@
 
 .stg-shell .ph2-wrap {
     margin-bottom: 0;
-}
-
-.stg-headRight {
-    display: inline-flex;
-    gap: 10px;
-    align-items: center;
-    justify-content: flex-end;
-    flex-wrap: wrap;
-    min-width: 0;
-}
-
-.stg-headRight .kx-btn {
-    flex: 0 0 auto;
 }
 
 .stg-grid {
@@ -83,10 +74,10 @@
     margin: 0;
     font-family: "Cal Sans", sans-serif;
     font-weight: 400;
-    font-size: 18px;
-    line-height: 1.08;
+    font-size: 24px;
+    line-height: 1.04;
     color: var(--stg-ink);
-    letter-spacing: -0.01em;
+    letter-spacing: -0.02em;
 }
 
 .stg-cardText {
@@ -94,7 +85,7 @@
     font-family: "Inter", sans-serif;
     font-weight: 500;
     font-size: 14px;
-    line-height: 1.55;
+    line-height: 1.6;
     color: var(--stg-muted);
 }
 
@@ -117,12 +108,12 @@
     justify-content: center;
     width: fit-content;
     max-width: 100%;
-    min-height: 28px;
-    padding: 0 10px;
+    min-height: 30px;
+    padding: 0 12px;
     border-radius: 999px;
     background: var(--stg-orange-soft);
     color: #c2410c;
-    border: 0;
+    border: 1px solid rgba(249, 115, 22, 0.14);
     font-family: "Inter", sans-serif;
     font-size: 12px;
     font-weight: 800;
@@ -138,16 +129,10 @@
     font-weight: 800;
 }
 
-.stg-pill--dark {
-    background: var(--stg-navy);
-    color: rgba(255, 255, 255, 0.84);
-    min-height: 34px;
-    padding: 0 12px;
-    font-size: 13px;
-}
-
-.stg-pill--dark strong {
-    color: #ffffff;
+.stg-accountHero {
+    display: flex;
+    flex-direction: column;
+    gap: var(--sp-3);
 }
 
 .stg-accountRow {
@@ -155,20 +140,20 @@
     align-items: center;
     gap: var(--sp-3);
     border: 1px solid var(--stg-border);
-    background: #ffffff;
-    border-radius: 18px;
+    background: linear-gradient(180deg, #ffffff 0%, #fcfcfd 100%);
+    border-radius: 20px;
     padding: 14px;
     min-width: 0;
 }
 
 .stg-avatar {
-    width: 58px;
-    height: 58px;
+    width: 60px;
+    height: 60px;
     border-radius: 18px;
     overflow: hidden;
     border: 1px solid var(--stg-softLine);
     background: rgba(15, 23, 42, 0.03);
-    flex: 0 0 58px;
+    flex: 0 0 60px;
     display: grid;
     place-items: center;
 }
@@ -199,8 +184,8 @@
     font-family: "Inter", sans-serif;
     font-weight: 800;
     color: var(--stg-ink);
-    font-size: 15px;
-    line-height: 1.4;
+    font-size: 18px;
+    line-height: 1.35;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -212,7 +197,7 @@
     font-weight: 500;
     color: var(--stg-muted);
     font-size: 14px;
-    line-height: 1.45;
+    line-height: 1.5;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -238,18 +223,18 @@
     font-size: 12px;
     font-weight: 800;
     letter-spacing: 0.08em;
-    color: rgba(15, 23, 42, 0.55);
+    color: rgba(15, 23, 42, 0.52);
     text-transform: uppercase;
 }
 
 .stg-vBox {
     width: 100%;
-    min-height: 46px;
+    min-height: 48px;
     display: flex;
     align-items: center;
     padding: 0 14px;
-    border-radius: 14px;
-    border: 1px solid rgba(15, 23, 42, 0.12);
+    border-radius: 16px;
+    border: 1px solid rgba(15, 23, 42, 0.1);
     background: #ffffff;
     font-family: "Inter", sans-serif;
     font-weight: 500;
@@ -272,7 +257,7 @@
     font-family: "Inter", sans-serif;
     font-weight: 500;
     font-size: 13px;
-    line-height: 1.55;
+    line-height: 1.6;
     color: var(--stg-muted);
 }
 
@@ -283,7 +268,7 @@
 
 .stg-hint--info {
     border: 1px solid var(--stg-border);
-    background: #ffffff;
+    background: linear-gradient(180deg, #ffffff 0%, #fcfcfd 100%);
     border-radius: 16px;
     padding: 14px 16px;
 }
@@ -319,7 +304,7 @@
 
 .stg-stat {
     border: 1px solid var(--stg-border);
-    background: #ffffff;
+    background: linear-gradient(180deg, #ffffff 0%, #fcfcfd 100%);
     border-radius: 18px;
     padding: 16px;
     min-width: 0;
@@ -330,7 +315,7 @@
     font-size: 12px;
     font-weight: 800;
     letter-spacing: 0.08em;
-    color: rgba(15, 23, 42, 0.55);
+    color: rgba(15, 23, 42, 0.52);
     text-transform: uppercase;
 }
 
@@ -339,15 +324,15 @@
     font-family: "Inter", sans-serif;
     font-weight: 800;
     color: var(--stg-ink);
-    font-size: 14px;
-    line-height: 1.4;
+    font-size: 18px;
+    line-height: 1.35;
     word-break: break-word;
 }
 
 .stg-billingBox {
     border: 1px solid var(--stg-border);
-    background: #ffffff;
-    border-radius: 18px;
+    background: linear-gradient(180deg, #ffffff 0%, #fcfcfd 100%);
+    border-radius: 20px;
     padding: 18px;
     display: flex;
     flex-direction: column;
@@ -363,7 +348,7 @@
 .stg-subTitle {
     margin: 0;
     font-family: "Inter", sans-serif;
-    font-size: 16px;
+    font-size: 18px;
     font-weight: 800;
     line-height: 1.35;
     letter-spacing: -0.01em;
@@ -375,12 +360,12 @@
     font-family: "Inter", sans-serif;
     font-size: 14px;
     font-weight: 500;
-    line-height: 1.55;
+    line-height: 1.6;
     color: var(--stg-muted);
 }
 
 .stg-table {
-    border-radius: 18px;
+    border-radius: 20px;
     border: 1px solid var(--stg-border);
     overflow: auto;
     background: #ffffff;
@@ -391,7 +376,7 @@
 .stg-row {
     display: grid;
     gap: 10px;
-    padding: 14px 14px;
+    padding: 15px 14px;
     border-top: 1px solid var(--stg-softLine);
     align-items: center;
     font-family: "Inter", sans-serif;
@@ -461,7 +446,7 @@
     justify-content: center;
     padding: 7px 10px;
     border-radius: 999px;
-    border: 1px solid rgba(15, 23, 42, 0.12);
+    border: 1px solid rgba(15, 23, 42, 0.1);
     background: #ffffff;
     font-family: "Inter", sans-serif;
     font-weight: 800;
@@ -484,7 +469,8 @@
 .stg-badge.cancelled,
 .stg-badge.uncollectible,
 .stg-badge.void,
-.stg-badge.past_due {
+.stg-badge.past_due,
+.stg-badge.requires_payment_method {
     color: var(--stg-red);
 }
 
@@ -655,22 +641,6 @@
     .stg-card {
         padding: var(--sp-6);
     }
-
-    .stg-headRight {
-        width: 100%;
-        justify-content: flex-start;
-    }
-
-    .stg-headRight .kx-btn {
-        width: 100%;
-        justify-content: center;
-    }
-
-    .stg-headRight .stg-pill {
-        width: fit-content;
-        max-width: 100%;
-        justify-content: center;
-    }
 }
 
 @media (max-width: 640px) {
@@ -710,8 +680,8 @@
     }
 
     .stg-card {
-        padding: var(--sp-6);
-        border-radius: 24px;
+        padding: var(--sp-5);
+        border-radius: 22px;
     }
 
     .stg-accountRow,
@@ -730,7 +700,7 @@
     }
 
     .stg-cardTitle {
-        font-size: 18px;
+        font-size: 22px;
     }
 
     .stg-cardText,
@@ -853,8 +823,7 @@
         text-overflow: ellipsis;
     }
 
-    .stg-pill,
-    .stg-pill--dark {
+    .stg-pill {
         white-space: nowrap;
         text-align: center;
         justify-content: center;
