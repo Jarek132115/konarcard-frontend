@@ -136,6 +136,7 @@
     border-radius: var(--upg-radius-xl);
     box-shadow: var(--upg-shadow);
     min-width: 0;
+    overflow: hidden;
 }
 
 .upg-heroMain {
@@ -423,50 +424,13 @@
     text-align: right;
 }
 
-.upg-currentInfo {
-    margin-top: var(--sp-5);
-    padding: 22px 24px;
-    border-radius: 22px;
-    background: linear-gradient(180deg, rgba(248, 250, 252, 0.92), #ffffff);
-    border: 1px solid var(--upg-border);
-}
-
-.upg-currentInfoLabel {
-    font-family: "Inter", sans-serif;
-    font-size: 12px;
-    font-weight: 800;
-    line-height: 1.2;
-    color: #94a3b8;
-    text-transform: uppercase;
-    letter-spacing: 0.06em;
-}
-
-.upg-currentInfoTitle {
-    margin-top: 10px;
-    font-family: "Cal Sans", sans-serif;
-    font-size: 24px;
-    line-height: 1.08;
-    font-weight: 400;
-    letter-spacing: -0.02em;
-    color: var(--upg-ink);
-}
-
-.upg-currentInfoText {
-    margin: 10px 0 0;
-    font-family: "Inter", sans-serif;
-    font-size: 14px;
-    line-height: 1.65;
-    font-weight: 500;
-    color: #475569;
-    max-width: 70ch;
-}
-
 .upg-plansGrid {
     margin-top: var(--sp-6);
     display: grid;
     grid-template-columns: repeat(3, minmax(0, 1fr));
     gap: var(--sp-3);
     align-items: stretch;
+    min-width: 0;
 }
 
 /* PLAN CARD */
@@ -886,10 +850,6 @@
         font-size: 24px;
     }
 
-    .upg-currentInfoTitle {
-        font-size: 22px;
-    }
-
     .upg-planTop,
     .upg-planBody {
         padding: 22px;
@@ -923,10 +883,6 @@
         text-align: center;
         padding: 0 12px;
         min-width: 0;
-    }
-
-    .upg-currentInfo {
-        padding: 20px;
     }
 
     .upg-planTopRow {
@@ -979,7 +935,6 @@
     .upg-planDesc,
     .upg-planMeta,
     .upg-planListItem,
-    .upg-currentInfoText,
     .upg-heroText,
     .upg-billingCardText {
         font-size: 13px;

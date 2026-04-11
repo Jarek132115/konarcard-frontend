@@ -204,21 +204,6 @@ function BillingIcon() {
     );
 }
 
-function SparklesIcon() {
-    return (
-        <svg viewBox="0 0 20 20" className="upg-miniIcon" aria-hidden="true">
-            <path
-                d="M10 2.8 11.6 7l4.2 1.6-4.2 1.6L10 14.4l-1.6-4.2L4.2 8.6 8.4 7 10 2.8Zm5.2 9.4.7 1.8 1.8.7-1.8.7-.7 1.8-.7-1.8-1.8-.7 1.8-.7.7-1.8ZM4.4 11.8l.9 2.3 2.3.9-2.3.9-.9 2.3-.9-2.3-2.3-.9 2.3-.9.9-2.3Z"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="1.4"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-            />
-        </svg>
-    );
-}
-
 function FeatureStat({ label, value, tone = "default" }) {
     return (
         <div className={`upg-statCard ${tone === "accent" ? "upg-statCard--accent" : ""}`}>
@@ -333,8 +318,7 @@ function PlanCard({ plan, currentPlan, loadingKey }) {
                     ) : (
                         <button
                             type="button"
-                            className={`upg-btn ${featured ? "upg-btn--featured" : "upg-btn--primary"} ${plan.button.disabled ? "is-disabled" : ""
-                                }`}
+                            className={`upg-btn ${featured ? "upg-btn--featured" : "upg-btn--primary"} ${plan.button.disabled ? "is-disabled" : ""}`}
                             onClick={plan.button.onClick || undefined}
                             disabled={!!plan.button.disabled}
                         >
@@ -467,7 +451,9 @@ export default function UpgradePlan() {
                 setSubErr("");
 
                 const token = safeGetToken();
-                const res = await fetch(`${apiBase}/api/subscription-status`, {
+                const ts = Date.now();
+
+                const summaryRes = await fetch(`${apiBase}/api/billing/summary?ts=${ts}`, {
                     method: "GET",
                     headers: {
                         "Content-Type": "application/json",
@@ -476,9 +462,9 @@ export default function UpgradePlan() {
                     credentials: "include",
                 });
 
-                const data = await res.json().catch(() => ({}));
+                const summaryData = await summaryRes.json().catch(() => ({}));
 
-                if (res.status === 401 || res.status === 404) {
+                if (summaryRes.status === 401 || summaryRes.status === 404) {
                     clearLocalAuth();
                     if (!mounted) return;
                     setSubState(null);
@@ -486,18 +472,32 @@ export default function UpgradePlan() {
                     return;
                 }
 
-                if (!res.ok) {
-                    throw new Error(data?.error || "Failed to load subscription status");
+                if (!summaryRes.ok) {
+                    throw new Error(summaryData?.error || "Failed to load billing summary");
                 }
+
+                const summaryPlan = summaryData?.plan || "free";
+                const summaryInterval = summaryData?.planInterval || "monthly";
+                const summaryStatus = summaryData?.subscriptionStatus || "free";
+                const summaryCurrentPeriodEnd = summaryData?.currentPeriodEnd || null;
+
+                const activeByStatus = ["active", "trialing"].includes(
+                    safeLower(summaryStatus)
+                );
+
+                const activeByDate =
+                    !!summaryCurrentPeriodEnd &&
+                    !Number.isNaN(new Date(summaryCurrentPeriodEnd).getTime()) &&
+                    new Date(summaryCurrentPeriodEnd).getTime() > Date.now();
 
                 if (!mounted) return;
 
                 setSubState({
-                    active: !!data?.active,
-                    plan: data?.plan || "free",
-                    interval: data?.interval || "monthly",
-                    status: data?.status || "free",
-                    currentPeriodEnd: data?.currentPeriodEnd || null,
+                    active: activeByStatus || activeByDate,
+                    plan: summaryPlan,
+                    interval: summaryInterval,
+                    status: summaryStatus,
+                    currentPeriodEnd: summaryCurrentPeriodEnd,
                 });
             } catch (e) {
                 if (!mounted) return;
@@ -509,6 +509,7 @@ export default function UpgradePlan() {
         }
 
         loadStatus();
+
         return () => {
             mounted = false;
         };
@@ -525,7 +526,7 @@ export default function UpgradePlan() {
         hasCurrentPeriodDate && currentPeriodEnd.getTime() > Date.now();
 
     const renewalDateLabel = hasCurrentPeriodDate ? formatDate(currentPeriodEnd) : "";
-    const activeUntilLabel = renewalDateLabel;
+    const activeUntilLabel = hasCurrentPeriodDate ? formatDate(currentPeriodEnd) : "";
 
     const planStatusLine = useMemo(() => {
         if (!isLoggedIn()) return "";
@@ -699,7 +700,8 @@ export default function UpgradePlan() {
         }
 
         const current = currentPlan;
-        const stillHasPaidAccess = current !== "free" && (isActive || hasFutureAccess || hasCurrentPeriodDate);
+        const stillHasPaidAccess =
+            current !== "free" && (isActive || hasFutureAccess || hasCurrentPeriodDate);
 
         if (planName === current && stillHasPaidAccess) {
             return {
@@ -852,13 +854,6 @@ export default function UpgradePlan() {
         subLoading,
     ]);
 
-    const currentPlanSummary =
-        currentPlan === "teams"
-            ? "You have Plus with extra profile access for managing more than one public profile."
-            : currentPlan === "plus"
-                ? "Full templates, expanded profile limits, and your full analytics dashboard."
-                : "A starter setup with limited profile content, one template, and basic analytics.";
-
     const handleOpenShareProfile = () => {
         if (!selectedProfile) {
             showUpgradeToast("error", "Create a profile first before sharing.");
@@ -992,10 +987,6 @@ export default function UpgradePlan() {
                 >
                     <div className="upg-heroMain">
                         <div className="upg-heroPills">
-                            <span className="upg-pill upg-pill--accent">
-                                <SparklesIcon />
-                                Plans
-                            </span>
                             <span className="upg-pill upg-pill--neutral">
                                 <CrownIcon />
                                 {normalizePlanLabel(currentPlan)}
@@ -1027,7 +1018,7 @@ export default function UpgradePlan() {
                             />
                             <FeatureStat
                                 label="Renews / access"
-                                value={renewalDateLabel || "No renewal date"}
+                                value={activeUntilLabel || "No renewal date"}
                             />
                         </div>
                     </div>
@@ -1105,12 +1096,6 @@ export default function UpgradePlan() {
                                 {billingNote} Extra Profile always bills monthly as a £2 add-on per extra profile.
                             </div>
                         </div>
-                    </div>
-
-                    <div className="upg-currentInfo">
-                        <div className="upg-currentInfoLabel">Your current setup</div>
-                        <div className="upg-currentInfoTitle">{normalizePlanLabel(currentPlan)}</div>
-                        <p className="upg-currentInfoText">{currentPlanSummary}</p>
                     </div>
 
                     <div className="upg-plansGrid">
