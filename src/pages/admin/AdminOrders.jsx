@@ -12,8 +12,21 @@ const STATUS_OPTIONS = [
     { value: "delivered", label: "Delivered" },
 ];
 
+const PAID_ORDER_STATUSES = new Set([
+    "paid",
+    "processing",
+    "fulfilled",
+    "shipped",
+    "complete",
+    "completed",
+]);
+
 function cleanString(v) {
     return String(v || "").trim();
+}
+
+function isPaidOrderStatus(status) {
+    return PAID_ORDER_STATUSES.has(cleanString(status).toLowerCase());
 }
 
 function formatDate(value) {
@@ -559,9 +572,15 @@ export default function AdminOrders() {
             if (cleanString(finalStatus)) params.fulfillmentStatus = cleanString(finalStatus);
 
             const res = await api.get("/api/admin/orders", { params });
-            const data = Array.isArray(res?.data?.data) ? res.data.data : [];
-            setOrders(data);
-            seedOrderEditBuffers(data);
+            const rawData = Array.isArray(res?.data?.data) ? res.data.data : [];
+            const paidOnly = rawData.filter((order) => isPaidOrderStatus(order?.status));
+
+            setOrders(paidOnly);
+            seedOrderEditBuffers(paidOnly);
+
+            if (selectedOrderId && !paidOnly.some((order) => order._id === selectedOrderId)) {
+                setSearchParams({});
+            }
         } catch (e) {
             setOrdersError(e?.response?.data?.error || "Failed to load orders");
             setOrders([]);
@@ -634,8 +653,8 @@ export default function AdminOrders() {
                     <p className="admin-page-kicker">KonarCard Admin</p>
                     <h1 className="admin-page-title">Orders</h1>
                     <p className="admin-page-subtitle">
-                        Manage fulfilment, tracking, preview assets, QR targets,
-                        and customer-ready order details.
+                        Manage paid physical orders, fulfilment, tracking, preview assets,
+                        QR targets, and customer-ready order details.
                     </p>
                 </div>
 
@@ -650,8 +669,8 @@ export default function AdminOrders() {
             </header>
 
             <SectionCard
-                title="Order fulfilment"
-                subtitle="Search orders, update shipping progress, check card front styling, and view public, QR, and NFC target links."
+                title="Paid orders only"
+                subtitle="Search real paid orders, update shipping progress, check card front styling, and view public, QR, and NFC target links."
             >
                 <div className="admin-toolbar">
                     <TextInput
@@ -693,7 +712,7 @@ export default function AdminOrders() {
                 ) : ordersError ? (
                     <div className="admin-error-banner">{ordersError}</div>
                 ) : orders.length === 0 ? (
-                    <div className="admin-empty-state">No orders found.</div>
+                    <div className="admin-empty-state">No paid orders found.</div>
                 ) : (
                     <div
                         className={selectedOrder ? "admin-grid-orders" : ""}
@@ -726,7 +745,7 @@ export default function AdminOrders() {
 
                                             <div className="admin-row">
                                                 <Pill tone={getStatusTone(order.status)}>
-                                                    {order.status || "pending"}
+                                                    {order.status || "paid"}
                                                 </Pill>
                                                 <Pill tone={getFulfillmentTone(order.fulfillmentStatus)}>
                                                     {order.fulfillmentStatus || "order_placed"}
@@ -751,7 +770,7 @@ export default function AdminOrders() {
                                         <div>
                                             <div className="admin-row">
                                                 <Pill tone={getStatusTone(selectedOrder.status)}>
-                                                    {selectedOrder.status || "pending"}
+                                                    {selectedOrder.status || "paid"}
                                                 </Pill>
                                                 <Pill tone={getFulfillmentTone(selectedOrder.fulfillmentStatus)}>
                                                     {selectedOrder.fulfillmentStatus || "order_placed"}
