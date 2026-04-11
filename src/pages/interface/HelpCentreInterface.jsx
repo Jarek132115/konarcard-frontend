@@ -409,7 +409,7 @@ export default function HelpCentreInterface() {
     <DashboardLayout hideDesktopHeader>
       <div className="hc5-shell">
         <PageHeader
-          title="HelpCenter"
+          title="Help Center"
           subtitle="Tutorials, walkthroughs, and practical best practices for getting the most from KonarCard."
           onShareClick={handleOpenShareProfile}
           shareDisabled={!selectedProfile}
