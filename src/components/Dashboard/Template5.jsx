@@ -48,39 +48,39 @@ function getSocialMeta(key) {
     const map = {
         facebook_url: {
             label: "Facebook",
-            analyticsKey: "facebook",
+            analyticsKey: "facebook_url",
             icon: <TemplateIcon src={FacebookIconSrc} alt="" className="t5-socialIconAsset" />,
         },
         instagram_url: {
             label: "Instagram",
-            analyticsKey: "instagram",
+            analyticsKey: "instagram_url",
             icon: <TemplateIcon src={InstagramIconSrc} alt="" className="t5-socialIconAsset" />,
         },
         linkedin_url: {
             label: "LinkedIn",
-            analyticsKey: "linkedin",
+            analyticsKey: "linkedin_url",
             icon: <TemplateIcon src={LinkedInIconSrc} alt="" className="t5-socialIconAsset" />,
         },
         x_url: {
             label: "X",
-            analyticsKey: "x",
+            analyticsKey: "x_url",
             icon: <TemplateIcon src={XIconSrc} alt="" className="t5-socialIconAsset" />,
         },
         twitter_url: {
             label: "X",
-            analyticsKey: "x",
+            analyticsKey: "twitter_url",
             icon: <TemplateIcon src={XIconSrc} alt="" className="t5-socialIconAsset" />,
         },
         tiktok_url: {
             label: "TikTok",
-            analyticsKey: "tiktok",
+            analyticsKey: "tiktok_url",
             icon: <TemplateIcon src={TikTokIconSrc} alt="" className="t5-socialIconAsset" />,
         },
     };
 
     return map[key] || {
         label: key.replace("_url", ""),
-        analyticsKey: key.replace("_url", ""),
+        analyticsKey: key,
         icon: null,
     };
 }
@@ -153,10 +153,22 @@ export default function Template5({ vm }) {
         }
     };
 
-    const handleSocialClick = (platformKey, url) => {
+    const handleSocialClick = async (platformKey, url) => {
         if (typeof v.onSocialClick === "function") {
-            v.onSocialClick(platformKey, url);
+            await v.onSocialClick(platformKey, url);
         }
+    };
+
+    const handleSocialLinkOpen = async (e, platformKey, url) => {
+        e.preventDefault();
+
+        try {
+            await handleSocialClick(platformKey, url);
+        } catch {
+            // ignore tracking errors so link still opens
+        }
+
+        window.open(url, "_blank", "noopener,noreferrer");
     };
 
     return (
@@ -362,7 +374,7 @@ export default function Template5({ vm }) {
                                                 rel="noreferrer"
                                                 aria-label={meta.label}
                                                 title={meta.label}
-                                                onClick={() => handleSocialClick(meta.analyticsKey, url)}
+                                                onClick={(e) => handleSocialLinkOpen(e, meta.analyticsKey, url)}
                                             >
                                                 {meta.icon}
                                             </a>

@@ -45,39 +45,39 @@ function getSocialMeta(key) {
     const map = {
         facebook_url: {
             label: "Facebook",
-            analyticsKey: "facebook",
+            analyticsKey: "facebook_url",
             icon: Template2IconFacebook,
         },
         instagram_url: {
             label: "Instagram",
-            analyticsKey: "instagram",
+            analyticsKey: "instagram_url",
             icon: Template2IconInstagram,
         },
         linkedin_url: {
             label: "LinkedIn",
-            analyticsKey: "linkedin",
+            analyticsKey: "linkedin_url",
             icon: Template2IconLinkedin,
         },
         x_url: {
             label: "X",
-            analyticsKey: "x",
+            analyticsKey: "x_url",
             icon: Template2IconX,
         },
         twitter_url: {
             label: "X",
-            analyticsKey: "x",
+            analyticsKey: "twitter_url",
             icon: Template2IconX,
         },
         tiktok_url: {
             label: "TikTok",
-            analyticsKey: "tiktok",
+            analyticsKey: "tiktok_url",
             icon: Template2IconTikTok,
         },
     };
 
     return map[key] || {
         label: key.replace("_url", "").replace(/_/g, " "),
-        analyticsKey: key.replace("_url", ""),
+        analyticsKey: key,
         icon: Template2IconX,
     };
 }
@@ -171,10 +171,22 @@ export default function Template2({ vm }) {
         }
     };
 
-    const handleSocialClick = (platformKey, url) => {
+    const handleSocialClick = async (platformKey, url) => {
         if (typeof v.onSocialClick === "function") {
-            v.onSocialClick(platformKey, url);
+            await v.onSocialClick(platformKey, url);
         }
+    };
+
+    const handleSocialLinkOpen = async (e, platformKey, url) => {
+        e.preventDefault();
+
+        try {
+            await handleSocialClick(platformKey, url);
+        } catch {
+            // ignore tracking errors so link still opens
+        }
+
+        window.open(url, "_blank", "noopener,noreferrer");
     };
 
     return (
@@ -198,7 +210,7 @@ export default function Template2({ vm }) {
 
                             {hasHeroCtas ? (
                                 <div className="t2-ctaRow">
-                                    {(nonEmpty(v.email) || nonEmpty(v.phone)) ? (
+                                    {nonEmpty(v.email) || nonEmpty(v.phone) ? (
                                         <button
                                             type="button"
                                             className="t2-btn t2-btn-primary"
@@ -376,7 +388,7 @@ export default function Template2({ vm }) {
                                                 target="_blank"
                                                 rel="noreferrer"
                                                 aria-label={s.label}
-                                                onClick={() => handleSocialClick(s.analyticsKey, s.url)}
+                                                onClick={(e) => handleSocialLinkOpen(e, s.analyticsKey, s.url)}
                                             >
                                                 <img src={s.icon} alt="" className="t2-socialIcon" />
                                             </a>
