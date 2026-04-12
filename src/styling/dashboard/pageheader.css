@@ -139,23 +139,24 @@
 /* Mobile */
 @media (max-width: 640px) {
     .ph4 {
-        align-items: flex-start;
+        align-items: center;
         gap: 14px;
     }
 
     .ph4-left {
         min-width: 0;
         flex: 1 1 auto;
+        gap: 0;
     }
 
     .ph4-sub {
-        max-width: none;
+        display: none;
     }
 
     .ph4-right {
         flex: 0 0 auto;
         justify-content: flex-end;
-        align-items: flex-start;
+        align-items: center;
         gap: 0;
     }
 
