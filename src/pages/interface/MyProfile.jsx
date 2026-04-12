@@ -1181,6 +1181,16 @@ export default function MyProfile() {
           rightSlot={null}
         />
 
+        <div className="profiles-actions-row">
+          <button
+            type="button"
+            className="profiles-btn profiles-btn-ghost"
+            onClick={() => navigate("/profiles")}
+          >
+            Back to Profiles
+          </button>
+        </div>
+
         {!authLoading && !authUser && (
           <section className="profiles-card myprofile-card">
             <h2 className="profiles-card-title">User not loaded</h2>
