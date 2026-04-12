@@ -1,0 +1,55 @@
+.ppcfp {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.ppcfp-card {
+    position: relative;
+    width: min(100%, 320px);
+    aspect-ratio: 85.6 / 54;
+    border-radius: 22px;
+    overflow: hidden;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: cover;
+    transform: perspective(1200px) rotateX(0deg) rotateY(0deg);
+    will-change: transform;
+}
+
+.ppcfp-frontText {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 14%;
+    text-align: center;
+    line-height: 1;
+    letter-spacing: -0.04em;
+    font-family: "Cal Sans", "Inter", "Helvetica Neue", Arial, sans-serif;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    user-select: none;
+    pointer-events: none;
+}
+
+@media (max-width: 900px) {
+    .ppcfp-card {
+        width: min(100%, 300px);
+        border-radius: 20px;
+    }
+}
+
+@media (max-width: 640px) {
+    .ppcfp-card {
+        width: min(100%, 280px);
+        border-radius: 18px;
+    }
+
+    .ppcfp-frontText {
+        padding: 13%;
+    }
+}
