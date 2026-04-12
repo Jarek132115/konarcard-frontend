@@ -26,6 +26,7 @@
 .krv-heroWrap {
     position: relative;
     padding-top: calc(var(--kc-nav-h, 64px) + 48px);
+    overflow: hidden;
 }
 
 /* Grid lines — same circular radial fade pattern */

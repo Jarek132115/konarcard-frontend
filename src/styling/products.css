@@ -8,6 +8,8 @@
 .kp-page {
     background: var(--kc-bg-main);
     color: var(--kc-text-primary);
+    width: 100%;
+    overflow-x: hidden;
 }
 
 /* keep site-wide top spacing exactly as before */

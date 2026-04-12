@@ -33,6 +33,7 @@
     align-items: center;
     padding-top: calc(var(--kc-nav-h, 64px) + 48px);
     padding-bottom: 48px;
+    overflow: hidden;
 }
 
 @media (max-width: 600px) {

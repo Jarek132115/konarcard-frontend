@@ -16,6 +16,10 @@ canvas {
   overflow-clip-margin: content-box;
 }
 
+html {
+  overflow-y: scroll;
+}
+
 html,
 body {
   margin: 0;
@@ -174,6 +178,8 @@ body {
    ========================================================= */
 .kc-page {
   padding-top: var(--kc-page-top-space);
+  width: 100%;
+  overflow-x: hidden;
 }
 
 @media (max-width: 600px) {

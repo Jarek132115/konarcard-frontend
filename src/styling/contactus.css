@@ -39,6 +39,7 @@
     align-items: center;
     padding-top: calc(var(--kc-nav-h, 64px) + 48px);
     padding-bottom: 40px;
+    overflow: hidden;
 }
 
 /* Grid lines with circular radial fade — same pattern as hero sections */
