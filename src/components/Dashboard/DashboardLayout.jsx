@@ -1,6 +1,5 @@
 import React, { useEffect, useMemo, useState } from "react";
 import Sidebar from "./Sidebar";
-import { KonarToastProvider } from "./KonarToast";
 
 import LogoIcon from "../../assets/icons/Logo-Icon.svg";
 import "../../styling/dashboard/layout.css";
@@ -72,7 +71,6 @@ export default function DashboardLayout({
     }, [hideMobileTopbar, isMobileNav, rightSlot]);
 
     return (
-        <KonarToastProvider>
         <div className={`dash-layout ${isMobileNav ? "is-mobileNav" : "is-desktopNav"}`}>
             <Sidebar sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
 
@@ -93,6 +91,5 @@ export default function DashboardLayout({
                 <main className="dash-content">{children}</main>
             </div>
         </div>
-        </KonarToastProvider>
     );
 }

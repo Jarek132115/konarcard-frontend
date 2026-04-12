@@ -10,6 +10,7 @@ import PublicOnlyRoute from "./components/PublicOnlyRoute";
 import ScrollToTop from "./components/ScrollToTop";
 import TidioDelayedLoader from "./components/TidioDelayedLoader";
 import RouteErrorBoundary from "./components/RouteErrorBoundary";
+import { KonarToastProvider } from "./components/Dashboard/KonarToast";
 
 // -------- Public pages --------
 import Home from "./pages/website/Home.jsx";
@@ -119,7 +120,7 @@ export default function App() {
   useContext(AuthContext);
 
   return (
-    <>
+    <KonarToastProvider>
       <Toaster position="bottom-right" toastOptions={{ duration: 2000 }} />
       <ScrollToTop />
       <TidioWrapper />
@@ -605,6 +606,6 @@ export default function App() {
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </RouteErrorBoundary>
-    </>
+    </KonarToastProvider>
   );
 }
