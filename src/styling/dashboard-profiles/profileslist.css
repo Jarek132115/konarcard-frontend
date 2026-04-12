@@ -1,10 +1,10 @@
 :root {
     --p-ink: var(--kc-text-primary, #0f172a);
     --p-muted: var(--kc-text-secondary, #475569);
-    --p-border: rgba(15, 23, 42, 0.1);
-    --p-softLine: rgba(15, 23, 42, 0.08);
+    --p-border: rgba(15, 23, 42, 0.09);
+    --p-softLine: rgba(15, 23, 42, 0.07);
     --p-radius: 24px;
-    --p-softShadow: 0 1px 0 rgba(15, 23, 42, 0.04), 0 10px 22px rgba(15, 23, 42, 0.04);
+    --p-softShadow: 0 2px 8px rgba(15, 23, 42, 0.06), 0 1px 0 rgba(15, 23, 42, 0.04);
 }
 
 /* =========================
@@ -61,11 +61,11 @@
     padding: 0 14px;
     border-radius: 999px;
     background: #ffffff;
-    border: 1px solid rgba(15, 23, 42, 0.08);
+    border: 1px solid var(--p-border);
     font-family: "Inter", sans-serif;
     font-weight: 700;
     font-size: 14px;
-    color: rgba(15, 23, 42, 0.86);
+    color: var(--p-ink);
     box-shadow: var(--p-softShadow);
     flex: 0 0 auto;
     white-space: nowrap;
@@ -108,23 +108,23 @@
 
 .profiles-profileCard {
     border-radius: 24px;
-    border: 1px solid rgba(15, 23, 42, 0.1);
+    border: 1px solid var(--p-border);
     background: #ffffff;
     cursor: pointer;
     box-shadow: var(--p-softShadow);
     will-change: transform;
     transition:
-        transform 0.22s ease,
-        background 0.22s ease,
-        border-color 0.22s ease,
-        box-shadow 0.22s ease;
+        transform 0.18s ease,
+        background 0.18s ease,
+        border-color 0.18s ease,
+        box-shadow 0.18s ease;
     overflow: hidden;
     min-width: 0;
 }
 
 .profiles-profileCard:hover {
     transform: translateY(-2px);
-    box-shadow: 0 14px 32px rgba(15, 23, 42, 0.09);
+    box-shadow: 0 8px 24px rgba(15, 23, 42, 0.1);
     border-color: rgba(15, 23, 42, 0.14);
 }
 
@@ -133,12 +133,11 @@
 }
 
 .profiles-profileCard.is-active {
-    border-color: rgba(249, 115, 22, 0.82);
+    border-color: rgba(249, 115, 22, 0.7);
     box-shadow:
-        inset 0 0 0 1px rgba(249, 115, 22, 0.18),
         0 0 0 3px rgba(249, 115, 22, 0.1),
         var(--p-softShadow);
-    background: #fffdfa;
+    background: #fffcf9;
 }
 
 .profiles-profileCard--rail,
@@ -395,7 +394,7 @@
 
 .profiles-addCard {
     border-radius: 24px;
-    border: 1px solid rgba(15, 23, 42, 0.1);
+    border: 1px solid var(--p-border);
     background: #ffffff;
     box-shadow: var(--p-softShadow);
     overflow: hidden;
@@ -412,10 +411,8 @@
     width: 100%;
     min-height: 0;
     position: relative;
-    border-bottom: 1px solid rgba(15, 23, 42, 0.08);
-    background:
-        radial-gradient(circle at top right, rgba(244, 118, 41, 0.1), transparent 34%),
-        linear-gradient(180deg, #ffffff 0%, #fbfbfc 100%);
+    border-bottom: 1px solid var(--p-border);
+    background: #f8fafc;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -439,8 +436,8 @@
     min-height: 28px;
     padding: 0 10px;
     border-radius: 999px;
-    background: rgba(244, 118, 41, 0.12);
-    color: #d56018;
+    background: rgba(249, 115, 22, 0.1);
+    color: #ea580c;
     font-family: "Inter", sans-serif;
     font-weight: 700;
     font-size: 12px;
@@ -457,7 +454,7 @@
     font-size: 56px;
     font-weight: 500;
     line-height: 1;
-    color: var(--kc-accent-primary, #f47629);
+    color: var(--kc-accent-primary, #f97316);
 }
 
 .profiles-cardContent {
@@ -514,7 +511,7 @@
     font-weight: 500;
     font-size: 13px;
     line-height: 1.5;
-    color: rgba(71, 85, 105, 0.72);
+    color: var(--p-muted);
 }
 
 .profiles-addFeatureList {
@@ -532,12 +529,12 @@
     min-height: 28px;
     padding: 6px 10px;
     border-radius: 999px;
-    background: rgba(15, 23, 42, 0.05);
-    border: 1px solid rgba(15, 23, 42, 0.06);
+    background: #f1f5f9;
+    border: 1px solid var(--p-border);
     font-family: "Inter", sans-serif;
     font-size: 11px;
     font-weight: 700;
-    color: rgba(15, 23, 42, 0.82);
+    color: var(--p-ink);
     line-height: 1;
 }
 
@@ -555,10 +552,8 @@
 
 .profiles-addInline {
     border-radius: 24px;
-    border: 1px solid rgba(15, 23, 42, 0.1);
-    background:
-        radial-gradient(circle at top right, rgba(244, 118, 41, 0.1), transparent 30%),
-        linear-gradient(180deg, #ffffff 0%, #fbfbfc 100%);
+    border: 1px solid var(--p-border);
+    background: #ffffff;
     box-shadow: var(--p-softShadow);
     padding: 18px 16px 16px;
     gap: 0;
@@ -582,20 +577,22 @@
     top: 0;
     width: 30px;
     height: 30px;
-    border: 0;
-    background: transparent;
+    border: 1px solid var(--p-border);
+    background: #ffffff;
     cursor: pointer;
-    border-radius: 10px;
+    border-radius: 8px;
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    color: rgba(15, 23, 42, 0.5);
-    font-size: 18px;
+    color: var(--p-muted);
+    font-size: 16px;
     line-height: 1;
+    transition: background 0.14s, color 0.14s;
 }
 
 .profiles-addInlineClose:hover {
-    background: rgba(15, 23, 42, 0.06);
+    background: #f8fafc;
+    color: var(--p-ink);
 }
 
 .profiles-addInlineHeadCopy--center {
@@ -612,8 +609,8 @@
     font-weight: 700;
     font-size: 11px;
     text-transform: uppercase;
-    letter-spacing: 0.08em;
-    color: rgba(71, 85, 105, 0.72);
+    letter-spacing: 0.06em;
+    color: var(--p-muted);
 }
 
 .profiles-addInlineTitle {
@@ -631,7 +628,7 @@
     font-weight: 500;
     font-size: 13px;
     line-height: 1.45;
-    color: rgba(71, 85, 105, 0.9);
+    color: var(--p-muted);
     max-width: 260px;
     margin-inline: auto;
 }
@@ -673,12 +670,18 @@
 .profiles-input-wrap {
     display: flex;
     align-items: center;
-    border: 1px solid rgba(15, 23, 42, 0.14);
+    border: 1px solid rgba(15, 23, 42, 0.13);
     background: #fff;
     border-radius: 14px;
     overflow: hidden;
     min-width: 0;
     width: 100%;
+    transition: border-color 0.14s, box-shadow 0.14s;
+}
+
+.profiles-input-wrap:focus-within {
+    border-color: rgba(249, 115, 22, 0.4);
+    box-shadow: 0 0 0 3px rgba(249, 115, 22, 0.1);
 }
 
 .profiles-input-prefix {
@@ -692,9 +695,9 @@
     font-family: "Inter", sans-serif;
     font-weight: 700;
     font-size: 12px;
-    color: rgba(15, 23, 42, 0.55);
-    background: rgba(15, 23, 42, 0.03);
-    border-right: 1px solid rgba(15, 23, 42, 0.1);
+    color: var(--p-muted);
+    background: #f8fafc;
+    border-right: 1px solid rgba(15, 23, 42, 0.09);
 }
 
 .profiles-input {
@@ -712,7 +715,8 @@
 }
 
 .profiles-input::placeholder {
-    color: rgba(71, 85, 105, 0.75);
+    color: rgba(71, 85, 105, 0.6);
+    font-weight: 500;
 }
 
 .profiles-cardBtn--claim {
@@ -725,11 +729,11 @@
 
 .profiles-claimStatusCard {
     padding: 14px;
-    border-radius: 16px;
-    border: 1px solid rgba(15, 23, 42, 0.08);
-    background: rgba(15, 23, 42, 0.03);
+    border-radius: 12px;
+    border: 1px solid var(--p-border);
+    background: #f8fafc;
     display: grid;
-    gap: 8px;
+    gap: 6px;
     flex: 0 0 auto;
 }
 
@@ -738,52 +742,52 @@
 }
 
 .profiles-claimStatusCard.is-success {
-    background: rgba(22, 163, 74, 0.08);
-    border-color: rgba(22, 163, 74, 0.2);
+    background: rgba(22, 163, 74, 0.06);
+    border-color: rgba(22, 163, 74, 0.18);
 }
 
 .profiles-claimStatusCard.is-danger {
-    background: rgba(220, 38, 38, 0.08);
-    border-color: rgba(220, 38, 38, 0.18);
+    background: rgba(220, 38, 38, 0.06);
+    border-color: rgba(220, 38, 38, 0.16);
 }
 
 .profiles-claimStatusCard.is-neutral {
-    background: rgba(15, 23, 42, 0.03);
-    border-color: rgba(15, 23, 42, 0.08);
+    background: #f8fafc;
+    border-color: var(--p-border);
 }
 
 .profiles-claimStatusTitle {
     font-family: "Inter", sans-serif;
     font-weight: 700;
-    font-size: 14px;
+    font-size: 13.5px;
     line-height: 1.3;
     color: var(--p-ink);
 }
 
 .profiles-claimStatusCard.is-success .profiles-claimStatusTitle {
-    color: rgba(21, 128, 61, 0.98);
+    color: #166534;
 }
 
 .profiles-claimStatusCard.is-danger .profiles-claimStatusTitle {
-    color: rgba(185, 28, 28, 0.98);
+    color: #b91c1c;
 }
 
 .profiles-claimStatusUrl {
     font-family: "Inter", sans-serif;
-    font-weight: 700;
-    font-size: 14px;
+    font-weight: 600;
+    font-size: 12.5px;
     line-height: 1.35;
-    color: var(--p-ink);
+    color: var(--p-muted);
     word-break: break-word;
 }
 
 .profiles-alert {
     padding: 12px;
-    border-radius: 14px;
-    border: 1px solid rgba(15, 23, 42, 0.1);
-    background: #fff;
+    border-radius: 12px;
+    border: 1px solid var(--p-border);
+    background: #f8fafc;
     font-family: "Inter", sans-serif;
-    font-weight: 700;
+    font-weight: 600;
     color: var(--p-ink);
     font-size: 13px;
     line-height: 1.35;
@@ -794,24 +798,27 @@
 }
 
 .profiles-alert.success {
-    border-color: rgba(22, 163, 74, 0.25);
-    background: rgba(22, 163, 74, 0.08);
+    border-color: rgba(22, 163, 74, 0.2);
+    background: rgba(22, 163, 74, 0.06);
+    color: #166534;
 }
 
 .profiles-alert.danger {
-    border-color: rgba(220, 38, 38, 0.25);
-    background: rgba(220, 38, 38, 0.08);
+    border-color: rgba(220, 38, 38, 0.2);
+    background: rgba(220, 38, 38, 0.06);
+    color: #b91c1c;
 }
 
 .profiles-alert.neutral {
-    background: rgba(15, 23, 42, 0.03);
+    background: #f8fafc;
 }
 
 .profiles-hint {
     font-family: "Inter", sans-serif;
-    font-weight: 600;
-    font-size: 13px;
-    color: rgba(71, 85, 105, 0.95);
+    font-weight: 500;
+    font-size: 12.5px;
+    color: var(--p-muted);
+    line-height: 1.5;
 }
 
 .profiles-hint--center {
@@ -820,6 +827,7 @@
 
 .profiles-hint strong {
     color: var(--kc-accent-primary, #f97316);
+    font-weight: 700;
 }
 
 /* =========================

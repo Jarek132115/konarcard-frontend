@@ -255,7 +255,7 @@ function ClaimCardClosed({ onOpenClaim, suppressClickRef }) {
                     </div>
 
                     <div className="profiles-updated profiles-updated--centered profiles-addPriceNote">
-                        £1.95 per extra profile / month
+                        £2 per extra profile / month
                     </div>
 
                     <div className="profiles-cardBtns profiles-cardBtns--stack">
@@ -429,7 +429,7 @@ function ClaimCardOpen({
                                     <span>
                                         {claimStatus === "creating"
                                             ? "Adding..."
-                                            : "Add profile +£1.95/m"}
+                                            : "Add profile +£2/m"}
                                     </span>
                                 </button>
                             ) : (
@@ -448,7 +448,7 @@ function ClaimCardOpen({
                                     <span>
                                         {claimStatus === "subscribing"
                                             ? "Opening checkout..."
-                                            : "Add profile +£1.95/m"}
+                                            : "Add profile +£2/m"}
                                     </span>
                                 </button>
                             )
@@ -468,7 +468,7 @@ function ClaimCardOpen({
                                 <span>
                                     {claimStatus === "subscribing"
                                         ? "Opening checkout..."
-                                        : "Add profile +£1.95/m"}
+                                        : "Add profile +£2/m"}
                                 </span>
                             </button>
                         )}
