@@ -1,11 +1,29 @@
+// frontend/src/pages/website/Blog.jsx
 import React, { useMemo, useState } from "react";
 import { Link } from "react-router-dom";
+import { motion } from "motion/react";
 
 import Navbar from "../../components/Navbar";
 import Footer from "../../components/Home/Footer";
 
 import "../../styling/fonts.css";
 import "../../styling/blog.css";
+
+/* ── Animation presets ─────────────────────────────────────── */
+const EASE = [0.22, 1, 0.36, 1];
+
+const fadeUp = (delay = 0) => ({
+    initial: { opacity: 0, y: 18 },
+    animate: { opacity: 1, y: 0 },
+    transition: { duration: 0.5, delay, ease: EASE },
+});
+
+const fadeUpInView = (delay = 0) => ({
+    initial: { opacity: 0, y: 16 },
+    whileInView: { opacity: 1, y: 0 },
+    viewport: { once: true, margin: "-40px" },
+    transition: { duration: 0.48, delay, ease: EASE },
+});
 
 export default function Blog() {
     const tabs = useMemo(
@@ -20,7 +38,6 @@ export default function Blog() {
 
     const posts = useMemo(
         () => [
-            // Tips & guides (3)
             {
                 id: "t1",
                 category: "tips-guides",
@@ -54,8 +71,6 @@ export default function Blog() {
                 readTime: "3 min read",
                 featured: false,
             },
-
-            // Digital business cards (3)
             {
                 id: "d1",
                 category: "digital-business-cards",
@@ -72,9 +87,9 @@ export default function Blog() {
                 category: "digital-business-cards",
                 categoryLabel: "Digital business cards",
                 pillClass: "is-digital",
-                title: "NFC vs QR codes: what’s best for you?",
+                title: "NFC vs QR codes: what's best for you?",
                 excerpt:
-                    "Both work. Here’s when NFC is faster, when QR is better, and why having both wins.",
+                    "Both work. Here's when NFC is faster, when QR is better, and why having both wins.",
                 readTime: "3 min read",
                 featured: false,
             },
@@ -89,8 +104,6 @@ export default function Blog() {
                 readTime: "3 min read",
                 featured: false,
             },
-
-            // Getting more jobs (3)
             {
                 id: "g1",
                 category: "getting-more-jobs",
@@ -141,59 +154,109 @@ export default function Blog() {
         <>
             <Navbar />
 
-            <main className={`kc-blog kc-page ${activeTab === "all" ? "is-all" : ""}`}>
-                {/* HERO */}
+            <main className="kc-blog kc-page">
+
+                {/* ── HERO ─────────────────────────────────────── */}
                 <section className="kc-blog__hero" aria-label="Blog hero">
-                    <div className="kc-blog__heroInner">
-                        <div className="kc-blog__heroGrid">
-                            <p className="kc-pill kc-blog__heroPill">Blog</p>
+                    <div className="kc-blog__container">
+                        <div className="kc-blog__head">
 
-                            <h1 className="h2 kc-blog__title">
-                                Tips, guides, and ideas to <br />
-                                help you win more jobs
-                            </h1>
+                            {/* Grid bg — circular radial fade, consistent with all hero sections */}
+                            <div className="kc-blog__gridBg" aria-hidden="true" />
 
-                            <p className="body-s kc-blog__subtitle">
-                                Practical advice for trades using digital business cards, profiles, and NFC.
-                            </p>
+                            <motion.div className="kc-blog__headContent" {...fadeUp(0)}>
+                                <p className="kc-pill kc-blog__kicker">Blog</p>
 
-                            <div className="kc-blog__tabs" role="tablist" aria-label="Blog filters">
-                                {tabs.map((t) => {
-                                    const isActive = t.key === activeTab;
-                                    return (
-                                        <button
-                                            key={t.key}
-                                            type="button"
-                                            className={`kc-blog__tab ${isActive ? "is-active" : ""}`}
-                                            onClick={() => setActiveTab(t.key)}
-                                            role="tab"
-                                            aria-selected={isActive}
-                                        >
-                                            {t.label}
-                                        </button>
-                                    );
-                                })}
-                            </div>
+                                <h1 className="h2 kc-blog__title">
+                                    Tips, guides, and ideas to{" "}
+                                    <span className="kc-blog__accent">help</span> you win more jobs
+                                </h1>
+
+                                <p className="kc-subheading kc-blog__sub">
+                                    Practical advice for trades using digital business cards, profiles, and NFC.
+                                </p>
+
+                                <div className="kc-blog__tabs" role="tablist" aria-label="Blog filters">
+                                    {tabs.map((t) => {
+                                        const isActive = t.key === activeTab;
+                                        return (
+                                            <button
+                                                key={t.key}
+                                                type="button"
+                                                role="tab"
+                                                aria-selected={isActive}
+                                                className={`kc-tabPill${isActive ? " is-active" : ""}`}
+                                                onClick={() => setActiveTab(t.key)}
+                                            >
+                                                {t.label}
+                                            </button>
+                                        );
+                                    })}
+                                </div>
+                            </motion.div>
                         </div>
                     </div>
                 </section>
 
-                {/* Spacer so headings don’t jump */}
-                {activeTab !== "all" && <div className="kc-blog__noJumpSpacer" aria-hidden="true" />}
-
-                {/* Featured (All only) */}
+                {/* ── FEATURED (All tab only) ───────────────────── */}
                 {activeTab === "all" && (
                     <section className="kc-blog__section kc-blog__section--featured" aria-label="Featured posts">
-                        <div className="kc-blog__sectionHead">
-                            <h2 className="h4 kc-blog__sectionTitle">Featured posts</h2>
-                            <p className="body-s kc-blog__sectionSub">
-                                Popular guides from each category to help you get the most out of KonarCard.
-                            </p>
+                        <div className="kc-blog__container">
+                            <motion.div className="kc-blog__sectionHead" {...fadeUpInView(0)}>
+                                <h2 className="h4 kc-blog__sectionTitle">Featured posts</h2>
+                                <p className="kc-subheading kc-blog__sectionSub">
+                                    Popular guides from each category to help you get the most out of KonarCard.
+                                </p>
+                            </motion.div>
+
+                            <div className="kc-blog__grid">
+                                {featuredPosts.slice(0, 3).map((p, i) => (
+                                    <motion.article
+                                        className="kc-blog__card"
+                                        key={p.id}
+                                        {...fadeUpInView(i * 0.08)}
+                                    >
+                                        <div className="kc-blog__media" aria-hidden="true">
+                                            <span className={`kc-blog__catPill ${p.pillClass}`}>{p.categoryLabel}</span>
+                                            <div className="kc-blog__image">Image</div>
+                                        </div>
+
+                                        <div className="kc-blog__cardBody">
+                                            <h3 className="h5 kc-blog__cardTitle">{p.title}</h3>
+                                            <p className="body-s kc-blog__excerpt">{p.excerpt}</p>
+                                            <p className="kc-blog__meta">{p.readTime}</p>
+                                            <Link
+                                                to="/blog"
+                                                className="kx-btn kx-btn--white kc-blog__btn"
+                                                aria-label={`Read now: ${p.title}`}
+                                            >
+                                                Read now
+                                            </Link>
+                                        </div>
+                                    </motion.article>
+                                ))}
+                            </div>
                         </div>
+                    </section>
+                )}
+
+                {/* ── ALL BLOGS ─────────────────────────────────── */}
+                <section className="kc-blog__section kc-blog__section--all" aria-label="All blogs">
+                    <div className="kc-blog__container">
+                        <motion.div className="kc-blog__sectionHead" {...fadeUpInView(0)}>
+                            <h2 className="h4 kc-blog__sectionTitle">All blogs</h2>
+                            <p className="kc-subheading kc-blog__sectionSub">
+                                Everything you need to know about KonarCard, profiles &amp; NFC cards.
+                            </p>
+                        </motion.div>
 
                         <div className="kc-blog__grid">
-                            {featuredPosts.slice(0, 3).map((p) => (
-                                <article className="kc-blog__card" key={p.id}>
+                            {filtered.map((p, i) => (
+                                <motion.article
+                                    className="kc-blog__card"
+                                    key={p.id}
+                                    {...fadeUpInView(i * 0.05)}
+                                >
                                     <div className="kc-blog__media" aria-hidden="true">
                                         <span className={`kc-blog__catPill ${p.pillClass}`}>{p.categoryLabel}</span>
                                         <div className="kc-blog__image">Image</div>
@@ -202,9 +265,7 @@ export default function Blog() {
                                     <div className="kc-blog__cardBody">
                                         <h3 className="h5 kc-blog__cardTitle">{p.title}</h3>
                                         <p className="body-s kc-blog__excerpt">{p.excerpt}</p>
-
                                         <p className="kc-blog__meta">{p.readTime}</p>
-
                                         <Link
                                             to="/blog"
                                             className="kx-btn kx-btn--white kc-blog__btn"
@@ -213,57 +274,22 @@ export default function Blog() {
                                             Read now
                                         </Link>
                                     </div>
-                                </article>
+                                </motion.article>
                             ))}
                         </div>
-                    </section>
-                )}
 
-                {/* All blogs */}
-                <section className="kc-blog__section kc-blog__section--all" aria-label="All blogs">
-                    <div className="kc-blog__sectionHead">
-                        <h2 className="h4 kc-blog__sectionTitle">All blogs</h2>
-                        <p className="body-s kc-blog__sectionSub">
-                            Everything you need to know about KonarCard, profiles &amp; NFC cards.
-                        </p>
-                    </div>
-
-                    <div className="kc-blog__grid">
-                        {filtered.map((p) => (
-                            <article className="kc-blog__card" key={p.id}>
-                                <div className="kc-blog__media" aria-hidden="true">
-                                    <span className={`kc-blog__catPill ${p.pillClass}`}>{p.categoryLabel}</span>
-                                    <div className="kc-blog__image">Image</div>
-                                </div>
-
-                                <div className="kc-blog__cardBody">
-                                    <h3 className="h5 kc-blog__cardTitle">{p.title}</h3>
-                                    <p className="body-s kc-blog__excerpt">{p.excerpt}</p>
-
-                                    <p className="kc-blog__meta">{p.readTime}</p>
-
-                                    <Link
-                                        to="/blog"
-                                        className="kx-btn kx-btn--white kc-blog__btn"
-                                        aria-label={`Read now: ${p.title}`}
-                                    >
-                                        Read now
-                                    </Link>
-                                </div>
-                            </article>
-                        ))}
-                    </div>
-
-                    {/* Subscribe CTA */}
-                    <div className="kc-blog__subscribe" aria-label="Subscribe to blog updates">
-                        <p className="body-s kc-blog__subscribeLine">
-                            Subscribe to our blog to be the first to be informed.
-                        </p>
-                        <button type="button" className="kx-btn kx-btn--black kc-blog__subscribeBtn">
-                            Subscribe to updates
-                        </button>
+                        {/* Subscribe CTA */}
+                        <motion.div className="kc-blog__subscribe" {...fadeUpInView(0)}>
+                            <p className="body-s kc-blog__subscribeLine">
+                                Subscribe to our blog to be the first to be informed.
+                            </p>
+                            <button type="button" className="kx-btn kx-btn--black kc-blog__subscribeBtn">
+                                Subscribe to updates
+                            </button>
+                        </motion.div>
                     </div>
                 </section>
+
             </main>
 
             <Footer />
