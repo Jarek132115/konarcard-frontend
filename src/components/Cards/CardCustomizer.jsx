@@ -45,9 +45,9 @@ const MAX_FONT_SIZE = 72;
 const MAX_FRONT_TEXT = 22;
 
 const WEIGHT_OPTIONS = [
-    { key: "regular", label: "Regular", value: 500 },
+    { key: "regular", label: "Regular", value: 400 },
     { key: "medium", label: "Medium", value: 600 },
-    { key: "bold", label: "Bold", value: 700 },
+    { key: "bold", label: "Bold", value: 900 },
 ];
 
 function fileToDataUrl(file) {
@@ -139,6 +139,7 @@ const PRODUCT_CONFIG = {
         subtitle:
             "Clean white plastic NFC business card with QR backup — designed to look premium and work instantly.",
         priceText: "£19.99",
+        unitPrice: 19.99,
         badge: "Essential",
         buyLabel: "Buy White Card",
         profileEmptyText: "You need at least 1 profile before buying a card.",
@@ -169,6 +170,7 @@ const PRODUCT_CONFIG = {
         subtitle:
             "Bold black plastic NFC business card with QR backup and a sleek premium finish.",
         priceText: "£19.99",
+        unitPrice: 19.99,
         badge: "Popular",
         buyLabel: "Buy Black Card",
         profileEmptyText: "You need at least 1 profile before buying a card.",
@@ -199,6 +201,7 @@ const PRODUCT_CONFIG = {
         subtitle:
             "Professional blue plastic NFC business card designed to stand out cleanly and work instantly.",
         priceText: "£19.99",
+        unitPrice: 19.99,
         badge: "Modern",
         buyLabel: "Buy Blue Card",
         profileEmptyText: "You need at least 1 profile before buying a card.",
@@ -229,6 +232,7 @@ const PRODUCT_CONFIG = {
         subtitle:
             "Modern green plastic NFC business card with a sharp branded look and QR backup.",
         priceText: "£19.99",
+        unitPrice: 19.99,
         badge: "Fresh",
         buyLabel: "Buy Green Card",
         profileEmptyText: "You need at least 1 profile before buying a card.",
@@ -259,6 +263,7 @@ const PRODUCT_CONFIG = {
         subtitle:
             "Strong magenta plastic NFC business card for a vibrant premium finish with QR backup.",
         priceText: "£19.99",
+        unitPrice: 19.99,
         badge: "Bold",
         buyLabel: "Buy Magenta Card",
         profileEmptyText: "You need at least 1 profile before buying a card.",
@@ -289,6 +294,7 @@ const PRODUCT_CONFIG = {
         subtitle:
             "High-impact orange NFC business card with a confident branded style and QR backup.",
         priceText: "£19.99",
+        unitPrice: 19.99,
         badge: "Warm",
         buyLabel: "Buy Orange Card",
         profileEmptyText: "You need at least 1 profile before buying a card.",
@@ -319,6 +325,7 @@ const PRODUCT_CONFIG = {
         subtitle:
             "Premium metal that stands out — tap to share your profile in seconds, with QR backup so it works on every phone.",
         priceText: "£44.99",
+        unitPrice: 44.99,
         badge: "Premium",
         buyLabel: "Buy Metal Card",
         profileEmptyText: "You need at least 1 profile before buying a card.",
@@ -356,6 +363,7 @@ const PRODUCT_CONFIG = {
         subtitle:
             "Pocket-friendly. Tap to share your Konar profile instantly — with QR backup on the back.",
         priceText: "£9.99",
+        unitPrice: 9.99,
         badge: "Accessory",
         buyLabel: "Buy KonarTag",
         profileEmptyText: "You need at least 1 profile before buying a KonarTag.",
@@ -937,7 +945,7 @@ export default function CardCustomizer({
 
                                 <div className="ccz-field ccz-field--buy">
                                     <div className="ccz-priceRow">
-                                        <div className="ccz-price">{config.priceText}</div>
+                                        <div className="ccz-price">£{(config.unitPrice * qty).toFixed(2)}</div>
 
                                         <div className="ccz-qty" aria-label="Quantity">
                                             <button
