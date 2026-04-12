@@ -648,8 +648,20 @@ export default function Cards() {
     <DashboardLayout hideDesktopHeader>
       <div className="cp-shell">
         <PageHeader
-          title="Cards"
-          subtitle="Choose a product, customise it, and check out."
+          title={
+            selectedProductKey
+              ? "Customize your card"
+              : selectedOrderView
+                ? "My Cards"
+                : "Cards"
+          }
+          subtitle={
+            selectedProductKey
+              ? null
+              : selectedOrderView
+                ? "View and manage your purchased cards."
+                : "Choose a product, customise it, and check out."
+          }
           onShareClick={handleOpenShareProfile}
           shareDisabled={!selectedProfile}
         />

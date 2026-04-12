@@ -674,15 +674,6 @@ export default function CardCustomizer({
 
     return (
         <div className="ccz-page">
-            <div className="ccz-pageIntro">
-                <div className="ccz-pageIntroCopy">
-                    <h2 className="ccz-pageTitle">Customize your card</h2>
-                    <p className="ccz-pageSubtitle">
-                        Design your NFC product and link it to your profile.
-                    </p>
-                </div>
-            </div>
-
             <div className="ccz-backRow">
                 <button type="button" className="kx-btn kx-btn--white" onClick={onBack}>
                     Back to products
