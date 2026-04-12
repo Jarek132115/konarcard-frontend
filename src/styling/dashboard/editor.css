@@ -445,10 +445,10 @@
 }
 
 .kce-themeModeBtn.is-active {
-    background: #ffffff;
-    border-color: rgba(15, 23, 42, 0.08);
-    color: var(--kce-ink);
-    box-shadow: 0 1px 0 rgba(15, 23, 42, 0.04), 0 6px 18px rgba(15, 23, 42, 0.06);
+    background: #0f172a;
+    border-color: #0f172a;
+    color: #ffffff;
+    box-shadow: 0 1px 0 rgba(15, 23, 42, 0.12), 0 6px 18px rgba(15, 23, 42, 0.14);
 }
 
 .kce-themeModeBtn:disabled {
@@ -481,7 +481,7 @@
     border: 1px solid rgba(15, 23, 42, 0.08);
     background: #ffffff;
     border-radius: 22px;
-    padding: 10px;
+    padding: 0;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -526,9 +526,9 @@
 
 .kce-phoneImg {
     width: 100%;
-    height: auto;
+    height: 100%;
     display: block;
-    border-radius: 14px;
+    border-radius: 0;
     object-fit: cover;
     user-select: none;
     pointer-events: none;
@@ -582,7 +582,7 @@
 .kce-upload {
     position: relative;
     width: 100%;
-    aspect-ratio: 1 / 1;
+    aspect-ratio: 4 / 3;
     min-height: unset;
     border-radius: 20px;
     border: 1px dashed rgba(15, 23, 42, 0.14);
@@ -692,7 +692,7 @@
     overflow: hidden;
     border: 1px solid rgba(15, 23, 42, 0.08);
     background: #ffffff;
-    aspect-ratio: 1 / 1;
+    aspect-ratio: 4 / 3;
     box-shadow: var(--kce-shadow);
 }
 
@@ -730,7 +730,22 @@
 
 .kce-workAdd {
     min-height: unset;
-    aspect-ratio: 1 / 1;
+    aspect-ratio: 4 / 3;
+}
+
+.kce-workAdd .kce-uploadInner {
+    gap: 6px;
+    padding: 14px;
+}
+
+.kce-workAdd .kce-plus {
+    width: 34px;
+    height: 34px;
+    font-size: 20px;
+}
+
+.kce-workAdd .kce-uploadText {
+    font-size: 12px;
 }
 
 /* =========================================================
@@ -797,47 +812,47 @@
     position: relative;
     appearance: none;
     width: 100%;
-    min-height: 84px;
-    border-radius: 20px;
-    border: 1px dashed rgba(15, 23, 42, 0.14);
-    background: linear-gradient(180deg, #ffffff 0%, #fbfbfc 100%);
+    min-height: 48px;
+    border-radius: 14px;
+    border: 1px solid rgba(15, 23, 42, 0.10);
+    background: #ffffff;
     display: flex;
     align-items: center;
-    justify-content: center;
+    justify-content: flex-start;
     gap: 10px;
+    padding: 0 16px;
     cursor: pointer;
     transition:
         border-color 0.16s ease,
-        box-shadow 0.18s ease,
-        transform 0.12s ease;
+        background-color 0.16s ease,
+        box-shadow 0.16s ease;
 }
 
 .kce-addCard:hover {
-    border-color: rgba(249, 115, 22, 0.30);
-    box-shadow: 0 14px 30px rgba(15, 23, 42, 0.06);
-    transform: translateY(-1px);
+    border-color: rgba(249, 115, 22, 0.32);
+    background: rgba(249, 115, 22, 0.02);
+    box-shadow: 0 4px 14px rgba(15, 23, 42, 0.06);
 }
 
 .kce-addCard:active {
-    transform: translateY(0);
+    background: rgba(249, 115, 22, 0.04);
 }
 
 .kce-addCard:disabled {
-    opacity: 0.65;
+    opacity: 0.55;
     cursor: not-allowed;
-    transform: none;
     box-shadow: none;
 }
 
 .kce-addCardPlus {
-    width: 30px;
-    height: 30px;
-    border-radius: 999px;
+    width: 22px;
+    height: 22px;
+    border-radius: 6px;
     background: rgba(249, 115, 22, 0.10);
     color: var(--kce-orange);
     display: grid;
     place-items: center;
-    font-size: 18px;
+    font-size: 15px;
     line-height: 1;
     font-weight: 600;
     flex: 0 0 auto;
@@ -845,9 +860,9 @@
 
 .kce-addCardText {
     font-family: "Inter", sans-serif;
-    font-size: 13px;
+    font-size: 14px;
     line-height: 1.2;
-    font-weight: 700;
+    font-weight: 600;
     color: var(--kce-ink);
 }
 
@@ -868,19 +883,16 @@
 }
 
 .kce-socialIcon {
-    min-height: 48px;
-    border-radius: 14px;
     display: grid;
     place-items: center;
-    background: rgba(15, 23, 42, 0.04);
-    border: 1px solid rgba(15, 23, 42, 0.08);
+    min-height: 48px;
 }
 
 .kce-socialIcon img {
-    width: 18px;
-    height: 18px;
+    width: 22px;
+    height: 22px;
     display: block;
-    opacity: 0.88;
+    opacity: 0.9;
 }
 
 /* =========================================================
@@ -1200,7 +1212,7 @@
         min-width: 160px;
         max-width: 160px;
         flex-basis: 160px;
-        padding: 8px;
+        padding: 0;
         border-radius: 20px;
     }
 
@@ -1218,8 +1230,8 @@
     }
 
     .kce-addCard {
-        min-height: 78px;
-        border-radius: 18px;
+        min-height: 46px;
+        border-radius: 12px;
     }
 
     .kce-socialRow {
@@ -1228,7 +1240,6 @@
 
     .kce-socialIcon {
         min-height: 44px;
-        border-radius: 12px;
     }
 
     .kce-bottomSaveWrap {
