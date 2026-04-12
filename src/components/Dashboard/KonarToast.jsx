@@ -1,6 +1,5 @@
 import React from "react";
 import { Toast } from "@base-ui/react/toast";
-import { useToastManager } from "@base-ui/react/toast";
 import "../../styling/dashboard/toast.css";
 
 const CheckIcon = () => (
@@ -43,7 +42,7 @@ function ToastIcon({ type }) {
 }
 
 function ToastList() {
-    const { toasts } = useToastManager();
+    const { toasts } = Toast.useToastManager();
 
     return (
         <Toast.Portal>

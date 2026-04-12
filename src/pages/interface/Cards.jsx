@@ -524,8 +524,10 @@ export default function Cards() {
     setSelectedOrderView(false);
     setSelectedId(null);
     setSelectedProductKey(resolvedKey);
+    // Replace only when already viewing a product (switching products).
+    // Push when coming from the catalog so browser back returns to catalog.
     navigate(`/cards?product=${encodeURIComponent(resolvedKey)}`, {
-      replace: true,
+      replace: !!selectedProductKey,
     });
   };
 

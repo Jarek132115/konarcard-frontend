@@ -1,4 +1,4 @@
-import { useToastManager } from "@base-ui/react/toast";
+import { Toast } from "@base-ui/react/toast";
 
 /**
  * Drop-in wrapper around Base UI's useToastManager.
@@ -12,7 +12,7 @@ import { useToastManager } from "@base-ui/react/toast";
  *   toast.dismiss(id)
  */
 export function useKonarToast() {
-    const { add, close, update } = useToastManager();
+    const { add, close, update } = Toast.useToastManager();
 
     return {
         success(title, opts = {}) {
