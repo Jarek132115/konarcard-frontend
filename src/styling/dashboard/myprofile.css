@@ -349,3 +349,76 @@
         justify-content: center;
     }
 }
+
+.myprofile-backRow {
+    display: flex;
+    align-items: center;
+    margin-top: 2px;
+    margin-bottom: 4px;
+    flex: 0 0 auto;
+}
+
+.myprofile-backBtn {
+    appearance: none;
+    border: 1px solid rgba(15, 23, 42, 0.12);
+    background: #ffffff;
+    color: #0f172a;
+    min-height: 44px;
+    padding: 0 18px;
+    border-radius: 14px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-family: "Inter", sans-serif;
+    font-size: 14px;
+    line-height: 1;
+    font-weight: 700;
+    cursor: pointer;
+    text-decoration: none;
+    transition:
+        background-color 0.16s ease,
+        border-color 0.16s ease,
+        box-shadow 0.16s ease,
+        transform 0.10s ease;
+}
+
+.myprofile-backBtn:hover {
+    background: #fafafa;
+    border-color: rgba(15, 23, 42, 0.18);
+    box-shadow: 0 8px 20px rgba(15, 23, 42, 0.06);
+}
+
+.myprofile-backBtn:active {
+    transform: translateY(1px);
+    box-shadow: none;
+}
+
+.myprofile-backBtn:focus-visible {
+    outline: none;
+    border-color: rgba(249, 115, 22, 0.40);
+    box-shadow: 0 0 0 4px rgba(249, 115, 22, 0.10);
+}
+
+@media (max-width: 760px) {
+    .myprofile-backRow {
+        margin-bottom: 2px;
+    }
+
+    .myprofile-backBtn {
+        min-height: 42px;
+        padding: 0 16px;
+        font-size: 13px;
+        border-radius: 12px;
+    }
+}
+
+@media (max-width: 520px) {
+    .myprofile-backRow {
+        width: 100%;
+    }
+
+    .myprofile-backBtn {
+        width: 100%;
+        justify-content: center;
+    }
+}

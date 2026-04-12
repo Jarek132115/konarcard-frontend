@@ -1181,10 +1181,10 @@ export default function MyProfile() {
           rightSlot={null}
         />
 
-        <div className="profiles-actions-row">
+        <div className="myprofile-backRow">
           <button
             type="button"
-            className="profiles-btn profiles-btn-ghost"
+            className="myprofile-backBtn"
             onClick={() => navigate("/profiles")}
           >
             Back to Profiles
