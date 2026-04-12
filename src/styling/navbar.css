@@ -1,355 +1,272 @@
-/* =========================================================
-   KONARCARD NAVBAR
-   Fixed top bar — desktop three-column, mobile burger overlay
-   ========================================================= */
+/* =========================
+   KONARCARD NAVBAR — single-bar layout
+   ========================= */
 
-:root {
-    --kc-nav-h: 64px;
+.kcnav {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 99999;
+  background: #ffffff;
+  border-bottom: 1px solid rgba(15, 23, 42, 0.06);
 }
 
-/* ── Fixed bar ───────────────────────────────────────────── */
-.kc-nav {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    z-index: 1000;
-    height: var(--kc-nav-h);
-    background: #ffffff;
-    border-bottom: 1px solid rgba(15, 23, 42, 0.07);
+/* ── TOP BAR (single bar, always visible) ── */
+
+.kcnav__bar {
+  max-width: 1140px;
+  margin: 0 auto;
+  padding: 0 20px;
+  height: 70px;
+  display: flex;
+  align-items: center;
+  gap: 24px;
 }
 
-.kc-nav__inner {
-    max-width: 1160px;
-    margin: 0 auto;
-    padding: 0 24px;
-    height: 100%;
-    display: flex;
-    align-items: center;
+/* Logo */
+.kcnav__logoLink {
+  display: inline-flex;
+  align-items: center;
+  flex-shrink: 0;
 }
 
-/* ── Logo ────────────────────────────────────────────────── */
-.kc-nav__logo {
-    display: inline-flex;
-    align-items: center;
-    flex-shrink: 0;
-    margin-right: 40px;
-    text-decoration: none;
+.kcnav__logo {
+  height: 34px;
+  display: block;
 }
 
-.kc-nav__logo img {
-    height: 32px;
-    display: block;
+/* Nav links — pushed to center via flex spacer */
+.kcnav__links {
+  list-style: none;
+  margin: 0 auto;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  gap: 34px;
 }
 
-/* ── Desktop links ───────────────────────────────────────── */
-.kc-nav__links {
-    list-style: none;
-    margin: 0;
-    padding: 0;
-    display: flex;
-    align-items: center;
-    gap: 32px;
-    flex: 1;
+.kcnav__links a {
+  text-decoration: none;
+  color: #0b1220;
+  font-size: 14px;
+  font-weight: 500;
+  transition: opacity 0.15s ease;
 }
 
-.kc-nav__link {
-    text-decoration: none;
-    font-family: "Inter", sans-serif;
-    font-size: 14px;
-    font-weight: 500;
-    color: rgba(15, 23, 42, 0.72);
-    transition: color 0.15s ease;
-    white-space: nowrap;
+.kcnav__links a:hover {
+  opacity: 0.8;
 }
 
-.kc-nav__link:hover {
-    color: #0b1220;
+.kcnav__links a.active {
+  font-weight: 700;
 }
 
-.kc-nav__link.is-active {
-    color: #0b1220;
-    font-weight: 700;
+/* Right actions */
+.kcnav__actions {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  flex-shrink: 0;
 }
 
-/* ── Desktop right actions ───────────────────────────────── */
-.kc-nav__actions {
-    display: flex;
-    align-items: center;
-    gap: 20px;
-    flex-shrink: 0;
-    margin-left: auto;
+.kcnav__loginBtn {
+  color: #0b1220;
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 500;
+  transition: opacity 0.15s ease;
 }
 
-.kc-nav__textLink {
-    font-family: "Inter", sans-serif;
-    font-size: 14px;
-    font-weight: 500;
-    color: rgba(15, 23, 42, 0.72);
-    text-decoration: none;
-    transition: color 0.15s ease;
-    white-space: nowrap;
+.kcnav__loginBtn:hover {
+  opacity: 0.8;
 }
 
-.kc-nav__textLink:hover {
-    color: #0b1220;
+.kcnav__cta {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 40px;
+  padding: 0 16px;
+  border-radius: 12px;
+  background: var(--kc-accent-primary);
+  color: #ffffff;
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 700;
+  box-shadow: 0 10px 22px rgba(249, 115, 22, 0.18);
+  transition: filter 0.15s ease, box-shadow 0.15s ease;
 }
 
-.kc-nav__textLink--btn {
-    appearance: none;
-    background: none;
-    border: none;
-    padding: 0;
-    cursor: pointer;
-    font-family: inherit;
-    font-size: inherit;
-    font-weight: inherit;
+.kcnav__cta:hover {
+  filter: brightness(0.97);
+  box-shadow: 0 12px 26px rgba(249, 115, 22, 0.22);
 }
 
-.kc-nav__cta {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    height: 38px;
-    padding: 0 18px;
-    border-radius: 10px;
-    background: var(--kc-accent-primary, #f97316);
-    color: #ffffff;
-    text-decoration: none;
-    font-family: "Inter", sans-serif;
-    font-size: 14px;
-    font-weight: 700;
-    white-space: nowrap;
-    box-shadow: 0 8px 20px rgba(249, 115, 22, 0.20);
-    transition: filter 0.15s ease, box-shadow 0.15s ease, transform 0.08s ease;
+.kcnav__logoutBtn {
+  appearance: none;
+  background: transparent;
+  border: none;
+  color: #0b1220;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  padding: 0;
+  transition: opacity 0.15s ease;
 }
 
-.kc-nav__cta:hover {
-    filter: brightness(0.96);
-    box-shadow: 0 10px 24px rgba(249, 115, 22, 0.26);
+.kcnav__logoutBtn:hover {
+  opacity: 0.8;
 }
 
-.kc-nav__cta:active {
-    transform: translateY(1px);
+/* ── BURGER (hidden on desktop, visible on mobile) ── */
+
+.kcnav__burger {
+  display: none;
+  appearance: none;
+  -webkit-appearance: none;
+  width: 40px;
+  height: 40px;
+  background: transparent;
+  border: none;
+  padding: 0;
+  margin: 0;
+  cursor: pointer;
+  color: #0b1220;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
 }
 
-/* ── Burger button — hidden on desktop ───────────────────── */
-.kc-nav__burger {
-    display: none;          /* overridden at ≤1000px */
-    align-items: center;
-    justify-content: center;
-    width: 44px;
-    height: 44px;
-    background: none;
-    border: none;
-    padding: 0;
-    cursor: pointer;
-    flex-shrink: 0;
-    margin-left: auto;
-    border-radius: 10px;
-    transition: background 0.15s ease;
-    -webkit-tap-highlight-color: transparent;
-    position: relative;
-    z-index: 1001;
+.kcnav__burger svg {
+  display: block;
 }
 
-.kc-nav__burger:hover {
-    background: rgba(15, 23, 42, 0.04);
+/* ── MOBILE MENU ── */
+
+.kcnav__menu {
+  position: fixed;
+  left: 0;
+  right: 0;
+  top: 70px;
+  bottom: 0;
+  background: #ffffff;
+  overflow: auto;
+  -webkit-overflow-scrolling: touch;
+  z-index: 1;
 }
 
-/* ── Mobile overlay ──────────────────────────────────────── */
-.kc-nav__overlay {
-    position: fixed;
-    inset: 0;
-    z-index: 999;
-    background: #ffffff;
-    overflow-y: auto;
-    -webkit-overflow-scrolling: touch;
-    padding-top: var(--kc-nav-h);
+.kcnav__menuInner {
+  max-width: 560px;
+  margin: 0 auto;
+  padding: 22px 20px 28px;
 }
 
-.kc-nav__overlayInner {
-    max-width: 480px;
-    margin: 0 auto;
-    padding: 32px 24px 40px;
-    display: flex;
-    flex-direction: column;
-    min-height: calc(100vh - var(--kc-nav-h));
-    min-height: calc(100dvh - var(--kc-nav-h));
+.kcnav__menuLabel {
+  text-align: center;
+  font-size: 12px;
+  letter-spacing: 0.14em;
+  font-weight: 800;
+  color: rgba(15, 23, 42, 0.55);
+  margin-bottom: 14px;
 }
 
-/* ── Mobile nav links ────────────────────────────────────── */
-.kc-nav__mobileLinks {
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
+.kcnav__menuLinks {
+  display: grid;
+  gap: 12px;
 }
 
-.kc-nav__mobileLink {
-    display: flex;
-    align-items: center;
-    width: 100%;
-    height: 52px;
-    padding: 0 16px;
-    border-radius: 14px;
-    border: none;
-    background: transparent;
-    color: #0b1220;
-    font-family: "Inter", sans-serif;
-    font-size: 16px;
-    font-weight: 600;
-    text-decoration: none;
-    transition: background 0.15s ease;
-    -webkit-tap-highlight-color: transparent;
+.kcnav__menuBtn {
+  width: 100%;
+  height: 52px;
+  border-radius: 14px;
+  border: 1px solid rgba(15, 23, 42, 0.12);
+  background: #ffffff;
+  color: #0b1220;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  font-size: 16px;
+  font-weight: 700;
+  text-decoration: none;
+  cursor: pointer;
+  transition: transform 0.08s ease, background 0.15s ease, border-color 0.15s ease;
 }
 
-.kc-nav__mobileLink:hover {
-    background: rgba(15, 23, 42, 0.04);
+.kcnav__menuBtn:active {
+  transform: translateY(1px);
 }
 
-.kc-nav__mobileLink:active {
-    background: rgba(15, 23, 42, 0.06);
+.kcnav__menuBtn.is-active {
+  background: var(--kc-text-primary);
+  border-color: var(--kc-text-primary);
+  color: #ffffff;
 }
 
-.kc-nav__mobileLink.is-active {
-    background: rgba(15, 23, 42, 0.05);
-    color: var(--kc-accent-primary, #f97316);
-    font-weight: 700;
+.kcnav__menuGap {
+  height: 100px;
 }
 
-/* button-reset variant */
-.kc-nav__mobileLink--btn {
-    appearance: none;
-    cursor: pointer;
-    font-family: inherit;
-    font-size: inherit;
-    font-weight: inherit;
+.kcnav__menuActions {
+  display: grid;
+  gap: 12px;
 }
 
-/* ── Divider ─────────────────────────────────────────────── */
-.kc-nav__mobileDivider {
-    height: 1px;
-    background: rgba(15, 23, 42, 0.07);
-    margin: 16px 0;
+.kcnav__menuCta {
+  width: 100%;
+  height: 56px;
+  border-radius: 14px;
+  background: var(--kc-accent-primary);
+  color: #ffffff;
+  font-weight: 800;
+  font-size: 16px;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 14px 28px rgba(249, 115, 22, 0.22);
+  transition: filter 0.15s ease, transform 0.08s ease;
 }
 
-/* ── Mobile auth actions ─────────────────────────────────── */
-.kc-nav__mobileActions {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
+.kcnav__menuCta:hover {
+  filter: brightness(0.98);
 }
 
-.kc-nav__mobileCta {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 100%;
-    height: 52px;
-    border-radius: 14px;
-    border: none;
-    background: var(--kc-accent-primary, #f97316);
-    color: #ffffff;
-    font-family: "Inter", sans-serif;
-    font-size: 16px;
-    font-weight: 700;
-    text-decoration: none;
-    box-shadow: 0 8px 24px rgba(249, 115, 22, 0.20);
-    transition: filter 0.15s ease, transform 0.08s ease;
-    -webkit-tap-highlight-color: transparent;
+.kcnav__menuCta:active {
+  transform: translateY(1px);
 }
 
-.kc-nav__mobileCta:hover {
-    filter: brightness(0.97);
+.kcnav__menuFooter {
+  margin-top: 14px;
+  text-align: center;
+  font-size: 12px;
+  font-weight: 700;
+  color: rgba(15, 23, 42, 0.55);
 }
 
-.kc-nav__mobileCta:active {
-    transform: translateY(1px);
-}
+/* ── RESPONSIVE ── */
 
-.kc-nav__mobileSecondary {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 100%;
-    height: 52px;
-    border-radius: 14px;
-    border: 1px solid rgba(15, 23, 42, 0.12);
-    background: #ffffff;
-    color: #0b1220;
-    font-family: "Inter", sans-serif;
-    font-size: 16px;
-    font-weight: 600;
-    text-decoration: none;
-    transition: background 0.15s ease, border-color 0.15s ease;
-    -webkit-tap-highlight-color: transparent;
-}
-
-.kc-nav__mobileSecondary:hover {
-    background: rgba(15, 23, 42, 0.03);
-    border-color: rgba(15, 23, 42, 0.18);
-}
-
-.kc-nav__mobileSecondary--btn {
-    appearance: none;
-    cursor: pointer;
-    font-family: inherit;
-    font-size: inherit;
-    font-weight: inherit;
-}
-
-/* ── Footer ──────────────────────────────────────────────── */
-.kc-nav__mobileFooter {
-    margin-top: auto;
-    padding-top: 32px;
-    text-align: center;
-    font-family: "Inter", sans-serif;
-    font-size: 12px;
-    font-weight: 500;
-    color: rgba(15, 23, 42, 0.32);
-}
-
-/* =========================================================
-   RESPONSIVE — ≤1000px: burger replaces desktop nav
-   ========================================================= */
 @media (max-width: 1000px) {
-    .kc-nav__links,
-    .kc-nav__actions {
-        display: none !important;
-    }
+  .kcnav__links,
+  .kcnav__actions {
+    display: none;
+  }
 
-    .kc-nav__burger {
-        display: inline-flex !important;
-    }
+  .kcnav__burger {
+    display: inline-flex;
+    margin-left: auto;
+  }
 
-    .kc-nav__logo {
-        margin-right: 0;
-    }
+  .kcnav__bar {
+    height: 64px;
+  }
 
-    .kc-nav__inner {
-        padding: 0 18px;
-    }
-}
+  .kcnav__logo {
+    height: 30px;
+  }
 
-@media (max-width: 600px) {
-    .kc-nav__inner {
-        padding: 0 14px;
-    }
-
-    .kc-nav__overlayInner {
-        padding: 24px 18px 32px;
-    }
-}
-
-/* =========================================================
-   REDUCED MOTION
-   ========================================================= */
-@media (prefers-reduced-motion: reduce) {
-    .kc-nav__burger,
-    .kc-nav__mobileLink,
-    .kc-nav__mobileCta,
-    .kc-nav__mobileSecondary,
-    .kc-nav__cta {
-        transition: none !important;
-    }
+  .kcnav__menu {
+    top: 64px;
+  }
 }
