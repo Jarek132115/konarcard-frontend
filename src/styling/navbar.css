@@ -1,361 +1,355 @@
-/* =========================
+/* =========================================================
    KONARCARD NAVBAR
-   ========================= */
+   Fixed top bar — desktop three-column, mobile burger overlay
+   ========================================================= */
 
-.kc-navbar {
-  position: fixed;
-  top: 0;
-  left: 0;
-  z-index: 999;
-  width: 100%;
-  background: #ffffff;
-  border-bottom: 1px solid rgba(15, 23, 42, 0.06);
+:root {
+    --kc-nav-h: 64px;
 }
 
-/* Container */
-.kc-navbar__container {
-  max-width: 1140px;
-  margin: 0 auto;
-  padding: 18px 20px;
+/* ── Fixed bar ───────────────────────────────────────────── */
+.kc-nav {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1000;
+    height: var(--kc-nav-h);
+    background: #ffffff;
+    border-bottom: 1px solid rgba(15, 23, 42, 0.07);
 }
 
-/* Logo */
-.kc-navbar__logoLink {
-  display: inline-flex;
-  align-items: center;
-}
-
-.kc-navbar__logo {
-  height: 34px;
-  display: block;
-}
-
-/* =========================
-   DESKTOP
-   ========================= */
-
-.kc-navbar__desktop {
-  display: grid;
-  grid-template-columns: auto 1fr auto;
-  align-items: center;
-}
-
-.kc-navbar__centerLinks {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  display: flex;
-  justify-content: center;
-  gap: 34px;
-}
-
-.kc-navbar__centerLinks a {
-  text-decoration: none;
-  color: #0b1220;
-  font-size: 14px;
-  font-weight: 500;
-  transition: opacity 0.15s ease, transform 0.08s ease;
-}
-
-.kc-navbar__centerLinks a:hover {
-  opacity: 0.8;
-}
-
-.kc-navbar__centerLinks a:active {
-  transform: translateY(1px);
-}
-
-.kc-navbar__centerLinks a.active {
-  font-weight: 700;
-}
-
-.kc-navbar__right {
-  display: inline-flex;
-  align-items: center;
-  justify-content: flex-end;
-  gap: 18px;
-}
-
-.kc-navbar__login {
-  color: #0b1220;
-  text-decoration: none;
-  font-size: 14px;
-  font-weight: 500;
-  transition: opacity 0.15s ease, transform 0.08s ease;
-}
-
-.kc-navbar__login:hover {
-  opacity: 0.8;
-}
-
-.kc-navbar__login:active {
-  transform: translateY(1px);
-}
-
-/* CTA (desktop) — consistent sizing, not overly pill */
-.kc-navbar__cta {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  height: 40px;
-  padding: 0 16px;
-  border-radius: 12px;
-  background: var(--kc-accent-primary);
-  color: #ffffff;
-  text-decoration: none;
-  font-size: 14px;
-  font-weight: 700;
-  box-shadow: 0 10px 22px rgba(249, 115, 22, 0.18);
-  transition: filter 0.15s ease, transform 0.08s ease, box-shadow 0.15s ease;
-}
-
-.kc-navbar__cta:hover {
-  filter: brightness(0.97);
-  box-shadow: 0 12px 26px rgba(249, 115, 22, 0.22);
-}
-
-.kc-navbar__cta:active {
-  transform: translateY(1px);
-}
-
-.kc-navbar__logoutBtn {
-  appearance: none;
-  background: transparent;
-  border: none;
-  color: #0b1220;
-  font-size: 14px;
-  font-weight: 500;
-  cursor: pointer;
-  padding: 0;
-  transition: opacity 0.15s ease, transform 0.08s ease;
-}
-
-.kc-navbar__logoutBtn:hover {
-  opacity: 0.8;
-}
-
-.kc-navbar__logoutBtn:active {
-  transform: translateY(1px);
-}
-
-/* =========================
-   MOBILE BAR (logo left, burger right)
-   - always same height
-   ========================= */
-
-.kc-navbar__mobileBar {
-  display: none;
-  height: 64px;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0 20px;
-  background: #ffffff;
-  border-bottom: 1px solid rgba(15, 23, 42, 0.06);
-}
-
-.kc-navbar__mobileBar .kc-navbar__logo {
-  height: 30px;
-}
-
-/* Burger → Perfect X (no bg/border) */
-.kc-navbar__burger {
-  width: 40px;
-  height: 40px;
-  position: relative;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  background: transparent;
-  border: none;
-  padding: 0;
-  cursor: pointer;
-}
-
-.kc-navbar__burger span {
-  position: absolute;
-  width: 22px;
-  height: 2px;
-  background: #0b1220;
-  border-radius: 2px;
-  transform-origin: center;
-  transition: transform 0.22s ease, opacity 0.18s ease;
-}
-
-/* Burger lines */
-.kc-navbar__burger span:nth-child(1) {
-  transform: translateY(-6px);
-}
-
-.kc-navbar__burger span:nth-child(2) {
-  transform: translateY(0);
-}
-
-.kc-navbar__burger span:nth-child(3) {
-  transform: translateY(6px);
-}
-
-/* Open state: perfect centered X */
-.kc-navbar__burger.is-open span:nth-child(1) {
-  transform: rotate(45deg);
-}
-
-.kc-navbar__burger.is-open span:nth-child(2) {
-  opacity: 0;
-}
-
-.kc-navbar__burger.is-open span:nth-child(3) {
-  transform: rotate(-45deg);
-}
-
-/* =========================
-   MOBILE MENU (full width, below mobile bar)
-   ========================= */
-
-.kc-navbar__mobileMenu {
-  display: none;
-  position: fixed;
-  left: 0;
-  right: 0;
-  top: 64px;
-  height: calc(100vh - 64px);
-  background: #ffffff;
-  overflow: auto;
-  -webkit-overflow-scrolling: touch;
-
-  transform: translateY(-6px);
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity 0.18s ease, transform 0.18s ease;
-}
-
-.kc-navbar__mobileMenu.is-open {
-  opacity: 1;
-  transform: translateY(0);
-  pointer-events: auto;
-}
-
-.kc-navbar__mobileMenuInner {
-  max-width: 560px;
-  margin: 0 auto;
-  padding: 22px 20px 28px;
-}
-
-/* MENU label */
-.kc-navbar__menuLabel {
-  text-align: center;
-  font-size: 12px;
-  letter-spacing: 0.14em;
-  font-weight: 800;
-  color: rgba(15, 23, 42, 0.55);
-  margin-bottom: 14px;
-}
-
-/* Links group */
-.kc-navbar__menuLinks {
-  display: grid;
-  gap: 12px;
-}
-
-/* Menu buttons (same style as Login) */
-.kc-navbar__menuBtn {
-  width: 100%;
-  height: 52px;
-  border-radius: 14px;
-  border: 1px solid rgba(15, 23, 42, 0.12);
-  background: #ffffff;
-  color: #0b1220;
-
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-
-  font-size: 16px;
-  font-weight: 700;
-  text-decoration: none;
-
-  transition: transform 0.08s ease, background 0.15s ease, border-color 0.15s ease;
-}
-
-.kc-navbar__menuBtn:active {
-  transform: translateY(1px);
-}
-
-/* Active page: primary text colour bg + white text */
-.kc-navbar__menuBtn.is-active {
-  background: var(--kc-text-primary);
-  border-color: var(--kc-text-primary);
-  color: #ffffff;
-}
-
-
-/* Gap between links and login/cta */
-.kc-navbar__menuGap {
-  height: 100px;
-}
-
-/* Actions */
-.kc-navbar__menuActions {
-  display: grid;
-  gap: 12px;
-}
-
-/* CTA (menu) */
-.kc-navbar__menuCta {
-  width: 100%;
-  height: 56px;
-  border-radius: 14px;
-  background: var(--kc-accent-primary);
-  color: #ffffff;
-
-  font-weight: 800;
-  font-size: 16px;
-  text-decoration: none;
-
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-
-  box-shadow: 0 14px 28px rgba(249, 115, 22, 0.22);
-  transition: filter 0.15s ease, transform 0.08s ease;
-}
-
-.kc-navbar__menuCta:hover {
-  filter: brightness(0.98);
-}
-
-.kc-navbar__menuCta:active {
-  transform: translateY(1px);
-}
-
-/* Footer */
-.kc-navbar__menuFooter {
-  margin-top: 14px;
-  text-align: center;
-  font-size: 12px;
-  font-weight: 700;
-  color: rgba(15, 23, 42, 0.55);
-}
-
-/* =========================
-   RESPONSIVE
-   ========================= */
-
-@media (max-width: 1000px) {
-  .kc-navbar__container {
-    padding: 0;
-    /* mobile bar handles padding */
-  }
-
-  .kc-navbar__desktop {
-    display: none;
-  }
-
-  .kc-navbar__mobileBar {
+.kc-nav__inner {
+    max-width: 1160px;
+    margin: 0 auto;
+    padding: 0 24px;
+    height: 100%;
     display: flex;
-  }
+    align-items: center;
+}
 
-  .kc-navbar__mobileMenu {
+/* ── Logo ────────────────────────────────────────────────── */
+.kc-nav__logo {
+    display: inline-flex;
+    align-items: center;
+    flex-shrink: 0;
+    margin-right: 40px;
+    text-decoration: none;
+}
+
+.kc-nav__logo img {
+    height: 32px;
     display: block;
-  }
+}
+
+/* ── Desktop links ───────────────────────────────────────── */
+.kc-nav__links {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    gap: 32px;
+    flex: 1;
+}
+
+.kc-nav__link {
+    text-decoration: none;
+    font-family: "Inter", sans-serif;
+    font-size: 14px;
+    font-weight: 500;
+    color: rgba(15, 23, 42, 0.72);
+    transition: color 0.15s ease;
+    white-space: nowrap;
+}
+
+.kc-nav__link:hover {
+    color: #0b1220;
+}
+
+.kc-nav__link.is-active {
+    color: #0b1220;
+    font-weight: 700;
+}
+
+/* ── Desktop right actions ───────────────────────────────── */
+.kc-nav__actions {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    flex-shrink: 0;
+    margin-left: auto;
+}
+
+.kc-nav__textLink {
+    font-family: "Inter", sans-serif;
+    font-size: 14px;
+    font-weight: 500;
+    color: rgba(15, 23, 42, 0.72);
+    text-decoration: none;
+    transition: color 0.15s ease;
+    white-space: nowrap;
+}
+
+.kc-nav__textLink:hover {
+    color: #0b1220;
+}
+
+.kc-nav__textLink--btn {
+    appearance: none;
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    font-family: inherit;
+    font-size: inherit;
+    font-weight: inherit;
+}
+
+.kc-nav__cta {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    height: 38px;
+    padding: 0 18px;
+    border-radius: 10px;
+    background: var(--kc-accent-primary, #f97316);
+    color: #ffffff;
+    text-decoration: none;
+    font-family: "Inter", sans-serif;
+    font-size: 14px;
+    font-weight: 700;
+    white-space: nowrap;
+    box-shadow: 0 8px 20px rgba(249, 115, 22, 0.20);
+    transition: filter 0.15s ease, box-shadow 0.15s ease, transform 0.08s ease;
+}
+
+.kc-nav__cta:hover {
+    filter: brightness(0.96);
+    box-shadow: 0 10px 24px rgba(249, 115, 22, 0.26);
+}
+
+.kc-nav__cta:active {
+    transform: translateY(1px);
+}
+
+/* ── Burger button — hidden on desktop ───────────────────── */
+.kc-nav__burger {
+    display: none;          /* overridden at ≤1000px */
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    flex-shrink: 0;
+    margin-left: auto;
+    border-radius: 10px;
+    transition: background 0.15s ease;
+    -webkit-tap-highlight-color: transparent;
+    position: relative;
+    z-index: 1001;
+}
+
+.kc-nav__burger:hover {
+    background: rgba(15, 23, 42, 0.04);
+}
+
+/* ── Mobile overlay ──────────────────────────────────────── */
+.kc-nav__overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 999;
+    background: #ffffff;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    padding-top: var(--kc-nav-h);
+}
+
+.kc-nav__overlayInner {
+    max-width: 480px;
+    margin: 0 auto;
+    padding: 32px 24px 40px;
+    display: flex;
+    flex-direction: column;
+    min-height: calc(100vh - var(--kc-nav-h));
+    min-height: calc(100dvh - var(--kc-nav-h));
+}
+
+/* ── Mobile nav links ────────────────────────────────────── */
+.kc-nav__mobileLinks {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.kc-nav__mobileLink {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    height: 52px;
+    padding: 0 16px;
+    border-radius: 14px;
+    border: none;
+    background: transparent;
+    color: #0b1220;
+    font-family: "Inter", sans-serif;
+    font-size: 16px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: background 0.15s ease;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.kc-nav__mobileLink:hover {
+    background: rgba(15, 23, 42, 0.04);
+}
+
+.kc-nav__mobileLink:active {
+    background: rgba(15, 23, 42, 0.06);
+}
+
+.kc-nav__mobileLink.is-active {
+    background: rgba(15, 23, 42, 0.05);
+    color: var(--kc-accent-primary, #f97316);
+    font-weight: 700;
+}
+
+/* button-reset variant */
+.kc-nav__mobileLink--btn {
+    appearance: none;
+    cursor: pointer;
+    font-family: inherit;
+    font-size: inherit;
+    font-weight: inherit;
+}
+
+/* ── Divider ─────────────────────────────────────────────── */
+.kc-nav__mobileDivider {
+    height: 1px;
+    background: rgba(15, 23, 42, 0.07);
+    margin: 16px 0;
+}
+
+/* ── Mobile auth actions ─────────────────────────────────── */
+.kc-nav__mobileActions {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.kc-nav__mobileCta {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 52px;
+    border-radius: 14px;
+    border: none;
+    background: var(--kc-accent-primary, #f97316);
+    color: #ffffff;
+    font-family: "Inter", sans-serif;
+    font-size: 16px;
+    font-weight: 700;
+    text-decoration: none;
+    box-shadow: 0 8px 24px rgba(249, 115, 22, 0.20);
+    transition: filter 0.15s ease, transform 0.08s ease;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.kc-nav__mobileCta:hover {
+    filter: brightness(0.97);
+}
+
+.kc-nav__mobileCta:active {
+    transform: translateY(1px);
+}
+
+.kc-nav__mobileSecondary {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 52px;
+    border-radius: 14px;
+    border: 1px solid rgba(15, 23, 42, 0.12);
+    background: #ffffff;
+    color: #0b1220;
+    font-family: "Inter", sans-serif;
+    font-size: 16px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: background 0.15s ease, border-color 0.15s ease;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.kc-nav__mobileSecondary:hover {
+    background: rgba(15, 23, 42, 0.03);
+    border-color: rgba(15, 23, 42, 0.18);
+}
+
+.kc-nav__mobileSecondary--btn {
+    appearance: none;
+    cursor: pointer;
+    font-family: inherit;
+    font-size: inherit;
+    font-weight: inherit;
+}
+
+/* ── Footer ──────────────────────────────────────────────── */
+.kc-nav__mobileFooter {
+    margin-top: auto;
+    padding-top: 32px;
+    text-align: center;
+    font-family: "Inter", sans-serif;
+    font-size: 12px;
+    font-weight: 500;
+    color: rgba(15, 23, 42, 0.32);
+}
+
+/* =========================================================
+   RESPONSIVE — ≤1000px: burger replaces desktop nav
+   ========================================================= */
+@media (max-width: 1000px) {
+    .kc-nav__links,
+    .kc-nav__actions {
+        display: none !important;
+    }
+
+    .kc-nav__burger {
+        display: inline-flex !important;
+    }
+
+    .kc-nav__logo {
+        margin-right: 0;
+    }
+
+    .kc-nav__inner {
+        padding: 0 18px;
+    }
+}
+
+@media (max-width: 600px) {
+    .kc-nav__inner {
+        padding: 0 14px;
+    }
+
+    .kc-nav__overlayInner {
+        padding: 24px 18px 32px;
+    }
+}
+
+/* =========================================================
+   REDUCED MOTION
+   ========================================================= */
+@media (prefers-reduced-motion: reduce) {
+    .kc-nav__burger,
+    .kc-nav__mobileLink,
+    .kc-nav__mobileCta,
+    .kc-nav__mobileSecondary,
+    .kc-nav__cta {
+        transition: none !important;
+    }
 }

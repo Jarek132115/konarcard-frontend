@@ -9,7 +9,7 @@ import LogoIcon from '../../assets/icons/Logo-Icon.svg';
 
 import { AuthContext } from '../../components/AuthContext';
 import { useFetchBusinessCard } from '../../hooks/useFetchBusinessCard';
-import { toast } from "react-hot-toast";
+import { useKonarToast } from "../../hooks/useKonarToast";
 import api from '../../services/api';
 import { loadStripe } from '@stripe/stripe-js';
 
@@ -46,6 +46,7 @@ async function getStripePublishableKey() {
 }
 
 export default function NFCCards() {
+  const toast = useKonarToast();
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 1000);
   const [isSmallMobile, setIsSmallMobile] = useState(window.innerWidth <= 600);
@@ -150,7 +151,7 @@ export default function NFCCards() {
 
   const handleShareCard = () => {
     if (!authUser?.isVerified) {
-      toast.error('Please verify your email to share your card.');
+      toast.error('Verify your email first to share your card.');
       return;
     }
     setShowShareModal(true);

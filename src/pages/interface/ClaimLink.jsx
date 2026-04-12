@@ -1,11 +1,21 @@
 // src/pages/auth/ClaimLink.jsx
 import React, { useEffect, useMemo, useState, useContext } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { toast } from "react-hot-toast";
+import { useKonarToast } from "../../hooks/useKonarToast";
 import api from "../../services/api";
 import { AuthContext } from "../../components/AuthContext";
 import Navbar from "../../components/Navbar";
 import "../../styling/login.css";
+
+/* ── Icons ──────────────────────────────────────────────── */
+function BackArrow() {
+    return (
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+            <path d="M9 2.5L4.5 7 9 11.5" stroke="currentColor" strokeWidth="1.7"
+                strokeLinecap="round" strokeLinejoin="round" />
+        </svg>
+    );
+}
 
 const PENDING_CLAIM_KEY = "pendingClaimUsername";
 const OAUTH_SOURCE_KEY = "oauthSource";
@@ -43,6 +53,7 @@ function clearLocalAuth() {
 }
 
 export default function ClaimLink() {
+    const toast    = useKonarToast();
     const navigate = useNavigate();
     const { user, fetchUser } = useContext(AuthContext);
 
@@ -170,89 +181,104 @@ export default function ClaimLink() {
                 <div className="kc-auth-topActions">
                     <button
                         type="button"
-                        className="kc-auth-closeBtn"
+                        className="kc-auth-backBtn"
                         onClick={() => navigate(hasClaimedUsername ? "/profiles" : "/")}
-                        aria-label="Close"
+                        aria-label={hasClaimedUsername ? "Back to profiles" : "Back to home"}
                     >
-                        <span aria-hidden="true">×</span>
+                        <BackArrow />
+                        {hasClaimedUsername ? "Back to profiles" : "Back to home"}
                     </button>
                 </div>
 
                 <main className="kc-auth-main">
                     <div className="kc-auth-inner">
-                        {!hasClaimedUsername ? (
-                            <>
-                                <h1 className="kc-title">Claim your link</h1>
-                                <p className="kc-subtitle">
-                                    This is your main KonarCard link. You’ll share this with customers.
-                                </p>
-
-                                <form onSubmit={submitClaimUsername} className="kc-form kc-form-claim">
-                                    <div className="kc-field">
-                                        <label className="kc-label">Your link</label>
-                                        <div className="kc-claim">
-                                            <div className="kc-claim-prefix">www.konarcard.com/u/</div>
-                                            <input
-                                                className="kc-input kc-claim-input"
-                                                value={username}
-                                                onChange={(e) => setUsername(e.target.value)}
-                                                placeholder="yourbusinessname"
-                                                required
-                                            />
-                                        </div>
-                                        <p className="kc-microcopy">Free to claim. No payment needed.</p>
-                                    </div>
-
-                                    <button className="kc-btn kc-btn-primary kc-btn-center" disabled={loading}>
-                                        {loading ? "Claiming…" : "Claim link"}
-                                    </button>
-
-                                    <p className="kc-bottom-line">
-                                        Already have an account?{" "}
-                                        <Link className="kc-link" to="/login">
-                                            Sign in
-                                        </Link>
+                        <div className="kc-auth-panel">
+                            {!hasClaimedUsername ? (
+                                <>
+                                    <h1 className="h2 kc-auth-title">
+                                        Claim your <span className="kc-auth-accent">link</span>
+                                    </h1>
+                                    <p className="kc-subtitle">
+                                        This is your main KonarCard link. You’ll share this with customers.
                                     </p>
-                                </form>
-                            </>
-                        ) : (
-                            <>
-                                <h1 className="kc-title">Create a profile link</h1>
-                                <p className="kc-subtitle">
-                                    Your main link is <strong>{`konarcard.com/u/${currentUsername}`}</strong>
-                                </p>
 
-                                <form onSubmit={submitCreateProfile} className="kc-form kc-form-claim">
-                                    <div className="kc-field">
-                                        <label className="kc-label">New profile link</label>
-                                        <div className="kc-claim">
-                                            <div className="kc-claim-prefix">{`/u/${currentUsername}/`}</div>
-                                            <input
-                                                className="kc-input kc-claim-input"
-                                                value={profileSlug}
-                                                onChange={(e) => setProfileSlug(e.target.value)}
-                                                placeholder="kitchen-fitouts"
-                                                required
-                                            />
+                                    <form onSubmit={submitClaimUsername} className="kc-form">
+                                        <div className="kc-field">
+                                            <label className="kc-label">Your link</label>
+                                            <div className="kc-claim">
+                                                <div className="kc-claim-prefix">konarcard.com/u/</div>
+                                                <input
+                                                    className="kc-input kc-claim-input"
+                                                    value={username}
+                                                    onChange={(e) => setUsername(e.target.value)}
+                                                    placeholder="yourbusinessname"
+                                                    autoFocus
+                                                    required
+                                                />
+                                            </div>
+                                            <p className="kc-microcopy">Free to claim. No payment needed.</p>
                                         </div>
-                                        <p className="kc-microcopy">
-                                            Example: <strong>{`/u/${currentUsername}/${cleanedProfileSlug || "kitchen-fitouts"}`}</strong>
+
+                                        <div className="kc-actionsCenter">
+                                            <button className="kx-btn kx-btn--black kc-authBtn" disabled={loading} aria-busy={loading}>
+                                                {loading ? "Claiming…" : "Claim link"}
+                                            </button>
+                                        </div>
+
+                                        <p className="kc-bottom-line">
+                                            Already have an account?{" "}
+                                            <Link className="kc-link" to="/login">
+                                                Sign in
+                                            </Link>
                                         </p>
-                                    </div>
-
-                                    <button className="kc-btn kc-btn-primary kc-btn-center" disabled={loading}>
-                                        {loading ? "Creating…" : "Create profile link"}
-                                    </button>
-
-                                    <p className="kc-bottom-line">
-                                        Want to manage profiles?{" "}
-                                        <Link className="kc-link" to="/profiles">
-                                            Go to Profiles
-                                        </Link>
+                                    </form>
+                                </>
+                            ) : (
+                                <>
+                                    <h1 className="h2 kc-auth-title">
+                                        Create a <span className="kc-auth-accent">profile link</span>
+                                    </h1>
+                                    <p className="kc-subtitle">
+                                        Your main link is{" "}
+                                        <strong>{`konarcard.com/u/${currentUsername}`}</strong>
                                     </p>
-                                </form>
-                            </>
-                        )}
+
+                                    <form onSubmit={submitCreateProfile} className="kc-form">
+                                        <div className="kc-field">
+                                            <label className="kc-label">New profile link</label>
+                                            <div className="kc-claim">
+                                                <div className="kc-claim-prefix">{`/u/${currentUsername}/`}</div>
+                                                <input
+                                                    className="kc-input kc-claim-input"
+                                                    value={profileSlug}
+                                                    onChange={(e) => setProfileSlug(e.target.value)}
+                                                    placeholder="kitchen-fitouts"
+                                                    autoFocus
+                                                    required
+                                                />
+                                            </div>
+                                            <p className="kc-microcopy">
+                                                Example:{" "}
+                                                <strong>{`/u/${currentUsername}/${cleanedProfileSlug || "kitchen-fitouts"}`}</strong>
+                                            </p>
+                                        </div>
+
+                                        <div className="kc-actionsCenter">
+                                            <button className="kx-btn kx-btn--black kc-authBtn" disabled={loading} aria-busy={loading}>
+                                                {loading ? "Creating…" : "Create profile link"}
+                                            </button>
+                                        </div>
+
+                                        <p className="kc-bottom-line">
+                                            Want to manage profiles?{" "}
+                                            <Link className="kc-link" to="/profiles">
+                                                Go to Profiles
+                                            </Link>
+                                        </p>
+                                    </form>
+                                </>
+                            )}
+                        </div>
                     </div>
                 </main>
             </div>

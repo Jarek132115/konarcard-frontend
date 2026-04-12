@@ -4,10 +4,10 @@ import { motion } from "motion/react";
 
 import "../../styling/home/share.css";
 
-import ShareFastest  from "../../assets/images/ShareFastest.jpg";
-import SharePhone    from "../../assets/images/SharePhone.jpg";
+import ShareFastest from "../../assets/images/ShareFastest.jpg";
+import SharePhone from "../../assets/images/SharePhone.jpg";
 import ShareFollowUp from "../../assets/images/ShareFollowUp.jpg";
-import ShareVisible  from "../../assets/images/ShareVisible.jpg";
+import ShareVisible from "../../assets/images/ShareVisible.jpg";
 
 /* ── Animation presets ─────────────────────────────────────── */
 const EASE = [0.22, 1, 0.36, 1];

@@ -1,6 +1,6 @@
 // src/pages/admin/AdminUsers.jsx
 import React, { useEffect, useMemo, useState } from "react";
-import { toast } from "react-hot-toast";
+import { useKonarToast } from "../../hooks/useKonarToast";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import api from "../../services/api";
 import AdminLayout from "./AdminLayout";
@@ -111,6 +111,7 @@ function InfoRow({ label, value, full = false, mono = false }) {
 }
 
 export default function AdminUsers() {
+    const toast    = useKonarToast();
     const navigate = useNavigate();
     const [searchParams, setSearchParams] = useSearchParams();
 

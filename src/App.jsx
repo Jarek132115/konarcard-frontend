@@ -1,7 +1,6 @@
 // src/App.jsx
 import { Routes, Route, useLocation, Navigate } from "react-router-dom";
 import { useContext } from "react";
-import { Toaster } from "react-hot-toast";
 
 import { AuthContext } from "./components/AuthContext";
 import ProtectedRoute from "./components/ProtectedRoute";
@@ -121,7 +120,6 @@ export default function App() {
 
   return (
     <KonarToastProvider>
-      <Toaster position="bottom-right" toastOptions={{ duration: 2000 }} />
       <ScrollToTop />
       <TidioWrapper />
 

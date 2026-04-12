@@ -18,7 +18,7 @@
 .kc-homeHero__inner {
     max-width: 1100px;
     margin: 0 auto;
-    padding: 96px 20px 48px;
+    padding: 152px 20px 48px;
     position: relative;
     z-index: 1;
     display: flex;
@@ -84,17 +84,13 @@
 }
 
 /* =========================
-   Carousel — contained, clipped
+   Carousel — full width, edge to edge
    ========================= */
 .kc-homeHero__carouselOuter {
-    max-width: 1100px;
-    margin: 0 auto;
-    padding: 0 20px;
+    width: 100%;
     position: relative;
     z-index: 1;
-    /* clip overflow so cards don't bleed outside the section width */
     overflow: hidden;
-    border-radius: 4px;
 }
 
 .kc-homeHero__carousel {
@@ -146,7 +142,7 @@
    ========================= */
 @media (max-width: 860px) {
     .kc-homeHero__inner {
-        padding-top: 80px;
+        padding-top: 124px;
         padding-bottom: 40px;
     }
 
@@ -166,15 +162,11 @@
     }
 
     .kc-homeHero__inner {
-        padding: 72px 16px 36px;
+        padding: 112px 16px 36px;
     }
 
     .kc-homeHero__sub {
         max-width: 100%;
-    }
-
-    .kc-homeHero__carouselOuter {
-        padding: 0 16px;
     }
 
     .kc-homeHero__phone {

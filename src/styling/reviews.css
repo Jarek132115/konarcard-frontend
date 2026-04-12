@@ -25,7 +25,7 @@
 /* Grid bg wrapper */
 .krv-heroWrap {
     position: relative;
-    padding-top: 20px;
+    padding-top: calc(var(--kc-nav-h, 64px) + 48px);
 }
 
 /* Grid lines — same circular radial fade pattern */

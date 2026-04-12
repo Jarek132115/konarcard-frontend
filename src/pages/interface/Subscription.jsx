@@ -1,6 +1,6 @@
 import React, { useContext, useState, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
-import { toast } from "react-hot-toast";
+import { useKonarToast } from "../../hooks/useKonarToast";
 import Sidebar from "../../components/Dashboard/Sidebar";
 import PageHeader from "../../components/Dashboard/PageHeader";
 import ShareProfile from '../../components/ShareProfile';
@@ -18,6 +18,7 @@ const stripePromise = loadStripe('pk_live_51RPmTAP7pC1ilLXASjenuib1XpQAiuBOxcUuY
 
 
 export default function Subscription() {
+  const toast = useKonarToast();
   const { user: authUser, loading: authLoading } = useContext(AuthContext);
   const navigate = useNavigate();
   const location = useLocation();
@@ -48,7 +49,7 @@ export default function Subscription() {
         const res = await api.get('/subscription-status');
         setIsSubscribed(res.data.active);
       } catch (err) {
-        toast.error('Failed to load subscription status.');
+        toast.error("Couldn't load your subscription status. Please refresh.");
       } finally {
         setLoadingSubscriptionStatus(false);
       }
@@ -107,7 +108,7 @@ export default function Subscription() {
     }
 
     if (isSubscribed) {
-      toast.info('You are already subscribed to the Power Profile.');
+      toast.info("You're already on the Plus plan.");
       return;
     }
 
@@ -119,7 +120,7 @@ export default function Subscription() {
       if (res.data.url) {
         window.location.href = res.data.url;
       } else {
-        toast.error('Failed to get Stripe checkout URL.');
+        toast.error("Couldn't start checkout. Please try again.");
       }
     } catch (err) {
       toast.error(err.response?.data?.error || 'Subscription initiation failed. Please try again.');
@@ -158,14 +159,14 @@ export default function Subscription() {
   const initiateCancelConfirmation = () => {
     setShowCancelConfirm(true);
     setCancelCooldown(3);
-    toast('Confirm cancellation in 3 seconds...', { duration: 3000 });
+    toast.info("Ready to cancel? Confirm in the box below.");
   };
 
   const confirmCancel = async () => {
     setIsCancelling(true);
     try {
       await api.post('/cancel-subscription', {});
-      toast.success('Subscription will be cancelled at the end of the current billing period.');
+      toast.success("Cancelled — your plan stays active until the end of this billing period.");
       setIsSubscribed(false);
       setShowCancelConfirm(false);
       setCancelCooldown(0);
@@ -185,7 +186,7 @@ export default function Subscription() {
 
   const handleShareCard = () => {
     if (!authUser?.isVerified) {
-      toast.error("Please verify your email to share your card.");
+      toast.error("Verify your email first to share your card.");
       return;
     }
     setShowShareModal(true);

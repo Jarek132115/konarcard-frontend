@@ -1,33 +1,34 @@
-import { toast } from "react-hot-toast";
+/**
+ * Utility functions for sharing a profile.
+ * Toast notifications are handled by the caller — pass a toast object
+ * (from useKonarToast) as the first argument where needed.
+ */
 
 function safeOpen(url) {
     if (!url) return;
     window.open(url, "_blank", "noopener,noreferrer");
 }
 
-export async function copyTextToClipboard(text, successMessage = "Copied!") {
+export async function copyTextToClipboard(text, toast, successMessage = "Copied!") {
     if (!text) return false;
 
     try {
         if (navigator.clipboard?.writeText) {
             await navigator.clipboard.writeText(text);
-            toast.success(successMessage);
-            return true;
+        } else {
+            const textArea = document.createElement("textarea");
+            textArea.value = text;
+            document.body.appendChild(textArea);
+            textArea.focus();
+            textArea.select();
+            document.execCommand("copy");
+            document.body.removeChild(textArea);
         }
-
-        const textArea = document.createElement("textarea");
-        textArea.value = text;
-        document.body.appendChild(textArea);
-        textArea.focus();
-        textArea.select();
-        document.execCommand("copy");
-        document.body.removeChild(textArea);
-
-        toast.success(successMessage);
+        toast?.success(successMessage);
         return true;
     } catch (error) {
         console.error(error);
-        toast.error("Failed to copy. Please try again.");
+        toast?.error("Couldn't copy — please try selecting and copying manually.");
         return false;
     }
 }
@@ -37,9 +38,9 @@ export function openFacebookShare(url) {
     safeOpen(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`);
 }
 
-export async function openInstagramShare(url) {
+export async function openInstagramShare(url, toast) {
     if (!url) return;
-    await copyTextToClipboard(url, "Profile link copied for Instagram sharing.");
+    await copyTextToClipboard(url, toast, "Link copied — paste it into Instagram.");
     safeOpen("https://www.instagram.com/");
 }
 
@@ -62,9 +63,9 @@ export function openTextShare(url) {
     window.location.href = `sms:?&body=${encodeURIComponent(url)}`;
 }
 
-export function downloadQrImage(dataUrl, filename = "konarcard-qrcode.png") {
+export function downloadQrImage(dataUrl, toast, filename = "konarcard-qrcode.png") {
     if (!dataUrl) {
-        toast.error("QR code is not available yet.");
+        toast?.error("QR code isn't ready yet — please wait a moment.");
         return;
     }
 
@@ -76,6 +77,6 @@ export function downloadQrImage(dataUrl, filename = "konarcard-qrcode.png") {
     document.body.removeChild(link);
 }
 
-export function showWalletComingSoon(walletName = "Wallet") {
-    toast(`${walletName} is coming soon.`);
+export function showWalletComingSoon(walletName = "Wallet", toast) {
+    toast?.info(`${walletName} is coming soon — stay tuned.`);
 }

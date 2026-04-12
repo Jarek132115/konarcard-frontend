@@ -5,7 +5,7 @@ import Sidebar from "../../components/Dashboard/Sidebar";
 import PageHeader from "../../components/Dashboard/PageHeader";
 import ShareProfile from '../../components/ShareProfile';
 import { AuthContext } from '../../components/AuthContext';
-import { toast } from "react-hot-toast";
+import { useKonarToast } from "../../hooks/useKonarToast";
 import api from '../../services/api';
 import LogoIcon from '../../assets/icons/Logo-Icon.svg';
 import { useFetchBusinessCard } from '../../hooks/useFetchBusinessCard';
@@ -27,6 +27,7 @@ function LockIcon({ className = 'lock-icon' }) {
 }
 
 export default function Profile() {
+  const toast = useKonarToast();
   const { user: authUser, fetchUser, setUser } = useContext(AuthContext);
 
   const [updatedName, setUpdatedName] = useState('');
@@ -81,7 +82,7 @@ export default function Profile() {
           localStorage.setItem('authUser', JSON.stringify(fresh));
         } catch { }
         fetchUser?.();
-        toast.success('Profile updated successfully!');
+        toast.success('Profile updated.');
       } else {
         toast.error(res?.data?.error || 'Something went wrong');
       }
@@ -99,7 +100,7 @@ export default function Profile() {
       try {
         const res = await api.delete('/profile');
         if (res?.data?.success) {
-          toast.success('Your account has been deleted');
+          toast.success('Account deleted — goodbye!');
           try {
             localStorage.removeItem('token');
             localStorage.removeItem('authUser');
@@ -126,7 +127,7 @@ export default function Profile() {
     try {
       const res = await api.post('/forgot-password', { email: authUser.email });
       if (res.data.error) toast.error(res.data.error);
-      else toast.success('Password reset link sent to your email!');
+      else toast.success('Reset link sent — check your inbox.');
     } catch (err) {
       toast.error(err.message || 'Failed to send reset link');
     }
@@ -134,7 +135,7 @@ export default function Profile() {
 
   const handleShareCard = () => {
     if (!authUser?.isVerified) {
-      toast.error('Please verify your email to share your card.');
+      toast.error('Verify your email first to share your card.');
       return;
     }
     setShowShareModal(true);

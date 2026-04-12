@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { Link } from 'react-router-dom';
-import { toast } from "react-hot-toast";
+import { useKonarToast } from "../../hooks/useKonarToast";
 
 import Sidebar from "../../components/Dashboard/Sidebar";
 import PageHeader from "../../components/Dashboard/PageHeader";
@@ -11,6 +11,7 @@ import { AuthContext } from '../../components/AuthContext';
 import { useFetchBusinessCard } from '../../hooks/useFetchBusinessCard';
 
 export default function ContactSupport() {
+    const toast = useKonarToast();
     const [formData, setFormData] = useState({
         name: '',
         email: '',
@@ -83,24 +84,24 @@ export default function ContactSupport() {
         e.preventDefault();
         const { name, email, reason, message } = formData;
         if (!name || !email || !reason || !message) {
-            toast.error('Please fill in all required fields.');
+            toast.error('Please fill in all fields before submitting.');
             return;
         }
         try {
             const res = await api.post('/contact', formData);
             if (res.data?.success) {
-                toast.success('Message sent!');
+                toast.success("Message sent — we'll get back to you shortly.");
                 setFormData({ name: '', email: '', reason: '', message: '', agree: true });
             } else {
-                toast.error(res.data?.error || 'Something went wrong');
+                toast.error(res.data?.error || 'Something went wrong. Please try again.');
             }
         } catch (err) {
-            toast.error(err.response?.data?.error || 'Failed to send message.');
+            toast.error(err.response?.data?.error || 'Failed to send your message. Please try again.');
         }
     };
 
     const handleShareCard = () => {
-        if (!authUser?.isVerified) return toast.error('Please verify your email to share your card.');
+        if (!authUser?.isVerified) return toast.error('Verify your email first to share your card.');
         setShowShareModal(true);
     };
     const closeShare = () => setShowShareModal(false);

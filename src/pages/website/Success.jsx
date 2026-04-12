@@ -7,7 +7,7 @@ import PageHeader from "../../components/Dashboard/PageHeader";
 import LogoIcon from "../../assets/icons/Logo-Icon.svg";
 import api from "../../services/api";
 import { AuthContext } from "../../components/AuthContext";
-import { toast } from "react-hot-toast";
+import { useKonarToast } from "../../hooks/useKonarToast";
 
 function formatAmount(amount, currency = "gbp") {
   if (typeof amount !== "number") return "—";
@@ -76,6 +76,7 @@ function ProgressBar({ status }) {
 }
 
 export default function SuccessCard() {
+  const toast = useKonarToast();
   const location = useLocation();
   const params = new URLSearchParams(location.search);
   const orderId = params.get("id"); // NEW: allow opening by id
@@ -210,10 +211,7 @@ export default function SuccessCard() {
     if (trackingUrl) {
       window.open(trackingUrl, "_blank", "noopener,noreferrer");
     } else {
-      toast(
-        "Your card is still being processed. We’ll email you when tracking is available.",
-        { icon: "⏳" }
-      );
+      toast.info("Tracking will be available once your card is dispatched — we’ll email you.");
     }
   }
 

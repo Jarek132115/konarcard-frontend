@@ -1,144 +1,119 @@
 /* =========================================================
-   AUTH (Login/Register/Verify/Reset) — SHARED
-   - White background
-   - Oval grid background ONLY around auth content (no straight edges)
-   - Labels Inter
-   - CTAs use kx-btn
-   - All primary buttons + socials same width and centered
-   - Divider width matches buttons
-   - Remember checkbox: checked bg = primary text color, tick white
+   AUTH — Login / Register / Reset / ClaimLink
+   Clean, narrow card — consistent across all auth pages
    ========================================================= */
 
 .kc-auth-page {
     min-height: 100dvh;
     background: #ffffff;
     color: var(--kc-text-primary);
-    position: relative;
-    overflow: hidden;
 }
 
-/* Top right actions (close button) */
+/* =========================
+   Top nav area — Back button, left-aligned
+   ========================= */
 .kc-auth-topActions {
     position: relative;
     z-index: 3;
     max-width: 1140px;
     margin: 0 auto;
-    padding: 96px 20px 0;
+    padding: 96px 24px 0;
     display: flex;
-    justify-content: flex-end;
+    justify-content: flex-start;
 }
 
-.kc-auth-closeBtn {
-    width: 56px;
-    height: 56px;
+.kc-auth-backBtn {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    padding: 9px 16px 9px 13px;
     border-radius: 999px;
     border: 1px solid rgba(15, 23, 42, 0.12);
-    background: rgba(255, 255, 255, 0.92);
+    background: #ffffff;
     cursor: pointer;
-    display: grid;
-    place-items: center;
-    box-shadow: 0 10px 26px rgba(16, 24, 40, 0.08);
-    transition: transform 0.08s ease, box-shadow 0.15s ease, border-color 0.15s ease;
+    font-family: "Inter", sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    color: rgba(15, 23, 42, 0.72);
+    transition: background 0.15s ease, border-color 0.15s ease, transform 0.1s ease;
+    box-shadow: 0 1px 4px rgba(15, 23, 42, 0.06);
 }
 
-.kc-auth-closeIcon {
-    display: inline-block;
-    line-height: 1;
-    font-size: 28px;
-    color: var(--kc-text-primary);
+.kc-auth-backBtn:hover {
+    background: #f9fafb;
+    border-color: rgba(15, 23, 42, 0.20);
+    transform: translateX(-1px);
 }
 
-.kc-auth-closeBtn:hover {
-    transform: translateY(-1px);
-    border-color: rgba(15, 23, 42, 0.18);
-    box-shadow: 0 16px 34px rgba(16, 24, 40, 0.1);
+.kc-auth-backBtn:active {
+    transform: translateX(0);
 }
 
-.kc-auth-closeBtn:active {
-    transform: translateY(0);
+.kc-auth-backBtn svg {
+    flex-shrink: 0;
 }
 
-/* Main */
+/* =========================
+   Main layout
+   ========================= */
 .kc-auth-main {
-    position: relative;
-    z-index: 2;
-    min-height: calc(100dvh - 96px);
-    display: grid;
-    place-items: start center;
-    padding: 18px 16px 72px;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    padding: 28px 16px 72px;
+    min-height: calc(100dvh - 136px);
 }
 
 .kc-auth-inner {
     width: 100%;
-    max-width: 620px;
-    text-align: center;
-}
-
-/* =========================================================
-   Grid wrap around auth content (oval fade)
-   ========================================================= */
-.kc-auth-wrap {
+    max-width: 440px;
     position: relative;
-    width: 100%;
-    padding: 18px 18px 10px;
-    border-radius: 18px;
-    z-index: 1;
 }
 
-.kc-auth-wrap::before {
+/* Grid texture — tight halo behind the form only */
+.kc-auth-inner::before {
     content: "";
     position: absolute;
-    inset: -70px -96px -84px;
+    inset: -120px -160px;
     pointer-events: none;
     z-index: 0;
-
     background-image:
-        linear-gradient(to right, rgba(12, 24, 48, 0.055) 1px, transparent 1px),
-        linear-gradient(to bottom, rgba(12, 24, 48, 0.055) 1px, transparent 1px);
-    background-size: 64px 64px;
-
-    -webkit-mask-image: radial-gradient(ellipse 96% 82% at 58% 55%,
-            rgba(0, 0, 0, 1) 0%,
-            rgba(0, 0, 0, 1) 44%,
-            rgba(0, 0, 0, 0) 86%);
-    mask-image: radial-gradient(ellipse 96% 82% at 58% 55%,
-            rgba(0, 0, 0, 1) 0%,
-            rgba(0, 0, 0, 1) 44%,
-            rgba(0, 0, 0, 0) 86%);
+        linear-gradient(rgba(12, 24, 48, 0.06) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(12, 24, 48, 0.06) 1px, transparent 1px);
+    background-size: 44px 44px;
+    -webkit-mask-image: radial-gradient(
+        ellipse 75% 70% at 50% 38%,
+        black 0%,
+        black 20%,
+        transparent 68%
+    );
+    mask-image: radial-gradient(
+        ellipse 75% 70% at 50% 38%,
+        black 0%,
+        black 20%,
+        transparent 68%
+    );
 }
 
-.kc-auth-wrap::after {
-    content: "";
-    position: absolute;
-    inset: -70px -96px -84px;
-    pointer-events: none;
-    z-index: 0;
-
-    background: radial-gradient(ellipse 96% 82% at 58% 55%,
-            rgba(255, 255, 255, 0) 0%,
-            rgba(255, 255, 255, 0.55) 62%,
-            rgba(255, 255, 255, 0.92) 100%);
-}
-
+/* =========================
+   Panel
+   ========================= */
 .kc-auth-panel {
-    position: relative;
-    z-index: 1;
     width: 100%;
     display: flex;
     flex-direction: column;
-    align-items: center;
-    justify-content: center;
+    align-items: stretch;
+    position: relative;
+    z-index: 1;
 }
 
-/* =========================================================
-   Titles + subtitle (match screenshots)
-   ========================================================= */
+/* =========================
+   Titles
+   ========================= */
 .kc-auth-title {
-    margin: 0 0 8px;
-    font-family: "Cal Sans", sans-serif;
-    font-weight: 500;
-    letter-spacing: -0.02em;
-    color: var(--kc-text-primary);
+    margin: 0 0 6px;
+    text-align: center;
+    text-wrap: balance;
 }
 
 .kc-auth-accent {
@@ -146,13 +121,13 @@
 }
 
 .kc-subtitle {
-    margin: 0 auto 18px;
-    max-width: 560px;
+    margin: 0 0 20px;
     font-family: "Inter", sans-serif;
     font-size: 14px;
     font-weight: 500;
-    line-height: 22px;
+    line-height: 1.55;
     color: var(--kc-text-secondary);
+    text-align: center;
 }
 
 .kc-link {
@@ -163,20 +138,22 @@
     border: none;
     padding: 0;
     cursor: pointer;
+    font-size: inherit;
+    font-family: inherit;
 }
 
 .kc-link:hover {
-    opacity: 0.92;
     text-decoration: underline;
 }
 
-/* Form */
+/* =========================
+   Form
+   ========================= */
 .kc-form {
-    margin-top: 18px;
-    text-align: left;
+    margin-top: 8px;
     display: flex;
     flex-direction: column;
-    gap: 12px;
+    gap: 14px;
     width: 100%;
 }
 
@@ -186,119 +163,100 @@
     gap: 6px;
 }
 
-/* Labels (Inter) */
 .kc-label {
     font-family: "Inter", sans-serif;
     font-size: 12px;
     font-weight: 600;
-    color: rgba(15, 23, 42, 0.65);
+    color: rgba(15, 23, 42, 0.60);
+    letter-spacing: 0.01em;
 }
 
-/* Inputs */
+/* =========================
+   Inputs
+   ========================= */
 .kc-input {
     width: 100%;
     min-height: 46px;
-    border: 1px solid rgba(15, 23, 42, 0.12);
+    border: 1px solid rgba(15, 23, 42, 0.14);
     border-radius: 12px;
-    padding: 10px 12px;
+    padding: 11px 14px;
     font-family: "Inter", sans-serif;
     font-size: 14px;
     font-weight: 500;
+    color: var(--kc-text-primary);
     outline: none;
-    background: rgba(15, 23, 42, 0.03);
+    background: #fafafa;
     transition: box-shadow 0.15s ease, border-color 0.15s ease, background 0.15s ease;
+    box-sizing: border-box;
 }
 
 .kc-input::placeholder {
-    color: rgba(15, 23, 42, 0.42);
+    color: rgba(15, 23, 42, 0.36);
 }
 
 .kc-input:focus {
-    background: rgba(15, 23, 42, 0.02);
-    border-color: rgba(15, 23, 42, 0.22);
-    box-shadow: 0 0 0 3px rgba(15, 23, 42, 0.10);
+    background: #ffffff;
+    border-color: rgba(15, 23, 42, 0.28);
+    box-shadow: 0 0 0 3px rgba(15, 23, 42, 0.07);
 }
 
-/* Claim input row */
-.kc-claim {
-    width: 100%;
+/* =========================
+   Password field with toggle
+   ========================= */
+.kc-password {
+    position: relative;
     display: flex;
     align-items: center;
-    border-radius: 14px;
-    border: 1px solid rgba(15, 23, 42, 0.12);
-    background: rgba(255, 255, 255, 0.88);
-    box-shadow: 0 10px 22px rgba(15, 23, 42, 0.06);
-    overflow: hidden;
 }
 
-.kc-claim-prefix {
-    padding: 12px 12px;
-    font-family: "Inter", sans-serif;
-    font-size: 14px;
-    font-weight: 500;
-    color: rgba(15, 23, 42, 0.70);
-    white-space: nowrap;
+.kc-password .kc-input {
+    padding-right: 56px;
 }
 
-.kc-claim-sep {
-    width: 1px;
-    align-self: stretch;
-    background: rgba(15, 23, 42, 0.12);
+.kc-password-toggle {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    padding: 4px;
+    cursor: pointer;
+    color: rgba(15, 23, 42, 0.45);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 6px;
+    transition: color 0.15s ease, background 0.15s ease;
 }
 
-.kc-claim-input {
-    border: none !important;
-    border-radius: 0 !important;
-    background: transparent !important;
-    box-shadow: none !important;
-    min-height: 48px;
-    padding: 12px 14px;
+.kc-password-toggle:hover {
+    color: rgba(15, 23, 42, 0.72);
+    background: rgba(15, 23, 42, 0.05);
 }
 
-.kc-claim-input:focus {
-    border: none !important;
-    box-shadow: none !important;
-}
-
-/* Microcopy */
-.kc-microcopy {
-    margin: 10px 0 0;
-    font-family: "Inter", sans-serif;
-    font-size: 12px;
-    font-weight: 500;
-    color: rgba(15, 23, 42, 0.58);
-    text-align: center;
-}
-
-.kc-bottom-line {
-    margin: 14px 0 0;
-    font-family: "Inter", sans-serif;
-    font-size: 13px;
-    font-weight: 500;
-    color: rgba(15, 23, 42, 0.65);
-    text-align: center;
-}
-
-/* Remember + forgot row (used in Login) */
+/* =========================
+   Remember me + Forgot row
+   ========================= */
 .kc-row {
     width: 100%;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 16px;
-    margin: 6px 0 10px;
+    gap: 12px;
+    margin: 2px 0 4px;
 }
 
 .kc-remember {
     display: inline-flex;
     align-items: center;
-    gap: 10px;
+    gap: 9px;
     font-family: "Inter", sans-serif;
     font-size: 13px;
     font-weight: 500;
     color: rgba(15, 23, 42, 0.65);
-    margin: 0;
-    line-height: 1;
+    cursor: pointer;
+    user-select: none;
 }
 
 /* Custom checkbox */
@@ -307,9 +265,10 @@
     appearance: none;
     width: 16px;
     height: 16px;
+    flex-shrink: 0;
     margin: 0;
     border-radius: 4px;
-    border: 1.5px solid rgba(15, 23, 42, 0.25);
+    border: 1.5px solid rgba(15, 23, 42, 0.22);
     background: #ffffff;
     display: grid;
     place-items: center;
@@ -324,13 +283,13 @@
     border-left: 2px solid transparent;
     border-bottom: 2px solid transparent;
     transform: rotate(-45deg);
-    margin-top: -1px;
+    margin-top: -2px;
 }
 
 .kc-remember input[type="checkbox"]:checked {
     background: var(--kc-text-primary);
     border-color: var(--kc-text-primary);
-    box-shadow: 0 0 0 3px rgba(15, 23, 42, 0.12);
+    box-shadow: 0 0 0 3px rgba(15, 23, 42, 0.10);
 }
 
 .kc-remember input[type="checkbox"]:checked::after {
@@ -338,7 +297,9 @@
     border-bottom-color: #ffffff;
 }
 
-/* Text links */
+/* =========================
+   Text links (Forgot password, Back to login)
+   ========================= */
 .kc-text-link {
     background: none;
     border: none;
@@ -347,10 +308,10 @@
     font-family: "Inter", sans-serif;
     font-size: 13px;
     font-weight: 500;
-    line-height: 1;
-    color: rgba(15, 23, 42, 0.62);
+    color: rgba(15, 23, 42, 0.55);
     cursor: pointer;
     white-space: nowrap;
+    text-decoration: none;
 }
 
 .kc-text-link:hover {
@@ -359,20 +320,14 @@
 }
 
 .kc-text-link--center {
-    display: inline-block;
-    margin: 12px auto 0;
+    display: block;
+    margin: 6px auto 0;
     text-align: center;
 }
 
-/* =========================================================
-   Centered button sizing (shared)
-   ========================================================= */
-
-/* single source of truth for auth button width */
-:root {
-    --kc-auth-btn-width: min(340px, 100%);
-}
-
+/* =========================
+   Primary & secondary buttons
+   ========================= */
 .kc-actionsCenter {
     width: 100%;
     display: flex;
@@ -380,32 +335,20 @@
 }
 
 .kc-authBtn {
-    width: 300px;
-    margin-left: auto;
-    margin-right: auto;
+    width: 100%;
     display: flex;
-    /* ensures consistent centering + same width everywhere */
     align-items: center;
     justify-content: center;
 }
 
-/* =========================================================
-   Divider matches button width (FIXED CENTERING)
-   - your screenshot shows "or" sitting left because the divider container
-     is not forced into the same centered width block.
-   ========================================================= */
-
+/* =========================
+   "or" divider
+   ========================= */
 .kc-divider {
-    /* IMPORTANT: make divider itself the centered block with the same width as buttons */
-    width: var(--kc-auth-btn-width);
-    margin: 18px auto 18px;
-    /* centers the whole divider block */
     display: flex;
     align-items: center;
-    justify-content: center;
-    /* keeps "or" perfectly centered */
-    gap: 14px;
-    text-align: center;
+    gap: 12px;
+    margin: 20px 0;
 }
 
 .kc-divider::before,
@@ -413,141 +356,123 @@
     content: "";
     flex: 1;
     height: 1px;
-    background: rgba(15, 23, 42, 0.12);
+    background: rgba(15, 23, 42, 0.10);
 }
 
-/* keep this class for backwards compatibility but make it harmless */
-.kc-divider--matchWidth {
-    width: var(--kc-auth-btn-width);
-    margin-left: auto;
-    margin-right: auto;
-}
-
-/* make sure the "or" cannot drift */
 .kc-divider span {
-    flex: 0 0 auto;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    min-width: 24px;
-    text-align: center;
+    flex-shrink: 0;
     font-family: "Inter", sans-serif;
     font-size: 12px;
     font-weight: 600;
-    color: rgba(15, 23, 42, 0.55);
-    line-height: 1;
+    color: rgba(15, 23, 42, 0.45);
 }
 
-/* =========================================================
-   Social group (FIXED CENTERING + SAME WIDTH AS BLACK BUTTON)
-   ========================================================= */
-
+/* =========================
+   Social OAuth buttons
+   ========================= */
 .kc-social {
-    width: 100%;
     display: flex;
     flex-direction: column;
-    align-items: center;
-    /* centers the stack */
-    justify-content: center;
-    gap: 12px;
-    text-align: center;
+    gap: 10px;
+    width: 100%;
 }
 
-/* social button layout */
 .kc-socialBtn {
-    width: 300px;
-    /* forces SAME WIDTH as primary button */
-    margin-left: auto;
-    margin-right: auto;
+    width: 100%;
     display: flex;
     align-items: center;
     justify-content: center;
-    /* centers icon+text */
     gap: 10px;
-    text-align: center;
 }
 
 .kc-social-icon {
     width: 18px;
     height: 18px;
-    flex: 0 0 auto;
+    flex-shrink: 0;
 }
 
-/* =========================================================
-   Password field (Reset page)
-   ========================================================= */
-.kc-password {
-    position: relative;
+/* =========================
+   Bottom sign-in / sign-up link
+   ========================= */
+.kc-bottom-line {
+    margin: 16px 0 0;
+    font-family: "Inter", sans-serif;
+    font-size: 13px;
+    font-weight: 500;
+    color: rgba(15, 23, 42, 0.58);
+    text-align: center;
+}
+
+/* =========================
+   Claim link input row
+   ========================= */
+.kc-claim {
+    width: 100%;
     display: flex;
     align-items: center;
-}
-
-.kc-password .kc-input {
-    padding-right: 74px;
-}
-
-.kc-password-toggle {
-    position: absolute;
-    right: 10px;
-    top: 50%;
-    transform: translateY(-50%);
+    border-radius: 12px;
     border: 1px solid rgba(15, 23, 42, 0.14);
-    background: #fff;
-    border-radius: 10px;
-    padding: 8px 10px;
+    background: #fafafa;
+    overflow: hidden;
+    transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.kc-claim:focus-within {
+    border-color: rgba(15, 23, 42, 0.28);
+    box-shadow: 0 0 0 3px rgba(15, 23, 42, 0.07);
+    background: #ffffff;
+}
+
+.kc-claim-prefix {
+    padding: 12px 10px 12px 14px;
+    font-family: "Inter", sans-serif;
+    font-size: 13px;
+    font-weight: 500;
+    color: rgba(15, 23, 42, 0.55);
+    white-space: nowrap;
+    flex-shrink: 0;
+    border-right: 1px solid rgba(15, 23, 42, 0.10);
+}
+
+.kc-claim-input {
+    border: none !important;
+    border-radius: 0 !important;
+    background: transparent !important;
+    box-shadow: none !important;
+    min-height: 46px;
+    padding: 11px 14px !important;
+    flex: 1;
+}
+
+.kc-claim-input:focus {
+    border: none !important;
+    box-shadow: none !important;
+}
+
+/* =========================
+   Microcopy / helper text
+   ========================= */
+.kc-microcopy {
+    margin: 8px 0 0;
     font-family: "Inter", sans-serif;
     font-size: 12px;
-    font-weight: 600;
-    color: rgba(15, 23, 42, 0.72);
-    cursor: pointer;
+    font-weight: 500;
+    color: rgba(15, 23, 42, 0.50);
+    text-align: center;
 }
 
-.kc-password-toggle:hover {
-    background: rgba(15, 23, 42, 0.02);
-}
-
-.kc-password-feedback {
-    width: 100%;
-    border: 1px solid rgba(15, 23, 42, 0.10);
-    background: rgba(15, 23, 42, 0.02);
-    border-radius: 14px;
-    padding: 12px 12px;
-    margin-top: 4px;
-}
-
-.kc-password-feedback p {
-    margin: 0;
-    padding: 4px 0;
-    font-family: "Inter", sans-serif;
-    font-size: 12px;
-    font-weight: 600;
-    color: rgba(15, 23, 42, 0.62);
-}
-
-.kc-password-feedback p.is-valid {
-    color: rgba(15, 23, 42, 0.92);
-}
-
-/* =========================================================
+/* =========================
    Responsive
-   ========================================================= */
+   ========================= */
 @media (max-width: 600px) {
     .kc-auth-topActions {
         padding-top: 88px;
+        padding-left: 16px;
+        padding-right: 16px;
     }
 
-    .kc-row {
-        flex-wrap: wrap;
-        row-gap: 10px;
-    }
-
-    .kc-auth-wrap {
-        padding: 14px 14px 8px;
-    }
-
-    .kc-auth-wrap::before,
-    .kc-auth-wrap::after {
-        inset: -58px -70px -72px;
+    .kc-auth-main {
+        padding-top: 24px;
     }
 
     .kc-claim-prefix {

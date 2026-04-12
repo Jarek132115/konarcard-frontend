@@ -170,9 +170,9 @@ export default function Hero() {
                     <Link to="/register" className="kx-btn kx-btn--orange kc-homeHero__ctaBtn">
                         Claim Your Link
                     </Link>
-                    <Link to="/how-it-works" className="kx-btn kx-btn--white kc-homeHero__ctaBtn">
+                    <button type="button" className="kx-btn kx-btn--white kc-homeHero__ctaBtn">
                         Watch How It Works
-                    </Link>
+                    </button>
                 </motion.div>
             </div>
 

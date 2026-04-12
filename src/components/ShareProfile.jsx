@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useState } from "react";
 import PropTypes from "prop-types";
-import { toast } from "react-hot-toast";
+import { useKonarToast } from "../hooks/useKonarToast";
 import QRCode from "qrcode";
 
 import "../styling/dashboard/shareprofile.css";
@@ -39,6 +39,7 @@ export default function ShareProfile({
     onAppleWallet,
     onGoogleWallet,
 }) {
+    const toast = useKonarToast();
     const [qrCodeImage, setQrCodeImage] = useState("");
 
     const selectedProfile = useMemo(() => {
@@ -79,7 +80,7 @@ export default function ShareProfile({
         if (!isOpen || !effectiveUrl) { setQrCodeImage(""); return; }
         QRCode.toDataURL(effectiveUrl, { errorCorrectionLevel: "H", width: 300, margin: 0 })
             .then(setQrCodeImage)
-            .catch(() => toast.error("Failed to generate QR code."));
+            .catch(() => toast.error("Couldn't generate your QR code. Please try again."));
     }, [isOpen, effectiveUrl]);
 
     /* ── helpers ── */
@@ -98,7 +99,7 @@ export default function ShareProfile({
             }
             toast.success(msg);
         } catch {
-            toast.error("Failed to copy.");
+            toast.error("Couldn't copy — please try selecting and copying manually.");
         }
     };
 
@@ -116,8 +117,8 @@ export default function ShareProfile({
     };
     const handleWhatsApp = () => onWhatsApp ? onWhatsApp() : openInNewTab(`https://wa.me/?text=${encodeURIComponent(effectiveUrl)}`);
     const handleText     = () => onText     ? onText()     : (window.location.href = `sms:?&body=${encodeURIComponent(effectiveUrl)}`);
-    const handleApple    = () => onAppleWallet  ? onAppleWallet()  : toast.info("Apple Wallet is coming soon.");
-    const handleGoogle   = () => onGoogleWallet ? onGoogleWallet() : toast.info("Google Wallet is coming soon.");
+    const handleApple    = () => onAppleWallet  ? onAppleWallet()  : toast.info("Apple Wallet is coming soon — stay tuned.");
+    const handleGoogle   = () => onGoogleWallet ? onGoogleWallet() : toast.info("Google Wallet is coming soon — stay tuned.");
 
     if (!isOpen) return null;
 

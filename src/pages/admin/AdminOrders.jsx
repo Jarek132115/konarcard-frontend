@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from "react";
-import { toast } from "react-hot-toast";
+import { useKonarToast } from "../../hooks/useKonarToast";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import api from "../../services/api";
 import AdminLayout from "./AdminLayout";
@@ -629,6 +629,7 @@ async function copyToClipboardHelper(value, label = "Copied") {
 }
 
 export default function AdminOrders() {
+    const toast    = useKonarToast();
     const navigate = useNavigate();
     const [searchParams, setSearchParams] = useSearchParams();
 

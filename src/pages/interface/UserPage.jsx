@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useMemo, useRef, useState } from "react";
 import { useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
-import { toast } from "react-hot-toast";
+import { useKonarToast } from "../../hooks/useKonarToast";
 
 import api from "../../services/api";
 import { AuthContext } from "../../components/AuthContext";
@@ -350,6 +350,7 @@ function ExchangeContactModal({
     themeMode = "light",
     fontFamily = "Inter, sans-serif",
 }) {
+    const toast = useKonarToast();
     const [name, setName] = useState("");
     const [email, setEmail] = useState("");
     const [phone, setPhone] = useState("");
@@ -370,10 +371,10 @@ function ExchangeContactModal({
             message: String(message || "").trim(),
         };
 
-        if (!payload.profileSlug) return toast.error("Missing profile slug.");
-        if (!payload.name) return toast.error("Please enter your name.");
+        if (!payload.profileSlug) return toast.error("Something went wrong — please refresh and try again.");
+        if (!payload.name) return toast.error("Please enter your name to continue.");
         if (!payload.email && !payload.phone) {
-            return toast.error("Please provide email or phone.");
+            return toast.error("Please add an email or phone number so we can reach you.");
         }
 
         setSubmitting(true);
@@ -397,7 +398,7 @@ function ExchangeContactModal({
                 },
             });
 
-            toast.success("Sent! Your details were shared.");
+            toast.success("Sent! Your details have been shared.");
             onClose?.();
             setName("");
             setEmail("");

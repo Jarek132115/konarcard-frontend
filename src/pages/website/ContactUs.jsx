@@ -1,6 +1,6 @@
 // frontend/src/pages/website/ContactUs.jsx
 import React, { useEffect, useMemo, useState } from "react";
-import { toast } from "react-hot-toast";
+import { useKonarToast } from "../../hooks/useKonarToast";
 import { Link } from "react-router-dom";
 import { motion, AnimatePresence } from "motion/react";
 
@@ -87,6 +87,7 @@ const quickAnswers = [
 ];
 
 export default function ContactUs() {
+    const toast = useKonarToast();
     const [openIndex, setOpenIndex] = useState(0);
 
     useEffect(() => {
@@ -121,7 +122,7 @@ export default function ContactUs() {
 
             if (ready) window.tidioChatApi.open();
             else if (Date.now() - started < 5000) setTimeout(tryOpen, 200);
-            else toast.error("Live chat is still loading — please try again shortly.");
+            else toast.error("Live chat is still loading — please try again in a moment.");
         };
 
         tryOpen();
