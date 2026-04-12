@@ -189,23 +189,15 @@
     overflow: hidden;
     position: relative;
     transform-origin: center;
-    will-change: transform, box-shadow;
-    transition: box-shadow 0.18s ease, border-color 0.18s ease;
-}
-
-.an-metric:hover {
-    box-shadow: 0 16px 34px rgba(15, 23, 42, 0.08);
-    border-color: rgba(15, 23, 42, 0.14);
+    will-change: transform, opacity;
+    transition: box-shadow 0.22s ease, border-color 0.22s ease;
+    cursor: default;
 }
 
 .an-metric--featured {
     background: var(--an-orange-gradient);
     border-color: transparent;
     box-shadow: 0 18px 40px rgba(249, 115, 22, 0.18);
-}
-
-.an-metric--featured:hover {
-    box-shadow: 0 22px 46px rgba(249, 115, 22, 0.22);
 }
 
 .an-metric--locked {
@@ -617,7 +609,7 @@
     white-space: nowrap;
 }
 
-/* LOCKED */
+/* LOCKED — no blur, clean placeholder */
 
 .an-panel--locked {
     position: relative;
@@ -629,18 +621,11 @@
     margin-top: var(--sp-5);
     min-height: 300px;
     border-radius: 20px;
-    background: linear-gradient(180deg, rgba(15, 23, 42, 0.03), rgba(15, 23, 42, 0.06));
+    background: rgba(15, 23, 42, 0.03);
     border: 1px solid rgba(15, 23, 42, 0.06);
     overflow: hidden;
     display: grid;
     place-items: center;
-}
-
-.an-lockedBlur {
-    position: absolute;
-    inset: 0;
-    backdrop-filter: blur(2px);
-    background: linear-gradient(180deg, rgba(255, 255, 255, 0.45), rgba(255, 255, 255, 0.76));
 }
 
 .an-lockedContent {
@@ -814,25 +799,33 @@
     }
 }
 
+/* Force dropdowns into a single row on all screen sizes */
 @media (max-width: 500px) {
     .an-toolbarDropdowns {
         width: 100%;
-        flex-direction: column;
-        align-items: stretch;
-        gap: 12px;
+        flex-direction: row;
+        align-items: center;
+        gap: 10px;
         flex-wrap: nowrap;
     }
 
     .an-profilePick,
     .an-rangePicker {
-        flex: 1 1 auto;
-        width: 100%;
+        flex: 1 1 0;
+        min-width: 0;
+        width: auto;
         max-width: none;
     }
 
     .an-selectBase {
         width: 100%;
         min-width: 0;
+        font-size: 12px;
+        padding: 0 28px 0 10px;
+    }
+
+    .an-selectChevron {
+        right: 10px;
     }
 
     .an-miniFilterBtn {

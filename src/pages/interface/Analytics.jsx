@@ -288,6 +288,28 @@ function TrendText({ delta, range, featured = false, isPercentage = false }) {
     );
 }
 
+// Card animation variants — staggered scale + fade with a slight y drift
+const cardVariants = {
+    hidden: {
+        opacity: 0,
+        scale: 0.92,
+        y: 16,
+        filter: "blur(4px)",
+    },
+    visible: (delay) => ({
+        opacity: 1,
+        scale: 1,
+        y: 0,
+        filter: "blur(0px)",
+        transition: {
+            duration: 0.42,
+            ease: [0.22, 1, 0.36, 1],
+            delay,
+            opacity: { duration: 0.3, ease: "easeOut" },
+        },
+    }),
+};
+
 function MetricCard({
     label,
     value,
@@ -302,14 +324,19 @@ function MetricCard({
     return (
         <motion.div
             className={`an-metric ${featured ? "an-metric--featured" : ""} ${locked ? "an-metric--locked" : ""}`}
-            initial={{ opacity: 0, y: 12 }}
-            animate={{ opacity: 1, y: 0 }}
+            custom={delay}
+            initial="hidden"
+            animate="visible"
+            variants={cardVariants}
             whileHover={{
-                y: -4,
-                scale: 1.01,
-                transition: { duration: 0.18, ease: "easeOut" },
+                y: -5,
+                scale: 1.025,
+                boxShadow: featured
+                    ? "0 28px 56px rgba(249, 115, 22, 0.28)"
+                    : "0 20px 44px rgba(15, 23, 42, 0.1)",
+                transition: { duration: 0.22, ease: [0.22, 1, 0.36, 1] },
             }}
-            transition={{ duration: 0.28, ease: "easeOut", delay }}
+            whileTap={{ scale: 0.98, transition: { duration: 0.1 } }}
         >
             <div className="an-metric-top">
                 <div className="an-metric-label">{label}</div>
@@ -356,7 +383,6 @@ function LockedAnalyticsCard({
             </div>
 
             <div className="an-lockedInner">
-                <div className="an-lockedBlur" />
                 <div className="an-lockedContent">
                     <div className="an-lockedBadge">Plus</div>
                     <div className="an-lockedTitle">Locked analytics</div>
@@ -1046,7 +1072,7 @@ export default function Analytics() {
                         <div className="an-emptyState an-emptyState--full">Loading analytics…</div>
                     ) : summaryQuery.isError ? (
                         <div className="an-emptyState an-emptyState--error">
-                            Couldn’t load analytics right now.
+                            Couldn't load analytics right now.
                         </div>
                     ) : (
                         <div className="an-metricsGrid">
@@ -1066,7 +1092,7 @@ export default function Analytics() {
                                 delta={getMetricDelta(metrics, previousMetrics, "cardTaps")}
                                 range={range}
                                 icon={NFCTapsIcon}
-                                delay={0.03}
+                                delay={0.06}
                             />
 
                             <MetricCard
@@ -1075,7 +1101,7 @@ export default function Analytics() {
                                 delta={getMetricDelta(metrics, previousMetrics, "qrScans")}
                                 range={range}
                                 icon={QRScansIcon}
-                                delay={0.06}
+                                delay={0.12}
                             />
 
                             <MetricCard
@@ -1084,7 +1110,7 @@ export default function Analytics() {
                                 delta={getMetricDelta(metrics, previousMetrics, "linkOpens")}
                                 range={range}
                                 icon={LinkVisitsIcon}
-                                delay={0.09}
+                                delay={0.18}
                             />
 
                             <MetricCard
@@ -1093,7 +1119,7 @@ export default function Analytics() {
                                 delta={getMetricDelta(metrics, previousMetrics, "contactsSaved")}
                                 range={range}
                                 icon={SavedContactsIcon}
-                                delay={0.12}
+                                delay={0.24}
                             />
 
                             <MetricCard
@@ -1102,7 +1128,7 @@ export default function Analytics() {
                                 delta={getMetricDelta(metrics, previousMetrics, "contactExchangeSubmits")}
                                 range={range}
                                 icon={ExchangeContactsIcon}
-                                delay={0.15}
+                                delay={0.30}
                             />
 
                             <MetricCard
@@ -1113,7 +1139,7 @@ export default function Analytics() {
                                 isPercentage
                                 locked={!isPaidPlan}
                                 icon={ConversionRateIcon}
-                                delay={0.18}
+                                delay={0.36}
                             />
                         </div>
                     )}
