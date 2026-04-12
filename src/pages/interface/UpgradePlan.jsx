@@ -85,7 +85,7 @@ function formatDate(d) {
 function fmtGBP(n) {
     const num = Number(n);
     if (!Number.isFinite(num)) return "—";
-    return num % 1 === 0 ? `£${num.toFixed(0)}` : `£${num.toFixed(2)}`;
+    return `£${num.toFixed(0)}`;
 }
 
 function normalizePlanLabel(plan) {
@@ -733,7 +733,7 @@ export default function UpgradePlan() {
     const planCards = useMemo(() => {
         const plusKey = billing === "monthly" ? "plus-monthly" : "plus-yearly";
         const extraProfileExample3 =
-            billing === "monthly" ? 5 + 1.95 + 1.95 : Math.round((50 / 12) + 1.95 + 1.95);
+            billing === "monthly" ? 5 + 2 + 2 : Math.round((50 / 12) + 2 + 2);
 
         return [
             {
@@ -790,7 +790,7 @@ export default function UpgradePlan() {
                 icon: TeamsPlanIcon,
                 tag: "Grow as needed",
                 featured: false,
-                price: "£1.95",
+                price: "£2",
                 cadence: "per extra profile / month",
                 note: "Billed monthly as an add-on to Plus.",
                 meta: [
@@ -1064,7 +1064,7 @@ export default function UpgradePlan() {
                             </Tabs.Root>
 
                             <div className="upg-billingNote">
-                                {billingNote} Extra Profile always bills monthly as a £1.95 add-on per extra profile.
+                                {billingNote} Extra Profile always bills monthly as a £2 add-on per extra profile.
                             </div>
                         </div>
                     </div>
