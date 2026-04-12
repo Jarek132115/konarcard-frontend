@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useRef } from "react";
 import * as THREE from "three";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
-import { useTexture } from "@react-three/drei";
+import { Environment, useTexture } from "@react-three/drei";
 
 import "../styling/products/plasticcard3d.css";
 
@@ -70,7 +70,7 @@ const clamp = (v, min, max) => Math.max(min, Math.min(max, v));
 function setupColorTexture(tex) {
     if (!tex) return;
     tex.colorSpace = THREE.SRGBColorSpace;
-    tex.anisotropy = 4;
+    tex.anisotropy = 12;
     tex.wrapS = THREE.ClampToEdgeWrapping;
     tex.wrapT = THREE.ClampToEdgeWrapping;
     tex.minFilter = THREE.LinearMipmapLinearFilter;
@@ -159,7 +159,11 @@ export default function PlasticCard3D({
     const resolvedEdgeColor = edgeColor || variantAssets.edgeColor;
     const resolvedTextColor = frontTextColor || variantAssets.textColor;
 
-    const isAnimated = interactive || autoRotate;
+    const handleCanvasCreated = ({ gl }) => {
+        gl.setClearColor(0x000000, 0);
+        gl.outputColorSpace = THREE.SRGBColorSpace;
+        gl.domElement.style.touchAction = interactive ? "none" : "auto";
+    };
 
     return (
         <div
@@ -168,33 +172,22 @@ export default function PlasticCard3D({
         >
             <div className="pc3d__stage">
                 <Canvas
-                    frameloop={isAnimated ? "always" : "demand"}
-                    dpr={1}
+                    dpr={[1, 2]}
                     camera={{ position: [0, 0.015, 1.68], fov: 25 }}
                     gl={{
-                        antialias: false,
+                        antialias: true,
                         alpha: true,
                         premultipliedAlpha: false,
-                        powerPreference: "default",
+                        powerPreference: "high-performance",
                     }}
-                    onCreated={({ gl }) => {
-                        gl.setClearColor(0x000000, 0);
-                        gl.outputColorSpace = THREE.SRGBColorSpace;
-
-                        const canvas = gl.getContext().canvas;
-                        const handleContextLost = (e) => {
-                            e.preventDefault();
-                            console.warn("WebGL context lost");
-                        };
-                        canvas.addEventListener("webglcontextlost", handleContextLost, { passive: false });
-
-                        gl.domElement.style.touchAction = interactive ? "none" : "auto";
-                    }}
+                    onCreated={handleCanvasCreated}
                 >
                     <ambientLight intensity={0.8} />
                     <directionalLight position={[2.3, 3.3, 2.3]} intensity={1.12} />
                     <directionalLight position={[-2, 1.2, -2]} intensity={0.6} />
                     <directionalLight position={[0, -1.5, 1.5]} intensity={0.18} />
+
+                    <Environment preset="studio" />
 
                     <ResponsiveRig compact={compact}>
                         <CardFitWrapper compact={compact}>
@@ -324,7 +317,6 @@ function CardRig({
     compact = false,
 }) {
     const group = useRef();
-    const { invalidate } = useThree();
 
     const baseRX = compact ? 0.11 : 0.085;
     const baseRY = 0.64 + rotationOffset;
@@ -350,15 +342,7 @@ function CardRig({
         drag.current.idle = true;
         drag.current.isDown = false;
         drag.current.hasUserInteracted = false;
-
-        if (group.current) {
-            group.current.rotation.x = baseRX;
-            group.current.rotation.y = baseRY;
-            group.current.rotation.z = 0.015;
-        }
-
-        invalidate();
-    }, [baseRX, baseRY, invalidate]);
+    }, [baseRX, baseRY]);
 
     useFrame((_, dt) => {
         if (!group.current) return;
@@ -390,10 +374,6 @@ function CardRig({
             0.015,
             0.08
         );
-
-        if (interactive || autoRotate) {
-            invalidate();
-        }
     });
 
     const onPointerDown = (e) => {
@@ -409,8 +389,6 @@ function CardRig({
 
         drag.current.baseRX = drag.current.rx;
         drag.current.baseRY = drag.current.ry;
-
-        invalidate();
 
         try {
             e.target.setPointerCapture(e.pointerId);
@@ -430,7 +408,6 @@ function CardRig({
 
         drag.current.ry = drag.current.baseRY + dx * gainX;
         drag.current.rx = clamp(drag.current.baseRX - dy * gainY, -0.55, 0.55);
-        invalidate();
     };
 
     const onPointerUp = () => {
@@ -440,7 +417,6 @@ function CardRig({
         drag.current.baseRX = drag.current.rx;
         drag.current.baseRY = drag.current.ry;
         drag.current.idle = true;
-        invalidate();
     };
 
     return (
@@ -502,7 +478,7 @@ function CardMesh({
         const ctx = canvas.getContext("2d");
         if (!ctx) return null;
 
-        const size = 512;
+        const size = 1024;
         canvas.width = size;
         canvas.height = size;
 
@@ -544,7 +520,7 @@ function CardMesh({
             const fontWeight = clamp(Number(frontFontWeight || 700), 400, 900);
 
             const requestedPx = clamp(
-                Number(frontFontSize || 30) * (height / 800) * 2.8,
+                Number(frontFontSize || 30) * (height / 800) * 3.8,
                 36,
                 320
             );
