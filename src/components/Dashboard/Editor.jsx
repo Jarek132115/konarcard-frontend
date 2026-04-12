@@ -34,6 +34,8 @@ import EditorTemplate4Dark from "../../assets/images/editor-templates/EditorTemp
 import EditorTemplate5Dark from "../../assets/images/editor-templates/EditorTemplate-5Dark.png";
 
 import { resolveMediaUrl } from "../../utils/profileHelpers";
+import { Switch } from "@base-ui/react/switch";
+import { motion } from "motion/react";
 import "../../styling/dashboard/editor.css";
 
 const isBlobUrl = (v) => typeof v === "string" && v.startsWith("blob:");
@@ -307,7 +309,7 @@ export default function Editor({
     };
 
     return (
-        <div className="kce-root">
+        <motion.div className="kce-root" initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.32, ease: "easeOut" }}>
             <div className="kce-top">
                 <div className="kce-topLeft">
                     <div className="kc-title kce-title">Edit Your Profile</div>
@@ -429,7 +431,6 @@ export default function Editor({
                     <div className="kce-sectionTop">
                         <div className="kce-headingBlock">
                             <span className="kce-pill">Choose Mode</span>
-                            <div className="kce-accentLine" />
                         </div>
                     </div>
 
@@ -1163,6 +1164,6 @@ export default function Editor({
 
                 <div className="kce-bottomPad" />
             </div>
-        </div>
+        </motion.div>
     );
 }
