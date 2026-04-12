@@ -644,21 +644,24 @@ export default function Cards() {
     toast("Google Wallet is coming soon.");
   };
 
+  const isCustomizerView = !!selectedProductKey;
+  const isMyCardsView = !!selectedOrderView;
+
   return (
     <DashboardLayout hideDesktopHeader>
       <div className="cp-shell">
         <PageHeader
           title={
-            selectedProductKey
+            isCustomizerView
               ? "Customize your card"
-              : selectedOrderView
+              : isMyCardsView
                 ? "My Cards"
                 : "Cards"
           }
           subtitle={
-            selectedProductKey
-              ? null
-              : selectedOrderView
+            isCustomizerView
+              ? ""
+              : isMyCardsView
                 ? "View and manage your purchased cards."
                 : "Choose a product, customise it, and check out."
           }
@@ -683,14 +686,14 @@ export default function Cards() {
           onGoogleWallet={handleGoogleWallet}
         />
 
-        {selectedProductKey ? (
+        {isCustomizerView ? (
           <CardCustomizer
             productKey={selectedProductKey}
             initialIntent={readIntent()}
             onBack={backToCardsHome}
             onCheckoutSuccess={async () => { }}
           />
-        ) : selectedOrderView ? (
+        ) : isMyCardsView ? (
           <OrderDetailsView
             selectedOrder={selectedOrder}
             productMeta={PRODUCT_META}
