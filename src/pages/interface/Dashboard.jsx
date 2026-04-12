@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
-import { motion } from "framer-motion";
+import { motion } from "motion/react";
 
 import "../../styling/spacing.css";
 import "../../styling/dashboard/dashboard.css";
@@ -296,6 +296,28 @@ function ownsPhysicalProduct(orders) {
     });
 }
 
+// Card animation variants — staggered scale + fade with blur, matching analytics
+const cardVariants = {
+    hidden: {
+        opacity: 0,
+        scale: 0.92,
+        y: 16,
+        filter: "blur(4px)",
+    },
+    visible: (delay) => ({
+        opacity: 1,
+        scale: 1,
+        y: 0,
+        filter: "blur(0px)",
+        transition: {
+            duration: 0.42,
+            ease: [0.22, 1, 0.36, 1],
+            delay,
+            opacity: { duration: 0.3, ease: "easeOut" },
+        },
+    }),
+};
+
 function ActivityPanelIcon() {
     return (
         <svg viewBox="0 0 24 24" aria-hidden="true" className="db-panelIconSvg">
@@ -341,9 +363,19 @@ function MetricCard({ label, value, helper, featured = false, icon = null, delay
     return (
         <motion.div
             className={`db-metric ${featured ? "db-metric--featured" : ""}`}
-            initial={{ opacity: 0, y: 12 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.28, delay, ease: "easeOut" }}
+            custom={delay}
+            initial="hidden"
+            animate="visible"
+            variants={cardVariants}
+            whileHover={{
+                y: -5,
+                scale: 1.025,
+                boxShadow: featured
+                    ? "0 28px 56px rgba(249, 115, 22, 0.28)"
+                    : "0 20px 44px rgba(15, 23, 42, 0.1)",
+                transition: { duration: 0.22, ease: [0.22, 1, 0.36, 1] },
+            }}
+            whileTap={{ scale: 0.98, transition: { duration: 0.1 } }}
         >
             <div className="db-metric-top">
                 <div className="db-metric-label">{label}</div>
@@ -604,6 +636,10 @@ export default function Dashboard() {
                     initial={{ opacity: 0, y: 18 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.32, ease: "easeOut" }}
+                    whileHover={{
+                        y: -3,
+                        transition: { duration: 0.22, ease: [0.22, 1, 0.36, 1] },
+                    }}
                 >
                     <div className="db-heroCard">
                         <div className="db-heroMain">
@@ -722,6 +758,11 @@ export default function Dashboard() {
                         initial={{ opacity: 0, y: 18 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ duration: 0.32, delay: 0.12, ease: "easeOut" }}
+                        whileHover={{
+                            y: -4,
+                            boxShadow: "0 20px 44px rgba(15, 23, 42, 0.1)",
+                            transition: { duration: 0.22, ease: [0.22, 1, 0.36, 1] },
+                        }}
                     >
                         <RecentActivityCard items={recentActivity} />
                     </motion.div>
@@ -730,6 +771,11 @@ export default function Dashboard() {
                         initial={{ opacity: 0, y: 18 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ duration: 0.32, delay: 0.16, ease: "easeOut" }}
+                        whileHover={{
+                            y: -4,
+                            boxShadow: "0 20px 44px rgba(15, 23, 42, 0.1)",
+                            transition: { duration: 0.22, ease: [0.22, 1, 0.36, 1] },
+                        }}
                     >
                         <ProfileCompletionCard completion={completion} />
                     </motion.div>

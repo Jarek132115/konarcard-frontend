@@ -46,6 +46,7 @@
     gap: 22px;
     min-width: 0;
     overflow: hidden;
+    transition: box-shadow 0.22s ease, border-color 0.22s ease;
 }
 
 .db-heroMain {
@@ -131,6 +132,13 @@
     padding: 18px;
     min-width: 0;
     box-shadow: 0 1px 0 rgba(15, 23, 42, 0.02);
+    transition: box-shadow 0.22s ease, border-color 0.22s ease, transform 0.22s ease;
+}
+
+.db-heroMiniCard:hover {
+    border-color: rgba(15, 23, 42, 0.14);
+    box-shadow: 0 8px 24px rgba(15, 23, 42, 0.08);
+    transform: translateY(-2px);
 }
 
 .db-heroMiniLabel {
@@ -179,6 +187,10 @@
     min-width: 0;
     overflow: hidden;
     position: relative;
+    transform-origin: center;
+    will-change: transform, opacity;
+    transition: box-shadow 0.22s ease, border-color 0.22s ease;
+    cursor: default;
 }
 
 .db-metric--featured {
@@ -256,6 +268,8 @@
     padding: var(--sp-6);
     min-width: 0;
     overflow: hidden;
+    will-change: transform;
+    transition: box-shadow 0.22s ease, border-color 0.22s ease;
 }
 
 .db-panel--equal {
