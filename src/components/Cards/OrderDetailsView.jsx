@@ -1,4 +1,5 @@
 import React, { useMemo } from "react";
+import { motion } from "framer-motion";
 
 function safeTrim(v) {
     return String(v || "").trim();
@@ -79,6 +80,17 @@ function orderStatusLabel(selectedOrder) {
     return raw.charAt(0).toUpperCase() + raw.slice(1);
 }
 
+function orderStatusTone(selectedOrder) {
+    const raw = safeTrim(selectedOrder?.status || selectedOrder?._raw?.status).toLowerCase();
+
+    if (["paid", "fulfilled", "processing", "complete", "completed", "shipped"].includes(raw)) {
+        return "success";
+    }
+    if (raw === "pending") return "warn";
+    if (raw === "failed" || raw === "cancelled" || raw === "canceled") return "danger";
+    return "neutral";
+}
+
 function fulfillmentStatusLabel(selectedOrder) {
     const raw = safeTrim(
         selectedOrder?.fulfillmentStatus ||
@@ -93,6 +105,18 @@ function fulfillmentStatusLabel(selectedOrder) {
     if (raw === "delivered") return "Delivered";
 
     return raw.charAt(0).toUpperCase() + raw.slice(1);
+}
+
+function fulfillmentStatusTone(selectedOrder) {
+    const raw = safeTrim(
+        selectedOrder?.fulfillmentStatus ||
+        selectedOrder?._raw?.fulfillmentStatus
+    ).toLowerCase();
+
+    if (raw === "delivered") return "success";
+    if (raw === "shipped" || raw === "packaged" || raw === "designing_card") return "info";
+    if (raw === "order_placed") return "neutral";
+    return "neutral";
 }
 
 function resolvedLogoSrc(selectedOrder, defaultLogoDataUrl) {
@@ -236,6 +260,62 @@ function isDelivered(selectedOrder) {
     return raw === "delivered";
 }
 
+function CopyButton({ value, label = "Copy" }) {
+    const onCopy = async () => {
+        if (!value || value === "—") return;
+        try {
+            await navigator.clipboard.writeText(value);
+        } catch {
+            // ignore
+        }
+    };
+
+    return (
+        <button type="button" className="odv-copyBtn" onClick={onCopy} disabled={!value || value === "—"}>
+            {label}
+        </button>
+    );
+}
+
+function InfoRow({ label, value, link = false, copy = false }) {
+    const hasValue = !!safeTrim(value) && value !== "—";
+
+    return (
+        <div className={`odv-infoRow ${link ? "odv-infoRow--link" : ""}`}>
+            <div className="odv-infoLabel">{label}</div>
+            <div className="odv-infoValueWrap">
+                {link ? (
+                    hasValue ? (
+                        <a
+                            className="odv-link"
+                            href={value}
+                            target="_blank"
+                            rel="noreferrer"
+                        >
+                            {value}
+                        </a>
+                    ) : (
+                        <div className="odv-infoValue">—</div>
+                    )
+                ) : (
+                    <div className="odv-infoValue">{value || "—"}</div>
+                )}
+
+                {copy ? <CopyButton value={value} /> : null}
+            </div>
+        </div>
+    );
+}
+
+function MetricTile({ label, value, tone = "neutral" }) {
+    return (
+        <div className={`odv-metricTile odv-metricTile--${tone}`}>
+            <div className="odv-metricLabel">{label}</div>
+            <div className="odv-metricValue">{value}</div>
+        </div>
+    );
+}
+
 export default function OrderDetailsView({
     selectedOrder,
     productMeta,
@@ -285,14 +365,14 @@ export default function OrderDetailsView({
 
     if (!selectedOrder) {
         return (
-            <>
-                <div className="ccz-backRow">
-                    <button type="button" className="kx-btn kx-btn--white" onClick={onBack}>
+            <div className="odv-shell">
+                <div className="odv-topActions">
+                    <button type="button" className="odv-backBtn" onClick={onBack}>
                         Back to cards
                     </button>
                 </div>
 
-                <section className="cp-card">
+                <section className="cp-card odv-heroCard">
                     <div className="cp-emptyState">
                         <div className="cp-emptyStateCard">
                             <div className="cp-emptyStateTitle">Order not found</div>
@@ -302,7 +382,7 @@ export default function OrderDetailsView({
                         </div>
                     </div>
                 </section>
-            </>
+            </div>
         );
     }
 
@@ -317,7 +397,9 @@ export default function OrderDetailsView({
     const createdAt = formatOrderDate(selectedOrder?._raw?.createdAt || selectedOrder?.createdAt);
     const variant = variantLabel(selectedOrder);
     const status = orderStatusLabel(selectedOrder);
+    const statusTone = orderStatusTone(selectedOrder);
     const fulfillmentStatus = fulfillmentStatusLabel(selectedOrder);
+    const fulfillmentTone = fulfillmentStatusTone(selectedOrder);
     const quantity = quantityLabel(selectedOrder);
     const profileSlug = safeTrim(selectedOrder?.profileSlug) || "—";
     const trackingCode = trackingCodeLabel(selectedOrder);
@@ -334,135 +416,114 @@ export default function OrderDetailsView({
         : estimatedDeliveryLabel(selectedOrder);
 
     return (
-        <>
-            <div className="ccz-backRow">
-                <button type="button" className="kx-btn kx-btn--white" onClick={onBack}>
+        <div className="odv-shell">
+            <div className="odv-topActions">
+                <button type="button" className="odv-backBtn" onClick={onBack}>
                     Back to cards
                 </button>
             </div>
 
-            <section className="cp-card">
-                <div className="cp-cardHead">
-                    <div className="cp-cardHeadCopy">
-                        <div className="cp-eyebrow">Order details</div>
-                        <h2 className="cp-cardTitle">{productTitle}</h2>
-                        <p className="cp-muted">
-                            View your product details, delivery progress, and shipping information.
-                        </p>
-                    </div>
+            <motion.section
+                className="cp-card odv-heroCard"
+                initial={{ opacity: 0, y: 16 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.28, ease: "easeOut" }}
+            >
+                <div className="odv-heroHead">
+                    <div className="cp-eyebrow">Order details</div>
+                    <h2 className="cp-cardTitle">{productTitle}</h2>
+                    <p className="cp-muted">
+                        View your product details, delivery progress, shipping information, and linked profile setup.
+                    </p>
                 </div>
 
-                <div className="cp-detailsGrid">
-                    <div className="cp-previewCard">
+                <div className="odv-metricsGrid">
+                    <MetricTile label="Order status" value={status} tone={statusTone} />
+                    <MetricTile label="Delivery status" value={fulfillmentStatus} tone={fulfillmentTone} />
+                    <MetricTile label="Total" value={amountFormatted} />
+                    <MetricTile label="Quantity" value={quantity} />
+                </div>
+
+                <div className="odv-heroGrid">
+                    <motion.div
+                        className="cp-previewCard odv-previewCard"
+                        initial={{ opacity: 0, y: 14 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.3, delay: 0.04, ease: "easeOut" }}
+                    >
                         <CardPreviewErrorBoundary
                             resetKey={`${selectedOrder?.id || "order"}-${previewProps?.productKey || "product"}-${previewProps?.variant || "variant"}-${previewProps?.frontText || "text"}`}
-                            fallback={
-                                <div className="cp-previewFallback">
-                                    Preview unavailable
-                                </div>
-                            }
+                            fallback={<div className="cp-previewFallback">Preview unavailable</div>}
                         >
                             <div className="cp-preview3dWrap">
                                 <Card3DDetails {...previewProps} />
                             </div>
                         </CardPreviewErrorBoundary>
-                    </div>
+                    </motion.div>
 
-                    <div className="cp-innerCard">
-                        <h3 className="cp-innerTitle">Order summary</h3>
-
-                        <div className="cp-row">
-                            <div className="cp-rowKey">Product</div>
-                            <div className="cp-rowVal">{productTitle}</div>
-                        </div>
-
-                        <div className="cp-row">
-                            <div className="cp-rowKey">Assigned profile</div>
-                            <div className="cp-rowVal">{profileLabel}</div>
-                        </div>
-
-                        <div className="cp-row">
-                            <div className="cp-rowKey">Profile slug</div>
-                            <div className="cp-rowVal">{profileSlug}</div>
-                        </div>
-
-                        <div className="cp-row">
-                            <div className="cp-rowKey">Variant</div>
-                            <div className="cp-rowVal">{variant}</div>
-                        </div>
-
-                        <div className="cp-row">
-                            <div className="cp-rowKey">Quantity</div>
-                            <div className="cp-rowVal">{quantity}</div>
-                        </div>
-
-                        <div className="cp-row">
-                            <div className="cp-rowKey">Total</div>
-                            <div className="cp-rowVal">{amountFormatted}</div>
-                        </div>
-
-                        <div className="cp-row">
-                            <div className="cp-rowKey">Order status</div>
-                            <div className="cp-rowVal">{status}</div>
-                        </div>
-
-                        <div className="cp-row">
-                            <div className="cp-rowKey">Delivery status</div>
-                            <div className="cp-rowVal">{fulfillmentStatus}</div>
-                        </div>
-
-                        <div className="cp-row">
-                            <div className="cp-rowKey">Ordered on</div>
-                            <div className="cp-rowVal">{createdAt}</div>
-                        </div>
-
-                        <div className="cp-row">
-                            <div className="cp-rowKey">{deliveryInfoLabel}</div>
-                            <div className="cp-rowVal">{deliveryInfoValue}</div>
-                        </div>
-
-                        <div className="cp-row">
-                            <div className="cp-rowKey">Tracking code</div>
-                            <div className="cp-rowVal">{trackingCode}</div>
-                        </div>
-
-                        <div className="cp-row cp-row--link">
-                            <div className="cp-rowKey">Tracking link</div>
-                            <div className="cp-rowVal cp-rowVal--link">
-                                {trackingUrl !== "—" ? (
-                                    <a
-                                        className="cp-link"
-                                        href={trackingUrl}
-                                        target="_blank"
-                                        rel="noreferrer"
-                                    >
-                                        {trackingUrl}
-                                    </a>
-                                ) : (
-                                    "—"
-                                )}
+                    <div className="odv-sideStack">
+                        <motion.section
+                            className="cp-innerCard odv-infoCard"
+                            initial={{ opacity: 0, y: 14 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ duration: 0.3, delay: 0.08, ease: "easeOut" }}
+                        >
+                            <div className="odv-sectionHead">
+                                <h3 className="odv-sectionTitle">Order summary</h3>
+                                <p className="odv-sectionText">Core order and product details.</p>
                             </div>
-                        </div>
 
-                        <div className="cp-row">
-                            <div className="cp-rowKey">Delivery name</div>
-                            <div className="cp-rowVal">{deliveryName}</div>
-                        </div>
-
-                        <div className="cp-row">
-                            <div className="cp-rowKey">Delivery address</div>
-                            <div className="cp-rowVal">{deliveryAddress}</div>
-                        </div>
-
-                        {previewProps?.frontText ? (
-                            <div className="cp-row">
-                                <div className="cp-rowKey">Front text</div>
-                                <div className="cp-rowVal">{previewProps.frontText}</div>
+                            <div className="odv-infoList">
+                                <InfoRow label="Product" value={productTitle} />
+                                <InfoRow label="Assigned profile" value={profileLabel} />
+                                <InfoRow label="Profile slug" value={profileSlug} copy={profileSlug !== "—"} />
+                                <InfoRow label="Variant" value={variant} />
+                                <InfoRow label="Ordered on" value={createdAt} />
+                                <InfoRow label={deliveryInfoLabel} value={deliveryInfoValue} />
                             </div>
-                        ) : null}
+                        </motion.section>
+
+                        <motion.section
+                            className="cp-innerCard odv-infoCard"
+                            initial={{ opacity: 0, y: 14 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ duration: 0.3, delay: 0.12, ease: "easeOut" }}
+                        >
+                            <div className="odv-sectionHead">
+                                <h3 className="odv-sectionTitle">Shipping & tracking</h3>
+                                <p className="odv-sectionText">Delivery contact and tracking info.</p>
+                            </div>
+
+                            <div className="odv-infoList">
+                                <InfoRow label="Tracking code" value={trackingCode} copy={trackingCode !== "—"} />
+                                <InfoRow label="Tracking link" value={trackingUrl} link copy={trackingUrl !== "—"} />
+                                <InfoRow label="Delivery name" value={deliveryName} />
+                                <InfoRow label="Delivery address" value={deliveryAddress} />
+                            </div>
+                        </motion.section>
+
+                        <motion.section
+                            className="cp-innerCard odv-infoCard"
+                            initial={{ opacity: 0, y: 14 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ duration: 0.3, delay: 0.16, ease: "easeOut" }}
+                        >
+                            <div className="odv-sectionHead">
+                                <h3 className="odv-sectionTitle">Card setup</h3>
+                                <p className="odv-sectionText">How this card is configured.</p>
+                            </div>
+
+                            <div className="odv-infoList">
+                                <InfoRow label="QR target" value={safeTrim(selectedOrder?.qrTargetUrl) || "—"} link copy={!!safeTrim(selectedOrder?.qrTargetUrl)} />
+                                <InfoRow label="Public profile link" value={safeTrim(selectedOrder?.publicProfileUrl || selectedOrder?.link) || "—"} link copy={!!safeTrim(selectedOrder?.publicProfileUrl || selectedOrder?.link)} />
+                                {previewProps?.frontText ? (
+                                    <InfoRow label="Front text" value={previewProps.frontText} />
+                                ) : null}
+                            </div>
+                        </motion.section>
                     </div>
                 </div>
-            </section>
-        </>
+            </motion.section>
+        </div>
     );
 }
