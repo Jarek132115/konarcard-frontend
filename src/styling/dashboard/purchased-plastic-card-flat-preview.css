@@ -1,3 +1,10 @@
+/* =========================================================
+   Purchased 2D Card Preview (Flat)
+   - CR80 ratio
+   - centered
+   - clean catalog match
+========================================================= */
+
 .ppcfp {
     width: 100%;
     height: 100%;
@@ -6,6 +13,10 @@
     align-items: stretch;
     justify-content: stretch;
 }
+
+/* =========================================================
+   Stage (background container)
+========================================================= */
 
 .ppcfp-stage {
     width: 100%;
@@ -18,97 +29,63 @@
     box-sizing: border-box;
 }
 
+/* =========================================================
+   Card (CR80 aspect ratio)
+========================================================= */
+
 .ppcfp-card {
     position: relative;
     width: 75%;
     max-width: 100%;
     aspect-ratio: 85.6 / 54;
+    /* CR80 */
     border-radius: 18px;
     overflow: hidden;
+
     background-repeat: no-repeat;
     background-position: center;
     background-size: cover;
+
     display: block;
+
     box-shadow:
         0 1px 0 rgba(15, 23, 42, 0.04),
         0 12px 30px rgba(15, 23, 42, 0.08);
 }
 
-.ppcfp-corner {
-    position: absolute;
-    top: 12px;
-    z-index: 2;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    line-height: 1;
-    user-select: none;
-    pointer-events: none;
-}
-
-.ppcfp-corner--left {
-    left: 12px;
-    font-family: "Inter", sans-serif;
-    font-size: 14px;
-    font-weight: 800;
-    color: rgba(255, 255, 255, 0.96);
-    letter-spacing: -0.04em;
-}
-
-.ppcfp-corner--right {
-    right: 12px;
-    width: 16px;
-    height: 16px;
-}
-
-.ppcfp-nfcGlyph {
-    position: relative;
-    display: block;
-    width: 14px;
-    height: 14px;
-}
-
-.ppcfp-nfcGlyph::before,
-.ppcfp-nfcGlyph::after {
-    content: "";
-    position: absolute;
-    top: 50%;
-    border: 1.6px solid rgba(255, 255, 255, 0.96);
-    border-left: 0;
-    border-radius: 0 10px 10px 0;
-    transform: translateY(-50%);
-}
-
-.ppcfp-nfcGlyph::before {
-    right: 4px;
-    width: 4px;
-    height: 8px;
-}
-
-.ppcfp-nfcGlyph::after {
-    right: 0;
-    width: 8px;
-    height: 12px;
-}
+/* =========================================================
+   Center Text
+========================================================= */
 
 .ppcfp-frontText {
     position: absolute;
     inset: 0;
+
     display: flex;
     align-items: center;
     justify-content: center;
+
     padding: 12px 24px;
+
     text-align: center;
     line-height: 0.92;
     letter-spacing: -0.055em;
+
     font-family: "Cal Sans", "Inter", "Helvetica Neue", Arial, sans-serif;
+
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+
     user-select: none;
     pointer-events: none;
+
     text-transform: uppercase;
 }
+
+/* =========================================================
+   Dynamic Text Sizes (auto scaling)
+========================================================= */
 
 .ppcfp-frontText--lg {
     font-size: clamp(22px, 2vw, 34px);
@@ -126,6 +103,10 @@
     font-size: clamp(14px, 1.2vw, 20px);
     letter-spacing: -0.045em;
 }
+
+/* =========================================================
+   Responsive tweaks
+========================================================= */
 
 @media (max-width: 1280px) {
     .ppcfp-stage {
@@ -154,36 +135,6 @@
 
     .ppcfp-frontText {
         padding: 10px 18px;
-    }
-
-    .ppcfp-corner--left {
-        top: 10px;
-        left: 10px;
-        font-size: 13px;
-    }
-
-    .ppcfp-corner--right {
-        top: 10px;
-        right: 10px;
-        width: 14px;
-        height: 14px;
-    }
-
-    .ppcfp-nfcGlyph {
-        width: 12px;
-        height: 12px;
-    }
-
-    .ppcfp-nfcGlyph::before {
-        right: 3px;
-        width: 4px;
-        height: 7px;
-    }
-
-    .ppcfp-nfcGlyph::after {
-        right: 0;
-        width: 7px;
-        height: 10px;
     }
 }
 

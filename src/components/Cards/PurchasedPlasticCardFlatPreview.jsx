@@ -135,11 +135,6 @@ export default function PurchasedPlasticCardFlatPreview({
                         backgroundImage: `url(${artwork.frontSrc})`,
                     }}
                 >
-                    <div className="ppcfp-corner ppcfp-corner--left">K</div>
-                    <div className="ppcfp-corner ppcfp-corner--right">
-                        <span className="ppcfp-nfcGlyph" />
-                    </div>
-
                     <div
                         className={`ppcfp-frontText ${textScaleClass}`}
                         style={{
