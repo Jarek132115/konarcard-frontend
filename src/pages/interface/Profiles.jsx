@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { toast } from "react-hot-toast";
+import { motion, AnimatePresence } from "motion/react";
 
 import DashboardLayout from "../../components/Dashboard/DashboardLayout";
 import PageHeader from "../../components/Dashboard/PageHeader";
@@ -1006,7 +1007,12 @@ export default function Profiles() {
                     onGoogleWallet={handleGoogleWallet}
                 />
 
-                <section className="profiles-main">
+                <motion.section
+                    className="profiles-main"
+                    initial={{ opacity: 0, y: 18 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.32, ease: "easeOut" }}
+                >
                     <div className="profiles-grid">
                         <ProfilesList
                             railRef={railRef}
@@ -1045,63 +1051,79 @@ export default function Profiles() {
                             }}
                         />
 
-                        {selectedProfile ? (
-                            <ProfilesInfo
-                                selectedProfile={selectedProfile}
-                                selectedPublicUrl={selectedPublicUrl}
-                                selectedQrTrackedUrl={selectedQrTrackedUrl}
-                                selectedNfcTrackedUrl={selectedNfcTrackedUrl}
-                                onCopyLink={handleCopyPublicLink}
-                                onCopyQrLink={handleCopyQrLink}
-                                onCopyNfcLink={handleCopyNfcLink}
-                                onDownloadQr={handleDownloadQr}
-                                onFacebook={shareToFacebook}
-                                onInstagram={shareToInstagram}
-                                onMessenger={shareToMessenger}
-                                onWhatsApp={shareToWhatsApp}
-                                onText={shareByText}
-                                onAppleWallet={handleAppleWallet}
-                                onGoogleWallet={handleGoogleWallet}
-                                onEdit={handleEdit}
-                                onDelete={handleDelete}
-                            />
-                        ) : (
-                            <section className="profiles-card profiles-emptyInfoCard">
-                                <div className="profiles-emptyInfoHead">
-                                    <h2 className="profiles-card-title">Profile details</h2>
-                                    <p className="profiles-muted">
-                                        Once you create a profile, your public link, QR code, sharing
-                                        tools and actions will show here.
-                                    </p>
-                                </div>
-
-                                <div className="profiles-emptyInfoPanel">
-                                    <div className="profiles-emptyInfoBlock">
-                                        <div className="profiles-emptyInfoLabel">Public link</div>
-                                        <div className="profiles-emptyInfoValue">
-                                            Create a profile to generate your link.
-                                        </div>
+                        <AnimatePresence mode="wait">
+                            {selectedProfile ? (
+                                <motion.div
+                                    key={selectedProfile.slug}
+                                    initial={{ opacity: 0, y: 12 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    exit={{ opacity: 0, y: -8 }}
+                                    transition={{ duration: 0.26, ease: "easeOut" }}
+                                >
+                                    <ProfilesInfo
+                                        selectedProfile={selectedProfile}
+                                        selectedPublicUrl={selectedPublicUrl}
+                                        selectedQrTrackedUrl={selectedQrTrackedUrl}
+                                        selectedNfcTrackedUrl={selectedNfcTrackedUrl}
+                                        onCopyLink={handleCopyPublicLink}
+                                        onCopyQrLink={handleCopyQrLink}
+                                        onCopyNfcLink={handleCopyNfcLink}
+                                        onDownloadQr={handleDownloadQr}
+                                        onFacebook={shareToFacebook}
+                                        onInstagram={shareToInstagram}
+                                        onMessenger={shareToMessenger}
+                                        onWhatsApp={shareToWhatsApp}
+                                        onText={shareByText}
+                                        onAppleWallet={handleAppleWallet}
+                                        onGoogleWallet={handleGoogleWallet}
+                                        onEdit={handleEdit}
+                                        onDelete={handleDelete}
+                                    />
+                                </motion.div>
+                            ) : (
+                                <motion.section
+                                    key="empty-info"
+                                    className="profiles-card profiles-emptyInfoCard"
+                                    initial={{ opacity: 0, y: 12 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    transition={{ duration: 0.26, ease: "easeOut" }}
+                                >
+                                    <div className="profiles-emptyInfoHead">
+                                        <h2 className="profiles-card-title">Profile details</h2>
+                                        <p className="profiles-muted">
+                                            Once you create a profile, your public link, QR code, sharing
+                                            tools and actions will show here.
+                                        </p>
                                     </div>
 
-                                    <div className="profiles-emptyInfoBlock">
-                                        <div className="profiles-emptyInfoLabel">QR code</div>
-                                        <div className="profiles-emptyInfoValue">
-                                            Your QR code will appear here once your first profile is created.
+                                    <div className="profiles-emptyInfoPanel">
+                                        <div className="profiles-emptyInfoBlock">
+                                            <div className="profiles-emptyInfoLabel">Public link</div>
+                                            <div className="profiles-emptyInfoValue">
+                                                Create a profile to generate your link.
+                                            </div>
                                         </div>
-                                    </div>
 
-                                    <div className="profiles-emptyInfoBlock">
-                                        <div className="profiles-emptyInfoLabel">Share tools</div>
-                                        <div className="profiles-emptyInfoValue">
-                                            Copy link, social share, wallet tools and profile actions will
-                                            appear here.
+                                        <div className="profiles-emptyInfoBlock">
+                                            <div className="profiles-emptyInfoLabel">QR code</div>
+                                            <div className="profiles-emptyInfoValue">
+                                                Your QR code will appear here once your first profile is created.
+                                            </div>
+                                        </div>
+
+                                        <div className="profiles-emptyInfoBlock">
+                                            <div className="profiles-emptyInfoLabel">Share tools</div>
+                                            <div className="profiles-emptyInfoValue">
+                                                Copy link, social share, wallet tools and profile actions will
+                                                appear here.
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
-                            </section>
-                        )}
+                                </motion.section>
+                            )}
+                        </AnimatePresence>
                     </div>
-                </section>
+                </motion.section>
 
                 {lockedOverlayOpen ? (
                     <div

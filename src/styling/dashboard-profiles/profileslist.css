@@ -112,21 +112,24 @@
     background: #ffffff;
     cursor: pointer;
     box-shadow: var(--p-softShadow);
+    will-change: transform;
     transition:
-        transform 0.08s ease,
-        background 0.18s ease,
-        border-color 0.18s ease,
-        box-shadow 0.18s ease;
+        transform 0.22s ease,
+        background 0.22s ease,
+        border-color 0.22s ease,
+        box-shadow 0.22s ease;
     overflow: hidden;
     min-width: 0;
 }
 
 .profiles-profileCard:hover {
-    background: rgba(15, 23, 42, 0.01);
+    transform: translateY(-2px);
+    box-shadow: 0 14px 32px rgba(15, 23, 42, 0.09);
+    border-color: rgba(15, 23, 42, 0.14);
 }
 
 .profiles-profileCard:active {
-    transform: translateY(1px);
+    transform: translateY(0);
 }
 
 .profiles-profileCard.is-active {

@@ -223,6 +223,94 @@
     border: 1px solid rgba(15, 23, 42, 0.12);
     box-shadow: 0 30px 80px rgba(15, 23, 42, 0.28);
     padding: var(--sp-6);
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.profiles-overlayHead {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 16px;
+}
+
+.profiles-overlayTitle {
+    font-family: "Cal Sans", sans-serif;
+    font-weight: 400;
+    font-size: 22px;
+    line-height: 1.08;
+    letter-spacing: -0.02em;
+    color: var(--p-ink);
+    margin: 0;
+}
+
+.profiles-overlaySub {
+    margin-top: 6px;
+    font-family: "Inter", sans-serif;
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 1.5;
+    color: var(--p-muted);
+}
+
+.profiles-overlayClose {
+    flex: 0 0 auto;
+    width: 32px;
+    height: 32px;
+    border: 1px solid rgba(15, 23, 42, 0.1);
+    border-radius: 10px;
+    background: transparent;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: rgba(15, 23, 42, 0.5);
+    font-size: 16px;
+    transition: background 0.15s ease, border-color 0.15s ease;
+}
+
+.profiles-overlayClose:hover {
+    background: rgba(15, 23, 42, 0.05);
+    border-color: rgba(15, 23, 42, 0.14);
+}
+
+.profiles-overlayCopy {
+    font-family: "Inter", sans-serif;
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 1.6;
+    color: var(--p-muted);
+}
+
+.profiles-overlayCopy strong {
+    color: var(--p-ink);
+    font-weight: 700;
+}
+
+.profiles-overlayMeta {
+    font-family: "Inter", sans-serif;
+    font-size: 13px;
+    font-weight: 500;
+    line-height: 1.5;
+    color: var(--p-muted);
+    padding: 12px 14px;
+    border-radius: 14px;
+    background: rgba(15, 23, 42, 0.03);
+    border: 1px solid rgba(15, 23, 42, 0.08);
+}
+
+.profiles-overlayMeta strong {
+    color: var(--p-ink);
+    font-weight: 700;
+}
+
+.profiles-overlayActions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-top: 4px;
 }
 
 /* =========================
