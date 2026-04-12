@@ -58,7 +58,7 @@
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: var(--sp-3);
-    align-items: start;
+    align-items: stretch;
 }
 
 /* =========================
@@ -70,6 +70,7 @@
     min-width: 0;
     display: flex;
     flex-direction: column;
+    height: 100%;
     padding: clamp(20px, 2vw, 28px);
     border-radius: var(--stg-radius-xl);
     border: 1px solid var(--stg-line);
@@ -755,6 +756,11 @@
 @media (max-width: 1200px) {
     .stg-grid {
         grid-template-columns: 1fr;
+        align-items: start;
+    }
+
+    .stg-card {
+        height: auto;
     }
 }
 
