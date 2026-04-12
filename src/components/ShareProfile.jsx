@@ -5,48 +5,22 @@ import QRCode from "qrcode";
 
 import "../styling/dashboard/shareprofile.css";
 
-import CopyLinkIcon from "../assets/icons/CopyLink-Icon.svg";
+import CopyLinkIcon     from "../assets/icons/CopyLink-Icon.svg";
 import VisitProfileIcon from "../assets/icons/VisitProfile-Icon.svg";
-import DownloadQRIcon from "../assets/icons/DownloadQR-Icon.svg";
+import DownloadQRIcon   from "../assets/icons/DownloadQR-Icon.svg";
 
-import ShareOnFacebookIcon from "../assets/icons/ShareOnFacebook.svg";
-import ShareOnInstagramIcon from "../assets/icons/ShareOnInstagram.svg";
-import ShareOnMessengerIcon from "../assets/icons/ShareOnMessenger.svg";
-import ShareOnWhatsappIcon from "../assets/icons/ShareOnWhatsapp.svg";
-import ShareOnTextIcon from "../assets/icons/ShareOnText.svg";
-import ShareOnCopyIcon from "../assets/icons/ShareOnCopy.svg";
+import ShareOnFacebookIcon    from "../assets/icons/ShareOnFacebook.svg";
+import ShareOnInstagramIcon   from "../assets/icons/ShareOnInstagram.svg";
+import ShareOnMessengerIcon   from "../assets/icons/ShareOnMessenger.svg";
+import ShareOnWhatsappIcon    from "../assets/icons/ShareOnWhatsapp.svg";
+import ShareOnTextIcon        from "../assets/icons/ShareOnText.svg";
+import ShareOnCopyIcon        from "../assets/icons/ShareOnCopy.svg";
 import ShareOnAppleWalletIcon from "../assets/icons/ShareOnAppleWallet.svg";
 import ShareOnGoogleWalletIcon from "../assets/icons/ShareOnGoogleWallet.svg";
 
 function openInNewTab(url) {
     if (!url) return;
     window.open(url, "_blank", "noopener,noreferrer");
-}
-
-function buildFacebookShareUrl(url) {
-    return `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`;
-}
-
-function buildMessengerShareUrl(url) {
-    return `https://www.facebook.com/dialog/send?link=${encodeURIComponent(
-        url
-    )}&app_id=1217981644879628&redirect_uri=${encodeURIComponent(url)}`;
-}
-
-function buildWhatsAppShareUrl(url) {
-    return `https://wa.me/?text=${encodeURIComponent(url)}`;
-}
-
-function buildSmsShareUrl(url) {
-    return `sms:?&body=${encodeURIComponent(url)}`;
-}
-
-function ActionIcon({ src, alt = "" }) {
-    return (
-        <span className="sp-actionBtnIcon" aria-hidden="true">
-            <img src={src} alt={alt} className="sp-actionBtnIconImg" />
-        </span>
-    );
 }
 
 export default function ShareProfile({
@@ -76,171 +50,78 @@ export default function ShareProfile({
 
     const effectiveUrl = selectedProfile?.url || profileUrl || "";
 
-    useEffect(() => {
-        const handleEscape = (event) => {
-            if (event.key === "Escape") onClose();
-        };
-
-        if (isOpen) {
-            document.addEventListener("keydown", handleEscape);
-        }
-
-        return () => {
-            document.removeEventListener("keydown", handleEscape);
-        };
-    }, [isOpen, onClose]);
-
-    useEffect(() => {
-        if (!isOpen) return;
-
-        const previousOverflow = document.body.style.overflow;
-        document.body.style.overflow = "hidden";
-
-        return () => {
-            document.body.style.overflow = previousOverflow || "";
-        };
-    }, [isOpen]);
-
-    useEffect(() => {
-        if (!isOpen) return;
-
-        if (!effectiveUrl) {
-            setQrCodeImage("");
-            return;
-        }
-
-        QRCode.toDataURL(effectiveUrl, {
-            errorCorrectionLevel: "H",
-            width: 300,
-            margin: 0,
-        })
-            .then((url) => setQrCodeImage(url))
-            .catch((err) => {
-                console.error(err);
-                toast.error("Failed to generate QR code.");
-            });
-    }, [isOpen, effectiveUrl]);
-
     const displayUrl = useMemo(() => {
         if (!effectiveUrl) return "";
         try {
             const u = new URL(effectiveUrl);
-            const host = u.host.replace(/^www\./i, "");
-            return `${host}${u.pathname}`;
+            return `${u.host.replace(/^www\./i, "")}${u.pathname}`;
         } catch {
             return effectiveUrl.replace(/^https?:\/\//i, "");
         }
     }, [effectiveUrl]);
 
-    const profileLabel = useMemo(() => {
-        if (!selectedProfile) return "";
-        return `${selectedProfile.name} — ${selectedProfile.slug}`;
-    }, [selectedProfile]);
+    /* ── effects ── */
+    useEffect(() => {
+        if (!isOpen) return;
+        const onKey = (e) => { if (e.key === "Escape") onClose(); };
+        document.addEventListener("keydown", onKey);
+        return () => document.removeEventListener("keydown", onKey);
+    }, [isOpen, onClose]);
 
-    const hasManyProfiles = (profiles?.length || 0) > 1;
+    useEffect(() => {
+        if (!isOpen) return;
+        const prev = document.body.style.overflow;
+        document.body.style.overflow = "hidden";
+        return () => { document.body.style.overflow = prev || ""; };
+    }, [isOpen]);
 
-    if (!isOpen) return null;
+    useEffect(() => {
+        if (!isOpen || !effectiveUrl) { setQrCodeImage(""); return; }
+        QRCode.toDataURL(effectiveUrl, { errorCorrectionLevel: "H", width: 300, margin: 0 })
+            .then(setQrCodeImage)
+            .catch(() => toast.error("Failed to generate QR code."));
+    }, [isOpen, effectiveUrl]);
 
-    const copyToClipboard = async (text, message) => {
+    /* ── helpers ── */
+    const copy = async (text, msg = "Copied!") => {
         if (!text) return;
-
         try {
             if (navigator.clipboard?.writeText) {
                 await navigator.clipboard.writeText(text);
-                toast.success(message || "Copied!");
-                return;
+            } else {
+                const el = document.createElement("textarea");
+                el.value = text;
+                document.body.appendChild(el);
+                el.select();
+                document.execCommand("copy");
+                document.body.removeChild(el);
             }
-
-            const textArea = document.createElement("textarea");
-            textArea.value = text;
-            document.body.appendChild(textArea);
-            textArea.focus();
-            textArea.select();
-            document.execCommand("copy");
-            document.body.removeChild(textArea);
-            toast.success(message || "Copied!");
-        } catch (err) {
-            console.error(err);
-            toast.error("Failed to copy. Please try manually.");
+            toast.success(msg);
+        } catch {
+            toast.error("Failed to copy.");
         }
     };
 
-    const handleFacebook = () => {
-        if (!effectiveUrl) return;
-        if (typeof onFacebook === "function") {
-            onFacebook();
-            return;
-        }
-        openInNewTab(buildFacebookShareUrl(effectiveUrl));
-    };
-
+    const handleFacebook  = () => onFacebook  ? onFacebook()  : openInNewTab(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(effectiveUrl)}`);
     const handleInstagram = async () => {
-        if (!effectiveUrl) return;
-
-        if (typeof onInstagram === "function") {
-            onInstagram();
-            return;
-        }
-
-        await copyToClipboard(effectiveUrl, "Profile link copied for Instagram sharing.");
+        if (onInstagram) { onInstagram(); return; }
+        await copy(effectiveUrl, "Link copied — paste it into Instagram.");
         openInNewTab("https://www.instagram.com/");
     };
-
     const handleMessenger = async () => {
-        if (!effectiveUrl) return;
-
-        if (typeof onMessenger === "function") {
-            onMessenger();
-            return;
-        }
-
-        const isMobile =
-            /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent || "");
-
-        if (isMobile) {
-            await copyToClipboard(
-                effectiveUrl,
-                "Messenger sharing is not supported on mobile browsers. Link copied instead."
-            );
-            return;
-        }
-
-        openInNewTab(buildMessengerShareUrl(effectiveUrl));
+        if (onMessenger) { onMessenger(); return; }
+        const isMobile = /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent || "");
+        if (isMobile) { await copy(effectiveUrl, "Link copied — paste into Messenger."); return; }
+        openInNewTab(`https://www.facebook.com/dialog/send?link=${encodeURIComponent(effectiveUrl)}&app_id=1217981644879628&redirect_uri=${encodeURIComponent(effectiveUrl)}`);
     };
+    const handleWhatsApp = () => onWhatsApp ? onWhatsApp() : openInNewTab(`https://wa.me/?text=${encodeURIComponent(effectiveUrl)}`);
+    const handleText     = () => onText     ? onText()     : (window.location.href = `sms:?&body=${encodeURIComponent(effectiveUrl)}`);
+    const handleApple    = () => onAppleWallet  ? onAppleWallet()  : toast.info("Apple Wallet is coming soon.");
+    const handleGoogle   = () => onGoogleWallet ? onGoogleWallet() : toast.info("Google Wallet is coming soon.");
 
-    const handleWhatsApp = () => {
-        if (!effectiveUrl) return;
-        if (typeof onWhatsApp === "function") {
-            onWhatsApp();
-            return;
-        }
-        openInNewTab(buildWhatsAppShareUrl(effectiveUrl));
-    };
+    if (!isOpen) return null;
 
-    const handleText = () => {
-        if (!effectiveUrl) return;
-        if (typeof onText === "function") {
-            onText();
-            return;
-        }
-        window.location.href = buildSmsShareUrl(effectiveUrl);
-    };
-
-    const handleAppleWallet = () => {
-        if (typeof onAppleWallet === "function") {
-            onAppleWallet();
-            return;
-        }
-        toast("Apple Wallet is coming soon.");
-    };
-
-    const handleGoogleWallet = () => {
-        if (typeof onGoogleWallet === "function") {
-            onGoogleWallet();
-            return;
-        }
-        toast("Google Wallet is coming soon.");
-    };
+    const hasManyProfiles = (profiles?.length || 0) > 1;
 
     return (
         <div className="sp-overlay" onClick={onClose} role="presentation">
@@ -251,249 +132,133 @@ export default function ShareProfile({
                 aria-modal="true"
                 aria-label="Share your profile"
             >
-                <button
-                    className="sp-close"
-                    onClick={(e) => {
-                        e.stopPropagation();
-                        onClose();
-                    }}
-                    aria-label="Close"
-                    type="button"
-                >
-                    ×
-                </button>
-
-                <div className="sp-head">
-                    <div className="sp-kicker">Share profile</div>
-                    <h3 className="sp-title">Share your profile</h3>
-                    <p className="sp-sub">
-                        Share your link, QR code, socials and wallet options from one place.
-                    </p>
+                {/* ── Header ── */}
+                <div className="sp-header">
+                    <div>
+                        <h2 className="sp-title">Share your profile</h2>
+                        {displayUrl && (
+                            <p className="sp-url">{displayUrl}</p>
+                        )}
+                    </div>
+                    <button className="sp-close" onClick={onClose} aria-label="Close" type="button">
+                        <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+                            <path d="M1.5 1.5L12.5 12.5M12.5 1.5L1.5 12.5" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"/>
+                        </svg>
+                    </button>
                 </div>
 
-                <div className="sp-layout">
-                    <div className="sp-mainCol">
-                        <section className="sp-panel">
-                            <div className="sp-panelHead">
-                                <h4 className="sp-panelTitle">Profile</h4>
-                                <p className="sp-panelSub">
-                                    Choose which profile you want to share.
-                                </p>
+                <div className="sp-body">
+                    {/* ── Left column ── */}
+                    <div className="sp-left">
+
+                        {/* Profile picker */}
+                        {hasManyProfiles && (
+                            <div className="sp-section">
+                                <label className="sp-label" htmlFor="sp-profile-select">Profile</label>
+                                <select
+                                    id="sp-profile-select"
+                                    className="sp-select"
+                                    value={selectedProfile?.slug || ""}
+                                    onChange={(e) => onSelectSlug?.(e.target.value)}
+                                >
+                                    {profiles.map((p) => (
+                                        <option key={p.slug} value={p.slug}>
+                                            {p.name} — {p.slug}
+                                        </option>
+                                    ))}
+                                </select>
                             </div>
+                        )}
 
-                            {hasManyProfiles ? (
-                                <div className="sp-field">
-                                    <label className="sp-label" htmlFor="sp-profile-select">
-                                        Choose profile
-                                    </label>
-                                    <select
-                                        id="sp-profile-select"
-                                        className="sp-select"
-                                        value={selectedProfile?.slug || ""}
-                                        onChange={(e) => onSelectSlug?.(e.target.value)}
-                                    >
-                                        {profiles.map((p) => (
-                                            <option key={p.slug} value={p.slug}>
-                                                {p.name} — {p.slug}
-                                            </option>
-                                        ))}
-                                    </select>
-                                </div>
-                            ) : profiles?.length === 1 ? (
-                                <div className="sp-selectedCard">
-                                    <div className="sp-selectedLabel">Selected profile</div>
-                                    <div className="sp-selectedValue">{profileLabel}</div>
-                                </div>
-                            ) : (
-                                <div className="sp-empty">
-                                    No profile available yet. Create a profile first.
-                                </div>
-                            )}
-                        </section>
-
-                        <section className="sp-panel">
-                            <div className="sp-panelHead">
-                                <h4 className="sp-panelTitle">Profile link</h4>
-                                <p className="sp-panelSub">
-                                    Copy your public URL or visit your profile.
-                                </p>
-                            </div>
-
-                            <div className="sp-linkRow">
-                                <input
-                                    type="text"
-                                    readOnly
-                                    value={displayUrl}
-                                    className="sp-input"
-                                    placeholder="Your profile link will appear here"
-                                />
-                            </div>
-
-                            <div className="sp-primaryActions">
+                        {/* Copy + Visit */}
+                        <div className="sp-section">
+                            <div className="sp-ctaRow">
                                 <button
                                     type="button"
-                                    className="kx-btn kx-btn--black sp-primaryBtn"
-                                    onClick={() => copyToClipboard(effectiveUrl, "Profile link copied!")}
+                                    className="sp-btn sp-btn--dark"
+                                    onClick={() => copy(effectiveUrl, "Profile link copied!")}
                                     disabled={!effectiveUrl}
                                 >
-                                    <img src={CopyLinkIcon} alt="" className="sp-inlineIcon" />
+                                    <img src={CopyLinkIcon} alt="" className="sp-btnIcon sp-btnIcon--invert" />
                                     Copy link
                                 </button>
-
                                 <a
                                     href={effectiveUrl || "#"}
                                     target="_blank"
                                     rel="noopener noreferrer"
-                                    className="kx-btn kx-btn--orange sp-primaryBtn"
-                                    onClick={(e) => {
-                                        if (!effectiveUrl) e.preventDefault();
-                                    }}
+                                    className="sp-btn sp-btn--orange"
+                                    onClick={(e) => { if (!effectiveUrl) e.preventDefault(); }}
                                 >
-                                    <img src={VisitProfileIcon} alt="" className="sp-inlineIcon" />
+                                    <img src={VisitProfileIcon} alt="" className="sp-btnIcon sp-btnIcon--invert" />
                                     Visit profile
                                 </a>
                             </div>
-                        </section>
+                        </div>
 
-                        <section className="sp-panel">
-                            <div className="sp-panelHead">
-                                <h4 className="sp-panelTitle">Share your profile</h4>
-                                <p className="sp-panelSub">
-                                    Send your profile through your favourite sharing channels.
-                                </p>
+                        {/* Share */}
+                        <div className="sp-section">
+                            <span className="sp-label">Share via</span>
+                            <div className="sp-grid">
+                                {[
+                                    { icon: ShareOnFacebookIcon,  label: "Facebook",  fn: handleFacebook  },
+                                    { icon: ShareOnInstagramIcon, label: "Instagram", fn: handleInstagram },
+                                    { icon: ShareOnMessengerIcon, label: "Messenger", fn: handleMessenger },
+                                    { icon: ShareOnWhatsappIcon,  label: "WhatsApp",  fn: handleWhatsApp  },
+                                    { icon: ShareOnTextIcon,      label: "Text",      fn: handleText      },
+                                    { icon: ShareOnCopyIcon,      label: "Copy",      fn: () => copy(effectiveUrl, "Copied!") },
+                                ].map(({ icon, label, fn }) => (
+                                    <button
+                                        key={label}
+                                        type="button"
+                                        className="sp-shareBtn"
+                                        onClick={fn}
+                                        disabled={!effectiveUrl}
+                                    >
+                                        <img src={icon} alt={label} className="sp-shareIcon" />
+                                        <span>{label}</span>
+                                    </button>
+                                ))}
                             </div>
+                        </div>
 
-                            <div className="sp-actionGrid">
-                                <button
-                                    type="button"
-                                    className="kx-btn kx-btn--white sp-actionBtn"
-                                    onClick={handleFacebook}
-                                    disabled={!effectiveUrl}
-                                >
-                                    <ActionIcon src={ShareOnFacebookIcon} />
-                                    <span>Facebook</span>
-                                </button>
-
-                                <button
-                                    type="button"
-                                    className="kx-btn kx-btn--white sp-actionBtn"
-                                    onClick={handleInstagram}
-                                    disabled={!effectiveUrl}
-                                >
-                                    <ActionIcon src={ShareOnInstagramIcon} />
-                                    <span>Instagram</span>
-                                </button>
-
-                                <button
-                                    type="button"
-                                    className="kx-btn kx-btn--white sp-actionBtn"
-                                    onClick={handleMessenger}
-                                    disabled={!effectiveUrl}
-                                >
-                                    <ActionIcon src={ShareOnMessengerIcon} />
-                                    <span>Messenger</span>
-                                </button>
-
-                                <button
-                                    type="button"
-                                    className="kx-btn kx-btn--white sp-actionBtn"
-                                    onClick={handleWhatsApp}
-                                    disabled={!effectiveUrl}
-                                >
-                                    <ActionIcon src={ShareOnWhatsappIcon} />
-                                    <span>WhatsApp</span>
-                                </button>
-
-                                <button
-                                    type="button"
-                                    className="kx-btn kx-btn--white sp-actionBtn"
-                                    onClick={handleText}
-                                    disabled={!effectiveUrl}
-                                >
-                                    <ActionIcon src={ShareOnTextIcon} />
-                                    <span>Text</span>
-                                </button>
-
-                                <button
-                                    type="button"
-                                    className="kx-btn kx-btn--white sp-actionBtn"
-                                    onClick={() => copyToClipboard(effectiveUrl, "Profile link copied!")}
-                                    disabled={!effectiveUrl}
-                                >
-                                    <ActionIcon src={ShareOnCopyIcon} />
-                                    <span>Copy link</span>
-                                </button>
-                            </div>
-                        </section>
-
-                        <section className="sp-panel">
-                            <div className="sp-panelHead">
-                                <h4 className="sp-panelTitle">Add to wallet</h4>
-                                <p className="sp-panelSub">
-                                    Save your profile to Apple Wallet or Google Wallet.
-                                </p>
-                            </div>
-
-                            <div className="sp-actionGrid sp-actionGrid--two">
-                                <button
-                                    type="button"
-                                    className="kx-btn kx-btn--white sp-actionBtn"
-                                    onClick={handleAppleWallet}
-                                >
-                                    <ActionIcon src={ShareOnAppleWalletIcon} />
+                        {/* Wallet */}
+                        <div className="sp-section sp-section--last">
+                            <span className="sp-label">Add to wallet</span>
+                            <div className="sp-grid sp-grid--two">
+                                <button type="button" className="sp-shareBtn" onClick={handleApple}>
+                                    <img src={ShareOnAppleWalletIcon} alt="Apple Wallet" className="sp-shareIcon" />
                                     <span>Apple Wallet</span>
                                 </button>
-
-                                <button
-                                    type="button"
-                                    className="kx-btn kx-btn--white sp-actionBtn"
-                                    onClick={handleGoogleWallet}
-                                >
-                                    <ActionIcon src={ShareOnGoogleWalletIcon} />
+                                <button type="button" className="sp-shareBtn" onClick={handleGoogle}>
+                                    <img src={ShareOnGoogleWalletIcon} alt="Google Wallet" className="sp-shareIcon" />
                                     <span>Google Wallet</span>
                                 </button>
                             </div>
-                        </section>
+                        </div>
                     </div>
 
-                    <div className="sp-sideCol">
-                        <section className="sp-panel sp-panel--sticky">
-                            <div className="sp-panelHead">
-                                <h4 className="sp-panelTitle">QR code</h4>
-                                <p className="sp-panelSub">
-                                    Download and print it for quick sharing.
-                                </p>
-                            </div>
-
-                            {qrCodeImage ? (
-                                <>
-                                    <div className="sp-qrWrap">
-                                        <img
-                                            src={qrCodeImage}
-                                            alt="Profile QR Code"
-                                            className="sp-qr"
-                                        />
-                                    </div>
-
-                                    <div className="sp-downloadWrap">
-                                        <a
-                                            href={qrCodeImage}
-                                            download={`${(username || "konarcard")
-                                                .toString()
-                                                .replace(/\s+/g, "-")}-qrcode.png`}
-                                            className="kx-btn kx-btn--white sp-downloadBtn"
-                                        >
-                                            <img src={DownloadQRIcon} alt="" className="sp-inlineIcon" />
-                                            Download QR
-                                        </a>
-                                    </div>
-                                </>
-                            ) : (
-                                <div className="sp-empty">
-                                    QR code will appear once a valid profile is selected.
+                    {/* ── QR column ── */}
+                    <div className="sp-right">
+                        <span className="sp-label">QR code</span>
+                        {qrCodeImage ? (
+                            <>
+                                <div className="sp-qrBox">
+                                    <img src={qrCodeImage} alt="QR code" className="sp-qrImg" />
                                 </div>
-                            )}
-                        </section>
+                                <a
+                                    href={qrCodeImage}
+                                    download={`${(username || "konarcard").replace(/\s+/g, "-")}-qrcode.png`}
+                                    className="sp-btn sp-btn--ghost sp-downloadBtn"
+                                >
+                                    <img src={DownloadQRIcon} alt="" className="sp-btnIcon" />
+                                    Download QR
+                                </a>
+                            </>
+                        ) : (
+                            <div className="sp-qrEmpty">
+                                QR code appears once a profile is selected.
+                            </div>
+                        )}
                     </div>
                 </div>
             </div>
@@ -502,24 +267,22 @@ export default function ShareProfile({
 }
 
 ShareProfile.propTypes = {
-    isOpen: PropTypes.bool.isRequired,
-    onClose: PropTypes.func.isRequired,
-    profiles: PropTypes.arrayOf(
-        PropTypes.shape({
-            slug: PropTypes.string.isRequired,
-            name: PropTypes.string.isRequired,
-            url: PropTypes.string.isRequired,
-        })
-    ),
-    selectedSlug: PropTypes.string,
-    onSelectSlug: PropTypes.func,
-    profileUrl: PropTypes.string,
-    username: PropTypes.string,
-    onFacebook: PropTypes.func,
-    onInstagram: PropTypes.func,
-    onMessenger: PropTypes.func,
-    onWhatsApp: PropTypes.func,
-    onText: PropTypes.func,
-    onAppleWallet: PropTypes.func,
+    isOpen:         PropTypes.bool.isRequired,
+    onClose:        PropTypes.func.isRequired,
+    profiles:       PropTypes.arrayOf(PropTypes.shape({
+        slug: PropTypes.string.isRequired,
+        name: PropTypes.string.isRequired,
+        url:  PropTypes.string.isRequired,
+    })),
+    selectedSlug:   PropTypes.string,
+    onSelectSlug:   PropTypes.func,
+    profileUrl:     PropTypes.string,
+    username:       PropTypes.string,
+    onFacebook:     PropTypes.func,
+    onInstagram:    PropTypes.func,
+    onMessenger:    PropTypes.func,
+    onWhatsApp:     PropTypes.func,
+    onText:         PropTypes.func,
+    onAppleWallet:  PropTypes.func,
     onGoogleWallet: PropTypes.func,
 };
