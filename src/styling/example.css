@@ -161,14 +161,20 @@
     border-color: rgba(249, 115, 22, 0.22);
 }
 
-/* Image area — fills top edge-to-edge */
+/* Media — padded container */
 .ex-media {
+    padding: 12px 12px 0;
+    flex-shrink: 0;
+}
+
+/* Image wrap — 1:1 ratio + rounded corners */
+.ex-imgWrap {
     position: relative;
     width: 100%;
-    aspect-ratio: 4 / 3;
+    aspect-ratio: 1 / 1;
     overflow: hidden;
+    border-radius: 12px;
     background: #f3f4f6;
-    flex-shrink: 0;
 }
 
 .ex-img {
@@ -182,8 +188,8 @@
 /* Role pill — overlaid on image */
 .ex-rolePill {
     position: absolute;
-    top: 14px;
-    left: 14px;
+    top: 10px;
+    left: 10px;
     z-index: 2;
     display: inline-flex;
     align-items: center;
@@ -207,6 +213,7 @@
     flex-direction: column;
     gap: 6px;
     border-top: 1px solid rgba(15, 23, 42, 0.06);
+    margin-top: 12px;
 }
 
 .ex-name {

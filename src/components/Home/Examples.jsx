@@ -75,16 +75,18 @@ export default function Examples() {
                             whileInView="show"
                             viewport={{ once: true, margin: "-40px" }}
                         >
-                            {/* Image — fills top, role pill overlaid */}
+                            {/* Padded image area */}
                             <div className="khe-media">
-                                <span className="khe-rolePill">{it.role}</span>
-                                <img
-                                    src={ExampleTest}
-                                    alt={`${it.name} — ${it.role} KonarCard profile example`}
-                                    className="khe-img"
-                                    loading="lazy"
-                                    decoding="async"
-                                />
+                                <div className="khe-imgWrap">
+                                    <span className="khe-rolePill">{it.role}</span>
+                                    <img
+                                        src={ExampleTest}
+                                        alt={`${it.name} — ${it.role} KonarCard profile example`}
+                                        className="khe-img"
+                                        loading="lazy"
+                                        decoding="async"
+                                    />
+                                </div>
                             </div>
 
                             {/* Body */}

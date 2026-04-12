@@ -190,16 +190,18 @@ export default function Example() {
                                         animate="show"
                                         exit="exit"
                                     >
-                                        {/* Image — fills top of card */}
+                                        {/* Padded image area */}
                                         <div className="ex-media">
-                                            <span className="ex-rolePill">{item.role}</span>
-                                            <img
-                                                src={ExampleTest}
-                                                alt={`${item.name} — ${item.role} KonarCard profile example`}
-                                                className="ex-img"
-                                                loading="lazy"
-                                                decoding="async"
-                                            />
+                                            <div className="ex-imgWrap">
+                                                <span className="ex-rolePill">{item.role}</span>
+                                                <img
+                                                    src={ExampleTest}
+                                                    alt={`${item.name} — ${item.role} KonarCard profile example`}
+                                                    className="ex-img"
+                                                    loading="lazy"
+                                                    decoding="async"
+                                                />
+                                            </div>
                                         </div>
 
                                         {/* Body */}

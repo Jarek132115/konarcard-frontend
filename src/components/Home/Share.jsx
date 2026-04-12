@@ -79,16 +79,18 @@ export default function Share() {
                             viewport={{ once: true, margin: "-40px" }}
                             transition={{ duration: 0.44, delay: i * 0.07, ease: EASE }}
                         >
-                            {/* Image — top of card, badge pill overlaid */}
+                            {/* Padded image area */}
                             <div className="khs-media" aria-hidden="true">
-                                <span className="khs-pill">{it.badge}</span>
-                                <img
-                                    className="khs-img"
-                                    src={it.img}
-                                    alt={`${it.title} — KonarCard sharing method`}
-                                    loading="lazy"
-                                    decoding="async"
-                                />
+                                <div className="khs-imgWrap">
+                                    <span className="khs-pill">{it.badge}</span>
+                                    <img
+                                        className="khs-img"
+                                        src={it.img}
+                                        alt={`${it.title} — KonarCard sharing method`}
+                                        loading="lazy"
+                                        decoding="async"
+                                    />
+                                </div>
                             </div>
 
                             {/* Body below image */}

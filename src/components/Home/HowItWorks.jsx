@@ -73,7 +73,7 @@ export default function HowItWorks() {
                             transition={{ duration: 0.44, delay: i * 0.1, ease: EASE }}
                         >
                             <div className="hiw__cardTop">
-                                <span className="hiw__stepPill">{s.step}</span>
+                                <span className="kc-pill hiw__stepPill">{s.step}</span>
                                 <h3 className="kc-title hiw__cardTitle">{s.title}</h3>
                                 <p className="body hiw__cardDesc">{s.desc}</p>
                             </div>
