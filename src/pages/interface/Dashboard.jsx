@@ -402,13 +402,6 @@ function RecentActivityCard({ items = [] }) {
         <div className="db-panel db-panel--equal">
             <div className="db-panelHead">
                 <div>
-                    <div className="db-panelKickerRow">
-                        <span className="db-panelIconWrap">
-                            <ActivityPanelIcon />
-                        </span>
-                        <span className="db-panelKicker">Live activity</span>
-                    </div>
-
                     <h3 className="db-panelTitle">Recent Activity</h3>
                     <p className="db-panelMuted">See what’s been happening on your profile recently.</p>
                 </div>
@@ -459,13 +452,6 @@ function ProfileCompletionCard({ completion }) {
         <div className="db-panel db-panel--equal">
             <div className="db-panelHead">
                 <div>
-                    <div className="db-panelKickerRow">
-                        <span className="db-panelIconWrap">
-                            <CompletionPanelIcon />
-                        </span>
-                        <span className="db-panelKicker">Profile quality</span>
-                    </div>
-
                     <h3 className="db-panelTitle">Profile Completion</h3>
                     <p className="db-panelMuted">
                         Finish your profile to look more professional and get more jobs.
@@ -636,10 +622,6 @@ export default function Dashboard() {
                     initial={{ opacity: 0, y: 18 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.32, ease: "easeOut" }}
-                    whileHover={{
-                        y: -3,
-                        transition: { duration: 0.22, ease: [0.22, 1, 0.36, 1] },
-                    }}
                 >
                     <div className="db-heroCard">
                         <div className="db-heroMain">
@@ -758,11 +740,6 @@ export default function Dashboard() {
                         initial={{ opacity: 0, y: 18 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ duration: 0.32, delay: 0.12, ease: "easeOut" }}
-                        whileHover={{
-                            y: -4,
-                            boxShadow: "0 20px 44px rgba(15, 23, 42, 0.1)",
-                            transition: { duration: 0.22, ease: [0.22, 1, 0.36, 1] },
-                        }}
                     >
                         <RecentActivityCard items={recentActivity} />
                     </motion.div>
@@ -771,11 +748,6 @@ export default function Dashboard() {
                         initial={{ opacity: 0, y: 18 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ duration: 0.32, delay: 0.16, ease: "easeOut" }}
-                        whileHover={{
-                            y: -4,
-                            boxShadow: "0 20px 44px rgba(15, 23, 42, 0.1)",
-                            transition: { duration: 0.22, ease: [0.22, 1, 0.36, 1] },
-                        }}
                     >
                         <ProfileCompletionCard completion={completion} />
                     </motion.div>
