@@ -1059,6 +1059,7 @@ export default function Profiles() {
                                     animate={{ opacity: 1, y: 0 }}
                                     exit={{ opacity: 0, y: -8 }}
                                     transition={{ duration: 0.26, ease: "easeOut" }}
+                                    style={{ height: "100%", minHeight: 0, display: "flex", flexDirection: "column" }}
                                 >
                                     <ProfilesInfo
                                         selectedProfile={selectedProfile}
