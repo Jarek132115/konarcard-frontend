@@ -110,7 +110,7 @@ function getMetaLine(card) {
 
     if (fulfillment === "delivered") {
         return {
-            label: "Delivered on",
+            label: "Delivered",
             value: getDeliveredDate(card),
         };
     }
@@ -151,10 +151,11 @@ export default function PurchasedProductCard({ card, onOpenDetails }) {
                     {statusLabel}
                 </span>
 
-                <div className="cp-catalogPreview3D cp-ownedPreview3D">
+                <div className="cp-catalogImageWrap cp-ownedImageWrap">
                     <PurchasedPlasticCardFlatPreview
                         card={card}
                         productKey={productKey}
+                        className="cp-ownedFlatPreview"
                     />
                 </div>
             </div>

@@ -249,51 +249,41 @@ Cards Page
 }
 
 /* =========================================================
-   New owned rail
+   Purchased products grid
 ========================================================= */
 
 .cp-ownedRail {
-    margin-top: var(--sp-5);
-    display: flex;
-    gap: var(--sp-3);
-    overflow-x: auto;
-    overflow-y: hidden;
-    padding-bottom: 6px;
-    scroll-snap-type: x proximity;
-    -webkit-overflow-scrolling: touch;
-    cursor: grab;
+    margin-top: var(--sp-6);
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 20px;
+    min-width: 0;
+    overflow: visible;
+    padding-bottom: 0;
+    scroll-snap-type: none;
+    cursor: default;
 }
 
 .cp-ownedRail:active {
-    cursor: grabbing;
+    cursor: default;
 }
 
 .cp-ownedRail>* {
-    flex: 0 0 clamp(320px, 31vw, 420px);
+    flex: initial;
     min-width: 0;
-    scroll-snap-align: start;
+    scroll-snap-align: unset;
+}
+
+.cp-ownedRail--loading {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
 }
 
 .cp-ownedRail--loading>* {
-    flex: 0 0 clamp(320px, 31vw, 420px);
+    flex: initial;
 }
 
 .cp-ownedRail::-webkit-scrollbar {
-    height: 10px;
-}
-
-.cp-ownedRail::-webkit-scrollbar-track {
-    background: rgba(15, 23, 42, 0.05);
-    border-radius: 999px;
-}
-
-.cp-ownedRail::-webkit-scrollbar-thumb {
-    background: rgba(15, 23, 42, 0.16);
-    border-radius: 999px;
-}
-
-.cp-ownedRail::-webkit-scrollbar-thumb:hover {
-    background: rgba(15, 23, 42, 0.22);
+    display: none;
 }
 
 /* =========================================================
@@ -314,7 +304,7 @@ Cards Page
 }
 
 .cp-catalogGrid--owned {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-columns: repeat(3, minmax(0, 1fr));
     align-items: stretch;
 }
 
@@ -487,57 +477,52 @@ Cards Page
 }
 
 .cp-ownedMedia {
-    min-height: 270px;
-    padding: 18px 18px 0;
+    min-height: auto;
+    padding: 0;
     display: flex;
-    align-items: center;
-    justify-content: center;
+    align-items: stretch;
+    justify-content: stretch;
 }
 
-.cp-ownedPreview3D {
-    width: 100%;
-    min-height: 252px;
+.cp-ownedImageWrap {
+    aspect-ratio: 1 / 1;
+    background: #ffffff;
     display: flex;
-    align-items: center;
-    justify-content: center;
-    overflow: hidden;
+    align-items: stretch;
+    justify-content: stretch;
 }
 
-.cp-ownedPreview3D .pc3d {
+.cp-ownedPreview3D,
+.cp-ownedFlatPreview {
     width: 100%;
     height: 100%;
-}
-
-.cp-ownedPreview3D .pc3d__stage {
-    width: 100%;
-    max-width: none;
-    height: 232px;
-    min-height: 232px;
-    padding: 0;
-    margin: 0 auto;
+    min-height: 0;
+    display: flex;
+    align-items: stretch;
+    justify-content: stretch;
 }
 
 .cp-ownedBody {
-    padding: var(--sp-5);
-    gap: var(--sp-4);
+    padding: 18px 16px 16px;
+    gap: 14px;
 }
 
 .cp-ownedTextGroup {
-    gap: 10px;
+    gap: 8px;
 }
 
 .cp-ownedTitle {
     font-size: 18px;
-    line-height: 1.15;
+    line-height: 1.12;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
 }
 
 .cp-ownedOrderDate {
-    font-size: 14px;
-    line-height: 1.45;
-    color: rgba(71, 85, 105, 0.95);
+    font-size: 13px;
+    line-height: 1.55;
+    color: var(--cp-muted);
 }
 
 .cp-ownedMeta {
@@ -718,14 +703,14 @@ Cards Page
 .cp-ownedLoadingGrid {
     margin-top: var(--sp-5);
     display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: var(--sp-3);
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 20px;
     min-width: 0;
 }
 
 .cp-ownedSkeleton {
-    min-height: 360px;
-    border-radius: 24px;
+    min-height: 420px;
+    border-radius: 22px;
     border: 1px solid var(--cp-border);
     background: linear-gradient(90deg,
             rgba(15, 23, 42, 0.04) 25%,
@@ -756,13 +741,18 @@ Cards Page
 .cp-catalogGrid--owned .pc-card,
 .cp-catalogGrid--owned .product-card,
 .cp-catalogGrid--owned .catalog-card,
-.cp-catalogGrid--owned .purchased-product-card {
+.cp-catalogGrid--owned .purchased-product-card,
+.cp-ownedRail .pc-card,
+.cp-ownedRail .product-card,
+.cp-ownedRail .catalog-card,
+.cp-ownedRail .purchased-product-card {
     height: 100%;
     min-width: 0;
 }
 
 .cp-catalogGrid .pc-card,
-.cp-catalogGrid--owned .pc-card {
+.cp-catalogGrid--owned .pc-card,
+.cp-ownedRail .pc-card {
     border-radius: 24px;
     overflow: hidden;
 }
@@ -776,7 +766,12 @@ Cards Page
 .cp-catalogGrid--owned .pc-cardMedia,
 .cp-catalogGrid--owned .product-card__media,
 .cp-catalogGrid--owned .catalog-card__media,
-.cp-catalogGrid--owned .purchased-product-card__media {
+.cp-catalogGrid--owned .purchased-product-card__media,
+.cp-ownedRail .pc-card__media,
+.cp-ownedRail .pc-cardMedia,
+.cp-ownedRail .product-card__media,
+.cp-ownedRail .catalog-card__media,
+.cp-ownedRail .purchased-product-card__media {
     min-width: 0;
 }
 
@@ -789,7 +784,12 @@ Cards Page
 .cp-catalogGrid--owned .pc-cardBody,
 .cp-catalogGrid--owned .product-card__body,
 .cp-catalogGrid--owned .catalog-card__body,
-.cp-catalogGrid--owned .purchased-product-card__body {
+.cp-catalogGrid--owned .purchased-product-card__body,
+.cp-ownedRail .pc-card__body,
+.cp-ownedRail .pc-cardBody,
+.cp-ownedRail .product-card__body,
+.cp-ownedRail .catalog-card__body,
+.cp-ownedRail .purchased-product-card__body {
     min-width: 0;
 }
 
@@ -802,7 +802,12 @@ Cards Page
 .cp-catalogGrid--owned .pc-cardTitle,
 .cp-catalogGrid--owned .product-card__title,
 .cp-catalogGrid--owned .catalog-card__title,
-.cp-catalogGrid--owned .purchased-product-card__title {
+.cp-catalogGrid--owned .purchased-product-card__title,
+.cp-ownedRail .pc-card__title,
+.cp-ownedRail .pc-cardTitle,
+.cp-ownedRail .product-card__title,
+.cp-ownedRail .catalog-card__title,
+.cp-ownedRail .purchased-product-card__title {
     overflow-wrap: anywhere;
 }
 
@@ -815,12 +820,18 @@ Cards Page
 .cp-catalogGrid--owned .pc-cardFooter,
 .cp-catalogGrid--owned .product-card__footer,
 .cp-catalogGrid--owned .catalog-card__footer,
-.cp-catalogGrid--owned .purchased-product-card__footer {
+.cp-catalogGrid--owned .purchased-product-card__footer,
+.cp-ownedRail .pc-card__footer,
+.cp-ownedRail .pc-cardFooter,
+.cp-ownedRail .product-card__footer,
+.cp-ownedRail .catalog-card__footer,
+.cp-ownedRail .purchased-product-card__footer {
     gap: var(--sp-3);
 }
 
 .cp-catalogGrid .kx-btn,
-.cp-catalogGrid--owned .kx-btn {
+.cp-catalogGrid--owned .kx-btn,
+.cp-ownedRail .kx-btn {
     white-space: nowrap;
 }
 
@@ -829,7 +840,11 @@ Cards Page
 ========================================================= */
 
 @media (max-width: 1280px) {
-    .cp-catalogGrid {
+
+    .cp-catalogGrid,
+    .cp-ownedRail,
+    .cp-ownedRail--loading,
+    .cp-ownedLoadingGrid {
         grid-template-columns: repeat(2, minmax(0, 1fr));
     }
 }
@@ -837,15 +852,6 @@ Cards Page
 @media (max-width: 1180px) {
     .cp-catalogGrid {
         grid-template-columns: 1fr;
-    }
-
-    .cp-ownedPreview3D {
-        min-height: 236px;
-    }
-
-    .cp-ownedPreview3D .pc3d__stage {
-        height: 212px;
-        min-height: 212px;
     }
 
     .cp-previewCard {
@@ -866,15 +872,6 @@ Cards Page
     .cp-catalogGrid--owned {
         grid-template-columns: 1fr;
     }
-
-    .cp-ownedLoadingGrid {
-        grid-template-columns: 1fr;
-    }
-
-    .cp-ownedRail>*,
-    .cp-ownedRail--loading>* {
-        flex-basis: 360px;
-    }
 }
 
 @media (max-width: 980px) {
@@ -883,6 +880,12 @@ Cards Page
     }
 
     .cp-detailsGrid {
+        grid-template-columns: 1fr;
+    }
+
+    .cp-ownedRail,
+    .cp-ownedRail--loading,
+    .cp-ownedLoadingGrid {
         grid-template-columns: 1fr;
     }
 }
@@ -895,11 +898,6 @@ Cards Page
 
     .cp-catalogGrid {
         grid-template-columns: 1fr;
-    }
-
-    .cp-ownedRail>*,
-    .cp-ownedRail--loading>* {
-        flex-basis: 340px;
     }
 }
 
@@ -944,25 +942,6 @@ Cards Page
     .cp-rowVal {
         max-width: 56%;
     }
-
-    .cp-ownedRail>*,
-    .cp-ownedRail--loading>* {
-        flex-basis: 320px;
-    }
-
-    .cp-ownedMedia {
-        min-height: 232px;
-        padding: 16px 16px 0;
-    }
-
-    .cp-ownedPreview3D {
-        min-height: 220px;
-    }
-
-    .cp-ownedPreview3D .pc3d__stage {
-        height: 188px;
-        min-height: 188px;
-    }
 }
 
 @media (max-width: 560px) {
@@ -982,7 +961,7 @@ Cards Page
     }
 
     .cp-ownedSkeleton {
-        min-height: 320px;
+        min-height: 360px;
         border-radius: 24px;
     }
 
@@ -990,17 +969,9 @@ Cards Page
     .cp-catalogGrid--owned,
     .cp-ownedLoadingGrid,
     .cp-grid,
-    .cp-detailsGrid {
+    .cp-detailsGrid,
+    .cp-ownedRail {
         gap: var(--sp-3);
-    }
-
-    .cp-ownedRail>*,
-    .cp-ownedRail--loading>* {
-        flex-basis: calc(100vw - 88px);
-    }
-
-    .cp-ownedTitle {
-        font-size: 17px;
     }
 }
 
@@ -1087,25 +1058,7 @@ Cards Page
     }
 
     .cp-ownedSkeleton {
-        min-height: 280px;
-    }
-
-    .cp-ownedRail>*,
-    .cp-ownedRail--loading>* {
-        flex-basis: calc(100vw - 72px);
-    }
-
-    .cp-ownedMedia {
-        min-height: 216px;
-    }
-
-    .cp-ownedPreview3D {
-        min-height: 204px;
-    }
-
-    .cp-ownedPreview3D .pc3d__stage {
-        height: 172px;
-        min-height: 172px;
+        min-height: 320px;
     }
 
     .cp-previewCard {
@@ -1189,16 +1142,6 @@ Cards Page
     color: rgba(15, 23, 42, 0.92);
     font-weight: 750;
     word-break: break-word;
-}
-
-.cp-ownedStaticPreview {
-    width: 100%;
-    height: 100%;
-    min-height: 220px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    overflow: hidden;
 }
 
 .cp-ownedStaticPreview {
