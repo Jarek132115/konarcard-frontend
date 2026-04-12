@@ -13,8 +13,12 @@ function safeTrim(v) {
     return String(v || "").trim();
 }
 
-function getVariantFromCard(card) {
-    const productKey = safeTrim(card?.productKey).toLowerCase();
+function clamp(value, min, max) {
+    return Math.max(min, Math.min(max, value));
+}
+
+function getVariantFromCard(card, explicitProductKey = "") {
+    const productKey = safeTrim(explicitProductKey || card?.productKey).toLowerCase();
     const variantRaw = safeTrim(card?.variantRaw || card?.preview?.variant).toLowerCase();
 
     if (variantRaw) return variantRaw;
@@ -34,44 +38,40 @@ function getArtworkByVariant(variant) {
             return {
                 frontSrc: BlackFrontImg,
                 textColor: "#ffffff",
-                shadow: "0 18px 42px rgba(15, 23, 42, 0.22)",
+                textShadow: "0 2px 10px rgba(0,0,0,0.22)",
             };
         case "blue":
             return {
                 frontSrc: BlueFrontImg,
                 textColor: "#ffffff",
-                shadow: "0 18px 42px rgba(15, 82, 255, 0.22)",
+                textShadow: "0 2px 10px rgba(15, 23, 42, 0.18)",
             };
         case "green":
             return {
                 frontSrc: GreenFrontImg,
                 textColor: "#ffffff",
-                shadow: "0 18px 42px rgba(21, 165, 58, 0.22)",
+                textShadow: "0 2px 10px rgba(15, 23, 42, 0.18)",
             };
         case "magenta":
             return {
                 frontSrc: MagentaFrontImg,
                 textColor: "#ffffff",
-                shadow: "0 18px 42px rgba(209, 0, 143, 0.22)",
+                textShadow: "0 2px 10px rgba(15, 23, 42, 0.18)",
             };
         case "orange":
             return {
                 frontSrc: OrangeFrontImg,
                 textColor: "#ffffff",
-                shadow: "0 18px 42px rgba(255, 123, 0, 0.22)",
+                textShadow: "0 2px 10px rgba(15, 23, 42, 0.18)",
             };
         case "white":
         default:
             return {
                 frontSrc: WhiteFrontImg,
                 textColor: "#111111",
-                shadow: "0 18px 42px rgba(15, 23, 42, 0.12)",
+                textShadow: "0 1px 0 rgba(255,255,255,0.22)",
             };
     }
-}
-
-function clamp(value, min, max) {
-    return Math.max(min, Math.min(max, value));
 }
 
 function resolveFrontText(card) {
@@ -81,7 +81,7 @@ function resolveFrontText(card) {
         safeTrim(card?._raw?.customization?.frontText) ||
         "KONAR";
 
-    return text.slice(0, 22);
+    return text.slice(0, 26);
 }
 
 function resolveFontWeight(card) {
@@ -91,17 +91,7 @@ function resolveFontWeight(card) {
         Number(card?._raw?.customization?.fontWeight) ||
         700;
 
-    return clamp(raw, 400, 900);
-}
-
-function resolveFontSize(card) {
-    const raw =
-        Number(card?.frontFontSize) ||
-        Number(card?._raw?.preview?.customization?.fontSize) ||
-        Number(card?._raw?.customization?.fontSize) ||
-        42;
-
-    return clamp(raw, 20, 52);
+    return clamp(raw, 500, 900);
 }
 
 function resolveTextColor(card, fallback) {
@@ -113,18 +103,28 @@ function resolveTextColor(card, fallback) {
     );
 }
 
+function resolveTextScaleClass(text) {
+    const len = safeTrim(text).length;
+
+    if (len >= 19) return "ppcfp-frontText--xs";
+    if (len >= 15) return "ppcfp-frontText--sm";
+    if (len >= 11) return "ppcfp-frontText--md";
+    return "ppcfp-frontText--lg";
+}
+
 export default function PurchasedPlasticCardFlatPreview({
     card,
+    productKey = "",
     className = "",
 }) {
-    const variant = getVariantFromCard(card);
+    const variant = getVariantFromCard(card, productKey);
 
     const artwork = useMemo(() => getArtworkByVariant(variant), [variant]);
 
     const frontText = resolveFrontText(card);
     const fontWeight = resolveFontWeight(card);
-    const fontSize = resolveFontSize(card);
     const textColor = resolveTextColor(card, artwork.textColor);
+    const textScaleClass = resolveTextScaleClass(frontText);
 
     return (
         <div className={`ppcfp ${className}`.trim()} aria-hidden="true">
@@ -132,15 +132,19 @@ export default function PurchasedPlasticCardFlatPreview({
                 className="ppcfp-card"
                 style={{
                     backgroundImage: `url(${artwork.frontSrc})`,
-                    boxShadow: artwork.shadow,
                 }}
             >
+                <div className="ppcfp-corner ppcfp-corner--left">K</div>
+                <div className="ppcfp-corner ppcfp-corner--right">
+                    <span className="ppcfp-nfcGlyph" />
+                </div>
+
                 <div
-                    className="ppcfp-frontText"
+                    className={`ppcfp-frontText ${textScaleClass}`}
                     style={{
                         color: textColor,
                         fontWeight,
-                        fontSize: `${fontSize}px`,
+                        textShadow: artwork.textShadow,
                     }}
                     title={frontText}
                 >
