@@ -5,7 +5,7 @@
    ========================================================= */
 
 .kc-comp {
-    background: var(--kc-bg-soft);
+    background: #fafafa;
     color: var(--kc-text-primary);
     padding: var(--sp-12) 0;
 }

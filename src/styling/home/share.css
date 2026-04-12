@@ -4,7 +4,7 @@
    ========================================================= */
 
 .khs-share {
-    background: var(--kc-bg-main);
+    background: #fafafa;
     color: var(--kc-text-primary);
     padding: 80px 0;
 }

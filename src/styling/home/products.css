@@ -6,7 +6,7 @@
    ========================================================= */
 
 .khp-products {
-    background: var(--kc-bg-main);
+    background: #ffffff;
     color: var(--kc-text-primary);
     padding: var(--sp-12) 0;
 }
