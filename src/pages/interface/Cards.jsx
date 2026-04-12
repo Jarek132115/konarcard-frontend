@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { toast } from "react-hot-toast";
+import { useKonarToast } from "../../hooks/useKonarToast";
 import { motion } from "motion/react";
 
 import DashboardLayout from "../../components/Dashboard/DashboardLayout";
@@ -311,6 +311,7 @@ function Card3DDetails({
 }
 
 export default function Cards() {
+  const toast = useKonarToast();
   const navigate = useNavigate();
   const location = useLocation();
 

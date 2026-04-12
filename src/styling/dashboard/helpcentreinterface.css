@@ -172,21 +172,14 @@
   gap: 18px;
 }
 
-.hc5-supportIcon {
-  width: 52px;
-  height: 52px;
-  border-radius: 16px;
-  display: grid;
-  place-items: center;
-  background: rgba(255, 255, 255, 0.16);
-  border: 1px solid rgba(255, 255, 255, 0.18);
-  color: #ffffff;
+.hc5-supportTop {
+  flex: 0 0 auto;
 }
 
-.hc5-liveBtnIconSvg {
-  width: 20px;
-  height: 20px;
-  display: block;
+.hc5-pill--contact {
+  background: rgba(255, 255, 255, 0.22);
+  border: 1px solid rgba(255, 255, 255, 0.32);
+  color: #ffffff;
 }
 
 .hc5-supportCopy h3 {

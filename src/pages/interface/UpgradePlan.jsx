@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from "react";
-import { toast } from "react-hot-toast";
+import { useKonarToast } from "../../hooks/useKonarToast";
 import { motion } from "motion/react";
 import { Tabs } from "@base-ui/react/tabs";
 
@@ -109,51 +109,10 @@ const buildPublicUrl = (profileSlug) => {
     return `${window.location.origin}/u/${encodeURIComponent(s)}`;
 };
 
-function showUpgradeToast(kind, message) {
-    const config = {
-        success: {
-            label: "Success",
-            icon: "✓",
-        },
-        error: {
-            label: "Something went wrong",
-            icon: "!",
-        },
-        info: {
-            label: "Heads up",
-            icon: "i",
-        },
-    };
-
-    const tone = config[kind] || config.info;
-
-    toast.custom(
-        (t) => (
-            <div
-                className={`upg-toast upg-toast--${kind} ${t.visible ? "is-visible" : "is-hidden"}`}
-            >
-                <div className="upg-toastIcon" aria-hidden="true">
-                    {tone.icon}
-                </div>
-                <div className="upg-toastCopy">
-                    <div className="upg-toastTitle">{tone.label}</div>
-                    <div className="upg-toastText">{message}</div>
-                </div>
-                <button
-                    type="button"
-                    className="upg-toastClose"
-                    onClick={() => toast.dismiss(t.id)}
-                    aria-label="Close notification"
-                >
-                    ×
-                </button>
-            </div>
-        ),
-        {
-            duration: kind === "error" ? 4200 : 3200,
-            position: "top-right",
-        }
-    );
+function showUpgradeToast(toast, kind, message) {
+    if (kind === "success") toast.success(message);
+    else if (kind === "error") toast.error(message);
+    else toast.info(message);
 }
 
 function CheckIcon({ featured = false }) {
@@ -358,6 +317,7 @@ function PlanCard({ plan, currentPlan, loadingKey }) {
 }
 
 export default function UpgradePlan() {
+    const toast = useKonarToast();
     const { data: authUser } = useAuthUser();
     const { data: cards } = useMyProfiles();
 
@@ -574,13 +534,13 @@ export default function UpgradePlan() {
     const startSubscription = async (planKey) => {
         if (!isLoggedIn()) {
             saveCheckoutIntent(planKey);
-            showUpgradeToast("info", "Please log in first so we can start your subscription.");
+            showUpgradeToast(toast, "info", "Please log in first so we can start your subscription.");
             window.location.href = "/login";
             return;
         }
 
         if (isActive && currentPlan === String(planKey).split("-")[0]) {
-            showUpgradeToast("info", "You’re already on this plan.");
+            showUpgradeToast(toast, "info", "You’re already on this plan.");
             return;
         }
 
@@ -608,7 +568,7 @@ export default function UpgradePlan() {
                 /user not found/i.test(String(data?.error || ""))
             ) {
                 clearLocalAuth();
-                showUpgradeToast("error", "Your session expired. Please log in again.");
+                showUpgradeToast(toast, "error", "Your session expired. Please log in again.");
                 window.location.href = "/login";
                 return;
             }
@@ -629,7 +589,7 @@ export default function UpgradePlan() {
 
             window.location.href = data.url;
         } catch (err) {
-            showUpgradeToast("error", err?.message || "Subscription could not be started.");
+            showUpgradeToast(toast, "error", err?.message || "Subscription could not be started.");
         } finally {
             setLoadingKey(null);
         }
@@ -637,7 +597,7 @@ export default function UpgradePlan() {
 
     const openBillingPortal = async () => {
         if (!isLoggedIn()) {
-            showUpgradeToast("info", "Log in to manage your billing and subscription.");
+            showUpgradeToast(toast, "info", "Log in to manage your billing and subscription.");
             window.location.href = "/login";
             return;
         }
@@ -659,7 +619,7 @@ export default function UpgradePlan() {
 
             if (res.status === 401 || res.status === 404) {
                 clearLocalAuth();
-                showUpgradeToast("error", "Your session expired. Please log in again.");
+                showUpgradeToast(toast, "error", "Your session expired. Please log in again.");
                 window.location.href = "/login";
                 return;
             }
@@ -674,7 +634,7 @@ export default function UpgradePlan() {
 
             window.location.href = data.url;
         } catch (e) {
-            showUpgradeToast("error", e?.message || "Billing portal is not available right now.");
+            showUpgradeToast(toast, "error", e?.message || "Billing portal is not available right now.");
         }
     };
 
@@ -866,7 +826,7 @@ export default function UpgradePlan() {
 
     const handleOpenShareProfile = () => {
         if (!selectedProfile) {
-            showUpgradeToast("error", "Create a profile first before sharing.");
+            showUpgradeToast(toast, "error", "Create a profile first before sharing.");
             return;
         }
         setShareOpen(true);
@@ -878,7 +838,7 @@ export default function UpgradePlan() {
 
     const shareToFacebook = () => {
         if (!selectedProfile?.url) {
-            showUpgradeToast("error", "No profile link is available yet.");
+            showUpgradeToast(toast, "error", "No profile link is available yet.");
             return;
         }
 
@@ -891,15 +851,15 @@ export default function UpgradePlan() {
 
     const shareToInstagram = async () => {
         if (!selectedProfile?.url) {
-            showUpgradeToast("error", "No profile link is available yet.");
+            showUpgradeToast(toast, "error", "No profile link is available yet.");
             return;
         }
 
         try {
             await navigator.clipboard.writeText(selectedProfile.url);
-            showUpgradeToast("success", "Profile link copied for Instagram sharing.");
+            showUpgradeToast(toast, "success", "Profile link copied for Instagram sharing.");
         } catch {
-            showUpgradeToast("error", "Could not copy the profile link.");
+            showUpgradeToast(toast, "error", "Could not copy the profile link.");
         }
 
         window.open("https://www.instagram.com/", "_blank", "noopener,noreferrer");
@@ -907,7 +867,7 @@ export default function UpgradePlan() {
 
     const shareToMessenger = async () => {
         if (!selectedProfile?.url) {
-            showUpgradeToast("error", "No profile link is available yet.");
+            showUpgradeToast(toast, "error", "No profile link is available yet.");
             return;
         }
 
@@ -917,11 +877,12 @@ export default function UpgradePlan() {
             try {
                 await navigator.clipboard.writeText(selectedProfile.url);
                 showUpgradeToast(
+                    toast,
                     "info",
                     "Messenger sharing is not supported in mobile browsers, so the link was copied instead."
                 );
             } catch {
-                showUpgradeToast("error", "Could not copy the profile link.");
+                showUpgradeToast(toast, "error", "Could not copy the profile link.");
             }
             return;
         }
@@ -935,7 +896,7 @@ export default function UpgradePlan() {
 
     const shareToWhatsApp = () => {
         if (!selectedProfile?.url) {
-            showUpgradeToast("error", "No profile link is available yet.");
+            showUpgradeToast(toast, "error", "No profile link is available yet.");
             return;
         }
 
@@ -946,7 +907,7 @@ export default function UpgradePlan() {
 
     const shareByText = () => {
         if (!selectedProfile?.url) {
-            showUpgradeToast("error", "No profile link is available yet.");
+            showUpgradeToast(toast, "error", "No profile link is available yet.");
             return;
         }
 
@@ -955,11 +916,11 @@ export default function UpgradePlan() {
     };
 
     const handleAppleWallet = () => {
-        showUpgradeToast("info", "Apple Wallet support is coming soon.");
+        showUpgradeToast(toast, "info", "Apple Wallet support is coming soon.");
     };
 
     const handleGoogleWallet = () => {
-        showUpgradeToast("info", "Google Wallet support is coming soon.");
+        showUpgradeToast(toast, "info", "Google Wallet support is coming soon.");
     };
 
     return (

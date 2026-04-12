@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useMemo } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { toast } from "react-hot-toast";
+import { useKonarToast } from "../../hooks/useKonarToast";
 
 import DashboardLayout from "../../components/Dashboard/DashboardLayout";
 import PageHeader from "../../components/Dashboard/PageHeader";
@@ -203,6 +203,7 @@ const isReasonablePhone = (value) => {
 };
 
 export default function MyProfile() {
+  const toast = useKonarToast();
   const { state, updateState, resetState } = useBusinessCardStore();
   const queryClient = useQueryClient();
   const location = useLocation();

@@ -1,6 +1,6 @@
 import React, { useMemo, useState, useEffect, useRef } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { toast } from "react-hot-toast";
+import { useKonarToast } from "../../hooks/useKonarToast";
 import { motion, AnimatePresence } from "motion/react";
 import { Input } from "@base-ui/react/input";
 
@@ -191,6 +191,7 @@ const panelVariants = {
 };
 
 export default function ContactBook() {
+    const toast = useKonarToast();
     const { data: authUser } = useAuthUser();
     const { data: cards } = useMyProfiles();
     const queryClient = useQueryClient();

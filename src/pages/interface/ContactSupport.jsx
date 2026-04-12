@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { Link } from 'react-router-dom';
-import { toast } from 'react-hot-toast';
+import { toast } from "react-hot-toast";
 
 import Sidebar from "../../components/Dashboard/Sidebar";
 import PageHeader from "../../components/Dashboard/PageHeader";

@@ -1,6 +1,6 @@
 import React, { useMemo, useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { toast } from "react-hot-toast";
+import { useKonarToast } from "../../hooks/useKonarToast";
 import { motion } from "motion/react";
 import { Tabs } from "@base-ui/react/tabs";
 import { Select } from "@base-ui/react/select";
@@ -684,6 +684,7 @@ function AnalyticsSelect({ value, onChange, options, placeholder = "" }) {
 }
 
 export default function Analytics() {
+    const toast = useKonarToast();
     const { data: authUser } = useAuthUser();
     const { data: cards } = useMyProfiles();
 

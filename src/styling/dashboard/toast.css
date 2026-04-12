@@ -1,0 +1,175 @@
+/* ─── Konar Toast ─── */
+:root {
+    --knt-bg:        #ffffff;
+    --knt-border:    rgba(15, 23, 42, 0.09);
+    --knt-shadow:    0 4px 24px rgba(15, 23, 42, 0.10), 0 1px 4px rgba(15, 23, 42, 0.06);
+    --knt-ink:       #0f172a;
+    --knt-muted:     #64748b;
+    --knt-radius:    14px;
+
+    --knt-success:   #16a34a;
+    --knt-success-bg: rgba(22, 163, 74, 0.09);
+    --knt-error:     #dc2626;
+    --knt-error-bg:  rgba(220, 38, 38, 0.09);
+    --knt-info:      #2563eb;
+    --knt-info-bg:   rgba(37, 99, 235, 0.09);
+    --knt-loading:   #64748b;
+    --knt-loading-bg: rgba(100, 116, 139, 0.09);
+}
+
+/* Viewport — bottom-right anchor */
+.knt-viewport {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    z-index: 9999;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    width: 320px;
+    max-width: calc(100vw - 32px);
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    outline: none;
+}
+
+/* Toast root */
+.knt-root {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 14px;
+    background: var(--knt-bg);
+    border: 1px solid var(--knt-border);
+    border-radius: var(--knt-radius);
+    box-shadow: var(--knt-shadow);
+    cursor: default;
+    position: relative;
+    overflow: hidden;
+    transform-origin: bottom right;
+    will-change: opacity, transform;
+}
+
+/* Entrance / exit animation */
+.knt-root[data-transition-status="starting"] {
+    animation: knt-slideIn 0.28s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+.knt-root[data-transition-status="ending"] {
+    animation: knt-fadeOut 0.22s ease-in forwards;
+}
+
+@keyframes knt-slideIn {
+    from { opacity: 0; transform: translateX(16px) scale(0.97); }
+    to   { opacity: 1; transform: translateX(0)    scale(1); }
+}
+
+@keyframes knt-fadeOut {
+    from { opacity: 1; transform: scale(1); }
+    to   { opacity: 0; transform: scale(0.96); }
+}
+
+/* Progress bar at bottom of toast (auto-dismiss indicator) */
+.knt-root::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    height: 2px;
+    border-radius: 0 0 var(--knt-radius) var(--knt-radius);
+    background: currentColor;
+    opacity: 0.15;
+    width: 100%;
+}
+
+/* Type-specific left strip */
+.knt-root--success { border-left: 3px solid var(--knt-success); }
+.knt-root--error   { border-left: 3px solid var(--knt-error); }
+.knt-root--info    { border-left: 3px solid var(--knt-info); }
+.knt-root--loading { border-left: 3px solid var(--knt-loading); }
+
+/* Icon wrap */
+.knt-iconWrap {
+    flex: 0 0 auto;
+    width: 26px;
+    height: 26px;
+    border-radius: 8px;
+    display: grid;
+    place-items: center;
+}
+
+.knt-iconWrap--success { background: var(--knt-success-bg); color: var(--knt-success); }
+.knt-iconWrap--error   { background: var(--knt-error-bg);   color: var(--knt-error); }
+.knt-iconWrap--info    { background: var(--knt-info-bg);    color: var(--knt-info); }
+.knt-iconWrap--loading { background: var(--knt-loading-bg); color: var(--knt-loading); }
+
+/* Spinner animation */
+.knt-spinner {
+    animation: knt-spin 0.8s linear infinite;
+}
+
+@keyframes knt-spin {
+    from { transform: rotate(0deg); }
+    to   { transform: rotate(360deg); }
+}
+
+/* Content */
+.knt-content {
+    flex: 1 1 0%;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.knt-title {
+    font-size: 13.5px;
+    font-weight: 550;
+    color: var(--knt-ink);
+    line-height: 1.4;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.knt-desc {
+    font-size: 12.5px;
+    color: var(--knt-muted);
+    line-height: 1.45;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* Close button */
+.knt-close {
+    flex: 0 0 auto;
+    width: 24px;
+    height: 24px;
+    border-radius: 6px;
+    border: none;
+    background: transparent;
+    color: var(--knt-muted);
+    cursor: pointer;
+    display: grid;
+    place-items: center;
+    padding: 0;
+    transition: background 0.14s, color 0.14s;
+}
+
+.knt-close:hover {
+    background: rgba(15, 23, 42, 0.06);
+    color: var(--knt-ink);
+}
+
+/* Mobile */
+@media (max-width: 480px) {
+    .knt-viewport {
+        bottom: 16px;
+        right: 16px;
+        left: 16px;
+        width: auto;
+        max-width: none;
+    }
+}

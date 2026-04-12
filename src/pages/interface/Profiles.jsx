@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { toast } from "react-hot-toast";
+import { useKonarToast } from "../../hooks/useKonarToast";
 import { motion, AnimatePresence } from "motion/react";
 
 import DashboardLayout from "../../components/Dashboard/DashboardLayout";
@@ -138,6 +138,7 @@ function ProfileMiniMainPreview({ card }) {
 }
 
 export default function Profiles() {
+    const toast = useKonarToast();
     const navigate = useNavigate();
     const location = useLocation();
 

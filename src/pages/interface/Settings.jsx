@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useState } from "react";
-import { toast } from "react-hot-toast";
+import { useKonarToast } from "../../hooks/useKonarToast";
 import { motion, AnimatePresence } from "motion/react";
 
 import DashboardLayout from "../../components/Dashboard/DashboardLayout";
@@ -154,6 +154,7 @@ function StatCard({ label, children, delay = 0 }) {
 }
 
 export default function Settings() {
+    const toast = useKonarToast();
     const {
         data: authUser,
         isLoading: authLoading,

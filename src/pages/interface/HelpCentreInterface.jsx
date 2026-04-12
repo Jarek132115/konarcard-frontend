@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useMemo, useRef, useState } from "react";
-import { toast } from "react-hot-toast";
+import { useKonarToast } from "../../hooks/useKonarToast";
 import { AnimatePresence, motion } from "motion/react";
 
 import DashboardLayout from "../../components/Dashboard/DashboardLayout";
@@ -97,6 +97,7 @@ const PLACEHOLDER_VIDEO =
   "https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4";
 
 export default function HelpCentreInterface() {
+  const toast = useKonarToast();
   const { user } = useContext(AuthContext);
   useFetchBusinessCard(user?._id);
 
@@ -471,8 +472,8 @@ export default function HelpCentreInterface() {
 
           <div className="hc5-heroAside">
             <div className="hc5-supportCard">
-              <div className="hc5-supportIcon">
-                <ChatIcon className="hc5-liveBtnIconSvg" />
+              <div className="hc5-supportTop">
+                <span className="hc5-pill hc5-pill--contact">Contact Us</span>
               </div>
 
               <div className="hc5-supportCopy">

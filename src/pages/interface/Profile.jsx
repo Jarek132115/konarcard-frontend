@@ -5,7 +5,7 @@ import Sidebar from "../../components/Dashboard/Sidebar";
 import PageHeader from "../../components/Dashboard/PageHeader";
 import ShareProfile from '../../components/ShareProfile';
 import { AuthContext } from '../../components/AuthContext';
-import { toast } from 'react-hot-toast';
+import { toast } from "react-hot-toast";
 import api from '../../services/api';
 import LogoIcon from '../../assets/icons/Logo-Icon.svg';
 import { useFetchBusinessCard } from '../../hooks/useFetchBusinessCard';

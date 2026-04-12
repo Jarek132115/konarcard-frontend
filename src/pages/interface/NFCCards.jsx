@@ -9,7 +9,7 @@ import LogoIcon from '../../assets/icons/Logo-Icon.svg';
 
 import { AuthContext } from '../../components/AuthContext';
 import { useFetchBusinessCard } from '../../hooks/useFetchBusinessCard';
-import { toast } from 'react-hot-toast';
+import { toast } from "react-hot-toast";
 import api from '../../services/api';
 import { loadStripe } from '@stripe/stripe-js';
 
