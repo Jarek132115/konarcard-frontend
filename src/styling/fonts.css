@@ -16,15 +16,15 @@ canvas {
   overflow-clip-margin: content-box;
 }
 
-html {
-  overflow-y: scroll;
-}
-
 html,
 body {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
+}
+
+body {
+  overflow-x: hidden;
   font-family: "Inter", sans-serif;
   background-color: #ffffff;
   color: #0f172a;
