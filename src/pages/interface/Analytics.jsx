@@ -297,13 +297,19 @@ function MetricCard({
     featured = false,
     isPercentage = false,
     locked = false,
+    delay = 0,
 }) {
     return (
         <motion.div
             className={`an-metric ${featured ? "an-metric--featured" : ""} ${locked ? "an-metric--locked" : ""}`}
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.28, ease: "easeOut" }}
+            whileHover={{
+                y: -4,
+                scale: 1.01,
+                transition: { duration: 0.18, ease: "easeOut" },
+            }}
+            transition={{ duration: 0.28, ease: "easeOut", delay }}
         >
             <div className="an-metric-top">
                 <div className="an-metric-label">{label}</div>
@@ -1051,6 +1057,7 @@ export default function Analytics() {
                                 range={range}
                                 featured
                                 icon={TotalVisitsIcon}
+                                delay={0}
                             />
 
                             <MetricCard
@@ -1059,6 +1066,7 @@ export default function Analytics() {
                                 delta={getMetricDelta(metrics, previousMetrics, "cardTaps")}
                                 range={range}
                                 icon={NFCTapsIcon}
+                                delay={0.03}
                             />
 
                             <MetricCard
@@ -1067,6 +1075,7 @@ export default function Analytics() {
                                 delta={getMetricDelta(metrics, previousMetrics, "qrScans")}
                                 range={range}
                                 icon={QRScansIcon}
+                                delay={0.06}
                             />
 
                             <MetricCard
@@ -1075,6 +1084,7 @@ export default function Analytics() {
                                 delta={getMetricDelta(metrics, previousMetrics, "linkOpens")}
                                 range={range}
                                 icon={LinkVisitsIcon}
+                                delay={0.09}
                             />
 
                             <MetricCard
@@ -1083,6 +1093,7 @@ export default function Analytics() {
                                 delta={getMetricDelta(metrics, previousMetrics, "contactsSaved")}
                                 range={range}
                                 icon={SavedContactsIcon}
+                                delay={0.12}
                             />
 
                             <MetricCard
@@ -1091,6 +1102,7 @@ export default function Analytics() {
                                 delta={getMetricDelta(metrics, previousMetrics, "contactExchangeSubmits")}
                                 range={range}
                                 icon={ExchangeContactsIcon}
+                                delay={0.15}
                             />
 
                             <MetricCard
@@ -1101,6 +1113,7 @@ export default function Analytics() {
                                 isPercentage
                                 locked={!isPaidPlan}
                                 icon={ConversionRateIcon}
+                                delay={0.18}
                             />
                         </div>
                     )}
