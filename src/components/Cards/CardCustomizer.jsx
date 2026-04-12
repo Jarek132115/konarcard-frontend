@@ -1,6 +1,10 @@
 import React, { useEffect, useMemo, useState } from "react";
+import { motion } from "framer-motion";
 import { Input } from "@base-ui/react/input";
 import { Slider } from "@base-ui/react/slider";
+
+import DashboardLayout from "../../components/Dashboard/DashboardLayout";
+import PageHeader from "../../components/Dashboard/PageHeader";
 
 import { useMyProfiles } from "../../hooks/useBusinessCard";
 import api from "../../services/api";
@@ -10,6 +14,7 @@ import MetalCard3D from "../MetalCard3D";
 import KonarTag3D from "../KonarTag3D";
 
 import "../../styling/fonts.css";
+import "../../styling/dashboard/cards.css";
 import "../../styling/dashboard/card-customizer.css";
 import "../../styling/home/value.css";
 
@@ -330,13 +335,13 @@ const PRODUCT_CONFIG = {
             { value: "black", label: "Black" },
             { value: "gold", label: "Gold" },
         ],
-        getDefaultLogo: (variant) => (variant === "black" ? LogoIconWhite : LogoIcon),
-        render3D: ({ logoSrc, qrSrc, logoPercent, variant }) => (
+        getDefaultLogo: (variantValue) => (variantValue === "black" ? LogoIconWhite : LogoIcon),
+        render3D: ({ logoSrc, qrSrc, logoPercent, variant: finish }) => (
             <MetalCard3D
                 logoSrc={logoSrc}
                 qrSrc={qrSrc}
                 logoSize={logoPercent}
-                finish={variant}
+                finish={finish}
             />
         ),
         specs: [
@@ -368,12 +373,12 @@ const PRODUCT_CONFIG = {
             { value: "gold", label: "Gold" },
         ],
         getDefaultLogo: () => LogoIconWhite,
-        render3D: ({ logoSrc, qrSrc, logoPercent, variant }) => (
+        render3D: ({ logoSrc, qrSrc, logoPercent, variant: finish }) => (
             <KonarTag3D
                 logoSrc={logoSrc}
                 qrSrc={qrSrc}
                 logoSize={logoPercent}
-                finish={variant}
+                finish={finish}
             />
         ),
         specs: [
@@ -523,7 +528,9 @@ export default function CardCustomizer({
         config.edition,
     ]);
 
-    const displayedLogo = logoUrl || (config.getDefaultLogo ? config.getDefaultLogo(variant) : LogoIcon);
+    const displayedLogo =
+        logoUrl || (config.getDefaultLogo ? config.getDefaultLogo(variant) : LogoIcon);
+
     const logoLabel = logoFile?.name || "Upload logo";
     const sizeLabel = (k) => (k === "small" ? "S" : k === "medium" ? "M" : "L");
     const deliveryInfo = useMemo(() => getEstimatedDelivery(), []);
@@ -669,299 +676,362 @@ export default function CardCustomizer({
     };
 
     return (
-        <>
-            <div className="ccz-backRow">
-                <button type="button" className="kx-btn kx-btn--white" onClick={onBack}>
-                    Back to products
-                </button>
-            </div>
+        <DashboardLayout>
+            <PageHeader
+                title="Customize your card"
+                subtitle="Design your NFC product and link it to your profile."
+            />
 
-            <section className="cp-card ccz-heroCard">
-                <div className="ccz-heroIntro">
-                    <div className="ccz-heroText">
-                        <span className="ccz-badge">{config.badge}</span>
-                        <h2 className="cp-cardTitle">{config.title}</h2>
-                        <p className="cp-muted">{config.subtitle}</p>
-                    </div>
+            <div className="ccz-page">
+                <div className="ccz-backRow">
+                    <button type="button" className="kx-btn kx-btn--white" onClick={onBack}>
+                        Back to products
+                    </button>
                 </div>
 
-                {(errorMsg || infoMsg) && (
-                    <div className={`cp-alert ${errorMsg ? "danger" : ""}`}>
-                        {errorMsg || infoMsg}
-                    </div>
-                )}
-
-                <div className="ccz-mainGrid">
-                    <div className="ccz-previewCard">
-                        <div className="ccz-previewCanvas">
-                            {config.allowTextPersonalisation ? (
-                                <PlasticCard3D
-                                    frontSrc={config.frontSrc}
-                                    backSrc={config.backSrc}
-                                    qrSrc={CardQrCode}
-                                    edgeColor={config.edgeColor}
-                                    frontText={frontText}
-                                    frontFontSize={fontSize}
-                                    frontFontWeight={frontFontWeight}
-                                    frontTextColor={config.frontTextColor}
-                                />
-                            ) : hasOptions || config.allowLogoUpload ? (
-                                config.render3D({
-                                    logoSrc: displayedLogo,
-                                    qrSrc: CardQrCode,
-                                    logoPercent,
-                                    variant,
-                                })
-                            ) : (
-                                config.render3D()
-                            )}
+                <motion.section
+                    className="cp-card ccz-heroCard"
+                    initial={{ opacity: 0, y: 18 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.35 }}
+                >
+                    <div className="ccz-heroIntro">
+                        <div className="ccz-heroText">
+                            <span className="ccz-badge">{config.badge}</span>
+                            <h2 className="cp-cardTitle">{config.title}</h2>
+                            <p className="cp-muted">{config.subtitle}</p>
                         </div>
                     </div>
 
-                    <div className="ccz-controlsCol">
-                        <div className="ccz-controlsCard">
-                            <div className="ccz-controlsGrid">
+                    {(errorMsg || infoMsg) && (
+                        <div className={`cp-alert ${errorMsg ? "danger" : ""}`}>
+                            {errorMsg || infoMsg}
+                        </div>
+                    )}
+
+                    <div className="ccz-mainGrid">
+                        <motion.div
+                            className="ccz-previewCard"
+                            initial={{ opacity: 0, y: 16 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ duration: 0.35, delay: 0.04 }}
+                        >
+                            <div className="ccz-previewCanvas">
                                 {config.allowTextPersonalisation ? (
-                                    <>
-                                        <div className="ccz-field">
-                                            <div className="ccz-label">Front text</div>
+                                    <PlasticCard3D
+                                        frontSrc={config.frontSrc}
+                                        backSrc={config.backSrc}
+                                        qrSrc={CardQrCode}
+                                        edgeColor={config.edgeColor}
+                                        frontText={frontText}
+                                        frontFontSize={fontSize}
+                                        frontFontWeight={frontFontWeight}
+                                        frontTextColor={config.frontTextColor}
+                                    />
+                                ) : hasOptions || config.allowLogoUpload ? (
+                                    config.render3D({
+                                        logoSrc: displayedLogo,
+                                        qrSrc: CardQrCode,
+                                        logoPercent,
+                                        variant,
+                                    })
+                                ) : (
+                                    config.render3D()
+                                )}
+                            </div>
+                        </motion.div>
 
-                                            <Input
-                                                className="ccz-textInput"
-                                                value={frontText}
-                                                onChange={(e) => setFrontText(sanitizeFrontText(e.target.value))}
-                                                placeholder="e.g. MichalPlumbing"
-                                                disabled={busy}
-                                                maxLength={MAX_FRONT_TEXT}
-                                            />
-                                        </div>
+                        <div className="ccz-controlsCol">
+                            <motion.div
+                                className="ccz-controlsCard"
+                                initial={{ opacity: 0, y: 16 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                transition={{ duration: 0.35, delay: 0.08 }}
+                            >
+                                <div className="ccz-controlsGrid">
+                                    {config.allowTextPersonalisation ? (
+                                        <>
+                                            <div className="ccz-field">
+                                                <div className="ccz-label">Front text</div>
 
-                                        <div className="ccz-field">
-                                            <div className="ccz-label">Text weight</div>
+                                                <Input
+                                                    className="ccz-textInput"
+                                                    value={frontText}
+                                                    onChange={(e) =>
+                                                        setFrontText(sanitizeFrontText(e.target.value))
+                                                    }
+                                                    placeholder="e.g. MichalPlumbing"
+                                                    disabled={busy}
+                                                    maxLength={MAX_FRONT_TEXT}
+                                                />
+                                            </div>
 
-                                            <div className="ccz-toggleRow" role="group" aria-label="Choose text weight">
-                                                {WEIGHT_OPTIONS.map((option) => {
-                                                    const isActive = option.value === frontFontWeight;
+                                            <div className="ccz-field">
+                                                <div className="ccz-label">Text weight</div>
 
-                                                    return (
+                                                <div
+                                                    className="ccz-toggleRow"
+                                                    role="group"
+                                                    aria-label="Choose text weight"
+                                                >
+                                                    {WEIGHT_OPTIONS.map((option) => {
+                                                        const isActive =
+                                                            option.value === frontFontWeight;
+
+                                                        return (
+                                                            <button
+                                                                key={option.key}
+                                                                type="button"
+                                                                className={`ccz-toggle ${isActive ? "is-active" : ""
+                                                                    }`}
+                                                                onClick={() =>
+                                                                    setFrontFontWeight(option.value)
+                                                                }
+                                                                disabled={busy}
+                                                            >
+                                                                {option.label}
+                                                            </button>
+                                                        );
+                                                    })}
+                                                </div>
+                                            </div>
+
+                                            <div className="ccz-field">
+                                                <div className="ccz-label">Text size</div>
+
+                                                <div className="ccz-sliderMeta">
+                                                    <span>{MIN_FONT_SIZE}px</span>
+                                                    <strong>{fontSize}px</strong>
+                                                    <span>{MAX_FONT_SIZE}px</span>
+                                                </div>
+
+                                                <div className="ccz-sliderWrap">
+                                                    <Slider.Root
+                                                        className="ccz-sliderRoot"
+                                                        min={MIN_FONT_SIZE}
+                                                        max={MAX_FONT_SIZE}
+                                                        step={1}
+                                                        value={fontSize}
+                                                        onValueChange={handleFontSizeChange}
+                                                        disabled={busy}
+                                                        aria-label="Text size"
+                                                    >
+                                                        <Slider.Control className="ccz-sliderControl">
+                                                            <Slider.Track className="ccz-sliderTrack">
+                                                                <Slider.Indicator className="ccz-sliderRange" />
+                                                                <Slider.Thumb
+                                                                    className="ccz-sliderThumb"
+                                                                    aria-label="Text size"
+                                                                />
+                                                            </Slider.Track>
+                                                        </Slider.Control>
+                                                    </Slider.Root>
+                                                </div>
+                                            </div>
+                                        </>
+                                    ) : null}
+
+                                    {config.allowLogoUpload ? (
+                                        <>
+                                            <div className="ccz-field">
+                                                <div className="ccz-label">Logo</div>
+
+                                                <div className="ccz-uploadRow">
+                                                    <label className="ccz-uploadBtn" title="Upload logo">
+                                                        <input
+                                                            type="file"
+                                                            accept="image/*"
+                                                            onChange={onPickLogo}
+                                                        />
+                                                        <span>{logoLabel}</span>
+                                                    </label>
+
+                                                    <button
+                                                        type="button"
+                                                        className="ccz-textBtn"
+                                                        onClick={clearLogo}
+                                                        disabled={!logoUrl || busy}
+                                                    >
+                                                        Remove
+                                                    </button>
+                                                </div>
+                                            </div>
+
+                                            <div className="ccz-field">
+                                                <div className="ccz-label">Logo size</div>
+
+                                                <div
+                                                    className="ccz-toggleRow"
+                                                    role="group"
+                                                    aria-label="Choose logo size"
+                                                >
+                                                    {["small", "medium", "large"].map((k) => (
                                                         <button
-                                                            key={option.key}
+                                                            key={k}
                                                             type="button"
-                                                            className={`ccz-toggle ${isActive ? "is-active" : ""}`}
-                                                            onClick={() => setFrontFontWeight(option.value)}
+                                                            className={`ccz-toggle ${logoPreset === k ? "is-active" : ""
+                                                                }`}
+                                                            onClick={() => setLogoPreset(k)}
                                                             disabled={busy}
                                                         >
-                                                            {option.label}
+                                                            {sizeLabel(k)}
                                                         </button>
-                                                    );
-                                                })}
+                                                    ))}
+                                                </div>
                                             </div>
-                                        </div>
+                                        </>
+                                    ) : null}
 
+                                    {hasOptions ? (
                                         <div className="ccz-field">
-                                            <div className="ccz-label">Text size</div>
+                                            <div className="ccz-label">{config.controlsLabel}</div>
 
-                                            <div className="ccz-sliderMeta">
-                                                <span>{MIN_FONT_SIZE}px</span>
-                                                <strong>{fontSize}px</strong>
-                                                <span>{MAX_FONT_SIZE}px</span>
-                                            </div>
-
-                                            <div className="ccz-sliderWrap">
-                                                <Slider.Root
-                                                    className="ccz-sliderRoot"
-                                                    min={MIN_FONT_SIZE}
-                                                    max={MAX_FONT_SIZE}
-                                                    step={1}
-                                                    value={fontSize}
-                                                    onValueChange={handleFontSizeChange}
-                                                    disabled={busy}
-                                                    aria-label="Text size"
-                                                >
-                                                    <Slider.Control className="ccz-sliderControl">
-                                                        <Slider.Track className="ccz-sliderTrack">
-                                                            <Slider.Indicator className="ccz-sliderRange" />
-                                                            <Slider.Thumb className="ccz-sliderThumb" aria-label="Text size" />
-                                                        </Slider.Track>
-                                                    </Slider.Control>
-                                                </Slider.Root>
-                                            </div>
-                                        </div>
-                                    </>
-                                ) : null}
-
-                                {config.allowLogoUpload ? (
-                                    <>
-                                        <div className="ccz-field">
-                                            <div className="ccz-label">Logo</div>
-
-                                            <div className="ccz-uploadRow">
-                                                <label className="ccz-uploadBtn" title="Upload logo">
-                                                    <input type="file" accept="image/*" onChange={onPickLogo} />
-                                                    <span>{logoLabel}</span>
-                                                </label>
-
-                                                <button
-                                                    type="button"
-                                                    className="ccz-textBtn"
-                                                    onClick={clearLogo}
-                                                    disabled={!logoUrl || busy}
-                                                >
-                                                    Remove
-                                                </button>
-                                            </div>
-                                        </div>
-
-                                        <div className="ccz-field">
-                                            <div className="ccz-label">Logo size</div>
-
-                                            <div className="ccz-toggleRow" role="group" aria-label="Choose logo size">
-                                                {["small", "medium", "large"].map((k) => (
+                                            <div
+                                                className="ccz-toggleRow"
+                                                role="group"
+                                                aria-label="Choose product option"
+                                            >
+                                                {config.options.map((opt) => (
                                                     <button
-                                                        key={k}
+                                                        key={opt.value}
                                                         type="button"
-                                                        className={`ccz-toggle ${logoPreset === k ? "is-active" : ""}`}
-                                                        onClick={() => setLogoPreset(k)}
+                                                        className={`ccz-toggle ${variant === opt.value ? "is-active" : ""
+                                                            }`}
+                                                        onClick={() => setVariant(opt.value)}
                                                         disabled={busy}
                                                     >
-                                                        {sizeLabel(k)}
+                                                        {opt.label}
                                                     </button>
                                                 ))}
                                             </div>
                                         </div>
-                                    </>
-                                ) : null}
+                                    ) : null}
 
-                                {hasOptions ? (
                                     <div className="ccz-field">
-                                        <div className="ccz-label">{config.controlsLabel}</div>
+                                        <div className="ccz-label">Link to profile</div>
 
-                                        <div className="ccz-toggleRow" role="group" aria-label="Choose product option">
-                                            {config.options.map((opt) => (
+                                        <div className="ccz-selectWrap">
+                                            <select
+                                                className="ccz-select"
+                                                value={profileId}
+                                                onChange={(e) => setProfileId(e.target.value)}
+                                                disabled={busy || isProfilesLoading}
+                                                aria-label="Choose profile"
+                                            >
+                                                <option value="">
+                                                    {isProfilesLoading
+                                                        ? "Loading..."
+                                                        : myProfiles.length
+                                                            ? "Choose profile"
+                                                            : "No profiles"}
+                                                </option>
+
+                                                {myProfiles.map((p) => {
+                                                    const id = String(p?._id || "");
+                                                    if (!id) return null;
+
+                                                    const label =
+                                                        p?.business_card_name ||
+                                                        p?.full_name ||
+                                                        p?.main_heading ||
+                                                        p?.profile_slug ||
+                                                        "Profile";
+
+                                                    return (
+                                                        <option key={id} value={id}>
+                                                            {label}
+                                                        </option>
+                                                    );
+                                                })}
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                    <div className="ccz-field ccz-field--buy">
+                                        <div className="ccz-priceRow">
+                                            <div className="ccz-price">{config.priceText}</div>
+
+                                            <div className="ccz-qty" aria-label="Quantity">
                                                 <button
-                                                    key={opt.value}
                                                     type="button"
-                                                    className={`ccz-toggle ${variant === opt.value ? "is-active" : ""}`}
-                                                    onClick={() => setVariant(opt.value)}
+                                                    className="ccz-qtyBtn"
+                                                    onClick={() =>
+                                                        setQty((q) => Math.max(1, q - 1))
+                                                    }
                                                     disabled={busy}
+                                                    aria-label="Decrease quantity"
                                                 >
-                                                    {opt.label}
+                                                    −
                                                 </button>
-                                            ))}
+
+                                                <div className="ccz-qtyVal">{qty}</div>
+
+                                                <button
+                                                    type="button"
+                                                    className="ccz-qtyBtn"
+                                                    onClick={() =>
+                                                        setQty((q) => Math.min(20, q + 1))
+                                                    }
+                                                    disabled={busy}
+                                                    aria-label="Increase quantity"
+                                                >
+                                                    +
+                                                </button>
+                                            </div>
                                         </div>
-                                    </div>
-                                ) : null}
 
-                                <div className="ccz-field">
-                                    <div className="ccz-label">Link to profile</div>
-
-                                    <div className="ccz-selectWrap">
-                                        <select
-                                            className="ccz-select"
-                                            value={profileId}
-                                            onChange={(e) => setProfileId(e.target.value)}
-                                            disabled={busy || isProfilesLoading}
-                                            aria-label="Choose profile"
+                                        <button
+                                            type="button"
+                                            onClick={handleBuy}
+                                            className="kx-btn kx-btn--orange ccz-buyBtn"
+                                            disabled={busy}
                                         >
-                                            <option value="">
-                                                {isProfilesLoading
-                                                    ? "Loading..."
-                                                    : myProfiles.length
-                                                        ? "Choose profile"
-                                                        : "No profiles"}
-                                            </option>
-
-                                            {myProfiles.map((p) => {
-                                                const id = String(p?._id || "");
-                                                if (!id) return null;
-
-                                                const label =
-                                                    p?.business_card_name ||
-                                                    p?.full_name ||
-                                                    p?.main_heading ||
-                                                    p?.profile_slug ||
-                                                    "Profile";
-
-                                                return (
-                                                    <option key={id} value={id}>
-                                                        {label}
-                                                    </option>
-                                                );
-                                            })}
-                                        </select>
+                                            {busy ? "Starting checkout..." : config.buyLabel}
+                                        </button>
                                     </div>
                                 </div>
+                            </motion.div>
 
-                                <div className="ccz-field ccz-field--buy">
-                                    <div className="ccz-priceRow">
-                                        <div className="ccz-price">{config.priceText}</div>
-
-                                        <div className="ccz-qty" aria-label="Quantity">
-                                            <button
-                                                type="button"
-                                                className="ccz-qtyBtn"
-                                                onClick={() => setQty((q) => Math.max(1, q - 1))}
-                                                disabled={busy}
-                                                aria-label="Decrease quantity"
-                                            >
-                                                −
-                                            </button>
-
-                                            <div className="ccz-qtyVal">{qty}</div>
-
-                                            <button
-                                                type="button"
-                                                className="ccz-qtyBtn"
-                                                onClick={() => setQty((q) => Math.min(20, q + 1))}
-                                                disabled={busy}
-                                                aria-label="Increase quantity"
-                                            >
-                                                +
-                                            </button>
-                                        </div>
-                                    </div>
-
-                                    <button
-                                        type="button"
-                                        onClick={handleBuy}
-                                        className="kx-btn kx-btn--orange ccz-buyBtn"
-                                        disabled={busy}
-                                    >
-                                        {busy ? "Starting checkout..." : config.buyLabel}
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div className="ccz-deliveryCard">
-                            <div className="ccz-deliveryLabel">Estimated delivery</div>
-                            <div className="ccz-deliveryDate">{deliveryInfo.label}</div>
-                            <p className="ccz-deliveryText">{deliveryInfo.helper}</p>
-                            <p className="ccz-deliveryMeta">
-                                Current time: {cutOffText} • Next day delivery available
-                            </p>
+                            <motion.div
+                                className="ccz-deliveryCard"
+                                initial={{ opacity: 0, y: 16 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                transition={{ duration: 0.35, delay: 0.12 }}
+                            >
+                                <div className="ccz-deliveryLabel">Estimated delivery</div>
+                                <div className="ccz-deliveryDate">{deliveryInfo.label}</div>
+                                <p className="ccz-deliveryText">{deliveryInfo.helper}</p>
+                                <p className="ccz-deliveryMeta">
+                                    Current time: {cutOffText} • Next day delivery available
+                                </p>
+                            </motion.div>
                         </div>
                     </div>
-                </div>
-            </section>
+                </motion.section>
 
-            <section className="cp-card cp-card--builderInfo">
-                <div className="cp-cardHead">
-                    <div className="cp-cardHeadCopy">
-                        <h2 className="cp-cardTitle">Product details</h2>
-                        <p className="cp-muted">Everything you need to know before checkout.</p>
+                <motion.section
+                    className="cp-card cp-card--builderInfo"
+                    initial={{ opacity: 0, y: 18 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.35, delay: 0.14 }}
+                >
+                    <div className="cp-cardHead">
+                        <div className="cp-cardHeadCopy">
+                            <h2 className="cp-cardTitle">Product details</h2>
+                            <p className="cp-muted">Everything you need to know before checkout.</p>
+                        </div>
                     </div>
-                </div>
 
-                <div className="ccz-specsGrid" aria-label="Product details">
-                    {config.specs.map((s, i) => (
-                        <article className="ccz-specCard" key={i}>
-                            <span className="ccz-specPill">{s.k}</span>
-                            <p className="ccz-specValue">{s.v}</p>
-                        </article>
-                    ))}
-                </div>
-            </section>
-        </>
+                    <div className="ccz-specsGrid" aria-label="Product details">
+                        {config.specs.map((s, i) => (
+                            <article className="ccz-specCard" key={i}>
+                                <span className="ccz-specPill">{s.k}</span>
+                                <p className="ccz-specValue">{s.v}</p>
+                            </article>
+                        ))}
+                    </div>
+                </motion.section>
+            </div>
+        </DashboardLayout>
     );
 }
