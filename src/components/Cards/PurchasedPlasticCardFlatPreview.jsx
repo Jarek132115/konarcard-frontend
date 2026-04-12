@@ -128,27 +128,29 @@ export default function PurchasedPlasticCardFlatPreview({
 
     return (
         <div className={`ppcfp ${className}`.trim()} aria-hidden="true">
-            <div
-                className="ppcfp-card"
-                style={{
-                    backgroundImage: `url(${artwork.frontSrc})`,
-                }}
-            >
-                <div className="ppcfp-corner ppcfp-corner--left">K</div>
-                <div className="ppcfp-corner ppcfp-corner--right">
-                    <span className="ppcfp-nfcGlyph" />
-                </div>
-
+            <div className="ppcfp-stage">
                 <div
-                    className={`ppcfp-frontText ${textScaleClass}`}
+                    className="ppcfp-card"
                     style={{
-                        color: textColor,
-                        fontWeight,
-                        textShadow: artwork.textShadow,
+                        backgroundImage: `url(${artwork.frontSrc})`,
                     }}
-                    title={frontText}
                 >
-                    {frontText}
+                    <div className="ppcfp-corner ppcfp-corner--left">K</div>
+                    <div className="ppcfp-corner ppcfp-corner--right">
+                        <span className="ppcfp-nfcGlyph" />
+                    </div>
+
+                    <div
+                        className={`ppcfp-frontText ${textScaleClass}`}
+                        style={{
+                            color: textColor,
+                            fontWeight,
+                            textShadow: artwork.textShadow,
+                        }}
+                        title={frontText}
+                    >
+                        {frontText}
+                    </div>
                 </div>
             </div>
         </div>

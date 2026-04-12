@@ -1,17 +1,29 @@
 .ppcfp {
     width: 100%;
     height: 100%;
+    min-width: 0;
     display: flex;
     align-items: stretch;
     justify-content: stretch;
-    min-width: 0;
+}
+
+.ppcfp-stage {
+    width: 100%;
+    height: 100%;
+    background: #fafafa;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 22px;
+    box-sizing: border-box;
 }
 
 .ppcfp-card {
     position: relative;
-    width: 100%;
-    height: 100%;
-    border-radius: 22px;
+    width: 75%;
+    max-width: 100%;
+    aspect-ratio: 85.6 / 54;
+    border-radius: 18px;
     overflow: hidden;
     background-repeat: no-repeat;
     background-position: center;
@@ -37,7 +49,7 @@
 .ppcfp-corner--left {
     left: 12px;
     font-family: "Inter", sans-serif;
-    font-size: 16px;
+    font-size: 14px;
     font-weight: 800;
     color: rgba(255, 255, 255, 0.96);
     letter-spacing: -0.04em;
@@ -45,15 +57,15 @@
 
 .ppcfp-corner--right {
     right: 12px;
-    width: 18px;
-    height: 18px;
+    width: 16px;
+    height: 16px;
 }
 
 .ppcfp-nfcGlyph {
     position: relative;
     display: block;
-    width: 16px;
-    height: 16px;
+    width: 14px;
+    height: 14px;
 }
 
 .ppcfp-nfcGlyph::before,
@@ -61,7 +73,7 @@
     content: "";
     position: absolute;
     top: 50%;
-    border: 1.8px solid rgba(255, 255, 255, 0.96);
+    border: 1.6px solid rgba(255, 255, 255, 0.96);
     border-left: 0;
     border-radius: 0 10px 10px 0;
     transform: translateY(-50%);
@@ -69,14 +81,14 @@
 
 .ppcfp-nfcGlyph::before {
     right: 4px;
-    width: 5px;
-    height: 9px;
+    width: 4px;
+    height: 8px;
 }
 
 .ppcfp-nfcGlyph::after {
     right: 0;
-    width: 9px;
-    height: 13px;
+    width: 8px;
+    height: 12px;
 }
 
 .ppcfp-frontText {
@@ -85,7 +97,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 18px 32px;
+    padding: 12px 24px;
     text-align: center;
     line-height: 0.92;
     letter-spacing: -0.055em;
@@ -99,102 +111,105 @@
 }
 
 .ppcfp-frontText--lg {
-    font-size: clamp(34px, 2.4vw, 52px);
+    font-size: clamp(22px, 2vw, 34px);
 }
 
 .ppcfp-frontText--md {
-    font-size: clamp(28px, 2vw, 44px);
+    font-size: clamp(19px, 1.7vw, 29px);
 }
 
 .ppcfp-frontText--sm {
-    font-size: clamp(22px, 1.7vw, 36px);
+    font-size: clamp(16px, 1.45vw, 24px);
 }
 
 .ppcfp-frontText--xs {
-    font-size: clamp(18px, 1.4vw, 30px);
+    font-size: clamp(14px, 1.2vw, 20px);
     letter-spacing: -0.045em;
 }
 
 @media (max-width: 1280px) {
-    .ppcfp-frontText--lg {
-        font-size: clamp(30px, 3vw, 46px);
+    .ppcfp-stage {
+        padding: 20px;
     }
 
-    .ppcfp-frontText--md {
-        font-size: clamp(26px, 2.6vw, 40px);
+    .ppcfp-card {
+        width: 78%;
+    }
+}
+
+@media (max-width: 980px) {
+    .ppcfp-stage {
+        padding: 18px;
     }
 
-    .ppcfp-frontText--sm {
-        font-size: clamp(21px, 2.2vw, 33px);
-    }
-
-    .ppcfp-frontText--xs {
-        font-size: clamp(17px, 1.9vw, 28px);
+    .ppcfp-card {
+        width: 74%;
     }
 }
 
 @media (max-width: 820px) {
     .ppcfp-card {
-        border-radius: 20px;
+        border-radius: 16px;
     }
 
     .ppcfp-frontText {
-        padding: 16px 24px;
+        padding: 10px 18px;
     }
 
     .ppcfp-corner--left {
         top: 10px;
         left: 10px;
-        font-size: 15px;
+        font-size: 13px;
     }
 
     .ppcfp-corner--right {
         top: 10px;
         right: 10px;
-        width: 16px;
-        height: 16px;
-    }
-
-    .ppcfp-nfcGlyph {
         width: 14px;
         height: 14px;
     }
 
+    .ppcfp-nfcGlyph {
+        width: 12px;
+        height: 12px;
+    }
+
     .ppcfp-nfcGlyph::before {
-        right: 4px;
+        right: 3px;
         width: 4px;
-        height: 8px;
+        height: 7px;
     }
 
     .ppcfp-nfcGlyph::after {
         right: 0;
-        width: 8px;
-        height: 12px;
+        width: 7px;
+        height: 10px;
     }
 }
 
 @media (max-width: 560px) {
-    .ppcfp-card {
-        border-radius: 18px;
+    .ppcfp-stage {
+        padding: 16px;
     }
 
-    .ppcfp-frontText {
-        padding: 14px 20px;
+    .ppcfp-card {
+        width: 82%;
+        border-radius: 15px;
     }
 
     .ppcfp-frontText--lg {
-        font-size: clamp(28px, 8vw, 38px);
+        font-size: clamp(20px, 7vw, 28px);
     }
 
     .ppcfp-frontText--md {
-        font-size: clamp(24px, 7vw, 32px);
+        font-size: clamp(18px, 6vw, 24px);
     }
 
     .ppcfp-frontText--sm {
-        font-size: clamp(20px, 6vw, 28px);
+        font-size: clamp(15px, 5.1vw, 20px);
     }
 
     .ppcfp-frontText--xs {
-        font-size: clamp(16px, 5.2vw, 24px);
+        font-size: clamp(13px, 4.4vw, 17px);
     }
 }
