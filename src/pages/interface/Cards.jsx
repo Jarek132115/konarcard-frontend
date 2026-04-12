@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { toast } from "react-hot-toast";
+import { motion } from "motion/react";
 
 import DashboardLayout from "../../components/Dashboard/DashboardLayout";
 import PageHeader from "../../components/Dashboard/PageHeader";
@@ -687,26 +688,43 @@ export default function Cards() {
         />
 
         {isCustomizerView ? (
-          <CardCustomizer
-            productKey={selectedProductKey}
-            initialIntent={readIntent()}
-            onBack={backToCardsHome}
-            onCheckoutSuccess={async () => { }}
-          />
+          <motion.div
+            initial={{ opacity: 0, y: 18 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.32, ease: "easeOut" }}
+          >
+            <CardCustomizer
+              productKey={selectedProductKey}
+              initialIntent={readIntent()}
+              onBack={backToCardsHome}
+              onCheckoutSuccess={async () => { }}
+            />
+          </motion.div>
         ) : isMyCardsView ? (
-          <OrderDetailsView
-            selectedOrder={selectedOrder}
-            productMeta={PRODUCT_META}
-            defaultLogoDataUrl={DEFAULT_LOGO_DATAURL}
-            qrSrcFromLink={qrSrcFromLink}
-            Card3DDetails={Card3DDetails}
-            CardPreviewErrorBoundary={CardPreviewErrorBoundary}
-            formatMoneyMinor={formatMoneyMinor}
-            onBack={backToCardsHome}
-          />
+          <motion.div
+            initial={{ opacity: 0, y: 18 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.32, ease: "easeOut" }}
+          >
+            <OrderDetailsView
+              selectedOrder={selectedOrder}
+              productMeta={PRODUCT_META}
+              defaultLogoDataUrl={DEFAULT_LOGO_DATAURL}
+              qrSrcFromLink={qrSrcFromLink}
+              Card3DDetails={Card3DDetails}
+              CardPreviewErrorBoundary={CardPreviewErrorBoundary}
+              formatMoneyMinor={formatMoneyMinor}
+              onBack={backToCardsHome}
+            />
+          </motion.div>
         ) : (
           <>
-            <section className="cp-card">
+            <motion.section
+              className="cp-card"
+              initial={{ opacity: 0, y: 18 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.32, ease: "easeOut" }}
+            >
               <div className="cp-cardHead">
                 <div className="cp-cardHeadCopy">
                   <div className="cp-eyebrow">Your cards</div>
@@ -756,12 +774,18 @@ export default function Cards() {
                   ))}
                 </div>
               )}
-            </section>
+            </motion.section>
 
-            <CardsCatalog
-              onChooseProduct={openConfigurator}
-              hasPurchasedCards={purchasedCards.length > 0}
-            />
+            <motion.div
+              initial={{ opacity: 0, y: 18 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.32, delay: 0.1, ease: "easeOut" }}
+            >
+              <CardsCatalog
+                onChooseProduct={openConfigurator}
+                hasPurchasedCards={purchasedCards.length > 0}
+              />
+            </motion.div>
           </>
         )}
       </div>
