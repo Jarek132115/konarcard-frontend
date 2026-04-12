@@ -502,26 +502,6 @@ export default function OrderDetailsView({
                                 <InfoRow label="Delivery address" value={deliveryAddress} />
                             </div>
                         </motion.section>
-
-                        <motion.section
-                            className="cp-innerCard odv-infoCard"
-                            initial={{ opacity: 0, y: 14 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            transition={{ duration: 0.3, delay: 0.16, ease: "easeOut" }}
-                        >
-                            <div className="odv-sectionHead">
-                                <h3 className="odv-sectionTitle">Card setup</h3>
-                                <p className="odv-sectionText">How this card is configured.</p>
-                            </div>
-
-                            <div className="odv-infoList">
-                                <InfoRow label="QR target" value={safeTrim(selectedOrder?.qrTargetUrl) || "—"} link copy={!!safeTrim(selectedOrder?.qrTargetUrl)} />
-                                <InfoRow label="Public profile link" value={safeTrim(selectedOrder?.publicProfileUrl || selectedOrder?.link) || "—"} link copy={!!safeTrim(selectedOrder?.publicProfileUrl || selectedOrder?.link)} />
-                                {previewProps?.frontText ? (
-                                    <InfoRow label="Front text" value={previewProps.frontText} />
-                                ) : null}
-                            </div>
-                        </motion.section>
                     </div>
                 </div>
             </motion.section>
