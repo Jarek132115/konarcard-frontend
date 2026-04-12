@@ -245,12 +245,12 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    min-height: 34px;
-    padding: 0 14px;
-    border-radius: 999px;
-    background: #0f172a;
-    border: 1px solid #0f172a;
-    color: #ffffff;
+    min-height: 28px;
+    padding: 0 12px;
+    border-radius: 8px;
+    background: rgba(15, 23, 42, 0.06);
+    border: 1px solid rgba(15, 23, 42, 0.12);
+    color: var(--kce-ink);
     font-family: "Inter", sans-serif;
     font-size: 11px;
     line-height: 1;
@@ -258,54 +258,58 @@
     letter-spacing: 0.06em;
     text-transform: uppercase;
     white-space: nowrap;
-    box-shadow: 0 1px 0 rgba(15, 23, 42, 0.03);
 }
 
-.kce-accentLine {
-    display: none;
-}
+/* =========================================================
+   SWITCH (section show/hide)
+========================================================= */
 
-.kce-hideBtn {
-    appearance: none;
-    border: 1px solid rgba(15, 23, 42, 0.12);
-    background: #ffffff;
-    color: var(--kce-muted);
-    min-height: 32px;
-    height: 32px;
-    padding: 0 12px;
+.kce-switch {
+    flex: 0 0 auto;
+    position: relative;
+    width: 44px;
+    height: 26px;
     border-radius: 999px;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    font-family: "Inter", sans-serif;
-    font-size: 12px;
-    line-height: 1;
-    font-weight: 700;
+    border: 1px solid rgba(15, 23, 42, 0.14);
+    background: rgba(15, 23, 42, 0.08);
     cursor: pointer;
     transition:
-        background-color 0.16s ease,
-        border-color 0.16s ease,
-        color 0.16s ease,
-        transform 0.10s ease,
-        box-shadow 0.16s ease;
-    white-space: nowrap;
-    flex: 0 0 auto;
-    box-shadow: 0 1px 0 rgba(15, 23, 42, 0.03);
+        background 0.18s ease,
+        border-color 0.18s ease;
+    appearance: none;
+    padding: 0;
+    outline: none;
 }
 
-.kce-hideBtn:hover {
-    background: #fafafa;
-    border-color: var(--kce-border-strong);
-    color: var(--kce-ink);
+.kce-switch[data-checked] {
+    background: var(--kce-orange);
+    border-color: var(--kce-orange);
 }
 
-.kce-hideBtn:active {
-    transform: translateY(1px);
+.kce-switch:focus-visible {
+    box-shadow: 0 0 0 3px rgba(249, 115, 22, 0.28);
 }
 
-.kce-hideBtn:disabled {
-    opacity: 0.6;
+.kce-switch[data-disabled] {
+    opacity: 0.5;
     cursor: not-allowed;
+}
+
+.kce-switchThumb {
+    display: block;
+    width: 18px;
+    height: 18px;
+    border-radius: 999px;
+    background: #ffffff;
+    box-shadow: 0 1px 4px rgba(15, 23, 42, 0.20);
+    position: absolute;
+    top: 3px;
+    left: 3px;
+    transition: transform 0.18s ease;
+}
+
+.kce-switch[data-checked] .kce-switchThumb {
+    transform: translateX(18px);
 }
 
 /* =========================================================
@@ -853,31 +857,30 @@
 
 .kce-social {
     display: grid;
-    gap: 12px;
+    gap: 10px;
 }
 
 .kce-socialRow {
     display: grid;
     grid-template-columns: 48px minmax(0, 1fr);
-    padding: 8px;
     gap: 10px;
-    align-items: stretch;
+    align-items: center;
 }
 
-.kce-socialRow img {
-    width: 18px;
-    height: 18px;
-    display: block;
-    justify-self: center;
-    align-self: center;
-    opacity: 0.88;
-}
-
-.kce-socialRow> :first-child {
+.kce-socialIcon {
     min-height: 48px;
     border-radius: 14px;
     display: grid;
     place-items: center;
+    background: rgba(15, 23, 42, 0.04);
+    border: 1px solid rgba(15, 23, 42, 0.08);
+}
+
+.kce-socialIcon img {
+    width: 18px;
+    height: 18px;
+    display: block;
+    opacity: 0.88;
 }
 
 /* =========================================================
@@ -1181,18 +1184,10 @@
         flex: 0 1 auto;
     }
 
-    .kce-hideBtn {
-        width: auto;
-        min-height: 30px;
-        height: 30px;
-        font-size: 11px;
-        padding: 0 10px;
-    }
-
     .kce-pill {
-        min-height: 30px;
+        min-height: 26px;
         font-size: 10px;
-        padding: 0 11px;
+        padding: 0 10px;
     }
 
     .kce-themeModeToggle {
@@ -1229,6 +1224,11 @@
 
     .kce-socialRow {
         grid-template-columns: 44px minmax(0, 1fr);
+    }
+
+    .kce-socialIcon {
+        min-height: 44px;
+        border-radius: 12px;
     }
 
     .kce-bottomSaveWrap {
@@ -1316,17 +1316,10 @@
         gap: 8px;
     }
 
-    .kce-hideBtn {
-        min-height: 28px;
-        height: 28px;
+    .kce-pill {
+        min-height: 24px;
         font-size: 10px;
         padding: 0 9px;
-    }
-
-    .kce-pill {
-        min-height: 28px;
-        font-size: 10px;
-        padding: 0 10px;
     }
 }
 

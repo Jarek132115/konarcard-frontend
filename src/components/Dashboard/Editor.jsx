@@ -475,7 +475,6 @@ export default function Editor({
                     <div className="kce-sectionTop">
                         <div className="kce-headingBlock">
                             <span className="kce-pill">Choose Template</span>
-                            <div className="kce-accentLine" />
                         </div>
                     </div>
 
@@ -536,17 +535,16 @@ export default function Editor({
                     <div className="kce-sectionTop">
                         <div className="kce-headingBlock">
                             <span className="kce-pill">Main Section</span>
-                            <div className="kce-accentLine" />
                         </div>
 
-                        <button
-                            type="button"
-                            className="kce-hideBtn"
-                            onClick={() => sectionToggle(!!showMainSection, setShowMainSection)}
+                        <Switch.Root
+                            checked={!!showMainSection}
+                            onCheckedChange={(checked) => { if (!isSaving) setShowMainSection(checked); }}
                             disabled={isSaving}
+                            className="kce-switch"
                         >
-                            {showMainSection ? "Hide section" : "Show section"}
-                        </button>
+                            <Switch.Thumb className="kce-switchThumb" />
+                        </Switch.Root>
                     </div>
 
                     {showMainSection ? (
@@ -713,17 +711,16 @@ export default function Editor({
                     <div className="kce-sectionTop">
                         <div className="kce-headingBlock">
                             <span className="kce-pill">About Me Section</span>
-                            <div className="kce-accentLine" />
                         </div>
 
-                        <button
-                            type="button"
-                            className="kce-hideBtn"
-                            onClick={() => sectionToggle(!!showAboutMeSection, setShowAboutMeSection)}
+                        <Switch.Root
+                            checked={!!showAboutMeSection}
+                            onCheckedChange={(checked) => { if (!isSaving) setShowAboutMeSection(checked); }}
                             disabled={isSaving}
+                            className="kce-switch"
                         >
-                            {showAboutMeSection ? "Hide section" : "Show section"}
-                        </button>
+                            <Switch.Thumb className="kce-switchThumb" />
+                        </Switch.Root>
                     </div>
 
                     {showAboutMeSection ? (
@@ -773,17 +770,16 @@ export default function Editor({
                     <div className="kce-sectionTop">
                         <div className="kce-headingBlock">
                             <span className="kce-pill">My Work Section</span>
-                            <div className="kce-accentLine" />
                         </div>
 
-                        <button
-                            type="button"
-                            className="kce-hideBtn"
-                            onClick={() => sectionToggle(!!showWorkSection, setShowWorkSection)}
+                        <Switch.Root
+                            checked={!!showWorkSection}
+                            onCheckedChange={(checked) => { if (!isSaving) setShowWorkSection(checked); }}
                             disabled={isSaving}
+                            className="kce-switch"
                         >
-                            {showWorkSection ? "Hide section" : "Show section"}
-                        </button>
+                            <Switch.Thumb className="kce-switchThumb" />
+                        </Switch.Root>
                     </div>
 
                     {showWorkSection ? (
@@ -844,17 +840,16 @@ export default function Editor({
                     <div className="kce-sectionTop">
                         <div className="kce-headingBlock">
                             <span className="kce-pill">My Services Section</span>
-                            <div className="kce-accentLine" />
                         </div>
 
-                        <button
-                            type="button"
-                            className="kce-hideBtn"
-                            onClick={() => sectionToggle(!!showServicesSection, setShowServicesSection)}
+                        <Switch.Root
+                            checked={!!showServicesSection}
+                            onCheckedChange={(checked) => { if (!isSaving) setShowServicesSection(checked); }}
                             disabled={isSaving}
+                            className="kce-switch"
                         >
-                            {showServicesSection ? "Hide section" : "Show section"}
-                        </button>
+                            <Switch.Thumb className="kce-switchThumb" />
+                        </Switch.Root>
                     </div>
 
                     {showServicesSection ? (
@@ -923,17 +918,16 @@ export default function Editor({
                     <div className="kce-sectionTop">
                         <div className="kce-headingBlock">
                             <span className="kce-pill">Reviews Section</span>
-                            <div className="kce-accentLine" />
                         </div>
 
-                        <button
-                            type="button"
-                            className="kce-hideBtn"
-                            onClick={() => sectionToggle(!!showReviewsSection, setShowReviewsSection)}
+                        <Switch.Root
+                            checked={!!showReviewsSection}
+                            onCheckedChange={(checked) => { if (!isSaving) setShowReviewsSection(checked); }}
                             disabled={isSaving}
+                            className="kce-switch"
                         >
-                            {showReviewsSection ? "Hide section" : "Show section"}
-                        </button>
+                            <Switch.Thumb className="kce-switchThumb" />
+                        </Switch.Root>
                     </div>
 
                     {showReviewsSection ? (
@@ -1012,17 +1006,16 @@ export default function Editor({
                     <div className="kce-sectionTop">
                         <div className="kce-headingBlock">
                             <span className="kce-pill">Contact Section</span>
-                            <div className="kce-accentLine" />
                         </div>
 
-                        <button
-                            type="button"
-                            className="kce-hideBtn"
-                            onClick={() => sectionToggle(!!showContactSection, setShowContactSection)}
+                        <Switch.Root
+                            checked={!!showContactSection}
+                            onCheckedChange={(checked) => { if (!isSaving) setShowContactSection(checked); }}
                             disabled={isSaving}
+                            className="kce-switch"
                         >
-                            {showContactSection ? "Hide section" : "Show section"}
-                        </button>
+                            <Switch.Thumb className="kce-switchThumb" />
+                        </Switch.Root>
                     </div>
 
                     {showContactSection ? (
@@ -1067,7 +1060,9 @@ export default function Editor({
 
                             <div className="kce-social">
                                 <div className="kce-socialRow">
-                                    <img src={FacebookIcon} alt="" />
+                                    <div className="kce-socialIcon">
+                                        <img src={FacebookIcon} alt="" />
+                                    </div>
                                     <input
                                         className="kce-input"
                                         placeholder="Facebook URL"
@@ -1082,7 +1077,9 @@ export default function Editor({
                                 </div>
 
                                 <div className="kce-socialRow">
-                                    <img src={InstagramIcon} alt="" />
+                                    <div className="kce-socialIcon">
+                                        <img src={InstagramIcon} alt="" />
+                                    </div>
                                     <input
                                         className="kce-input"
                                         placeholder="Instagram URL"
@@ -1097,7 +1094,9 @@ export default function Editor({
                                 </div>
 
                                 <div className="kce-socialRow">
-                                    <img src={LinkedInIcon} alt="" />
+                                    <div className="kce-socialIcon">
+                                        <img src={LinkedInIcon} alt="" />
+                                    </div>
                                     <input
                                         className="kce-input"
                                         placeholder="LinkedIn URL"
@@ -1112,7 +1111,9 @@ export default function Editor({
                                 </div>
 
                                 <div className="kce-socialRow">
-                                    <img src={XIcon} alt="" />
+                                    <div className="kce-socialIcon">
+                                        <img src={XIcon} alt="" />
+                                    </div>
                                     <input
                                         className="kce-input"
                                         placeholder="X URL"
@@ -1127,7 +1128,9 @@ export default function Editor({
                                 </div>
 
                                 <div className="kce-socialRow">
-                                    <img src={TikTokIcon} alt="" />
+                                    <div className="kce-socialIcon">
+                                        <img src={TikTokIcon} alt="" />
+                                    </div>
                                     <input
                                         className="kce-input"
                                         placeholder="TikTok URL"
