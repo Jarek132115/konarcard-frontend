@@ -1,231 +1,342 @@
 /* frontend/src/styling/contactus.css
-   CONTACT US — consistent with Pricing/Examples system
-   - Hero uses pricing hero classes (grid handled in pricingpagehero.css)
-   - Cards are outside the grid background
-   - Quick answers uses divider-list style
-*/
+   CONTACT US PAGE
+   kcon- prefix throughout.
+   No dependency on pricingpagehero.css.
+   ========================================================= */
 
-.kc-contactPage {
+/* ── Page shell ────────────────────────────────────────────── */
+.kcon-page {
     background: var(--kc-bg-main);
     color: var(--kc-text-primary);
 }
 
-/* =========================
-   HERO spacing (same rhythm)
-   ========================= */
-.kc-contactHero {
-    padding: 0 0 70px;
-    /* ✅ matches the section rhythm you wanted */
+/* ── Shared container ──────────────────────────────────────── */
+.kcon-container {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 0 20px;
 }
 
-/* =========================
-   CONTACT CARDS
-   ========================= */
-.kc-contactCards {
-    margin-top: 22px;
+/* =========================================================
+   HERO
+   ========================================================= */
+.kcon-hero {
+    padding: 0 0 70px;
+}
 
+@media (max-width: 600px) {
+    .kcon-hero {
+        padding: 0 0 56px;
+    }
+}
+
+/* Heading block — grid bg lives inside here */
+.kcon-head {
+    position: relative;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding-top: 20px;
+    padding-bottom: 40px;
+}
+
+/* Grid lines with circular radial fade — same pattern as hero sections */
+.kcon-gridBg {
+    position: absolute;
+    inset: -80px;
+    background-image:
+        linear-gradient(rgba(15, 23, 42, 0.07) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(15, 23, 42, 0.07) 1px, transparent 1px);
+    background-size: 44px 44px;
+    -webkit-mask-image: radial-gradient(
+        ellipse 62% 88% at 50% 50%,
+        black 0%,
+        transparent 68%
+    );
+    mask-image: radial-gradient(
+        ellipse 62% 88% at 50% 50%,
+        black 0%,
+        transparent 68%
+    );
+    pointer-events: none;
+    z-index: 0;
+}
+
+/* All heading content above the grid */
+.kcon-headContent {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+}
+
+.kcon-kicker {
+    margin: 0 0 12px;
+}
+
+.kcon-title {
+    margin: 0 0 8px;
+    max-width: 600px;
+    text-wrap: balance;
+}
+
+.kcon-accent {
+    color: var(--kc-accent-primary);
+}
+
+.kcon-sub {
+    margin: 0 auto;
+    max-width: 480px;
+    text-wrap: balance;
+}
+
+/* =========================================================
+   CONTACT CARDS
+   Solid white bg — sit below the grid bg, no bleed-through
+   ========================================================= */
+.kcon-cards {
+    position: relative;
+    z-index: 1;
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 16px;
+    max-width: 860px;
+    margin: 0 auto;
+}
 
-    max-width: 920px;
-    margin-left: auto;
-    margin-right: auto;
+@media (max-width: 700px) {
+    .kcon-cards {
+        grid-template-columns: 1fr;
+        max-width: 480px;
+    }
+}
 
+.kcon-card {
+    border-radius: 18px;
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    background: #ffffff;
+    border: 1px solid rgba(15, 23, 42, 0.10);
+    box-shadow: 0 10px 26px rgba(15, 23, 42, 0.06);
     text-align: left;
 }
 
-.kc-contactCard {
-    border-radius: 18px;
-    padding: 20px;
+/* Icon */
+.kcon-iconWrap {
+    width: 44px;
+    height: 44px;
+    display: grid;
+    place-items: center;
+    margin-bottom: 14px;
+}
 
+.kcon-icon {
+    width: 44px;
+    height: 44px;
+    object-fit: contain;
+    display: block;
+}
+
+/* Card text */
+.kcon-cardBody {
     display: flex;
     flex-direction: column;
-    gap: 10px;
-
-    box-shadow: 0 10px 26px rgba(15, 23, 42, 0.06);
-    border: 1px solid rgba(15, 23, 42, 0.10);
-    background: #ffffff;
+    gap: 6px;
+    margin-bottom: 16px;
 }
 
-.kc-contactCardTitle {
+.kcon-cardTitle {
     margin: 0;
+    font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+    font-size: 17px;
+    font-weight: 700;
+    line-height: 1.25;
+    color: var(--kc-text-primary);
+    letter-spacing: -0.01em;
 }
 
-.kc-contactCardText {
+.kcon-cardText {
     margin: 0;
+    font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+    font-size: 14px;
     line-height: 1.65;
     color: var(--kc-text-secondary);
 }
 
-.kc-contactCardHint {
-    margin: 6px 0 0;
-    color: var(--kc-text-secondary);
-}
-
-.kc-contactIconWrap {
-    width: 40px;
-    height: 40px;
-    display: grid;
-    place-items: center;
-}
-
-.kc-contactIcon {
-    width: 40px;
-    height: 40px;
-    display: block;
-    object-fit: contain;
-}
-
-/* Buttons */
-.kc-contactCardBtn {
+/* Button */
+.kcon-cardBtn {
     width: 100%;
-    margin-top: 6px;
+    margin-bottom: 10px;
 }
 
-.kc-contactCardBtn--outlined {
+.kcon-cardBtn--outlined {
     border-color: rgba(15, 23, 42, 0.16);
 }
 
-.kc-contactCardBtn--outlined:hover {
+.kcon-cardBtn--outlined:hover {
     background: rgba(15, 23, 42, 0.02);
 }
 
-/* =========================
-   QUICK ANSWERS (divider list)
-   ========================= */
-.kc-contactFaq {
+/* Hint */
+.kcon-cardHint {
+    margin: 0;
+    font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+    font-size: 12px;
+    line-height: 1.5;
+    color: var(--kc-text-secondary);
+}
+
+/* =========================================================
+   QUICK ANSWERS ACCORDION
+   ========================================================= */
+.kcon-faq {
     background: var(--kc-bg-main);
     padding: 80px 0;
 }
 
 @media (max-width: 600px) {
-    .kc-contactFaq {
+    .kcon-faq {
         padding: 56px 0;
     }
 }
 
-.kc-contactFaqInner {
+.kcon-faqInner {
     max-width: 1040px;
     margin: 0 auto;
     padding: 0 20px;
 }
 
-.kc-contactFaqHead {
+/* Header */
+.kcon-faqHead {
     text-align: center;
     margin-bottom: 18px;
 }
 
-.kc-contactFaqPill {
+.kcon-faqKicker {
     margin: 0 0 12px;
 }
 
-.kc-contactFaqTitle {
+.kcon-faqTitle {
     margin: 0 0 8px;
 }
 
-.kc-contactFaqSub {
+.kcon-faqSub {
     margin: 0 auto;
     max-width: 560px;
     color: var(--kc-text-secondary);
 }
 
-/* Divider list */
-.kc-contactFaqList {
-    margin-top: 18px;
-    max-width: 920px;
-    margin-left: auto;
-    margin-right: auto;
+/* List */
+.kcon-faqList {
+    max-width: 860px;
+    margin: 18px auto 0;
 }
 
-.kc-contactFaqItem {
-    border-bottom: 1px solid rgba(11, 18, 32, 0.10);
+/* Item */
+.kcon-faqItem {
+    border-bottom: 1px solid rgba(15, 23, 42, 0.09);
 }
 
-.kc-contactFaqItem:first-child {
-    border-top: 1px solid rgba(11, 18, 32, 0.10);
+.kcon-faqItem:first-child {
+    border-top: 1px solid rgba(15, 23, 42, 0.09);
 }
 
-.kc-contactFaqQRow {
+/* Question row */
+.kcon-faqQRow {
     width: 100%;
     text-align: left;
-
     padding: 22px 0;
     background: transparent;
     border: none;
-
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 14px;
-
+    gap: 16px;
     cursor: pointer;
 }
 
-.kc-contactFaqQ {
-    margin: 0;
-    max-width: 70ch;
-    line-height: 1.25;
+@media (max-width: 720px) {
+    .kcon-faqQRow {
+        padding: 18px 0;
+    }
+}
+
+/* Question text — Inter only, NOT Cal Sans */
+.kcon-faqQ {
+    font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+    font-size: 16px;
+    font-weight: 600;
+    line-height: 1.4;
     color: var(--kc-text-primary);
+    margin: 0;
+    flex: 1;
+    text-align: left;
 }
 
 /* Chevron */
-.kc-contactFaqChev {
-    width: 34px;
-    height: 34px;
-
+.kcon-faqChev {
+    width: 32px;
+    height: 32px;
+    flex: 0 0 auto;
     display: inline-flex;
     align-items: center;
     justify-content: center;
-
     border-radius: 999px;
-    border: 1px solid rgba(11, 18, 32, 0.14);
+    border: 1px solid rgba(15, 23, 42, 0.12);
     background: rgba(255, 255, 255, 0.92);
-
-    color: rgba(11, 18, 32, 0.80);
-    font-size: 12px;
-
-    flex: 0 0 auto;
-    transition: transform 0.15s ease, background-color 0.15s ease, border-color 0.15s ease;
+    color: rgba(15, 23, 42, 0.65);
+    transition: transform 0.22s ease, background-color 0.15s ease,
+        border-color 0.15s ease, color 0.15s ease;
 }
 
-.kc-contactFaqQRow:hover .kc-contactFaqChev {
+.kcon-faqQRow:hover .kcon-faqChev {
     background: rgba(15, 23, 42, 0.03);
-    border-color: rgba(11, 18, 32, 0.22);
+    border-color: rgba(15, 23, 42, 0.20);
 }
 
-.kc-contactFaqChev.is-open {
+.kcon-faqChev.is-open {
     transform: rotate(180deg);
+    background: rgba(249, 115, 22, 0.07);
+    border-color: rgba(249, 115, 22, 0.28);
+    color: var(--kc-accent-primary);
 }
 
-.kc-contactFaqA {
-    padding: 0 0 22px;
-    max-width: 78ch;
+@media (prefers-reduced-motion: reduce) {
+    .kcon-faqChev {
+        transition: none !important;
+    }
+}
+
+/* Answer */
+.kcon-faqAWrap {
+    /* height + overflow controlled by Framer Motion */
+}
+
+.kcon-faqA {
+    font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+    font-size: 15px;
     line-height: 1.65;
     color: var(--kc-text-secondary);
+    margin: 0;
+    padding: 0 48px 22px 0;
+    max-width: 72ch;
+}
+
+@media (max-width: 600px) {
+    .kcon-faqA {
+        padding-right: 0;
+        padding-bottom: 18px;
+    }
 }
 
 /* CTA */
-.kc-contactFaqCta {
+.kcon-faqCta {
     margin-top: 18px;
     display: flex;
     justify-content: center;
-}
-
-/* Responsive */
-@media (max-width: 980px) {
-    .kc-contactCards {
-        grid-template-columns: 1fr;
-        max-width: 560px;
-    }
-}
-
-@media (max-width: 720px) {
-    .kc-contactFaqQRow {
-        padding: 18px 0;
-    }
-
-    .kc-contactFaqA {
-        padding-bottom: 18px;
-    }
 }

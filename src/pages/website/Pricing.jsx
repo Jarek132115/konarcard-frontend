@@ -110,7 +110,7 @@ function savingsLabel(fromPerMonth, toPerMonth) {
 }
 
 export default function Pricing() {
-    const [billing, setBilling] = useState("monthly"); // monthly | quarterly | yearly
+    const [billing, setBilling] = useState("monthly"); // monthly | yearly
     const [loadingKey, setLoadingKey] = useState(null);
 
     const [subLoading, setSubLoading] = useState(false);
@@ -124,28 +124,20 @@ export default function Pricing() {
        Pricing rules (your exact spec)
        ========================= */
     const PRICES = useMemo(() => {
-        const plusMonthly = 4.95;
-        const plusQuarterlyPerMonth = 4.45;
-        const plusYearlyPerMonth = 3.95;
+        const plusMonthly = 5;
+        const plusYearlyTotal = 50;
+        const plusYearlyPerMonth = plusYearlyTotal / 12; // ≈ 4.17
 
-        const addOnPerExtraProfilePerMonth = 1.95;
-
-        const quarterMonths = 3;
-        const yearMonths = 12;
-
-        const plusQuarterTotal = plusQuarterlyPerMonth * quarterMonths; // 13.35
-        const plusYearTotal = plusYearlyPerMonth * yearMonths; // 47.40
+        const addOnPerExtraProfilePerMonth = 2;
 
         return {
             addOnPerExtraProfilePerMonth,
             plus: {
                 monthly: { perMonth: plusMonthly, billedLabel: `${fmtGBP(plusMonthly)} / month` },
-                quarterly: { perMonth: plusQuarterlyPerMonth, billedTotal: plusQuarterTotal, billedLabel: `${fmtGBP(plusQuarterTotal)} / quarter` },
-                yearly: { perMonth: plusYearlyPerMonth, billedTotal: plusYearTotal, billedLabel: `${fmtGBP(plusYearTotal)} / year` },
+                yearly: { perMonth: plusYearlyPerMonth, billedTotal: plusYearlyTotal, billedLabel: `£${plusYearlyTotal} / year` },
             },
             free: {
                 monthly: { perMonth: 0, billedLabel: "£0" },
-                quarterly: { perMonth: 0, billedLabel: "£0" },
                 yearly: { perMonth: 0, billedLabel: "£0" },
             },
         };
@@ -156,25 +148,19 @@ export default function Pricing() {
     const plusPerMonth =
         billing === "monthly"
             ? PRICES.plus.monthly.perMonth
-            : billing === "quarterly"
-                ? PRICES.plus.quarterly.perMonth
-                : PRICES.plus.yearly.perMonth;
+            : PRICES.plus.yearly.perMonth;
 
     const plusBilledLabel =
         billing === "monthly"
             ? PRICES.plus.monthly.billedLabel
-            : billing === "quarterly"
-                ? PRICES.plus.quarterly.billedLabel
-                : PRICES.plus.yearly.billedLabel;
+            : PRICES.plus.yearly.billedLabel;
 
     const plusSavings = billing === "monthly" ? "" : savingsLabel(plusMonthly, plusPerMonth);
 
     const billingNote =
         billing === "monthly"
             ? "Billed monthly. Cancel anytime."
-            : billing === "quarterly"
-                ? "Billed every 3 months. Cancel anytime."
-                : "Best value. Billed yearly.";
+            : "Best value. Billed £50/year.";
 
     /* =========================
        SEO — Meta upsert + JSON-LD (SPA-safe)
@@ -252,16 +238,16 @@ export default function Pricing() {
                 name: "KonarCard Plans",
                 itemListElement: [
                     { "@type": "Offer", name: "Free (Individual)", priceCurrency: "GBP", price: "0.00", url: CANONICAL, availability: "https://schema.org/InStock" },
-                    { "@type": "Offer", name: "Plus", priceCurrency: "GBP", price: "4.95", url: CANONICAL, availability: "https://schema.org/InStock", category: "subscription" },
+                    { "@type": "Offer", name: "Plus", priceCurrency: "GBP", price: "5.00", url: CANONICAL, availability: "https://schema.org/InStock", category: "subscription" },
                     {
                         "@type": "Offer",
                         name: "Teams",
                         priceCurrency: "GBP",
-                        price: "4.95",
+                        price: "5.00",
                         url: CANONICAL,
                         availability: "https://schema.org/InStock",
                         category: "subscription",
-                        description: "Plus base plan + £1.95 per extra profile per month.",
+                        description: "Plus base plan + £2 per extra profile per month.",
                     },
                 ],
             },
@@ -273,7 +259,7 @@ export default function Pricing() {
             mainEntity: [
                 { "@type": "Question", name: "Do I need to pay upfront?", acceptedAnswer: { "@type": "Answer", text: "No. Start on Free, then upgrade when it’s worth it. Paid plans bill on your chosen interval." } },
                 { "@type": "Question", name: "Can I cancel anytime?", acceptedAnswer: { "@type": "Answer", text: "Yes. You can cancel or manage billing anytime from the Billing portal." } },
-                { "@type": "Question", name: "How does Teams pricing work?", acceptedAnswer: { "@type": "Answer", text: "Teams uses the Plus plan as your base, then you add extra profiles for staff at £1.95 per extra profile per month." } },
+                { "@type": "Question", name: "How does Teams pricing work?", acceptedAnswer: { "@type": "Answer", text: "Teams uses the Plus plan as your base, then you add extra profiles for staff at £2 per extra profile per month." } },
                 { "@type": "Question", name: "What happens if my plan ends?", acceptedAnswer: { "@type": "Answer", text: "You’ll stay on Free. Your link remains live — paid features simply pause until you re-subscribe." } },
             ],
         });
@@ -552,7 +538,7 @@ export default function Pricing() {
                 tag: "For small teams",
                 featured: false,
                 price: fmtGBP(plusPerMonth),
-                cadence: "+ £1.95 per extra profile",
+                cadence: "+ £2 per extra profile/month",
                 meta: [
                     billing === "monthly" ? "Billed monthly. Cancel anytime." : `Base billed ${plusBilledLabel}.`,
                     `Example: 3 profiles = ${fmtGBP(teamsExample3Profiles)} / month`,

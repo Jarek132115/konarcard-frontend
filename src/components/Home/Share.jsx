@@ -1,52 +1,62 @@
-// frontend/src/components/home/Share.jsx
-import React, { useMemo } from "react";
+// frontend/src/components/Home/Share.jsx
+import React from "react";
+import { motion } from "motion/react";
+
 import "../../styling/home/share.css";
 
-/* ✅ Correct 4 share images only */
-import ShareFastest from "../../assets/images/ShareFastest.jpg";
-import SharePhone from "../../assets/images/SharePhone.jpg";
+import ShareFastest  from "../../assets/images/ShareFastest.jpg";
+import SharePhone    from "../../assets/images/SharePhone.jpg";
 import ShareFollowUp from "../../assets/images/ShareFollowUp.jpg";
-import ShareVisible from "../../assets/images/ShareVisible.jpg";
+import ShareVisible  from "../../assets/images/ShareVisible.jpg";
+
+/* ── Animation presets ─────────────────────────────────────── */
+const EASE = [0.22, 1, 0.36, 1];
+
+const fadeUpInView = (delay = 0) => ({
+    initial: { opacity: 0, y: 16 },
+    whileInView: { opacity: 1, y: 0 },
+    viewport: { once: true, margin: "-40px" },
+    transition: { duration: 0.48, delay, ease: EASE },
+});
+
+/* ── Data ──────────────────────────────────────────────────── */
+const ITEMS = [
+    {
+        k: "nfc",
+        title: "Tap with KonarCard",
+        desc: "Tap your card — your profile opens instantly.",
+        img: ShareFastest,
+        badge: "Fastest Way",
+    },
+    {
+        k: "phone",
+        title: "Scan the QR backup",
+        desc: "Scan with any phone camera — opens instantly.",
+        img: SharePhone,
+        badge: "Works on Any Phone",
+    },
+    {
+        k: "msg",
+        title: "Send your link",
+        desc: "Send it by WhatsApp, text, or email in seconds.",
+        img: ShareFollowUp,
+        badge: "Best for Follow-Ups",
+    },
+    {
+        k: "bio",
+        title: "Link in bio",
+        desc: "Add it to Instagram, Google, or your website.",
+        img: ShareVisible,
+        badge: "Always Visible",
+    },
+];
 
 export default function Share() {
-    const items = useMemo(
-        () => [
-            {
-                k: "nfc",
-                title: "Tap with KonarCard",
-                desc: "Tap your card - your profile opens instantly.",
-                img: ShareFastest,
-                badge: "Fastest Way",
-            },
-            {
-                k: "phone",
-                title: "Scan the QR backup",
-                desc: "Scan with any phone camera - opens instantly.",
-                img: SharePhone,
-                badge: "Works on Any Phone",
-            },
-            {
-                k: "msg",
-                title: "Send your link",
-                desc: "Send it by WhatsApp, text, or email in seconds.",
-                img: ShareFollowUp,
-                badge: "Best for Follow-Ups",
-            },
-            {
-                k: "bio",
-                title: "Link in bio",
-                desc: "Add it to Instagram, Google, or your website.",
-                img: ShareVisible,
-                badge: "Always Visible",
-            },
-        ],
-        []
-    );
-
     return (
         <section className="khs-share" aria-label="How to share your profile with KonarCard">
             <div className="khs-container">
-                <header className="khs-head">
+
+                <motion.header className="khs-head" {...fadeUpInView(0)}>
                     <p className="kc-pill khs-kicker">One profile, everywhere</p>
 
                     <h2 className="h3 khs-title">
@@ -57,19 +67,21 @@ export default function Share() {
                     <p className="kc-subheading khs-sub">
                         Share your profile in person, online, and anywhere.
                     </p>
-                </header>
+                </motion.header>
 
                 <div className="khs-grid" aria-label="Sharing methods">
-                    {items.map((it) => (
-                        <article className="khs-card" key={it.k}>
-                            <span className="khs-pill">{it.badge}</span>
-
-                            <div className="khs-copy">
-                                <h3 className="kc-title khs-cardTitle">{it.title}</h3>
-                                <p className="body khs-cardDesc">{it.desc}</p>
-                            </div>
-
+                    {ITEMS.map((it, i) => (
+                        <motion.article
+                            className="khs-card"
+                            key={it.k}
+                            initial={{ opacity: 0, y: 14 }}
+                            whileInView={{ opacity: 1, y: 0 }}
+                            viewport={{ once: true, margin: "-40px" }}
+                            transition={{ duration: 0.44, delay: i * 0.07, ease: EASE }}
+                        >
+                            {/* Image — top of card, badge pill overlaid */}
                             <div className="khs-media" aria-hidden="true">
+                                <span className="khs-pill">{it.badge}</span>
                                 <img
                                     className="khs-img"
                                     src={it.img}
@@ -78,9 +90,16 @@ export default function Share() {
                                     decoding="async"
                                 />
                             </div>
-                        </article>
+
+                            {/* Body below image */}
+                            <div className="khs-body">
+                                <h3 className="kc-title khs-cardTitle">{it.title}</h3>
+                                <p className="body khs-cardDesc">{it.desc}</p>
+                            </div>
+                        </motion.article>
                     ))}
                 </div>
+
             </div>
         </section>
     );

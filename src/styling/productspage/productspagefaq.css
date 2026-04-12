@@ -1,20 +1,21 @@
 /* frontend/src/styling/productspage/productspagefaq.css */
 /* =========================================================
-   PRODUCTS PAGE — FAQ SECTION (Product FAQs)
-   - Same divider-list style as Home FAQ
-   - No tabs (product-only questions)
-   Typography comes ONLY from fonts.css
+   PRODUCTS PAGE — FAQ SECTION
+   - Cal Sans ONLY in the heading area (.h3 + .kc-pill)
+   - Inter for all question and answer text
+   - Grid line background with circular radial fade on heading
+   - Framer Motion drives accordion height animation
    ========================================================= */
 
 .kpfq {
     background: var(--kc-bg-main);
     color: var(--kc-text-primary);
-    padding: 80px 0;
+    padding: 0 0 80px;
 }
 
 @media (max-width: 600px) {
     .kpfq {
-        padding: 56px 0;
+        padding: 0 0 56px;
     }
 }
 
@@ -25,11 +26,20 @@
 }
 
 /* =========================
-   HEAD
+   HEADER — Cal Sans comes from .h3 and .kc-pill
    ========================= */
 .kpfq__head {
     text-align: center;
-    margin-bottom: 18px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 80px 0 48px;
+}
+
+@media (max-width: 600px) {
+    .kpfq__head {
+        padding: 56px 0 36px;
+    }
 }
 
 .kpfq__kicker {
@@ -42,119 +52,138 @@
 
 .kpfq__sub {
     margin: 0 auto;
-    max-width: 560px;
+    max-width: 540px;
     color: var(--kc-text-secondary);
 }
 
 /* =========================
-   DIVIDER LIST
+   FAQ LIST
    ========================= */
 .kpfq__list {
-    margin-top: 18px;
-    max-width: 920px;
-    margin-left: auto;
-    margin-right: auto;
+    max-width: 860px;
+    margin: 0 auto;
 }
 
 .kpfq__item {
-    border-bottom: 1px solid rgba(11, 18, 32, 0.10);
+    border-bottom: 1px solid rgba(15, 23, 42, 0.09);
 }
 
 .kpfq__item:first-child {
-    border-top: 1px solid rgba(11, 18, 32, 0.10);
+    border-top: 1px solid rgba(15, 23, 42, 0.09);
 }
 
+/* =========================
+   QUESTION ROW BUTTON
+   ========================= */
 .kpfq__qRow {
     width: 100%;
     text-align: left;
-
     padding: 22px 0;
     background: transparent;
     border: none;
-
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 14px;
-
+    gap: 16px;
     cursor: pointer;
 }
 
-.kpfq__q {
-    margin: 0;
-    max-width: 70ch;
-    line-height: 1.25;
-    color: var(--kc-text-primary);
+@media (max-width: 720px) {
+    .kpfq__qRow {
+        padding: 18px 0;
+    }
 }
 
-/* Chevron */
-.kpfq__chev {
-    width: 34px;
-    height: 34px;
+/* Question text — Inter only, NOT Cal Sans */
+.kpfq__q {
+    font-family: "Inter", sans-serif;
+    font-size: 16px;
+    font-weight: 600;
+    line-height: 1.4;
+    color: var(--kc-text-primary);
+    margin: 0;
+    flex: 1;
+    text-align: left;
+}
 
+/* =========================
+   CHEVRON
+   ========================= */
+.kpfq__chev {
+    width: 32px;
+    height: 32px;
+    flex: 0 0 auto;
     display: inline-flex;
     align-items: center;
     justify-content: center;
-
     border-radius: 999px;
-    border: 1px solid rgba(11, 18, 32, 0.14);
+    border: 1px solid rgba(15, 23, 42, 0.12);
     background: rgba(255, 255, 255, 0.92);
-
-    color: rgba(11, 18, 32, 0.80);
-    font-size: 12px;
-
-    flex: 0 0 auto;
-    transition: transform 0.15s ease, background-color 0.15s ease, border-color 0.15s ease;
+    color: rgba(15, 23, 42, 0.65);
+    transition: transform 0.22s ease, background-color 0.15s ease,
+        border-color 0.15s ease, color 0.15s ease;
 }
 
 .kpfq__qRow:hover .kpfq__chev {
     background: rgba(15, 23, 42, 0.03);
-    border-color: rgba(11, 18, 32, 0.22);
+    border-color: rgba(15, 23, 42, 0.20);
 }
 
 .kpfq__chev.is-open {
     transform: rotate(180deg);
+    background: rgba(249, 115, 22, 0.07);
+    border-color: rgba(249, 115, 22, 0.28);
+    color: var(--kc-accent-primary);
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .kpfq__chev {
+        transition: none !important;
+    }
+}
+
+/* =========================
+   ANSWER — Framer Motion controls height/opacity
+   ========================= */
+
+/* aWrap receives overflow:hidden inline from motion */
+.kpfq__aWrap {
+    /* intentionally empty — layout controlled by Framer Motion */
 }
 
 .kpfq__a {
-    padding: 0 0 22px;
-    max-width: 78ch;
+    font-family: "Inter", sans-serif;
+    font-size: 15px;
     line-height: 1.65;
     color: var(--kc-text-secondary);
+    margin: 0;
+    padding: 0 48px 22px 0;
+    max-width: 72ch;
+}
+
+@media (max-width: 600px) {
+    .kpfq__a {
+        padding-right: 0;
+        padding-bottom: 18px;
+    }
 }
 
 /* =========================
    CTA
    ========================= */
 .kpfq__cta {
-    margin-top: 18px;
-    display: grid;
-    gap: 12px;
-    justify-items: center;
+    margin-top: 40px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 14px;
     text-align: center;
 }
 
 .kpfq__ctaText {
+    font-family: "Inter", sans-serif;
+    font-size: 14px;
+    line-height: 1.5;
     margin: 0;
-    color: rgba(15, 23, 42, 0.70);
-}
-
-.kpfq__ctaBtns {
-    display: flex;
-    gap: 12px;
-    flex-wrap: wrap;
-    justify-content: center;
-}
-
-/* =========================
-   RESPONSIVE
-   ========================= */
-@media (max-width: 720px) {
-    .kpfq__qRow {
-        padding: 18px 0;
-    }
-
-    .kpfq__a {
-        padding-bottom: 18px;
-    }
+    color: rgba(15, 23, 42, 0.55);
 }

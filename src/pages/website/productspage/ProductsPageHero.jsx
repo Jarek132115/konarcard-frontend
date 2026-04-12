@@ -1,28 +1,52 @@
 // frontend/src/pages/website/productspage/ProductsPageHero.jsx
 import React from "react";
 import { Link } from "react-router-dom";
+import { motion } from "motion/react";
 
 import "../../../styling/fonts.css";
 import "../../../styling/productspage/productspagehero.css";
+
+/* ── Animation presets ─────────────────────────────────────── */
+const EASE = [0.22, 1, 0.36, 1];
+
+const fadeUp = (delay = 0) => ({
+    initial: { opacity: 0, y: 18 },
+    animate: { opacity: 1, y: 0 },
+    transition: { duration: 0.5, delay, ease: EASE },
+});
+
+const cardVariant = {
+    hidden: { opacity: 0, y: 16 },
+    show: (i) => ({
+        opacity: 1,
+        y: 0,
+        transition: { duration: 0.44, delay: i * 0.07, ease: EASE },
+    }),
+};
 
 export default function ProductsPageHero({ products }) {
     return (
         <section className="kph-hero" aria-labelledby="kph-title">
             <div className="kph-container">
                 <header className="kph-head">
-                    <p className="kc-pill kph-topPill">
-                        NFC & Contactless Business Cards
-                    </p>
+                    {/* Grid lines — circular radial fade */}
+                    <div className="kph-gridBg" aria-hidden="true" />
 
-                    <h1 id="kph-title" className="h2 kph-title">
-                        Premium <span className="kph-accent">Plastic NFC Cards</span> Designed
-                        for <span className="kph-accent">Your Brand</span>
-                    </h1>
+                    <motion.div className="kph-headContent" {...fadeUp(0)}>
+                        <p className="kc-pill kph-topPill">
+                            NFC & Contactless Business Cards
+                        </p>
 
-                    <p className="kc-subheading kph-sub">
-                        Choose from multiple professionally designed card styles — all powered by
-                        your KonarCard digital profile.
-                    </p>
+                        <h1 id="kph-title" className="h2 kph-title">
+                            Premium <span className="kph-accent">Plastic NFC Cards</span> Designed
+                            for <span className="kph-accent">Your Brand</span>
+                        </h1>
+
+                        <p className="kc-subheading kph-sub">
+                            Choose from multiple professionally designed card styles — all powered by
+                            your KonarCard digital profile.
+                        </p>
+                    </motion.div>
                 </header>
 
                 <div
@@ -30,11 +54,15 @@ export default function ProductsPageHero({ products }) {
                     role="list"
                     aria-label="KonarCard plastic card designs"
                 >
-                    {products.map((item) => (
-                        <article
+                    {products.map((item, i) => (
+                        <motion.article
                             key={item.sku}
                             className="kph-card"
                             role="listitem"
+                            custom={i}
+                            variants={cardVariant}
+                            initial="hidden"
+                            animate="show"
                         >
                             {/* IMAGE */}
                             <div className="kph-media">
@@ -80,7 +108,7 @@ export default function ProductsPageHero({ products }) {
                                     </div>
                                 </div>
                             </div>
-                        </article>
+                        </motion.article>
                     ))}
                 </div>
             </div>

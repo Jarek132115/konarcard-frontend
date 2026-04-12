@@ -1,81 +1,91 @@
-import React, { useMemo } from "react";
+// frontend/src/components/Home/Pricing.jsx
+import React from "react";
 import { Link } from "react-router-dom";
+import { motion } from "motion/react";
+
 import "../../styling/home/pricing.css";
 
-/* Plan icons */
-import FreePlanIcon from "../../assets/icons/FreePlan.svg";
-import PlusPlanIcon from "../../assets/icons/PlusPlan.svg";
+import FreePlanIcon  from "../../assets/icons/FreePlan.svg";
+import PlusPlanIcon  from "../../assets/icons/PlusPlan.svg";
 import TeamsPlanIcon from "../../assets/icons/TeamsPlan.svg";
 
-export default function Pricing() {
-    const cards = useMemo(
-        () => [
-            {
-                key: "free",
-                title: "Individual",
-                icon: FreePlanIcon,
-                tag: "Best for starting out",
-                featured: false,
-                price: "£0",
-                cadence: "No monthly fees",
-                meta: [],
-                highlights: [
-                    "Your KonarCard link",
-                    "Contact buttons",
-                    "QR sharing",
-                    "Works on any phone",
-                    "Unlimited updates",
-                    "Tap or scan share",
-                ],
-                cta: { label: "Start Free", to: "/register" },
-            },
-            {
-                key: "plus",
-                title: "Plus",
-                icon: PlusPlanIcon,
-                tag: "Most popular",
-                featured: true,
-                price: "£4.95",
-                cadence: "per month",
-                meta: ["Cancel anytime. No contracts."],
-                highlights: [
-                    "Full customisation",
-                    "More photos",
-                    "Services & pricing",
-                    "Reviews & ratings",
-                    "Unlimited edits",
-                    "Remove branding",
-                    "Deeper analytics",
-                ],
-                cta: { label: "Upgrade to Plus", to: "/pricing" },
-            },
-            {
-                key: "teams",
-                title: "Teams",
-                icon: TeamsPlanIcon,
-                tag: "For small teams",
-                featured: false,
-                price: "£4.95",
-                cadence: "+ £1.95 per extra profile",
-                meta: ["Billed monthly. Cancel anytime."],
-                highlights: [
-                    "Everything in Plus",
-                    "Add staff profiles",
-                    "Centralised controls",
-                    "Shared branding",
-                    "Team analytics",
-                    "Manage in one place",
-                ],
-                cta: { label: "Upgrade to Teams", to: "/pricing" },
-            },
-        ],
-        []
-    );
+/* ── Animation presets ─────────────────────────────────────── */
+const EASE = [0.22, 1, 0.36, 1];
 
+const fadeUpInView = (delay = 0) => ({
+    initial: { opacity: 0, y: 16 },
+    whileInView: { opacity: 1, y: 0 },
+    viewport: { once: true, margin: "-40px" },
+    transition: { duration: 0.48, delay, ease: EASE },
+});
+
+/* ── Data ──────────────────────────────────────────────────── */
+const CARDS = [
+    {
+        key: "free",
+        title: "Individual",
+        icon: FreePlanIcon,
+        tag: "Best for starting out",
+        featured: false,
+        price: "£0",
+        cadence: "No monthly fees",
+        meta: [],
+        highlights: [
+            "Your KonarCard link",
+            "Contact buttons",
+            "QR sharing",
+            "Works on any phone",
+            "Unlimited updates",
+            "Tap or scan share",
+        ],
+        cta: { label: "Start Free", to: "/register" },
+    },
+    {
+        key: "plus",
+        title: "Plus",
+        icon: PlusPlanIcon,
+        tag: "Most popular",
+        featured: true,
+        price: "£5",
+        cadence: "per month",
+        meta: ["Cancel anytime. No contracts."],
+        highlights: [
+            "Full customisation",
+            "More photos",
+            "Services & pricing",
+            "Reviews & ratings",
+            "Unlimited edits",
+            "Deeper analytics",
+        ],
+        cta: { label: "Upgrade to Plus", to: "/pricing" },
+    },
+    {
+        key: "teams",
+        title: "Teams",
+        icon: TeamsPlanIcon,
+        tag: "For small teams",
+        featured: false,
+        price: "£5",
+        cadence: "+ £2 per extra profile/month",
+        meta: ["Billed monthly. Cancel anytime."],
+        highlights: [
+            "Everything in Plus",
+            "Add staff profiles",
+            "Centralised controls",
+            "Shared branding",
+            "Team analytics",
+            "Manage in one place",
+        ],
+        cta: { label: "Upgrade to Teams", to: "/pricing" },
+    },
+];
+
+export default function Pricing() {
     return (
         <section className="kpr" aria-label="Pricing">
             <div className="kpr__container">
-                <header className="kpr__head">
+
+                <motion.header className="kpr__head" {...fadeUpInView(0)}>
                     <div className="kc-pill kpr__pill">Simple pricing</div>
 
                     <h2 className="h3 kpr__title">
@@ -85,17 +95,21 @@ export default function Pricing() {
                     <p className="kc-subheading kpr__sub">
                         Start free. Upgrade anytime. No contracts.
                     </p>
-                </header>
+                </motion.header>
 
                 <div className="kpr__grid" role="list" aria-label="KonarCard plans">
-                    {cards.map((card) => {
+                    {CARDS.map((card, i) => {
                         const isFeatured = card.featured;
 
                         return (
-                            <article
+                            <motion.article
                                 key={card.key}
                                 className={`kpr-card ${isFeatured ? "is-featured" : ""}`}
                                 role="listitem"
+                                initial={{ opacity: 0, y: 14 }}
+                                whileInView={{ opacity: 1, y: 0 }}
+                                viewport={{ once: true, margin: "-40px" }}
+                                transition={{ duration: 0.44, delay: i * 0.08, ease: EASE }}
                             >
                                 {/* TOP */}
                                 <div className={`kpr-top ${isFeatured ? "is-featured" : ""}`}>
@@ -107,7 +121,6 @@ export default function Pricing() {
                                         <div className={`kpr-name ${isFeatured ? "is-featured" : ""}`}>
                                             {card.title}
                                         </div>
-
                                         <span className={`kpr-icon ${isFeatured ? "is-featured" : ""}`} aria-hidden="true">
                                             <img src={card.icon} alt="" loading="lazy" decoding="async" />
                                         </span>
@@ -133,12 +146,11 @@ export default function Pricing() {
 
                                 <div className={`kpr-divider ${isFeatured ? "is-featured" : ""}`} aria-hidden="true" />
 
-                                {/* BODY (fit height) */}
+                                {/* BODY */}
                                 <div className="kpr-body">
-                                    {/* content wrapper */}
                                     <div className="kpr-content">
                                         <div className={`kpr-included ${isFeatured ? "is-featured" : ""}`}>
-                                            What’s Included
+                                            What's Included
                                         </div>
 
                                         <ul
@@ -155,7 +167,6 @@ export default function Pricing() {
                                         </ul>
                                     </div>
 
-                                    {/* ✅ CTA wrapper gives consistent spacing */}
                                     <div className="kpr-actions">
                                         <Link
                                             to={card.cta.to}
@@ -165,18 +176,18 @@ export default function Pricing() {
                                         </Link>
                                     </div>
                                 </div>
-                            </article>
+                            </motion.article>
                         );
                     })}
                 </div>
 
-                <div className="kpr-bottom">
+                <motion.div className="kpr-bottom" {...fadeUpInView(0.2)}>
                     <p className="body-s kpr-bottomText">Compare plans and see full details.</p>
-
                     <Link to="/pricing" className="kx-btn kx-btn--black">
                         View full Pricing
                     </Link>
-                </div>
+                </motion.div>
+
             </div>
         </section>
     );

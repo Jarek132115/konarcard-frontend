@@ -1,0 +1,24 @@
+/* frontend/src/styling/pricingpage/pricingpagefaq.css
+   PRICING PAGE FAQ — #fafafa background + question text style
+   ========================================================= */
+
+.kpfq--pricing {
+    background: #fafafa;
+}
+
+/* Question text — Inter, not Cal Sans */
+.kpfq--pricing .kpfq__q {
+    font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+    font-size: 15px;
+    font-weight: 600;
+    color: rgba(15, 23, 42, 0.90);
+    text-align: left;
+    line-height: 1.4;
+}
+
+/* Chevron inherits circle style from productspagefaq.css — just ensure SVG fills correctly */
+.kpfq--pricing .kpfq__chev svg {
+    display: block;
+    width: 14px;
+    height: 14px;
+}

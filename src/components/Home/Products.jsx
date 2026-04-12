@@ -1,96 +1,71 @@
-import React, { useMemo } from "react";
+// frontend/src/components/Home/Products.jsx
+import React from "react";
 import { Link } from "react-router-dom";
+import { motion } from "motion/react";
 
 import "../../styling/fonts.css";
 import "../../styling/home/products.css";
 
-/* ✅ Product images (same as Products page) */
-import PlasticCardImg from "../../assets/images/PlasticCard.jpg";
-import MetalCardImg from "../../assets/images/MetalCard.jpg";
-import KonarTagImg from "../../assets/images/KonarTag.jpg";
+import KonarCardWhiteImg from "../../assets/images/KonarCard-White.jpg";
+import KonarCardBlackImg from "../../assets/images/KonarCard-Black.jpg";
+import KonarCardBlueImg  from "../../assets/images/KonarCard-Blue.jpg";
+
+/* ── Animation presets ─────────────────────────────────────── */
+const EASE = [0.22, 1, 0.36, 1];
+
+const fadeUpInView = (delay = 0) => ({
+    initial: { opacity: 0, y: 16 },
+    whileInView: { opacity: 1, y: 0 },
+    viewport: { once: true, margin: "-40px" },
+    transition: { duration: 0.48, delay, ease: EASE },
+});
+
+/* ── Data ──────────────────────────────────────────────────── */
+const PRODUCTS = [
+    {
+        tag: "Classic White",
+        name: "KonarCard — White",
+        desc: "Clean, professional white finish. Fits any wallet and works on every phone.",
+        priceText: "£29.99",
+        priceValue: 29.99,
+        to: "/products",
+        img: KonarCardWhiteImg,
+        alt: "KonarCard White — plastic NFC business card",
+        sku: "konarcard-white",
+        cta: "View Card",
+    },
+    {
+        tag: "Signature Black",
+        name: "KonarCard — Black",
+        desc: "Bold, premium black finish. Leaves a strong first impression every time.",
+        priceText: "£29.99",
+        priceValue: 29.99,
+        to: "/products",
+        img: KonarCardBlackImg,
+        alt: "KonarCard Black — plastic NFC business card",
+        sku: "konarcard-black",
+        cta: "View Card",
+    },
+    {
+        tag: "Standout Blue",
+        name: "KonarCard — Blue",
+        desc: "Distinctive blue design that stands out and gets noticed on the job.",
+        priceText: "£29.99",
+        priceValue: 29.99,
+        to: "/products",
+        img: KonarCardBlueImg,
+        alt: "KonarCard Blue — plastic NFC business card",
+        sku: "konarcard-blue",
+        cta: "View Card",
+    },
+];
 
 export default function Products() {
-    const products = useMemo(
-        () => [
-            {
-                tag: "Best Value",
-                name: "KonarCard - Plastic Edition",
-                desc: "Durable, lightweight NFC business card for everyday use.",
-                priceText: "£29.99",
-                priceValue: 29.99,
-                currency: "GBP",
-                to: "/products/plastic-card",
-                img: PlasticCardImg,
-                alt: "KonarCard Plastic Edition – plastic NFC business card with QR code",
-                sku: "konarcard-plastic",
-                cta: "View Plastic Card",
-            },
-            {
-                tag: "Premium",
-                name: "KonarCard - Metal Edition",
-                desc: "Premium metal NFC card designed to make a strong first impression.",
-                priceText: "£44.99",
-                priceValue: 44.99,
-                currency: "GBP",
-                to: "/products/metal-card",
-                img: MetalCardImg,
-                alt: "KonarCard Metal Edition – metal NFC business card with QR code",
-                sku: "konarcard-metal",
-                cta: "View Metal Card",
-            },
-            {
-                tag: "Accessory",
-                name: "KonarTag",
-                desc: "Compact NFC key tag that shares your profile with a tap.",
-                priceText: "£9.99",
-                priceValue: 9.99,
-                currency: "GBP",
-                to: "/products/konartag",
-                img: KonarTagImg,
-                alt: "KonarTag – NFC key tag that opens your digital business card profile",
-                sku: "konartag",
-                cta: "View KonarTag",
-            },
-        ],
-        []
-    );
-
-    const productSchema = useMemo(() => {
-        const origin =
-            typeof window !== "undefined" && window.location?.origin
-                ? window.location.origin
-                : "https://konarcard.com";
-
-        return {
-            "@context": "https://schema.org",
-            "@type": "ItemList",
-            name: "KonarCard Physical Cards",
-            itemListElement: products.map((p, idx) => ({
-                "@type": "ListItem",
-                position: idx + 1,
-                item: {
-                    "@type": "Product",
-                    name: p.name,
-                    description: p.desc,
-                    image: p.img,
-                    sku: p.sku,
-                    brand: { "@type": "Brand", name: "KonarCard" },
-                    offers: {
-                        "@type": "Offer",
-                        priceCurrency: p.currency,
-                        price: p.priceValue,
-                        availability: "https://schema.org/InStock",
-                        url: `${origin}${p.to}`,
-                    },
-                },
-            })),
-        };
-    }, [products]);
-
     return (
         <section className="khp-products" aria-labelledby="khp-products-title">
             <div className="khp-container">
-                <header className="khp-head">
+
+                <motion.header className="khp-head" {...fadeUpInView(0)}>
                     <p className="kc-pill khp-kicker">Physical Cards</p>
 
                     <h2 id="khp-products-title" className="h3 khp-title">
@@ -99,29 +74,23 @@ export default function Products() {
                     </h2>
 
                     <p className="kc-subheading khp-sub">
-                        Tap to open your profile instantly - QR backup included.
+                        One-time purchase. Links to your profile forever — update anytime.
                     </p>
-                </header>
+                </motion.header>
 
                 <div className="khp-grid" role="list" aria-label="KonarCard products">
-                    {products.map((item) => (
-                        <article
+                    {PRODUCTS.map((item, i) => (
+                        <motion.article
                             key={item.sku}
                             className="khp-card"
                             role="listitem"
-                            itemScope
-                            itemType="https://schema.org/Product"
+                            initial={{ opacity: 0, y: 14 }}
+                            whileInView={{ opacity: 1, y: 0 }}
+                            viewport={{ once: true, margin: "-40px" }}
+                            transition={{ duration: 0.44, delay: i * 0.08, ease: EASE }}
                         >
-                            <meta itemProp="name" content={item.name} />
-                            <meta itemProp="description" content={item.desc} />
-                            <meta itemProp="sku" content={item.sku} />
-                            <meta itemProp="image" content={item.img} />
-
                             <div className="khp-media">
-                                <span className="khp-tagPill" aria-label={item.tag}>
-                                    {item.tag}
-                                </span>
-
+                                <span className="khp-tagPill">{item.tag}</span>
                                 <img
                                     src={item.img}
                                     alt={item.alt}
@@ -140,50 +109,31 @@ export default function Products() {
                                 </div>
 
                                 <div className="khp-buy">
-                                    <div
-                                        className="khp-priceRow"
-                                        itemProp="offers"
-                                        itemScope
-                                        itemType="https://schema.org/Offer"
-                                    >
-                                        <p className="body khp-price">
-                                            {item.priceText}
-                                            <meta itemProp="priceCurrency" content={item.currency} />
-                                            <meta itemProp="price" content={String(item.priceValue)} />
-                                            <link itemProp="availability" href="https://schema.org/InStock" />
-                                        </p>
-                                    </div>
-
+                                    <p className="body khp-price">{item.priceText}</p>
                                     <div className="khp-actions">
                                         <Link
                                             to={item.to}
                                             className="kx-btn kx-btn--white khp-btn"
                                             aria-label={`View ${item.name}`}
-                                            itemProp="url"
                                         >
                                             {item.cta}
                                         </Link>
                                     </div>
                                 </div>
                             </div>
-                        </article>
+                        </motion.article>
                     ))}
                 </div>
 
-                <p className="body khp-note">
-                    One-time card purchase. Your digital profile is free to start.
-                </p>
-
-                <div className="khp-ctaRow">
+                <motion.div className="khp-footer" {...fadeUpInView(0.2)}>
+                    <p className="body-s khp-note">
+                        One-time card purchase. Your digital profile is free to start.
+                    </p>
                     <Link to="/products" className="kx-btn kx-btn--black">
-                        Shop Cards
+                        View All Cards
                     </Link>
-                </div>
+                </motion.div>
 
-                <script
-                    type="application/ld+json"
-                    dangerouslySetInnerHTML={{ __html: JSON.stringify(productSchema) }}
-                />
             </div>
         </section>
     );

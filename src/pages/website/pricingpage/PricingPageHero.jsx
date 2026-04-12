@@ -1,18 +1,24 @@
 // frontend/src/pages/website/pricingpage/PricingPageHero.jsx
 import React, { useMemo } from "react";
 import { Link } from "react-router-dom";
+import { motion } from "motion/react";
 
-/* ✅ NEW: Hero-only styling for the pricing page */
 import "../../../styling/pricingpage/pricingpagehero.css";
 
-/* Plan icons (same as HOME pricing section) */
 import FreePlanIcon from "../../../assets/icons/FreePlan.svg";
 import PlusPlanIcon from "../../../assets/icons/PlusPlan.svg";
 import TeamsPlanIcon from "../../../assets/icons/TeamsPlan.svg";
 
-/* =========================
-   Helpers
-========================= */
+/* ── Animation presets ─────────────────────────────────────── */
+const EASE = [0.22, 1, 0.36, 1];
+
+const fadeUp = (delay = 0) => ({
+    initial: { opacity: 0, y: 18 },
+    animate: { opacity: 1, y: 0 },
+    transition: { duration: 0.5, delay, ease: EASE },
+});
+
+/* ── Helpers ───────────────────────────────────────────────── */
 function fmtGBP(n) {
     const cleaned = typeof n === "string" ? n.replace(/[^0-9.]/g, "") : n;
     const num = parseFloat(cleaned);
@@ -43,30 +49,25 @@ export default function PricingPageHero({
     subLoading,
     subErr,
     planStatusLine,
-    currentPlan = "free", // "free" | "plus" | "teams"
+    currentPlan = "free",
     isActive = false,
     hasFutureAccess = false,
     activeUntilLabel = "",
 
-    /* actions (optional) */
+    /* actions */
     loadingKey,
-    startSubscription, // (planKey) => Promise<void>
-    openBillingPortal, // () => Promise<void>
+    startSubscription,
+    openBillingPortal,
 }) {
-    /* =========================
-       CTA logic (kept safe)
-    ========================= */
+    /* ── CTA logic ─────────────────────────────────────────── */
     const getCTA = (planName, planKeyForPaid) => {
         const logged = !!isLoggedIn;
 
-        // Not logged in
         if (!logged) {
             if (planName === "free") return { type: "link", label: "Start Free", to: "/register" };
-
             if (typeof startSubscription !== "function") {
                 return { type: "link", label: `Upgrade to ${planName === "plus" ? "Plus" : "Teams"}`, to: "/login" };
             }
-
             return {
                 type: "button",
                 label: `Upgrade to ${planName === "plus" ? "Plus" : "Teams"}`,
@@ -75,7 +76,6 @@ export default function PricingPageHero({
             };
         }
 
-        // Logged in
         const stillHasPaidAccess = currentPlan !== "free" && (isActive || hasFutureAccess);
 
         if (planName === currentPlan && stillHasPaidAccess) {
@@ -92,7 +92,6 @@ export default function PricingPageHero({
                 };
             }
             if (currentPlan === "free") return { type: "button", label: "Current plan", disabled: true };
-
             return {
                 type: "button",
                 label: "Choose Free",
@@ -134,9 +133,7 @@ export default function PricingPageHero({
         };
     };
 
-    /* =========================
-       Cards (same structure as HOME pricing)
-    ========================= */
+    /* ── Cards ─────────────────────────────────────────────── */
     const cards = useMemo(() => {
         const plusKey = `plus-${billing}`;
         const teamsKey = `teams-${billing}`;
@@ -183,7 +180,6 @@ export default function PricingPageHero({
                     "Services & pricing",
                     "Reviews & ratings",
                     "Unlimited edits",
-                    "Remove branding",
                     "Deeper analytics",
                 ],
                 cta: getCTA("plus", plusKey),
@@ -195,7 +191,7 @@ export default function PricingPageHero({
                 tag: "For small teams",
                 featured: false,
                 price: fmtGBP(plusPerMonth),
-                cadence: "+ £1.95 per extra profile",
+                cadence: "+ £2 per extra profile/month",
                 meta: [
                     billing === "monthly" ? "Billed monthly. Cancel anytime." : `Base billed ${plusBilledLabel}.`,
                     base > 0 ? `Example: 3 profiles = ${fmtGBP(teamsExample3Profiles)} / month` : null,
@@ -230,53 +226,65 @@ export default function PricingPageHero({
     return (
         <section className="pr-hero" aria-label="Pricing hero and plans">
             <div className="pr-container pr-hero__inner">
-                {/* ✅ Heading block (grid background ONLY here) */}
+
+                {/* ── Heading block with grid bg ────────────── */}
                 <div className="pr-heroCopyGrid">
-                    <p className="kc-pill pr-heroPill">Pricing</p>
+                    {/* Grid bg — radial fade, same pattern as all hero sections */}
+                    <div className="pr-gridBg" aria-hidden="true" />
 
-                    <h1 className="h2 pr-title">
-                        Plans &amp; pricing <span className="pr-accent">built</span> for real trades
-                    </h1>
+                    <motion.div className="pr-headContent" {...fadeUp(0)}>
+                        <p className="kc-pill pr-heroPill">Pricing</p>
 
-                    <p className="kc-subheading pr-sub">Start free. Upgrade when it’s worth it. Cancel anytime.</p>
+                        <h1 className="h2 pr-title">
+                            Plans &amp; pricing <span className="pr-accent">built</span> for real trades
+                        </h1>
 
-                    {isLoggedIn && (
-                        <div className="pr-status" aria-live="polite">
-                            {subLoading ? (
-                                <span className="pr-status__muted">Checking your plan…</span>
-                            ) : subErr ? (
-                                <span className="pr-status__err">{subErr}</span>
-                            ) : (
-                                <span className="pr-status__muted">{planStatusLine}</span>
-                            )}
+                        <p className="kc-subheading pr-sub">
+                            Start free. Upgrade when it's worth it. Cancel anytime.
+                        </p>
+
+                        {isLoggedIn && (
+                            <div className="pr-status" aria-live="polite">
+                                {subLoading ? (
+                                    <span className="pr-status__muted">Checking your plan…</span>
+                                ) : subErr ? (
+                                    <span className="pr-status__err">{subErr}</span>
+                                ) : (
+                                    <span className="pr-status__muted">{planStatusLine}</span>
+                                )}
+                            </div>
+                        )}
+
+                        <div className="pr-billing" aria-label="Billing options">
+                            <div className="pr-billing__tabs" role="tablist" aria-label="Billing interval">
+                                {["monthly", "yearly"].map((v) => {
+                                    const active = billing === v;
+                                    return (
+                                        <button
+                                            key={v}
+                                            type="button"
+                                            className={`kc-tabPill ${active ? "is-active" : ""}`}
+                                            onClick={() => setBilling(v)}
+                                            role="tab"
+                                            aria-selected={active}
+                                        >
+                                            {v === "monthly" ? "Monthly" : "Yearly"}
+                                        </button>
+                                    );
+                                })}
+                            </div>
+                            <div className="body-s pr-note">{billingNote}</div>
                         </div>
-                    )}
-
-                    <div className="pr-billing" aria-label="Billing options">
-                        <div className="pr-billing__tabs" role="tablist" aria-label="Billing interval">
-                            {["monthly", "quarterly", "yearly"].map((v) => {
-                                const active = billing === v;
-                                return (
-                                    <button
-                                        key={v}
-                                        type="button"
-                                        className={`kc-tabPill ${active ? "is-active" : ""}`}
-                                        onClick={() => setBilling(v)}
-                                        role="tab"
-                                        aria-selected={active}
-                                    >
-                                        {v.charAt(0).toUpperCase() + v.slice(1)}
-                                    </button>
-                                );
-                            })}
-                        </div>
-
-                        <div className="body-s pr-note">{billingNote}</div>
-                    </div>
+                    </motion.div>
                 </div>
 
-                {/* ✅ Cards (HOME pricing system) */}
-                <div className="pr-plansInline">
+                {/* ── Plan cards ────────────────────────────── */}
+                <motion.div
+                    className="pr-plansInline"
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.5, delay: 0.18, ease: EASE }}
+                >
                     <div className="kpr__grid" role="list" aria-label="KonarCard plans">
                         {cards.map((card) => {
                             const isFeatured = card.featured;
@@ -288,7 +296,6 @@ export default function PricingPageHero({
 
                                         <div className="kpr-nameRow">
                                             <div className={`kpr-name ${isFeatured ? "is-featured" : ""}`}>{card.title}</div>
-
                                             <span className={`kpr-icon ${isFeatured ? "is-featured" : ""}`} aria-hidden="true">
                                                 <img src={card.icon} alt="" loading="lazy" decoding="async" />
                                             </span>
@@ -312,7 +319,7 @@ export default function PricingPageHero({
 
                                     <div className="kpr-body">
                                         <div className="kpr-content">
-                                            <div className={`kpr-included ${isFeatured ? "is-featured" : ""}`}>What’s Included</div>
+                                            <div className={`kpr-included ${isFeatured ? "is-featured" : ""}`}>What's Included</div>
 
                                             <ul className={`kpr-list ${isFeatured ? "is-featured" : ""}`} aria-label={`${card.title} plan features`}>
                                                 {card.highlights.map((h) => (
@@ -348,7 +355,7 @@ export default function PricingPageHero({
                             );
                         })}
                     </div>
-                </div>
+                </motion.div>
             </div>
         </section>
     );

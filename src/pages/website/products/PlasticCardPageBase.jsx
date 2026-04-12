@@ -2,6 +2,7 @@ import React, { useEffect, useMemo, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Input } from "@base-ui/react/input";
 import { Slider } from "@base-ui/react/slider";
+import { motion } from "motion/react";
 
 import Navbar from "../../../components/Navbar";
 import Footer from "../../../components/Home/Footer";
@@ -34,6 +35,29 @@ const WEIGHT_OPTIONS = [
     { key: "medium", label: "Medium", value: 600 },
     { key: "bold", label: "Bold", value: 700 },
 ];
+
+/* ── Animation presets ─────────────────────────────────────── */
+const EASE = [0.22, 1, 0.36, 1];
+
+const fadeUp = (delay = 0) => ({
+    initial: { opacity: 0, y: 20 },
+    animate: { opacity: 1, y: 0 },
+    transition: { duration: 0.52, delay, ease: EASE },
+});
+
+const fadeUpInView = (delay = 0) => ({
+    initial: { opacity: 0, y: 16 },
+    whileInView: { opacity: 1, y: 0 },
+    viewport: { once: true, margin: "-60px" },
+    transition: { duration: 0.48, delay, ease: EASE },
+});
+
+const fadeInView = (delay = 0) => ({
+    initial: { opacity: 0, y: 10 },
+    whileInView: { opacity: 1, y: 0 },
+    viewport: { once: true, margin: "-30px" },
+    transition: { duration: 0.4, delay, ease: EASE },
+});
 
 function readIntent() {
     try {
@@ -145,7 +169,6 @@ export default function PlasticCardPageBase({
     })();
 
     const profilesQuery = useMyProfiles();
-    const isProfilesLoading = !!profilesQuery?.isLoading;
 
     const myProfiles = (() => {
         const d = profilesQuery?.data;
@@ -260,7 +283,7 @@ export default function PlasticCardPageBase({
 
         if (checkout === "success") {
             setErrorMsg("");
-            setInfoMsg("✅ Payment received! We’ll email you confirmation shortly.");
+            setInfoMsg("✅ Payment received! We'll email you confirmation shortly.");
             clearIntent();
             return;
         }
@@ -415,7 +438,7 @@ export default function PlasticCardPageBase({
                 <section className="kc-topHero" aria-label={`${productName} hero`}>
                     <div className="kc-konarcard__wrap">
                         <div className="kc-heroHeadWrap kc-heroHeadWrap--lg">
-                            <div className="kc-topHero__head">
+                            <motion.div className="kc-topHero__head" {...fadeUp(0)}>
                                 <div className="kc-crumbPill" aria-label="Breadcrumb">
                                     <Link to="/products" className="kc-crumbPill__link">
                                         Products
@@ -436,11 +459,17 @@ export default function PlasticCardPageBase({
                                 {(errorMsg || infoMsg) && (
                                     <div className="kc-msgBox">{errorMsg ? `⚠️ ${errorMsg}` : `ℹ️ ${infoMsg}`}</div>
                                 )}
-                            </div>
+                            </motion.div>
                         </div>
 
                         <div className="kc-premStage">
-                            <div className="kc-premStage__canvasPad">
+                            {/* Opacity-only fade — no Y movement to avoid 3D canvas clipping */}
+                            <motion.div
+                                className="kc-premStage__canvasPad"
+                                initial={{ opacity: 0 }}
+                                animate={{ opacity: 1 }}
+                                transition={{ duration: 0.6, delay: 0.14, ease: EASE }}
+                            >
                                 <PlasticCard3D
                                     frontSrc={frontSrc}
                                     backSrc={backSrc}
@@ -451,9 +480,13 @@ export default function PlasticCardPageBase({
                                     frontFontWeight={frontFontWeight}
                                     frontTextColor={frontTextColor}
                                 />
-                            </div>
+                            </motion.div>
 
-                            <div className="kc-controls" aria-label="Configure your card">
+                            <motion.div
+                                className="kc-controls"
+                                aria-label="Configure your card"
+                                {...fadeUp(0.28)}
+                            >
                                 <div className="kc-controlsSplit">
                                     <div className="kc-controlsLeft">
                                         <div className="kc-controlK">Personalise your card</div>
@@ -591,14 +624,14 @@ export default function PlasticCardPageBase({
                                         </div>
                                     </div>
                                 </div>
-                            </div>
+                            </motion.div>
                         </div>
                     </div>
                 </section>
 
                 <section className="khv kc-plastic-khv" aria-label="Product details">
                     <div className="khv__inner">
-                        <header className="khv__head">
+                        <motion.header className="khv__head" {...fadeUpInView(0)}>
                             <p className="kc-pill khv__kicker">Product details</p>
 
                             <h2 className="h3 khv__title">
@@ -609,14 +642,18 @@ export default function PlasticCardPageBase({
                             <p className="kc-subheading khv__sub">
                                 Built to standard bank card size. Durable for daily use. Works instantly with NFC and QR.
                             </p>
-                        </header>
+                        </motion.header>
 
                         <div className="khv__grid" aria-label="Plastic card specifications">
                             {specs.map((s, i) => (
-                                <article className="khv__cell kc-specCell" key={i}>
+                                <motion.article
+                                    className="khv__cell kc-specCell"
+                                    key={i}
+                                    {...fadeInView(i * 0.055)}
+                                >
                                     <p className="kc-pill kc-specPill">{s.k}</p>
                                     <p className="body khv__cellDesc kc-specValue">{s.v}</p>
-                                </article>
+                                </motion.article>
                             ))}
                         </div>
                     </div>
@@ -624,7 +661,7 @@ export default function PlasticCardPageBase({
 
                 <section className="khv khv--white kc-plastic-khv" aria-label="What you get">
                     <div className="khv__inner">
-                        <header className="khv__head">
+                        <motion.header className="khv__head" {...fadeUpInView(0)}>
                             <p className="kc-pill khv__kicker">What you get</p>
 
                             <h2 className="h3 khv__title">
@@ -635,11 +672,15 @@ export default function PlasticCardPageBase({
                             <p className="kc-subheading khv__sub">
                                 Make a strong first impression instantly — and update your details anytime without reprinting.
                             </p>
-                        </header>
+                        </motion.header>
 
                         <div className="khv__grid" aria-label="What you get benefits">
                             {features.map((it, i) => (
-                                <article className="khv__cell" key={i}>
+                                <motion.article
+                                    className="khv__cell"
+                                    key={i}
+                                    {...fadeInView(i * 0.055)}
+                                >
                                     <div className="khv__icon" aria-hidden="true">
                                         <img
                                             className="khv__iconImg"
@@ -652,7 +693,7 @@ export default function PlasticCardPageBase({
 
                                     <h3 className="kc-title khv__cellTitle">{it.t}</h3>
                                     <p className="body khv__cellDesc">{it.s}</p>
-                                </article>
+                                </motion.article>
                             ))}
                         </div>
                     </div>

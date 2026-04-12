@@ -1,274 +1,293 @@
-/* frontend/src/styling/pricingpagecompare.css
-   PRICING — COMPARE TABLE
-   Clean, minimal, responsive.
-   Uses typography from fonts.css
-*/
+/* frontend/src/styling/pricingpage/pricingpagecompare.css
+   PRICING — COMPARE TABLE (responsive, no horizontal scroll)
+   prc- prefix.
+   Desktop: 4-col grid (Feature | Free | Plus | Teams).
+   Mobile (<640px): feature name full-width, 3 plan cells in a row below.
+   ========================================================= */
 
-/* Section spacing aligned with other page sections */
-.pr-compare {
+/* ── Section wrapper ────────────────────────────────────────── */
+.prc-wrap {
     padding: 56px 0 76px;
     background: #ffffff;
 }
 
 @media (max-width: 600px) {
-    .pr-compare {
-        padding: 44px 0 64px;
+    .prc-wrap {
+        padding: 44px 0 60px;
     }
 }
 
-/* Section head */
-.pr-sectionHead {
+/* ── Section header ─────────────────────────────────────────── */
+.prc-head {
     text-align: center;
     max-width: 760px;
-    margin: 0 auto 18px;
+    margin: 0 auto 28px;
 }
 
-.pr-sectionPill {
+.prc-pill {
     margin: 0 auto 10px;
     display: inline-flex;
 }
 
-.pr-h2 {
+.prc-title {
     margin: 0 0 8px;
 }
 
-.pr-sectionSub {
+.prc-sub {
     margin: 0 auto;
     color: rgba(15, 23, 42, 0.62);
     max-width: 560px;
 }
 
-/* Wrap */
-.pr-compareWrap {
-    margin-top: 22px;
-}
-
-/* Scroll container */
-.pr-compareScroll {
-    overflow-x: auto;
-    overflow-y: hidden;
-    -webkit-overflow-scrolling: touch;
-
-    border: 1px solid rgba(15, 23, 42, 0.10);
+/* ── Table shell ─────────────────────────────────────────────── */
+.prc-table {
+    border: 1px solid rgba(15, 23, 42, 0.09);
     border-radius: 22px;
+    overflow: hidden;
     background: #ffffff;
-    box-shadow: 0 12px 28px rgba(16, 24, 40, 0.06);
-
-    /* so sticky elements behave and edges look clean */
-    position: relative;
+    box-shadow:
+        0 2px 8px rgba(15, 23, 42, 0.04),
+        0 12px 32px rgba(15, 23, 42, 0.05);
 }
 
-/* Nice focus when tabbing into scroll region */
-.pr-compareScroll:focus {
-    outline: 3px solid rgba(249, 115, 22, 0.25);
-    outline-offset: 3px;
-}
-
-/* Table */
-.pr-compareTable {
-    min-width: 980px;
-    /* ensures 3 plan columns are readable; scroll on small screens */
-}
-
-/* Header row */
-.pr-compareHeader {
+/* ── Column headers — desktop only ──────────────────────────── */
+.prc-colHead {
     display: grid;
-    grid-template-columns: minmax(280px, 1.35fr) repeat(3, minmax(180px, 1fr));
-    align-items: stretch;
+    grid-template-columns: 1.6fr 1fr 1fr 1fr;
     border-bottom: 1px solid rgba(15, 23, 42, 0.08);
-    background: #ffffff;
+    background: #fafafa;
 }
 
-/* Shared cell styles */
-.pr-th,
-.pr-td {
-    padding: 16px 16px;
+.prc-colHead__feat {
+    padding: 14px 20px;
+    font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: rgba(15, 23, 42, 0.45);
+    display: flex;
+    align-items: center;
 }
 
-/* Keep feature column readable */
-.pr-th--feature,
-.pr-td--feature {
-    text-align: left;
-}
-
-/* Plan columns */
-.pr-th {
+.prc-colHead__plan {
+    padding: 14px 12px;
     display: flex;
     flex-direction: column;
-    gap: 4px;
+    align-items: center;
     justify-content: center;
+    gap: 3px;
+    border-left: 1px solid rgba(15, 23, 42, 0.07);
 }
 
-.pr-thName {
+.prc-colHead__plan--plus {
+    background: rgba(249, 115, 22, 0.05);
+}
+
+.prc-planName {
+    font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+    font-size: 13px;
     font-weight: 800;
-    color: rgba(15, 23, 42, 0.92);
+    color: rgba(15, 23, 42, 0.90);
 }
 
-.pr-thSub {
-    font-size: 12px;
-    font-weight: 700;
-    color: rgba(15, 23, 42, 0.58);
+.prc-planPrice {
+    font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+    font-size: 11px;
+    font-weight: 600;
+    color: rgba(15, 23, 42, 0.50);
+    white-space: nowrap;
 }
 
-/* Highlight Plus column subtly */
-.pr-th--plus {
-    background: rgba(249, 115, 22, 0.06);
+.prc-planPrice--plus {
+    color: var(--kc-accent-primary);
 }
 
-.pr-th--plus .pr-thName {
-    color: rgba(15, 23, 42, 0.92);
-}
-
-.pr-th--plus .pr-thSub {
-    color: rgba(249, 115, 22, 0.90);
-}
-
-/* Section blocks */
-.pr-sec {
+/* ── Section group ───────────────────────────────────────────── */
+.prc-group {
     border-bottom: 1px solid rgba(15, 23, 42, 0.06);
 }
 
-.pr-sec:last-child {
+.prc-group:last-child {
     border-bottom: none;
 }
 
-/* Section title row */
-.pr-secTitle {
-    padding: 10px 16px;
-    background: rgba(15, 23, 42, 0.03);
-    border-top: 1px solid rgba(15, 23, 42, 0.06);
-    border-bottom: 1px solid rgba(15, 23, 42, 0.06);
-}
-
-.pr-secTitleInner {
+.prc-groupLabel {
+    padding: 9px 20px;
+    font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+    font-size: 11px;
     font-weight: 800;
-    font-size: 13px;
-    letter-spacing: 0.2px;
-    color: rgba(15, 23, 42, 0.70);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: rgba(15, 23, 42, 0.45);
+    background: rgba(15, 23, 42, 0.025);
+    border-bottom: 1px solid rgba(15, 23, 42, 0.05);
 }
 
-/* Rows */
-.pr-tr {
+/* ── Feature rows — desktop: 4-col grid ────────────────────── */
+.prc-row {
     display: grid;
-    grid-template-columns: minmax(280px, 1.35fr) repeat(3, minmax(180px, 1fr));
+    grid-template-columns: 1.6fr 3fr; /* feat + cells wrapper */
     align-items: stretch;
-    background: #ffffff;
+    border-bottom: 1px solid rgba(15, 23, 42, 0.05);
 }
 
-.pr-tr:nth-child(even) {
-    background: rgba(15, 23, 42, 0.015);
+.prc-row:last-child {
+    border-bottom: none;
 }
 
-/* Row separators */
-.pr-tr+.pr-tr {
-    border-top: 1px solid rgba(15, 23, 42, 0.06);
-}
-
-/* Cells */
-.pr-td {
+/* Feature name cell */
+.prc-feat {
+    padding: 14px 20px;
     display: flex;
     flex-direction: column;
     justify-content: center;
+    gap: 3px;
+    border-right: 1px solid rgba(15, 23, 42, 0.05);
 }
 
-.pr-td--center {
-    align-items: center;
-    text-align: center;
+.prc-featText {
+    font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    color: rgba(15, 23, 42, 0.88);
 }
 
-/* Ensure Plus column stays highlighted throughout table */
-.pr-td--plus {
-    background: rgba(249, 115, 22, 0.04);
+.prc-featHint {
+    font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+    font-size: 11px;
+    font-weight: 500;
+    color: rgba(15, 23, 42, 0.48);
 }
 
-/* Feature cell copy */
-.pr-featLabel {
+/* Plan cells wrapper — on desktop uses display:contents to participate in parent grid */
+.prc-cells {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+}
+
+/* Plan value cell */
+.prc-cell {
+    padding: 14px 10px;
     display: flex;
+    flex-direction: column;
     align-items: center;
-    gap: 10px;
+    justify-content: center;
+    gap: 4px;
+    border-left: 1px solid rgba(15, 23, 42, 0.05);
 }
 
-.pr-featText {
-    font-weight: 750;
-    color: rgba(15, 23, 42, 0.92);
+.prc-cell:first-child {
+    border-left: none;
 }
 
-.pr-featHint {
-    margin-top: 4px;
-    font-size: 12px;
-    font-weight: 650;
-    color: rgba(15, 23, 42, 0.60);
+.prc-cell--plus {
+    background: rgba(249, 115, 22, 0.03);
 }
 
-/* Compare values */
-.pr-cv {
+/* Mobile plan label — hidden on desktop */
+.prc-mobileLabel {
+    display: none;
+    font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: rgba(15, 23, 42, 0.38);
+}
+
+/* ── Compare values ──────────────────────────────────────────── */
+.prc-cv {
     display: inline-flex;
     align-items: center;
     justify-content: center;
 }
 
-.pr-cv--text {
-    font-weight: 800;
-    color: rgba(15, 23, 42, 0.86);
-}
-
-.pr-cv--icon img {
+.prc-cv img {
     width: 18px;
     height: 18px;
     display: block;
 }
 
-.pr-cv--yes {
-    filter: none;
-}
-
-.pr-cv--no {
-    opacity: 0.85;
-}
-
-/* Sticky first column (nice UX on scroll) */
-.pr-th--feature,
-.pr-td--feature {
-    position: sticky;
-    left: 0;
-    z-index: 2;
-    background: inherit;
-}
-
-/* Sticky header effect (optional feel without real sticky top) */
-.pr-compareHeader .pr-th {
-    position: sticky;
-    top: 0;
-    z-index: 3;
-}
-
-/* But keep feature header above everything */
-.pr-compareHeader .pr-th--feature {
-    z-index: 4;
-}
-
-/* Hint under table */
-.pr-compareHint {
-    margin: 10px 4px 0;
+.prc-cv--text {
+    font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+    font-size: 12px;
+    font-weight: 700;
+    color: rgba(15, 23, 42, 0.82);
     text-align: center;
-    color: rgba(15, 23, 42, 0.60);
+    line-height: 1.3;
 }
 
-/* Mobile tightening */
+.prc-cv--no {
+    opacity: 0.65;
+}
+
+/* ── MOBILE < 640px ─────────────────────────────────────────── */
 @media (max-width: 640px) {
-    .pr-compareTable {
-        min-width: 920px;
+    /* Hide desktop column headers */
+    .prc-colHead {
+        display: none;
     }
 
-    .pr-th,
-    .pr-td {
-        padding: 14px 14px;
+    /* Each row becomes a vertical card */
+    .prc-row {
+        display: flex;
+        flex-direction: column;
+        padding: 14px 16px;
+        gap: 10px;
+    }
+
+    .prc-feat {
+        padding: 0;
+        border-right: none;
+    }
+
+    .prc-featText {
+        font-size: 13px;
+    }
+
+    /* 3 plan cells sit in a horizontal row */
+    .prc-cells {
+        display: flex;
+        gap: 6px;
+    }
+
+    .prc-cell {
+        flex: 1;
+        flex-direction: column;
+        border-left: none;
+        padding: 8px 6px;
+        background: rgba(15, 23, 42, 0.025);
+        border-radius: 10px;
+        min-height: 52px;
+    }
+
+    .prc-cell--plus {
+        background: rgba(249, 115, 22, 0.07);
+    }
+
+    /* Show plan labels on mobile */
+    .prc-mobileLabel {
+        display: block;
+    }
+
+    .prc-groupLabel {
+        padding: 8px 16px;
+    }
+
+    .prc-cv--text {
+        font-size: 11px;
+    }
+
+    .prc-cv img {
+        width: 16px;
+        height: 16px;
     }
 }
 
-/* Reduced motion friendliness */
+/* ── Reduced motion ─────────────────────────────────────────── */
 @media (prefers-reduced-motion: reduce) {
-    .pr-compareScroll {
-        scroll-behavior: auto;
+    .prc-table {
+        transition: none;
     }
 }
