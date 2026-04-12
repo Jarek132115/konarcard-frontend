@@ -78,8 +78,12 @@ export default function Editor({
     const logoInputRef = useRef(null);
     const workImageInputRef = useRef(null);
 
+    const templateViewportRef = useRef(null);
+    const templateTrackRef = useRef(null);
+
     const [upgradeOpen, setUpgradeOpen] = useState(false);
     const [upgradeContext, setUpgradeContext] = useState("feature");
+    const [templateDragLeft, setTemplateDragLeft] = useState(0);
 
     const FREE_MAX_WORKS = 6;
     const FREE_MAX_SERVICES = 3;
@@ -113,6 +117,39 @@ export default function Editor({
         if (upgradeOpen) window.addEventListener("keydown", onKey);
         return () => window.removeEventListener("keydown", onKey);
     }, [upgradeOpen]);
+
+    useEffect(() => {
+        const calculateTemplateDragBounds = () => {
+            const viewport = templateViewportRef.current;
+            const track = templateTrackRef.current;
+            if (!viewport || !track) {
+                setTemplateDragLeft(0);
+                return;
+            }
+
+            const overflow = Math.max(0, track.scrollWidth - viewport.clientWidth);
+            setTemplateDragLeft(-overflow);
+        };
+
+        calculateTemplateDragBounds();
+
+        let resizeObserver;
+        if (typeof ResizeObserver !== "undefined") {
+            resizeObserver = new ResizeObserver(() => {
+                calculateTemplateDragBounds();
+            });
+
+            if (templateViewportRef.current) resizeObserver.observe(templateViewportRef.current);
+            if (templateTrackRef.current) resizeObserver.observe(templateTrackRef.current);
+        }
+
+        window.addEventListener("resize", calculateTemplateDragBounds);
+
+        return () => {
+            window.removeEventListener("resize", calculateTemplateDragBounds);
+            if (resizeObserver) resizeObserver.disconnect();
+        };
+    }, [currentTemplateSafe(state), currentThemeModeSafe(state), isSubscribed]);
 
     const TEMPLATE_IDS = useMemo(
         () => ["template-1", "template-2", "template-3", "template-4", "template-5"],
@@ -268,11 +305,6 @@ export default function Editor({
         resolveMediaUrl(isBlobUrl(state.avatar) ? "" : state.avatar) ||
         "";
 
-    const sectionToggle = (isShown, setter) => {
-        if (isSaving) return;
-        setter?.(!isShown);
-    };
-
     const handleWorkAddClick = () => {
         if (isSaving) return;
         if (!isSubscribed && worksCount >= FREE_MAX_WORKS) return openUpgrade("work");
@@ -309,7 +341,12 @@ export default function Editor({
     };
 
     return (
-        <motion.div className="kce-root" initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.32, ease: "easeOut" }}>
+        <motion.div
+            className="kce-root"
+            initial={{ opacity: 0, y: 18 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.32, ease: "easeOut" }}
+        >
             <div className="kce-top">
                 <div className="kce-topLeft">
                     <div className="kc-title kce-title">Edit Your Profile</div>
@@ -480,44 +517,60 @@ export default function Editor({
 
                     <div className="kce-sectionBody">
                         <div
-                            className="kce-templatePhones"
-                            role="tablist"
-                            aria-label="Template selector"
+                            ref={templateViewportRef}
+                            className="kce-templateViewport"
+                            aria-label="Template selector area"
                         >
-                            {TEMPLATE_IDS.map((t) => {
-                                const locked = isTemplateLocked(t);
-                                const active = currentTemplate === t;
+                            <motion.div
+                                ref={templateTrackRef}
+                                className="kce-templateTrack"
+                                role="tablist"
+                                aria-label="Template selector"
+                                drag="x"
+                                dragConstraints={{ left: templateDragLeft, right: 0 }}
+                                dragElastic={0.06}
+                                dragMomentum={true}
+                                whileTap={{ cursor: "grabbing" }}
+                            >
+                                {TEMPLATE_IDS.map((t) => {
+                                    const locked = isTemplateLocked(t);
+                                    const active = currentTemplate === t;
 
-                                return (
-                                    <button
-                                        key={t}
-                                        type="button"
-                                        className={`kce-phoneCard ${active ? "is-active" : ""} ${locked ? "is-locked" : ""
-                                            }`}
-                                        onClick={() => handleTemplateSelect(t)}
-                                        title={locked ? "Upgrade to unlock this template" : "Select template"}
-                                        aria-label={locked ? `${t} locked` : t}
-                                        role="tab"
-                                        aria-selected={active}
-                                        disabled={isSaving}
-                                    >
-                                        <img
-                                            src={templateThumbs[t]}
-                                            alt=""
-                                            className="kce-phoneImg"
-                                            draggable={false}
-                                            loading="lazy"
-                                            decoding="async"
-                                        />
+                                    return (
+                                        <button
+                                            key={t}
+                                            type="button"
+                                            className={`kce-phoneCard ${active ? "is-active" : ""} ${locked ? "is-locked" : ""
+                                                }`}
+                                            onClick={() => handleTemplateSelect(t)}
+                                            title={
+                                                locked
+                                                    ? "Upgrade to unlock this template"
+                                                    : "Select template"
+                                            }
+                                            aria-label={locked ? `${t} locked` : t}
+                                            role="tab"
+                                            aria-selected={active}
+                                            disabled={isSaving}
+                                        >
+                                            <img
+                                                src={templateThumbs[t]}
+                                                alt=""
+                                                className="kce-phoneImg"
+                                                draggable={false}
+                                                loading="lazy"
+                                                decoding="async"
+                                            />
 
-                                        {locked ? (
-                                            <span className="kce-premiumBadge" aria-hidden="true">
-                                                <img src={TemplateLockIcon} alt="" />
-                                            </span>
-                                        ) : null}
-                                    </button>
-                                );
-                            })}
+                                            {locked ? (
+                                                <span className="kce-premiumBadge" aria-hidden="true">
+                                                    <img src={TemplateLockIcon} alt="" />
+                                                </span>
+                                            ) : null}
+                                        </button>
+                                    );
+                                })}
+                            </motion.div>
                         </div>
 
                         {!isSubscribed ? (
@@ -539,7 +592,9 @@ export default function Editor({
 
                         <Switch.Root
                             checked={!!showMainSection}
-                            onCheckedChange={(checked) => { if (!isSaving) setShowMainSection(checked); }}
+                            onCheckedChange={(checked) => {
+                                if (!isSaving) setShowMainSection(checked);
+                            }}
                             disabled={isSaving}
                             className="kce-switch"
                         >
@@ -715,7 +770,9 @@ export default function Editor({
 
                         <Switch.Root
                             checked={!!showAboutMeSection}
-                            onCheckedChange={(checked) => { if (!isSaving) setShowAboutMeSection(checked); }}
+                            onCheckedChange={(checked) => {
+                                if (!isSaving) setShowAboutMeSection(checked);
+                            }}
                             disabled={isSaving}
                             className="kce-switch"
                         >
@@ -774,7 +831,9 @@ export default function Editor({
 
                         <Switch.Root
                             checked={!!showWorkSection}
-                            onCheckedChange={(checked) => { if (!isSaving) setShowWorkSection(checked); }}
+                            onCheckedChange={(checked) => {
+                                if (!isSaving) setShowWorkSection(checked);
+                            }}
                             disabled={isSaving}
                             className="kce-switch"
                         >
@@ -844,7 +903,9 @@ export default function Editor({
 
                         <Switch.Root
                             checked={!!showServicesSection}
-                            onCheckedChange={(checked) => { if (!isSaving) setShowServicesSection(checked); }}
+                            onCheckedChange={(checked) => {
+                                if (!isSaving) setShowServicesSection(checked);
+                            }}
                             disabled={isSaving}
                             className="kce-switch"
                         >
@@ -863,7 +924,9 @@ export default function Editor({
                                                 className="kce-input"
                                                 placeholder="Fuse Board Upgrades"
                                                 value={s.name || ""}
-                                                onChange={(e) => handleServiceChange(i, "name", e.target.value)}
+                                                onChange={(e) =>
+                                                    handleServiceChange(i, "name", e.target.value)
+                                                }
                                                 disabled={isSaving}
                                             />
                                         </div>
@@ -922,7 +985,9 @@ export default function Editor({
 
                         <Switch.Root
                             checked={!!showReviewsSection}
-                            onCheckedChange={(checked) => { if (!isSaving) setShowReviewsSection(checked); }}
+                            onCheckedChange={(checked) => {
+                                if (!isSaving) setShowReviewsSection(checked);
+                            }}
                             disabled={isSaving}
                             className="kce-switch"
                         >
@@ -942,7 +1007,9 @@ export default function Editor({
                                                     className="kce-input"
                                                     placeholder="Sarah Thompson"
                                                     value={r.name || ""}
-                                                    onChange={(e) => handleReviewChange(i, "name", e.target.value)}
+                                                    onChange={(e) =>
+                                                        handleReviewChange(i, "name", e.target.value)
+                                                    }
                                                     disabled={isSaving}
                                                 />
                                             </div>
@@ -952,7 +1019,9 @@ export default function Editor({
                                                 <StarRating
                                                     value={r.rating || 5}
                                                     disabled={isSaving}
-                                                    onChange={(val) => handleReviewChange(i, "rating", val)}
+                                                    onChange={(val) =>
+                                                        handleReviewChange(i, "rating", val)
+                                                    }
                                                 />
                                             </div>
                                         </div>
@@ -964,7 +1033,9 @@ export default function Editor({
                                                 rows={3}
                                                 placeholder="Write the review..."
                                                 value={r.text || ""}
-                                                onChange={(e) => handleReviewChange(i, "text", e.target.value)}
+                                                onChange={(e) =>
+                                                    handleReviewChange(i, "text", e.target.value)
+                                                }
                                                 disabled={isSaving}
                                             />
                                         </div>
@@ -1010,7 +1081,9 @@ export default function Editor({
 
                         <Switch.Root
                             checked={!!showContactSection}
-                            onCheckedChange={(checked) => { if (!isSaving) setShowContactSection(checked); }}
+                            onCheckedChange={(checked) => {
+                                if (!isSaving) setShowContactSection(checked);
+                            }}
                             disabled={isSaving}
                             className="kce-switch"
                         >
@@ -1060,7 +1133,7 @@ export default function Editor({
 
                             <div className="kce-social">
                                 <div className="kce-socialRow">
-                                    <div className="kce-socialIcon">
+                                    <div className="kce-socialIcon" aria-hidden="true">
                                         <img src={FacebookIcon} alt="" />
                                     </div>
                                     <input
@@ -1077,7 +1150,7 @@ export default function Editor({
                                 </div>
 
                                 <div className="kce-socialRow">
-                                    <div className="kce-socialIcon">
+                                    <div className="kce-socialIcon" aria-hidden="true">
                                         <img src={InstagramIcon} alt="" />
                                     </div>
                                     <input
@@ -1094,7 +1167,7 @@ export default function Editor({
                                 </div>
 
                                 <div className="kce-socialRow">
-                                    <div className="kce-socialIcon">
+                                    <div className="kce-socialIcon" aria-hidden="true">
                                         <img src={LinkedInIcon} alt="" />
                                     </div>
                                     <input
@@ -1111,7 +1184,7 @@ export default function Editor({
                                 </div>
 
                                 <div className="kce-socialRow">
-                                    <div className="kce-socialIcon">
+                                    <div className="kce-socialIcon" aria-hidden="true">
                                         <img src={XIcon} alt="" />
                                     </div>
                                     <input
@@ -1128,7 +1201,7 @@ export default function Editor({
                                 </div>
 
                                 <div className="kce-socialRow">
-                                    <div className="kce-socialIcon">
+                                    <div className="kce-socialIcon" aria-hidden="true">
                                         <img src={TikTokIcon} alt="" />
                                     </div>
                                     <input
@@ -1169,4 +1242,12 @@ export default function Editor({
             </div>
         </motion.div>
     );
+}
+
+function currentTemplateSafe(state) {
+    return (state?.templateId || "template-1").toString();
+}
+
+function currentThemeModeSafe(state) {
+    return (state?.themeMode || state?.pageTheme || "light").toString();
 }

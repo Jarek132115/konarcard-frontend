@@ -360,6 +360,7 @@
 .kce-input {
     width: 100%;
     min-height: 48px;
+    height: 48px;
     border-radius: 14px;
     border: 1px solid var(--kce-border-strong);
     background: #ffffff;
@@ -398,6 +399,7 @@
 
 .kce-textarea {
     min-height: 132px;
+    height: auto;
     resize: vertical;
     padding-top: 12px;
     padding-bottom: 12px;
@@ -460,19 +462,28 @@
    TEMPLATE PHONES
 ========================================================= */
 
-.kce-templatePhones {
+.kce-templateViewport {
+    width: 100%;
+    overflow: hidden;
+    position: relative;
+    cursor: grab;
+    user-select: none;
+    touch-action: pan-y;
+    padding: 2px 0 10px;
+}
+
+.kce-templateViewport:active {
+    cursor: grabbing;
+}
+
+.kce-templateTrack {
     display: flex;
     flex-wrap: nowrap;
     gap: 14px;
-    overflow-x: auto;
-    overflow-y: hidden;
-    padding: 2px 2px 8px;
-    scrollbar-width: none;
-    -webkit-overflow-scrolling: touch;
-}
-
-.kce-templatePhones::-webkit-scrollbar {
-    display: none;
+    width: max-content;
+    will-change: transform;
+    user-select: none;
+    padding: 0 2px;
 }
 
 .kce-phoneCard {
@@ -877,22 +888,31 @@
 
 .kce-socialRow {
     display: grid;
-    grid-template-columns: 48px minmax(0, 1fr);
-    gap: 10px;
+    grid-template-columns: 40px minmax(0, 1fr);
+    gap: 12px;
     align-items: center;
-}
-
-.kce-socialIcon {
-    display: grid;
-    place-items: center;
     min-height: 48px;
 }
 
+.kce-socialIcon {
+    width: 40px;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    align-self: center;
+}
+
 .kce-socialIcon img {
-    width: 22px;
-    height: 22px;
+    width: 18px;
+    height: 18px;
     display: block;
-    opacity: 0.9;
+    object-fit: contain;
+    opacity: 0.95;
+    margin: 0;
+    padding: 0;
+    background: none;
+    border: 0;
 }
 
 /* =========================================================
@@ -1235,11 +1255,19 @@
     }
 
     .kce-socialRow {
-        grid-template-columns: 44px minmax(0, 1fr);
+        grid-template-columns: 36px minmax(0, 1fr);
+        gap: 10px;
+        min-height: 46px;
     }
 
     .kce-socialIcon {
-        min-height: 44px;
+        width: 36px;
+        height: 46px;
+    }
+
+    .kce-socialIcon img {
+        width: 17px;
+        height: 17px;
     }
 
     .kce-bottomSaveWrap {
@@ -1298,11 +1326,13 @@
 
     .kce-input {
         min-height: 46px;
+        height: 46px;
         font-size: 14px;
     }
 
     .kce-textarea {
         min-height: 120px;
+        height: auto;
     }
 
     .kce-dangerPill {
@@ -1332,6 +1362,21 @@
         font-size: 10px;
         padding: 0 9px;
     }
+
+    .kce-socialRow {
+        grid-template-columns: 34px minmax(0, 1fr);
+        gap: 10px;
+    }
+
+    .kce-socialIcon {
+        width: 34px;
+        height: 46px;
+    }
+
+    .kce-socialIcon img {
+        width: 16px;
+        height: 16px;
+    }
 }
 
 /* =========================================================
@@ -1344,7 +1389,6 @@
     gap: 6px;
 }
 
-/* button reset */
 .kce-starBtn {
     appearance: none;
     border: none;
@@ -1352,90 +1396,40 @@
     padding: 0;
     margin: 0;
     cursor: pointer;
-
     width: 28px;
     height: 28px;
-
     display: inline-flex;
     align-items: center;
     justify-content: center;
-
     transition: transform 0.12s ease, opacity 0.16s ease;
 }
 
-/* icon base */
 .kce-starIcon {
     width: 100%;
     height: 100%;
     display: block;
-
-    /* default = inactive (grey) */
     filter: grayscale(1) brightness(0.7) opacity(0.6);
-
     transition: filter 0.18s ease, transform 0.12s ease;
 }
 
-/* ACTIVE STAR (this is what your JSX already controls) */
 .kce-starBtn.is-active .kce-starIcon {
     filter: none;
     opacity: 1;
 }
 
-/* hover effect (nice subtle Apple feel) */
 .kce-starBtn:hover .kce-starIcon {
     transform: scale(1.08);
 }
 
-/* slight press feedback */
 .kce-starBtn:active {
     transform: scale(0.92);
 }
 
-/* disabled state */
 .kce-starBtn:disabled {
     cursor: not-allowed;
     opacity: 0.5;
 }
 
-/* =========================================================
-   OPTIONAL: HOVER PREVIEW (LIKE IOS RATINGS)
-   (only applies visually, logic still controlled by React)
-========================================================= */
-
 .kce-stars:hover .kce-starBtn:hover~.kce-starBtn .kce-starIcon {
     filter: grayscale(1) brightness(0.7) opacity(0.4);
-}
-
-/* =========================================================
-   SOCIAL ROW ICON FIX (CLEAN + ALIGNED)
-========================================================= */
-
-.kce-socialRow {
-    display: grid;
-    grid-template-columns: 48px minmax(0, 1fr);
-    /* match input height */
-    gap: 12px;
-    align-items: stretch;
-    /* THIS is key */
-}
-
-/* icon container */
-.kce-socialRow img {
-    width: 100%;
-    height: 100%;
-    object-fit: contain;
-
-    /* remove ALL styling */
-    background: none;
-    border: none;
-    padding: 8px 0;
-    margin: 0;
-
-    /* center the icon visually */
-    display: block;
-}
-
-/* make sure input height is consistent */
-.kce-socialRow .kce-input {
-    height: 48px;
 }
