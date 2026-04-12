@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { toast } from "react-hot-toast";
-import { motion } from "motion/react";
+import { motion, AnimatePresence } from "motion/react";
 
 import DashboardLayout from "../../components/Dashboard/DashboardLayout";
 import PageHeader from "../../components/Dashboard/PageHeader";
@@ -46,15 +46,12 @@ const fmtDate = (d) => {
 
 const fmtMoneyFromMinor = (minorAmount, currency) => {
     if (minorAmount == null || minorAmount === "") return "—";
-
     const cur = String(currency || "GBP").toUpperCase();
     const major =
         typeof minorAmount === "number"
             ? minorAmount / 100
             : Number(minorAmount) / 100;
-
     if (!Number.isFinite(major)) return "—";
-
     try {
         return new Intl.NumberFormat(undefined, {
             style: "currency",
@@ -99,16 +96,60 @@ function getPlanLabel(plan) {
     return value.charAt(0).toUpperCase() + value.slice(1).toLowerCase();
 }
 
+// Shared card animation variants
+const cardVariants = {
+    hidden: { opacity: 0, y: 20, scale: 0.98 },
+    visible: (delay) => ({
+        opacity: 1,
+        y: 0,
+        scale: 1,
+        transition: {
+            duration: 0.4,
+            ease: [0.22, 1, 0.36, 1],
+            delay,
+        },
+    }),
+};
+
+const rowVariants = {
+    hidden: { opacity: 0, x: -8 },
+    visible: (i) => ({
+        opacity: 1,
+        x: 0,
+        transition: { duration: 0.28, ease: [0.22, 1, 0.36, 1], delay: i * 0.05 },
+    }),
+};
+
 function SectionShell({ children, delay = 0 }) {
     return (
         <motion.section
             className="stg-card"
-            initial={{ opacity: 0, y: 16 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.32, ease: "easeOut", delay }}
+            custom={delay}
+            variants={cardVariants}
+            initial="hidden"
+            animate="visible"
+            whileHover={{
+                y: -2,
+                boxShadow: "0 20px 48px rgba(15,23,42,0.09)",
+                transition: { duration: 0.22, ease: "easeOut" },
+            }}
         >
             {children}
         </motion.section>
+    );
+}
+
+function StatCard({ label, children, delay = 0 }) {
+    return (
+        <motion.div
+            className="stg-stat"
+            initial={{ opacity: 0, y: 10, scale: 0.96 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            transition={{ duration: 0.32, ease: [0.22, 1, 0.36, 1], delay }}
+        >
+            <div className="stg-statK">{label}</div>
+            <div className="stg-statV">{children}</div>
+        </motion.div>
     );
 }
 
@@ -137,28 +178,18 @@ export default function Settings() {
             .map((c) => {
                 const slug = centerTrim(c?.profile_slug);
                 if (!slug) return null;
-
                 const name =
                     centerTrim(c?.business_card_name) ||
                     centerTrim(c?.business_name) ||
                     centerTrim(c?.full_name) ||
                     (slug === "main" ? "Main Profile" : "Profile");
-
-                return {
-                    slug,
-                    name,
-                    url: buildPublicUrl(slug),
-                };
+                return { slug, name, url: buildPublicUrl(slug) };
             })
             .filter(Boolean);
     }, [cards]);
 
     useEffect(() => {
-        if (!profilesForShare.length) {
-            setSelectedSlug(null);
-            return;
-        }
-
+        if (!profilesForShare.length) { setSelectedSlug(null); return; }
         setSelectedSlug((prev) => {
             if (prev && profilesForShare.some((p) => p.slug === prev)) return prev;
             return profilesForShare[0].slug;
@@ -174,9 +205,7 @@ export default function Settings() {
         try {
             setLoading(true);
             setLoadErr("");
-
             const ts = Date.now();
-
             const [sRes, iRes, pRes] = await Promise.all([
                 api.get(`/api/billing/summary?ts=${ts}`),
                 api.get(`/api/billing/invoices?ts=${ts}`),
@@ -187,17 +216,9 @@ export default function Settings() {
             const iStatus = Number(iRes?.status || 0);
             const pStatus = Number(pRes?.status || 0);
 
-            if (sStatus >= 400) {
-                throw new Error(sRes?.data?.error || "Could not load billing summary.");
-            }
-
-            if (iStatus >= 400) {
-                throw new Error(iRes?.data?.error || "Could not load invoices.");
-            }
-
-            if (pStatus >= 400) {
-                throw new Error(pRes?.data?.error || "Could not load payments.");
-            }
+            if (sStatus >= 400) throw new Error(sRes?.data?.error || "Could not load billing summary.");
+            if (iStatus >= 400) throw new Error(iRes?.data?.error || "Could not load invoices.");
+            if (pStatus >= 400) throw new Error(pRes?.data?.error || "Could not load payments.");
 
             const summaryPayload = sRes?.data || null;
             const invoicesPayload = iRes?.data || {};
@@ -218,7 +239,6 @@ export default function Settings() {
 
     useEffect(() => {
         if (authLoading) return;
-
         if (!authUser) {
             setLoading(false);
             setLoadErr("");
@@ -227,7 +247,6 @@ export default function Settings() {
             setPayments([]);
             return;
         }
-
         loadBillingData();
     }, [authLoading, authUser, loadBillingData]);
 
@@ -243,23 +262,9 @@ export default function Settings() {
 
     const isGoogle = provider === "google";
 
-    const accountName =
-        summary?.account?.name ||
-        authUser?.name ||
-        authUser?.full_name ||
-        "—";
-
-    const accountEmail =
-        summary?.account?.email ||
-        authUser?.email ||
-        "—";
-
-    const accountAvatar =
-        summary?.account?.avatar ||
-        authUser?.avatar ||
-        authUser?.picture ||
-        authUser?.photoURL ||
-        "";
+    const accountName = summary?.account?.name || authUser?.name || authUser?.full_name || "—";
+    const accountEmail = summary?.account?.email || authUser?.email || "—";
+    const accountAvatar = summary?.account?.avatar || authUser?.avatar || authUser?.picture || authUser?.photoURL || "";
 
     const plan = summary?.plan || authUser?.plan || "free";
     const planInterval = summary?.planInterval || null;
@@ -274,143 +279,57 @@ export default function Settings() {
         try {
             const res = await api.post("/api/billing-portal", {});
             const status = Number(res?.status || 0);
-
-            if (status >= 400) {
-                throw new Error(res?.data?.error || "Could not open billing portal.");
-            }
-
+            if (status >= 400) throw new Error(res?.data?.error || "Could not open billing portal.");
             const url = res?.data?.url;
             if (!url) throw new Error("Billing portal URL missing.");
-
             window.location.href = url;
         } catch (e) {
-            toast.error(
-                e?.response?.data?.error ||
-                e?.message ||
-                "Could not open billing portal."
-            );
+            toast.error(e?.response?.data?.error || e?.message || "Could not open billing portal.");
         }
     };
 
     const retryAll = async () => {
         setLoadErr("");
-
-        try {
-            await refetchAuth?.();
-        } catch {
-            // ignore
-        }
-
+        try { await refetchAuth?.(); } catch { /* ignore */ }
         await loadBillingData();
     };
 
-    const handleResetPassword = () => {
-        toast("Password reset flow can be connected next.");
-    };
-
-    const handleDeleteAccount = () => {
-        toast("Delete account flow can be connected next.");
-    };
-
     const handleOpenShareProfile = () => {
-        if (!selectedProfile) {
-            toast.error("Create a profile first.");
-            return;
-        }
+        if (!selectedProfile) { toast.error("Create a profile first."); return; }
         setShareOpen(true);
     };
 
-    const handleCloseShareProfile = () => {
-        setShareOpen(false);
-    };
-
     const shareToFacebook = () => {
-        if (!selectedProfile?.url) {
-            toast.error("No profile link available yet.");
-            return;
-        }
-
-        const url = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(
-            selectedProfile.url
-        )}`;
-
-        window.open(url, "_blank", "noopener,noreferrer,width=680,height=720");
+        if (!selectedProfile?.url) { toast.error("No profile link available yet."); return; }
+        window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(selectedProfile.url)}`, "_blank", "noopener,noreferrer,width=680,height=720");
     };
 
     const shareToInstagram = async () => {
-        if (!selectedProfile?.url) {
-            toast.error("No profile link available yet.");
-            return;
-        }
-
-        try {
-            await navigator.clipboard.writeText(selectedProfile.url);
-            toast.success("Profile link copied for Instagram sharing.");
-        } catch {
-            toast.error("Could not copy the link.");
-        }
-
+        if (!selectedProfile?.url) { toast.error("No profile link available yet."); return; }
+        try { await navigator.clipboard.writeText(selectedProfile.url); toast.success("Profile link copied for Instagram sharing."); }
+        catch { toast.error("Could not copy the link."); }
         window.open("https://www.instagram.com/", "_blank", "noopener,noreferrer");
     };
 
     const shareToMessenger = async () => {
-        if (!selectedProfile?.url) {
-            toast.error("No profile link available yet.");
-            return;
-        }
-
-        const isMobile = /Android|iPhone|iPad|iPod|Mobile/i.test(
-            navigator.userAgent || ""
-        );
-
+        if (!selectedProfile?.url) { toast.error("No profile link available yet."); return; }
+        const isMobile = /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent || "");
         if (isMobile) {
-            try {
-                await navigator.clipboard.writeText(selectedProfile.url);
-                toast.success(
-                    "Messenger sharing is not supported on mobile browsers. Link copied instead."
-                );
-            } catch {
-                toast.error("Could not copy the link.");
-            }
+            try { await navigator.clipboard.writeText(selectedProfile.url); toast.success("Messenger sharing is not supported on mobile browsers. Link copied instead."); }
+            catch { toast.error("Could not copy the link."); }
             return;
         }
-
-        const url = `https://www.facebook.com/dialog/send?link=${encodeURIComponent(
-            selectedProfile.url
-        )}&app_id=291494419107518&redirect_uri=${encodeURIComponent(
-            selectedProfile.url
-        )}`;
-
-        window.open(url, "_blank", "noopener,noreferrer,width=680,height=720");
+        window.open(`https://www.facebook.com/dialog/send?link=${encodeURIComponent(selectedProfile.url)}&app_id=291494419107518&redirect_uri=${encodeURIComponent(selectedProfile.url)}`, "_blank", "noopener,noreferrer,width=680,height=720");
     };
 
     const shareToWhatsApp = () => {
-        if (!selectedProfile?.url) {
-            toast.error("No profile link available yet.");
-            return;
-        }
-
-        const text = `Check out my profile: ${selectedProfile.url}`;
-        const url = `https://wa.me/?text=${encodeURIComponent(text)}`;
-        window.open(url, "_blank", "noopener,noreferrer");
+        if (!selectedProfile?.url) { toast.error("No profile link available yet."); return; }
+        window.open(`https://wa.me/?text=${encodeURIComponent(`Check out my profile: ${selectedProfile.url}`)}`, "_blank", "noopener,noreferrer");
     };
 
     const shareByText = () => {
-        if (!selectedProfile?.url) {
-            toast.error("No profile link available yet.");
-            return;
-        }
-
-        const body = `Check out my profile: ${selectedProfile.url}`;
-        window.location.href = `sms:?&body=${encodeURIComponent(body)}`;
-    };
-
-    const handleAppleWallet = () => {
-        toast("Apple Wallet is coming soon.");
-    };
-
-    const handleGoogleWallet = () => {
-        toast("Google Wallet is coming soon.");
+        if (!selectedProfile?.url) { toast.error("No profile link available yet."); return; }
+        window.location.href = `sms:?&body=${encodeURIComponent(`Check out my profile: ${selectedProfile.url}`)}`;
     };
 
     return (
@@ -425,7 +344,7 @@ export default function Settings() {
 
                 <ShareProfile
                     isOpen={shareOpen}
-                    onClose={handleCloseShareProfile}
+                    onClose={() => setShareOpen(false)}
                     profiles={profilesForShare}
                     selectedSlug={selectedSlug}
                     onSelectSlug={setSelectedSlug}
@@ -436,36 +355,33 @@ export default function Settings() {
                     onMessenger={shareToMessenger}
                     onWhatsApp={shareToWhatsApp}
                     onText={shareByText}
-                    onAppleWallet={handleAppleWallet}
-                    onGoogleWallet={handleGoogleWallet}
+                    onAppleWallet={() => toast("Apple Wallet is coming soon.")}
+                    onGoogleWallet={() => toast("Google Wallet is coming soon.")}
                 />
 
-                {hasError ? (
-                    <motion.div
-                        className="stg-banner stg-banner--danger"
-                        initial={{ opacity: 0, y: 12 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.25, ease: "easeOut" }}
-                    >
-                        <div className="stg-bannerCopy">
-                            <div className="stg-sectionTitle">Couldn’t load your settings</div>
-                            <div className="stg-sectionText">
-                                {pick(loadErr, "Please try again.")}
-                            </div>
-                        </div>
-
-                        <button
-                            type="button"
-                            className="kx-btn kx-btn--black"
-                            onClick={retryAll}
-                            disabled={isBusy}
+                <AnimatePresence>
+                    {hasError && (
+                        <motion.div
+                            className="stg-banner stg-banner--danger"
+                            initial={{ opacity: 0, y: -10, scale: 0.98 }}
+                            animate={{ opacity: 1, y: 0, scale: 1 }}
+                            exit={{ opacity: 0, y: -6, scale: 0.98 }}
+                            transition={{ duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
                         >
-                            Retry
-                        </button>
-                    </motion.div>
-                ) : null}
+                            <div className="stg-bannerCopy">
+                                <div className="stg-sectionTitle">Couldn't load your settings</div>
+                                <div className="stg-sectionText">{pick(loadErr, "Please try again.")}</div>
+                            </div>
+                            <button type="button" className="kx-btn kx-btn--black" onClick={retryAll} disabled={isBusy}>
+                                Retry
+                            </button>
+                        </motion.div>
+                    )}
+                </AnimatePresence>
 
                 <div className="stg-grid">
+
+                    {/* ── ACCOUNT ── */}
                     <SectionShell delay={0.02}>
                         <div className="stg-cardHead">
                             <div className="stg-cardHeadLeft">
@@ -474,99 +390,112 @@ export default function Settings() {
                                     Your identity, sign-in provider, and account information.
                                 </p>
                             </div>
-
-                            <span className="stg-chip stg-chip--soft">
+                            <motion.span
+                                className="stg-chip stg-chip--soft"
+                                initial={{ opacity: 0, scale: 0.85 }}
+                                animate={{ opacity: 1, scale: 1 }}
+                                transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1], delay: 0.12 }}
+                            >
                                 {isBusy ? "Loading" : `Login: ${isGoogle ? "Google" : "Email"}`}
-                            </span>
+                            </motion.span>
                         </div>
 
                         <div className="stg-cardBody">
-                            <div className="stg-heroAccount">
+                            <motion.div
+                                className="stg-heroAccount"
+                                initial={{ opacity: 0, y: 8 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                transition={{ duration: 0.34, ease: [0.22, 1, 0.36, 1], delay: 0.1 }}
+                            >
                                 <div className="stg-heroAccountLeft">
                                     <div className="stg-avatar">
                                         {accountAvatar && !isBusy ? (
                                             <img src={accountAvatar} alt="Profile" />
                                         ) : (
-                                            <div
-                                                className={`stg-avatarFallback ${isBusy ? "stg-skelBlock" : ""}`}
-                                            >
+                                            <div className={`stg-avatarFallback ${isBusy ? "stg-skelBlock" : ""}`}>
                                                 {!isBusy ? initialsFromName(accountName, accountEmail) : ""}
                                             </div>
                                         )}
                                     </div>
-
                                     <div className="stg-heroIdentity">
                                         <div className="stg-heroName">
                                             {isBusy ? <span className="stg-skelText w52" /> : accountName}
                                         </div>
-                                        <div
-                                            className="stg-heroEmail"
-                                            title={!isBusy ? accountEmail : undefined}
-                                        >
+                                        <div className="stg-heroEmail" title={!isBusy ? accountEmail : undefined}>
                                             {isBusy ? <span className="stg-skelText w72" /> : accountEmail}
                                         </div>
                                     </div>
                                 </div>
-                            </div>
+                            </motion.div>
 
                             <div className="stg-infoGrid">
-                                <div className="stg-infoCard">
-                                    <div className="stg-infoLabel">Full name</div>
-                                    <div className={`stg-infoValue ${isBusy ? "stg-skelLine" : ""}`}>
-                                        {isBusy ? "" : accountName}
-                                    </div>
-                                </div>
-
-                                <div className="stg-infoCard">
-                                    <div className="stg-infoLabel">Email address</div>
-                                    <div
-                                        className={`stg-infoValue stg-infoValue--single ${isBusy ? "stg-skelLine" : ""}`}
-                                        title={!isBusy ? accountEmail : undefined}
+                                {[
+                                    { label: "Full name", value: accountName, single: false },
+                                    { label: "Email address", value: accountEmail, single: true },
+                                ].map(({ label, value, single }, i) => (
+                                    <motion.div
+                                        key={label}
+                                        className="stg-infoCard"
+                                        initial={{ opacity: 0, y: 8 }}
+                                        animate={{ opacity: 1, y: 0 }}
+                                        transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1], delay: 0.14 + i * 0.06 }}
                                     >
-                                        {isBusy ? "" : accountEmail}
-                                    </div>
-                                </div>
+                                        <div className="stg-infoLabel">{label}</div>
+                                        <div className={`stg-infoValue${single ? " stg-infoValue--single" : ""}${isBusy ? " stg-skelLine" : ""}`}
+                                            title={single && !isBusy ? value : undefined}>
+                                            {isBusy ? "" : value}
+                                        </div>
+                                    </motion.div>
+                                ))}
                             </div>
 
-                            <div className="stg-inlineNote">
+                            <motion.div
+                                className="stg-inlineNote"
+                                initial={{ opacity: 0 }}
+                                animate={{ opacity: 1 }}
+                                transition={{ duration: 0.3, delay: 0.22 }}
+                            >
                                 {isGoogle && !isBusy ? (
-                                    <>
-                                        This account is connected through <strong>Google</strong>. Profile and password
-                                        changes should be managed through your Google account.
-                                    </>
+                                    <>This account is connected through <strong>Google</strong>. Profile and password changes should be managed through your Google account.</>
                                 ) : (
-                                    <>
-                                        Keep your account information up to date so billing and support communications
-                                        always reach you correctly.
-                                    </>
+                                    <>Keep your account information up to date so billing and support communications always reach you correctly.</>
                                 )}
-                            </div>
+                            </motion.div>
 
-                            {!isGoogle ? (
-                                <div className="stg-actions">
-                                    <button
+                            {!isGoogle && (
+                                <motion.div
+                                    className="stg-actions"
+                                    initial={{ opacity: 0, y: 6 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    transition={{ duration: 0.28, delay: 0.26 }}
+                                >
+                                    <motion.button
                                         type="button"
                                         className="kx-btn kx-btn--black"
                                         disabled={isBusy}
-                                        onClick={handleResetPassword}
+                                        onClick={() => toast("Password reset flow can be connected next.")}
+                                        whileHover={{ y: -2, boxShadow: "0 10px 24px rgba(11,22,53,0.22)" }}
+                                        whileTap={{ scale: 0.98 }}
                                     >
                                         Reset Password
-                                    </button>
-
-                                    <button
+                                    </motion.button>
+                                    <motion.button
                                         type="button"
                                         className="kx-btn kx-btn--white"
                                         disabled={isBusy}
-                                        onClick={handleDeleteAccount}
+                                        onClick={() => toast("Delete account flow can be connected next.")}
+                                        whileHover={{ y: -2 }}
+                                        whileTap={{ scale: 0.98 }}
                                     >
                                         Delete Account
-                                    </button>
-                                </div>
-                            ) : null}
+                                    </motion.button>
+                                </motion.div>
+                            )}
                         </div>
                     </SectionShell>
 
-                    <SectionShell delay={0.06}>
+                    {/* ── BILLING ── */}
+                    <SectionShell delay={0.07}>
                         <div className="stg-cardHead">
                             <div className="stg-cardHeadLeft">
                                 <h2 className="stg-cardTitle">Billing</h2>
@@ -574,49 +503,47 @@ export default function Settings() {
                                     Subscription state, billing cadence, and renewal information.
                                 </p>
                             </div>
-
-                            <span className={`stg-chip stg-chip--plan stg-chip--${planTone(plan)}`}>
+                            <motion.span
+                                className={`stg-chip stg-chip--plan stg-chip--${planTone(plan)}`}
+                                initial={{ opacity: 0, scale: 0.85 }}
+                                animate={{ opacity: 1, scale: 1 }}
+                                transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1], delay: 0.17 }}
+                            >
                                 {isBusy ? "…" : `Plan: ${displayPlanLabel}`}
-                            </span>
+                            </motion.span>
                         </div>
 
                         <div className="stg-cardBody">
                             <div className="stg-stats3">
-                                <div className="stg-stat">
-                                    <div className="stg-statK">Status</div>
-                                    <div className="stg-statV">
-                                        {isBusy ? (
-                                            <span className="stg-skelText w70" />
-                                        ) : (
-                                            <span className={`stg-statBadge stg-statBadge--${statusTone(subscriptionStatus)}`}>
-                                                {pick(subscriptionStatus)}
-                                            </span>
-                                        )}
-                                    </div>
-                                </div>
+                                <StatCard label="Status" delay={0.12}>
+                                    {isBusy ? (
+                                        <span className="stg-skelText w70" />
+                                    ) : (
+                                        <span className={`stg-statBadge stg-statBadge--${statusTone(subscriptionStatus)}`}>
+                                            {pick(subscriptionStatus)}
+                                        </span>
+                                    )}
+                                </StatCard>
 
-                                <div className="stg-stat">
-                                    <div className="stg-statK">Interval</div>
-                                    <div className="stg-statV">
-                                        {isBusy ? <span className="stg-skelText w60" /> : pick(planInterval)}
-                                    </div>
-                                </div>
+                                <StatCard label="Interval" delay={0.17}>
+                                    {isBusy ? <span className="stg-skelText w60" /> : pick(planInterval)}
+                                </StatCard>
 
-                                <div className="stg-stat">
-                                    <div className="stg-statK">Renews</div>
-                                    <div className="stg-statV">
-                                        {isBusy ? (
-                                            <span className="stg-skelText w64" />
-                                        ) : currentPeriodEnd ? (
-                                            fmtDate(currentPeriodEnd)
-                                        ) : (
-                                            "—"
-                                        )}
-                                    </div>
-                                </div>
+                                <StatCard label="Renews" delay={0.22}>
+                                    {isBusy ? (
+                                        <span className="stg-skelText w64" />
+                                    ) : currentPeriodEnd ? (
+                                        fmtDate(currentPeriodEnd)
+                                    ) : "—"}
+                                </StatCard>
                             </div>
 
-                            <div className="stg-billingHero">
+                            <motion.div
+                                className="stg-billingHero"
+                                initial={{ opacity: 0, y: 10, scale: 0.98 }}
+                                animate={{ opacity: 1, y: 0, scale: 1 }}
+                                transition={{ duration: 0.36, ease: [0.22, 1, 0.36, 1], delay: 0.2 }}
+                            >
                                 <div className="stg-billingHeroCopy">
                                     <h3 className="stg-subTitle">Manage your subscription</h3>
                                     <p className="stg-subText">
@@ -625,33 +552,42 @@ export default function Settings() {
                                 </div>
 
                                 <div className="stg-actions stg-actions--billing">
-                                    <button
+                                    <motion.button
                                         type="button"
                                         className="kx-btn kx-btn--white stg-btnWhiteOnOrange"
                                         onClick={openBillingPortal}
                                         disabled={isBusy || hasError}
+                                        whileHover={{ y: -2, boxShadow: "0 10px 24px rgba(0,0,0,0.14)" }}
+                                        whileTap={{ scale: 0.98 }}
                                     >
                                         Manage Billing
-                                    </button>
-
-                                    <button
+                                    </motion.button>
+                                    <motion.button
                                         type="button"
                                         className="kx-btn kx-btn--white stg-btnGhostOnOrange"
                                         onClick={() => (window.location.href = "/upgrade-plan")}
                                         disabled={isBusy}
+                                        whileHover={{ y: -2, background: "rgba(255,255,255,0.22)" }}
+                                        whileTap={{ scale: 0.98 }}
                                     >
                                         View Plans
-                                    </button>
+                                    </motion.button>
                                 </div>
-                            </div>
+                            </motion.div>
 
-                            <div className="stg-minorText">
+                            <motion.p
+                                className="stg-minorText"
+                                initial={{ opacity: 0 }}
+                                animate={{ opacity: 1 }}
+                                transition={{ duration: 0.28, delay: 0.3 }}
+                            >
                                 Your payment method, invoices, and subscription controls are handled securely through Stripe.
-                            </div>
+                            </motion.p>
                         </div>
                     </SectionShell>
 
-                    <SectionShell delay={0.1}>
+                    {/* ── INVOICES ── */}
+                    <SectionShell delay={0.12}>
                         <div className="stg-cardHead">
                             <div className="stg-cardHeadLeft">
                                 <h2 className="stg-cardTitle">Invoices</h2>
@@ -683,65 +619,70 @@ export default function Settings() {
                                             ))}
                                         </>
                                     ) : invoices.length ? (
-                                        invoices.map((inv, idx) => {
-                                            const id = inv?.id || idx;
-                                            const date = inv?.created;
-                                            const amountMinor = inv?.total ?? inv?.amount_paid ?? inv?.amount_due;
-                                            const currency = inv?.currency;
-                                            const status = inv?.status || "—";
-                                            const pdf = inv?.invoice_pdf || inv?.hosted_invoice_url;
+                                        <AnimatePresence>
+                                            {invoices.map((inv, idx) => {
+                                                const id = inv?.id || idx;
+                                                const date = inv?.created;
+                                                const amountMinor = inv?.total ?? inv?.amount_paid ?? inv?.amount_due;
+                                                const currency = inv?.currency;
+                                                const status = inv?.status || "—";
+                                                const pdf = inv?.invoice_pdf || inv?.hosted_invoice_url;
 
-                                            return (
-                                                <div className="stg-row stg-row4" key={id}>
-                                                    <div>
-                                                        <span className="stg-mobileLabel">Date</span>
-                                                        {fmtDate(date)}
-                                                    </div>
-
-                                                    <div>
-                                                        <span className="stg-mobileLabel">Amount</span>
-                                                        {fmtMoneyFromMinor(amountMinor, currency)}
-                                                    </div>
-
-                                                    <div>
-                                                        <span className="stg-mobileLabel">Status</span>
-                                                        <span className={`stg-badge ${safeLower(status)}`}>
-                                                            {String(status)}
-                                                        </span>
-                                                    </div>
-
-                                                    <div>
-                                                        <span className="stg-mobileLabel">Receipt</span>
-                                                        {pdf ? (
-                                                            <a
-                                                                className="stg-link"
-                                                                href={pdf}
-                                                                target="_blank"
-                                                                rel="noreferrer"
-                                                            >
-                                                                Download
-                                                            </a>
-                                                        ) : (
-                                                            "—"
-                                                        )}
-                                                    </div>
-                                                </div>
-                                            );
-                                        })
+                                                return (
+                                                    <motion.div
+                                                        className="stg-row stg-row4"
+                                                        key={id}
+                                                        custom={idx}
+                                                        variants={rowVariants}
+                                                        initial="hidden"
+                                                        animate="visible"
+                                                    >
+                                                        <div>
+                                                            <span className="stg-mobileLabel">Date</span>
+                                                            {fmtDate(date)}
+                                                        </div>
+                                                        <div>
+                                                            <span className="stg-mobileLabel">Amount</span>
+                                                            {fmtMoneyFromMinor(amountMinor, currency)}
+                                                        </div>
+                                                        <div>
+                                                            <span className="stg-mobileLabel">Status</span>
+                                                            <span className={`stg-badge ${safeLower(status)}`}>
+                                                                {String(status)}
+                                                            </span>
+                                                        </div>
+                                                        <div>
+                                                            <span className="stg-mobileLabel">Receipt</span>
+                                                            {pdf ? (
+                                                                <a className="stg-link" href={pdf} target="_blank" rel="noreferrer">
+                                                                    Download
+                                                                </a>
+                                                            ) : "—"}
+                                                        </div>
+                                                    </motion.div>
+                                                );
+                                            })}
+                                        </AnimatePresence>
                                     ) : (
-                                        <div className="stg-emptyRow">
+                                        <motion.div
+                                            className="stg-emptyRow"
+                                            initial={{ opacity: 0 }}
+                                            animate={{ opacity: 1 }}
+                                            transition={{ duration: 0.28 }}
+                                        >
                                             <div className="stg-sectionTitle">No invoices yet</div>
                                             <div className="stg-sectionText">
                                                 Finalized invoices will appear here once they are generated.
                                             </div>
-                                        </div>
+                                        </motion.div>
                                     )}
                                 </div>
                             </div>
                         </div>
                     </SectionShell>
 
-                    <SectionShell delay={0.14}>
+                    {/* ── PAYMENTS ── */}
+                    <SectionShell delay={0.17}>
                         <div className="stg-cardHead">
                             <div className="stg-cardHeadLeft">
                                 <h2 className="stg-cardTitle">Payments</h2>
@@ -773,52 +714,64 @@ export default function Settings() {
                                             ))}
                                         </>
                                     ) : payments.length ? (
-                                        payments.map((p, idx) => {
-                                            const id = p?.id || idx;
-                                            const date = p?.created;
-                                            const amountMinor = p?.amount;
-                                            const currency = p?.currency;
-                                            const status = p?.status || "—";
-                                            const desc = p?.description || p?.receipt_email || "Payment";
+                                        <AnimatePresence>
+                                            {payments.map((p, idx) => {
+                                                const id = p?.id || idx;
+                                                const date = p?.created;
+                                                const amountMinor = p?.amount;
+                                                const currency = p?.currency;
+                                                const status = p?.status || "—";
+                                                const desc = p?.description || p?.receipt_email || "Payment";
 
-                                            return (
-                                                <div className="stg-row stg-row4p" key={id}>
-                                                    <div>
-                                                        <span className="stg-mobileLabel">Date</span>
-                                                        {fmtDate(date)}
-                                                    </div>
-
-                                                    <div>
-                                                        <span className="stg-mobileLabel">Amount</span>
-                                                        {fmtMoneyFromMinor(amountMinor, currency)}
-                                                    </div>
-
-                                                    <div>
-                                                        <span className="stg-mobileLabel">Status</span>
-                                                        <span className={`stg-badge ${safeLower(status)}`}>
-                                                            {String(status)}
-                                                        </span>
-                                                    </div>
-
-                                                    <div className="stg-ellipsis" title={String(desc)}>
-                                                        <span className="stg-mobileLabel">Description</span>
-                                                        {String(desc)}
-                                                    </div>
-                                                </div>
-                                            );
-                                        })
+                                                return (
+                                                    <motion.div
+                                                        className="stg-row stg-row4p"
+                                                        key={id}
+                                                        custom={idx}
+                                                        variants={rowVariants}
+                                                        initial="hidden"
+                                                        animate="visible"
+                                                    >
+                                                        <div>
+                                                            <span className="stg-mobileLabel">Date</span>
+                                                            {fmtDate(date)}
+                                                        </div>
+                                                        <div>
+                                                            <span className="stg-mobileLabel">Amount</span>
+                                                            {fmtMoneyFromMinor(amountMinor, currency)}
+                                                        </div>
+                                                        <div>
+                                                            <span className="stg-mobileLabel">Status</span>
+                                                            <span className={`stg-badge ${safeLower(status)}`}>
+                                                                {String(status)}
+                                                            </span>
+                                                        </div>
+                                                        <div className="stg-ellipsis" title={String(desc)}>
+                                                            <span className="stg-mobileLabel">Description</span>
+                                                            {String(desc)}
+                                                        </div>
+                                                    </motion.div>
+                                                );
+                                            })}
+                                        </AnimatePresence>
                                     ) : (
-                                        <div className="stg-emptyRow">
+                                        <motion.div
+                                            className="stg-emptyRow"
+                                            initial={{ opacity: 0 }}
+                                            animate={{ opacity: 1 }}
+                                            transition={{ duration: 0.28 }}
+                                        >
                                             <div className="stg-sectionTitle">No completed payments yet</div>
                                             <div className="stg-sectionText">
                                                 Successful charges will appear here once they are processed.
                                             </div>
-                                        </div>
+                                        </motion.div>
                                     )}
                                 </div>
                             </div>
                         </div>
                     </SectionShell>
+
                 </div>
             </div>
         </DashboardLayout>
