@@ -188,7 +188,7 @@ export default function PlasticCardPageBase({
         const pageUrl = `${siteUrl}/products/${productKey}`;
 
         const colorName = String(variant || "").charAt(0).toUpperCase() + String(variant || "").slice(1);
-        const description = `KonarCard ${colorName} NFC business card. Tap to share your digital profile. No app needed. Works on all phones. Free digital profile included. £19.99, UK delivery.`;
+        const description = `The KonarCard ${colorName} is an NFC business card that shares your digital profile with a single tap. One-off cost of £19.99. Free profile included. UK delivery.`;
 
         const toAbsolute = (src) => {
             const s = String(src || "");
@@ -199,7 +199,7 @@ export default function PlasticCardPageBase({
         };
         const imageUrl = toAbsolute(frontSrc);
 
-        document.title = `${colorName} NFC Business Card | KonarCard UK | £19.99`;
+        document.title = `KonarCard ${colorName} NFC Business Card | KonarCard UK`;
 
         const setMeta = (attr, key, value) => {
             const sel = `meta[${attr}="${key}"]`;
