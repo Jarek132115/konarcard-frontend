@@ -48,13 +48,18 @@ function upsertJsonLd(id, payload) {
  * @param {string} opts.title
  * @param {string} opts.description
  * @param {string} [opts.ogType="website"]
+ * @param {boolean} [opts.noindex=false] - When true, sets meta robots
+ *   to "noindex, nofollow" so search engines skip the page.
  */
-export function useSeo({ path, title, description, ogType = "website" }) {
+export function useSeo({ path, title, description, ogType = "website", noindex = false }) {
     useEffect(() => {
         const url = `${SITE_URL}${path}`;
         if (title) document.title = title;
         if (description) upsertMeta("name", "description", description);
         upsertLink("canonical", url);
+
+        // Robots: noindex,nofollow for auth/dashboard pages, indexable otherwise
+        upsertMeta("name", "robots", noindex ? "noindex, nofollow" : "index, follow");
 
         if (title) upsertMeta("property", "og:title", title);
         if (description) upsertMeta("property", "og:description", description);
@@ -64,7 +69,7 @@ export function useSeo({ path, title, description, ogType = "website" }) {
         upsertMeta("name", "twitter:card", "summary_large_image");
         if (title) upsertMeta("name", "twitter:title", title);
         if (description) upsertMeta("name", "twitter:description", description);
-    }, [path, title, description, ogType]);
+    }, [path, title, description, ogType, noindex]);
 }
 
 export { SITE_URL, upsertMeta, upsertLink, upsertJsonLd };

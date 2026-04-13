@@ -6,6 +6,8 @@ import api, { BASE_URL } from "../../services/api";
 import Navbar from "../../components/Navbar";
 import "../../styling/login.css";
 
+import { useSeo } from "../../utils/seo";
+
 /* Social logos */
 import GoogleIcon   from "../../assets/icons/Google-Icon.svg";
 import FacebookIcon from "../../assets/icons/Facebook-Icon.svg";
@@ -56,6 +58,14 @@ function isAdminUser(userLike) {
 }
 
 export default function Login() {
+    useSeo({
+        path: "/login",
+        title: "Log In to KonarCard",
+        description:
+            "Log in to your KonarCard account to manage your digital business card profile.",
+        noindex: true,
+    });
+
     const toast     = useKonarToast();
     const navigate  = useNavigate();
     const location  = useLocation();

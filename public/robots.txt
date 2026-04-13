@@ -1,4 +1,32 @@
 User-agent: *
 Allow: /
 
+# Authentication pages — not for indexing
+Disallow: /login
+Disallow: /register
+Disallow: /reset-password
+Disallow: /oauth
+
+# Dashboard / authenticated user area — not for indexing
+Disallow: /dashboard
+Disallow: /profiles
+Disallow: /cards
+Disallow: /analytics
+Disallow: /contact-book
+Disallow: /settings
+Disallow: /upgrade-plan
+Disallow: /billing
+Disallow: /myorders
+Disallow: /nfccards
+Disallow: /notifications
+Disallow: /profile
+Disallow: /myprofile
+Disallow: /claim
+Disallow: /contact-support
+Disallow: /helpcentreinterface
+Disallow: /successsubscription
+
+# Admin area — not for indexing
+Disallow: /admin
+
 Sitemap: https://www.konarcard.com/sitemap.xml

@@ -6,6 +6,8 @@ import api, { BASE_URL } from "../../services/api";
 import Navbar from "../../components/Navbar";
 import "../../styling/login.css";
 
+import { useSeo } from "../../utils/seo";
+
 import GoogleIcon   from "../../assets/icons/Google-Icon.svg";
 import FacebookIcon from "../../assets/icons/Facebook-Icon.svg";
 import AppleIcon    from "../../assets/icons/Apple-Icon.svg";
@@ -47,6 +49,14 @@ function buildCardsProductUrl(productKey) {
 }
 
 export default function Register() {
+    useSeo({
+        path: "/register",
+        title: "Create Your KonarCard Account",
+        description:
+            "Sign up for KonarCard and set up your digital business card profile in minutes.",
+        noindex: true,
+    });
+
     const toast     = useKonarToast();
     const navigate  = useNavigate();
     const location  = useLocation();

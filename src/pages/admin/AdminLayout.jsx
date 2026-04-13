@@ -1,5 +1,5 @@
 // src/pages/admin/AdminLayout.jsx
-import React from "react";
+import React, { useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import LogoIcon from "../../assets/icons/Logo-Icon.svg";
 import AdminErrorBoundary from "./AdminErrorBoundary";
@@ -44,6 +44,23 @@ function ActionButton({ children, tone = "ghost", className = "", ...props }) {
 export default function AdminLayout({ children }) {
     const navigate = useNavigate();
     const location = useLocation();
+
+    // Admin pages must never be indexed by search engines
+    useEffect(() => {
+        const sel = `meta[name="robots"]`;
+        let el = document.head.querySelector(sel);
+        if (!el) {
+            el = document.createElement("meta");
+            el.setAttribute("name", "robots");
+            document.head.appendChild(el);
+        }
+        el.setAttribute("content", "noindex, nofollow");
+
+        return () => {
+            const restore = document.head.querySelector(`meta[name="robots"]`);
+            if (restore) restore.setAttribute("content", "index, follow");
+        };
+    }, []);
 
     async function logout() {
         try {

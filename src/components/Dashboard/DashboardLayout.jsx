@@ -30,6 +30,24 @@ export default function DashboardLayout({
         }
     }, [pathname]);
 
+    // Dashboard pages must never be indexed by search engines
+    useEffect(() => {
+        const sel = `meta[name="robots"]`;
+        let el = document.head.querySelector(sel);
+        if (!el) {
+            el = document.createElement("meta");
+            el.setAttribute("name", "robots");
+            document.head.appendChild(el);
+        }
+        el.setAttribute("content", "noindex, nofollow");
+
+        return () => {
+            // Restore default when leaving the dashboard so public pages can be indexed
+            const restore = document.head.querySelector(`meta[name="robots"]`);
+            if (restore) restore.setAttribute("content", "index, follow");
+        };
+    }, []);
+
     useEffect(() => {
         const onResize = () => {
             const mobileNow = window.innerWidth <= MOBILE_NAV_BREAKPOINT;
