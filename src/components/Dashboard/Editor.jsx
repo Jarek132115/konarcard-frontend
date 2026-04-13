@@ -13,7 +13,7 @@ import SaveProfileIcon from "../../assets/icons/SaveProfileIcon.svg";
 import ResetProfileIcon from "../../assets/icons/ResetProfileIcon.svg";
 
 /* Locked template icon */
-import TemplateLockIcon from "../../assets/icons/TemplateLockIcon.svg";
+import TemplateLockIcon from "../../assets/icons/LockUpgrade.svg";
 import ReviewStar from "../../assets/icons/ReviewStar.svg";
 
 /* Upgrade modal image */
@@ -186,7 +186,28 @@ export default function Editor({
 
     const isTemplateLocked = (templateId) => !isSubscribed && templateId !== "template-1";
 
+    // Track pointer-down position so we can tell a click from a drag
+    const templatePointerDownRef = useRef({ x: 0, y: 0, moved: false });
+
+    const handleTemplatePointerDown = (e) => {
+        templatePointerDownRef.current = {
+            x: e.clientX,
+            y: e.clientY,
+            moved: false,
+        };
+    };
+
+    const handleTemplatePointerMove = (e) => {
+        const start = templatePointerDownRef.current;
+        if (!start) return;
+        if (Math.abs(e.clientX - start.x) > 6 || Math.abs(e.clientY - start.y) > 6) {
+            templatePointerDownRef.current.moved = true;
+        }
+    };
+
     const handleTemplateSelect = (id) => {
+        // Ignore clicks that happened after a drag
+        if (templatePointerDownRef.current?.moved) return;
         if (isSaving) return;
         if (isTemplateLocked(id)) {
             openUpgrade("templates");
@@ -397,40 +418,33 @@ export default function Editor({
                     aria-label="Upgrade to Plus"
                 >
                     <div className="kce-modal" onClick={(e) => e.stopPropagation()}>
-                        <div className="kce-modalTopBar">
-                            <div className="kce-modalHeroBadge">Plus</div>
+                        <button
+                            type="button"
+                            className="kce-modalClose"
+                            onClick={closeUpgrade}
+                            aria-label="Close"
+                        >
+                            ✕
+                        </button>
 
-                            <button
-                                type="button"
-                                className="kce-modalClose"
-                                onClick={closeUpgrade}
-                                aria-label="Close"
-                            >
-                                ✕
-                            </button>
+                        <div className="kce-modalHeader">
+                            <div className="kce-modalBadge">
+                                <img src={TemplateLockIcon} alt="" />
+                                <span>Plus plan</span>
+                            </div>
+                            <h2 className="kce-modalTitle">Upgrade to Plus</h2>
+                            <p className="kce-modalText">
+                                Unlock every template, more content space, and full analytics.
+                            </p>
                         </div>
 
-                        <div className="kce-modalHeroMedia">
-                            <img
-                                src={UpgradeToPlusImage}
-                                alt=""
-                                className="kce-modalHeroImg"
-                            />
-                        </div>
-
-                        <div className="kce-modalTitle">Upgrade to Plus</div>
-                        <div className="kce-modalText">
-                            Unlock more customisation, more content space, and the full analytics
-                            experience for your KonarCard profile.
-                        </div>
-
-                        <div className="kce-modalFeaturePills">
-                            <span className="kce-modalFeaturePill">Unlock all 5 templates</span>
-                            <span className="kce-modalFeaturePill">Add up to 12 work images</span>
-                            <span className="kce-modalFeaturePill">Add up to 12 services</span>
-                            <span className="kce-modalFeaturePill">Add up to 12 reviews</span>
-                            <span className="kce-modalFeaturePill">Unlock full analytics</span>
-                        </div>
+                        <ul className="kce-modalFeatures">
+                            <li><span className="kce-modalCheck">✓</span>Unlock all 5 templates</li>
+                            <li><span className="kce-modalCheck">✓</span>Add up to 12 work images</li>
+                            <li><span className="kce-modalCheck">✓</span>Add up to 12 services</li>
+                            <li><span className="kce-modalCheck">✓</span>Add up to 12 reviews</li>
+                            <li><span className="kce-modalCheck">✓</span>Full analytics dashboard</li>
+                        </ul>
 
                         <div className="kce-modalActions">
                             <button
@@ -531,6 +545,8 @@ export default function Editor({
                                 dragElastic={0.06}
                                 dragMomentum={true}
                                 whileTap={{ cursor: "grabbing" }}
+                                onPointerDown={handleTemplatePointerDown}
+                                onPointerMove={handleTemplatePointerMove}
                             >
                                 {TEMPLATE_IDS.map((t) => {
                                     const locked = isTemplateLocked(t);
