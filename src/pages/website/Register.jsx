@@ -298,6 +298,14 @@ export default function Register() {
     };
 
     const startOAuth = (provider) => {
+        if (provider === "facebook") {
+            toast("Coming soon — Facebook login will be available shortly.");
+            return;
+        }
+        if (provider === "apple") {
+            toast("Coming soon — Apple login will be available shortly.");
+            return;
+        }
         if ((hasCheckoutIntent || hasNfcIntent) && !sanitizeSlug(data.username || claimInput)) {
             toast.error("Please claim your link before continuing.");
             setForceClaimStep(true);
