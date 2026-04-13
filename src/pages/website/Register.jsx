@@ -78,7 +78,7 @@ export default function Register() {
     };
 
     const goToVerifyStep = (msg) => {
-        toast.success(msg || "Check your inbox — verification code sent.");
+        toast.success(msg || "Check your inbox. Verification code sent.");
         setCode("");
         setVerificationStep(true);
         setCooldown(30);
@@ -254,7 +254,7 @@ export default function Register() {
         try {
             const res = await api.post("/verify-email", { email, code: finalCode });
             if (res?.data?.error) { toast.error(res.data.error); return; }
-            toast.success("Email verified — logging you in.");
+            toast.success("Email verified. Logging you in.");
             const loginRes = await api.post("/login", { email, password: data.password });
             if (loginRes?.data?.error) {
                 if (loginRes.data?.resend) { toast.error(loginRes.data?.error || "Please verify your email."); setCooldown(30); return; }
@@ -278,7 +278,7 @@ export default function Register() {
         try {
             const r = await api.post("/resend-code", { email });
             if (r?.data?.error) { toast.error(r.data.error); return; }
-            toast.success("New code sent — check your inbox.");
+            toast.success("New code sent. Check your inbox.");
             setCooldown(30);
             setCode("");
             setVerificationStep(true);
@@ -384,7 +384,7 @@ export default function Register() {
                                         Claim your <span className="kc-auth-accent">link</span>
                                     </h1>
                                     <p className="kc-subtitle">
-                                        Your unique link — when someone taps your card, they see your digital profile.
+                                        Your unique link. When someone taps your card, they see your digital profile.
                                     </p>
 
                                     <form onSubmit={claimLinkContinue} className="kc-form">

@@ -10,7 +10,7 @@ import { AuthContext } from "../../components/AuthContext";
 import { useKonarToast } from "../../hooks/useKonarToast";
 
 function formatAmount(amount, currency = "gbp") {
-  if (typeof amount !== "number") return "—";
+  if (typeof amount !== "number") return "N/A";
   const value = amount / 100;
   return new Intl.NumberFormat(undefined, {
     style: "currency",
@@ -185,7 +185,7 @@ export default function SuccessCard() {
   const order = confirmedOrder || (orderId ? orders[0] : latestCardOrder);
 
   const amountPaid = useMemo(() => {
-    if (!order) return "—";
+    if (!order) return "N/A";
     return formatAmount(
       typeof order.amountTotal === "number" ? order.amountTotal : 0,
       order.currency || "gbp"
@@ -194,9 +194,9 @@ export default function SuccessCard() {
 
   const quantity = order?.quantity ?? order?.metadata?.quantity ?? 1;
   const status = (order?.status || "paid").toLowerCase();
-  const orderIdDisplay = order?._id || order?.id || "—";
+  const orderIdDisplay = order?._id || order?.id || "N/A";
   const estimatedDelivery =
-    order?.deliveryWindow || order?.metadata?.estimatedDelivery || "—";
+    order?.deliveryWindow || order?.metadata?.estimatedDelivery || "N/A";
 
   const deliveryName =
     order?.deliveryName || order?.metadata?.deliveryName || "";
@@ -211,7 +211,7 @@ export default function SuccessCard() {
     if (trackingUrl) {
       window.open(trackingUrl, "_blank", "noopener,noreferrer");
     } else {
-      toast.info("Tracking will be available once your card is dispatched — we’ll email you.");
+      toast.info("Tracking will be available once your card is dispatched. We’ll email you.");
     }
   }
 
@@ -391,7 +391,7 @@ export default function SuccessCard() {
                   <span className="desktop-body-s kv-value">
                     {order?.createdAt
                       ? new Date(order.createdAt).toLocaleString()
-                      : "—"}
+                      : "N/A"}
                   </span>
                 </div>
                 <div className="kv-row">

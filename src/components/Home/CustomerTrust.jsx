@@ -76,7 +76,7 @@ export default function CustomerTrust() {
                     </h2>
 
                     <p className="kc-subheading kht__sub">
-                        Put your work, reviews, and contact options in one place — so
+                        Put your work, reviews, and contact options in one place so
                         <br />
                         customers choose you faster.
                     </p>

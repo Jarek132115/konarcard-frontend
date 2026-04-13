@@ -603,9 +603,11 @@ canvas {
 }
 
 .kc-specValue {
-    max-width: 34ch;
+    max-width: 42ch;
     margin-left: auto !important;
     margin-right: auto !important;
+    text-wrap: pretty;
+    overflow-wrap: break-word;
 }
 
 /* =========================================================

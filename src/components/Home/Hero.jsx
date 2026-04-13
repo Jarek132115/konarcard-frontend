@@ -150,7 +150,7 @@ export default function Hero() {
             {/* ── Heading copy ──────────────────────────────── */}
             <div className="kc-homeHero__inner">
 
-                {/* Subtle grid texture — covers the full heading area */}
+                {/* Subtle grid texture, covers the full heading area */}
                 <div className="kc-homeHero__gridBg" aria-hidden="true" />
                 <motion.p className="kc-pill kc-homeHero__pill" {...fadeUp(0.06)}>
                     Built for UK trades
@@ -163,7 +163,7 @@ export default function Hero() {
                 </motion.h1>
 
                 <motion.p className="kc-subheading kc-homeHero__sub" {...fadeUp(0.22)}>
-                    Tap your card to any phone and your profile opens — your details, your services, your reviews, all in one place.
+                    Tap your card to any phone. Your profile opens straight away. Details, services, reviews, all in one place.
                 </motion.p>
 
                 <motion.div className="kc-homeHero__ctaRow" {...fadeUp(0.30)}>
@@ -176,7 +176,7 @@ export default function Hero() {
                 </motion.div>
             </div>
 
-            {/* ── Phone carousel — contained width, clipped ── */}
+            {/* ── Phone carousel, contained width, clipped ── */}
             <motion.div
                 className="kc-homeHero__carouselOuter"
                 initial={{ opacity: 0 }}

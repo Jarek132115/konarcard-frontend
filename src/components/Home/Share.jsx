@@ -24,14 +24,14 @@ const ITEMS = [
     {
         k: "nfc",
         title: "Tap with KonarCard",
-        desc: "Tap your card — your profile opens instantly.",
+        desc: "Tap your card. Your profile opens instantly.",
         img: ShareFastest,
         badge: "Fastest Way",
     },
     {
         k: "phone",
         title: "Scan the QR backup",
-        desc: "Scan with any phone camera — opens instantly.",
+        desc: "Scan with any phone camera. Opens instantly.",
         img: SharePhone,
         badge: "Works on Any Phone",
     },
@@ -86,7 +86,7 @@ export default function Share() {
                                     <img
                                         className="khs-img"
                                         src={it.img}
-                                        alt={`${it.title} — KonarCard sharing method`}
+                                        alt={`${it.title}, KonarCard sharing method`}
                                         loading="lazy"
                                         decoding="async"
                                     />

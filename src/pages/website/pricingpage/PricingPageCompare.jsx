@@ -65,7 +65,7 @@ function CellValue({ v }) {
             </span>
         );
     }
-    return <span className="prc-cv prc-cv--text">{String(v ?? "—")}</span>;
+    return <span className="prc-cv prc-cv--text">{String(v ?? "N/A")}</span>;
 }
 
 export default function PricingPageCompare() {
@@ -75,11 +75,9 @@ export default function PricingPageCompare() {
 
                 <motion.header className="prc-head" {...fadeUpInView(0)}>
                     <p className="kc-pill prc-pill">Compare</p>
-                    <h2 className="h3 prc-title">Compare plans</h2>
+                    <h2 className="h3 prc-title">Compare the Plans</h2>
                     <p className="kc-subheading prc-sub">
-                        A box of 250 paper business cards costs around £20 and goes out of date the
-                        moment you change your number. KonarCard is the same price — once — and
-                        never needs reprinting.
+                        A box of 250 paper cards costs around £20 and goes out of date the moment anything changes. KonarCard costs the same, once, and never needs reprinting.
                     </p>
                 </motion.header>
 
@@ -117,7 +115,7 @@ export default function PricingPageCompare() {
                                         {row.hint && <span className="prc-featHint">{row.hint}</span>}
                                     </div>
 
-                                    {/* Plan cells — wrapped so they can flex on mobile */}
+                                    {/* Plan cells, wrapped so they can flex on mobile */}
                                     <div className="prc-cells">
                                         <div className="prc-cell prc-cell--free" role="cell">
                                             <span className="prc-mobileLabel" aria-hidden="true">Free</span>

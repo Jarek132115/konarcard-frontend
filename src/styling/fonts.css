@@ -202,6 +202,11 @@ body {
   font-family: "Cal Sans", sans-serif;
   font-weight: 400;
   color: var(--kc-text-primary);
+  /* Natural, balanced wrapping so headings never look lopsided */
+  text-wrap: balance;
+  overflow-wrap: break-word;
+  word-break: normal;
+  hyphens: manual;
 }
 
 .h1 {
@@ -239,7 +244,11 @@ body {
   font-weight: 400;
   font-size: var(--kc-sub-size);
   line-height: var(--kc-sub-line);
+  letter-spacing: -0.005em;
   color: var(--kc-text-secondary);
+  /* Prevents awkward orphaned last lines */
+  text-wrap: pretty;
+  overflow-wrap: break-word;
 }
 
 .kc-subheading-md {
@@ -247,7 +256,10 @@ body {
   font-weight: 500;
   font-size: var(--kc-sub-size);
   line-height: var(--kc-sub-line);
+  letter-spacing: -0.005em;
   color: var(--kc-text-secondary);
+  text-wrap: pretty;
+  overflow-wrap: break-word;
 }
 
 .body,
@@ -257,7 +269,10 @@ body {
   font-weight: 400;
   font-size: var(--kc-body-size);
   line-height: var(--kc-body-line);
+  letter-spacing: -0.002em;
   color: var(--kc-text-secondary);
+  text-wrap: pretty;
+  overflow-wrap: break-word;
 }
 
 .button-text {

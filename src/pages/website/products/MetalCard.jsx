@@ -262,9 +262,9 @@ export default function MetalCard() {
     const features = useMemo(
         () => [
             { icon: OneJobIcon, t: "Premium metal that stands out", s: "Heavier feel designed to leave a strong first impression." },
-            { icon: NoReprintsIcon, t: "No reprints, ever", s: "Update your details anytime — no reordering required." },
+            { icon: NoReprintsIcon, t: "No reprints, ever", s: "Update your details anytime. No reordering required." },
             { icon: UpToDateIcon, t: "Always up to date", s: "Your latest work, reviews, and services stay live instantly." },
-            { icon: WorksEverywhereIcon, t: "Works everywhere", s: "In person, online, or on the phone — no apps needed." },
+            { icon: WorksEverywhereIcon, t: "Works everywhere", s: "In person, online, or on the phone. No apps needed." },
             { icon: HammerIcon, t: "Built for serious trades", s: "Clean, practical, and made for the way you actually work." },
             { icon: ProfessionalFastIcon, t: "Looks premium fast", s: "Metal helps you look the part before you even speak." },
         ],
@@ -273,12 +273,12 @@ export default function MetalCard() {
 
     const specs = useMemo(
         () => [
-            { k: "Card size", v: "85.6 × 54 mm — standard wallet size" },
-            { k: "Thickness", v: "0.8 mm — premium metal build" },
+            { k: "Card size", v: "85.6 × 54 mm, standard wallet size" },
+            { k: "Thickness", v: "0.8 mm, premium metal build" },
             { k: "Material", v: "Premium metal body with a durable finish" },
-            { k: "NFC", v: "NFC enabled — works with iPhone & Android" },
+            { k: "NFC", v: "NFC enabled, works with iPhone & Android" },
             { k: "QR backup", v: "Printed QR code on the back for instant access" },
-            { k: "Setup", v: "Linked to your Konar profile — update anytime, no reprints" },
+            { k: "Setup", v: "Linked to your Konar profile, update anytime, no reprints" },
         ],
         []
     );
@@ -378,7 +378,7 @@ export default function MetalCard() {
                                 <h1 className="h2 kc-premHero__title">Metal NFC Business Card (UK)</h1>
 
                                 <p className="kc-premHero__sub">
-                                    Premium metal that stands out — tap to share your profile in seconds, with a QR backup so it works on every phone.
+                                    Premium metal that stands out. Tap to share your profile in seconds, with a QR backup so it works on every phone.
                                 </p>
 
                                 <div className="kc-topHero__badges">
@@ -596,7 +596,7 @@ export default function MetalCard() {
                             </h2>
 
                             <p className="kc-subheading khv__sub">
-                                Make a strong first impression instantly — and update your details anytime without reprinting.
+                                Make a strong first impression instantly, and update your details anytime without reprinting.
                             </p>
                         </header>
 

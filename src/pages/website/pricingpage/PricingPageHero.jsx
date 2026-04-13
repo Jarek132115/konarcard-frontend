@@ -22,7 +22,7 @@ const fadeUp = (delay = 0) => ({
 function fmtGBP(n) {
     const cleaned = typeof n === "string" ? n.replace(/[^0-9.]/g, "") : n;
     const num = parseFloat(cleaned);
-    if (!Number.isFinite(num)) return "—";
+    if (!Number.isFinite(num)) return "N/A";
     return `£${num.toFixed(2)}`;
 }
 
@@ -145,26 +145,26 @@ export default function PricingPageHero({
         return [
             {
                 key: "free",
-                title: "Free",
+                title: "Free Plan",
                 icon: FreePlanIcon,
-                tag: "Try it without paying",
+                tag: "Start without paying",
                 featured: false,
                 price: "£0",
                 cadence: "Free forever",
-                meta: ["No card required to try it."],
+                meta: ["No card required to get started."],
                 highlights: [
                     "One profile",
-                    "Up to 6 work photos",
-                    "3 services listed",
-                    "3 reviews shown",
-                    "Tap or QR sharing",
+                    "Up to six work photos",
+                    "Three services listed",
+                    "Three reviews shown",
+                    "Basic view count",
                     "Unlimited updates",
                 ],
                 cta: getCTA("free"),
             },
             {
                 key: "plus",
-                title: "Plus",
+                title: "Plus Plan",
                 icon: PlusPlanIcon,
                 tag: "Most popular",
                 featured: true,
@@ -175,20 +175,20 @@ export default function PricingPageHero({
                     plusSavings ? plusSavings : null,
                 ].filter(Boolean),
                 highlights: [
-                    "All 5 profile templates",
-                    "Up to 12 work photos",
-                    "12 services listed",
-                    "12 reviews shown",
+                    "All five profile templates",
+                    "Up to twelve work photos",
+                    "Twelve services listed",
+                    "Twelve reviews shown",
                     "Full analytics",
-                    "See who views your profile",
+                    "See who views and when",
                 ],
                 cta: getCTA("plus", plusKey),
             },
             {
                 key: "teams",
-                title: "Teams",
+                title: "Extra Profile",
                 icon: TeamsPlanIcon,
-                tag: "Multiple vans or a crew",
+                tag: "Teams or multiple vans",
                 featured: false,
                 price: fmtGBP(plusPerMonth),
                 cadence: "+ £2 per extra profile/month",
@@ -198,9 +198,9 @@ export default function PricingPageHero({
                 ].filter(Boolean),
                 highlights: [
                     "Everything in Plus",
-                    "A profile per team member",
-                    "Separate link and QR",
-                    "Separate analytics",
+                    "A separate profile per person",
+                    "Its own link and QR code",
+                    "Its own analytics",
                     "Shared branding",
                     "Manage from one account",
                 ],
@@ -229,19 +229,18 @@ export default function PricingPageHero({
 
                 {/* ── Heading block with grid bg ────────────── */}
                 <div className="pr-heroCopyGrid">
-                    {/* Grid bg — radial fade, same pattern as all hero sections */}
+                    {/* Grid bg, radial fade, same pattern as all hero sections */}
                     <div className="pr-gridBg" aria-hidden="true" />
 
                     <motion.div className="pr-headContent" {...fadeUp(0)}>
                         <p className="kc-pill pr-heroPill">Pricing</p>
 
                         <h1 className="h2 pr-title">
-                            Simple <span className="pr-accent">Pricing</span> — No Surprises
+                            Straightforward Pricing, <span className="pr-accent">Nothing Hidden</span>
                         </h1>
 
                         <p className="kc-subheading pr-sub">
-                            The card is a one-off £19.99. Your digital profile is free to set up and use.
-                            If you want unlimited services, more photos and full analytics, upgrade to Plus for £5 a month.
+                            The card is a one-off £19.99. Your profile is free to set up and use. If you want more from your profile, upgrade to Plus for £5 a month.
                         </p>
 
                         {isLoggedIn && (

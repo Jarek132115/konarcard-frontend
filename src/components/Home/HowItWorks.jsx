@@ -23,24 +23,24 @@ const fadeUpInView = (delay = 0) => ({
 const STEPS = [
     {
         step: "Step 1",
-        title: "Tap or Scan",
-        desc: "The customer taps your card on their phone, or scans the QR code on the back.",
+        title: "Claim Your Link",
+        desc: "Sign up free and get your own KonarCard link. It takes two minutes and no card is needed to get started.",
         img: Step1,
-        alt: "Customer tapping a KonarCard on their phone",
+        alt: "Claim your KonarCard link",
     },
     {
         step: "Step 2",
-        title: "Profile Opens",
-        desc: "They see your details, services, work photos and reviews straight away — no app needed.",
+        title: "Create Your Profile",
+        desc: "Add your services, work photos, prices and contact details. Your profile looks professional from day one.",
         img: Step2,
-        alt: "KonarCard profile open on a phone",
+        alt: "Create your KonarCard profile",
     },
     {
         step: "Step 3",
-        title: "They Book You",
-        desc: "Call, save your number, send a message or leave a review — all from one link.",
+        title: "Share Your Profile",
+        desc: "Tap your card to a customer's phone, share your link, or let them scan the QR code. Your profile opens instantly on any phone.",
         img: Step3,
-        alt: "Customer contacting a tradesperson via KonarCard",
+        alt: "Share your KonarCard profile",
     },
 ];
 
@@ -53,12 +53,11 @@ export default function HowItWorks() {
                     <p className="kc-pill hiw__kicker">How it works</p>
 
                     <h2 className="h3 hiw__title">
-                        Tap the card.{" "}
-                        <span className="hiw__accent">Win the job.</span>
+                        How <span className="hiw__accent">KonarCard</span> Works
                     </h2>
 
                     <p className="kc-subheading hiw__sub">
-                        No apps to download. No faff. Three steps and the customer has everything they need.
+                        No apps. No typing. Three steps.
                     </p>
                 </motion.header>
 

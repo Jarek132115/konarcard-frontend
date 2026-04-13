@@ -24,34 +24,34 @@ const fadeUpInView = (delay = 0) => ({
 /* ── Data ──────────────────────────────────────────────────── */
 const ITEMS = [
     {
-        icon: NoPrintIcon,
-        title: "No more bin-fodder",
-        desc: "Stop handing out cards that end up in the bin after one quote.",
-    },
-    {
         icon: RefreshIcon,
-        title: "Details never go stale",
-        desc: "Change your number or price list — it updates on every card you've given out.",
+        title: "Your details never go out of date",
+        desc: "Change your number, address or prices online and every card you have ever handed out updates instantly.",
     },
     {
         icon: SmartPhoneTapIcon,
-        title: "Your work sells for you",
-        desc: "Customers see your job photos and reviews before they even call.",
+        title: "Customers see your work before they call",
+        desc: "Your profile shows photos, services and reviews. Customers arrive knowing what you do and what you charge.",
+    },
+    {
+        icon: NoPrintIcon,
+        title: "No reprints, no waste",
+        desc: "One card does the job forever. Stop paying for boxes of cards that end up in a drawer.",
     },
     {
         icon: MoneyShieldIcon,
-        title: "One card lasts forever",
-        desc: "Pay once. No reprints. No waste. One job covers the cost.",
+        title: "Works on every phone",
+        desc: "Tap to an iPhone or Android. No app needed on the customer's end. It just works.",
     },
     {
         icon: ToolsIcon,
-        title: "Built for real trades",
-        desc: "Made for vans and tool bags — not office drawers.",
+        title: "Built for life on the tools",
+        desc: "Tough plastic that lives in a wallet or van glovebox. Made for everyday use, not office drawers.",
     },
     {
         icon: TrophyIcon,
-        title: "Look pro straight away",
-        desc: "Credible the second you hand it over — no website build needed.",
+        title: "Looks professional from day one",
+        desc: "A clean, branded profile that earns trust the second you hand the card over.",
     },
 ];
 
@@ -63,11 +63,11 @@ export default function Value() {
                     <p className="kc-pill khv__kicker">Built for trades</p>
 
                     <h2 className="h3 khv__title">
-                        Why Tradespeople <span className="khv__accent">Switch to KonarCard</span>
+                        Why Tradespeople <span className="khv__accent">Choose</span> KonarCard
                     </h2>
 
                     <p className="kc-subheading khv__sub">
-                        Straight answers. No marketing fluff. Here's what you actually get.
+                        Straight answers. No marketing fluff.
                     </p>
                 </motion.header>
 

@@ -108,7 +108,7 @@ const REVIEWS = [
         id: "r8",  avatar: pp8,  name: "Alex M",  trade: "Heating Engineer",
         location: "Newcastle",   rating: 5,   date: "6 days ago",
         plan: "Plus plan",  products: ["KonarCard"],
-        text: "Tap, scan or share the link — it just works. Booking more local jobs than ever.",
+        text: "Tap, scan or share the link, it just works. Booking more local jobs than ever.",
     },
     {
         id: "r9",  avatar: pp9,  name: "Dan R",   trade: "Handyman",
@@ -120,13 +120,13 @@ const REVIEWS = [
         id: "r10", avatar: pp10, name: "Ben K",   trade: "Gardener",
         location: "Cardiff",     rating: 4,   date: "4 weeks ago",
         plan: "Plus plan",  products: [],
-        text: "Clients love the map and service list. Stopped reprinting cards — this pays for itself.",
+        text: "Clients love the map and service list. Stopped reprinting cards. This pays for itself.",
     },
     {
         id: "r11", avatar: pp11, name: "John P",  trade: "Bricklayer",
         location: "London",      rating: 5,   date: "8 days ago",
         plan: "Plus plan",  products: [],
-        text: "All my links in one place — quote form, photos, socials. Helped me close jobs faster.",
+        text: "All my links in one place: quote form, photos, socials. Helped me close jobs faster.",
     },
     {
         id: "r12", avatar: pp12, name: "Lewis J", trade: "Plasterer",
@@ -143,7 +143,7 @@ export default function Reviews() {
         path: "/reviews",
         title: "KonarCard Reviews | What UK Tradespeople Say",
         description:
-            "Read genuine reviews from UK tradespeople using KonarCard NFC business cards — electricians, plumbers, builders and more sharing their experience.",
+            "Read genuine reviews from UK tradespeople using KonarCard NFC business cards: electricians, plumbers, builders and more sharing their experience.",
     });
 
     return (
@@ -162,7 +162,7 @@ export default function Reviews() {
 
                             <div className="krv-heroGrid">
 
-                                {/* Left — copy */}
+                                {/* Left: copy */}
                                 <motion.div className="krv-heroCopy" {...fadeUp(0)}>
                                     <p className="kc-pill krv-kicker">Reviews</p>
 
@@ -171,7 +171,7 @@ export default function Reviews() {
                                     </h1>
 
                                     <p className="kc-subheading krv-sub">
-                                        {AVG_RATING} out of 5 from verified UK tradespeople. Here's what they said after using KonarCard on the job.
+                                        {AVG_RATING} out of 5 from verified UK tradespeople.
                                     </p>
 
                                     <div className="krv-trustRow" aria-label="Average rating">
@@ -187,7 +187,7 @@ export default function Reviews() {
                                     </div>
                                 </motion.div>
 
-                                {/* Right — summary card */}
+                                {/* Right: summary card */}
                                 <motion.aside
                                     className="krv-summaryCard"
                                     aria-label="Review summary"
@@ -196,7 +196,7 @@ export default function Reviews() {
                                     <div className="krv-summaryHead">
                                         <p className="krv-summaryTitle">Summary</p>
                                         <p className="krv-summaryDesc">
-                                            Straight from the van — what tradespeople think after using KonarCard on real jobs.
+                                            Straight from the van. Real feedback from real jobs.
                                         </p>
                                     </div>
 
@@ -299,8 +299,9 @@ export default function Reviews() {
                             viewport={{ once: true, margin: "-30px" }}
                             transition={{ duration: 0.4, ease: EASE }}
                         >
+                            <h2 className="h3 krv-ctaTitle">Ready to Try It Yourself?</h2>
                             <p className="krv-ctaText">
-                                Want to see what your KonarCard profile could look like? Start free — no card needed to set up your profile.
+                                Start free. No card needed to set up your profile.
                             </p>
                             <Link to="/register" className="kx-btn kx-btn--black">
                                 Start Free

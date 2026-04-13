@@ -31,12 +31,12 @@ const CAROUSEL_ITEMS = [
     {
         icon: WorksOnEveryPhone,
         title: "Works on every phone",
-        desc: "Compatible with iPhone and Android — no issues, no setup.",
+        desc: "Compatible with iPhone and Android. No issues, no setup.",
     },
     {
         icon: NoAppNeeded,
         title: "No app needed",
-        desc: "Just tap or scan — nothing to download.",
+        desc: "Just tap or scan. Nothing to download.",
     },
     {
         icon: OneLinkForEverything,

@@ -188,7 +188,7 @@ export default function PlasticCardPageBase({
         const pageUrl = `${siteUrl}/products/${productKey}`;
 
         const colorName = String(variant || "").charAt(0).toUpperCase() + String(variant || "").slice(1);
-        const description = `KonarCard ${colorName} NFC business card. Tap to share your digital profile — no app needed. Works on all phones. Free digital profile included. £19.99, UK delivery.`;
+        const description = `KonarCard ${colorName} NFC business card. Tap to share your digital profile. No app needed. Works on all phones. Free digital profile included. £19.99, UK delivery.`;
 
         const toAbsolute = (src) => {
             const s = String(src || "");
@@ -199,7 +199,7 @@ export default function PlasticCardPageBase({
         };
         const imageUrl = toAbsolute(frontSrc);
 
-        document.title = `${colorName} NFC Business Card | KonarCard UK — £19.99`;
+        document.title = `${colorName} NFC Business Card | KonarCard UK | £19.99`;
 
         const setMeta = (attr, key, value) => {
             const sel = `meta[${attr}="${key}"]`;
@@ -235,7 +235,7 @@ export default function PlasticCardPageBase({
         setMeta("name", "description", description);
         setLink("canonical", pageUrl);
 
-        setMeta("property", "og:title", `${productName} — NFC Business Card | KonarCard`);
+        setMeta("property", "og:title", `${productName} NFC Business Card | KonarCard`);
         setMeta("property", "og:description", description);
         setMeta("property", "og:url", pageUrl);
         setMeta("property", "og:type", "product");
@@ -251,7 +251,7 @@ export default function PlasticCardPageBase({
         setJsonLd(`product-${productKey}`, {
             "@context": "https://schema.org/",
             "@type": "Product",
-            name: `KonarCard ${colorName} — NFC Business Card`,
+            name: `KonarCard ${colorName} NFC Business Card`,
             description,
             url: pageUrl,
             image: [imageUrl],
@@ -310,7 +310,7 @@ export default function PlasticCardPageBase({
             {
                 icon: NoReprintsIcon,
                 t: "No reprints, ever",
-                s: "Update your details anytime — no reordering required.",
+                s: "Update your details anytime. No reordering required.",
             },
             {
                 icon: UpToDateIcon,
@@ -320,7 +320,7 @@ export default function PlasticCardPageBase({
             {
                 icon: WorksEverywhereIcon,
                 t: "Works everywhere",
-                s: "In person, online, or on the phone — no apps needed.",
+                s: "In person, online, or on the phone. No apps needed.",
             },
             {
                 icon: HammerIcon,
@@ -338,12 +338,12 @@ export default function PlasticCardPageBase({
 
     const specs = useMemo(
         () => [
-            { k: "Card size", v: "85.6 × 54 mm — standard wallet size" },
-            { k: "Thickness", v: "0.76 mm — same thickness as a bank card" },
-            { k: "Material", v: "Durable PVC plastic with a smooth matte finish" },
-            { k: "NFC", v: "NFC enabled — works with iPhone & Android" },
-            { k: "QR backup", v: "Printed QR code on the back for instant access" },
-            { k: "Setup", v: "Linked to your Konar profile — update anytime, no reprints" },
+            { k: "Size", v: "Standard bank card size, fits in any wallet" },
+            { k: "Thickness", v: "0.76mm, same as a standard bank card" },
+            { k: "Made from", v: "Durable PVC plastic with a smooth matte finish" },
+            { k: "How it works", v: "Tap to any iPhone or Android. Opens your profile instantly, no app needed" },
+            { k: "QR code on the back", v: "Every card has a QR code. Customers can scan it if they prefer" },
+            { k: "Getting started", v: "Create your free profile online, link it to your card, start sharing" },
         ],
         []
     );
@@ -567,9 +567,11 @@ export default function PlasticCardPageBase({
                                     <span className="kc-crumbPill__here">{crumbName}</span>
                                 </div>
 
-                                <h1 className="h2 kc-premHero__title">{productName} — NFC Business Card</h1>
+                                <h1 className="h2 kc-premHero__title">{productName} NFC Business Card</h1>
 
-                                <p className="kc-premHero__sub">{heroSubtext}</p>
+                                <p className="kc-premHero__sub">
+                                    The {productName} is a tap-to-share NFC business card. Hand it to a customer or tap it to their phone and your profile opens straight away. Your details, services, photos and reviews are all in one place. One-off cost. Free profile included. UK delivery.
+                                </p>
 
                                 <div className="kc-topHero__badges">
                                     <span className="kc-badge kc-badge--orange">{badgeText}</span>
@@ -583,7 +585,7 @@ export default function PlasticCardPageBase({
                         </div>
 
                         <div className="kc-premStage">
-                            {/* Opacity-only fade — no Y movement to avoid 3D canvas clipping */}
+                            {/* Opacity-only fade, no Y movement to avoid 3D canvas clipping */}
                             <motion.div
                                 className="kc-premStage__canvasPad"
                                 initial={{ opacity: 0 }}
@@ -755,11 +757,11 @@ export default function PlasticCardPageBase({
                             <p className="kc-pill khv__kicker">Product details</p>
 
                             <h2 className="h3 khv__title">
-                                The <span className="khv__accent">specs</span>, in plain English
+                                The <span className="khv__accent">Specs</span>
                             </h2>
 
                             <p className="kc-subheading khv__sub">
-                                Standard bank card size. Built to live in a wallet or van. Works with every modern phone.
+                                Bank card size. Built for daily use.
                             </p>
                         </motion.header>
 
@@ -784,11 +786,11 @@ export default function PlasticCardPageBase({
                             <p className="kc-pill khv__kicker">What you get</p>
 
                             <h2 className="h3 khv__title">
-                                Why <span className="khv__accent">tradespeople</span> buy this card
+                                Why <span className="khv__accent">Tradespeople</span> Buy It
                             </h2>
 
                             <p className="kc-subheading khv__sub">
-                                Look credible in seconds. Keep your details live forever. Never reprint a card again.
+                                One card. Details update forever. Never reprint again.
                             </p>
                         </motion.header>
 

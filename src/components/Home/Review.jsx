@@ -2,7 +2,7 @@ import React from "react";
 import "../../styling/home/review.css";
 
 /*
-  HOME — REVIEW SECTION (final section)
+  HOME: REVIEW SECTION (final section)
   Matches screenshot:
   - Title + subtitle
   - 3 large cards with image area + copy
@@ -12,17 +12,17 @@ import "../../styling/home/review.css";
 export default function Review() {
     const items = [
         {
-            title: "Electrician — James",
+            title: "Electrician, James",
             desc: "Uses KonarCard to share contact details instantly after jobs and quotes.",
             image: null,
         },
         {
-            title: "Electrician — James",
+            title: "Electrician, James",
             desc: "Uses KonarCard to share contact details instantly after jobs and quotes.",
             image: null,
         },
         {
-            title: "Electrician — James",
+            title: "Electrician, James",
             desc: "Uses KonarCard to share contact details instantly after jobs and quotes.",
             image: null,
         },

@@ -24,37 +24,37 @@ const fadeUpInView = (delay = 0) => ({
 const PRODUCTS = [
     {
         tag: "Classic White",
-        name: "KonarCard — White",
+        name: "KonarCard White",
         desc: "Clean, professional white finish. Fits any wallet and works on every phone.",
-        priceText: "£29.99",
-        priceValue: 29.99,
-        to: "/products",
+        priceText: "£19.99",
+        priceValue: 19.99,
+        to: "/products/plastic-white",
         img: KonarCardWhiteImg,
-        alt: "KonarCard White — plastic NFC business card",
+        alt: "KonarCard White plastic NFC business card",
         sku: "konarcard-white",
         cta: "View Card",
     },
     {
         tag: "Signature Black",
-        name: "KonarCard — Black",
+        name: "KonarCard Black",
         desc: "Bold, premium black finish. Leaves a strong first impression every time.",
-        priceText: "£29.99",
-        priceValue: 29.99,
-        to: "/products",
+        priceText: "£19.99",
+        priceValue: 19.99,
+        to: "/products/plastic-black",
         img: KonarCardBlackImg,
-        alt: "KonarCard Black — plastic NFC business card",
+        alt: "KonarCard Black plastic NFC business card",
         sku: "konarcard-black",
         cta: "View Card",
     },
     {
         tag: "Standout Blue",
-        name: "KonarCard — Blue",
+        name: "KonarCard Blue",
         desc: "Distinctive blue design that stands out and gets noticed on the job.",
-        priceText: "£29.99",
-        priceValue: 29.99,
-        to: "/products",
+        priceText: "£19.99",
+        priceValue: 19.99,
+        to: "/products/plastic-blue",
         img: KonarCardBlueImg,
-        alt: "KonarCard Blue — plastic NFC business card",
+        alt: "KonarCard Blue plastic NFC business card",
         sku: "konarcard-blue",
         cta: "View Card",
     },
@@ -74,7 +74,7 @@ export default function Products() {
                     </h2>
 
                     <p className="kc-subheading khp-sub">
-                        One-time purchase. Links to your profile forever — update anytime.
+                        One-time purchase. Links to your profile forever. Update anytime.
                     </p>
                 </motion.header>
 

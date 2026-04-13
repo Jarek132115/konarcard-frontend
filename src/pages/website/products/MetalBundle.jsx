@@ -33,7 +33,7 @@ export default function PlasticBundle() {
             { t: "Best value starter kit", s: "Everything you need to look pro fast." },
             { t: "Share anywhere", s: "Tap, scan QR, or send your link." },
             { t: "No app needed", s: "Works on iPhone & Android in the browser." },
-            { t: "Update anytime", s: "Edit once — changes go live instantly." },
+            { t: "Update anytime", s: "Edit once, changes go live instantly." },
             { t: "Built for trades", s: "Simple, durable, made for real work." },
             { t: "One job pays for it", s: "Win one extra job and it covers the bundle." },
         ],

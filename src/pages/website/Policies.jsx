@@ -61,7 +61,7 @@ function PrivacyPolicy({ dot }) {
                 <ul className="kc-pol__ul">
                     <Li src={dot}>Name, email address, and password when you create an account</Li>
                     <Li src={dot}>Business details, phone number, and social links added to your KonarCard profile</Li>
-                    <Li src={dot}>Billing information (payment handled securely via Stripe — we do not store card details)</Li>
+                    <Li src={dot}>Billing information (payment handled securely via Stripe; we do not store card details)</Li>
                     <Li src={dot}>Delivery address when purchasing physical NFC cards</Li>
                     <Li src={dot}>Usage data including pages visited, features used, and device/browser information</Li>
                     <Li src={dot}>Support communications when you contact us via chat or email</Li>
@@ -72,10 +72,10 @@ function PrivacyPolicy({ dot }) {
                 <p className="kc-pol__h">2. Lawful basis for processing</p>
                 <p className="body kc-pol__p">We process your data under the following lawful bases (UK GDPR):</p>
                 <ul className="kc-pol__ul">
-                    <Li src={dot}><strong>Contract</strong> — to provide the services you have signed up for</Li>
-                    <Li src={dot}><strong>Legitimate interests</strong> — to improve our platform, prevent fraud, and provide customer support</Li>
-                    <Li src={dot}><strong>Legal obligation</strong> — where we are required to retain certain records by law</Li>
-                    <Li src={dot}><strong>Consent</strong> — for any optional marketing communications (you can opt out at any time)</Li>
+                    <Li src={dot}><strong>Contract</strong>: to provide the services you have signed up for</Li>
+                    <Li src={dot}><strong>Legitimate interests</strong>: to improve our platform, prevent fraud, and provide customer support</Li>
+                    <Li src={dot}><strong>Legal obligation</strong>: where we are required to retain certain records by law</Li>
+                    <Li src={dot}><strong>Consent</strong>: for any optional marketing communications (you can opt out at any time)</Li>
                 </ul>
             </div>
 
@@ -101,10 +101,10 @@ function PrivacyPolicy({ dot }) {
                     business. These include:
                 </p>
                 <ul className="kc-pol__ul">
-                    <Li src={dot}><strong>Stripe</strong> — payment processing</Li>
-                    <Li src={dot}><strong>Cloud hosting providers</strong> — secure infrastructure and storage</Li>
-                    <Li src={dot}><strong>Analytics tools</strong> — to understand how our site is used (anonymised where possible)</Li>
-                    <Li src={dot}><strong>Tidio</strong> — live chat support</Li>
+                    <Li src={dot}><strong>Stripe</strong>: payment processing</Li>
+                    <Li src={dot}><strong>Cloud hosting providers</strong>: secure infrastructure and storage</Li>
+                    <Li src={dot}><strong>Analytics tools</strong>: to understand how our site is used (anonymised where possible)</Li>
+                    <Li src={dot}><strong>Tidio</strong>: live chat support</Li>
                 </ul>
                 <p className="body kc-pol__p">
                     All third parties are contractually required to handle your data securely and in accordance with
@@ -136,12 +136,12 @@ function PrivacyPolicy({ dot }) {
                 <p className="kc-pol__h">7. Your rights (UK GDPR)</p>
                 <p className="body kc-pol__p">Under UK data protection law, you have the right to:</p>
                 <ul className="kc-pol__ul">
-                    <Li src={dot}><strong>Access</strong> — request a copy of the personal data we hold about you</Li>
-                    <Li src={dot}><strong>Rectification</strong> — ask us to correct inaccurate data</Li>
-                    <Li src={dot}><strong>Erasure</strong> — request deletion of your data (subject to legal retention requirements)</Li>
-                    <Li src={dot}><strong>Restriction</strong> — ask us to limit how we process your data in certain circumstances</Li>
-                    <Li src={dot}><strong>Portability</strong> — receive your data in a structured, machine-readable format</Li>
-                    <Li src={dot}><strong>Object</strong> — object to processing based on legitimate interests or for direct marketing</Li>
+                    <Li src={dot}><strong>Access</strong>: request a copy of the personal data we hold about you</Li>
+                    <Li src={dot}><strong>Rectification</strong>: ask us to correct inaccurate data</Li>
+                    <Li src={dot}><strong>Erasure</strong>: request deletion of your data (subject to legal retention requirements)</Li>
+                    <Li src={dot}><strong>Restriction</strong>: ask us to limit how we process your data in certain circumstances</Li>
+                    <Li src={dot}><strong>Portability</strong>: receive your data in a structured, machine-readable format</Li>
+                    <Li src={dot}><strong>Object</strong>: object to processing based on legitimate interests or for direct marketing</Li>
                 </ul>
                 <p className="body kc-pol__p">
                     To exercise any of these rights, contact us at <strong>support@konarcard.com</strong>. We will
@@ -207,7 +207,7 @@ function TermsPolicy({ dot }) {
                 <ul className="kc-pol__ul">
                     <Li src={dot}>Subscriptions auto-renew unless cancelled before the next billing date</Li>
                     <Li src={dot}>You can cancel your subscription at any time from the Billing section in your dashboard</Li>
-                    <Li src={dot}>Cancellation takes effect at the end of the current billing period — you retain access until then</Li>
+                    <Li src={dot}>Cancellation takes effect at the end of the current billing period; you retain access until then</Li>
                     <Li src={dot}>Fees already paid are non-refundable unless required by law</Li>
                     <Li src={dot}>Extra profiles are billed at £2/month each on the Plus plan</Li>
                 </ul>
@@ -422,9 +422,9 @@ function CookiesPolicy({ dot }) {
                     Some third-party services we use may set their own cookies. These include:
                 </p>
                 <ul className="kc-pol__ul">
-                    <Li src={dot}><strong>Stripe</strong> — payment processing (fraud prevention and secure checkout)</Li>
-                    <Li src={dot}><strong>Tidio</strong> — live chat support widget</Li>
-                    <Li src={dot}><strong>Analytics providers</strong> — usage and traffic analysis</Li>
+                    <Li src={dot}><strong>Stripe</strong>: payment processing (fraud prevention and secure checkout)</Li>
+                    <Li src={dot}><strong>Tidio</strong>: live chat support widget</Li>
+                    <Li src={dot}><strong>Analytics providers</strong>: usage and traffic analysis</Li>
                 </ul>
                 <p className="body kc-pol__p">
                     These cookies are controlled by the respective providers and subject to their own privacy
@@ -500,8 +500,8 @@ function ShippingPolicy({ dot }) {
                     We ship to all addresses within the United Kingdom. Estimated delivery times after dispatch:
                 </p>
                 <ul className="kc-pol__ul">
-                    <Li src={dot}><strong>Standard delivery</strong> — 3–5 business days</Li>
-                    <Li src={dot}><strong>Express delivery</strong> — 1–2 business days (where available at checkout)</Li>
+                    <Li src={dot}><strong>Standard delivery</strong>: 3–5 business days</Li>
+                    <Li src={dot}><strong>Express delivery</strong>: 1–2 business days (where available at checkout)</Li>
                 </ul>
                 <p className="body kc-pol__p">
                     Tracking information will be provided by email once your order has been dispatched.

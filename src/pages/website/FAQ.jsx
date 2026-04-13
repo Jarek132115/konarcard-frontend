@@ -63,96 +63,61 @@ const FAQ_DATA = [
     // Getting started
     {
         tab: "getting-started",
-        q: "What is a digital business card?",
-        a: "A card you share from your phone instead of handing out paper. With KonarCard, the customer taps your card on their phone and your profile opens — details, services, photos and reviews all in one link.",
-    },
-    {
-        tab: "getting-started",
-        q: "Does the customer need to download an app?",
-        a: "No. Your profile opens straight in their browser. No download, no sign-up.",
+        q: "What if the customer's phone doesn't have NFC?",
+        a: "Every card also has a QR code on the back. The customer scans it and your profile opens exactly the same way. It works on any smartphone.",
     },
     {
         tab: "getting-started",
         q: "What trades use KonarCard?",
-        a: "Electricians, plumbers, builders, roofers, gas engineers, decorators, landscapers, handymen and other UK tradespeople.",
+        a: "Electricians, plumbers, builders, roofers, gas engineers, decorators, landscapers, handymen and other service professionals across the UK.",
+    },
+    {
+        tab: "getting-started",
+        q: "Is KonarCard based in the UK?",
+        a: "Yes. KonarCard is a UK company. Cards are shipped from within the UK.",
     },
 
     // Cards & profiles
     {
         tab: "cards-profiles",
-        q: "Does it work on all phones?",
-        a: "Yes. Tap works on every modern iPhone and Android. For older phones, the QR code on the back of the card works on any phone with a camera.",
+        q: "What happens if I lose my card?",
+        a: "Your profile stays live. Order a new card at any time and link it to the same profile. Nothing is lost.",
     },
     {
         tab: "cards-profiles",
-        q: "What if the customer doesn't have NFC on their phone?",
-        a: "They scan the QR code on the back of the card with their camera. Works on every phone.",
-    },
-    {
-        tab: "cards-profiles",
-        q: "Can I change my details after I've given the card out?",
-        a: "Yes. Update your profile online and it updates on every card you've ever given out — no reprints.",
-    },
-    {
-        tab: "cards-profiles",
-        q: "What if I lose my card?",
-        a: "Your profile stays live. Same link, same details. Just order a new card.",
+        q: "Can I change my details after giving the card out?",
+        a: "Yes. Log into your profile, make the change, and save it. Every card that has ever been given out will show the updated details immediately.",
     },
     {
         tab: "cards-profiles",
         q: "Can I have more than one profile?",
-        a: "Yes, on the Plus plan. Add extra profiles for team members or different services — £2 per extra profile per month.",
+        a: "Yes. With the Plus plan you can add extra profiles at £2 a month each. Useful for teams, multiple trades or different service areas.",
     },
 
     // Pricing
     {
         tab: "pricing",
-        q: "Do I need to pay a monthly fee?",
-        a: "No. The card is a one-off £19.99. Your digital profile is free. Plus is £5 a month if you want more photos, services and full analytics — totally optional.",
-    },
-    {
-        tab: "pricing",
-        q: "What do I get on the free plan?",
-        a: "Your link, your profile, tap and QR sharing, up to 6 work photos, 3 services and 3 reviews. Plenty to get started.",
-    },
-    {
-        tab: "pricing",
-        q: "Can I cancel Plus anytime?",
-        a: "Yes. Cancel from your dashboard whenever you want. Your profile stays live on the free plan.",
-    },
-    {
-        tab: "pricing",
-        q: "Is there a setup fee?",
-        a: "No. No setup fees, no hidden costs, no contracts.",
+        q: "Do I need to pay monthly?",
+        a: "The card is a one-off payment. The basic profile is free with no time limit. The Plus plan at £5 a month is optional and you can cancel any time.",
     },
 
     // Teams
     {
         tab: "teams",
         q: "Can I set up cards for my crew?",
-        a: "Yes. Add extra profiles for each team member on Plus — £2 per extra profile per month. Each person gets their own link, QR and stats.",
-    },
-    {
-        tab: "teams",
-        q: "Can everyone have their own reviews and contact details?",
-        a: "Yes. Each profile is completely separate — their own number, photos and reviews.",
+        a: "Yes. Add extra profiles for each team member on the Plus plan at £2 a month each. Each person gets their own link, QR code and analytics.",
     },
 
     // Technical & support
     {
         tab: "support",
         q: "How long does delivery take?",
-        a: "Same-day dispatch on orders placed before 1pm. Next-day delivery available at checkout for UK addresses.",
-    },
-    {
-        tab: "support",
-        q: "The tap isn't working — what should I do?",
-        a: "Check NFC is switched on in the phone settings, then tap the card near the top or back of the phone. If it still doesn't work, scan the QR code on the back.",
+        a: "Orders placed before 1pm are dispatched the same day. Next-day delivery is available at checkout.",
     },
     {
         tab: "support",
         q: "How do I get help?",
-        a: "Live chat is fastest. Or email supportteam@konarcard.com — we reply within one working day.",
+        a: "Live chat is fastest. Or email supportteam@konarcard.com. We reply within one working day.",
     },
 ];
 
@@ -168,7 +133,7 @@ export default function FAQPage() {
         path: "/faq",
         title: "KonarCard FAQs | NFC Business Card Questions Answered",
         description:
-            "Answers to common questions about KonarCard NFC business cards — how the cards work, setup, plans, delivery, and updating your digital profile.",
+            "Answers to common questions about KonarCard NFC business cards: how the cards work, setup, plans, delivery, and updating your digital profile.",
     });
 
     const [activeTab, setActiveTab] = useState("getting-started");
@@ -190,18 +155,18 @@ export default function FAQPage() {
                     <div className="kfaq-container">
                         <div className="kfaq-head">
 
-                            {/* Grid bg — visible in centre, fades out radially on all edges */}
+                            {/* Grid bg, visible in centre, fades out radially on all edges */}
                             <div className="kfaq-gridBg" aria-hidden="true" />
 
                             <motion.div className="kfaq-headContent" {...fadeUp(0)}>
                                 <p className="kc-pill kfaq-kicker">FAQs</p>
 
                                 <h1 id="kfaq-title" className="h2 kfaq-title">
-                                    Questions About KonarCard — <span className="kfaq-accent">Answered</span>
+                                    Questions About KonarCard, <span className="kfaq-accent">Answered</span>
                                 </h1>
 
                                 <p className="kc-subheading kfaq-sub">
-                                    Straight answers to the questions tradespeople actually ask. No jargon, no fluff.
+                                    Everything you need to know. No jargon.
                                 </p>
 
                                 <div

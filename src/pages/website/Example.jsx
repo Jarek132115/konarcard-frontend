@@ -78,7 +78,7 @@ const EXAMPLES_BY_TRADE = {
     ],
     handyman: [
         { id: "ha-1", role: "Handyman", name: "George", desc: "Customers can call instantly while he's still on-site." },
-        { id: "ha-2", role: "Handyman", name: "Leo",    desc: "Perfect for repeat work — always the right details." },
+        { id: "ha-2", role: "Handyman", name: "Leo",    desc: "Perfect for repeat work, always the right details." },
         { id: "ha-3", role: "Handyman", name: "Sam",    desc: "Shares services and pricing so customers know what's covered." },
     ],
 };
@@ -112,20 +112,18 @@ export default function Example() {
                 <section className="ex-hero" aria-label="Examples hero">
                     <div className="ex-container">
                         <div className="ex-head">
-                            {/* Grid bg — circular radial fade, consistent with all hero sections */}
+                            {/* Grid bg, circular radial fade, consistent with all hero sections */}
                             <div className="ex-gridBg" aria-hidden="true" />
 
                             <motion.div className="ex-headContent" {...fadeUp(0)}>
                                 <p className="kc-pill ex-kicker">Real UK profiles</p>
 
                                 <h1 className="h2 ex-title">
-                                    Real KonarCard Profiles — <span className="ex-accent">See What UK Trades Are Doing</span>
+                                    How UK Tradespeople Use <span className="ex-accent">KonarCard</span>
                                 </h1>
 
                                 <p className="kc-subheading ex-sub">
-                                    Here's how electricians, plumbers, builders and other UK tradespeople are using
-                                    KonarCard. Every profile below is real — tap a card, show your work, collect reviews
-                                    and win more jobs.
+                                    Here is how electricians, plumbers, builders and other tradespeople across the UK are using their KonarCard. Real profiles. Real results.
                                 </p>
 
                                 <div className="ex-tabs" role="tablist" aria-label="Filter by trade">
@@ -181,7 +179,7 @@ export default function Example() {
                                                 <span className="ex-rolePill">{item.role}</span>
                                                 <img
                                                     src={ExampleTest}
-                                                    alt={`${item.name} — ${item.role} KonarCard profile example`}
+                                                    alt={`${item.name}, ${item.role} KonarCard profile example`}
                                                     className="ex-img"
                                                     loading="lazy"
                                                     decoding="async"

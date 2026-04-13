@@ -198,7 +198,7 @@ export default function Login() {
     };
 
     const goToVerificationStep = (msg) => {
-        toast.error(msg || "Email not verified — check your inbox for the code.");
+        toast.error(msg || "Email not verified. Check your inbox for the code.");
         setCode("");
         setForgotPasswordStep(false);
         setVerificationStep(true);
@@ -272,7 +272,7 @@ export default function Login() {
         try {
             const res = await api.post("/resend-code", { email: cleanEmail });
             if (res.data?.error) { toast.error(res.data.error); return; }
-            toast.success("New code sent — check your inbox.");
+            toast.success("New code sent. Check your inbox.");
             setCode("");
             setCooldown(30);
             setVerificationStep(true);
@@ -288,7 +288,7 @@ export default function Login() {
         try {
             const res = await api.post("/forgot-password", { email: emailForReset.trim().toLowerCase() });
             if (res.data?.error) toast.error(res.data.error);
-            else toast.success("Reset link sent — check your inbox.");
+            else toast.success("Reset link sent. Check your inbox.");
         } catch { toast.error("Failed to send reset link."); }
         finally { setIsSendingReset(false); }
     };

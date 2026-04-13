@@ -69,9 +69,7 @@ export default function ProductsPageRealWorld() {
                     </h2>
 
                     <p className="kc-subheading kprw__sub">
-                        Electricians, plumbers, builders and roofers use KonarCard after quotes,
-                        at the trade counter, on the van and on every site they visit. One tap and
-                        the customer has everything — no typing, no paper cards in the bin.
+                        After quotes. On site. At the trade counter.
                     </p>
                 </header>
 

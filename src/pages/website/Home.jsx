@@ -3,7 +3,7 @@ import React, { useEffect } from "react";
 import Navbar from "../../components/Navbar";
 import Footer from "../../components/Home/Footer";
 
-/* Sections — order: Hero → Comparison → HowItWorks → Share →
+/* Sections, order: Hero → Comparison → HowItWorks → Share →
    Products → Examples → Pricing → Value → FAQ              */
 import Hero       from "../../components/Home/Hero";
 import Comparison from "../../components/Home/Comparison";
@@ -114,7 +114,7 @@ export default function Home() {
           name: "What is a digital business card?",
           acceptedAnswer: {
             "@type": "Answer",
-            text: "A digital business card is a card you share from your phone instead of handing out paper. With KonarCard, the customer taps your card on their phone and your profile opens — details, services, photos and reviews, all in one link.",
+            text: "It is an online profile that replaces your paper card. Share it by tapping your NFC card, scanning the QR code, or sending your link. Everything a customer needs is in one place.",
           },
         },
         {
@@ -122,31 +122,31 @@ export default function Home() {
           name: "Does the customer need to download an app?",
           acceptedAnswer: {
             "@type": "Answer",
-            text: "No. Your profile opens straight in their browser — no downloads, no sign-ups.",
+            text: "No. Your profile opens straight in their browser. Nothing to download on either end.",
           },
         },
         {
           "@type": "Question",
-          name: "What happens if I change my phone number or address?",
+          name: "What if I change my number or move area?",
           acceptedAnswer: {
             "@type": "Answer",
-            text: "Update your profile online and every card you've ever given out now shows the new details. Nothing to reprint, nothing to replace.",
+            text: "Update your profile online and it changes everywhere instantly. Every card you have ever given out will show your new details.",
           },
         },
         {
           "@type": "Question",
-          name: "How does the card actually work?",
+          name: "Is it a one-off cost or a monthly fee?",
           acceptedAnswer: {
             "@type": "Answer",
-            text: "Tap the card on the top or back of a phone and your profile loads. If their phone can't tap, they scan the QR code on the back instead.",
+            text: "The card is a one-off payment of £19.99. The basic profile is free. There is an optional Plus plan at £5 a month if you want more photos, more services listed and full analytics.",
           },
         },
         {
           "@type": "Question",
-          name: "Is it a one-off cost or a subscription?",
+          name: "How quickly does delivery arrive?",
           acceptedAnswer: {
             "@type": "Answer",
-            text: "The card is £19.99, paid once. Your digital profile is free. Plus is £5 a month if you want more photos, services and full analytics, and it's optional.",
+            text: "Orders placed before 1pm are dispatched the same day. Next-day delivery is available at checkout.",
           },
         },
       ],
@@ -158,59 +158,31 @@ export default function Home() {
       <Navbar />
 
       <main className="kc-home" aria-label="KonarCard home page">
-        {/* 1 — #ffffff */}
+        {/* 1: #ffffff */}
         <Hero />
 
-        {/* SEO intro — indexable copy right below the hero */}
-        <section
-          className="kc-homeIntro"
-          aria-label="About KonarCard"
-          style={{
-            background: "#ffffff",
-            padding: "32px 20px 48px",
-          }}
-        >
-          <div
-            style={{
-              maxWidth: 920,
-              margin: "0 auto",
-              textAlign: "center",
-            }}
-          >
-            <p className="kc-subheading" style={{ margin: 0 }}>
-              KonarCard is a digital business card built for UK tradespeople.
-              Your card has a built-in NFC chip — tap it to a customer's
-              phone and your profile opens straight away, no app needed.
-              Think of it as your business card, website and review page all
-              in one link. It works as a smart electronic business card you
-              update online, so your details are always right. One card. One
-              tap. Everything a customer needs to book you.
-            </p>
-          </div>
-        </section>
-
-        {/* 2 — #fafafa */}
+        {/* 2: #fafafa */}
         <Comparison />
 
-        {/* 3 — #ffffff */}
+        {/* 3: #ffffff */}
         <HowItWorks />
 
-        {/* 4 — #fafafa */}
+        {/* 4: #fafafa */}
         <Share />
 
-        {/* 5 — #ffffff */}
+        {/* 5: #ffffff */}
         <Products />
 
-        {/* 6 — #fafafa */}
+        {/* 6: #fafafa */}
         <Examples />
 
-        {/* 7 — #ffffff */}
+        {/* 7: #ffffff */}
         <Pricing />
 
-        {/* 8 — #fafafa */}
+        {/* 8: #fafafa */}
         <Value />
 
-        {/* 9 — #ffffff */}
+        {/* 9: #ffffff */}
         <FAQ />
       </main>
 

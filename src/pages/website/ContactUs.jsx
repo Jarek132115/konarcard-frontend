@@ -68,7 +68,7 @@ const quickAnswers = [
     },
     {
         q: "Can you help me set up my profile?",
-        a: "Yes — live chat is best for this. We'll guide you step by step.",
+        a: "Yes. Live chat is best for this. We'll guide you step by step.",
     },
     {
         q: "Do I need an account to contact you?",
@@ -84,7 +84,7 @@ const quickAnswers = [
     },
     {
         q: "What should I do if something isn't working?",
-        a: "Use live chat and include a screenshot if possible — it helps us fix things faster.",
+        a: "Use live chat and include a screenshot if possible. It helps us fix things faster.",
     },
 ];
 
@@ -96,7 +96,7 @@ export default function ContactUs() {
         path: "/contactus",
         title: "Contact KonarCard | Live Chat & Email Support",
         description:
-            "Get in touch with the KonarCard team. Live chat during working hours or email supportteam@konarcard.com — replies within one working day.",
+            "Get in touch with the KonarCard team. Live chat during working hours or email supportteam@konarcard.com. Replies within one working day.",
     });
 
     useEffect(() => {
@@ -131,7 +131,7 @@ export default function ContactUs() {
 
             if (ready) window.tidioChatApi.open();
             else if (Date.now() - started < 5000) setTimeout(tryOpen, 200);
-            else toast.error("Live chat is still loading — please try again in a moment.");
+            else toast.error("Live chat is still loading. Please try again in a moment.");
         };
 
         tryOpen();
@@ -159,12 +159,12 @@ export default function ContactUs() {
                                 </h1>
 
                                 <p className="kc-subheading kcon-sub">
-                                    Got a question about your KonarCard or order? We're here to help — live chat during working hours or email anytime.
+                                    Got a question about your order or your KonarCard profile? We will get back to you quickly.
                                 </p>
                             </motion.div>
                         </div>
 
-                        {/* Contact cards — below the grid bg, solid white bg */}
+                        {/* Contact cards, below the grid bg, solid white bg */}
                         <div
                             className="kcon-cards"
                             role="list"

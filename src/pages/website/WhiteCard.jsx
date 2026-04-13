@@ -82,7 +82,7 @@ export default function WhiteCard() {
         <div className="product-options">
           <p className="desktop-h5">Konar Card - White Edition</p>
           <p className="desktop-body">
-            The smart, durable card that instantly shows your profile — help customers see your work, your services, and how to contact you in seconds.
+            The smart, durable card that instantly shows your profile. Help customers see your work, your services, and how to contact you in seconds.
           </p>
           <p style={{ fontSize: 18, fontWeight: 600, marginTop: 10, marginBottom: 20 }}>
             £{(pricePerCard * quantity).toFixed(2)}

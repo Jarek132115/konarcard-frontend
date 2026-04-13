@@ -154,7 +154,7 @@ export default function KonarTag() {
 
     useEffect(() => {
         const CANONICAL = "https://www.konarcard.com/products/konartag";
-        const title = "KonarTag — NFC Key Tag for Digital Business Cards (UK) | KonarCard";
+        const title = "KonarTag: NFC Key Tag for Digital Business Cards (UK) | KonarCard";
         const description =
             "KonarTag is a premium NFC key tag for instantly sharing your digital business card in the UK. Tap on iPhone/Android to open your Konar profile, with QR backup if NFC is off.";
         const ogImage = "https://www.konarcard.com/og/konartag.png";
@@ -240,7 +240,7 @@ export default function KonarTag() {
                     name: "Does KonarTag work with iPhone and Android?",
                     acceptedAnswer: {
                         "@type": "Answer",
-                        text: "Yes. KonarTag works with modern iPhone and Android devices that support NFC. No app is required — it opens in the browser. If NFC is disabled, the QR backup still works.",
+                        text: "Yes. KonarTag works with modern iPhone and Android devices that support NFC. No app is required, it opens in the browser. If NFC is disabled, the QR backup still works.",
                     },
                 },
                 {
@@ -371,23 +371,23 @@ export default function KonarTag() {
 
     const specs = useMemo(
         () => [
-            { k: "Tag size", v: "Compact key-tag size — easy everyday carry" },
+            { k: "Tag size", v: "Compact key-tag size, easy everyday carry" },
             { k: "Material", v: "Durable metal body with premium finish" },
             { k: "Finish", v: "Black or Gold" },
-            { k: "NFC", v: "Tap compatible — works with iPhone & Android" },
+            { k: "NFC", v: "Tap compatible, works with iPhone & Android" },
             { k: "QR backup", v: "Printed on the rear for instant scan access" },
-            { k: "Setup", v: "Linked to your Konar profile — update anytime" },
+            { k: "Setup", v: "Linked to your Konar profile, update anytime" },
         ],
         []
     );
 
     const features = useMemo(
         () => [
-            { icon: WorksEverywhereIcon, t: "Pocket-friendly", s: "A compact NFC tag — ideal for keys, vans, and everyday carry." },
+            { icon: WorksEverywhereIcon, t: "Pocket-friendly", s: "A compact NFC tag, ideal for keys, vans, and everyday carry." },
             { icon: UpToDateIcon, t: "Tap to share instantly", s: "One tap opens your Konar profile in seconds." },
             { icon: NoReprintsIcon, t: "QR backup included", s: "If NFC is off, they can scan the QR and still save your details." },
             { icon: HammerIcon, t: "Built for daily use", s: "Durable finish designed for busy days and real work." },
-            { icon: OneJobIcon, t: "One-time purchase", s: "Pay once — keep sharing. Your profile stays up to date anytime." },
+            { icon: OneJobIcon, t: "One-time purchase", s: "Pay once, keep sharing. Your profile stays up to date anytime." },
             { icon: ProfessionalFastIcon, t: "Looks professional fast", s: "Clean, premium, and easy to share anywhere." },
         ],
         []
@@ -487,7 +487,7 @@ export default function KonarTag() {
                                 <h1 className="h2 kc-premHero__title">KonarTag NFC Key Tag (UK)</h1>
 
                                 <p className="kc-premHero__sub">
-                                    Pocket-friendly. Tap to share your Konar profile instantly — with QR backup on the back.
+                                    Pocket-friendly. Tap to share your Konar profile instantly, with QR backup on the back.
                                 </p>
 
                                 <div className="kc-topHero__badges">
@@ -705,7 +705,7 @@ export default function KonarTag() {
                             </h2>
 
                             <p className="kc-subheading khv__sub">
-                                Tap or scan and you’re done — a simple tool for everyday carry.
+                                Tap or scan and you’re done. A simple tool for everyday carry.
                             </p>
                         </header>
 

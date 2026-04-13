@@ -17,7 +17,7 @@ const faqs = [
     },
     {
         q: "Can I update my digital business card after ordering?",
-        a: "Yes. Update your profile anytime and changes go live instantly — no reprints needed.",
+        a: "Yes. Update your profile anytime and changes go live instantly. No reprints needed.",
     },
     {
         q: "What if someone's phone doesn't support NFC?",

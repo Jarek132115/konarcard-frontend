@@ -81,7 +81,7 @@ export default function Products() {
         const title =
             "NFC Business Cards | Tap to Share | KonarCard UK";
         const description =
-            "Browse KonarCard's NFC business cards. Available in 6 colours at £19.99 each. Tap to share your digital profile — no app needed. UK delivery. Free profile included.";
+            "Browse KonarCard's NFC business cards. Available in 6 colours at £19.99 each. Tap to share your digital profile. No app needed. UK delivery. Free profile included.";
 
         document.title = title;
 
@@ -262,7 +262,7 @@ export default function Products() {
             {
                 tag: "Classic",
                 name: "KonarCard White",
-                desc: "Clean white finish — looks sharp with any logo or trade name.",
+                desc: "Clean white finish that looks sharp with any logo or trade name.",
                 priceText: "£19.99",
                 to: "/products/plastic-white",
                 img: KonarCardWhiteImg,
@@ -284,7 +284,7 @@ export default function Products() {
             {
                 tag: "Professional",
                 name: "KonarCard Blue",
-                desc: "Clean blue finish — stands out without shouting.",
+                desc: "Clean blue finish that stands out without shouting.",
                 priceText: "£19.99",
                 to: "/products/plastic-blue",
                 img: KonarCardBlueImg,
@@ -295,7 +295,7 @@ export default function Products() {
             {
                 tag: "Fresh",
                 name: "KonarCard Green",
-                desc: "Bright green finish — ideal for landscapers and gardeners.",
+                desc: "Bright green finish, ideal for landscapers and gardeners.",
                 priceText: "£19.99",
                 to: "/products/plastic-green",
                 img: KonarCardGreenImg,
@@ -306,7 +306,7 @@ export default function Products() {
             {
                 tag: "Bold",
                 name: "KonarCard Magenta",
-                desc: "Vibrant magenta — hard to lose, hard to forget.",
+                desc: "Vibrant magenta, hard to lose, hard to forget.",
                 priceText: "£19.99",
                 to: "/products/plastic-magenta",
                 img: KonarCardMagentaImg,
@@ -317,7 +317,7 @@ export default function Products() {
             {
                 tag: "High-vis",
                 name: "KonarCard Orange",
-                desc: "Bright orange — stands out on any van or site.",
+                desc: "Bright orange that stands out on any van or site.",
                 priceText: "£19.99",
                 to: "/products/plastic-orange",
                 img: KonarCardOrangeImg,

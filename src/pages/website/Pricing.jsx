@@ -98,7 +98,7 @@ function planRank(plan) {
    ========================= */
 function fmtGBP(n) {
     const num = Number(n);
-    if (!Number.isFinite(num)) return "—";
+    if (!Number.isFinite(num)) return "N/A";
     return `£${num.toFixed(2)}`;
 }
 
@@ -162,11 +162,11 @@ export default function Pricing() {
             : "Best value. Billed £50/year.";
 
     /* =========================
-       SEO — Meta upsert + JSON-LD (SPA-safe)
+       SEO: Meta upsert + JSON-LD (SPA-safe)
     ========================= */
     useEffect(() => {
         const CANONICAL = "https://www.konarcard.com/pricing";
-        const title = "KonarCard Pricing — Free, Plus & Teams (UK)";
+        const title = "KonarCard Pricing: Free, Plus & Teams (UK)";
         const description =
             "Start free with your KonarCard link. Upgrade to Plus for more customisation, content and analytics, or use Teams to manage multiple profiles. Cancel anytime.";
         const ogImage = "https://www.konarcard.com/og/pricing.png";
@@ -259,7 +259,7 @@ export default function Pricing() {
                 { "@type": "Question", name: "Do I need to pay upfront?", acceptedAnswer: { "@type": "Answer", text: "No. Start on Free, then upgrade when it’s worth it. Paid plans bill on your chosen interval." } },
                 { "@type": "Question", name: "Can I cancel anytime?", acceptedAnswer: { "@type": "Answer", text: "Yes. You can cancel or manage billing anytime from the Billing portal." } },
                 { "@type": "Question", name: "How does Teams pricing work?", acceptedAnswer: { "@type": "Answer", text: "Teams uses the Plus plan as your base, then you add extra profiles for staff at £2 per extra profile per month." } },
-                { "@type": "Question", name: "What happens if my plan ends?", acceptedAnswer: { "@type": "Answer", text: "You’ll stay on Free. Your link remains live — paid features simply pause until you re-subscribe." } },
+                { "@type": "Question", name: "What happens if my plan ends?", acceptedAnswer: { "@type": "Answer", text: "You’ll stay on Free. Your link remains live. Paid features simply pause until you re-subscribe." } },
             ],
         });
     }, []);

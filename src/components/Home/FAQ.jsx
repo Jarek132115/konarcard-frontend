@@ -51,28 +51,28 @@ const FAQS = [
     {
         tab: "getting-started",
         q: "What is a digital business card?",
-        a: "It's a business card you share from your phone instead of handing out paper. With KonarCard, the customer taps your card on their phone and your profile opens — details, services, photos and reviews, all in one link.",
+        a: "It is an online profile that replaces your paper card. Share it by tapping your NFC card, scanning the QR code, or sending your link. Everything a customer needs is in one place.",
     },
     {
         tab: "getting-started",
         q: "Does the customer need to download an app?",
-        a: "No. Your profile opens straight in their browser. No downloads, no sign-ups, no faff.",
+        a: "No. Your profile opens straight in their browser. Nothing to download on either end.",
     },
     {
         tab: "getting-started",
-        q: "How does the card actually work?",
-        a: "Tap the card on the top or back of a phone and your profile loads. If their phone doesn't support tap, they scan the QR code on the back of the card instead.",
+        q: "What if I change my number or move area?",
+        a: "Update your profile online and it changes everywhere instantly. Every card you have ever given out will show your new details.",
     },
     {
         tab: "getting-started",
         q: "Who is KonarCard for?",
-        a: "Electricians, plumbers, builders, roofers, gas engineers, decorators, landscapers, handymen — any UK trade that wants to get more work from the jobs they already do.",
+        a: "Electricians, plumbers, builders, roofers, gas engineers, decorators, landscapers, handymen, and any UK trade that wants to get more work from the jobs they already do.",
     },
 
     {
         tab: "cards-profiles",
         q: "What if I change my phone number or address?",
-        a: "Update your profile online. Every card you've ever given out now shows the new details — nothing to reprint, nothing to replace.",
+        a: "Update your profile online. Every card you have ever given out now shows the new details. Nothing to reprint, nothing to replace.",
     },
     {
         tab: "cards-profiles",
@@ -82,7 +82,7 @@ const FAQS = [
     {
         tab: "cards-profiles",
         q: "What happens if I lose my card?",
-        a: "Your profile stays live — same link, same number, same details. Just order a new card.",
+        a: "Your profile stays live with the same link, same number, same details. Just order a new card.",
     },
     {
         tab: "cards-profiles",
@@ -92,8 +92,8 @@ const FAQS = [
 
     {
         tab: "pricing",
-        q: "Is it a one-off cost or a subscription?",
-        a: "The card is £19.99 — paid once. Your digital profile is free. If you want more photos, services and full analytics, Plus is £5 a month. Totally optional.",
+        q: "Is it a one-off cost or a monthly fee?",
+        a: "The card is a one-off payment of £19.99. The basic profile is free. There is an optional Plus plan at £5 a month if you want more photos, more services listed and full analytics.",
     },
     {
         tab: "pricing",
@@ -109,28 +109,28 @@ const FAQS = [
     {
         tab: "teams",
         q: "Can I set up cards for my crew?",
-        a: "Yes. Add extra profiles for each member of your team — separate link, separate QR, separate stats. £2 a month per extra profile on top of Plus.",
+        a: "Yes. Add extra profiles for each member of your team, each with a separate link, separate QR, separate stats. £2 a month per extra profile on top of Plus.",
     },
     {
         tab: "teams",
         q: "Can everyone have their own reviews and contact details?",
-        a: "Yes. Each profile is its own thing — their own number, their own work photos, their own reviews.",
+        a: "Yes. Each profile is its own thing, with their own number, their own work photos, their own reviews.",
     },
 
     {
         tab: "support",
-        q: "How long does delivery take?",
-        a: "Same-day dispatch on orders placed before 1pm. Next-day delivery available at checkout for UK addresses.",
+        q: "How quickly does delivery arrive?",
+        a: "Orders placed before 1pm are dispatched the same day. Next-day delivery is available at checkout.",
     },
     {
         tab: "support",
-        q: "The tap isn't working — what should I do?",
+        q: "The tap isn't working. What should I do?",
         a: "Check NFC is switched on in the phone settings, then tap the card near the top or back of the phone. If it still doesn't work, scan the QR code on the back of the card.",
     },
     {
         tab: "support",
         q: "How do I get help?",
-        a: "Live chat is fastest. Or email supportteam@konarcard.com — we reply within one working day.",
+        a: "Live chat is fastest. Or email supportteam@konarcard.com. We reply within one working day.",
     },
 ];
 
@@ -148,11 +148,11 @@ export default function HomeFAQ() {
                     <p className="kc-pill khq__kicker">FAQs</p>
 
                     <h2 className="h3 khq__title">
-                        Straight <span className="khq__accent">Answers</span> to Common Questions
+                        Questions About <span className="khq__accent">KonarCard</span>
                     </h2>
 
                     <p className="kc-subheading khq__sub">
-                        No jargon. Just the answers tradespeople actually want before they buy.
+                        Straight answers. No jargon.
                     </p>
 
                     <div className="khq__tabs" role="tablist" aria-label="FAQ categories">

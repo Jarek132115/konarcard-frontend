@@ -48,7 +48,7 @@ export default function KonarSubscription() {
     const headerBullets = [
         { title: 'Contact Button', text: 'Save my number' },
         { title: 'Tap to Share', text: 'Works with NFC cards' },
-        { title: 'Live Updates', text: 'Edit anytime — goes live' },
+        { title: 'Live Updates', text: 'Edit anytime, goes live' },
         { title: 'About & Services', text: 'Tell your story, list services' },
         { title: 'Branding', text: 'Fonts, colours, layouts' },
     ];
@@ -58,7 +58,7 @@ export default function KonarSubscription() {
         {
             title: 'What do I get with Power Profile?',
             text:
-                'Unlimited edits, gallery, services with pricing, reviews, themes/fonts, layouts, and easy sharing via QR or link — changes go live instantly.',
+                'Unlimited edits, gallery, services with pricing, reviews, themes/fonts, layouts, and easy sharing via QR or link. Changes go live instantly.',
         },
         {
             title: 'How does the free trial work?',
@@ -68,12 +68,12 @@ export default function KonarSubscription() {
         {
             title: 'Do I need a subscription to use the card?',
             text:
-                'The card is a one-time purchase, but without an active trial or subscription your page is hidden — so tapping the card won’t show your profile until you subscribe again.',
+                'The card is a one-time purchase, but without an active trial or subscription your page is hidden, so tapping the card won’t show your profile until you subscribe again.',
         },
         {
             title: 'Can I update my page anytime?',
             text:
-                'Yes — while on an active trial or subscription your changes publish instantly.',
+                'Yes. While on an active trial or subscription your changes publish instantly.',
         },
     ];
 
@@ -86,7 +86,7 @@ export default function KonarSubscription() {
         {
             title: 'Is there a contract?',
             text:
-                'No long-term contracts. It’s a simple monthly plan — cancel anytime.',
+                'No long-term contracts. It’s a simple monthly plan. Cancel anytime.',
         },
         {
             title: 'How do I start?',
@@ -96,7 +96,7 @@ export default function KonarSubscription() {
         {
             title: 'Who is Power Profile for?',
             text:
-                'Built for tradies — plumbers, sparkies, builders, tilers, gardeners and more.',
+                'Built for tradies: plumbers, sparkies, builders, tilers, gardeners and more.',
         },
     ];
 
@@ -167,7 +167,7 @@ export default function KonarSubscription() {
                         Konar <span className="orange">Power Profile</span>
                     </h1>
                     <p className="pd-sub desktop-body">
-                        Stand out and win more jobs — one tap opens your profile with your services, photos, and contact details.
+                        Stand out and win more jobs. One tap opens your profile with your services, photos, and contact details.
                     </p>
 
                     {/* Orange-dot bullets */}
@@ -188,7 +188,7 @@ export default function KonarSubscription() {
                             <div className="pd-feature-copy">
                                 <p className="pd-feature-title desktop-body-s">Instant activation</p>
                                 <p className="desktop-body-xs" style={{ color: '#666' }}>
-                                    Free for 14 days — ends {freeTrialEndDate}
+                                    Free for 14 days, ends {freeTrialEndDate}
                                 </p>
                             </div>
                         </div>
@@ -238,7 +238,7 @@ export default function KonarSubscription() {
                         See How <span className="orange">Tradies</span> Put Konar To <span className="orange">Work</span>
                     </h2>
                     <h3 className="desktop-body-xs text-center">
-                        Don’t take our word for it — see why tradespeople are switching to smarter, faster profiles.
+                        Don’t take our word for it. See why tradespeople are switching to smarter, faster profiles.
                     </h3>
                 </div>
                 <div className="review-container-box">
@@ -310,7 +310,7 @@ export default function KonarSubscription() {
             <div className="section">
                 <div className="section-1-title">
                     <h2 className="desktop-h3 text-center">
-                        Power Profile — Subscription <span className="orange">FAQs</span>
+                        Power Profile Subscription <span className="orange">FAQs</span>
                     </h2>
                     <h3 className="desktop-body-xs text-center">Free trial, what’s included, and what happens after.</h3>
                 </div>

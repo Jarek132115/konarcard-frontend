@@ -32,7 +32,7 @@ export default function Blog() {
         path: "/blog",
         title: "KonarCard Blog | Tips for UK Tradespeople",
         description:
-            "Practical advice for UK tradespeople — how to win more jobs, get more reviews, and use a digital business card to look professional fast.",
+            "Practical advice for UK tradespeople on how to win more jobs, get more reviews, and use a digital business card to look professional fast.",
     });
 
     const tabs = useMemo(
@@ -120,7 +120,7 @@ export default function Blog() {
                 pillClass: "is-jobs",
                 title: "How to set up your KonarCard in under 5 mins",
                 excerpt:
-                    "Claim your link, add your details, and start sharing your card by tap, QR, or link — in minutes.",
+                    "Claim your link, add your details, and start sharing your card by tap, QR, or link in minutes.",
                 readTime: "3 min read",
                 featured: true,
             },
@@ -170,20 +170,18 @@ export default function Blog() {
                     <div className="kc-blog__container">
                         <div className="kc-blog__head">
 
-                            {/* Grid bg — circular radial fade, consistent with all hero sections */}
+                            {/* Grid bg, circular radial fade, consistent with all hero sections */}
                             <div className="kc-blog__gridBg" aria-hidden="true" />
 
                             <motion.div className="kc-blog__headContent" {...fadeUp(0)}>
                                 <p className="kc-pill kc-blog__kicker">Blog</p>
 
                                 <h1 className="h2 kc-blog__title">
-                                    Tips & Guides for <span className="kc-blog__accent">UK Tradespeople</span>
+                                    Tips and Guides for <span className="kc-blog__accent">UK Tradespeople</span>
                                 </h1>
 
                                 <p className="kc-subheading kc-blog__sub">
-                                    Practical advice on winning more work, getting found online, and making
-                                    the most of your KonarCard profile. Written for electricians, plumbers,
-                                    builders and other UK tradespeople.
+                                    Practical advice on getting more work, looking professional, and making the most of your KonarCard. Written for trades, not for tech people.
                                 </p>
 
                                 <div className="kc-blog__tabs" role="tablist" aria-label="Blog filters">

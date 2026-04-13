@@ -29,7 +29,7 @@ export default function ProductsPageHero({ products }) {
         <section className="kph-hero" aria-labelledby="kph-title">
             <div className="kph-container">
                 <header className="kph-head">
-                    {/* Grid lines — circular radial fade */}
+                    {/* Grid lines, circular radial fade */}
                     <div className="kph-gridBg" aria-hidden="true" />
 
                     <motion.div className="kph-headContent" {...fadeUp(0)}>
@@ -38,14 +38,11 @@ export default function ProductsPageHero({ products }) {
                         </p>
 
                         <h1 id="kph-title" className="h2 kph-title">
-                            NFC Business Cards — <span className="kph-accent">Choose Your Colour</span>
+                            NFC Business Cards in <span className="kph-accent">Six Colours</span>
                         </h1>
 
                         <p className="kc-subheading kph-sub">
-                            KonarCard NFC business cards are available in 6 colours. Each card is the
-                            same price — £19.99 — and includes a free digital profile you can update
-                            any time. Works on every iPhone and Android phone without an app. Tap the
-                            card to any phone and your profile opens instantly.
+                            Pick your colour. Pay once. Free profile included.
                         </p>
                     </motion.div>
                 </header>

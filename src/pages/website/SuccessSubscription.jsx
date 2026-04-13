@@ -20,7 +20,7 @@ function niceInterval(interval) {
     if (i === "monthly") return "Monthly";
     if (i === "quarterly") return "Quarterly";
     if (i === "yearly") return "Yearly";
-    return "—";
+    return "N/A";
 }
 
 export default function SuccessSubscription() {
@@ -163,7 +163,7 @@ export default function SuccessSubscription() {
                                 <div className="info-tile">
                                     <p className="desktop-body-s label">Next renewal</p>
                                     <p className="desktop-h5 value">
-                                        {nextChargeDate ? nextChargeDate.toLocaleString() : "—"}
+                                        {nextChargeDate ? nextChargeDate.toLocaleString() : "N/A"}
                                     </p>
                                 </div>
                             </div>

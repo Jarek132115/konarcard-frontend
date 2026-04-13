@@ -55,11 +55,11 @@ export default function Examples() {
                     <p className="kc-pill khe-kicker">Real examples</p>
 
                     <h2 id="khe-title" className="h3 khe-title">
-                        See How UK Trades <span className="khe-accent">Win More Work</span> With KonarCard
+                        What UK <span className="khe-accent">Tradespeople</span> Say
                     </h2>
 
                     <p className="kc-subheading khe-sub">
-                        Real examples of trades turning taps into booked jobs.
+                        Real profiles. Real results.
                     </p>
                 </motion.header>
 
@@ -81,7 +81,7 @@ export default function Examples() {
                                     <span className="khe-rolePill">{it.role}</span>
                                     <img
                                         src={ExampleTest}
-                                        alt={`${it.name} — ${it.role} KonarCard profile example`}
+                                        alt={`${it.name}, ${it.role} KonarCard profile example`}
                                         className="khe-img"
                                         loading="lazy"
                                         decoding="async"

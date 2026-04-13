@@ -54,7 +54,7 @@ export default function ProductsPageBestChoice() {
                     </h2>
 
                     <p className="kc-subheading kbc__sub">
-                        Compare plastic, metal, and key tag NFC business cards — all linked to the same digital profile.
+                        Compare plastic, metal, and key tag NFC business cards, all linked to the same digital profile.
                     </p>
                 </motion.header>
 

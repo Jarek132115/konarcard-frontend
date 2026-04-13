@@ -115,7 +115,7 @@ export default function KonarCard() {
   const faqsLeft = [
     {
       title: 'What is the Konar NFC business card?',
-      text: 'A reusable card with a tiny NFC chip that opens your Konar profile with a tap—no app, no battery.',
+      text: 'A reusable card with a tiny NFC chip that opens your Konar profile with a tap. No app, no battery.',
     },
     {
       title: 'How does the tap actually work?',
@@ -123,7 +123,7 @@ export default function KonarCard() {
     },
     {
       title: 'What if someone can’t tap?',
-      text: 'Every card includes a QR code and your profile has a shareable link — there’s always a backup.',
+      text: 'Every card includes a QR code and your profile has a shareable link, so there’s always a backup.',
     },
     {
       title: 'Will it work with their phone?',
@@ -134,7 +134,7 @@ export default function KonarCard() {
   const faqsRight = [
     {
       title: 'Is the NFC chip visible?',
-      text: 'No — it’s sealed inside the card and doesn’t affect the finish or design.',
+      text: 'No. It’s sealed inside the card and doesn’t affect the finish or design.',
     },
     {
       title: 'How long does the card last?',
@@ -184,9 +184,9 @@ export default function KonarCard() {
 
         {/* RIGHT: copy, bullets, price, CTA */}
         <div className="pd-right">
-          <h1 className="pd-title desktop-h4">Konar Card — <span className="orange">White Edition</span></h1>
+          <h1 className="pd-title desktop-h4">Konar Card <span className="orange">White Edition</span></h1>
           <p className="pd-sub desktop-body">
-            Stand out and win more jobs — one tap opens your profile with your services, photos, and contact details.
+            Stand out and win more jobs. One tap opens your profile with your services, photos, and contact details.
           </p>
 
           {/* Bullets (orange dot + copy) */}
@@ -261,7 +261,7 @@ export default function KonarCard() {
             See How <span className="orange">Tradies</span> Put Konar To <span className="orange">Work</span>
           </h2>
           <h3 className="desktop-body-xs text-center">
-            Don’t take our word for it — see why tradespeople are switching to smarter, faster profiles.
+            Don’t take our word for it. See why tradespeople are switching to smarter, faster profiles.
           </h3>
         </div>
         <div className="review-container-box">
@@ -314,7 +314,7 @@ export default function KonarCard() {
               <div className="review-div">
                 <img className="stars" src={ReviewStars} alt="5 star rating" />
                 <p className="desktop-body-s text-center">
-                  “I update prices and services on my phone. No reprinting, no fuss — just more enquiries.”
+                  “I update prices and services on my phone. No reprinting, no fuss, just more enquiries.”
                 </p>
                 <div className="review-div-person">
                   <img src={pp4} alt="Reviewer" />
@@ -332,7 +332,7 @@ export default function KonarCard() {
       {/* ===== Product FAQs (dot style to match subscription page) ===== */}
       <div className="section">
         <div className="section-1-title">
-          <h2 className="desktop-h3 text-center">Konar Card — Product <span className="orange">FAQs</span></h2>
+          <h2 className="desktop-h3 text-center">Konar Card Product <span className="orange">FAQs</span></h2>
           <h3 className="desktop-body-xs text-center">Everything about the card, tap-to-share, delivery and warranty.</h3>
         </div>
 

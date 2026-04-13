@@ -41,9 +41,7 @@ export default function Comparison() {
 
                     <h2 id="kc-comp-title" className="h3 kc-comp__title">
                         Stop handing out paper cards.{" "}
-                        <span className="kc-comp__accent">Start</span>
-                        <br />
-                        <span className="kc-comp__accent">winning</span> trust.
+                        <span className="kc-comp__accent">Start winning trust.</span>
                     </h2>
 
                     <p className="kc-subheading kc-comp__sub">

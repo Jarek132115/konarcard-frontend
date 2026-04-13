@@ -34,7 +34,7 @@ function ChevronIcon() {
 const FAQS = [
     {
         q: "Do I need to pay upfront?",
-        a: "No. Start on Free, then upgrade when it's worth it. Paid plans bill monthly or yearly — whichever you choose.",
+        a: "No. Start on Free, then upgrade when it's worth it. Paid plans bill monthly or yearly, whichever you choose.",
     },
     {
         q: "Can I cancel anytime?",
@@ -46,11 +46,11 @@ const FAQS = [
     },
     {
         q: "What's the difference between Plus and Teams?",
-        a: "Plus is everything you need for a single profile — full customisation, analytics, and no branding. Teams adds the ability to manage multiple staff profiles from one account, each at £2/month extra.",
+        a: "Plus is everything you need for a single profile, with full customisation, analytics, and no branding. Teams adds the ability to manage multiple staff profiles from one account, each at £2/month extra.",
     },
     {
         q: "What happens if my plan ends?",
-        a: "You'll stay on Free. Your KonarCard link stays live — paid features simply pause until you re-subscribe.",
+        a: "You'll stay on Free. Your KonarCard link stays live. Paid features simply pause until you re-subscribe.",
     },
     {
         q: "Can I switch plans later?",
