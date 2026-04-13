@@ -10,7 +10,7 @@ export default function PlasticCard2() {
             productKey="plastic-black"
             productName="KonarCard Black"
             crumbName="KonarCard – Black"
-            heroSubtext="A bold black NFC business card with QR backup — designed to feel premium and stand out instantly."
+            heroSubtext="Tap this card to a customer's phone and your profile opens straight away. No app. No typing. QR code on the back for any phone that can't tap. £19.99 with free UK delivery."
             badgeText="Popular"
             frontSrc={BlackFrontImg}
             backSrc={BlackBackImg}

@@ -164,14 +164,14 @@ export default function Reviews() {
 
                                 {/* Left — copy */}
                                 <motion.div className="krv-heroCopy" {...fadeUp(0)}>
-                                    <p className="kc-pill krv-kicker">Customer reviews</p>
+                                    <p className="kc-pill krv-kicker">Reviews</p>
 
                                     <h1 className="h2 krv-title">
-                                        Tradespeople use KonarCard to look more professional — fast.
+                                        What UK Tradespeople Say About KonarCard
                                     </h1>
 
                                     <p className="kc-subheading krv-sub">
-                                        Clear profiles, easy sharing, and a better first impression. Here's what customers are saying after switching.
+                                        {AVG_RATING} out of 5 from verified UK tradespeople. Here's what they said after using KonarCard on the job.
                                     </p>
 
                                     <div className="krv-trustRow" aria-label="Average rating">
@@ -196,7 +196,7 @@ export default function Reviews() {
                                     <div className="krv-summaryHead">
                                         <p className="krv-summaryTitle">Summary</p>
                                         <p className="krv-summaryDesc">
-                                            Short, honest feedback from people using KonarCard day-to-day.
+                                            Straight from the van — what tradespeople think after using KonarCard on real jobs.
                                         </p>
                                     </div>
 
@@ -211,11 +211,11 @@ export default function Reviews() {
                                         </div>
                                     </div>
 
-                                    <Link to="/claimyourlink" className="kx-btn kx-btn--black krv-summaryBtn">
-                                        Claim your link
+                                    <Link to="/register" className="kx-btn kx-btn--black krv-summaryBtn">
+                                        Start Free
                                     </Link>
 
-                                    <p className="krv-summaryHint">Set up in minutes. Update anytime.</p>
+                                    <p className="krv-summaryHint">No card needed to set up your profile.</p>
                                 </motion.aside>
 
                             </div>
@@ -299,10 +299,12 @@ export default function Reviews() {
                             viewport={{ once: true, margin: "-30px" }}
                             transition={{ duration: 0.4, ease: EASE }}
                         >
-                            <p className="krv-ctaText">Share your experience with KonarCard.</p>
-                            <button type="button" className="kx-btn kx-btn--black">
-                                Add your own review
-                            </button>
+                            <p className="krv-ctaText">
+                                Want to see what your KonarCard profile could look like? Start free — no card needed to set up your profile.
+                            </p>
+                            <Link to="/register" className="kx-btn kx-btn--black">
+                                Start Free
+                            </Link>
                         </motion.div>
                     </div>
                 </section>

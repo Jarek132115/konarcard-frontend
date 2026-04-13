@@ -23,24 +23,24 @@ const fadeUpInView = (delay = 0) => ({
 const STEPS = [
     {
         step: "Step 1",
-        title: "Claim Your Link",
-        desc: "Secure your personal KonarCard link in seconds — no payment required.",
+        title: "Tap or Scan",
+        desc: "The customer taps your card on their phone, or scans the QR code on the back.",
         img: Step1,
-        alt: "Claim your KonarCard link on mobile",
+        alt: "Customer tapping a KonarCard on their phone",
     },
     {
         step: "Step 2",
-        title: "Build Your Profile",
-        desc: "Upload photos, list your services, add reviews and contact buttons in one place.",
+        title: "Profile Opens",
+        desc: "They see your details, services, work photos and reviews straight away — no app needed.",
         img: Step2,
-        alt: "Build your KonarCard profile",
+        alt: "KonarCard profile open on a phone",
     },
     {
         step: "Step 3",
-        title: "Share It Anywhere",
-        desc: "Tap your card, send your link, or use a QR code — online or on site.",
+        title: "They Book You",
+        desc: "Call, save your number, send a message or leave a review — all from one link.",
         img: Step3,
-        alt: "Share your KonarCard anywhere",
+        alt: "Customer contacting a tradesperson via KonarCard",
     },
 ];
 
@@ -50,15 +50,15 @@ export default function HowItWorks() {
             <div className="hiw__inner">
 
                 <motion.header className="hiw__head" {...fadeUpInView(0)}>
-                    <p className="kc-pill hiw__kicker">3 Simple Steps</p>
+                    <p className="kc-pill hiw__kicker">How it works</p>
 
                     <h2 className="h3 hiw__title">
-                        Set Up Your <span className="hiw__accent">Profile</span> in{" "}
-                        <span className="hiw__accent">Minutes.</span>
+                        Tap the card.{" "}
+                        <span className="hiw__accent">Win the job.</span>
                     </h2>
 
                     <p className="kc-subheading hiw__sub">
-                        Add your work, reviews, and contact buttons — then share one simple link.
+                        No apps to download. No faff. Three steps and the customer has everything they need.
                     </p>
                 </motion.header>
 
@@ -93,16 +93,16 @@ export default function HowItWorks() {
 
                 <motion.div className="hiw__ctaBlock" {...fadeUpInView(0.2)}>
                     <p className="body hiw__ctaDesc">
-                        Ready to look more professional today?
+                        Ready to look more professional on the next job?
                     </p>
 
                     <div className="hiw__cta">
                         <Link to="/register" className="kx-btn kx-btn--black">
-                            Claim Your Link
+                            Start Free
                         </Link>
 
-                        <Link to="/how-it-works" className="kx-btn kx-btn--white">
-                            See How It Works
+                        <Link to="/products" className="kx-btn kx-btn--white">
+                            See the Cards
                         </Link>
                     </div>
                 </motion.div>

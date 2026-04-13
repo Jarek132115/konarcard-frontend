@@ -153,7 +153,7 @@ export default function Hero() {
                 {/* Subtle grid texture — covers the full heading area */}
                 <div className="kc-homeHero__gridBg" aria-hidden="true" />
                 <motion.p className="kc-pill kc-homeHero__pill" {...fadeUp(0.06)}>
-                    NFC + QR Digital Business Card for Trades
+                    Built for UK trades
                 </motion.p>
 
                 <motion.h1 className="h1 kc-homeHero__title" {...fadeUp(0.14)}>
@@ -163,16 +163,16 @@ export default function Hero() {
                 </motion.h1>
 
                 <motion.p className="kc-subheading kc-homeHero__sub" {...fadeUp(0.22)}>
-                    Share your contact details with a tap, QR, or link — and update them anytime.
+                    Tap your card to any phone and your profile opens — your details, your services, your reviews, all in one place.
                 </motion.p>
 
                 <motion.div className="kc-homeHero__ctaRow" {...fadeUp(0.30)}>
                     <Link to="/register" className="kx-btn kx-btn--orange kc-homeHero__ctaBtn">
-                        Claim Your Link
+                        Start Free
                     </Link>
-                    <button type="button" className="kx-btn kx-btn--white kc-homeHero__ctaBtn">
-                        Watch How It Works
-                    </button>
+                    <Link to="/products" className="kx-btn kx-btn--white kc-homeHero__ctaBtn">
+                        See the Cards
+                    </Link>
                 </motion.div>
             </div>
 

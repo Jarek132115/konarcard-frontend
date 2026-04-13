@@ -116,14 +116,16 @@ export default function Example() {
                             <div className="ex-gridBg" aria-hidden="true" />
 
                             <motion.div className="ex-headContent" {...fadeUp(0)}>
-                                <p className="kc-pill ex-kicker">Real profiles built with KonarCard</p>
+                                <p className="kc-pill ex-kicker">Real UK profiles</p>
 
                                 <h1 className="h2 ex-title">
-                                    See how other <span className="ex-accent">tradies</span> use KonarCard
+                                    Real KonarCard Profiles — <span className="ex-accent">See What UK Trades Are Doing</span>
                                 </h1>
 
                                 <p className="kc-subheading ex-sub">
-                                    Real UK examples of taps turning into booked jobs.
+                                    Here's how electricians, plumbers, builders and other UK tradespeople are using
+                                    KonarCard. Every profile below is real — tap a card, show your work, collect reviews
+                                    and win more jobs.
                                 </p>
 
                                 <div className="ex-tabs" role="tablist" aria-label="Filter by trade">

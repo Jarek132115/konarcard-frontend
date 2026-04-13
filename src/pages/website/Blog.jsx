@@ -177,12 +177,13 @@ export default function Blog() {
                                 <p className="kc-pill kc-blog__kicker">Blog</p>
 
                                 <h1 className="h2 kc-blog__title">
-                                    Tips, guides, and ideas to{" "}
-                                    <span className="kc-blog__accent">help</span> you win more jobs
+                                    Tips & Guides for <span className="kc-blog__accent">UK Tradespeople</span>
                                 </h1>
 
                                 <p className="kc-subheading kc-blog__sub">
-                                    Practical advice for trades using digital business cards, profiles, and NFC.
+                                    Practical advice on winning more work, getting found online, and making
+                                    the most of your KonarCard profile. Written for electricians, plumbers,
+                                    builders and other UK tradespeople.
                                 </p>
 
                                 <div className="kc-blog__tabs" role="tablist" aria-label="Blog filters">

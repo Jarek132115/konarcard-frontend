@@ -111,50 +111,42 @@ export default function Home() {
       mainEntity: [
         {
           "@type": "Question",
-          name: "What is KonarCard?",
+          name: "What is a digital business card?",
           acceptedAnswer: {
             "@type": "Answer",
-            text: "KonarCard is a digital business card built for UK trades and small businesses. Share your profile instantly using an NFC tap, QR scan, or a link — no app needed. Update your details anytime.",
+            text: "A digital business card is a card you share from your phone instead of handing out paper. With KonarCard, the customer taps your card on their phone and your profile opens — details, services, photos and reviews, all in one link.",
           },
         },
         {
           "@type": "Question",
-          name: "How do I get started?",
+          name: "Does the customer need to download an app?",
           acceptedAnswer: {
             "@type": "Answer",
-            text: "Create your free profile, claim your link, and add your contact details, services, photos, and reviews. Then share by link, QR, or order an NFC card for tap-to-share.",
+            text: "No. Your profile opens straight in their browser — no downloads, no sign-ups.",
           },
         },
         {
           "@type": "Question",
-          name: "Do I need to pay to start?",
+          name: "What happens if I change my phone number or address?",
           acceptedAnswer: {
             "@type": "Answer",
-            text: "No. You can start free and share your link straight away. NFC products (plastic, metal, or KonarTag) are optional for tap-to-share.",
+            text: "Update your profile online and every card you've ever given out now shows the new details. Nothing to reprint, nothing to replace.",
           },
         },
         {
           "@type": "Question",
-          name: "Does the NFC business card work on iPhone and Android?",
+          name: "How does the card actually work?",
           acceptedAnswer: {
             "@type": "Answer",
-            text: "Yes. Most modern iPhones and Android phones support NFC tap-to-open. There's also a QR backup for phones with NFC off.",
+            text: "Tap the card on the top or back of a phone and your profile loads. If their phone can't tap, they scan the QR code on the back instead.",
           },
         },
         {
           "@type": "Question",
-          name: "Can I update my details anytime?",
+          name: "Is it a one-off cost or a subscription?",
           acceptedAnswer: {
             "@type": "Answer",
-            text: "Yes. Your link stays the same, but you can update your profile content whenever you want — no reprints and no outdated details.",
-          },
-        },
-        {
-          "@type": "Question",
-          name: "Is the NFC card a one-time purchase?",
-          acceptedAnswer: {
-            "@type": "Answer",
-            text: "Yes. NFC products are a one-time purchase. Plans are optional if you want extra features like more templates or deeper analytics.",
+            text: "The card is £19.99, paid once. Your digital profile is free. Plus is £5 a month if you want more photos, services and full analytics, and it's optional.",
           },
         },
       ],
@@ -186,13 +178,13 @@ export default function Home() {
             }}
           >
             <p className="kc-subheading" style={{ margin: 0 }}>
-              KonarCard is a digital business card designed for UK
-              tradespeople. Each card uses NFC technology — tap it to any
-              smartphone and your profile opens instantly, no app required.
-              Share your contact details, services, photos, prices and reviews
-              in one link. Cards are available in 6 colours at £19.99 each
-              with a free digital profile included. Used by electricians,
-              plumbers, builders, landscapers and handymen across the UK.
+              KonarCard is a digital business card built for UK tradespeople.
+              Your card has a built-in NFC chip — tap it to a customer's
+              phone and your profile opens straight away, no app needed.
+              Think of it as your business card, website and review page all
+              in one link. It works as a smart electronic business card you
+              update online, so your details are always right. One card. One
+              tap. Everything a customer needs to book you.
             </p>
           </div>
         </section>

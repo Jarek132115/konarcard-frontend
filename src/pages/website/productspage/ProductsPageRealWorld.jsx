@@ -65,11 +65,13 @@ export default function ProductsPageRealWorld() {
                     <p className="kc-pill kprw__kicker">Built for trades</p>
 
                     <h2 className="h3 kprw__title">
-                        How Trades Use NFC Business Cards <span className="kprw__accent">in the Real World</span>
+                        How Trades Actually <span className="kprw__accent">Use the Card</span>
                     </h2>
 
                     <p className="kc-subheading kprw__sub">
-                        See how contactless business cards help you share details instantly, collect leads, and win more jobs.
+                        Electricians, plumbers, builders and roofers use KonarCard after quotes,
+                        at the trade counter, on the van and on every site they visit. One tap and
+                        the customer has everything — no typing, no paper cards in the bin.
                     </p>
                 </header>
 

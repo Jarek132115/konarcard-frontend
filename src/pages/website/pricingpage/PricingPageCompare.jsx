@@ -77,7 +77,9 @@ export default function PricingPageCompare() {
                     <p className="kc-pill prc-pill">Compare</p>
                     <h2 className="h3 prc-title">Compare plans</h2>
                     <p className="kc-subheading prc-sub">
-                        Clear differences — no fluff. Pick what matches how you work.
+                        A box of 250 paper business cards costs around £20 and goes out of date the
+                        moment you change your number. KonarCard is the same price — once — and
+                        never needs reprinting.
                     </p>
                 </motion.header>
 

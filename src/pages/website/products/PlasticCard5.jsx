@@ -10,7 +10,7 @@ export default function PlasticCard5() {
             productKey="plastic-magenta"
             productName="KonarCard Magenta"
             crumbName="KonarCard – Magenta"
-            heroSubtext="A bold magenta NFC business card with QR backup — designed to stand out instantly and feel premium."
+            heroSubtext="Tap this card to a customer's phone and your profile opens straight away. No app. No typing. QR code on the back for any phone that can't tap. £19.99 with free UK delivery."
             badgeText="Bold choice"
             frontSrc={MagentaFrontImg}
             backSrc={MagentaBackImg}

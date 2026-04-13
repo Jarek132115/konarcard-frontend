@@ -50,97 +50,87 @@ const TABS = [
 const FAQS = [
     {
         tab: "getting-started",
-        q: "What is KonarCard?",
-        a: "KonarCard is a digital business card built for trades and service businesses. Share your details instantly using one link, an NFC tap, or a QR code — no app needed.",
+        q: "What is a digital business card?",
+        a: "It's a business card you share from your phone instead of handing out paper. With KonarCard, the customer taps your card on their phone and your profile opens — details, services, photos and reviews, all in one link.",
     },
     {
         tab: "getting-started",
-        q: "How do I get started?",
-        a: "Claim your KonarCard link in seconds, create your profile, and start sharing straight away. You can add your contact info, socials, website, reviews, or booking link.",
+        q: "Does the customer need to download an app?",
+        a: "No. Your profile opens straight in their browser. No downloads, no sign-ups, no faff.",
     },
     {
         tab: "getting-started",
-        q: "Do I need to pay to start?",
-        a: "No. You can claim your link and create a basic profile for free. Paid plans unlock extra features and physical NFC cards.",
+        q: "How does the card actually work?",
+        a: "Tap the card on the top or back of a phone and your profile loads. If their phone doesn't support tap, they scan the QR code on the back of the card instead.",
     },
     {
         tab: "getting-started",
-        q: "Who is KonarCard best for?",
-        a: "It's ideal for electricians, plumbers, builders, landscapers, and any service businesses that want more calls, more quotes, and easier referrals.",
+        q: "Who is KonarCard for?",
+        a: "Electricians, plumbers, builders, roofers, gas engineers, decorators, landscapers, handymen — any UK trade that wants to get more work from the jobs they already do.",
     },
 
     {
         tab: "cards-profiles",
-        q: "How does the physical card work?",
-        a: "KonarCard cards use NFC. When someone taps your card with their phone, your profile opens instantly. If NFC isn't supported, they can scan the QR code instead.",
+        q: "What if I change my phone number or address?",
+        a: "Update your profile online. Every card you've ever given out now shows the new details — nothing to reprint, nothing to replace.",
     },
     {
         tab: "cards-profiles",
-        q: "Can I update my profile anytime?",
-        a: "Yes. Edit your details whenever you like and updates show instantly. No reprinting, no waiting.",
+        q: "What if the customer's phone doesn't have NFC?",
+        a: "They scan the QR code on the back of the card with their camera. Works on every phone.",
     },
     {
         tab: "cards-profiles",
         q: "What happens if I lose my card?",
-        a: "Your profile stays live. You can order a replacement card and link it to the same profile without losing anything.",
+        a: "Your profile stays live — same link, same number, same details. Just order a new card.",
     },
     {
         tab: "cards-profiles",
-        q: "Does KonarCard work on all phones?",
-        a: "Yes. It works on iPhone and Android. Most modern phones support NFC, and QR scanning works on any phone with a camera.",
-    },
-    {
-        tab: "cards-profiles",
-        q: "Can I add a booking link, WhatsApp, or reviews?",
-        a: "Yes. You can add your preferred contact methods and links — including WhatsApp, website, Google reviews, quote forms, and more.",
+        q: "Can I add my work photos and reviews?",
+        a: "Yes. Add photos from jobs, list your services and prices, and show your reviews. Customers see proof before they pick up the phone.",
     },
 
     {
         tab: "pricing",
-        q: "What plans are available?",
-        a: "There's a free plan to get started, plus paid plans for extra features and physical cards. See full details on the pricing page.",
+        q: "Is it a one-off cost or a subscription?",
+        a: "The card is £19.99 — paid once. Your digital profile is free. If you want more photos, services and full analytics, Plus is £5 a month. Totally optional.",
     },
     {
         tab: "pricing",
-        q: "Can I upgrade or downgrade later?",
-        a: "Yes. You can change your plan anytime from your account dashboard.",
+        q: "Can I try it without buying a card?",
+        a: "Yes. Claim your link and build your profile for free. Order a card later if you want one.",
     },
     {
         tab: "pricing",
-        q: "What happens if I cancel?",
-        a: "If you cancel a paid plan, your profile stays accessible, but premium features will no longer be available.",
-    },
-    {
-        tab: "pricing",
-        q: "Do you offer refunds or replacements for cards?",
-        a: "If there's a delivery or print issue, we'll make it right. For order help, message us via live chat.",
+        q: "Can I cancel Plus anytime?",
+        a: "Yes. Cancel whenever you want from your dashboard. Your profile stays live on the free plan.",
     },
 
     {
         tab: "teams",
-        q: "Can I create cards for my team?",
-        a: "Yes. Team plans let you manage multiple profiles under one account — perfect for companies, crews, and growing businesses.",
+        q: "Can I set up cards for my crew?",
+        a: "Yes. Add extra profiles for each member of your team — separate link, separate QR, separate stats. £2 a month per extra profile on top of Plus.",
     },
     {
         tab: "teams",
-        q: "Can I control what my team members can edit?",
-        a: "Yes. Team setups can be managed from one place so branding and key details stay consistent.",
+        q: "Can everyone have their own reviews and contact details?",
+        a: "Yes. Each profile is its own thing — their own number, their own work photos, their own reviews.",
     },
 
     {
         tab: "support",
-        q: "Do I need an app?",
-        a: "No app needed. People tap the card or scan the QR code to open your profile instantly in their browser.",
+        q: "How long does delivery take?",
+        a: "Same-day dispatch on orders placed before 1pm. Next-day delivery available at checkout for UK addresses.",
     },
     {
         tab: "support",
         q: "The tap isn't working — what should I do?",
-        a: "Make sure NFC is enabled and tap the card near the top/back of the phone. If the phone doesn't support NFC, use the QR code instead.",
+        a: "Check NFC is switched on in the phone settings, then tap the card near the top or back of the phone. If it still doesn't work, scan the QR code on the back of the card.",
     },
     {
         tab: "support",
-        q: "How can I contact support?",
-        a: "Use live chat — it's the fastest way to get help.",
+        q: "How do I get help?",
+        a: "Live chat is fastest. Or email supportteam@konarcard.com — we reply within one working day.",
     },
 ];
 
@@ -158,11 +148,11 @@ export default function HomeFAQ() {
                     <p className="kc-pill khq__kicker">FAQs</p>
 
                     <h2 className="h3 khq__title">
-                        Frequently <span className="khq__accent">Asked</span> Questions
+                        Straight <span className="khq__accent">Answers</span> to Common Questions
                     </h2>
 
                     <p className="kc-subheading khq__sub">
-                        Everything you need to know before getting started with KonarCard.
+                        No jargon. Just the answers tradespeople actually want before they buy.
                     </p>
 
                     <div className="khq__tabs" role="tablist" aria-label="FAQ categories">

@@ -155,11 +155,11 @@ export default function ContactUs() {
                                 <p className="kc-pill kcon-kicker">Contact</p>
 
                                 <h1 id="kcon-title" className="h2 kcon-title">
-                                    We're here to <span className="kcon-accent">help</span>
+                                    Get in <span className="kcon-accent">Touch</span>
                                 </h1>
 
                                 <p className="kc-subheading kcon-sub">
-                                    Live chat is the quickest way to get support. Email is available anytime.
+                                    Got a question about your KonarCard or order? We're here to help — live chat during working hours or email anytime.
                                 </p>
                             </motion.div>
                         </div>

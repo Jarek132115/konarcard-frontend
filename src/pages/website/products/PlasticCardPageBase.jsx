@@ -187,8 +187,8 @@ export default function PlasticCardPageBase({
         const siteUrl = "https://www.konarcard.com";
         const pageUrl = `${siteUrl}/products/${productKey}`;
 
-        const description = heroSubtext ||
-            `${productName} — premium plastic NFC business card. Tap or scan to share your profile instantly. Free UK delivery.`;
+        const colorName = String(variant || "").charAt(0).toUpperCase() + String(variant || "").slice(1);
+        const description = `KonarCard ${colorName} NFC business card. Tap to share your digital profile — no app needed. Works on all phones. Free digital profile included. £19.99, UK delivery.`;
 
         const toAbsolute = (src) => {
             const s = String(src || "");
@@ -199,7 +199,7 @@ export default function PlasticCardPageBase({
         };
         const imageUrl = toAbsolute(frontSrc);
 
-        document.title = `${productName} — NFC Business Card | KonarCard`;
+        document.title = `${colorName} NFC Business Card | KonarCard UK — £19.99`;
 
         const setMeta = (attr, key, value) => {
             const sel = `meta[${attr}="${key}"]`;
@@ -246,12 +246,12 @@ export default function PlasticCardPageBase({
         setMeta("name", "twitter:description", description);
         setMeta("name", "twitter:image", imageUrl);
 
-        const colorLabel = String(variant || "").charAt(0).toUpperCase() + String(variant || "").slice(1);
+        const colorLabel = colorName;
 
         setJsonLd(`product-${productKey}`, {
             "@context": "https://schema.org/",
             "@type": "Product",
-            name: productName,
+            name: `KonarCard ${colorName} — NFC Business Card`,
             description,
             url: pageUrl,
             image: [imageUrl],
@@ -567,7 +567,7 @@ export default function PlasticCardPageBase({
                                     <span className="kc-crumbPill__here">{crumbName}</span>
                                 </div>
 
-                                <h1 className="h2 kc-premHero__title">{productName}</h1>
+                                <h1 className="h2 kc-premHero__title">{productName} — NFC Business Card</h1>
 
                                 <p className="kc-premHero__sub">{heroSubtext}</p>
 
@@ -755,12 +755,11 @@ export default function PlasticCardPageBase({
                             <p className="kc-pill khv__kicker">Product details</p>
 
                             <h2 className="h3 khv__title">
-                                Everything <span className="khv__accent">you need</span> to know about <br />
-                                your NFC business card
+                                The <span className="khv__accent">specs</span>, in plain English
                             </h2>
 
                             <p className="kc-subheading khv__sub">
-                                Built to standard bank card size. Durable for daily use. Works instantly with NFC and QR.
+                                Standard bank card size. Built to live in a wallet or van. Works with every modern phone.
                             </p>
                         </motion.header>
 
@@ -785,12 +784,11 @@ export default function PlasticCardPageBase({
                             <p className="kc-pill khv__kicker">What you get</p>
 
                             <h2 className="h3 khv__title">
-                                Everything <span className="khv__accent">you need</span> to look <br />
-                                professional
+                                Why <span className="khv__accent">tradespeople</span> buy this card
                             </h2>
 
                             <p className="kc-subheading khv__sub">
-                                Make a strong first impression instantly — and update your details anytime without reprinting.
+                                Look credible in seconds. Keep your details live forever. Never reprint a card again.
                             </p>
                         </motion.header>
 

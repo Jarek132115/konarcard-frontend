@@ -24,34 +24,34 @@ const fadeUpInView = (delay = 0) => ({
 /* ── Data ──────────────────────────────────────────────────── */
 const ITEMS = [
     {
-        icon: MoneyShieldIcon,
-        title: "One job pays for everything",
-        desc: "One extra job can cover your card cost.",
-    },
-    {
         icon: NoPrintIcon,
-        title: "No reprints, ever",
-        desc: "Update details anytime - no reprints.",
+        title: "No more bin-fodder",
+        desc: "Stop handing out cards that end up in the bin after one quote.",
     },
     {
         icon: RefreshIcon,
-        title: "Always up to date",
-        desc: "Your latest work and reviews stay up to date.",
+        title: "Details never go stale",
+        desc: "Change your number or price list — it updates on every card you've given out.",
     },
     {
         icon: SmartPhoneTapIcon,
-        title: "Works everywhere",
-        desc: "Share anywhere - works on every phone.",
+        title: "Your work sells for you",
+        desc: "Customers see your job photos and reviews before they even call.",
+    },
+    {
+        icon: MoneyShieldIcon,
+        title: "One card lasts forever",
+        desc: "Pay once. No reprints. No waste. One job covers the cost.",
     },
     {
         icon: ToolsIcon,
         title: "Built for real trades",
-        desc: "Built for real jobs, not office desks.",
+        desc: "Made for vans and tool bags — not office drawers.",
     },
     {
         icon: TrophyIcon,
-        title: "Looks professional fast",
-        desc: "Look credible before you even speak.",
+        title: "Look pro straight away",
+        desc: "Credible the second you hand it over — no website build needed.",
     },
 ];
 
@@ -63,11 +63,11 @@ export default function Value() {
                     <p className="kc-pill khv__kicker">Built for trades</p>
 
                     <h2 className="h3 khv__title">
-                        Why KonarCard Is <span className="khv__accent">Worth It</span>
+                        Why Tradespeople <span className="khv__accent">Switch to KonarCard</span>
                     </h2>
 
                     <p className="kc-subheading khv__sub">
-                        A practical profile you can share by tap, QR, or link.
+                        Straight answers. No marketing fluff. Here's what you actually get.
                     </p>
                 </motion.header>
 

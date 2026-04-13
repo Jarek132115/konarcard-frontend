@@ -145,20 +145,20 @@ export default function PricingPageHero({
         return [
             {
                 key: "free",
-                title: "Individual",
+                title: "Free",
                 icon: FreePlanIcon,
-                tag: "Best for starting out",
+                tag: "Try it without paying",
                 featured: false,
                 price: "£0",
-                cadence: "No monthly fees",
-                meta: [],
+                cadence: "Free forever",
+                meta: ["No card required to try it."],
                 highlights: [
-                    "Your KonarCard link",
-                    "Contact buttons",
-                    "QR sharing",
-                    "Works on any phone",
+                    "One profile",
+                    "Up to 6 work photos",
+                    "3 services listed",
+                    "3 reviews shown",
+                    "Tap or QR sharing",
                     "Unlimited updates",
-                    "Tap or scan share",
                 ],
                 cta: getCTA("free"),
             },
@@ -175,12 +175,12 @@ export default function PricingPageHero({
                     plusSavings ? plusSavings : null,
                 ].filter(Boolean),
                 highlights: [
-                    "Full customisation",
-                    "More photos",
-                    "Services & pricing",
-                    "Reviews & ratings",
-                    "Unlimited edits",
-                    "Deeper analytics",
+                    "All 5 profile templates",
+                    "Up to 12 work photos",
+                    "12 services listed",
+                    "12 reviews shown",
+                    "Full analytics",
+                    "See who views your profile",
                 ],
                 cta: getCTA("plus", plusKey),
             },
@@ -188,7 +188,7 @@ export default function PricingPageHero({
                 key: "teams",
                 title: "Teams",
                 icon: TeamsPlanIcon,
-                tag: "For small teams",
+                tag: "Multiple vans or a crew",
                 featured: false,
                 price: fmtGBP(plusPerMonth),
                 cadence: "+ £2 per extra profile/month",
@@ -198,11 +198,11 @@ export default function PricingPageHero({
                 ].filter(Boolean),
                 highlights: [
                     "Everything in Plus",
-                    "Add staff profiles",
-                    "Centralised controls",
+                    "A profile per team member",
+                    "Separate link and QR",
+                    "Separate analytics",
                     "Shared branding",
-                    "Team analytics",
-                    "Manage in one place",
+                    "Manage from one account",
                 ],
                 cta: getCTA("teams", teamsKey),
             },
@@ -236,11 +236,12 @@ export default function PricingPageHero({
                         <p className="kc-pill pr-heroPill">Pricing</p>
 
                         <h1 className="h2 pr-title">
-                            Plans &amp; pricing <span className="pr-accent">built</span> for real trades
+                            Simple <span className="pr-accent">Pricing</span> — No Surprises
                         </h1>
 
                         <p className="kc-subheading pr-sub">
-                            Start free. Upgrade when it's worth it. Cancel anytime.
+                            The card is a one-off £19.99. Your digital profile is free to set up and use.
+                            If you want unlimited services, more photos and full analytics, upgrade to Plus for £5 a month.
                         </p>
 
                         {isLoggedIn && (
