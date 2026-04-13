@@ -48,103 +48,112 @@ export default function Blog() {
     const posts = useMemo(
         () => [
             {
-                id: "t1",
-                category: "tips-guides",
-                categoryLabel: "Tips & guides",
-                pillClass: "is-tips",
-                title: "How to win more jobs with a digital business card",
-                excerpt:
-                    "Make it easier for customers to save your details, view your work, and contact you again after the job.",
-                readTime: "3 min read",
-                featured: true,
-            },
-            {
-                id: "t2",
-                category: "tips-guides",
-                categoryLabel: "Tips & guides",
-                pillClass: "is-tips",
-                title: "5 ways to make customers call you back",
-                excerpt:
-                    "Small changes to your profile and follow-ups that increase repeat work and referrals.",
-                readTime: "3 min read",
-                featured: false,
-            },
-            {
-                id: "t3",
-                category: "tips-guides",
-                categoryLabel: "Tips & guides",
-                pillClass: "is-tips",
-                title: "The best profile photo for tradies (with examples)",
-                excerpt:
-                    "A simple checklist to look professional and trustworthy in under 10 minutes.",
-                readTime: "3 min read",
-                featured: false,
-            },
-            {
-                id: "d1",
+                id: "d4",
+                slug: "best-digital-business-cards-uk-tradespeople",
                 category: "digital-business-cards",
                 categoryLabel: "Digital business cards",
                 pillClass: "is-digital",
-                title: "Do trades really need digital business cards?",
+                title: "The Best Digital Business Cards for UK Tradespeople in 2026",
                 excerpt:
-                    "Paper cards get lost. Digital cards give tradies one link to share details, work, and contact info instantly.",
-                readTime: "3 min read",
+                    "An honest comparison of the digital business cards available to UK tradespeople, with pricing, features and which one actually works for trades.",
+                readTime: "10 min read",
                 featured: true,
             },
             {
-                id: "d2",
+                id: "d5",
+                slug: "what-is-an-nfc-business-card",
                 category: "digital-business-cards",
                 categoryLabel: "Digital business cards",
                 pillClass: "is-digital",
-                title: "NFC vs QR codes: what's best for you?",
+                title: "What is an NFC Business Card and How Does It Work?",
                 excerpt:
-                    "Both work. Here's when NFC is faster, when QR is better, and why having both wins.",
-                readTime: "3 min read",
-                featured: false,
-            },
-            {
-                id: "d3",
-                category: "digital-business-cards",
-                categoryLabel: "Digital business cards",
-                pillClass: "is-digital",
-                title: "What to put on your digital business card profile",
-                excerpt:
-                    "The sections that actually get you contacted: services, photos, reviews, and one clear call-to-action.",
-                readTime: "3 min read",
-                featured: false,
-            },
-            {
-                id: "g1",
-                category: "getting-more-jobs",
-                categoryLabel: "Getting more jobs",
-                pillClass: "is-jobs",
-                title: "How to set up your KonarCard in under 5 mins",
-                excerpt:
-                    "Claim your link, add your details, and start sharing your card by tap, QR, or link in minutes.",
-                readTime: "3 min read",
+                    "Plain English explanation of NFC business cards, how tapping works, and why UK tradespeople are switching from paper cards to NFC.",
+                readTime: "6 min read",
                 featured: true,
             },
             {
-                id: "g2",
-                category: "getting-more-jobs",
-                categoryLabel: "Getting more jobs",
-                pillClass: "is-jobs",
-                title: "Turn every job into a review (without being awkward)",
+                id: "d6",
+                slug: "digital-business-cards-for-tradespeople",
+                category: "digital-business-cards",
+                categoryLabel: "Digital business cards",
+                pillClass: "is-digital",
+                title: "Digital Business Cards for Tradespeople, The Complete Guide",
                 excerpt:
-                    "A simple message template and the best moment to ask so you get more 5-star ratings.",
-                readTime: "3 min read",
-                featured: false,
+                    "How UK tradespeople are using digital business cards to win more jobs, look more professional and never hand out an out-of-date card again.",
+                readTime: "9 min read",
+                featured: true,
             },
             {
-                id: "g3",
+                id: "t4",
+                slug: "are-business-cards-still-worth-it",
+                category: "tips-guides",
+                categoryLabel: "Tips & guides",
+                pillClass: "is-tips",
+                title: "Are Business Cards Still Worth It in 2026?",
+                excerpt:
+                    "Honest answer to whether business cards are still worth having in 2026, and what UK tradespeople are using instead to win more work.",
+                readTime: "6 min read",
+                featured: true,
+            },
+            {
+                id: "g4",
+                slug: "how-to-win-more-jobs-as-a-tradesperson",
                 category: "getting-more-jobs",
                 categoryLabel: "Getting more jobs",
                 pillClass: "is-jobs",
-                title: "How to stand out when quoting jobs",
+                title: "How to Win More Jobs as a Tradesperson Without Spending More on Ads",
                 excerpt:
-                    "Send your link with proof of work and instant contact buttons to win the job faster.",
-                readTime: "3 min read",
-                featured: false,
+                    "Five practical ways UK tradespeople win more work without paid advertising, and how to make word of mouth work harder for you.",
+                readTime: "8 min read",
+                featured: true,
+            },
+            {
+                id: "g5",
+                slug: "how-to-get-more-reviews-as-a-tradesperson",
+                category: "getting-more-jobs",
+                categoryLabel: "Getting more jobs",
+                pillClass: "is-jobs",
+                title: "How to Get More Reviews as a Tradesperson",
+                excerpt:
+                    "Practical advice for UK tradespeople on getting more genuine customer reviews, and why most tradespeople ask at the wrong time.",
+                readTime: "8 min read",
+                featured: true,
+            },
+            {
+                id: "t5",
+                slug: "how-to-set-up-the-perfect-tradesperson-profile",
+                category: "tips-guides",
+                categoryLabel: "Tips & guides",
+                pillClass: "is-tips",
+                title: "How to Set Up the Perfect Tradesperson Profile",
+                excerpt:
+                    "A practical guide for UK tradespeople on building a digital profile that wins jobs, what to write, what photos to take and how to make every section work for you.",
+                readTime: "10 min read",
+                featured: true,
+            },
+            {
+                id: "d7",
+                slug: "nfc-cards-vs-qr-codes-for-tradespeople",
+                category: "digital-business-cards",
+                categoryLabel: "Digital business cards",
+                pillClass: "is-digital",
+                title: "NFC Cards vs QR Codes, Which is Better for Tradespeople?",
+                excerpt:
+                    "Honest comparison of NFC cards and QR codes for UK tradespeople, how each one works, when to use which, and why having both beats choosing one.",
+                readTime: "7 min read",
+                featured: true,
+            },
+            {
+                id: "d8",
+                slug: "how-much-does-a-digital-business-card-cost-uk",
+                category: "digital-business-cards",
+                categoryLabel: "Digital business cards",
+                pillClass: "is-digital",
+                title: "How Much Does a Digital Business Card Cost in the UK?",
+                excerpt:
+                    "Honest breakdown of digital business card costs in the UK in 2026, what you actually get at each price point and which option makes sense for tradespeople.",
+                readTime: "8 min read",
+                featured: true,
             },
         ],
         []
@@ -234,7 +243,7 @@ export default function Blog() {
                                             <p className="body-s kc-blog__excerpt">{p.excerpt}</p>
                                             <p className="kc-blog__meta">{p.readTime}</p>
                                             <Link
-                                                to="/blog"
+                                                to={p.slug ? `/blog/${p.slug}` : "/blog"}
                                                 className="kx-btn kx-btn--white kc-blog__btn"
                                                 aria-label={`Read now: ${p.title}`}
                                             >
@@ -275,7 +284,7 @@ export default function Blog() {
                                         <p className="body-s kc-blog__excerpt">{p.excerpt}</p>
                                         <p className="kc-blog__meta">{p.readTime}</p>
                                         <Link
-                                            to="/blog"
+                                            to={p.slug ? `/blog/${p.slug}` : "/blog"}
                                             className="kx-btn kx-btn--white kc-blog__btn"
                                             aria-label={`Read now: ${p.title}`}
                                         >

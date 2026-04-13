@@ -29,6 +29,15 @@ import Example from "./pages/website/Example.jsx";
 import Pricing from "./pages/website/Pricing.jsx";
 import FAQ from "./pages/website/FAQ.jsx";
 import Blog from "./pages/website/Blog.jsx";
+import BestDigitalBusinessCardsUkTradespeople from "./pages/website/blog/BestDigitalBusinessCardsUkTradespeople.jsx";
+import WhatIsAnNfcBusinessCard from "./pages/website/blog/WhatIsAnNfcBusinessCard.jsx";
+import DigitalBusinessCardsForTradespeople from "./pages/website/blog/DigitalBusinessCardsForTradespeople.jsx";
+import AreBusinessCardsStillWorthIt from "./pages/website/blog/AreBusinessCardsStillWorthIt.jsx";
+import HowToWinMoreJobsAsATradesperson from "./pages/website/blog/HowToWinMoreJobsAsATradesperson.jsx";
+import HowToGetMoreReviewsAsATradesperson from "./pages/website/blog/HowToGetMoreReviewsAsATradesperson.jsx";
+import HowToSetUpThePerfectTradespersonProfile from "./pages/website/blog/HowToSetUpThePerfectTradespersonProfile.jsx";
+import NfcCardsVsQrCodesForTradespeople from "./pages/website/blog/NfcCardsVsQrCodesForTradespeople.jsx";
+import HowMuchDoesADigitalBusinessCardCostUk from "./pages/website/blog/HowMuchDoesADigitalBusinessCardCostUk.jsx";
 import Reviews from "./pages/website/Reviews.jsx";
 import HelpCentre from "./pages/website/HelpCentre.jsx";
 import ContactUs from "./pages/website/ContactUs.jsx";
@@ -367,6 +376,78 @@ export default function App() {
             element={
               <PublicOnlyRoute redirectAuthenticatedTo="/dashboard">
                 <Blog />
+              </PublicOnlyRoute>
+            }
+          />
+          <Route
+            path="/blog/best-digital-business-cards-uk-tradespeople"
+            element={
+              <PublicOnlyRoute redirectAuthenticatedTo="/dashboard">
+                <BestDigitalBusinessCardsUkTradespeople />
+              </PublicOnlyRoute>
+            }
+          />
+          <Route
+            path="/blog/what-is-an-nfc-business-card"
+            element={
+              <PublicOnlyRoute redirectAuthenticatedTo="/dashboard">
+                <WhatIsAnNfcBusinessCard />
+              </PublicOnlyRoute>
+            }
+          />
+          <Route
+            path="/blog/digital-business-cards-for-tradespeople"
+            element={
+              <PublicOnlyRoute redirectAuthenticatedTo="/dashboard">
+                <DigitalBusinessCardsForTradespeople />
+              </PublicOnlyRoute>
+            }
+          />
+          <Route
+            path="/blog/are-business-cards-still-worth-it"
+            element={
+              <PublicOnlyRoute redirectAuthenticatedTo="/dashboard">
+                <AreBusinessCardsStillWorthIt />
+              </PublicOnlyRoute>
+            }
+          />
+          <Route
+            path="/blog/how-to-win-more-jobs-as-a-tradesperson"
+            element={
+              <PublicOnlyRoute redirectAuthenticatedTo="/dashboard">
+                <HowToWinMoreJobsAsATradesperson />
+              </PublicOnlyRoute>
+            }
+          />
+          <Route
+            path="/blog/how-to-get-more-reviews-as-a-tradesperson"
+            element={
+              <PublicOnlyRoute redirectAuthenticatedTo="/dashboard">
+                <HowToGetMoreReviewsAsATradesperson />
+              </PublicOnlyRoute>
+            }
+          />
+          <Route
+            path="/blog/how-to-set-up-the-perfect-tradesperson-profile"
+            element={
+              <PublicOnlyRoute redirectAuthenticatedTo="/dashboard">
+                <HowToSetUpThePerfectTradespersonProfile />
+              </PublicOnlyRoute>
+            }
+          />
+          <Route
+            path="/blog/nfc-cards-vs-qr-codes-for-tradespeople"
+            element={
+              <PublicOnlyRoute redirectAuthenticatedTo="/dashboard">
+                <NfcCardsVsQrCodesForTradespeople />
+              </PublicOnlyRoute>
+            }
+          />
+          <Route
+            path="/blog/how-much-does-a-digital-business-card-cost-uk"
+            element={
+              <PublicOnlyRoute redirectAuthenticatedTo="/dashboard">
+                <HowMuchDoesADigitalBusinessCardCostUk />
               </PublicOnlyRoute>
             }
           />
