@@ -303,7 +303,7 @@ export default function ContactUs() {
                             viewport={{ once: true, margin: "-30px" }}
                             transition={{ duration: 0.4, ease: EASE }}
                         >
-                            <Link to="/faqs" className="kx-btn kx-btn--black">
+                            <Link to="/faq" className="kx-btn kx-btn--black">
                                 Read more FAQs
                             </Link>
                         </motion.div>

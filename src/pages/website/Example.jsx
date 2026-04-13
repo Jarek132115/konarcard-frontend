@@ -211,7 +211,7 @@ export default function Example() {
                             Claim your KonarCard link, build your profile, then choose a card or keytag when you're ready.
                         </p>
                         <div className="ex-ctaBtns">
-                            <Link to="/claimyourlink" className="kx-btn kx-btn--black">
+                            <Link to="/register" className="kx-btn kx-btn--black">
                                 Claim Your Link
                             </Link>
                         </div>

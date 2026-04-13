@@ -45,6 +45,21 @@
       "source": "/products/metal-bundle",
       "destination": "/products",
       "permanent": true
+    },
+    {
+      "source": "/faqs",
+      "destination": "/faq",
+      "permanent": true
+    },
+    {
+      "source": "/claimyourlink",
+      "destination": "/register",
+      "permanent": true
+    },
+    {
+      "source": "/how-it-works",
+      "destination": "/",
+      "permanent": true
     }
   ],
   "rewrites": [
