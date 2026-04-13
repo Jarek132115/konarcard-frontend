@@ -326,15 +326,32 @@ export default function MyProfile() {
     } catch { }
 
     (async () => {
+      const toastId = "kc-subscription-toast";
+      toast.loading("Activating your plan…", { id: toastId });
+
+      // Sync subs from Stripe into our DB (in case the webhook is lagging)
       try {
         await api.post("/me/sync-subscriptions", { ts: Date.now() });
       } catch { }
 
-      try {
-        await refetchAuthUser?.();
-      } catch { }
+      // Retry refetch up to 5 times over ~6s until plan != "free"
+      let fresh = null;
+      for (let attempt = 0; attempt < 5; attempt++) {
+        try {
+          fresh = await refetchAuthUser?.();
+        } catch { }
+        const plan = String(fresh?.plan || fresh?.data?.plan || "").toLowerCase();
+        if (plan && plan !== "free") break;
 
-      const toastId = "kc-subscription-toast";
+        // Re-sync and wait before next attempt
+        if (attempt < 4) {
+          await new Promise((r) => setTimeout(r, 1500));
+          try {
+            await api.post("/me/sync-subscriptions", { ts: Date.now() });
+          } catch { }
+        }
+      }
+
       if (subscribed === "1") toast.success("Plan updated ✅", { id: toastId });
       else toast.success("Plan updated successfully!", { id: toastId });
 
@@ -1117,7 +1134,30 @@ export default function MyProfile() {
     }
   };
 
-  const handleStartSubscription = () => navigate("/pricing");
+  const handleStartSubscription = async () => {
+    try {
+      const returnUrl = `${window.location.origin}/myprofile?subscribed=1`;
+      const res = await api.post("/subscribe", {
+        planKey: "plus-monthly",
+        returnUrl,
+      });
+      const url = res?.data?.url;
+      if (url) {
+        window.location.href = url;
+      } else if (res?.data?.error) {
+        toast.error(res.data.error);
+      } else {
+        toast.error("Could not start checkout. Please try again.");
+      }
+    } catch (err) {
+      const msg = err?.response?.data?.error;
+      if (err?.response?.data?.code === "PROFILE_REQUIRED") {
+        toast.error("Create your profile first before upgrading.");
+      } else {
+        toast.error(msg || "Could not start checkout. Please try again.");
+      }
+    }
+  };
 
   const handleShareCard = () => {
     if (!isUserVerified) {
