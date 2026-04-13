@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState, Suspense } from "react";
 import { useKonarToast } from "../../hooks/useKonarToast";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import api from "../../services/api";
@@ -420,6 +420,7 @@ function QrCodeCard({ src, alt, onOpen, onDownload }) {
 function PurchasedCardPreview({ order, onCopyText }) {
     const productKey = cleanString(order?.productKey).toLowerCase();
     const variant = cleanString(order?.variant || order?.preview?.variant || "white").toLowerCase();
+    const flatPreviewUrl = cleanString(order?.previewImageUrl);
 
     const frontText = extractFrontText(order) || "KONAR";
     const fontSize = normalizeFontSize(extractFontSize(order) || 42);
@@ -445,7 +446,22 @@ function PurchasedCardPreview({ order, onCopyText }) {
 
     let previewNode = null;
 
-    if (productKey === "metal-card") {
+    // Prefer the saved flat preview image when available — avoids 3D WebGL crashes
+    if (flatPreviewUrl) {
+        previewNode = (
+            <img
+                src={flatPreviewUrl}
+                alt="Card preview"
+                style={{
+                    width: "100%",
+                    height: "auto",
+                    maxHeight: 320,
+                    objectFit: "contain",
+                    display: "block",
+                }}
+            />
+        );
+    } else if (productKey === "metal-card") {
         previewNode = (
             <MetalCard3D
                 logoSrc={resolvedLogoSrc}
@@ -472,21 +488,20 @@ function PurchasedCardPreview({ order, onCopyText }) {
             />
         );
     } else {
+        // Plastic card — use static front image as a safe fallback
         const artwork = getPlasticArtwork(productKey);
         previewNode = (
-            <PlasticCard3D
-                frontSrc={artwork.frontSrc}
-                backSrc={artwork.backSrc}
-                qrSrc={qrSrc}
-                edgeColor={artwork.edgeColor}
-                frontText={frontText}
-                frontFontSize={fontSize}
-                frontFontWeight={fontWeight}
-                frontTextColor={textColor || artwork.fallbackTextColor}
-                interactive={false}
-                autoRotate={false}
-                compact={true}
-                stageClassName="cp-preview3dScene"
+            <img
+                src={artwork.frontSrc}
+                alt="Card preview"
+                style={{
+                    width: "100%",
+                    height: "auto",
+                    maxHeight: 320,
+                    objectFit: "contain",
+                    display: "block",
+                    borderRadius: 12,
+                }}
             />
         );
     }
@@ -501,9 +516,16 @@ function PurchasedCardPreview({ order, onCopyText }) {
                     padding: 20,
                     background: "var(--admin-surface-soft)",
                     minHeight: 320,
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
                 }}
             >
-                {previewNode}
+                <AdminErrorBoundary>
+                    <Suspense fallback={<div style={{ color: "#64748b", fontSize: 13 }}>Loading preview…</div>}>
+                        {previewNode}
+                    </Suspense>
+                </AdminErrorBoundary>
             </div>
 
             <div className="admin-preview-actions">
