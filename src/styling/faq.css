@@ -81,7 +81,7 @@
 
 .kfaq-title {
     margin: 0 0 8px;
-    max-width: 680px;
+    max-width: 900px;
     text-wrap: balance;
 }
 
@@ -91,8 +91,8 @@
 
 .kfaq-sub {
     margin: 0 auto;
-    max-width: 540px;
-    text-wrap: balance;
+    max-width: 720px;
+    text-wrap: pretty;
 }
 
 /* ── Tabs ──────────────────────────────────────────────────── */

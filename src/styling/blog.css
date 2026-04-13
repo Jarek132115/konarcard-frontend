@@ -77,7 +77,7 @@
 
 .kc-blog__title {
     margin: 0 0 8px;
-    max-width: 760px;
+    max-width: 900px;
     text-wrap: balance;
 }
 
@@ -87,8 +87,8 @@
 
 .kc-blog__sub {
     margin: 0 auto;
-    max-width: 620px;
-    text-wrap: balance;
+    max-width: 720px;
+    text-wrap: pretty;
 }
 
 /* =========================

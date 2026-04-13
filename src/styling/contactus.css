@@ -80,7 +80,7 @@
 
 .kcon-title {
     margin: 0 0 8px;
-    max-width: 600px;
+    max-width: 900px;
     text-wrap: balance;
 }
 
@@ -90,8 +90,8 @@
 
 .kcon-sub {
     margin: 0 auto;
-    max-width: 480px;
-    text-wrap: balance;
+    max-width: 720px;
+    text-wrap: pretty;
 }
 
 /* =========================================================
