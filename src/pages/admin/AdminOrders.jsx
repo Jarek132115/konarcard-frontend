@@ -8,6 +8,7 @@ import AdminErrorBoundary from "./AdminErrorBoundary";
 import PlasticCard3D from "../../components/PlasticCard3D";
 import MetalCard3D from "../../components/MetalCard3D";
 import KonarTag3D from "../../components/KonarTag3D";
+import FlatCardPreview from "../../components/Cards/FlatCardPreview";
 
 import LogoIcon from "../../assets/icons/Logo-Icon.svg";
 import LogoIconWhite from "../../assets/icons/Logo-Icon-White.svg";
@@ -461,6 +462,21 @@ function PurchasedCardPreview({ order, onCopyText }) {
                 }}
             />
         );
+    } else if (productKey.startsWith("plastic")) {
+        // Plastic card — build a 2D flat preview that includes the custom text
+        previewNode = (
+            <FlatCardPreview
+                productKey={productKey}
+                variant={variant}
+                frontText={frontText}
+                frontFontSize={fontSize}
+                frontFontWeight={fontWeight}
+                frontTextColor={textColor}
+                qrSrc={qrSrc}
+                logoSrc={resolvedLogoSrc}
+                maxWidth={380}
+            />
+        );
     } else if (productKey === "metal-card") {
         previewNode = (
             <MetalCard3D
@@ -488,20 +504,18 @@ function PurchasedCardPreview({ order, onCopyText }) {
             />
         );
     } else {
-        // Plastic card — use static front image as a safe fallback
-        const artwork = getPlasticArtwork(productKey);
+        // Unknown product — fallback to 2D flat preview with text overlay
         previewNode = (
-            <img
-                src={artwork.frontSrc}
-                alt="Card preview"
-                style={{
-                    width: "100%",
-                    height: "auto",
-                    maxHeight: 320,
-                    objectFit: "contain",
-                    display: "block",
-                    borderRadius: 12,
-                }}
+            <FlatCardPreview
+                productKey={productKey}
+                variant={variant}
+                frontText={frontText}
+                frontFontSize={fontSize}
+                frontFontWeight={fontWeight}
+                frontTextColor={textColor}
+                qrSrc={qrSrc}
+                logoSrc={resolvedLogoSrc}
+                maxWidth={380}
             />
         );
     }

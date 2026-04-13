@@ -1,6 +1,7 @@
 import React, { useMemo } from "react";
 import { motion } from "framer-motion";
 import "../../styling/dashboard/order-details-view.css";
+import FlatCardPreview from "./FlatCardPreview";
 
 function safeTrim(v) {
     return String(v || "").trim();
@@ -454,7 +455,21 @@ export default function OrderDetailsView({
                     >
                         <CardPreviewErrorBoundary
                             resetKey={`${selectedOrder?.id || "order"}-${previewProps?.productKey || "product"}-${previewProps?.variant || "variant"}-${previewProps?.frontText || "text"}`}
-                            fallback={<div className="cp-previewFallback">Preview unavailable</div>}
+                            fallback={
+                                <div className="cp-preview3dWrap" style={{ display: "flex", alignItems: "center", justifyContent: "center", padding: 20 }}>
+                                    <FlatCardPreview
+                                        productKey={previewProps?.productKey}
+                                        variant={previewProps?.variant}
+                                        frontText={previewProps?.frontText}
+                                        frontFontSize={previewProps?.frontFontSize}
+                                        frontFontWeight={previewProps?.frontFontWeight}
+                                        frontTextColor={previewProps?.frontTextColor}
+                                        qrSrc={previewProps?.qrSrc}
+                                        logoSrc={previewProps?.logoSrc}
+                                        maxWidth={420}
+                                    />
+                                </div>
+                            }
                         >
                             <div className="cp-preview3dWrap">
                                 <Card3DDetails {...previewProps} />
