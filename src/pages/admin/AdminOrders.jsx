@@ -469,11 +469,8 @@ function PurchasedCardPreview({ order, onCopyText }) {
                 productKey={productKey}
                 variant={variant}
                 frontText={frontText}
-                frontFontSize={fontSize}
                 frontFontWeight={fontWeight}
                 frontTextColor={textColor}
-                qrSrc={qrSrc}
-                logoSrc={resolvedLogoSrc}
                 maxWidth={380}
             />
         );
@@ -510,11 +507,8 @@ function PurchasedCardPreview({ order, onCopyText }) {
                 productKey={productKey}
                 variant={variant}
                 frontText={frontText}
-                frontFontSize={fontSize}
                 frontFontWeight={fontWeight}
                 frontTextColor={textColor}
-                qrSrc={qrSrc}
-                logoSrc={resolvedLogoSrc}
                 maxWidth={380}
             />
         );

@@ -1,7 +1,7 @@
 // frontend/src/components/Cards/FlatCardPreview.jsx
-// 2D flat card preview that overlays the custom text, logo and QR on top of
-// the product artwork. Used as the primary admin preview and as the fallback
-// for the user-facing order details when the 3D preview fails.
+// 2D flat card preview — base artwork (logo + NFC already baked into the image)
+// plus the customer's custom text overlaid. Matches the purchased-products
+// card list visual exactly.
 
 import React from "react";
 
@@ -12,16 +12,13 @@ import GreenFrontImg from "../../assets/images/Products/GreenFront.jpg";
 import MagentaFrontImg from "../../assets/images/Products/MagentaFront.jpg";
 import OrangeFrontImg from "../../assets/images/Products/OrangeFront.jpg";
 
-import LogoIcon from "../../assets/icons/Logo-Icon.svg";
-import LogoIconWhite from "../../assets/icons/Logo-Icon-White.svg";
-
 const ARTWORK = {
-    "plastic-white": { src: WhiteFrontImg, dark: false, textColor: "#111111" },
-    "plastic-black": { src: BlackFrontImg, dark: true, textColor: "#ffffff" },
-    "plastic-blue": { src: BlueFrontImg, dark: true, textColor: "#ffffff" },
-    "plastic-green": { src: GreenFrontImg, dark: true, textColor: "#ffffff" },
-    "plastic-magenta": { src: MagentaFrontImg, dark: true, textColor: "#ffffff" },
-    "plastic-orange": { src: OrangeFrontImg, dark: true, textColor: "#ffffff" },
+    "plastic-white": { src: WhiteFrontImg, textColor: "#111111" },
+    "plastic-black": { src: BlackFrontImg, textColor: "#ffffff" },
+    "plastic-blue": { src: BlueFrontImg, textColor: "#ffffff" },
+    "plastic-green": { src: GreenFrontImg, textColor: "#ffffff" },
+    "plastic-magenta": { src: MagentaFrontImg, textColor: "#ffffff" },
+    "plastic-orange": { src: OrangeFrontImg, textColor: "#ffffff" },
 };
 
 const str = (v) => String(v ?? "").trim();
@@ -30,12 +27,8 @@ export default function FlatCardPreview({
     productKey,
     variant,
     frontText = "",
-    frontFontSize = 42,
     frontFontWeight = 700,
     frontTextColor,
-    qrSrc,
-    logoSrc,
-    nfcIndicator = true,
     maxWidth = 380,
 }) {
     const key = str(productKey).toLowerCase();
@@ -48,9 +41,8 @@ export default function FlatCardPreview({
     const art = ARTWORK[artworkKey] || ARTWORK["plastic-white"];
 
     const textColor = str(frontTextColor) || art.textColor;
-    const resolvedLogo = str(logoSrc) || (art.dark ? LogoIconWhite : LogoIcon);
+    const text = str(frontText);
 
-    // Card aspect is 85.6 × 54 (≈ 1.585:1)
     return (
         <div
             style={{
@@ -62,10 +54,11 @@ export default function FlatCardPreview({
                 overflow: "hidden",
                 background: "#f1f5f9",
                 boxShadow: "0 8px 24px rgba(15,23,42,0.12)",
+                containerType: "inline-size",
             }}
             aria-label="Card preview"
         >
-            {/* Base artwork */}
+            {/* Base card artwork (logo + NFC are already in the image) */}
             <img
                 src={art.src}
                 alt=""
@@ -80,49 +73,8 @@ export default function FlatCardPreview({
                 draggable={false}
             />
 
-            {/* Top-left logo */}
-            <img
-                src={resolvedLogo}
-                alt="Logo"
-                style={{
-                    position: "absolute",
-                    top: "10%",
-                    left: "7%",
-                    width: "13%",
-                    height: "auto",
-                    opacity: 0.95,
-                    pointerEvents: "none",
-                }}
-                draggable={false}
-            />
-
-            {/* NFC indicator top-right */}
-            {nfcIndicator ? (
-                <svg
-                    viewBox="0 0 32 32"
-                    style={{
-                        position: "absolute",
-                        top: "10%",
-                        right: "7%",
-                        width: "11%",
-                        height: "auto",
-                        color: textColor,
-                        opacity: 0.85,
-                    }}
-                    fill="none"
-                    aria-hidden="true"
-                >
-                    <path
-                        d="M12 8c3 2 3 14 0 16M17 6c5 3 5 17 0 20M22 4c7 4 7 20 0 24"
-                        stroke="currentColor"
-                        strokeWidth="2"
-                        strokeLinecap="round"
-                    />
-                </svg>
-            ) : null}
-
-            {/* Front text — centered */}
-            {frontText ? (
+            {/* Custom business name — always fits inside the card */}
+            {text ? (
                 <div
                     style={{
                         position: "absolute",
@@ -130,7 +82,7 @@ export default function FlatCardPreview({
                         display: "flex",
                         alignItems: "center",
                         justifyContent: "center",
-                        padding: "0 14%",
+                        padding: "0 16%",
                         pointerEvents: "none",
                     }}
                 >
@@ -138,40 +90,21 @@ export default function FlatCardPreview({
                         style={{
                             fontFamily: "'Cal Sans', Inter, sans-serif",
                             color: textColor,
-                            fontSize: `clamp(14px, ${Math.max(18, Math.min(56, Number(frontFontSize) || 42)) * 0.32}vw, ${Math.max(18, Math.min(56, Number(frontFontSize) || 42))}px)`,
+                            // Scales with card width — always fits
+                            fontSize: "clamp(14px, 8cqw, 38px)",
                             fontWeight: Math.max(400, Math.min(900, Number(frontFontWeight) || 700)),
                             letterSpacing: "0.01em",
                             lineHeight: 1.1,
                             textAlign: "center",
+                            whiteSpace: "nowrap",
                             overflow: "hidden",
                             textOverflow: "ellipsis",
-                            whiteSpace: "nowrap",
                             maxWidth: "100%",
                         }}
                     >
-                        {frontText}
+                        {text}
                     </span>
                 </div>
-            ) : null}
-
-            {/* Small QR bottom-right */}
-            {qrSrc ? (
-                <img
-                    src={qrSrc}
-                    alt="QR"
-                    style={{
-                        position: "absolute",
-                        bottom: "7%",
-                        right: "6%",
-                        width: "22%",
-                        height: "auto",
-                        borderRadius: 4,
-                        background: "#ffffff",
-                        padding: "3%",
-                        boxShadow: "0 2px 8px rgba(0,0,0,0.2)",
-                    }}
-                    draggable={false}
-                />
             ) : null}
         </div>
     );

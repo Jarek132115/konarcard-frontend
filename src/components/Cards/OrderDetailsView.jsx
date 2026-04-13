@@ -461,11 +461,8 @@ export default function OrderDetailsView({
                                         productKey={previewProps?.productKey}
                                         variant={previewProps?.variant}
                                         frontText={previewProps?.frontText}
-                                        frontFontSize={previewProps?.frontFontSize}
                                         frontFontWeight={previewProps?.frontFontWeight}
                                         frontTextColor={previewProps?.frontTextColor}
-                                        qrSrc={previewProps?.qrSrc}
-                                        logoSrc={previewProps?.logoSrc}
                                         maxWidth={420}
                                     />
                                 </div>
