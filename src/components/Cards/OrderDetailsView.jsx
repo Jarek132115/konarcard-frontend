@@ -27,14 +27,22 @@ function formatDeliveryDate(value) {
     const raw = safeTrim(value);
     if (!raw) return "—";
 
-    const parsed = new Date(raw);
-    if (Number.isNaN(parsed.getTime())) return raw;
+    // Backend formats deliveryWindow as e.g. "Tue 14 Apr" — keep it as-is.
+    // Only re-parse when it's an ISO/numeric date that the user would expect
+    // to see in DD/MM/YYYY form (e.g. "2026-04-14" or "2026-04-14T...").
+    if (/^\d{4}-\d{2}-\d{2}/.test(raw)) {
+        const parsed = new Date(raw);
+        if (!Number.isNaN(parsed.getTime())) {
+            return parsed.toLocaleDateString("en-GB", {
+                day: "2-digit",
+                month: "2-digit",
+                year: "numeric",
+            });
+        }
+    }
 
-    return parsed.toLocaleDateString("en-GB", {
-        day: "2-digit",
-        month: "2-digit",
-        year: "numeric",
-    });
+    // Already-human text like "Tue 14 Apr" or "14 Apr 2026" — return unchanged
+    return raw;
 }
 
 function titleFromOrder(selectedOrder, productMeta) {
