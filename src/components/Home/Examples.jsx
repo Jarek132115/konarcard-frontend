@@ -55,11 +55,11 @@ export default function Examples() {
                     <p className="kc-pill khe-kicker">Real examples</p>
 
                     <h2 id="khe-title" className="h3 khe-title">
-                        What UK <span className="khe-accent">Tradespeople</span> Say
+                        See Real <span className="khe-accent">KonarCard Profiles</span>
                     </h2>
 
                     <p className="kc-subheading khe-sub">
-                        Real profiles. Real results.
+                        Examples of cards and profiles from UK tradespeople.
                     </p>
                 </motion.header>
 

@@ -67,7 +67,7 @@ export default function Value() {
                     </h2>
 
                     <p className="kc-subheading khv__sub">
-                        Straight answers. No marketing fluff.
+                        The real reasons it wins more work than a paper card.
                     </p>
                 </motion.header>
 

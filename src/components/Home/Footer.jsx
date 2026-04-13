@@ -74,21 +74,26 @@ const CAROUSEL_ITEMS = [
 const LOOP_ITEMS = [...CAROUSEL_ITEMS, ...CAROUSEL_ITEMS];
 
 const PRODUCT_LINKS = [
-    { label: "Plastic KonarCard", to: "/products/plastic" },
-    { label: "Metal KonarCard", to: "/products/metal" },
-    { label: "KonarTag", to: "/products/konartag" },
-    { label: "Pricing", to: "/pricing" },
-    { label: "Examples", to: "/examples" },
+    { label: "All Cards", to: "/products" },
+    { label: "KonarCard White", to: "/products/plastic-white" },
+    { label: "KonarCard Black", to: "/products/plastic-black" },
+    { label: "KonarCard Blue", to: "/products/plastic-blue" },
+    { label: "KonarCard Green", to: "/products/plastic-green" },
+    { label: "KonarCard Magenta", to: "/products/plastic-magenta" },
+    { label: "KonarCard Orange", to: "/products/plastic-orange" },
 ];
 
 const SUPPORT_LINKS = [
     { label: "Contact Us", to: "/contactus" },
     { label: "FAQs", to: "/faq" },
-    { label: "Shipping & Returns", to: "/policies" },
+    { label: "Delivery", to: "/policies" },
+    { label: "Returns", to: "/policies" },
     { label: "Warranty", to: "/policies" },
 ];
 
 const COMPANY_LINKS = [
+    { label: "Pricing", to: "/pricing" },
+    { label: "Examples", to: "/examples" },
     { label: "Reviews", to: "/reviews" },
     { label: "Blog", to: "/blog" },
 ];
@@ -285,7 +290,7 @@ export default function Footer() {
                         <div className="kc-footer__copyright">
                             <img src={CopyrightIcon} alt="" aria-hidden="true" />
                             <span className="body kc-footer__copyrightText">
-                                2025 KONARCARD LTD. All Rights Reserved
+                                {new Date().getFullYear()} KONARCARD LTD. All Rights Reserved
                             </span>
                         </div>
 

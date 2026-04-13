@@ -57,7 +57,7 @@ export default function HowItWorks() {
                     </h2>
 
                     <p className="kc-subheading hiw__sub">
-                        No apps. No typing. Three steps.
+                        Quick and easy. Set up in under 5 minutes.
                     </p>
                 </motion.header>
 

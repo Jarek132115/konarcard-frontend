@@ -41,7 +41,9 @@ export default function Hero() {
         let distance = 0;
         let offset   = 0;
         const baseSpeed = 100;
-        let direction   = 1;
+        /* -1 = visually scroll left → right (content enters from left).
+           Flip to 1 for the opposite direction. Drag reverses at runtime. */
+        let direction   = -1;
 
         let isDragging    = false;
         let isPointerDown = false;
@@ -72,7 +74,11 @@ export default function Hero() {
         const measureAndStart = () => {
             distance = trackEl.scrollWidth / 2;
             if (distance > 0) {
-                offset = 0;
+                /* When running direction = -1 (left → right) we seed offset at
+                   `distance` so the first tick decreases smoothly toward 0
+                   instead of wrapping and visually snapping. Seamless tiling
+                   means x=0 and x=-distance are visually identical. */
+                offset = direction === -1 ? distance : 0;
                 applyTransform();
                 if (tickerFn) { gsap.ticker.remove(tickerFn); tickerFn = null; }
                 startTicker();

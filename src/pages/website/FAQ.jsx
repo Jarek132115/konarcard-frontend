@@ -196,7 +196,7 @@ export default function FAQPage() {
                                 </h1>
 
                                 <p className="kc-subheading kfaq-sub">
-                                    Everything you need to know, in plain words.
+                                    Quick answers to the questions tradespeople ask most.
                                 </p>
 
                                 <div

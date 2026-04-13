@@ -152,7 +152,7 @@ export default function HomeFAQ() {
                     </h2>
 
                     <p className="kc-subheading khq__sub">
-                        Honest answers in plain words.
+                        Quick answers to the questions tradespeople ask most.
                     </p>
 
                     <div className="khq__tabs" role="tablist" aria-label="FAQ categories">
