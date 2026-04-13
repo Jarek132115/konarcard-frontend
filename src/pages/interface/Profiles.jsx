@@ -796,7 +796,12 @@ export default function Profiles() {
                 setClaimStatus("created");
                 setClaimMessage("Profile created ✅");
 
-                toast.success("Profile created.");
+                if (data?.proration?.deferredToNextInvoice) {
+                    const amt = data?.proration?.amount ? `£${data.proration.amount}` : "£2";
+                    toast.success(`Profile created. ${amt} added to your next payment.`);
+                } else {
+                    toast.success("Profile created.");
+                }
 
                 setTimeout(() => closeClaimPanel(), 450);
                 return;
