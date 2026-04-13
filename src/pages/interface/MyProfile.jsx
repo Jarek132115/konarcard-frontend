@@ -310,6 +310,24 @@ export default function MyProfile() {
     (state.contact_email && state.contact_email.trim()) ||
     (state.phone_number && state.phone_number.trim());
 
+  // One-time sync on mount: if user has a Stripe customer but we still show "free",
+  // sync from Stripe. Handles cases where a previous subscription didn't flow through.
+  useEffect(() => {
+    if (!authUser) return;
+    const plan = String(authUser.plan || "free").toLowerCase();
+    if (plan !== "free") return;
+    if (!authUser.stripeCustomerId) return;
+
+    (async () => {
+      try {
+        await api.post("/me/sync-subscriptions", { ts: Date.now() });
+        await refetchAuthUser?.();
+      } catch { }
+    })();
+    // run once when authUser becomes available
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [authUser?._id]);
+
   useEffect(() => {
     const params = new URLSearchParams(location.search);
     const sessionId = params.get("session_id");
