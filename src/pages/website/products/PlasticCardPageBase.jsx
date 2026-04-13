@@ -180,6 +180,106 @@ export default function PlasticCardPageBase({
 
     const totalPrice = useMemo(() => qty * UNIT_PRICE, [qty]);
 
+    /* ─── SEO: per-variant meta + Product schema ─── */
+    useEffect(() => {
+        if (!productKey || !productName) return;
+
+        const siteUrl = "https://www.konarcard.com";
+        const pageUrl = `${siteUrl}/products/${productKey}`;
+
+        const description = heroSubtext ||
+            `${productName} — premium plastic NFC business card. Tap or scan to share your profile instantly. Free UK delivery.`;
+
+        const toAbsolute = (src) => {
+            const s = String(src || "");
+            if (!s) return `${siteUrl}/konarcard-og.jpg`;
+            if (/^https?:\/\//i.test(s)) return s;
+            if (s.startsWith("/")) return `${siteUrl}${s}`;
+            return `${siteUrl}/${s}`;
+        };
+        const imageUrl = toAbsolute(frontSrc);
+
+        document.title = `${productName} — NFC Business Card | KonarCard`;
+
+        const setMeta = (attr, key, value) => {
+            const sel = `meta[${attr}="${key}"]`;
+            let el = document.head.querySelector(sel);
+            if (!el) {
+                el = document.createElement("meta");
+                el.setAttribute(attr, key);
+                document.head.appendChild(el);
+            }
+            el.setAttribute("content", value);
+        };
+        const setLink = (rel, href) => {
+            let el = document.head.querySelector(`link[rel="${rel}"]`);
+            if (!el) {
+                el = document.createElement("link");
+                el.setAttribute("rel", rel);
+                document.head.appendChild(el);
+            }
+            el.setAttribute("href", href);
+        };
+        const setJsonLd = (id, payload) => {
+            const selector = `script[data-kc="${id}"]`;
+            let el = document.head.querySelector(selector);
+            if (!el) {
+                el = document.createElement("script");
+                el.setAttribute("type", "application/ld+json");
+                el.setAttribute("data-kc", id);
+                document.head.appendChild(el);
+            }
+            el.textContent = JSON.stringify(payload);
+        };
+
+        setMeta("name", "description", description);
+        setLink("canonical", pageUrl);
+
+        setMeta("property", "og:title", `${productName} — NFC Business Card | KonarCard`);
+        setMeta("property", "og:description", description);
+        setMeta("property", "og:url", pageUrl);
+        setMeta("property", "og:type", "product");
+        setMeta("property", "og:image", imageUrl);
+
+        setMeta("name", "twitter:card", "summary_large_image");
+        setMeta("name", "twitter:title", productName);
+        setMeta("name", "twitter:description", description);
+        setMeta("name", "twitter:image", imageUrl);
+
+        setJsonLd(`product-${productKey}`, {
+            "@context": "https://schema.org",
+            "@type": "Product",
+            name: productName,
+            description,
+            url: pageUrl,
+            image: [imageUrl],
+            sku: `konarcard-${productKey}`,
+            brand: { "@type": "Brand", name: "KonarCard" },
+            offers: {
+                "@type": "Offer",
+                price: UNIT_PRICE.toFixed(2),
+                priceCurrency: "GBP",
+                availability: "https://schema.org/InStock",
+                url: pageUrl,
+                shippingDetails: {
+                    "@type": "OfferShippingDetails",
+                    shippingRate: { "@type": "MonetaryAmount", value: "0", currency: "GBP" },
+                    shippingDestination: { "@type": "DefinedRegion", addressCountry: "GB" },
+                },
+            },
+        });
+
+        setJsonLd(`breadcrumb-${productKey}`, {
+            "@context": "https://schema.org",
+            "@type": "BreadcrumbList",
+            itemListElement: [
+                { "@type": "ListItem", position: 1, name: "Home", item: siteUrl },
+                { "@type": "ListItem", position: 2, name: "NFC Business Cards", item: `${siteUrl}/products` },
+                { "@type": "ListItem", position: 3, name: productName, item: pageUrl },
+            ],
+        });
+    }, [productKey, productName, heroSubtext, frontSrc]);
+
     const features = useMemo(
         () => [
             {

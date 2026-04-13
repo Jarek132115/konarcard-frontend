@@ -1,0 +1,40 @@
+# KonarCard
+
+> KonarCard is a UK-based platform that helps tradespeople and service professionals replace paper business cards with NFC-enabled digital business cards and shareable profile links.
+
+## About
+
+KonarCard is both a SaaS platform and a physical product. Customers create a professional digital profile showcasing their services, photos, reviews, and contact details, then share it via:
+- A unique shareable link (e.g. konarcard.com/u/their-name)
+- A QR code
+- A physical NFC card or key tag that opens their profile on tap
+
+The aim is to help tradies turn conversations into booked jobs by replacing unreliable paper cards with a single, up-to-date, professional digital presence.
+
+## Products
+
+- [Plastic NFC Business Cards](https://www.konarcard.com/products) - £19.99 each, 6 colours (white, black, blue, green, magenta, orange)
+- [Metal NFC Business Cards](https://www.konarcard.com/products) - £44.99, premium finish
+- [KonarTag Key Tag](https://www.konarcard.com/products) - £9.99, pocket-friendly NFC tag
+
+## Plans
+
+- **Free** - 1 template, limited content (6 images, services, reviews), basic analytics
+- **Plus** - £5/month, all templates unlocked, 12 images/services/reviews, full analytics
+- **Teams** - Plus + £2/month per additional team profile
+
+## Key Pages
+
+- [Homepage](https://www.konarcard.com/)
+- [Products](https://www.konarcard.com/products)
+- [Pricing](https://www.konarcard.com/pricing)
+- [Examples](https://www.konarcard.com/examples)
+- [FAQs](https://www.konarcard.com/faq)
+- [Help Centre](https://www.konarcard.com/helpcentre)
+- [Contact](https://www.konarcard.com/contactus)
+- [Policies](https://www.konarcard.com/policies)
+
+## Contact
+
+- Support: supportteam@konarcard.com
+- Website: https://www.konarcard.com

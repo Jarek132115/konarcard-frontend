@@ -63,6 +63,21 @@ export default function Products() {
         const siteUrl = "https://www.konarcard.com";
         const pageUrl = `${siteUrl}/products`;
 
+        // Absolute URLs to product images (Google requires absolute URLs for schema.org)
+        const absoluteImage = (src) => {
+            const s = String(src || "");
+            if (!s) return `${siteUrl}/konarcard-og.jpg`;
+            if (/^https?:\/\//i.test(s)) return s;
+            if (s.startsWith("/")) return `${siteUrl}${s}`;
+            return `${siteUrl}/${s}`;
+        };
+        const imgWhite = absoluteImage(KonarCardWhiteImg);
+        const imgBlack = absoluteImage(KonarCardBlackImg);
+        const imgBlue = absoluteImage(KonarCardBlueImg);
+        const imgGreen = absoluteImage(KonarCardGreenImg);
+        const imgMagenta = absoluteImage(KonarCardMagentaImg);
+        const imgOrange = absoluteImage(KonarCardOrangeImg);
+
         const title =
             "NFC Business Cards & Contactless Cards UK | KonarCard Shop";
         const description =
@@ -120,11 +135,15 @@ export default function Products() {
                         description:
                             "Clean white plastic NFC business card with your logo and QR code.",
                         url: `${siteUrl}/products/plastic-white`,
+                        image: [imgWhite],
+                        sku: "konarcard-plastic-white",
+                        brand: { "@type": "Brand", name: "KonarCard" },
                         offers: {
                             "@type": "Offer",
                             price: "19.99",
                             priceCurrency: "GBP",
                             availability: "https://schema.org/InStock",
+                            url: `${siteUrl}/products/plastic-white`,
                         },
                     },
                 },
@@ -137,11 +156,15 @@ export default function Products() {
                         description:
                             "Bold black plastic NFC business card with a sleek premium finish.",
                         url: `${siteUrl}/products/plastic-black`,
+                        image: [imgBlack],
+                        sku: "konarcard-plastic-black",
+                        brand: { "@type": "Brand", name: "KonarCard" },
                         offers: {
                             "@type": "Offer",
                             price: "19.99",
                             priceCurrency: "GBP",
                             availability: "https://schema.org/InStock",
+                            url: `${siteUrl}/products/plastic-black`,
                         },
                     },
                 },
@@ -154,11 +177,15 @@ export default function Products() {
                         description:
                             "Professional blue plastic NFC business card designed to stand out cleanly.",
                         url: `${siteUrl}/products/plastic-blue`,
+                        image: [imgBlue],
+                        sku: "konarcard-plastic-blue",
+                        brand: { "@type": "Brand", name: "KonarCard" },
                         offers: {
                             "@type": "Offer",
                             price: "19.99",
                             priceCurrency: "GBP",
                             availability: "https://schema.org/InStock",
+                            url: `${siteUrl}/products/plastic-blue`,
                         },
                     },
                 },
@@ -171,11 +198,15 @@ export default function Products() {
                         description:
                             "Modern green plastic NFC business card with a sharp branded look.",
                         url: `${siteUrl}/products/plastic-green`,
+                        image: [imgGreen],
+                        sku: "konarcard-plastic-green",
+                        brand: { "@type": "Brand", name: "KonarCard" },
                         offers: {
                             "@type": "Offer",
                             price: "19.99",
                             priceCurrency: "GBP",
                             availability: "https://schema.org/InStock",
+                            url: `${siteUrl}/products/plastic-green`,
                         },
                     },
                 },
@@ -188,11 +219,15 @@ export default function Products() {
                         description:
                             "Strong magenta plastic NFC business card for a vibrant premium finish.",
                         url: `${siteUrl}/products/plastic-magenta`,
+                        image: [imgMagenta],
+                        sku: "konarcard-plastic-magenta",
+                        brand: { "@type": "Brand", name: "KonarCard" },
                         offers: {
                             "@type": "Offer",
                             price: "19.99",
                             priceCurrency: "GBP",
                             availability: "https://schema.org/InStock",
+                            url: `${siteUrl}/products/plastic-magenta`,
                         },
                     },
                 },
@@ -205,11 +240,15 @@ export default function Products() {
                         description:
                             "High-impact orange plastic NFC business card with a confident branded style.",
                         url: `${siteUrl}/products/plastic-orange`,
+                        image: [imgOrange],
+                        sku: "konarcard-plastic-orange",
+                        brand: { "@type": "Brand", name: "KonarCard" },
                         offers: {
                             "@type": "Offer",
                             price: "19.99",
                             priceCurrency: "GBP",
                             availability: "https://schema.org/InStock",
+                            url: `${siteUrl}/products/plastic-orange`,
                         },
                     },
                 },
