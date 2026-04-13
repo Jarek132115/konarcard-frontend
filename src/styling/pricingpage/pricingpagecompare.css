@@ -81,7 +81,14 @@
 }
 
 .prc-colHead__plan--plus {
-    background: rgba(249, 115, 22, 0.05);
+    background: var(--kc-accent-primary);
+}
+
+/* All text inside the Plus column header turns white */
+.prc-colHead__plan--plus .prc-planName,
+.prc-colHead__plan--plus .prc-planPrice,
+.prc-colHead__plan--plus .prc-planPrice--plus {
+    color: #ffffff;
 }
 
 .prc-planName {
@@ -182,7 +189,21 @@
 }
 
 .prc-cell--plus {
-    background: rgba(249, 115, 22, 0.03);
+    background: var(--kc-accent-primary);
+}
+
+/* All text and icons inside the Plus column turn white */
+.prc-cell--plus .prc-cv--text,
+.prc-cell--plus .prc-mobileLabel {
+    color: #ffffff;
+}
+
+.prc-cell--plus .prc-cv img {
+    filter: brightness(0) invert(1);
+}
+
+.prc-cell--plus .prc-cv--no {
+    opacity: 0.85;
 }
 
 /* Mobile plan label — hidden on desktop */
@@ -263,7 +284,7 @@
     }
 
     .prc-cell--plus {
-        background: rgba(249, 115, 22, 0.07);
+        background: var(--kc-accent-primary);
     }
 
     /* Show plan labels on mobile */
