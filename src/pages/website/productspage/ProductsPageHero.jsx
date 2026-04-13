@@ -42,7 +42,7 @@ export default function ProductsPageHero({ products }) {
                         </h1>
 
                         <p className="kc-subheading kph-sub">
-                            Pick your colour. Pay once. Free profile included.
+                            Pick your colour, pay once, and get a free digital profile to go with it. Tap any phone to share your details, no app needed.
                         </p>
                     </motion.div>
                 </header>
