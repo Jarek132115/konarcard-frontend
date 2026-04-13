@@ -9,6 +9,8 @@ import "../../styling/fonts.css";
 import "../../styling/faq.css";
 import "../../styling/productspage/productspagefaq.css";
 
+import { useSeo } from "../../utils/seo";
+
 /* ── Animation presets ─────────────────────────────────────── */
 const EASE = [0.22, 1, 0.36, 1];
 
@@ -202,6 +204,13 @@ function openLiveChat() {
 }
 
 export default function FAQPage() {
+    useSeo({
+        path: "/faq",
+        title: "KonarCard FAQs | NFC Business Card Questions Answered",
+        description:
+            "Answers to common questions about KonarCard NFC business cards — how the cards work, setup, plans, delivery, and updating your digital profile.",
+    });
+
     const [activeTab, setActiveTab] = useState("getting-started");
     const [openIndex, setOpenIndex] = useState(0);
 

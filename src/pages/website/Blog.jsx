@@ -9,6 +9,8 @@ import Footer from "../../components/Home/Footer";
 import "../../styling/fonts.css";
 import "../../styling/blog.css";
 
+import { useSeo } from "../../utils/seo";
+
 /* ── Animation presets ─────────────────────────────────────── */
 const EASE = [0.22, 1, 0.36, 1];
 
@@ -26,6 +28,13 @@ const fadeUpInView = (delay = 0) => ({
 });
 
 export default function Blog() {
+    useSeo({
+        path: "/blog",
+        title: "KonarCard Blog | Tips for UK Tradespeople",
+        description:
+            "Practical advice for UK tradespeople — how to win more jobs, get more reviews, and use a digital business card to look professional fast.",
+    });
+
     const tabs = useMemo(
         () => [
             { key: "all", label: "All" },

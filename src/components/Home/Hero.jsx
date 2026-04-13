@@ -157,9 +157,9 @@ export default function Hero() {
                 </motion.p>
 
                 <motion.h1 className="h1 kc-homeHero__title" {...fadeUp(0.14)}>
-                    The Digital{" "}
-                    <span className="kc-homeHero__accent">Business Card</span>{" "}
-                    Built For Trades
+                    Digital Business Cards{" "}
+                    <span className="kc-homeHero__accent">Built for</span>{" "}
+                    UK Trades
                 </motion.h1>
 
                 <motion.p className="kc-subheading kc-homeHero__sub" {...fadeUp(0.22)}>

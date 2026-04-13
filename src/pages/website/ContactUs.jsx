@@ -10,6 +10,8 @@ import Footer from "../../components/Home/Footer";
 import "../../styling/fonts.css";
 import "../../styling/contactus.css";
 
+import { useSeo } from "../../utils/seo";
+
 import ContactIcon from "../../assets/icons/ChatIcon.svg";
 import ChatIcon from "../../assets/icons/Contact-Interface.svg";
 
@@ -89,6 +91,13 @@ const quickAnswers = [
 export default function ContactUs() {
     const toast = useKonarToast();
     const [openIndex, setOpenIndex] = useState(0);
+
+    useSeo({
+        path: "/contactus",
+        title: "Contact KonarCard | Live Chat & Email Support",
+        description:
+            "Get in touch with the KonarCard team. Live chat during working hours or email supportteam@konarcard.com — replies within one working day.",
+    });
 
     useEffect(() => {
         if (localStorage.getItem("openChatOnLoad") !== "1") return;

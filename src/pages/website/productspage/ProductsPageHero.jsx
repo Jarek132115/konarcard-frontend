@@ -38,13 +38,14 @@ export default function ProductsPageHero({ products }) {
                         </p>
 
                         <h1 id="kph-title" className="h2 kph-title">
-                            Premium <span className="kph-accent">Plastic NFC Cards</span> Designed
-                            for <span className="kph-accent">Your Brand</span>
+                            NFC Business Cards — <span className="kph-accent">Choose Your Colour</span>
                         </h1>
 
                         <p className="kc-subheading kph-sub">
-                            Choose from multiple professionally designed card styles — all powered by
-                            your KonarCard digital profile.
+                            KonarCard NFC business cards are available in 6 colours. Each card is the
+                            same price — £19.99 — and includes a free digital profile you can update
+                            any time. Works on every iPhone and Android phone without an app. Tap the
+                            card to any phone and your profile opens instantly.
                         </p>
                     </motion.div>
                 </header>

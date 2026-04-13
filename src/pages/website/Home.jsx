@@ -57,9 +57,9 @@ export default function Home() {
   useEffect(() => {
     const siteUrl = "https://www.konarcard.com";
 
-    const title = "Digital Business Card & NFC Business Card UK | KonarCard";
+    const title = "Digital Business Cards for UK Tradespeople | KonarCard";
     const description =
-      "KonarCard is a digital business card and NFC business card for the UK. Share your details with a tap, QR code or link. Replace paper business cards today.";
+      "KonarCard NFC business cards let UK tradespeople share their contact details, services and reviews with a single tap. No app needed. From £19.99. Free digital profile included.";
 
     document.title = title;
 
@@ -89,7 +89,20 @@ export default function Home() {
       "@type": "Organization",
       name: "KonarCard",
       url: siteUrl,
-      logo: `${siteUrl}/logo.png`,
+      logo: `${siteUrl}/Favicon.png`,
+      description:
+        "KonarCard provides NFC-enabled digital business cards for UK tradespeople and service professionals.",
+      address: {
+        "@type": "PostalAddress",
+        addressCountry: "GB",
+      },
+      contactPoint: {
+        "@type": "ContactPoint",
+        contactType: "customer support",
+        email: "supportteam@konarcard.com",
+        areaServed: "GB",
+        availableLanguage: ["English"],
+      },
     });
 
     upsertJsonLd("faq", {
@@ -155,6 +168,34 @@ export default function Home() {
       <main className="kc-home" aria-label="KonarCard home page">
         {/* 1 — #ffffff */}
         <Hero />
+
+        {/* SEO intro — indexable copy right below the hero */}
+        <section
+          className="kc-homeIntro"
+          aria-label="About KonarCard"
+          style={{
+            background: "#ffffff",
+            padding: "32px 20px 48px",
+          }}
+        >
+          <div
+            style={{
+              maxWidth: 920,
+              margin: "0 auto",
+              textAlign: "center",
+            }}
+          >
+            <p className="kc-subheading" style={{ margin: 0 }}>
+              KonarCard is a digital business card designed for UK
+              tradespeople. Each card uses NFC technology — tap it to any
+              smartphone and your profile opens instantly, no app required.
+              Share your contact details, services, photos, prices and reviews
+              in one link. Cards are available in 6 colours at £19.99 each
+              with a free digital profile included. Used by electricians,
+              plumbers, builders, landscapers and handymen across the UK.
+            </p>
+          </div>
+        </section>
 
         {/* 2 — #fafafa */}
         <Comparison />

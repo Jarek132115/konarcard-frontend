@@ -79,9 +79,9 @@ export default function Products() {
         const imgOrange = absoluteImage(KonarCardOrangeImg);
 
         const title =
-            "NFC Business Cards & Contactless Cards UK | KonarCard Shop";
+            "NFC Business Cards | Tap to Share | KonarCard UK";
         const description =
-            "Browse KonarCard NFC business cards — plastic cards, metal cards and key tags. Tap or scan to share your digital profile instantly. Free UK delivery.";
+            "Browse KonarCard's NFC business cards. Available in 6 colours at £19.99 each. Tap to share your digital profile — no app needed. UK delivery. Free profile included.";
 
         document.title = title;
 

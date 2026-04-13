@@ -8,6 +8,8 @@ import Footer from "../../components/Home/Footer";
 import "../../styling/fonts.css";
 import "../../styling/reviews.css";
 
+import { useSeo } from "../../utils/seo";
+
 import pp1  from "../../assets/images/pp1.png";
 import pp2  from "../../assets/images/pp2.png";
 import pp3  from "../../assets/images/pp3.png";
@@ -137,6 +139,13 @@ const REVIEWS = [
 const AVG_RATING = 4.8;
 
 export default function Reviews() {
+    useSeo({
+        path: "/reviews",
+        title: "KonarCard Reviews | What UK Tradespeople Say",
+        description:
+            "Read genuine reviews from UK tradespeople using KonarCard NFC business cards — electricians, plumbers, builders and more sharing their experience.",
+    });
+
     return (
         <>
             <Navbar />

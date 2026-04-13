@@ -9,6 +9,8 @@ import Footer from "../../components/Home/Footer";
 import "../../styling/fonts.css";
 import "../../styling/example.css";
 
+import { useSeo } from "../../utils/seo";
+
 import ExampleTest from "../../assets/images/ExampleTest.jpg";
 
 /* ── Animation presets ─────────────────────────────────────── */
@@ -86,6 +88,13 @@ const ALL_EXAMPLES = Object.entries(EXAMPLES_BY_TRADE).flatMap(([category, items
 );
 
 export default function Example() {
+    useSeo({
+        path: "/examples",
+        title: "Digital Business Card Examples | KonarCard",
+        description:
+            "See real KonarCard digital business card examples from electricians, plumbers, builders, landscapers and more UK trades. Get inspiration for your own profile.",
+    });
+
     const [active, setActive] = useState("all");
 
     const visible = useMemo(() => {

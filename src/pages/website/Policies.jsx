@@ -9,6 +9,8 @@ import RightArrow from "../../assets/icons/RightArrow.svg";
 import "../../styling/fonts.css";
 import "../../styling/policies.css";
 
+import { useSeo } from "../../utils/seo";
+
 /* ── Animation ease ────────────────────────────────────────── */
 const EASE = [0.22, 1, 0.36, 1];
 
@@ -585,6 +587,13 @@ function renderPolicy(key, dot) {
 }
 
 export default function Policies() {
+    useSeo({
+        path: "/policies",
+        title: "Policies | KonarCard Privacy, Terms, Refunds & Shipping",
+        description:
+            "Read KonarCard's privacy policy, terms of service, refund policy, and shipping information for our NFC business cards and digital profile platform.",
+    });
+
     const [activePolicy, setActivePolicy] = useState("privacy");
 
     return (

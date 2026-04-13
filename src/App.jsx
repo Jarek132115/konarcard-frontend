@@ -295,15 +295,23 @@ export default function App() {
           />
           <Route
             path="/products/metal-card"
-            element={<Navigate to="/products/plastic-black" replace />}
+            element={<Navigate to="/products" replace />}
           />
           <Route
             path="/products/metal"
-            element={<Navigate to="/products/plastic-black" replace />}
+            element={<Navigate to="/products" replace />}
           />
           <Route
             path="/products/konartag"
-            element={<Navigate to="/products/plastic-blue" replace />}
+            element={<Navigate to="/products" replace />}
+          />
+          <Route
+            path="/products/plastic-bundle"
+            element={<Navigate to="/products" replace />}
+          />
+          <Route
+            path="/products/metal-bundle"
+            element={<Navigate to="/products" replace />}
           />
           <Route
             path="/products/plastic-basic"

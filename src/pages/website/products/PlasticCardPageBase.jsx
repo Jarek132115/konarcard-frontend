@@ -246,14 +246,18 @@ export default function PlasticCardPageBase({
         setMeta("name", "twitter:description", description);
         setMeta("name", "twitter:image", imageUrl);
 
+        const colorLabel = String(variant || "").charAt(0).toUpperCase() + String(variant || "").slice(1);
+
         setJsonLd(`product-${productKey}`, {
-            "@context": "https://schema.org",
+            "@context": "https://schema.org/",
             "@type": "Product",
             name: productName,
             description,
             url: pageUrl,
             image: [imageUrl],
-            sku: `konarcard-${productKey}`,
+            sku: `KONAR-${String(variant || "").toUpperCase()}`,
+            material: "PVC Plastic",
+            color: colorLabel,
             brand: { "@type": "Brand", name: "KonarCard" },
             offers: {
                 "@type": "Offer",
@@ -261,6 +265,7 @@ export default function PlasticCardPageBase({
                 priceCurrency: "GBP",
                 availability: "https://schema.org/InStock",
                 url: pageUrl,
+                seller: { "@type": "Organization", name: "KonarCard" },
                 shippingDetails: {
                     "@type": "OfferShippingDetails",
                     shippingRate: { "@type": "MonetaryAmount", value: "0", currency: "GBP" },
@@ -278,7 +283,7 @@ export default function PlasticCardPageBase({
                 { "@type": "ListItem", position: 3, name: productName, item: pageUrl },
             ],
         });
-    }, [productKey, productName, heroSubtext, frontSrc]);
+    }, [productKey, productName, heroSubtext, frontSrc, variant]);
 
     const features = useMemo(
         () => [
