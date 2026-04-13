@@ -1,4 +1,5 @@
 import React, { useEffect, useMemo, useState } from "react";
+import { useLocation } from "react-router-dom";
 import Sidebar from "./Sidebar";
 
 import LogoIcon from "../../assets/icons/Logo-Icon.svg";
@@ -14,10 +15,20 @@ export default function DashboardLayout({
     hideDesktopHeader = false,
     hideMobileTopbar = false,
 }) {
+    const { pathname } = useLocation();
     const [sidebarOpen, setSidebarOpen] = useState(false);
     const [isMobileNav, setIsMobileNav] = useState(() =>
         typeof window !== "undefined" ? window.innerWidth <= MOBILE_NAV_BREAKPOINT : false
     );
+
+    // Scroll to top whenever the dashboard route changes
+    useEffect(() => {
+        try {
+            window.scrollTo({ top: 0, left: 0, behavior: "auto" });
+        } catch {
+            window.scrollTo(0, 0);
+        }
+    }, [pathname]);
 
     useEffect(() => {
         const onResize = () => {
