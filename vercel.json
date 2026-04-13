@@ -13,12 +13,37 @@
     },
     {
       "source": "/products/plastic",
-      "destination": "/products/plastic-card",
+      "destination": "/products/plastic-white",
+      "permanent": true
+    },
+    {
+      "source": "/products/plastic-card",
+      "destination": "/products/plastic-white",
       "permanent": true
     },
     {
       "source": "/products/metal",
-      "destination": "/products/metal-card",
+      "destination": "/products",
+      "permanent": true
+    },
+    {
+      "source": "/products/metal-card",
+      "destination": "/products",
+      "permanent": true
+    },
+    {
+      "source": "/products/konartag",
+      "destination": "/products",
+      "permanent": true
+    },
+    {
+      "source": "/products/plastic-bundle",
+      "destination": "/products",
+      "permanent": true
+    },
+    {
+      "source": "/products/metal-bundle",
+      "destination": "/products",
       "permanent": true
     }
   ],
