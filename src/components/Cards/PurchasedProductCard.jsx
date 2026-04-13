@@ -53,31 +53,43 @@ function fallbackEstimatedDelivery(orderDateValue) {
     return `${formatShortDate(minDate)} – ${formatShortDate(maxDate)}`;
 }
 
-function getStatusLabel(card) {
-    const raw = safeTrim(card?.status || card?._raw?.status).toLowerCase();
+const FULFILLMENT_LABEL = {
+    order_placed: "Order placed",
+    designing_card: "Preparing",
+    packaged: "Packaged",
+    shipped: "Shipped",
+    delivered: "Delivered",
+};
 
-    if (!raw) return "Pending";
-    if (raw === "paid") return "Paid";
+function getStatusLabel(card) {
+    // Prefer the fulfillment status that admin controls
+    const fulfillment = safeTrim(card?.fulfillmentStatus || card?._raw?.fulfillmentStatus).toLowerCase();
+    if (fulfillment && FULFILLMENT_LABEL[fulfillment]) {
+        return FULFILLMENT_LABEL[fulfillment];
+    }
+
+    // Fallback to payment-status edge cases (failed / cancelled / pending)
+    const raw = safeTrim(card?.status || card?._raw?.status).toLowerCase();
     if (raw === "pending") return "Pending";
     if (raw === "failed") return "Failed";
     if (raw === "cancelled" || raw === "canceled") return "Cancelled";
-    if (raw === "fulfilled") return "Fulfilled";
-    if (raw === "processing") return "Processing";
-    if (raw === "complete" || raw === "completed") return "Completed";
-    if (raw === "shipped") return "Shipped";
 
-    return raw.charAt(0).toUpperCase() + raw.slice(1);
+    // Default: order was placed but no explicit fulfillment step yet
+    return "Order placed";
 }
 
 function getStatusTone(card) {
-    const raw = safeTrim(card?.status || card?._raw?.status).toLowerCase();
+    const fulfillment = safeTrim(card?.fulfillmentStatus || card?._raw?.fulfillmentStatus).toLowerCase();
 
-    if (["paid", "fulfilled", "processing", "complete", "completed", "shipped"].includes(raw)) {
-        return "success";
-    }
+    if (fulfillment === "delivered") return "success";
+    if (fulfillment === "shipped") return "success";
+    if (fulfillment === "packaged" || fulfillment === "designing_card") return "neutral";
+    if (fulfillment === "order_placed") return "warn";
+
+    const raw = safeTrim(card?.status || card?._raw?.status).toLowerCase();
     if (raw === "pending") return "warn";
     if (raw === "failed" || raw === "cancelled" || raw === "canceled") return "danger";
-    return "neutral";
+    return "warn";
 }
 
 function getFulfillmentStatus(card) {
