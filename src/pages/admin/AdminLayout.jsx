@@ -2,6 +2,7 @@
 import React from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import LogoIcon from "../../assets/icons/Logo-Icon.svg";
+import AdminErrorBoundary from "./AdminErrorBoundary";
 import "../../styling/admin/admin.css";
 
 const NAV_ITEMS = [
@@ -138,7 +139,11 @@ export default function AdminLayout({ children }) {
                 </div>
 
                 <main className="admin-main">
-                    <div className="admin-main-inner">{children}</div>
+                    <div className="admin-main-inner">
+                        <AdminErrorBoundary key={location.pathname}>
+                            {children}
+                        </AdminErrorBoundary>
+                    </div>
                 </main>
             </div>
         </div>

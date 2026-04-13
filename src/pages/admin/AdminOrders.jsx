@@ -3,6 +3,7 @@ import { useKonarToast } from "../../hooks/useKonarToast";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import api from "../../services/api";
 import AdminLayout from "./AdminLayout";
+import AdminErrorBoundary from "./AdminErrorBoundary";
 
 import PlasticCard3D from "../../components/PlasticCard3D";
 import MetalCard3D from "../../components/MetalCard3D";
@@ -880,6 +881,7 @@ export default function AdminOrders() {
                         </div>
 
                         {selectedOrder ? (
+                            <AdminErrorBoundary key={selectedOrder._id}>
                             <div className="admin-stack-lg">
                                 <div className="admin-detail-card">
                                     <div className="admin-detail-head">
@@ -1383,6 +1385,7 @@ export default function AdminOrders() {
                                     </div>
                                 </div>
                             </div>
+                            </AdminErrorBoundary>
                         ) : null}
                     </div>
                 )}

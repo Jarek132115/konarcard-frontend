@@ -7,14 +7,9 @@ import Navbar from "../../components/Navbar";
 import Footer from "../../components/Home/Footer";
 
 import "../../styling/fonts.css";
-import "../../styling/home/customertrust.css";
 import "../../styling/example.css";
 
 import ExampleTest from "../../assets/images/ExampleTest.jpg";
-
-import WorksOnEveryPhone  from "../../assets/icons/WorksOnEveryPhone.svg";
-import BuiltForRealJobs   from "../../assets/icons/BuiltForRealJobs.svg";
-import LinkInSocial       from "../../assets/icons/LinkInSocial.svg";
 
 /* ── Animation presets ─────────────────────────────────────── */
 const EASE = [0.22, 1, 0.36, 1];
@@ -89,27 +84,6 @@ const EXAMPLES_BY_TRADE = {
 const ALL_EXAMPLES = Object.entries(EXAMPLES_BY_TRADE).flatMap(([category, items]) =>
     items.map((x) => ({ ...x, category }))
 );
-
-const WHY_CARDS = [
-    {
-        img: WorksOnEveryPhone,
-        alt: "Works on every phone",
-        title: "Works on every phone",
-        desc: "Tap or scan and your profile opens instantly — no downloads needed.",
-    },
-    {
-        img: BuiltForRealJobs,
-        alt: "Built for real jobs",
-        title: "Built for real jobs",
-        desc: "Made for on-site work so customers can trust you quickly and contact you fast.",
-    },
-    {
-        img: LinkInSocial,
-        alt: "One link for everything",
-        title: "One link for everything",
-        desc: "Keep photos, services, reviews and contact buttons together in one place.",
-    },
-];
 
 export default function Example() {
     const [active, setActive] = useState("all");
@@ -213,50 +187,6 @@ export default function Example() {
                                 ))}
                             </motion.div>
                         </AnimatePresence>
-                    </div>
-                </section>
-
-                {/* ── WHY THIS WORKS ───────────────────────────── */}
-                <section className="kht ex-why" aria-label="Why this works for any trade">
-                    <div className="kht__inner">
-                        <motion.header className="kht__head" {...fadeUpInView(0)}>
-                            <p className="kc-pill kht__kicker">Built for trades</p>
-                            <h2 className="h3 kht__title">
-                                Why This <span className="kht__accent">Works</span> For Any Trade
-                            </h2>
-                            <p className="kc-subheading kht__sub">
-                                The common reasons tradies get more work with KonarCard.
-                            </p>
-                        </motion.header>
-
-                        <div className="kht__grid" role="list" aria-label="Reasons KonarCard works">
-                            {WHY_CARDS.map((c, i) => (
-                                <motion.article
-                                    key={i}
-                                    className="kht__card ex-whyCard"
-                                    role="listitem"
-                                    initial={{ opacity: 0, y: 14 }}
-                                    whileInView={{ opacity: 1, y: 0 }}
-                                    viewport={{ once: true, margin: "-40px" }}
-                                    transition={{ duration: 0.42, delay: i * 0.08, ease: EASE }}
-                                >
-                                    <div className="kht__copy">
-                                        <h3 className="kc-title kht__cardTitle">{c.title}</h3>
-                                        <p className="body kht__cardDesc">{c.desc}</p>
-                                    </div>
-
-                                    <div className="kht__imgWrap ex-whyIconWrap" aria-hidden="true">
-                                        <img
-                                            className="ex-whyIcon"
-                                            src={c.img}
-                                            alt={c.alt}
-                                            loading="lazy"
-                                            decoding="async"
-                                        />
-                                    </div>
-                                </motion.article>
-                            ))}
-                        </div>
                     </div>
                 </section>
 

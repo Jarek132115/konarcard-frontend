@@ -24,7 +24,6 @@ import TeamsPlanIcon from "../../assets/icons/TeamsPlan.svg";
 
 /* ✅ Page components */
 import PricingPageHero from "./pricingpage/PricingPageHero";
-import PricingPageWho from "./pricingpage/PricingPageWho";
 import PricingPageCompare from "./pricingpage/PricingPageCompare";
 import PricingPageFAQ from "./pricingpage/PricingPageFAQ";
 
@@ -580,9 +579,6 @@ export default function Pricing() {
                     startSubscription={startSubscription}
                     openBillingPortal={openBillingPortal}
                 />
-
-                {/* ✅ WHO (with real images) */}
-                <PricingPageWho />
 
                 {/* ✅ COMPARE (styled) */}
                 <PricingPageCompare billing={billing} />

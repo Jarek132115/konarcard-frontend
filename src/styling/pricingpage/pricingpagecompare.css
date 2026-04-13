@@ -8,7 +8,7 @@
 /* ── Section wrapper ────────────────────────────────────────── */
 .prc-wrap {
     padding: 56px 0 76px;
-    background: #ffffff;
+    background: #fafafa;
 }
 
 @media (max-width: 600px) {
