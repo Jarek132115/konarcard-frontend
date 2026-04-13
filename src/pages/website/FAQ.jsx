@@ -63,56 +63,86 @@ const FAQ_DATA = [
     // Getting started
     {
         tab: "getting-started",
-        q: "What if the customer's phone doesn't have NFC?",
-        a: "Every card also has a QR code on the back. The customer scans it and your profile opens exactly the same way. It works on any smartphone.",
+        q: "What is a digital business card?",
+        a: "It is an online profile that replaces your paper card. Share it by tapping your NFC card, scanning the QR code, or sending your link. Everything a customer needs is in one place.",
     },
     {
         tab: "getting-started",
-        q: "What trades use KonarCard?",
-        a: "Electricians, plumbers, builders, roofers, gas engineers, decorators, landscapers, handymen and other service professionals across the UK.",
+        q: "Does the customer need to download an app?",
+        a: "No. Your profile opens straight in their browser. Nothing to download on either end.",
     },
     {
         tab: "getting-started",
-        q: "Is KonarCard based in the UK?",
-        a: "Yes. KonarCard is a UK company. Cards are shipped from within the UK.",
+        q: "What if I change my number or move area?",
+        a: "Update your profile online and it changes everywhere instantly. Every card you have ever given out will show your new details.",
+    },
+    {
+        tab: "getting-started",
+        q: "Who is KonarCard for?",
+        a: "Electricians, plumbers, builders, roofers, gas engineers, decorators, landscapers, handymen, and any UK trade that wants to get more work from the jobs they already do.",
     },
 
     // Cards & profiles
     {
         tab: "cards-profiles",
+        q: "What if I change my phone number or address?",
+        a: "Update your profile online. Every card you have ever given out now shows the new details. Nothing to reprint, nothing to replace.",
+    },
+    {
+        tab: "cards-profiles",
+        q: "What if the customer's phone doesn't have NFC?",
+        a: "They scan the QR code on the back of the card with their camera. Works on every phone.",
+    },
+    {
+        tab: "cards-profiles",
         q: "What happens if I lose my card?",
-        a: "Your profile stays live. Order a new card at any time and link it to the same profile. Nothing is lost.",
+        a: "Your profile stays live with the same link, same number, same details. Just order a new card.",
     },
     {
         tab: "cards-profiles",
-        q: "Can I change my details after giving the card out?",
-        a: "Yes. Log into your profile, make the change, and save it. Every card that has ever been given out will show the updated details immediately.",
-    },
-    {
-        tab: "cards-profiles",
-        q: "Can I have more than one profile?",
-        a: "Yes. With the Plus plan you can add extra profiles at £2 a month each. Useful for teams, multiple trades or different service areas.",
+        q: "Can I add my work photos and reviews?",
+        a: "Yes. Add photos from jobs, list your services and prices, and show your reviews. Customers see proof before they pick up the phone.",
     },
 
     // Pricing
     {
         tab: "pricing",
-        q: "Do I need to pay monthly?",
-        a: "The card is a one-off payment. The basic profile is free with no time limit. The Plus plan at £5 a month is optional and you can cancel any time.",
+        q: "Is it a one-off cost or a monthly fee?",
+        a: "The card is a one-off payment of £19.99. The basic profile is free. There is an optional Plus plan at £5 a month if you want more photos, more services listed and full analytics.",
+    },
+    {
+        tab: "pricing",
+        q: "Can I try it without buying a card?",
+        a: "Yes. Claim your link and build your profile for free. Order a card later if you want one.",
+    },
+    {
+        tab: "pricing",
+        q: "Can I cancel Plus anytime?",
+        a: "Yes. Cancel whenever you want from your dashboard. Your profile stays live on the free plan.",
     },
 
     // Teams
     {
         tab: "teams",
         q: "Can I set up cards for my crew?",
-        a: "Yes. Add extra profiles for each team member on the Plus plan at £2 a month each. Each person gets their own link, QR code and analytics.",
+        a: "Yes. Add extra profiles for each member of your team, each with a separate link, separate QR, separate stats. £2 a month per extra profile on top of Plus.",
+    },
+    {
+        tab: "teams",
+        q: "Can everyone have their own reviews and contact details?",
+        a: "Yes. Each profile is its own thing, with their own number, their own work photos, their own reviews.",
     },
 
     // Technical & support
     {
         tab: "support",
-        q: "How long does delivery take?",
+        q: "How quickly does delivery arrive?",
         a: "Orders placed before 1pm are dispatched the same day. Next-day delivery is available at checkout.",
+    },
+    {
+        tab: "support",
+        q: "The tap isn't working. What should I do?",
+        a: "Check NFC is switched on in the phone settings, then tap the card near the top or back of the phone. If it still doesn't work, scan the QR code on the back of the card.",
     },
     {
         tab: "support",
@@ -166,7 +196,7 @@ export default function FAQPage() {
                                 </h1>
 
                                 <p className="kc-subheading kfaq-sub">
-                                    Everything you need to know. No jargon.
+                                    Everything you need to know, in plain words.
                                 </p>
 
                                 <div

@@ -167,10 +167,10 @@ canvas {
 }
 
 .kc-premHero__sub {
-    margin: 10px auto 0;
-    max-width: 760px;
-    color: rgba(12, 24, 48, 0.68);
-    text-wrap: balance;
+    margin: 14px auto 0;
+    max-width: 620px;
+    text-align: center;
+    text-wrap: pretty;
 }
 
 /* =========================================================

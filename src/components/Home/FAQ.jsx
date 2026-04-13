@@ -152,7 +152,7 @@ export default function HomeFAQ() {
                     </h2>
 
                     <p className="kc-subheading khq__sub">
-                        Straight answers. No jargon.
+                        Honest answers in plain words.
                     </p>
 
                     <div className="khq__tabs" role="tablist" aria-label="FAQ categories">

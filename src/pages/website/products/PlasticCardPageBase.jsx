@@ -338,8 +338,8 @@ export default function PlasticCardPageBase({
 
     const specs = useMemo(
         () => [
-            { k: "Size", v: "Standard bank card size, fits in any wallet" },
-            { k: "Thickness", v: "0.76mm, same as a standard bank card" },
+            { k: "Size", v: "CR80 standard credit card size (85.6 × 54 mm). Fits any wallet." },
+            { k: "Thickness", v: "0.76 mm, same as a standard bank card." },
             { k: "Made from", v: "Durable PVC plastic with a smooth matte finish" },
             { k: "How it works", v: "Tap to any iPhone or Android. Opens your profile instantly, no app needed" },
             { k: "QR code on the back", v: "Every card has a QR code. Customers can scan it if they prefer" },
@@ -569,8 +569,8 @@ export default function PlasticCardPageBase({
 
                                 <h1 className="h2 kc-premHero__title">{productName} NFC Business Card</h1>
 
-                                <p className="kc-premHero__sub">
-                                    The {productName} is a tap-to-share NFC business card. Hand it to a customer or tap it to their phone and your profile opens straight away. Your details, services, photos and reviews are all in one place. One-off cost. Free profile included. UK delivery.
+                                <p className="kc-subheading kc-premHero__sub">
+                                    Tap to share your profile. £19.99, paid once. Free UK delivery.
                                 </p>
 
                                 <div className="kc-topHero__badges">
