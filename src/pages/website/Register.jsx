@@ -298,7 +298,6 @@ export default function Register() {
     };
 
     const startOAuth = (provider) => {
-        if (provider === "apple") { toast("Apple login coming soon"); return; }
         if ((hasCheckoutIntent || hasNfcIntent) && !sanitizeSlug(data.username || claimInput)) {
             toast.error("Please claim your link before continuing.");
             setForceClaimStep(true);

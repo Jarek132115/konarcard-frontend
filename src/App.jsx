@@ -9,6 +9,7 @@ import PublicOnlyRoute from "./components/PublicOnlyRoute";
 import ScrollToTop from "./components/ScrollToTop";
 import TidioDelayedLoader from "./components/TidioDelayedLoader";
 import RouteErrorBoundary from "./components/RouteErrorBoundary";
+import CookieConsent from "./components/CookieConsent";
 import { KonarToastProvider } from "./components/Dashboard/KonarToast";
 
 // -------- Public pages --------
@@ -131,6 +132,7 @@ export default function App() {
     <KonarToastProvider>
       <ScrollToTop />
       <TidioWrapper />
+      <CookieConsent />
 
       <RouteErrorBoundary>
         <Routes>

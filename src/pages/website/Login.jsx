@@ -166,7 +166,6 @@ export default function Login() {
 
     /* ── OAuth ───────────────────────────────────────────── */
     const startOAuth = (provider) => {
-        if (provider === "apple") { toast("Apple login coming soon"); return; }
         window.location.href = `${BASE_URL}/auth/${provider}`;
     };
 
