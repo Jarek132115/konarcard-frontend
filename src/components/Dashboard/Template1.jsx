@@ -1,4 +1,5 @@
 import React, { useMemo } from "react";
+import { motion } from "motion/react";
 import "../../styling/dashboard/templates/template1.css";
 
 import SaveMyNumberIcon from "../../assets/icons/SaveMyNumberIcon.svg";
@@ -15,6 +16,21 @@ import XIconSrc from "../../assets/icons/Template1Icon-X.svg";
 
 const nonEmpty = (v) => typeof v === "string" && v.trim().length > 0;
 const asArray = (v) => (Array.isArray(v) ? v : []);
+
+const EASE = [0.22, 1, 0.36, 1];
+
+const fadeUp = (delay = 0) => ({
+    initial: { opacity: 0, y: 20 },
+    animate: { opacity: 1, y: 0 },
+    transition: { duration: 0.55, delay, ease: EASE },
+});
+
+const fadeUpInView = (delay = 0) => ({
+    initial: { opacity: 0, y: 20 },
+    whileInView: { opacity: 1, y: 0 },
+    viewport: { once: true, margin: "-40px" },
+    transition: { duration: 0.55, delay, ease: EASE },
+});
 
 function Stars({ rating = 0 }) {
     const r = Math.max(0, Math.min(5, Number(rating) || 0));
@@ -165,7 +181,7 @@ export default function Template1(props) {
         <div className={`kc-tpl kc-tpl-1 ${themeMode === "dark" ? "t1-theme-dark" : "t1-theme-light"}`}>
             <div className="t1-shell">
                 {v.showMainSection && (
-                    <section className="t1-hero">
+                    <motion.section className="t1-hero" {...fadeUp(0)}>
                         <div className="t1-coverShell">
                             {nonEmpty(cover) ? (
                                 <div className="t1-cover">
@@ -222,11 +238,11 @@ export default function Template1(props) {
                                 </div>
                             ) : null}
                         </div>
-                    </section>
+                    </motion.section>
                 )}
 
                 {v.showAboutMeSection && hasAbout ? (
-                    <section className="t1-section">
+                    <motion.section className="t1-section" {...fadeUpInView(0)}>
                         <SectionHead kicker="About" title="About Me" />
 
                         <div className="t1-aboutCard">
@@ -247,11 +263,11 @@ export default function Template1(props) {
 
                             {nonEmpty(aboutBio) ? <p className="t1-bio">{aboutBio}</p> : null}
                         </div>
-                    </section>
+                    </motion.section>
                 ) : null}
 
                 {v.showWorkSection && works.length > 0 ? (
-                    <section className="t1-section">
+                    <motion.section className="t1-section" {...fadeUpInView(0)}>
                         <SectionHead kicker="Recent Work" title="My Work" />
 
                         <div className="t1-work-grid">
@@ -268,11 +284,11 @@ export default function Template1(props) {
                                 );
                             })}
                         </div>
-                    </section>
+                    </motion.section>
                 ) : null}
 
                 {v.showServicesSection && services.length > 0 ? (
-                    <section className="t1-section">
+                    <motion.section className="t1-section" {...fadeUpInView(0)}>
                         <SectionHead kicker="Services" title="What I Offer" />
 
                         <div className="t1-services">
@@ -289,11 +305,11 @@ export default function Template1(props) {
                                 </article>
                             ))}
                         </div>
-                    </section>
+                    </motion.section>
                 ) : null}
 
                 {v.showReviewsSection && reviews.length > 0 ? (
-                    <section className="t1-section">
+                    <motion.section className="t1-section" {...fadeUpInView(0)}>
                         <SectionHead kicker="Reviews" title="Client Feedback" />
 
                         <div className="t1-reviews">
@@ -305,11 +321,11 @@ export default function Template1(props) {
                                 </article>
                             ))}
                         </div>
-                    </section>
+                    </motion.section>
                 ) : null}
 
                 {v.showContactSection && hasContact ? (
-                    <section className="t1-section t1-section-last">
+                    <motion.section className="t1-section t1-section-last" {...fadeUpInView(0)}>
                         <SectionHead kicker="Contact" title="Get In Touch" />
 
                         <div className="t1-contact">
@@ -387,7 +403,7 @@ export default function Template1(props) {
                                 </div>
                             ) : null}
                         </div>
-                    </section>
+                    </motion.section>
                 ) : null}
             </div>
         </div>

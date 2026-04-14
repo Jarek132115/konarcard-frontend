@@ -1,4 +1,5 @@
 import React, { useMemo } from "react";
+import { motion } from "motion/react";
 import "../../styling/dashboard/templates/template2.css";
 
 import SaveMyNumberIcon from "../../assets/icons/SaveMyNumberIcon.svg";
@@ -14,6 +15,21 @@ import Template2ServiceIcon from "../../assets/icons/Template2ServiceIcon.svg";
 
 const nonEmpty = (v) => typeof v === "string" && v.trim().length > 0;
 const asArray = (v) => (Array.isArray(v) ? v : []);
+
+const EASE = [0.22, 1, 0.36, 1];
+
+const fadeUp = (delay = 0) => ({
+    initial: { opacity: 0, y: 20 },
+    animate: { opacity: 1, y: 0 },
+    transition: { duration: 0.55, delay, ease: EASE },
+});
+
+const fadeUpInView = (delay = 0) => ({
+    initial: { opacity: 0, y: 20 },
+    whileInView: { opacity: 1, y: 0 },
+    viewport: { once: true, margin: "-40px" },
+    transition: { duration: 0.55, delay, ease: EASE },
+});
 
 function Stars({ rating = 0 }) {
     const r = Math.max(0, Math.min(5, Number(rating) || 0));
@@ -193,7 +209,7 @@ export default function Template2({ vm }) {
         <div className={`kc-tpl kc-tpl-2 ${v.themeMode === "dark" ? "t2-theme-dark" : "t2-theme-light"}`}>
             <div className="t2-shell">
                 {v.showMainSection && (
-                    <section className="t2-hero">
+                    <motion.section className="t2-hero" {...fadeUp(0)}>
                         <div className="t2-hero-media">
                             {nonEmpty(cover) ? (
                                 <img src={cover} alt="" className="t2-hero-cover" />
@@ -234,11 +250,11 @@ export default function Template2({ vm }) {
                                 </div>
                             ) : null}
                         </div>
-                    </section>
+                    </motion.section>
                 )}
 
                 {v.showAboutMeSection && hasAbout ? (
-                    <section className="t2-section">
+                    <motion.section className="t2-section" {...fadeUpInView(0)}>
                         <SectionHead title="ABOUT ME" />
 
                         <div className="t2-aboutCard">
@@ -257,11 +273,11 @@ export default function Template2({ vm }) {
 
                             {nonEmpty(v.bio) ? <p className="t2-aboutBio">{v.bio}</p> : null}
                         </div>
-                    </section>
+                    </motion.section>
                 ) : null}
 
                 {v.showWorkSection && works.length > 0 ? (
-                    <section className="t2-section">
+                    <motion.section className="t2-section" {...fadeUpInView(0)}>
                         <SectionHead title="MY WORK" />
 
                         <div className="t2-workRows">
@@ -281,11 +297,11 @@ export default function Template2({ vm }) {
                                 </div>
                             ))}
                         </div>
-                    </section>
+                    </motion.section>
                 ) : null}
 
                 {v.showServicesSection && services.length > 0 ? (
-                    <section className="t2-section">
+                    <motion.section className="t2-section" {...fadeUpInView(0)}>
                         <SectionHead title="MY SERVICES" />
 
                         <div className="t2-servicesList">
@@ -303,11 +319,11 @@ export default function Template2({ vm }) {
                                 </article>
                             ))}
                         </div>
-                    </section>
+                    </motion.section>
                 ) : null}
 
                 {v.showReviewsSection && reviews.length > 0 ? (
-                    <section className="t2-section">
+                    <motion.section className="t2-section" {...fadeUpInView(0)}>
                         <SectionHead title="MY REVIEWS" />
 
                         <div className="t2-reviewsList">
@@ -321,11 +337,11 @@ export default function Template2({ vm }) {
                                 </article>
                             ))}
                         </div>
-                    </section>
+                    </motion.section>
                 ) : null}
 
                 {v.showContactSection && hasContact ? (
-                    <section className="t2-section t2-section-last">
+                    <motion.section className="t2-section t2-section-last" {...fadeUpInView(0)}>
                         <SectionHead title="GET IN TOUCH" />
 
                         <div className="t2-contactStack">
@@ -397,7 +413,7 @@ export default function Template2({ vm }) {
                                 </div>
                             ) : null}
                         </div>
-                    </section>
+                    </motion.section>
                 ) : null}
             </div>
         </div>

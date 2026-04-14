@@ -1,4 +1,5 @@
 import React, { useMemo } from "react";
+import { motion } from "motion/react";
 import "../../styling/dashboard/templates/template3.css";
 
 import SaveMyNumberIcon from "../../assets/icons/SaveMyNumberIcon.svg";
@@ -6,6 +7,21 @@ import ExchangeContactIcon from "../../assets/icons/ExchangeContactIcon.svg";
 
 const nonEmpty = (v) => typeof v === "string" && v.trim().length > 0;
 const asArray = (v) => (Array.isArray(v) ? v : []);
+
+const EASE = [0.22, 1, 0.36, 1];
+
+const fadeUp = (delay = 0) => ({
+    initial: { opacity: 0, y: 20 },
+    animate: { opacity: 1, y: 0 },
+    transition: { duration: 0.55, delay, ease: EASE },
+});
+
+const fadeUpInView = (delay = 0) => ({
+    initial: { opacity: 0, y: 20 },
+    whileInView: { opacity: 1, y: 0 },
+    viewport: { once: true, margin: "-40px" },
+    transition: { duration: 0.55, delay, ease: EASE },
+});
 
 function Stars({ rating = 0 }) {
     const r = Math.max(0, Math.min(5, Number(rating) || 0));
@@ -222,7 +238,7 @@ export default function Template3({ vm }) {
         <div className={`kc-tpl kc-tpl-3 ${themeMode === "dark" ? "t3-theme-dark" : "t3-theme-light"}`}>
             <div className="t3-shell">
                 {v.showMainSection && (
-                    <section className="t3-hero">
+                    <motion.section className="t3-hero" {...fadeUp(0)}>
                         <div className="t3-heroGrid">
                             <div className="t3-heroMedia">
                                 {nonEmpty(cover) ? (
@@ -281,11 +297,11 @@ export default function Template3({ vm }) {
                                 ) : null}
                             </div>
                         </div>
-                    </section>
+                    </motion.section>
                 )}
 
                 {v.showAboutMeSection && hasAbout ? (
-                    <section className="t3-section">
+                    <motion.section className="t3-section" {...fadeUpInView(0)}>
                         <div className="t3-sectionHead">
                             <div className="t3-sectionKicker">About</div>
                             <h2 className="t3-sectionTitle">About Me</h2>
@@ -309,11 +325,11 @@ export default function Template3({ vm }) {
 
                             {nonEmpty(bio) ? <p className="t3-aboutBio">{bio}</p> : null}
                         </div>
-                    </section>
+                    </motion.section>
                 ) : null}
 
                 {v.showWorkSection && works.length > 0 ? (
-                    <section className="t3-section">
+                    <motion.section className="t3-section" {...fadeUpInView(0)}>
                         <div className="t3-sectionHead">
                             <div className="t3-sectionKicker">Recent Jobs</div>
                             <h2 className="t3-sectionTitle">My Work</h2>
@@ -340,11 +356,11 @@ export default function Template3({ vm }) {
                                 </div>
                             ))}
                         </div>
-                    </section>
+                    </motion.section>
                 ) : null}
 
                 {v.showServicesSection && services.length > 0 ? (
-                    <section className="t3-section">
+                    <motion.section className="t3-section" {...fadeUpInView(0)}>
                         <div className="t3-sectionHead">
                             <div className="t3-sectionKicker">Services</div>
                             <h2 className="t3-sectionTitle">What I Offer</h2>
@@ -366,11 +382,11 @@ export default function Template3({ vm }) {
                                 </article>
                             ))}
                         </div>
-                    </section>
+                    </motion.section>
                 ) : null}
 
                 {v.showReviewsSection && reviews.length > 0 ? (
-                    <section className="t3-section">
+                    <motion.section className="t3-section" {...fadeUpInView(0)}>
                         <div className="t3-sectionHead">
                             <div className="t3-sectionKicker">Reviews</div>
                             <h2 className="t3-sectionTitle">Client Feedback</h2>
@@ -385,11 +401,11 @@ export default function Template3({ vm }) {
                                 </article>
                             ))}
                         </div>
-                    </section>
+                    </motion.section>
                 ) : null}
 
                 {v.showContactSection && hasContact ? (
-                    <section className="t3-section t3-section-last">
+                    <motion.section className="t3-section t3-section-last" {...fadeUpInView(0)}>
                         <div className="t3-sectionHead">
                             <div className="t3-sectionKicker">Contact</div>
                             <h2 className="t3-sectionTitle">Get In Touch</h2>
@@ -472,7 +488,7 @@ export default function Template3({ vm }) {
                                 </div>
                             ) : null}
                         </div>
-                    </section>
+                    </motion.section>
                 ) : null}
             </div>
         </div>
