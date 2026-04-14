@@ -11,7 +11,25 @@ import "../../styling/example.css";
 
 import { useSeo } from "../../utils/seo";
 
-import ExampleTest from "../../assets/images/ExampleTest.jpg";
+/* Real profile screenshots — one per example card */
+import AkermanImg from "../../assets/images/example-images/AkermanProfile.jpg";
+import BancroftImg from "../../assets/images/example-images/BancroftProfile.jpg";
+import DalyImg from "../../assets/images/example-images/DalyProfile.jpg";
+import DonnellyImg from "../../assets/images/example-images/DonnellyProfile.jpg";
+import FletcherImg from "../../assets/images/example-images/FletcherProfile.jpg";
+import GallagherImg from "../../assets/images/example-images/GallagherProfile.jpg";
+import HargreavesImg from "../../assets/images/example-images/HargreavesProfile.jpg";
+import KowalskiImg from "../../assets/images/example-images/KowalskiProfile.jpg";
+import MorleyImg from "../../assets/images/example-images/MorleyProfile.jpg";
+import MurphyImg from "../../assets/images/example-images/MurphyProfile.jpg";
+import NkemdirimImg from "../../assets/images/example-images/NkemdirimProfile.jpg";
+import OkaforImg from "../../assets/images/example-images/OkaforProfile.jpg";
+import PattersonImg from "../../assets/images/example-images/PattersonProfile.jpg";
+import SolidbuildImg from "../../assets/images/example-images/SolidbuildProfile.jpg";
+import SutherlandImg from "../../assets/images/example-images/SutherlandProfile.jpg";
+import ThorntonImg from "../../assets/images/example-images/ThorntonProfile.jpg";
+import WebbImg from "../../assets/images/example-images/WebbProfile.jpg";
+import WhitfieldImg from "../../assets/images/example-images/WhitfieldProfile.jpg";
 
 /* ── Animation presets ─────────────────────────────────────── */
 const EASE = [0.22, 1, 0.36, 1];
@@ -31,55 +49,185 @@ const fadeUpInView = (delay = 0) => ({
 
 const cardVariant = {
     hidden: { opacity: 0, y: 14 },
-    show:   (i) => ({
+    show: (i) => ({
         opacity: 1,
         y: 0,
-        transition: { duration: 0.42, delay: i * 0.06, ease: EASE },
+        transition: { duration: 0.42, delay: Math.min(i, 8) * 0.05, ease: EASE },
     }),
     exit: { opacity: 0, y: -8, transition: { duration: 0.2, ease: EASE } },
 };
 
-/* ── Data ──────────────────────────────────────────────────── */
+/* ── Data ──────────────────────────────────────────────────────
+   18 real KonarCard profiles (3 per trade). Each card links to
+   the live public profile at /u/{slug}. Images are placeholders
+   until real cover/profile shots are uploaded.
+   ────────────────────────────────────────────────────────────── */
 const CATEGORIES = [
-    { key: "all",        label: "All" },
-    { key: "electrician",label: "Electrician" },
-    { key: "plumber",    label: "Plumber" },
-    { key: "builder",    label: "Builder" },
-    { key: "renovator",  label: "Renovator" },
+    { key: "all", label: "All" },
+    { key: "electrician", label: "Electrician" },
+    { key: "plumber", label: "Plumber" },
+    { key: "builder", label: "Builder" },
+    { key: "renovator", label: "Renovator" },
     { key: "landscaper", label: "Landscaper" },
-    { key: "handyman",   label: "Handyman" },
+    { key: "handyman", label: "Handyman" },
 ];
 
 const EXAMPLES_BY_TRADE = {
     electrician: [
-        { id: "el-1", role: "Electrician", name: "James", desc: "Shares contact details instantly after jobs and quotes." },
-        { id: "el-2", role: "Electrician", name: "Liam",  desc: "Sends a booking link and reviews in one quick tap." },
-        { id: "el-3", role: "Electrician", name: "Aaron", desc: "Shows services and pricing clearly while quoting on-site." },
+        {
+            id: "el-1",
+            role: "Electrician",
+            name: "Fletcher Electrical",
+            slug: "fletcherelectrical",
+            img: FletcherImg,
+            desc: "Domestic and commercial wiring with a clean, fully-stocked profile.",
+        },
+        {
+            id: "el-2",
+            role: "Electrician",
+            name: "Okafor Electrical Services",
+            slug: "okaforelectricalservices",
+            img: OkaforImg,
+            desc: "Consumer units, EV chargers and rewires — plus verified reviews.",
+        },
+        {
+            id: "el-3",
+            role: "Electrician",
+            name: "Hargreaves Electrical Ltd",
+            slug: "hargreaveselectrical",
+            img: HargreavesImg,
+            desc: "Full service list and pricing up-front so customers know what to expect.",
+        },
     ],
     plumber: [
-        { id: "pl-1", role: "Plumber", name: "Ben",    desc: "Shares emergency call-out details and saves contacts fast." },
-        { id: "pl-2", role: "Plumber", name: "Oliver", desc: "Shows before/after photos to build trust on visit one." },
-        { id: "pl-3", role: "Plumber", name: "Ethan",  desc: "Shares invoice email and WhatsApp link in one tap." },
+        {
+            id: "pl-1",
+            role: "Plumber",
+            name: "Whitfield Plumbing & Gas",
+            slug: "whitfieldplumbinggas",
+            img: WhitfieldImg,
+            desc: "Gas Safe registered, 24/7 emergency callouts shared via tap or QR.",
+        },
+        {
+            id: "pl-2",
+            role: "Plumber",
+            name: "Gallagher Plumbing Solutions",
+            slug: "gallagherplumbingsolutions",
+            img: GallagherImg,
+            desc: "Bathroom fit-outs and boiler installs with before-and-after gallery.",
+        },
+        {
+            id: "pl-3",
+            role: "Plumber",
+            name: "Donnelly Plumbing & Heating",
+            slug: "donnellyplumbingheating",
+            img: DonnellyImg,
+            desc: "Call-out rate and common job prices listed so customers can decide fast.",
+        },
     ],
     builder: [
-        { id: "bu-1", role: "Builder", name: "Ryan",   desc: "Shares portfolio + booking link to win higher-value jobs." },
-        { id: "bu-2", role: "Builder", name: "Jack",   desc: "Sets clear timelines and services so customers know what to expect." },
-        { id: "bu-3", role: "Builder", name: "Callum", desc: "Uses reviews and gallery to stand out when quoting." },
+        {
+            id: "bu-1",
+            role: "Builder",
+            name: "Murphy Build & Renovate",
+            slug: "murphybuildrenovate",
+            img: MurphyImg,
+            desc: "Extensions and new builds with a photo-led portfolio.",
+        },
+        {
+            id: "bu-2",
+            role: "Builder",
+            name: "Nkemdirim Construction",
+            slug: "nkemdirimconstruction",
+            img: NkemdirimImg,
+            desc: "Full-project builder with timelines and reviews for each job type.",
+        },
+        {
+            id: "bu-3",
+            role: "Builder",
+            name: "SolidBuild Contractors",
+            slug: "solidbuildcontractors",
+            img: SolidbuildImg,
+            desc: "Loft conversions and structural work with an organised service list.",
+        },
     ],
     renovator: [
-        { id: "re-1", role: "Renovator", name: "Daniel", desc: "Shows transformations so customers decide faster with confidence." },
-        { id: "re-2", role: "Renovator", name: "Harvey", desc: "Collects new leads at showrooms with a fast tap." },
-        { id: "re-3", role: "Renovator", name: "Theo",   desc: "Shares a quote request form for easy survey booking." },
+        {
+            id: "re-1",
+            role: "Renovator",
+            name: "Thornton Renovation Group",
+            slug: "thorntonrenovationgroup",
+            img: ThorntonImg,
+            desc: "Full-home renovations with a clean, trust-first profile design.",
+        },
+        {
+            id: "re-2",
+            role: "Renovator",
+            name: "Webb Property Renovations",
+            slug: "webbpropertyrenovations",
+            img: WebbImg,
+            desc: "House refurbishments with a strong before-and-after gallery.",
+        },
+        {
+            id: "re-3",
+            role: "Renovator",
+            name: "Kowalski Renovations",
+            slug: "kowalskirenovations",
+            img: KowalskiImg,
+            desc: "Kitchen and bathroom specialists with pricing ranges up-front.",
+        },
     ],
     landscaper: [
-        { id: "la-1", role: "Landscaper", name: "Charlie", desc: "Shares seasonal packages and availability while on-site." },
-        { id: "la-2", role: "Landscaper", name: "Oscar",   desc: "Uses gallery and reviews to secure maintenance clients." },
-        { id: "la-3", role: "Landscaper", name: "Alfie",   desc: "Shares Instagram and booking link from one clean profile." },
+        {
+            id: "la-1",
+            role: "Landscaper",
+            name: "Sutherland Gardens",
+            slug: "sutherlandgardens",
+            img: SutherlandImg,
+            desc: "Garden design and planting with a portfolio of completed projects.",
+        },
+        {
+            id: "la-2",
+            role: "Landscaper",
+            name: "Daly Groundworks & Landscaping",
+            slug: "dalygroundworkslandscaping",
+            img: DalyImg,
+            desc: "Driveways, patios and groundworks shown through a clean photo grid.",
+        },
+        {
+            id: "la-3",
+            role: "Landscaper",
+            name: "Bancroft Landscape Design",
+            slug: "bancroftlandscapedesign",
+            img: BancroftImg,
+            desc: "Bespoke landscape design and build — maintenance plans included.",
+        },
     ],
     handyman: [
-        { id: "ha-1", role: "Handyman", name: "George", desc: "Customers can call instantly while he's still on-site." },
-        { id: "ha-2", role: "Handyman", name: "Leo",    desc: "Perfect for repeat work, always the right details." },
-        { id: "ha-3", role: "Handyman", name: "Sam",    desc: "Shares services and pricing so customers know what's covered." },
+        {
+            id: "ha-1",
+            role: "Handyman",
+            name: "Akerman Home Services",
+            slug: "akermanhomeservices",
+            img: AkermanImg,
+            desc: "Small jobs, flat-pack, repairs — services listed with quick call buttons.",
+        },
+        {
+            id: "ha-2",
+            role: "Handyman",
+            name: "Patterson Property Maintenance",
+            slug: "pattersonpropertymaintenance",
+            img: PattersonImg,
+            desc: "Regular property maintenance bookings made easy with one profile.",
+        },
+        {
+            id: "ha-3",
+            role: "Handyman",
+            name: "Morley Handyman Services",
+            slug: "morleyhandymanservices",
+            img: MorleyImg,
+            desc: "Domestic handyman with a clear service menu and instant contact.",
+        },
     ],
 };
 
@@ -173,25 +321,32 @@ export default function Example() {
                                         animate="show"
                                         exit="exit"
                                     >
-                                        {/* Padded image area */}
-                                        <div className="ex-media">
-                                            <div className="ex-imgWrap">
-                                                <span className="ex-rolePill">{item.role}</span>
-                                                <img
-                                                    src={ExampleTest}
-                                                    alt={`${item.name}, ${item.role} KonarCard profile example`}
-                                                    className="ex-img"
-                                                    loading="lazy"
-                                                    decoding="async"
-                                                />
+                                        <Link
+                                            to={`/u/${item.slug}`}
+                                            className="ex-cardLink"
+                                            aria-label={`View ${item.name} profile`}
+                                        >
+                                            {/* Padded image area */}
+                                            <div className="ex-media">
+                                                <div className="ex-imgWrap">
+                                                    <span className="ex-rolePill">{item.role}</span>
+                                                    <img
+                                                        src={item.img}
+                                                        alt={`${item.name}, ${item.role} KonarCard profile example`}
+                                                        className="ex-img"
+                                                        loading="lazy"
+                                                        decoding="async"
+                                                    />
+                                                </div>
                                             </div>
-                                        </div>
 
-                                        {/* Body */}
-                                        <div className="ex-body">
-                                            <p className="kc-title ex-name">{item.name}</p>
-                                            <p className="body ex-desc">{item.desc}</p>
-                                        </div>
+                                            {/* Body */}
+                                            <div className="ex-body">
+                                                <p className="kc-title ex-name">{item.name}</p>
+                                                <p className="body ex-desc">{item.desc}</p>
+                                                <span className="ex-viewCta">View profile →</span>
+                                            </div>
+                                        </Link>
                                     </motion.article>
                                 ))}
                             </motion.div>

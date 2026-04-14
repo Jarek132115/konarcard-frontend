@@ -6,7 +6,9 @@ import { motion } from "motion/react";
 import "../../styling/fonts.css";
 import "../../styling/home/examples.css";
 
-import ExampleTest from "../../assets/images/ExampleTest.jpg";
+import NkemdirimImg from "../../assets/images/example-images/NkemdirimProfile.jpg";
+import SutherlandImg from "../../assets/images/example-images/SutherlandProfile.jpg";
+import DonnellyImg from "../../assets/images/example-images/DonnellyProfile.jpg";
 
 /* ── Animation presets ─────────────────────────────────────── */
 const EASE = [0.22, 1, 0.36, 1];
@@ -30,19 +32,25 @@ const cardVariant = {
 /* ── Data ──────────────────────────────────────────────────── */
 const ITEMS = [
     {
-        role: "Electrician",
-        name: "James",
-        desc: "Shares contact details instantly after jobs and quotes.",
+        role: "Builder",
+        name: "Nkemdirim Construction",
+        slug: "nkemdirimconstruction",
+        img: NkemdirimImg,
+        desc: "Full-project builder with timelines and reviews for each job type.",
     },
     {
-        role: "Builder",
-        name: "David",
-        desc: "Shows reviews + gallery to build trust on the first visit.",
+        role: "Landscaper",
+        name: "Sutherland Gardens",
+        slug: "sutherlandgardens",
+        img: SutherlandImg,
+        desc: "Garden design and planting with a portfolio of completed projects.",
     },
     {
         role: "Plumber",
-        name: "Ryan",
-        desc: "Shares portfolio + booking link to win higher-value work.",
+        name: "Donnelly Plumbing & Heating",
+        slug: "donnellyplumbingheating",
+        img: DonnellyImg,
+        desc: "Call-out rate and common job prices listed so customers can decide fast.",
     },
 ];
 
@@ -67,7 +75,7 @@ export default function Examples() {
                     {ITEMS.map((it, i) => (
                         <motion.article
                             className="khe-card"
-                            key={`${it.role}-${it.name}`}
+                            key={it.slug}
                             role="listitem"
                             custom={i}
                             variants={cardVariant}
@@ -75,25 +83,31 @@ export default function Examples() {
                             whileInView="show"
                             viewport={{ once: true, margin: "-40px" }}
                         >
-                            {/* Padded image area */}
-                            <div className="khe-media">
-                                <div className="khe-imgWrap">
-                                    <span className="khe-rolePill">{it.role}</span>
-                                    <img
-                                        src={ExampleTest}
-                                        alt={`${it.name}, ${it.role} KonarCard profile example`}
-                                        className="khe-img"
-                                        loading="lazy"
-                                        decoding="async"
-                                    />
+                            <Link
+                                to={`/u/${it.slug}`}
+                                className="khe-cardLink"
+                                aria-label={`View ${it.name} profile`}
+                            >
+                                {/* Padded image area */}
+                                <div className="khe-media">
+                                    <div className="khe-imgWrap">
+                                        <span className="khe-rolePill">{it.role}</span>
+                                        <img
+                                            src={it.img}
+                                            alt={`${it.name}, ${it.role} KonarCard profile example`}
+                                            className="khe-img"
+                                            loading="lazy"
+                                            decoding="async"
+                                        />
+                                    </div>
                                 </div>
-                            </div>
 
-                            {/* Body */}
-                            <div className="khe-body">
-                                <p className="kc-title khe-name">{it.name}</p>
-                                <p className="body khe-desc">{it.desc}</p>
-                            </div>
+                                {/* Body */}
+                                <div className="khe-body">
+                                    <p className="kc-title khe-name">{it.name}</p>
+                                    <p className="body khe-desc">{it.desc}</p>
+                                </div>
+                            </Link>
                         </motion.article>
                     ))}
                 </div>

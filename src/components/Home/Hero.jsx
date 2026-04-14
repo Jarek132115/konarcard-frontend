@@ -4,15 +4,25 @@ import { Link } from "react-router-dom";
 import { motion } from "motion/react";
 import { gsap } from "gsap";
 
-/* Profile images */
-import UP1 from "../../assets/images/UP1.jpg";
-import UP2 from "../../assets/images/UP2.jpg";
-import UP3 from "../../assets/images/UP3.jpg";
-import UP4 from "../../assets/images/UP4.jpg";
-import UP5 from "../../assets/images/UP5.jpg";
-import UP6 from "../../assets/images/UP6.jpg";
-import UP7 from "../../assets/images/UP7.jpg";
-import UP8 from "../../assets/images/UP8.jpg";
+/* Profile images — 18 real KonarCard profile screenshots, in numbered order */
+import UP1 from "../../assets/images/carousel-images/ExampleImage1.jpg";
+import UP2 from "../../assets/images/carousel-images/ExampleImage2.jpg";
+import UP3 from "../../assets/images/carousel-images/ExampleImage3.jpg";
+import UP4 from "../../assets/images/carousel-images/ExampleImage4.jpg";
+import UP5 from "../../assets/images/carousel-images/ExampleImage5.jpg";
+import UP6 from "../../assets/images/carousel-images/ExampleImage6.jpg";
+import UP7 from "../../assets/images/carousel-images/ExampleImage7.jpg";
+import UP8 from "../../assets/images/carousel-images/ExampleImage8.jpg";
+import UP9 from "../../assets/images/carousel-images/ExampleImage9.jpg";
+import UP10 from "../../assets/images/carousel-images/ExampleImage10.jpg";
+import UP11 from "../../assets/images/carousel-images/ExampleImage11.jpg";
+import UP12 from "../../assets/images/carousel-images/ExampleImage12.jpg";
+import UP13 from "../../assets/images/carousel-images/ExampleImage13.jpg";
+import UP14 from "../../assets/images/carousel-images/ExampleImage14.jpg";
+import UP15 from "../../assets/images/carousel-images/ExampleImage15.jpg";
+import UP16 from "../../assets/images/carousel-images/ExampleImage16.jpg";
+import UP17 from "../../assets/images/carousel-images/ExampleImage17.jpg";
+import UP18 from "../../assets/images/carousel-images/ExampleImage18.jpg";
 
 import "../../styling/home/hero.css";
 
@@ -26,7 +36,10 @@ const fadeUp = (delay = 0) => ({
 });
 
 /* ── Data ──────────────────────────────────────────────────── */
-const ITEMS = [UP1, UP2, UP3, UP4, UP5, UP6, UP7, UP8];
+const ITEMS = [
+    UP1, UP2, UP3, UP4, UP5, UP6, UP7, UP8, UP9,
+    UP10, UP11, UP12, UP13, UP14, UP15, UP16, UP17, UP18,
+];
 const LOOP_ITEMS = [...ITEMS, ...ITEMS];
 
 export default function Hero() {

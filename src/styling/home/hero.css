@@ -117,7 +117,7 @@
 
 .kc-homeHero__phone {
     flex: 0 0 auto;
-    width: clamp(160px, 11vw, 200px);
+    width: clamp(146px, 10vw, 184px);
     aspect-ratio: 9 / 19.5;
     border-radius: 20px;
     overflow: hidden;
@@ -147,7 +147,7 @@
     }
 
     .kc-homeHero__phone {
-        width: clamp(148px, 19vw, 175px);
+        width: clamp(136px, 17.5vw, 160px);
         border-radius: 18px;
     }
 
@@ -170,7 +170,7 @@
     }
 
     .kc-homeHero__phone {
-        width: clamp(138px, 40vw, 160px);
+        width: clamp(128px, 37vw, 148px);
         border-radius: 16px;
     }
 

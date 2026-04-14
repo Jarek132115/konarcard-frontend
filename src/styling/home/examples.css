@@ -84,6 +84,15 @@
     transition: box-shadow 0.22s ease, transform 0.22s ease, border-color 0.22s ease;
 }
 
+/* Whole card becomes a link to /u/{slug} */
+.khe-cardLink {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    color: inherit;
+    text-decoration: none;
+}
+
 .khe-card:hover {
     transform: translateY(-3px);
     box-shadow:
