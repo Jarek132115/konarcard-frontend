@@ -13,6 +13,7 @@ import Products   from "../../components/Home/Products";
 import Examples   from "../../components/Home/Examples";
 import Pricing    from "../../components/Home/Pricing";
 import Value      from "../../components/Home/Value";
+import Reviews    from "../../components/Home/Reviews";
 import FAQ        from "../../components/Home/FAQ";
 
 /* Global typography */
@@ -183,6 +184,9 @@ export default function Home() {
         <Value />
 
         {/* 9: #ffffff */}
+        <Reviews />
+
+        {/* 10: #fafafa */}
         <FAQ />
       </main>
 

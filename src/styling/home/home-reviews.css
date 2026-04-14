@@ -1,0 +1,105 @@
+/* frontend/src/styling/home/home-reviews.css
+   Home-page Reviews section (3 featured cards). Card styling comes from
+   reviews.css via the shared .krv-card class — this file only handles the
+   section shell, grid and header.
+   ========================================================= */
+
+.khr-reviews {
+    background: #ffffff;
+    padding: 84px 0 96px;
+}
+
+@media (max-width: 860px) {
+    .khr-reviews {
+        padding: 64px 0 72px;
+    }
+}
+
+@media (max-width: 600px) {
+    .khr-reviews {
+        padding: 52px 0 60px;
+    }
+}
+
+.khr-container {
+    max-width: 1180px;
+    margin: 0 auto;
+    padding: 0 24px;
+}
+
+@media (max-width: 600px) {
+    .khr-container {
+        padding: 0 16px;
+    }
+}
+
+/* ── Header ───────────────────────────────────────────────── */
+.khr-head {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 10px;
+    margin: 0 0 36px;
+}
+
+.khr-kicker {
+    margin: 0;
+}
+
+.khr-title {
+    margin: 0;
+    text-wrap: balance;
+    max-width: 760px;
+}
+
+.khr-accent {
+    color: var(--kc-accent-primary);
+}
+
+.khr-sub {
+    margin: 0 auto;
+    max-width: 560px;
+    text-wrap: pretty;
+}
+
+/* ── Grid of 3 review cards ──────────────────────────────── */
+.khr-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 20px;
+    align-items: stretch;
+}
+
+@media (max-width: 980px) {
+    .khr-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        max-width: 720px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    /* Hide the 3rd card on 2-column layouts so the row is always balanced */
+    .khr-grid > :nth-child(3) {
+        display: none;
+    }
+}
+
+@media (max-width: 600px) {
+    .khr-grid {
+        grid-template-columns: 1fr;
+        gap: 14px;
+        max-width: 520px;
+    }
+
+    .khr-grid > :nth-child(3) {
+        display: flex; /* bring it back on single-column so user sees all 3 */
+    }
+}
+
+/* ── Footer CTA ──────────────────────────────────────────── */
+.khr-cta {
+    margin: 36px 0 0;
+    display: flex;
+    justify-content: center;
+}
