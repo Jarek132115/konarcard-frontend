@@ -363,7 +363,7 @@ export default function Example() {
                         <p className="kc-pill ex-ctaPill">Start now</p>
                         <h2 className="h3 ex-ctaTitle">Ready to make yours?</h2>
                         <p className="kc-subheading ex-ctaSub">
-                            Claim your KonarCard link, build your profile, then choose a card or keytag when you're ready.
+                            Claim your KonarCard link, build your profile, then order your card when you're ready.
                         </p>
                         <div className="ex-ctaBtns">
                             <Link to="/register" className="kx-btn kx-btn--black">

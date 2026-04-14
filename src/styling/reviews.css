@@ -80,6 +80,9 @@
 
 .krv-kicker {
     margin: 0 0 14px;
+    /* Hug content so it doesn't stretch to 100% in the flex column */
+    align-self: flex-start;
+    width: fit-content;
 }
 
 .krv-title {
@@ -274,159 +277,134 @@
 }
 
 /* =========================================================
-   REVIEW CARD — premium / Apple-style
-   Stars + quote up top, person at bottom
+   REVIEW CARD — clean, centered, Apple-style
+   Avatar → stars → quote → name/trade, all centered
    ========================================================= */
 .krv-card {
     background: #ffffff;
     border: 1px solid rgba(15, 23, 42, 0.08);
     border-radius: 20px;
-    padding: 22px;
+    padding: 28px 22px;
     display: flex;
     flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    text-align: center;
     gap: 14px;
     box-shadow:
         0 1px 2px rgba(15, 23, 42, 0.04),
         0 8px 24px rgba(15, 23, 42, 0.05);
-    transition: box-shadow 0.2s ease, transform 0.2s ease;
+    transition: box-shadow 0.2s ease, transform 0.2s ease, border-color 0.2s ease;
 }
 
 .krv-card:hover {
     box-shadow:
         0 2px 4px rgba(15, 23, 42, 0.06),
-        0 16px 40px rgba(15, 23, 42, 0.09);
-    transform: translateY(-2px);
+        0 18px 42px rgba(15, 23, 42, 0.10);
+    transform: translateY(-3px);
+    border-color: rgba(15, 23, 42, 0.12);
 }
 
-/* Stars row */
-.krv-cardTop {
+/* Avatar — larger, centered at the top */
+.krv-avatar {
+    width: 60px;
+    height: 60px;
+    border-radius: 999px;
+    object-fit: cover;
+    border: 2px solid #ffffff;
+    outline: 1px solid rgba(15, 23, 42, 0.08);
+    display: block;
+    flex-shrink: 0;
+    box-shadow: 0 6px 16px rgba(15, 23, 42, 0.08);
+}
+
+/* Stars row under the avatar */
+.krv-cardStars {
     display: flex;
-    align-items: center;
-    gap: 8px;
+    justify-content: center;
+    margin: 2px 0 0;
 }
 
-.krv-cardRating {
-    font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-    font-size: 12px;
-    font-weight: 700;
-    color: var(--kc-text-secondary);
-}
-
-/* Quote — the hero of the card */
+/* Quote — hero of the card */
 .krv-cardQuote {
     margin: 0;
     font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-    font-size: 14px;
+    font-size: 14.5px;
     font-weight: 400;
-    line-height: 1.75;
+    line-height: 1.65;
     color: var(--kc-text-primary);
+    text-wrap: pretty;
     flex: 1;
+    max-width: 38ch;
 }
 
-/* Thin divider */
-.krv-cardDivider {
-    height: 1px;
-    background: rgba(15, 23, 42, 0.07);
-    flex-shrink: 0;
-}
-
-/* Person row */
-.krv-cardPerson {
-    display: grid;
-    grid-template-columns: 38px 1fr;
-    gap: 10px;
-    align-items: start;
-}
-
-.krv-avatar {
-    width: 38px;
-    height: 38px;
-    border-radius: 999px;
-    object-fit: cover;
-    border: 1.5px solid rgba(15, 23, 42, 0.08);
-    display: block;
-    flex-shrink: 0;
-}
-
-.krv-personInfo {
+/* Name + trade/location at the bottom */
+.krv-cardFoot {
     display: flex;
     flex-direction: column;
+    align-items: center;
     gap: 2px;
-    min-width: 0;
+    margin-top: 4px;
+    padding-top: 14px;
+    width: 100%;
+    border-top: 1px solid rgba(15, 23, 42, 0.06);
 }
 
 .krv-personName {
     margin: 0;
     font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-    font-size: 13px;
+    font-size: 14px;
     font-weight: 700;
     color: var(--kc-text-primary);
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
-
-.krv-personTrade {
-    font-weight: 400;
-    color: var(--kc-text-secondary);
-}
-
-.krv-personSep {
-    color: rgba(15, 23, 42, 0.30);
+    letter-spacing: -0.005em;
 }
 
 .krv-personMeta {
     margin: 0;
     font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
     font-size: 12px;
+    font-weight: 500;
     color: var(--kc-text-secondary);
-}
-
-/* Tags */
-.krv-tags {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 5px;
-    margin-top: 6px;
-}
-
-.krv-tag {
-    display: inline-flex;
-    align-items: center;
-    padding: 3px 8px;
-    border-radius: 999px;
-    font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-    font-size: 11px;
-    font-weight: 600;
-}
-
-.krv-tag--plan {
-    background: rgba(15, 23, 42, 0.04);
-    border: 1px solid rgba(15, 23, 42, 0.10);
-    color: rgba(15, 23, 42, 0.65);
-}
-
-.krv-tag--product {
-    background: rgba(249, 115, 22, 0.06);
-    border: 1px solid rgba(249, 115, 22, 0.20);
-    color: var(--kc-accent-primary);
+    letter-spacing: 0;
 }
 
 /* =========================================================
-   CTA
+   BOTTOM CTA SECTION — matches the Examples page CTA pattern
    ========================================================= */
-.krv-cta {
-    margin-top: 40px;
+.krv-ctaSection {
+    padding: 76px 0 88px;
+    text-align: center;
+    background: #fafafa;
+}
+
+@media (max-width: 600px) {
+    .krv-ctaSection {
+        padding: 56px 0 64px;
+    }
+}
+
+.krv-ctaInner {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 12px;
-    text-align: center;
 }
 
-.krv-ctaText {
-    margin: 0;
-    font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-    font-size: 14px;
-    color: var(--kc-text-secondary);
+.krv-ctaPill {
+    margin: 0 0 12px;
+}
+
+.krv-ctaTitle {
+    margin: 0 0 8px;
+    text-wrap: balance;
+}
+
+.krv-ctaSub {
+    margin: 0 auto 24px;
+    max-width: 520px;
+    text-wrap: balance;
+}
+
+.krv-ctaBtns {
+    display: flex;
+    justify-content: center;
 }

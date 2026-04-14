@@ -63,80 +63,80 @@ function Stars({ value = 5, size = 14 }) {
 /* ── Review data ───────────────────────────────────────────── */
 const REVIEWS = [
     {
-        id: "r1",  avatar: pp1,  name: "Mark B",  trade: "Plumber",
-        location: "Manchester", rating: 5,   date: "2 days ago",
-        plan: "Plus plan",  products: ["KonarCard"],
-        text: "Since using KonarCard I'm actually getting replies. Clients say it looks slick and I'm getting referrals.",
+        id: "r1", avatar: pp1, name: "Mark B", trade: "Plumber",
+        location: "Manchester", rating: 5, date: "2 days ago",
+        plan: "Plus plan", products: ["KonarCard"],
+        text: "Honestly didn't think a little card would make this much difference!! Customer showed it to their neighbour on the driveway and I had another boiler job booked by the weekend. Best £19.99 I've spent on my business.",
     },
     {
-        id: "r2",  avatar: pp2,  name: "Jake C",  trade: "Electrician",
-        location: "Leeds",       rating: 4.5, date: "1 week ago",
-        plan: "Free plan",  products: ["KonarCard"],
-        text: "Saved me a fortune on printing. Tap the card and customers have everything in seconds.",
+        id: "r2", avatar: pp2, name: "Jake C", trade: "Electrician",
+        location: "Leeds", rating: 5, date: "1 week ago",
+        plan: "Free plan", products: ["KonarCard"],
+        text: "I was throwing money at a new box of paper cards every time my number changed. Had a new mobile earlier in the year, couldn't be bothered to reprint. Got KonarCard instead and I've not touched a paper card since!",
     },
     {
-        id: "r3",  avatar: pp3,  name: "Tom G",   trade: "Builder",
-        location: "Birmingham",  rating: 5,   date: "3 weeks ago",
+        id: "r3", avatar: pp3, name: "Tom G", trade: "Builder",
+        location: "Birmingham", rating: 5, date: "3 weeks ago",
         plan: "Teams plan", products: ["KonarCard"],
-        text: "Gives me a proper online presence without a pricey website. Photos and reviews do the selling.",
+        text: "Run a small crew of three and we've all got our own profile under the same account. Customers see photos of actual finished extensions before they even ring. Makes selling the job so much easier, I can't recommend it enough.",
     },
     {
-        id: "r4",  avatar: pp4,  name: "Sam H",   trade: "Roofer",
-        location: "Sheffield",   rating: 4,   date: "1 month ago",
-        plan: "Plus plan",  products: [],
-        text: "I update prices and services on my phone. No reprinting, no fuss. More enquiries coming in.",
+        id: "r4", avatar: pp4, name: "Sam H", trade: "Roofer",
+        location: "Sheffield", rating: 4, date: "1 month ago",
+        plan: "Plus plan", products: [],
+        text: "Took a bit of getting my head round at first but once I had my photos and services loaded in I was away. Got a couple of leaks jobs last week off the back of my profile alone. Bit of trust goes a long way in this game.",
     },
     {
-        id: "r5",  avatar: pp5,  name: "Steve L", trade: "Decorator",
-        location: "Liverpool",   rating: 5,   date: "5 days ago",
-        plan: "Plus plan",  products: ["KonarCard"],
-        text: "Looks professional on mobile. Clients can call, WhatsApp or request a quote right away.",
+        id: "r5", avatar: pp5, name: "Steve L", trade: "Decorator",
+        location: "Liverpool", rating: 5, date: "5 days ago",
+        plan: "Plus plan", products: ["KonarCard"],
+        text: "Love it!! Clients scroll through the gallery and go 'oh that's gorgeous, can you do ours like that' before I've even quoted. Won 3 proper full-house jobs in my first month using it. Game changer.",
     },
     {
-        id: "r6",  avatar: pp6,  name: "Matt D",  trade: "Joiner",
-        location: "Glasgow",     rating: 5,   date: "2 months ago",
-        plan: "Plus plan",  products: ["KonarCard"],
-        text: "Before this I relied on word of mouth. Now people find me online and book. Worth every penny.",
+        id: "r6", avatar: pp6, name: "Matt D", trade: "Joiner",
+        location: "Glasgow", rating: 5, date: "2 months ago",
+        plan: "Plus plan", products: ["KonarCard"],
+        text: "Had it set up in maybe 10 minutes, and I'm not exactly the most tech savvy guy. Older customer couldn't tap her phone so I used the QR code on the back, worked first go. Covers everyone.",
     },
     {
-        id: "r7",  avatar: pp7,  name: "Chris S", trade: "Tiler",
-        location: "Nottingham",  rating: 4.5, date: "2 weeks ago",
-        plan: "Free plan",  products: [],
-        text: "Cheaper than keeping a website going. The gallery shows my best work and wins trust.",
+        id: "r7", avatar: pp7, name: "Chris S", trade: "Tiler",
+        location: "Nottingham", rating: 4.5, date: "2 weeks ago",
+        plan: "Free plan", products: [],
+        text: "The gallery is the best bit for me. Bathroom tiling is all about the finish, customers always want to see before/after. Now I just hand them the card and they can scroll through 12 of my jobs right there in their kitchen.",
     },
     {
-        id: "r8",  avatar: pp8,  name: "Alex M",  trade: "Heating Engineer",
-        location: "Newcastle",   rating: 5,   date: "6 days ago",
-        plan: "Plus plan",  products: ["KonarCard"],
-        text: "Tap, scan or share the link, it just works. Booking more local jobs than ever.",
+        id: "r8", avatar: pp8, name: "Alex M", trade: "Heating Engineer",
+        location: "Newcastle", rating: 5, date: "6 days ago",
+        plan: "Plus plan", products: ["KonarCard"],
+        text: "Had an emergency callout on a boiler and the lady wanted my details for her landlord. I tapped the card on her phone and it was done in about 3 seconds!! She couldn't believe it. Got the re-fit job off it too.",
     },
     {
-        id: "r9",  avatar: pp9,  name: "Dan R",   trade: "Handyman",
-        location: "Bristol",     rating: 5,   date: "3 months ago",
-        plan: "Free plan",  products: [],
-        text: "Not techy at all and still set it up in minutes. Tidy, modern and saves me on marketing.",
+        id: "r9", avatar: pp9, name: "Dan R", trade: "Handyman",
+        location: "Bristol", rating: 5, date: "3 months ago",
+        plan: "Free plan", products: [],
+        text: "Wasn't sold on the idea at first, thought it was a gimmick. But the reviews have genuinely rolled in and a couple of proper regulars have found me through the profile link I put on Facebook. Keeps the phone ringing nicely.",
     },
     {
-        id: "r10", avatar: pp10, name: "Ben K",   trade: "Gardener",
-        location: "Cardiff",     rating: 4,   date: "4 weeks ago",
-        plan: "Plus plan",  products: [],
-        text: "Clients love the map and service list. Stopped reprinting cards. This pays for itself.",
+        id: "r10", avatar: pp10, name: "Ben K", trade: "Gardener",
+        location: "Cardiff", rating: 4, date: "4 weeks ago",
+        plan: "Plus plan", products: [],
+        text: "Added my seasonal offers and hourly rate straight on the profile so I don't get a million 'how much do you charge' texts anymore. People can see everything up front. Huge time saver, honestly.",
     },
     {
-        id: "r11", avatar: pp11, name: "John P",  trade: "Bricklayer",
-        location: "London",      rating: 5,   date: "8 days ago",
-        plan: "Plus plan",  products: [],
-        text: "All my links in one place: quote form, photos, socials. Helped me close jobs faster.",
+        id: "r11", avatar: pp11, name: "John P", trade: "Bricklayer",
+        location: "London", rating: 5, date: "8 days ago",
+        plan: "Plus plan", products: [],
+        text: "Tap, profile opens, job booked. Three steps and I've stopped losing leads because someone lost my bit of card in the bottom of their bag. Wish I'd done this years ago!!",
     },
     {
         id: "r12", avatar: pp12, name: "Lewis J", trade: "Plasterer",
-        location: "Belfast",     rating: 4.5, date: "2 months ago",
-        plan: "Plus plan",  products: ["KonarCard"],
-        text: "Looks professional when I'm on site. One tap and the client has my details and portfolio.",
+        location: "Belfast", rating: 5, date: "2 months ago",
+        plan: "Plus plan", products: ["KonarCard"],
+        text: "Hand it over after every quote now without fail. It just looks proper when the phone lights up and shows my name, photos and reviews. I genuinely think it's the reason I'm winning more jobs against cheaper quotes.",
     },
 ];
 
-const AVG_RATING = 4.8;
+const AVG_RATING = 4.9;
 
 export default function Reviews() {
     useSeo({
@@ -238,76 +238,59 @@ export default function Reviews() {
                                     role="listitem"
                                     {...fadeInView(i * 0.04)}
                                 >
-                                    {/* Stars + rating at top */}
-                                    <div className="krv-cardTop">
-                                        <Stars value={r.rating} size={13} />
-                                        <span className="krv-cardRating">{r.rating.toFixed(1)}</span>
+                                    {/* Avatar */}
+                                    <img
+                                        className="krv-avatar"
+                                        src={r.avatar}
+                                        alt={`${r.name} avatar`}
+                                        width={60}
+                                        height={60}
+                                        loading="lazy"
+                                        decoding="async"
+                                    />
+
+                                    {/* Stars */}
+                                    <div className="krv-cardStars">
+                                        <Stars value={r.rating} size={14} />
                                     </div>
 
                                     {/* Quote */}
                                     <p className="krv-cardQuote">"{r.text}"</p>
 
-                                    {/* Divider */}
-                                    <div className="krv-cardDivider" aria-hidden="true" />
-
-                                    {/* Person */}
-                                    <div className="krv-cardPerson">
-                                        <img
-                                            className="krv-avatar"
-                                            src={r.avatar}
-                                            alt={`${r.name} avatar`}
-                                            width={38}
-                                            height={38}
-                                            loading="lazy"
-                                            decoding="async"
-                                        />
-
-                                        <div className="krv-personInfo">
-                                            <p className="krv-personName">
-                                                {r.name}
-                                                <span className="krv-personSep" aria-hidden="true"> · </span>
-                                                <span className="krv-personTrade">{r.trade}</span>
-                                            </p>
-                                            <p className="krv-personMeta">
-                                                {r.location}
-                                                <span className="krv-personSep" aria-hidden="true"> · </span>
-                                                {r.date}
-                                            </p>
-
-                                            {/* Tags */}
-                                            {(r.plan || r.products.length > 0) && (
-                                                <div className="krv-tags">
-                                                    {r.plan && (
-                                                        <span className="krv-tag krv-tag--plan">{r.plan}</span>
-                                                    )}
-                                                    {r.products.map((p) => (
-                                                        <span key={p} className="krv-tag krv-tag--product">{p}</span>
-                                                    ))}
-                                                </div>
-                                            )}
-                                        </div>
+                                    {/* Person details */}
+                                    <div className="krv-cardFoot">
+                                        <p className="krv-personName">{r.name}</p>
+                                        <p className="krv-personMeta">
+                                            {r.trade} · {r.location}
+                                        </p>
                                     </div>
                                 </motion.article>
                             ))}
                         </div>
 
-                        {/* CTA */}
-                        <motion.div
-                            className="krv-cta"
-                            initial={{ opacity: 0, y: 10 }}
-                            whileInView={{ opacity: 1, y: 0 }}
-                            viewport={{ once: true, margin: "-30px" }}
-                            transition={{ duration: 0.4, ease: EASE }}
-                        >
-                            <h2 className="h3 krv-ctaTitle">Ready to Try It Yourself?</h2>
-                            <p className="krv-ctaText">
-                                Start free. No card needed to set up your profile.
-                            </p>
+                    </div>
+                </section>
+
+                {/* ── CTA ──────────────────────────────────────── */}
+                <section className="krv-ctaSection" aria-label="Claim your link">
+                    <motion.div
+                        className="krv-container krv-ctaInner"
+                        initial={{ opacity: 0, y: 14 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        viewport={{ once: true, margin: "-40px" }}
+                        transition={{ duration: 0.48, ease: EASE }}
+                    >
+                        <p className="kc-pill krv-ctaPill">Start now</p>
+                        <h2 className="h3 krv-ctaTitle">Ready to make yours?</h2>
+                        <p className="kc-subheading krv-ctaSub">
+                            Claim your KonarCard link, build your profile, then order your card when you're ready.
+                        </p>
+                        <div className="krv-ctaBtns">
                             <Link to="/register" className="kx-btn kx-btn--black">
                                 Claim Your Link
                             </Link>
-                        </motion.div>
-                    </div>
+                        </div>
+                    </motion.div>
                 </section>
 
             </main>

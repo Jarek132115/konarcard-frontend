@@ -24,8 +24,8 @@ const faqs = [
         a: "No problem. Every card includes a QR code backup, so anyone can scan and open your profile.",
     },
     {
-        q: "Can I use one profile across multiple NFC products?",
-        a: "Yes. Your plastic card, metal card, and KonarTag can all link to the same KonarCard profile.",
+        q: "Can I have more than one card linked to my profile?",
+        a: "Yes. You can order multiple KonarCards in different colours, all linked to the same digital profile. Hand one out, keep one as a spare, or give one to a team member.",
     },
 ];
 
