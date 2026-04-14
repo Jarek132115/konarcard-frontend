@@ -126,7 +126,7 @@ const REVIEWS = [
         id: "r11", avatar: pp11, name: "John P", trade: "Bricklayer",
         location: "London", rating: 5, date: "8 days ago",
         plan: "Plus plan", products: [],
-        text: "Tap, profile opens, job booked. Three steps and I've stopped losing leads because someone lost my bit of card in the bottom of their bag. Wish I'd done this years ago!!",
+        text: "Tap, profile opens, job booked. Three steps and I've stopped losing leads because someone lost my bit of card in the bottom of their bag. Wish this had been around years ago!!",
     },
     {
         id: "r12", avatar: pp12, name: "Lewis J", trade: "Plasterer",

@@ -81,7 +81,7 @@ const FEATURED = [
         location: "London",
         rating: 5,
         text:
-            "Tap, profile opens, job booked. Three steps and I've stopped losing leads because someone lost my bit of card in the bottom of their bag. Wish I'd done this years ago!!",
+            "Tap, profile opens, job booked. Three steps and I've stopped losing leads because someone lost my bit of card in the bottom of their bag. Wish this had been around years ago!!",
     },
 ];
 
