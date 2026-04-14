@@ -117,8 +117,10 @@
 
 .kc-homeHero__phone {
     flex: 0 0 auto;
-    width: clamp(146px, 10vw, 184px);
-    aspect-ratio: 9 / 19.5;
+    width: clamp(160px, 11vw, 200px);
+    /* Matches the source artwork in Figma (795 × 1692), so cards fill
+       edge-to-edge with no letterbox or crop. */
+    aspect-ratio: 795 / 1692;
     border-radius: 20px;
     overflow: hidden;
     background: #f3f4f6;
@@ -131,7 +133,7 @@
     height: 100%;
     display: block;
     object-fit: cover;
-    object-position: top center;
+    object-position: center;
     user-select: none;
     -webkit-user-drag: none;
     pointer-events: none;
@@ -147,7 +149,7 @@
     }
 
     .kc-homeHero__phone {
-        width: clamp(136px, 17.5vw, 160px);
+        width: clamp(148px, 19vw, 175px);
         border-radius: 18px;
     }
 
@@ -170,7 +172,7 @@
     }
 
     .kc-homeHero__phone {
-        width: clamp(128px, 37vw, 148px);
+        width: clamp(138px, 40vw, 160px);
         border-radius: 16px;
     }
 

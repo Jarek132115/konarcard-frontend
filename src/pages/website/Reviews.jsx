@@ -212,7 +212,7 @@ export default function Reviews() {
                                     </div>
 
                                     <Link to="/register" className="kx-btn kx-btn--black krv-summaryBtn">
-                                        Start Free
+                                        Claim Your Link
                                     </Link>
 
                                     <p className="krv-summaryHint">No card needed to set up your profile.</p>
@@ -304,7 +304,7 @@ export default function Reviews() {
                                 Start free. No card needed to set up your profile.
                             </p>
                             <Link to="/register" className="kx-btn kx-btn--black">
-                                Start Free
+                                Claim Your Link
                             </Link>
                         </motion.div>
                     </div>

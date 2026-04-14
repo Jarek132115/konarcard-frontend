@@ -64,7 +64,7 @@ export default function PricingPageHero({
         const logged = !!isLoggedIn;
 
         if (!logged) {
-            if (planName === "free") return { type: "link", label: "Start Free", to: "/register" };
+            if (planName === "free") return { type: "link", label: "Claim Your Link", to: "/register" };
             if (typeof startSubscription !== "function") {
                 return { type: "link", label: `Upgrade to ${planName === "plus" ? "Plus" : "Teams"}`, to: "/login" };
             }

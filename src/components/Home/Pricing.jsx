@@ -38,7 +38,7 @@ const CARDS = [
             "Unlimited updates",
             "Tap or scan share",
         ],
-        cta: { label: "Start Free", to: "/register" },
+        cta: { label: "Claim Your Link", to: "/register" },
     },
     {
         key: "plus",

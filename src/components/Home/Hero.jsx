@@ -187,7 +187,7 @@ export default function Hero() {
 
                 <motion.div className="kc-homeHero__ctaRow" {...fadeUp(0.30)}>
                     <Link to="/register" className="kx-btn kx-btn--orange kc-homeHero__ctaBtn">
-                        Start Free
+                        Claim Your Link
                     </Link>
                     <Link to="/products" className="kx-btn kx-btn--white kc-homeHero__ctaBtn">
                         See the Cards

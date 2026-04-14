@@ -211,7 +211,7 @@ export default function BlogPostLayout({
                                 See the Cards
                             </Link>
                             <Link to="/register" className="kx-btn kx-btn--black kbp-ctaBtn">
-                                Start Free
+                                Claim Your Link
                             </Link>
                         </div>
                     </section>

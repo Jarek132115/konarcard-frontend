@@ -446,7 +446,7 @@ export default function Pricing() {
 
         if (!logged) {
             if (planName === "free") {
-                return { type: "link", label: "Start Free", to: "/register", disabled: false, helper: "" };
+                return { type: "link", label: "Claim Your Link", to: "/register", disabled: false, helper: "" };
             }
             return {
                 type: "button",

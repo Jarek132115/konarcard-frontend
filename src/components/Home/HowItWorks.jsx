@@ -97,7 +97,7 @@ export default function HowItWorks() {
 
                     <div className="hiw__cta">
                         <Link to="/register" className="kx-btn kx-btn--black">
-                            Start Free
+                            Claim Your Link
                         </Link>
 
                         <Link to="/products" className="kx-btn kx-btn--white">
