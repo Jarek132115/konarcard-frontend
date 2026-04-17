@@ -1,81 +1,24 @@
 {
   "redirects": [
     {
-      "source": "/(.*)",
-      "has": [
-        {
-          "type": "host",
-          "value": "konarcard.com"
-        }
-      ],
-      "destination": "https://www.konarcard.com/$1",
-      "permanent": true
+      "source": "/:path*",
+      "destination": "https://www.konarcard.com/:path*",
+      "statusCode": 301,
+      "has": [{ "type": "host", "value": "konarcard.com" }]
     },
-    {
-      "source": "/products/plastic",
-      "destination": "/products/plastic-white",
-      "permanent": true
-    },
-    {
-      "source": "/products/plastic-card",
-      "destination": "/products/plastic-white",
-      "permanent": true
-    },
-    {
-      "source": "/products/metal",
-      "destination": "/products",
-      "permanent": true
-    },
-    {
-      "source": "/products/metal-card",
-      "destination": "/products",
-      "permanent": true
-    },
-    {
-      "source": "/products/konartag",
-      "destination": "/products",
-      "permanent": true
-    },
-    {
-      "source": "/products/plastic-bundle",
-      "destination": "/products",
-      "permanent": true
-    },
-    {
-      "source": "/products/metal-bundle",
-      "destination": "/products",
-      "permanent": true
-    },
-    {
-      "source": "/faqs",
-      "destination": "/faq",
-      "permanent": true
-    },
-    {
-      "source": "/claimyourlink",
-      "destination": "/register",
-      "permanent": true
-    },
-    {
-      "source": "/how-it-works",
-      "destination": "/",
-      "permanent": true
-    },
-    {
-      "source": "/share",
-      "destination": "/",
-      "permanent": true
-    },
-    {
-      "source": "/u/-",
-      "destination": "/examples",
-      "permanent": true
-    },
-    {
-      "source": "/u/z",
-      "destination": "/examples",
-      "permanent": true
-    }
+    { "source": "/products/metal-card", "destination": "/products", "statusCode": 301 },
+    { "source": "/products/metal", "destination": "/products", "statusCode": 301 },
+    { "source": "/products/konartag", "destination": "/products", "statusCode": 301 },
+    { "source": "/products/plastic-bundle", "destination": "/products", "statusCode": 301 },
+    { "source": "/products/metal-bundle", "destination": "/products", "statusCode": 301 },
+    { "source": "/products/plastic", "destination": "/products", "statusCode": 301 },
+    { "source": "/products/plastic-card", "destination": "/products", "statusCode": 301 },
+    { "source": "/faqs", "destination": "/faq", "statusCode": 301 },
+    { "source": "/claimyourlink", "destination": "/register", "statusCode": 301 },
+    { "source": "/how-it-works", "destination": "/", "statusCode": 301 },
+    { "source": "/share", "destination": "/", "statusCode": 301 },
+    { "source": "/u/-", "destination": "/examples", "statusCode": 301 },
+    { "source": "/u/z", "destination": "/examples", "statusCode": 301 }
   ],
   "rewrites": [
     {
