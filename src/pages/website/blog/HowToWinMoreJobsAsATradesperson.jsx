@@ -7,7 +7,7 @@ export default function HowToWinMoreJobsAsATradesperson() {
         <BlogPostLayout
             slug="how-to-win-more-jobs-as-a-tradesperson"
             title="How to Win More Jobs as a Tradesperson Without Spending More on Ads"
-            metaTitle="How to Win More Jobs as a Tradesperson Without Spending More on Ads | KonarCard"
+            metaTitle="Win More Jobs as a Tradesperson | KonarCard"
             description="Five practical ways UK tradespeople win more work without paid advertising, and how to make word of mouth work harder for you."
             pillLabel="Getting more jobs"
             datePublished="2026-04-13"

@@ -7,7 +7,7 @@ export default function WhatIsAnNfcBusinessCard() {
         <BlogPostLayout
             slug="what-is-an-nfc-business-card"
             title="What is an NFC Business Card and How Does It Work?"
-            metaTitle="What is an NFC Business Card and How Does It Work? | KonarCard"
+            metaTitle="What Is an NFC Business Card? | KonarCard"
             description="Plain English explanation of NFC business cards, how tapping works, and why UK tradespeople are switching from paper cards to NFC."
             pillLabel="Digital business cards"
             datePublished="2026-04-13"

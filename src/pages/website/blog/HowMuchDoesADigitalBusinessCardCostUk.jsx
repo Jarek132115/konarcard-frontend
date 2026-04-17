@@ -7,7 +7,7 @@ export default function HowMuchDoesADigitalBusinessCardCostUk() {
         <BlogPostLayout
             slug="how-much-does-a-digital-business-card-cost-uk"
             title="How Much Does a Digital Business Card Cost in the UK?"
-            metaTitle="How Much Does a Digital Business Card Cost in the UK? | KonarCard"
+            metaTitle="Digital Business Card Cost UK | KonarCard"
             description="Honest breakdown of digital business card costs in the UK in 2026, what you actually get at each price point and which option makes sense for tradespeople."
             pillLabel="Digital business cards"
             datePublished="2026-04-13"

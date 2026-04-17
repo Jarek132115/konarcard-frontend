@@ -692,6 +692,7 @@ export default function UserPage() {
         read(businessCard, ["show_main_section", "showMainSection"], true),
         true
     );
+    const needsFallbackH1 = !showMain;
     const showAbout = normalizeBool(
         read(businessCard, ["show_about_me_section", "showAboutMeSection"], true),
         true
@@ -1087,6 +1088,9 @@ export default function UserPage() {
             />
 
             <div className={shellClass}>
+                {needsFallbackH1 && (
+                    <h1 className="sr-only">{businessName || "KonarCard Profile"}</h1>
+                )}
                 <div className="userpage-inner">
                     {tid === "template-2" ? <Template2 vm={vm} /> : null}
                     {tid === "template-3" ? <Template3 vm={vm} /> : null}

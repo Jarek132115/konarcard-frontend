@@ -7,7 +7,7 @@ export default function NfcCardsVsQrCodesForTradespeople() {
         <BlogPostLayout
             slug="nfc-cards-vs-qr-codes-for-tradespeople"
             title="NFC Cards vs QR Codes, Which is Better for Tradespeople?"
-            metaTitle="NFC Cards vs QR Codes, Which is Better for Tradespeople? | KonarCard"
+            metaTitle="NFC Cards vs QR Codes for Tradespeople | KonarCard"
             description="Honest comparison of NFC cards and QR codes for UK tradespeople, how each one works, when to use which, and why having both beats choosing one."
             pillLabel="Digital business cards"
             datePublished="2026-04-13"

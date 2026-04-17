@@ -7,7 +7,7 @@ export default function DigitalBusinessCardsForTradespeople() {
         <BlogPostLayout
             slug="digital-business-cards-for-tradespeople"
             title="Digital Business Cards for Tradespeople, The Complete Guide"
-            metaTitle="Digital Business Cards for Tradespeople, The Complete Guide | KonarCard"
+            metaTitle="Digital Business Cards for Tradespeople | KonarCard"
             description="How UK tradespeople are using digital business cards to win more jobs, look more professional and never hand out an out-of-date card again."
             pillLabel="Digital business cards"
             datePublished="2026-04-13"

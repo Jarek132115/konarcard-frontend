@@ -7,7 +7,7 @@ export default function BestDigitalBusinessCardsUkTradespeople() {
         <BlogPostLayout
             slug="best-digital-business-cards-uk-tradespeople"
             title="The Best Digital Business Cards for UK Tradespeople in 2026"
-            metaTitle="Best Digital Business Cards for UK Tradespeople 2026 | KonarCard"
+            metaTitle="Best Digital Business Cards for UK Trades | KonarCard"
             description="Comparing the best digital business cards for UK tradespeople in 2026. Real pricing, honest pros and cons, and which one actually works for trades."
             pillLabel="Digital business cards"
             datePublished="2026-04-13"
