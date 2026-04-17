@@ -388,7 +388,7 @@ function renderPolicy(key, dot) {
 export default function Policies() {
     useSeo({
         path: "/policies",
-        title: "Policies | KonarCard Delivery, Returns, Warranty & Privacy",
+        title: "KonarCard Policies | Delivery, Returns & Privacy",
         description:
             "Read KonarCard's delivery, returns, warranty, privacy, cookie and terms policies. UK delivery, 30 day returns and a 12 month warranty on every card.",
     });

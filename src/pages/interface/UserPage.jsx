@@ -5,6 +5,7 @@ import { useKonarToast } from "../../hooks/useKonarToast";
 
 import api from "../../services/api";
 import { AuthContext } from "../../components/AuthContext";
+import { useSeo } from "../../utils/seo";
 
 /* Templates */
 import Template1 from "../../components/Dashboard/Template1";
@@ -741,6 +742,17 @@ export default function UserPage() {
     const jobTitle = read(businessCard, ["job_title", "jobTitle"], "");
     const location = read(businessCard, ["location"], "");
     const bio = read(businessCard, ["bio"], "");
+
+    const seoName = businessName || publicSlug;
+    const seoDesc = [seoName, tradeTitle, location].filter(Boolean).join(" — ");
+    useSeo({
+        path: `/u/${publicSlug}`,
+        title: `${seoName} | KonarCard Profile`,
+        description: seoDesc
+            ? `${seoDesc}. Tap to see services, photos and reviews.`
+            : `${seoName} on KonarCard. Tap to share contact details, services, photos and reviews.`,
+        noindex: true,
+    });
 
     const works = normalizeWorks(read(businessCard, ["works", "workImages"], []));
     const services = normalizeServices(read(businessCard, ["services"], []));

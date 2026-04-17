@@ -1,13 +1,13 @@
 User-agent: *
 Allow: /
 
-# Authentication pages — not for indexing
+# Authentication pages
 Disallow: /login
 Disallow: /register
 Disallow: /reset-password
 Disallow: /oauth
 
-# Dashboard / authenticated user area — not for indexing
+# Dashboard / authenticated user area
 Disallow: /dashboard
 Disallow: /profiles
 Disallow: /cards
@@ -26,7 +26,15 @@ Disallow: /contact-support
 Disallow: /helpcentreinterface
 Disallow: /successsubscription
 
-# Admin area — not for indexing
+# Admin area
 Disallow: /admin
+
+# API routes
+Disallow: /api/
+
+# Tracking parameters
+Disallow: /*?utm_
+Disallow: /*?fbclid
+Disallow: /*?ref=
 
 Sitemap: https://www.konarcard.com/sitemap.xml

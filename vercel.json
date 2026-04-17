@@ -60,6 +60,21 @@
       "source": "/how-it-works",
       "destination": "/",
       "permanent": true
+    },
+    {
+      "source": "/share",
+      "destination": "/",
+      "permanent": true
+    },
+    {
+      "source": "/u/-",
+      "destination": "/examples",
+      "permanent": true
+    },
+    {
+      "source": "/u/z",
+      "destination": "/examples",
+      "permanent": true
     }
   ],
   "rewrites": [
