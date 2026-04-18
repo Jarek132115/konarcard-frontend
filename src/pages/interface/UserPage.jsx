@@ -564,6 +564,23 @@ export default function UserPage() {
         });
     }, [businessCard, isValidSlug, publicSlug]);
 
+    const seoName = read(businessCard, ["business_card_name", "businessCardName"], "")
+        || read(businessCard, ["main_heading", "mainHeading"], "")
+        || read(businessCard, ["business_name", "businessName"], "")
+        || publicSlug;
+    const seoTrade = read(businessCard, ["sub_heading", "subHeading"], "")
+        || read(businessCard, ["trade_title", "tradeTitle"], "");
+    const seoLocation = read(businessCard, ["location"], "");
+    const seoDesc = [seoName, seoTrade, seoLocation].filter(Boolean).join(" — ");
+    useSeo({
+        path: `/u/${publicSlug}`,
+        title: `${seoName} | KonarCard Profile`,
+        description: seoDesc
+            ? `${seoDesc}. Tap to see services, photos and reviews.`
+            : `${seoName} on KonarCard. Tap to share contact details, services, photos and reviews.`,
+        noindex: true,
+    });
+
     const goEditProfile = () => {
         try {
             localStorage.setItem("scrollToEditorOnLoad", "1");
@@ -744,16 +761,6 @@ export default function UserPage() {
     const location = read(businessCard, ["location"], "");
     const bio = read(businessCard, ["bio"], "");
 
-    const seoName = businessName || publicSlug;
-    const seoDesc = [seoName, tradeTitle, location].filter(Boolean).join(" — ");
-    useSeo({
-        path: `/u/${publicSlug}`,
-        title: `${seoName} | KonarCard Profile`,
-        description: seoDesc
-            ? `${seoDesc}. Tap to see services, photos and reviews.`
-            : `${seoName} on KonarCard. Tap to share contact details, services, photos and reviews.`,
-        noindex: true,
-    });
 
     const works = normalizeWorks(read(businessCard, ["works", "workImages"], []));
     const services = normalizeServices(read(businessCard, ["services"], []));
